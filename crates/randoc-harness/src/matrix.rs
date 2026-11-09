@@ -76,9 +76,23 @@ fn string_list(value: &Value) -> Vec<String> {
         .unwrap_or_default()
 }
 
-/// Builds one section of the matrix.
+/// Returns the status of an entry from its tallies.
 ///
-/// `primary` names the tally that decides the status of an entry.
+/// `primary` is the tally that shows whether work on the entry started.
+/// An entry is `passing` only when each of its units passes.
+fn entry_status(primary: Tally, tallies: &BTreeMap<&'static str, Tally>) -> &'static str {
+    let all = tallies.values().fold(Tally::default(), |sum, tally| Tally {
+        passing: sum.passing + tally.passing,
+        total: sum.total + tally.total,
+    });
+    match (primary.status(), all.status()) {
+        ("passing", "passing") => "passing",
+        ("passing", _) => "partial",
+        (status, _) => status,
+    }
+}
+
+/// Builds one section of the matrix.
 fn section(
     names: &[String],
     prefix: &str,
@@ -99,7 +113,7 @@ fn section(
         let status = if reason.is_some() {
             "not_applicable"
         } else {
-            primary_tally.status()
+            entry_status(primary_tally, &entry_tallies)
         };
         out.insert(
             name.clone(),
@@ -389,8 +403,8 @@ mod tests {
         );
         assert_eq!(matrix["input_formats"]["json"]["status"], "passing");
         assert_eq!(matrix["input_formats"]["docx"]["status"], "not_started");
-        assert_eq!(matrix["output_formats"]["html"]["status"], "passing");
-        // The end-to-end unit fails, but the writer status comes from the write units.
+        // The write unit passes, but the end-to-end unit fails, so the writer is not passing.
+        assert_eq!(matrix["output_formats"]["html"]["status"], "partial");
         assert_eq!(
             matrix["output_formats"]["html"]["end_to_end"],
             serde_json::json!({"passing": 0, "total": 1})

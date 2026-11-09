@@ -26,6 +26,9 @@ pub enum Error {
     Template(Text),
     /// A command-line option or a defaults file is not valid.
     Option(Text),
+    /// A format specification has a syntax error. The text is the full message.
+    /// The Pandoc manual does not list this error. Pandoc 3.13 exits with 20.
+    Format(Text),
     /// The input format is not known.
     UnknownReader(Text),
     /// The output format is not known.
@@ -121,6 +124,7 @@ impl Error {
             Error::App(_) => 4,
             Error::Template(_) => 5,
             Error::Option(_) => 6,
+            Error::Format(_) => 20,
             Error::UnknownReader(_) => 21,
             Error::UnknownWriter(_) => 22,
             Error::UnsupportedExtension { .. } => 23,
@@ -155,6 +159,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::Io(message)
+            | Error::Format(message)
             | Error::App(message)
             | Error::Option(message)
             | Error::Some(message)
@@ -267,6 +272,7 @@ mod tests {
             (Error::App(text()), 4),
             (Error::Template(text()), 5),
             (Error::Option(text()), 6),
+            (Error::Format(text()), 20),
             (Error::UnknownReader(text()), 21),
             (Error::UnknownWriter(text()), 22),
             (

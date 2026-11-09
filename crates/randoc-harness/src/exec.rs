@@ -4,13 +4,17 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::io::{Read, Write};
 use std::path::{Component, Path};
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, Stdio};
+use std::sync::mpsc;
 use std::time::{Duration, Instant};
 
 use crate::cases::Outcome;
 
 /// The time that both programs see as the current time, so that dates in the output are equal.
 pub const SOURCE_DATE_EPOCH: &str = "1700000000";
+
+/// The time that the harness gives the output pipes to close after the program ends.
+const PIPE_GRACE: Duration = Duration::from_secs(2);
 
 /// A program to run and the limits for one run.
 #[derive(Debug, Clone)]
@@ -47,26 +51,46 @@ fn is_safe_relative(name: &str) -> bool {
             .all(|part| matches!(part, Component::Normal(_)))
 }
 
+/// Stops the program and each process that it started.
+fn kill_tree(child: &mut Child) {
+    // The program runs in its own process group, and the group identifier is its process identifier.
+    #[cfg(unix)]
+    {
+        let group = format!("-{}", child.id());
+        let _ = Command::new("/bin/kill")
+            .args(["-9", "--", &group])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status();
+    }
+    let _ = child.kill();
+    let _ = child.wait();
+}
+
+fn read_in_thread<R: Read + Send + 'static>(pipe: Option<R>) -> mpsc::Receiver<Vec<u8>> {
+    let (sender, receiver) = mpsc::channel();
+    std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        if let Some(mut pipe) = pipe {
+            // A read error leaves the bytes that arrived before the error.
+            let _ = pipe.read_to_end(&mut bytes);
+        }
+        let _ = sender.send(bytes);
+    });
+    receiver
+}
+
 impl Program {
     /// Runs the program under the name `pandoc` in `work_dir` and returns the outcome.
     ///
     /// The function empties `work_dir` first and writes `files` into it. The
     /// program gets a fixed environment, so the result does not depend on the
     /// settings of the user.
+    ///
+    /// An error means that the harness has no result of the program: the
+    /// program did not start, did not end in time, or ended without an exit
+    /// code. An error is never a result to compare.
     pub fn run(
-        &self,
-        args: &[String],
-        stdin: &[u8],
-        files: &BTreeMap<String, Vec<u8>>,
-        work_dir: &Path,
-    ) -> Outcome {
-        match self.try_run(args, stdin, files, work_dir) {
-            Ok(outcome) => outcome,
-            Err(error) => Outcome::new(-1, Vec::new(), format!("[harness] {error}\n").as_bytes()),
-        }
-    }
-
-    fn try_run(
         &self,
         args: &[String],
         stdin: &[u8],
@@ -91,7 +115,7 @@ impl Program {
         #[cfg(unix)]
         {
             use std::os::unix::process::CommandExt;
-            command.arg0("pandoc");
+            command.arg0("pandoc").process_group(0);
         }
         command
             .args(args)
@@ -110,68 +134,49 @@ impl Program {
             .spawn()
             .map_err(|e| format!("{}: {e}", self.binary.display()))?;
 
-        let mut child_stdin = child.stdin.take();
-        let mut child_stdout = child.stdout.take();
-        let mut child_stderr = child.stderr.take();
+        let child_stdin = child.stdin.take();
         let input = stdin.to_vec();
-        let (stdout, stderr, status, timed_out) = std::thread::scope(|scope| {
-            scope.spawn(move || {
-                if let Some(mut pipe) = child_stdin.take() {
-                    // The program can close its input early. That is not an error here.
-                    let _ = pipe.write_all(&input);
-                }
-            });
-            let out_reader = scope.spawn(move || read_all(child_stdout.as_mut()));
-            let err_reader = scope.spawn(move || read_all(child_stderr.as_mut()));
-
-            let deadline = Instant::now() + self.timeout;
-            let mut timed_out = false;
-            let status = loop {
-                match child.try_wait() {
-                    Ok(Some(status)) => break Some(status),
-                    Ok(None) if Instant::now() >= deadline => {
-                        timed_out = true;
-                        let _ = child.kill();
-                        break child.wait().ok();
-                    }
-                    Ok(None) => std::thread::sleep(Duration::from_millis(2)),
-                    Err(_) => break None,
-                }
-            };
-            (
-                out_reader.join().unwrap_or_default(),
-                err_reader.join().unwrap_or_default(),
-                status,
-                timed_out,
-            )
+        std::thread::spawn(move || {
+            if let Some(mut pipe) = child_stdin {
+                // The program can close its input early. That is not an error here.
+                let _ = pipe.write_all(&input);
+            }
         });
+        let stdout = read_in_thread(child.stdout.take());
+        let stderr = read_in_thread(child.stderr.take());
 
-        let mut stderr = stderr;
-        let exit = if timed_out {
-            stderr.extend_from_slice(
-                format!("[harness] no result after {} s\n", self.timeout.as_secs()).as_bytes(),
-            );
-            -1
-        } else {
-            match status.and_then(|s| s.code()) {
-                Some(code) => code,
-                None => {
-                    stderr.extend_from_slice(b"[harness] the program ended without an exit code\n");
-                    -1
+        let deadline = Instant::now() + self.timeout;
+        let status = loop {
+            match child.try_wait() {
+                Ok(Some(status)) => break status,
+                Ok(None) if Instant::now() >= deadline => {
+                    kill_tree(&mut child);
+                    return Err(format!("no result after {} s", self.timeout.as_secs()));
+                }
+                Ok(None) => std::thread::sleep(Duration::from_millis(2)),
+                Err(error) => {
+                    kill_tree(&mut child);
+                    return Err(format!("cannot wait for the program: {error}"));
                 }
             }
         };
-        Ok(Outcome::new(exit, stdout, &stderr))
-    }
-}
 
-fn read_all<R: Read>(pipe: Option<&mut R>) -> Vec<u8> {
-    let mut bytes = Vec::new();
-    if let Some(pipe) = pipe {
-        // A read error leaves the bytes that arrived before the error.
-        let _ = pipe.read_to_end(&mut bytes);
+        // A process that the program started can hold the pipes open after the program ends.
+        let pipe_deadline = Instant::now() + PIPE_GRACE;
+        let mut receive = |receiver: &mpsc::Receiver<Vec<u8>>| {
+            let wait = pipe_deadline.saturating_duration_since(Instant::now());
+            receiver.recv_timeout(wait).map_err(|_| {
+                kill_tree(&mut child);
+                "the output pipes stayed open after the program ended".to_owned()
+            })
+        };
+        let stdout = receive(&stdout)?;
+        let stderr = receive(&stderr)?;
+        let exit = status
+            .code()
+            .ok_or("the program ended without an exit code")?;
+        Ok(Outcome::new(exit, stdout, stderr))
     }
-    bytes
 }
 
 #[cfg(all(test, unix))]
@@ -196,15 +201,17 @@ mod tests {
     #[test]
     fn captures_output_exit_code_and_stdin() {
         let dir = work_dir("basic");
-        let outcome = shell(10_000).run(
-            &sh("cat; echo err >&2; exit 7"),
-            b"in\n",
-            &BTreeMap::new(),
-            &dir,
-        );
+        let outcome = shell(20_000)
+            .run(
+                &sh("cat; echo err >&2; exit 7"),
+                b"in\n",
+                &BTreeMap::new(),
+                &dir,
+            )
+            .unwrap();
         assert_eq!(outcome.exit, 7);
-        assert_eq!(outcome.stdout.as_deref(), Some("in\n"));
-        assert_eq!(outcome.stderr, "err\n");
+        assert_eq!(outcome.stdout_bytes(), b"in\n");
+        assert_eq!(outcome.stderr_bytes(), b"err\n");
         fs::remove_dir_all(&dir).unwrap();
     }
 
@@ -216,42 +223,57 @@ mod tests {
         let mut files = BTreeMap::new();
         files.insert("sub/a.txt".to_owned(), b"A".to_vec());
         let script = "echo $SOURCE_DATE_EPOCH $TZ $LANG; echo $0; cat sub/a.txt; ls";
-        let outcome = shell(10_000).run(&sh(script), b"", &files, &dir);
+        let outcome = shell(20_000).run(&sh(script), b"", &files, &dir).unwrap();
         assert_eq!(
-            outcome.stdout.as_deref(),
-            Some("1700000000 UTC en_US.UTF-8\npandoc\nAsub\n")
+            String::from_utf8(outcome.stdout_bytes()).unwrap(),
+            "1700000000 UTC en_US.UTF-8\npandoc\nAsub\n"
         );
         fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]
-    fn a_slow_program_is_stopped() {
+    fn a_slow_program_is_stopped_with_the_processes_that_it_started() {
         let dir = work_dir("slow");
-        let started = Instant::now();
-        let outcome = shell(200).run(&sh("sleep 30"), b"", &BTreeMap::new(), &dir);
-        assert_eq!(outcome.exit, -1);
-        assert!(outcome.stderr.contains("no result after"));
-        assert!(started.elapsed() < Duration::from_secs(10));
+        for script in ["sleep 30", "(sleep 30) & wait", "sleep 30 & sleep 30"] {
+            let started = Instant::now();
+            let error = shell(300)
+                .run(&sh(script), b"", &BTreeMap::new(), &dir)
+                .unwrap_err();
+            assert!(error.contains("no result after"), "{script}: {error}");
+            assert!(started.elapsed() < Duration::from_secs(10), "{script}");
+        }
         fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]
-    fn unsafe_file_names_and_missing_programs_are_reported() {
+    fn a_background_process_that_holds_the_pipes_is_an_error() {
+        let dir = work_dir("pipes");
+        let started = Instant::now();
+        let error = shell(20_000)
+            .run(&sh("sleep 30 & exit 0"), b"", &BTreeMap::new(), &dir)
+            .unwrap_err();
+        assert!(error.contains("pipes stayed open"), "{error}");
+        assert!(started.elapsed() < Duration::from_secs(15));
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn unsafe_file_names_and_missing_programs_are_errors() {
         let dir = work_dir("unsafe");
         let mut files = BTreeMap::new();
         files.insert("../escape.txt".to_owned(), Vec::new());
-        let outcome = shell(10_000).run(&sh("true"), b"", &files, &dir);
-        assert_eq!(outcome.exit, -1);
-        assert!(outcome.stderr.contains("not a relative path"));
+        let error = shell(20_000)
+            .run(&sh("true"), b"", &files, &dir)
+            .unwrap_err();
+        assert!(error.contains("not a relative path"));
         assert!(!dir.join("../escape.txt").exists());
 
         let missing = Program {
             binary: "/nonexistent/program".into(),
             timeout: Duration::from_secs(1),
         };
-        let outcome = missing.run(&[], b"", &BTreeMap::new(), &dir);
-        assert_eq!(outcome.exit, -1);
-        assert!(outcome.stderr.contains("/nonexistent/program"));
+        let error = missing.run(&[], b"", &BTreeMap::new(), &dir).unwrap_err();
+        assert!(error.contains("/nonexistent/program"));
         fs::remove_dir_all(&dir).unwrap();
     }
 
@@ -259,8 +281,20 @@ mod tests {
     fn a_program_that_ignores_large_input_does_not_block() {
         let dir = work_dir("large");
         let input = vec![b'x'; 4 << 20];
-        let outcome = shell(10_000).run(&sh("exit 0"), &input, &BTreeMap::new(), &dir);
+        let outcome = shell(20_000)
+            .run(&sh("exit 0"), &input, &BTreeMap::new(), &dir)
+            .unwrap();
         assert_eq!(outcome.exit, 0);
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn a_program_that_a_signal_stops_is_an_error() {
+        let dir = work_dir("signal");
+        let error = shell(20_000)
+            .run(&sh("kill -9 $$"), b"", &BTreeMap::new(), &dir)
+            .unwrap_err();
+        assert!(error.contains("without an exit code"), "{error}");
         fs::remove_dir_all(&dir).unwrap();
     }
 }

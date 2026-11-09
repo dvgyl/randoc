@@ -26,7 +26,7 @@ const USAGE: &str = "\
 Usage: randoc-harness COMMAND [OPTIONS]
 
 Commands:
-  record          Run the oracle for each unit that has no expected result.
+  record          Run the oracle for each unit that has no current expected result.
   run             Run Randoc for each unit and compare with the expected results.
   verify-oracle   Run the oracle again and check that the expected results are current.
   show UNIT_ID    Run one unit and print the expected result and the Randoc result.
@@ -60,6 +60,21 @@ struct Config {
     jobs: usize,
     timeout: Duration,
     root: PathBuf,
+}
+
+impl Config {
+    /// Returns `true` when the run uses each unit of the suite.
+    fn whole_suite(&self) -> bool {
+        self.filters.is_empty() && self.unit_id.is_none()
+    }
+
+    /// Returns `true` when a unit identifier is in the part of the suite that the run uses.
+    fn selects(&self, id: &str) -> bool {
+        match &self.unit_id {
+            Some(unit_id) => unit_id == id,
+            None => self.filters.is_empty() || self.filters.iter().any(|f| id.contains(f)),
+        }
+    }
 }
 
 fn parse_config(args: &[String]) -> Result<Config, String> {
@@ -148,15 +163,12 @@ impl Session {
         let conformance = config.root.join("conformance");
         let mut units =
             cases::load_units(&conformance.join("cases"), &conformance.join("fixtures"))?;
-        if let Some(id) = &config.unit_id {
-            units.retain(|unit| unit.id == *id);
-            if units.is_empty() {
-                return Err(format!("there is no unit with the identifier {id}"));
-            }
+        if let Some(id) = &config.unit_id
+            && !units.iter().any(|unit| unit.id == *id)
+        {
+            return Err(format!("there is no unit with the identifier {id}"));
         }
-        if !config.filters.is_empty() {
-            units.retain(|unit| config.filters.iter().any(|filter| unit.id.contains(filter)));
-        }
+        units.retain(|unit| config.selects(&unit.id));
         let expected_dir = conformance.join("expected");
         let mut expected = BTreeMap::new();
         for unit in &units {
@@ -211,7 +223,8 @@ impl Session {
         })
     }
 
-    fn expected_outcome(&self, unit: &Unit) -> Option<&Outcome> {
+    /// Returns the stored oracle result of a unit, also when it is out of date.
+    fn stored(&self, unit: &Unit) -> Option<&Outcome> {
         self.expected.get(&unit.file_key)?.units.get(&unit.local_id)
     }
 
@@ -232,63 +245,82 @@ impl Session {
         }
     }
 
+    /// Returns the stored oracle result of a unit when it belongs to the current input of the unit.
+    fn current(&self, unit: &Unit, stdin: &[u8]) -> Option<&Outcome> {
+        self.stored(unit)
+            .filter(|outcome| outcome.key == unit.fingerprint(stdin))
+    }
+
     fn close(&self) {
         let _ = fs::remove_dir_all(&self.scratch);
     }
 }
 
 fn oracle_version(oracle: &Program, work_dir: &Path) -> Result<String, String> {
-    let outcome = oracle.run(&["--version".to_owned()], b"", &BTreeMap::new(), work_dir);
-    let first_line = outcome
-        .stdout
-        .as_deref()
-        .and_then(|text| text.lines().next())
-        .unwrap_or("");
+    let outcome = oracle.run(&["--version".to_owned()], b"", &BTreeMap::new(), work_dir)?;
+    let stdout = String::from_utf8_lossy(&outcome.stdout_bytes()).into_owned();
+    let first_line = stdout.lines().next().unwrap_or("");
     if outcome.exit != 0 || first_line.is_empty() {
-        return Err(format!(
-            "the oracle did not print its version: {}",
-            outcome.stderr
-        ));
+        return Err("the oracle did not print its version".to_owned());
     }
     Ok(first_line.to_owned())
 }
+
+/// The identifier, the case file key and the local identifier of a unit, with its new oracle result.
+type RecordUpdate = (String, String, String, Option<Result<Outcome, String>>);
 
 fn record(mut session: Session) -> Result<bool, String> {
     let oracle = session.oracle()?;
     let version = oracle_version(&oracle, &session.work_dir(0))?;
     let all = session.config.all;
     let mut recorded = 0usize;
+    let mut errors = 0usize;
 
     // The write units need the document tree from the read units, so the read units run first.
     for write_phase in [false, true] {
-        let todo: Vec<&Unit> = session
+        let todo: Vec<(&Unit, Option<Vec<u8>>)> = session
             .units
             .iter()
             .filter(|unit| (unit.kind == UnitKind::Write) == write_phase)
-            .filter(|unit| all || session.expected_outcome(unit).is_none())
+            .map(|unit| (unit, session.stdin(unit)))
+            .filter(|(unit, stdin)| match stdin {
+                Some(stdin) => all || session.current(unit, stdin).is_none(),
+                None => session.stored(unit).is_some(),
+            })
             .collect();
-        let outcomes = parallel_map(&todo, session.config.jobs, |worker, unit| {
-            let stdin = session.stdin(unit)?;
-            Some(oracle.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)))
+        let outcomes = parallel_map(&todo, session.config.jobs, |worker, (unit, stdin)| {
+            let stdin = stdin.as_ref()?;
+            let result = oracle.run(&unit.args, stdin, &unit.files, &session.work_dir(worker));
+            Some(result.map(|mut outcome| {
+                outcome.key = unit.fingerprint(stdin);
+                outcome
+            }))
         });
-        let updates: Vec<(String, String, Option<Outcome>)> = todo
+        let updates: Vec<RecordUpdate> = todo
             .iter()
             .zip(outcomes)
-            .map(|(unit, outcome)| {
+            .map(|((unit, _), outcome)| {
                 (
+                    unit.id.clone(),
                     unit.file_key.clone(),
                     unit.local_id.clone(),
                     outcome.flatten(),
                 )
             })
             .collect();
-        for (file_key, local_id, outcome) in updates {
+        for (id, file_key, local_id, outcome) in updates {
             let file = session.expected.entry(file_key).or_default();
             match outcome {
-                Some(outcome) => {
+                Some(Ok(outcome)) => {
                     file.units.insert(local_id, outcome);
                     recorded += 1;
                 }
+                Some(Err(error)) => {
+                    println!("  ORACLE ERROR {id}: {error}");
+                    file.units.remove(&local_id);
+                    errors += 1;
+                }
+                // The oracle gives no document tree for this case, so the write unit has no result.
                 None => {
                     file.units.remove(&local_id);
                 }
@@ -297,7 +329,7 @@ fn record(mut session: Session) -> Result<bool, String> {
     }
 
     // Without a filter the harness knows each unit, so it can remove results that have no unit.
-    let prune = session.config.filters.is_empty() && session.config.unit_id.is_none();
+    let prune = session.config.whole_suite();
     let mut known: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
     for unit in &session.units {
         known
@@ -318,20 +350,34 @@ fn record(mut session: Session) -> Result<bool, String> {
         cases::save_expected(&session.expected_dir, file_key, file)?;
     }
     println!(
-        "harness: recorded {recorded} units with {version}, removed {removed} results that have no unit"
+        "harness: recorded {recorded} units with {version}, removed {removed} results that have no unit, {errors} oracle errors"
     );
     session.close();
-    Ok(true)
+    Ok(errors == 0)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Status {
     Pass,
     Fail,
-    /// The expected file has no result for the unit. Run `record`.
+    /// There is no stored oracle result for the current input of the unit. Run `record`.
     NotRecorded,
     /// The oracle gives no document tree for the case, so the write unit does not apply.
     Skipped,
+    /// The harness has no result of Randoc, for example because of a timeout.
+    NoResult(String),
+}
+
+impl Status {
+    fn name(&self) -> &'static str {
+        match self {
+            Status::Pass => "pass",
+            Status::Fail => "fail",
+            Status::NotRecorded => "not_recorded",
+            Status::Skipped => "skipped",
+            Status::NoResult(_) => "no_result",
+        }
+    }
 }
 
 struct UnitResult<'a> {
@@ -342,36 +388,36 @@ struct UnitResult<'a> {
 }
 
 fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> {
-    let outcomes = parallel_map(&session.units, session.config.jobs, |worker, unit| {
-        let stdin = session.stdin(unit)?;
-        session.expected_outcome(unit)?;
-        Some(randoc.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)))
+    let results = parallel_map(&session.units, session.config.jobs, |worker, unit| {
+        let Some(stdin) = session.stdin(unit) else {
+            return (Status::Skipped, None, None);
+        };
+        let Some(expected) = session.current(unit, &stdin) else {
+            return (Status::NotRecorded, None, None);
+        };
+        match randoc.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)) {
+            Ok(actual) => {
+                let verdict = compare::compare(unit, expected, &actual);
+                let status = if verdict.pass {
+                    Status::Pass
+                } else {
+                    Status::Fail
+                };
+                (status, Some(verdict), Some(actual))
+            }
+            Err(error) => (Status::NoResult(error), None, None),
+        }
     });
     session
         .units
         .iter()
-        .zip(outcomes)
-        .map(|(unit, outcome)| {
-            let actual = outcome.flatten();
-            let expected = session.expected_outcome(unit);
-            let (status, verdict) = match (expected, &actual) {
-                (Some(expected), Some(actual)) => {
-                    let verdict = compare::compare(unit, expected, actual);
-                    (
-                        if verdict.pass {
-                            Status::Pass
-                        } else {
-                            Status::Fail
-                        },
-                        Some(verdict),
-                    )
-                }
-                (None, _) if unit.kind == UnitKind::Write && session.stdin(unit).is_none() => {
-                    (Status::Skipped, None)
-                }
-                (None, _) => (Status::NotRecorded, None),
-                (Some(_), None) => (Status::Skipped, None),
-            };
+        .zip(results)
+        .map(|(unit, result)| {
+            let (status, verdict, actual) = result.unwrap_or((
+                Status::NoResult("the worker thread stopped".to_owned()),
+                None,
+                None,
+            ));
             UnitResult {
                 unit,
                 status,
@@ -382,24 +428,22 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
         .collect()
 }
 
-fn load_baseline(path: &Path) -> Result<BTreeSet<String>, String> {
-    if !path.exists() {
-        return Ok(BTreeSet::new());
-    }
-    let text = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))?;
-    Ok(value["passing"]
-        .as_array()
-        .map(|ids| {
-            ids.iter()
-                .filter_map(|id| id.as_str().map(str::to_owned))
-                .collect()
-        })
-        .unwrap_or_default())
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BaselineFile {
+    passing: Vec<String>,
 }
 
-fn write_json(path: &Path, value: &serde_json::Value) -> Result<(), String> {
+/// Reads the baseline. A file that is missing or not valid is an error,
+/// because an empty baseline would hide each regression.
+fn load_baseline(path: &Path) -> Result<BTreeSet<String>, String> {
+    let text = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let file: BaselineFile =
+        serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))?;
+    Ok(file.passing.into_iter().collect())
+}
+
+fn write_json<T: serde::Serialize>(path: &Path, value: &T) -> Result<(), String> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
     }
@@ -408,25 +452,29 @@ fn write_json(path: &Path, value: &serde_json::Value) -> Result<(), String> {
     fs::write(path, text).map_err(|e| format!("{}: {e}", path.display()))
 }
 
-fn failure_reason(verdict: Option<Verdict>) -> String {
-    let Some(verdict) = verdict else {
-        return "no expected result".to_owned();
-    };
-    let mut parts = Vec::new();
-    if !verdict.exit_ok {
-        parts.push("exit code");
+fn failure_reason(result: &UnitResult<'_>) -> String {
+    match (&result.status, result.verdict) {
+        (Status::NoResult(error), _) => format!("no result: {error}"),
+        (Status::NotRecorded, _) => "no current oracle result, run record".to_owned(),
+        (_, Some(verdict)) => {
+            let mut parts = Vec::new();
+            if !verdict.exit_ok {
+                parts.push("exit code");
+            }
+            if !verdict.stderr_ok {
+                parts.push("stderr");
+            }
+            if !verdict.bytes_ok {
+                parts.push(if verdict.content_ok {
+                    "output bytes"
+                } else {
+                    "output"
+                });
+            }
+            parts.join(", ")
+        }
+        (status, None) => status.name().to_owned(),
     }
-    if !verdict.stderr_ok {
-        parts.push("stderr");
-    }
-    if !verdict.bytes_ok {
-        parts.push(if verdict.content_ok {
-            "output bytes"
-        } else {
-            "output"
-        });
-    }
-    parts.join(", ")
 }
 
 fn run(session: Session) -> Result<bool, String> {
@@ -434,9 +482,10 @@ fn run(session: Session) -> Result<bool, String> {
     let results = run_units(&session, &randoc);
     let config = &session.config;
 
-    let count = |status: Status| results.iter().filter(|r| r.status == status).count();
-    let (passing, failing) = (count(Status::Pass), count(Status::Fail));
-    let (not_recorded, skipped) = (count(Status::NotRecorded), count(Status::Skipped));
+    let count = |name: &str| results.iter().filter(|r| r.status.name() == name).count();
+    let (passing, failing) = (count("pass"), count("fail"));
+    let (not_recorded, skipped, no_result) =
+        (count("not_recorded"), count("skipped"), count("no_result"));
     let verdicts = || results.iter().filter_map(|r| r.verdict);
     let byte_identical = verdicts()
         .filter(|v| v.exit_ok && v.stderr_ok && v.bytes_ok)
@@ -445,27 +494,23 @@ fn run(session: Session) -> Result<bool, String> {
         .filter(|v| v.exit_ok && v.stderr_ok && v.content_ok)
         .count();
     println!(
-        "harness: {} units: {passing} pass, {failing} fail, {not_recorded} not recorded, {skipped} skipped",
+        "harness: {} units: {passing} pass, {failing} fail, {no_result} no result, {not_recorded} not recorded, {skipped} skipped",
         results.len()
     );
     println!(
         "harness: output byte-identical {byte_identical}, content-identical {content_identical}"
     );
-    for result in results
+    let problems: Vec<&UnitResult<'_>> = results
         .iter()
-        .filter(|r| matches!(r.status, Status::Fail | Status::NotRecorded))
-        .take(25)
-    {
-        println!(
-            "  FAIL {} ({})",
-            result.unit.id,
-            failure_reason(result.verdict)
-        );
+        .filter(|r| !matches!(r.status, Status::Pass | Status::Skipped))
+        .collect();
+    for result in problems.iter().take(25) {
+        println!("  FAIL {} ({})", result.unit.id, failure_reason(result));
     }
-    if failing + not_recorded > 25 {
+    if problems.len() > 25 {
         println!(
             "  ... and {} more. See the report file.",
-            failing + not_recorded - 25
+            problems.len() - 25
         );
     }
 
@@ -478,12 +523,7 @@ fn run(session: Session) -> Result<bool, String> {
         .map(|result| {
             serde_json::json!({
                 "id": result.unit.id,
-                "status": match result.status {
-                    Status::Pass => "pass",
-                    Status::Fail => "fail",
-                    Status::NotRecorded => "not_recorded",
-                    Status::Skipped => "skipped",
-                },
+                "status": result.status.name(),
                 "verdict": result.verdict,
             })
         })
@@ -492,7 +532,7 @@ fn run(session: Session) -> Result<bool, String> {
         &report_path,
         &serde_json::json!({
             "summary": {
-                "units": results.len(), "pass": passing, "fail": failing,
+                "units": results.len(), "pass": passing, "fail": failing, "no_result": no_result,
                 "not_recorded": not_recorded, "skipped": skipped,
                 "byte_identical": byte_identical, "content_identical": content_identical,
             },
@@ -500,9 +540,8 @@ fn run(session: Session) -> Result<bool, String> {
         }),
     )?;
 
-    let whole_suite = config.filters.is_empty() && config.unit_id.is_none();
     if let Some(matrix_path) = &config.matrix {
-        if !whole_suite {
+        if !config.whole_suite() {
             return Err("--matrix needs the whole suite. Remove the filter.".to_owned());
         }
         let facts: Vec<UnitFact> = results
@@ -524,16 +563,21 @@ fn run(session: Session) -> Result<bool, String> {
 
     let mut ok = true;
     if let Some(baseline_path) = &config.baseline {
-        let baseline = load_baseline(baseline_path)?;
         let passing_ids: BTreeSet<&str> = results
             .iter()
             .filter(|r| r.status == Status::Pass)
             .map(|r| r.unit.id.as_str())
             .collect();
-        let in_scope = |id: &str| whole_suite || results.iter().any(|r| r.unit.id == id);
+        // The first baseline does not exist before the first update.
+        let baseline = if config.update_baseline && !baseline_path.exists() {
+            BTreeSet::new()
+        } else {
+            load_baseline(baseline_path)?
+        };
+        // A unit of the baseline that the suite no longer has is a regression too.
         let regressions: Vec<&String> = baseline
             .iter()
-            .filter(|id| in_scope(id) && !passing_ids.contains(id.as_str()))
+            .filter(|id| config.selects(id) && !passing_ids.contains(id.as_str()))
             .collect();
         let new_passes = passing_ids
             .iter()
@@ -549,7 +593,7 @@ fn run(session: Session) -> Result<bool, String> {
         }
         ok = regressions.is_empty();
         if config.update_baseline {
-            if !whole_suite {
+            if !config.whole_suite() {
                 return Err(
                     "--update-baseline needs the whole suite. Remove the filter.".to_owned(),
                 );
@@ -557,11 +601,13 @@ fn run(session: Session) -> Result<bool, String> {
             if !ok {
                 return Err("the baseline was not updated because there are regressions".to_owned());
             }
-            let ids: Vec<&str> = passing_ids.into_iter().collect();
-            write_json(baseline_path, &serde_json::json!({ "passing": ids }))?;
+            let file = BaselineFile {
+                passing: passing_ids.iter().map(|id| (*id).to_owned()).collect(),
+            };
+            write_json(baseline_path, &file)?;
             println!(
                 "harness: wrote {} passing units to {}",
-                ids.len(),
+                file.passing.len(),
                 baseline_path.display()
             );
         }
@@ -576,27 +622,34 @@ fn verify_oracle(session: Session) -> Result<bool, String> {
         let stdin = session.stdin(unit)?;
         Some(oracle.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)))
     });
-    let mut stale = 0usize;
+    let mut different = 0usize;
     let mut checked = 0usize;
     for (unit, outcome) in session.units.iter().zip(fresh) {
-        let (Some(expected), Some(outcome)) = (session.expected_outcome(unit), outcome.flatten())
-        else {
+        let Some(outcome) = outcome.flatten() else {
             continue;
         };
         checked += 1;
-        if *expected != outcome {
-            stale += 1;
-            println!("  STALE {}", unit.id);
-        }
+        let stored = session
+            .stdin(unit)
+            .and_then(|stdin| session.current(unit, &stdin));
+        let problem = match (stored, outcome) {
+            (Some(stored), Ok(outcome)) if stored.same_result(&outcome) => continue,
+            (Some(_), Ok(_)) => "the stored result is different from the oracle result".to_owned(),
+            (None, Ok(_)) => "no current stored result, run record".to_owned(),
+            (_, Err(error)) => format!("no oracle result: {error}"),
+        };
+        different += 1;
+        println!("  STALE {} ({problem})", unit.id);
     }
     println!(
-        "harness: checked {checked} expected results against the oracle: {stale} are different"
+        "harness: checked {checked} units against the oracle: {different} stored results are not current"
     );
     session.close();
-    Ok(stale == 0)
+    Ok(different == 0)
 }
 
-fn print_block(title: &str, text: &str) {
+fn print_block(title: &str, bytes: &[u8]) {
+    let text = String::from_utf8_lossy(bytes);
     println!("--- {title} ---");
     print!("{text}");
     if !text.ends_with('\n') && !text.is_empty() {
@@ -612,21 +665,27 @@ fn show(session: Session) -> Result<bool, String> {
     };
     let unit = result.unit;
     println!("unit: {}", unit.id);
-    println!("status: {:?}", result.status);
-    println!("command: pandoc {}", unit.args.join(" "));
-    if let Some(stdin) = session.stdin(unit) {
-        print_block("stdin", &String::from_utf8_lossy(&stdin));
+    println!("status: {}", result.status.name());
+    if let Status::NoResult(error) = &result.status {
+        println!("harness: {error}");
     }
-    let lossy = |outcome: &Outcome| String::from_utf8_lossy(&outcome.stdout_bytes()).into_owned();
-    if let Some(expected) = session.expected_outcome(unit) {
+    println!("command: pandoc {}", unit.args.join(" "));
+    let stdin = session.stdin(unit);
+    if let Some(stdin) = &stdin {
+        print_block("stdin", stdin);
+    }
+    if let Some(expected) = stdin
+        .as_ref()
+        .and_then(|stdin| session.current(unit, stdin))
+    {
         println!("expected exit code: {}", expected.exit);
-        print_block("expected stdout", &lossy(expected));
-        print_block("expected stderr", &expected.stderr);
+        print_block("expected stdout", &expected.stdout_bytes());
+        print_block("expected stderr", &expected.stderr_bytes());
     }
     if let Some(actual) = &result.actual {
         println!("randoc exit code: {}", actual.exit);
-        print_block("randoc stdout", &lossy(actual));
-        print_block("randoc stderr", &actual.stderr);
+        print_block("randoc stdout", &actual.stdout_bytes());
+        print_block("randoc stderr", &actual.stderr_bytes());
     }
     if let Some(verdict) = result.verdict {
         println!("verdict: {verdict:?}");
@@ -725,6 +784,25 @@ mod tests {
     }
 
     #[test]
+    fn the_selection_follows_the_filters_and_the_unit_identifier() {
+        let whole = parse_config(&args(&["run"])).unwrap();
+        assert!(whole.whole_suite());
+        assert!(whole.selects("any/unit#read"));
+
+        let filtered =
+            parse_config(&args(&["run", "--filter", "md/", "--filter", "cli/"])).unwrap();
+        assert!(!filtered.whole_suite());
+        assert!(filtered.selects("md/a/b#read"));
+        assert!(filtered.selects("cli/a/b#cmd"));
+        assert!(!filtered.selects("json/a/b#read"));
+
+        let single = parse_config(&args(&["show", "md/a/b#read"])).unwrap();
+        assert!(!single.whole_suite());
+        assert!(single.selects("md/a/b#read"));
+        assert!(!single.selects("md/a/b#read2"));
+    }
+
+    #[test]
     fn parallel_map_keeps_item_order() {
         let items: Vec<usize> = (0..100).collect();
         let doubled = parallel_map(&items, 8, |_, item| item * 2);
@@ -736,40 +814,30 @@ mod tests {
     }
 
     #[test]
-    fn failure_reasons_name_each_difference() {
-        let verdict = |exit_ok, stderr_ok, bytes_ok, content_ok| Verdict {
-            exit_ok,
-            stderr_ok,
-            bytes_ok,
-            content_ok,
-            pass: false,
-        };
-        assert_eq!(
-            failure_reason(Some(verdict(false, false, false, false))),
-            "exit code, stderr, output"
-        );
-        assert_eq!(
-            failure_reason(Some(verdict(true, true, false, true))),
-            "output bytes"
-        );
-        assert_eq!(
-            failure_reason(Some(verdict(true, false, true, true))),
-            "stderr"
-        );
-        assert_eq!(failure_reason(None), "no expected result");
-    }
-
-    #[test]
-    fn a_missing_baseline_file_is_an_empty_baseline() {
+    fn a_baseline_that_is_missing_or_not_valid_is_an_error() {
         let dir = std::env::temp_dir().join(format!("randoc-harness-main-{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
-        assert!(load_baseline(&dir.join("none.json")).unwrap().is_empty());
+        assert!(load_baseline(&dir.join("none.json")).is_err());
         let path = dir.join("baseline.json");
-        write_json(&path, &serde_json::json!({"passing": ["b", "a"]})).unwrap();
+        write_json(
+            &path,
+            &BaselineFile {
+                passing: vec!["b".into(), "a".into()],
+            },
+        )
+        .unwrap();
         let baseline = load_baseline(&path).unwrap();
         assert_eq!(baseline.into_iter().collect::<Vec<_>>(), ["a", "b"]);
-        fs::write(&path, "not json").unwrap();
-        assert!(load_baseline(&path).is_err());
+        for bad in [
+            "not json",
+            "{}",
+            r#"{"passing":"invalid"}"#,
+            r#"{"passing":[12]}"#,
+            r#"{"passing":[],"x":1}"#,
+        ] {
+            fs::write(&path, bad).unwrap();
+            assert!(load_baseline(&path).is_err(), "{bad}");
+        }
         fs::remove_dir_all(&dir).unwrap();
     }
 }
