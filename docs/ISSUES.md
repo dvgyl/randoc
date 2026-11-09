@@ -16,6 +16,12 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | I-001 | JSON reader | The text of a JSON error is different. Pandoc prints the path of the error (`Error in $.blocks[0]: ...`) and its own type names. The exit code is equal. | Open. 8 units fail: `json/roundtrip/{old-version,missing-version,not-json,unknown-block}`. |
 | I-002 | Program | Only `-f`, `-t`, `-o`, `--version` and input files work. | Open. The command-line workstream replaces the first version. |
 
+## Harness limits
+
+| ID | Limit | State |
+| --- | --- | --- |
+| H-001 | The harness has no rule for output with random values. Pandoc 3.13 writes a random `id` for each cell of `ipynb` output, so an `ipynb` unit cannot pass. EPUB identifiers can have the same problem. | Open. Add a rule that replaces such values with a fixed text before the comparison, and make `record` run the oracle two times to find output that is not stable. Do this before the first `ipynb` or EPUB writer workstream. |
+
 ## Review findings with low severity
 
 None yet.
