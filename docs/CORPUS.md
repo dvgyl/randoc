@@ -47,7 +47,7 @@ Useful options of `run.py`:
 - `--only TEXT`: use only the documents whose name contains `TEXT`.
 - `--target FORMAT`: use only one target format (`json`, `html` or `markdown`). Repeat for more.
 - `--jobs N`: the number of parallel conversions. The default is 4.
-- `--timeout S`: the time limit of one conversion in seconds. The default is 60.
+- `--timeout S`: the time limit of one conversion in seconds. The default is 180. Pandoc needs about 100 s for `jupyter-running-code`.
 
 ## What `run.py` compares
 
@@ -192,3 +192,11 @@ that they match the manifest.
 | typst | 8 | 40149 |
 | xlsx | 4 | 36560 |
 | all | 242 | 15683840 |
+
+## Documents that Pandoc rejects
+
+Pandoc 3.13 exits with code 64 (a parse error) for 19 documents, for example
+`latex2e-cfgguide` (`unexpected @`), `wp-haskell` (an unclosed `<ref>`),
+`openbsd-ksh` (the `Xo` macro) and the Typst templates that import packages.
+These documents stay in the corpus. Randoc must give the same exit code and
+the same error message.

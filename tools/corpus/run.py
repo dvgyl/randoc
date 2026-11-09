@@ -223,7 +223,7 @@ def main(argv=None):
     parser.add_argument("--corpus", type=Path, default=os.environ.get("RANDOC_CORPUS"),
                         help="the corpus directory (default: $RANDOC_CORPUS)")
     parser.add_argument("--jobs", type=int, default=4, help="the number of parallel runs")
-    parser.add_argument("--timeout", type=int, default=60, help="seconds for one run")
+    parser.add_argument("--timeout", type=int, default=180, help="seconds for one run")
     parser.add_argument("--target", action="append", choices=TARGETS,
                         help="a target format (default: all)")
     parser.add_argument("--only", action="append", default=[],
