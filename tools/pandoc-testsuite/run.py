@@ -91,11 +91,11 @@ class Runner:
         reference = self.reference.execute if self.reference else None
         try:
             return case.id, case.evaluate(self.execute, self.suite, reference)
-        except OSError as error:
-            return case.id, f"[tool] {error}"
+        except Exception as error:  # one test must not stop the run
+            return case.id, f"[tool] {type(error).__name__}: {error}"
 
 
-NO_ORACLE = "not run: the expected files need a trusted program to read them (--oracle)"
+NO_ORACLE = "not checked: the expected files need a reference program to read them (--oracle)"
 
 
 def without_reference_cases(found):
@@ -166,16 +166,30 @@ def markdown_tables(report: dict) -> str:
 
 
 def write_json(path: str, value) -> None:
-    with open(path, "w", encoding="utf-8") as handle:
-        json.dump(value, handle, indent=1, ensure_ascii=False)
-        handle.write("\n")
+    """Writes to a temporary file and renames it, so that an interrupted run
+    never leaves the file missing or half written."""
+    directory = os.path.dirname(os.path.abspath(path))
+    handle, temporary = tempfile.mkstemp(prefix=".pandoc-testsuite-", suffix=".json", dir=directory)
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8") as stream:
+            json.dump(value, stream, indent=1, ensure_ascii=False)
+            stream.write("\n")
+        os.replace(temporary, path)
+    except BaseException:
+        os.unlink(temporary)
+        raise
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pandoc", required=True, help="the program to test")
     parser.add_argument("--suite", required=True, help="the test/ directory of the Pandoc source tree")
-    parser.add_argument("--oracle", help="the trusted Pandoc that reads the expected files of the reader tests")
+    parser.add_argument(
+        "--oracle",
+        default=os.environ.get("RANDOC_ORACLE_PANDOC") or None,
+        help="the reference Pandoc that reads the expected files of the reader tests "
+        "(default: $RANDOC_ORACLE_PANDOC)",
+    )
     parser.add_argument("--out", help="write the results as JSON to this file")
     parser.add_argument("--label", help="store the results under this key of the --out file and keep the other keys")
     parser.add_argument("--filter", default="", help="run only the tests whose identifier contains this text")

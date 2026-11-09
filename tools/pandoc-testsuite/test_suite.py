@@ -107,6 +107,10 @@ class Fb2Normalize(unittest.TestCase):
     def test_drops_empty_lines(self):
         self.assertEqual(suite.fb2_normalize("<a></a>\n\n"), "<a>\n</a>\n")
 
+    def test_last_pair_is_not_split(self):
+        self.assertEqual(suite.split_tags("<a><b><"), "<a>\n<b><")
+        self.assertEqual(suite.fb2_normalize("<a><b><"), "<a>\n<b><\n")
+
     def test_drops_a_line_that_is_a_prefix_of_the_tag(self):
         self.assertEqual(suite.fb2_normalize("<a>\n<bi\n<b>x</b>\n"), "<a>\n<b>x</b>\n")
 
@@ -241,6 +245,16 @@ class ReaderTests(unittest.TestCase):
         self.assertEqual(calls, [("-f", "x", "-t", "json", "in.x")])
         self.assertIsNone(case.evaluate(reference, ".", reference))
 
+    def test_ast_case_reports_a_different_api_version(self):
+        def program(args, stdin):
+            return Outcome(0, b'{"pandoc-api-version": [1, 22], "meta": {}, "blocks": []}', b"")
+
+        def reference(args, stdin):
+            return Outcome(0, b'{"pandoc-api-version": [1, 23], "meta": {}, "blocks": []}', b"")
+
+        case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
+        self.assertIn("pandoc-api-version", case.evaluate(program, ".", reference))
+
     def test_ast_case_without_reference_does_not_pass(self):
         case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
         ok = lambda args, stdin: Outcome(0, b"{}", b"")  # noqa: E731
@@ -292,10 +306,48 @@ class GoldenFiles(unittest.TestCase):
             with open(os.path.join(directory, "want.txt"), "wb") as handle:
                 handle.write(b"a\r\nb\n")
             case = suite.GoldenCase("g", "old", ("x",), "want.txt")
-            self.assertIsNone(case.evaluate(lambda a, s: Outcome(0, b"a\nb\n", b""), directory))
+            # Tests/Old.hs removes carriage returns from the output, not from the expected file.
+            self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, b"a\nb\n", b""), directory))
+            with open(os.path.join(directory, "want.txt"), "wb") as handle:
+                handle.write(b"a\nb\n")
+            self.assertIsNone(case.evaluate(lambda a, s: Outcome(0, b"a\r\nb\n", b""), directory))
             self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, b"a\n", b""), directory))
             failed = case.evaluate(lambda a, s: Outcome(2, b"a\nb\n", b"bad"), directory)
             self.assertTrue(failed.startswith("exit code 2"))
+
+
+class RunnerErrors(unittest.TestCase):
+    def test_an_exception_in_a_test_is_a_failure(self):
+        class Broken:
+            id = "broken"
+
+            def evaluate(self, execute, suite_dir, reference=None):
+                raise RecursionError("deep")
+
+        with tempfile.TemporaryDirectory() as directory:
+            runner = run.Runner(sys.executable, directory, 1.0, directory)
+            ident, failure = runner.check(Broken())
+        self.assertEqual(ident, "broken")
+        self.assertIn("RecursionError", failure)
+
+    def test_interrupted_write_keeps_the_old_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "out.json")
+            run.write_json(path, {"old": 1})
+
+            class Stop(Exception):
+                pass
+
+            class Bad:
+                def __repr__(self):
+                    raise Stop()
+
+            with self.assertRaises(TypeError):
+                run.write_json(path, {"new": Bad()})
+            with open(path, encoding="utf-8") as handle:
+                self.assertEqual(json.load(handle), {"old": 1})
+            names = [n for n in os.listdir(directory) if not n.startswith("._")]
+            self.assertEqual(names, ["out.json"])
 
 
 class Timeouts(unittest.TestCase):

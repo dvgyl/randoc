@@ -70,7 +70,8 @@ class GoldenCase:
         norm = NORMALIZERS[self.normalize]
         actual = norm(decode(out.stdout).replace("\r", ""))
         with open(os.path.join(suite, self.expected_path), "rb") as handle:
-            expected = norm(decode(handle.read()).replace("\r", ""))
+            # Tests/Old.hs removes carriage returns from the output only.
+            expected = norm(decode(handle.read()))
         return None if actual == expected else diff_text(expected, actual)
 
 
@@ -98,7 +99,7 @@ class AstCase:
 
     def evaluate(self, execute: Execute, suite: str, reference: Execute | None = None) -> str | None:
         if reference is None:
-            return "[tool] this test needs a reference program (--oracle)"
+            return "not checked: this test needs a reference program (--oracle)"
         spec = self.reader
         if self.extensions is not None:
             spec = format_with_exact_extensions(reference, self.reader, self.extensions)
@@ -113,6 +114,10 @@ class AstCase:
             left, right = json.loads(actual.stdout), json.loads(expected.stdout)
         except ValueError as error:
             return f"output is not JSON: {error}"
+        if not (isinstance(left, dict) and isinstance(right, dict)):
+            return "output is not a Pandoc JSON document"
+        if left.get("pandoc-api-version") != right.get("pandoc-api-version"):
+            return f"pandoc-api-version {left.get('pandoc-api-version')} is not {right.get('pandoc-api-version')}"
         if left == right:
             return None
         return diff_text(json.dumps(right, indent=1), json.dumps(left, indent=1))
@@ -178,8 +183,23 @@ def diff_text(expected: str, actual: str, limit: int = 40) -> str:
 
 def fb2_normalize(text: str) -> str:
     """Old.hs `fb2WriterTest`: break the XML between tags and drop `<binary` lines."""
-    formatted = "" if len(text) < 2 else text.replace("><", ">\n<")
-    return hs_unlines([line for line in hs_lines(formatted) if not hs_starts_with("<binary ", line)])
+    return hs_unlines([line for line in hs_lines(split_tags(text)) if not hs_starts_with("<binary ", line)])
+
+
+def split_tags(text: str) -> str:
+    """`formatXML` of Old.hs. It walks the pairs of neighbour characters and
+    puts a newline in each `><`, except in the last pair. A text of fewer
+    than two characters gives an empty text."""
+    pairs = list(zip(text, text[1:]))
+    out = []
+    for index, (char, following) in enumerate(pairs):
+        if index == len(pairs) - 1:
+            out.append(char + following)
+        elif (char, following) == (">", "<"):
+            out.append(">\n")
+        else:
+            out.append(char)
+    return "".join(out)
 
 
 def hs_starts_with(tag: str, line: str) -> bool:
@@ -715,10 +735,11 @@ def parse_rtf(source: str) -> list:
     return cases
 
 
+# A helper body passes a variable as the name (`testCase name ...`). That
+# call is not a test, so a constructor before an identifier does not count.
 TEST_MARKERS = re.compile(
-    r"=\?>|\btestCase\b|\btestProperty\b|\bgoldenTest\b|\btestGolden\b|\bgoldenVsString\b"
-    r"|\bdocxTest\b|\bpptxTests?\b|\bodtTest\b"
-    r"|\bimageSizeTest\b"
+    r"=\?>|\b(?:testCase|testProperty|goldenTest|testGolden|goldenVsString"
+    r"|docxTest|pptxTests?|odtTest|imageSizeTest)\b(?![ \t]+[a-z_])"
 )
 
 
@@ -774,17 +795,22 @@ def count_tests(source: str) -> int:
     """An estimate of the number of tests in a Haskell module.
 
     Comments do not count. Each `=?>` pair is one test. A line without a
-    pair and with a call of a test constructor is one test. Type
-    declarations (lines with `::`) and imports do not count.
+    pair and with a call of a test constructor is one test (`pptxTests`
+    makes two). Type declarations (lines with `::`), imports and calls in
+    helper bodies (a variable as the name) do not count.
     """
     total = 0
     for line in active_code(source).split("\n"):
         stripped = line.strip()
         if "::" in stripped or stripped.startswith("import"):
             continue
-        markers = TEST_MARKERS.findall(line)
+        markers = [match.group(0) for match in TEST_MARKERS.finditer(line)]
         pairs = markers.count("=?>")
-        total += pairs if pairs else min(1, len(markers))
+        if pairs:
+            total += pairs
+        elif markers:
+            # `pptxTests` makes two tests: without and with a reference document.
+            total += 2 if markers[0] == "pptxTests" else 1
     return total
 
 
@@ -802,7 +828,7 @@ UNSUPPORTED_REASON = {
     "Readers": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate",
     "Writers": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate",
     "Writers/Docx.hs": "the tests compare the XML parts of the output archive with a Haskell normalization",
-    "Writers/ODT.hs": "the tests compare the XML parts of the output archive with a Haskell normalization",
+    "Writers/ODT.hs": "the test calls the FODT writer in Haskell and checks the image references in the XML output",
     "Writers/Powerpoint.hs": "the tests compare the XML parts of the output archive with a Haskell normalization",
     "Writers/Native.hs": "QuickCheck properties on random Haskell values",
     "Writers/AnnotatedTable.hs": "QuickCheck properties of an internal Haskell module",
