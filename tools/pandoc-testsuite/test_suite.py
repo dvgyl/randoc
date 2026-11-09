@@ -102,6 +102,12 @@ class Fb2Normalize(unittest.TestCase):
     def test_short_text(self):
         self.assertEqual(suite.fb2_normalize("x"), "")
 
+    def test_drops_empty_lines(self):
+        self.assertEqual(suite.fb2_normalize("<a></a>\n\n"), "<a>\n</a>\n")
+
+    def test_drops_a_line_that_is_a_prefix_of_the_tag(self):
+        self.assertEqual(suite.fb2_normalize("<a>\n<bi\n<b>x</b>\n"), "<a>\n<b>x</b>\n")
+
 
 OLD_SAMPLE = '''
 module Tests.Old (tests) where

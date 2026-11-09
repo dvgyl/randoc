@@ -168,11 +168,14 @@ def diff_text(expected: str, actual: str, limit: int = 40) -> str:
 
 def fb2_normalize(text: str) -> str:
     """Old.hs `fb2WriterTest`: break the XML between tags and drop `<binary` lines."""
-    if len(text) < 2:
-        formatted = ""
-    else:
-        formatted = text.replace("><", ">\n<")
-    return hs_unlines([line for line in hs_lines(formatted) if not line.startswith("<binary ")])
+    formatted = "" if len(text) < 2 else text.replace("><", ">\n<")
+    return hs_unlines([line for line in hs_lines(formatted) if not hs_starts_with("<binary ", line)])
+
+
+def hs_starts_with(tag: str, line: str) -> bool:
+    """The `startsWith` of Old.hs. It compares only the common length, so it
+    is also true for an empty line and for a line that is a prefix of `tag`."""
+    return all(a == b for a, b in zip(tag, line))
 
 
 NORMALIZERS = {"": lambda text: text, "fb2": fb2_normalize}
