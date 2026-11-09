@@ -25,6 +25,7 @@ import suite as testsuite  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXCLUSIONS = os.path.join(HERE, "exclusions.json")
+CLEANUP_SECONDS = 5.0
 
 
 class Runner:
@@ -49,9 +50,11 @@ class Runner:
 
     def execute(self, command, stdin: bytes) -> testsuite.Outcome:
         if isinstance(command, str):
-            argv, shell = ["/bin/sh", "-c", command], True
+            argv = ["/bin/sh", "-c", command]
         else:
-            argv, shell = [self.pandoc, *command], False
+            argv = [self.pandoc, *command]
+        # A new session puts the program and all its children in one process
+        # group, so that a timeout can stop all of them.
         process = subprocess.Popen(
             argv,
             cwd=self.suite,
@@ -59,18 +62,28 @@ class Runner:
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            start_new_session=shell,
+            start_new_session=True,
         )
         try:
             out, err = process.communicate(stdin, timeout=self.timeout)
         except subprocess.TimeoutExpired:
-            if shell:
-                os.killpg(process.pid, signal.SIGKILL)
-            else:
-                process.kill()
-            out, err = process.communicate()
-            return testsuite.Outcome(-1, out, err, timed_out=True)
+            return self.stop(process)
         return testsuite.Outcome(process.returncode, out, err)
+
+    def stop(self, process) -> testsuite.Outcome:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        try:
+            out, err = process.communicate(timeout=CLEANUP_SECONDS)
+        except subprocess.TimeoutExpired:
+            # A process outside the group still holds a pipe. Give up on the output.
+            for pipe in (process.stdout, process.stderr):
+                pipe.close()
+            process.wait(timeout=CLEANUP_SECONDS)
+            out, err = b"", b""
+        return testsuite.Outcome(-1, out or b"", err or b"", timed_out=True)
 
     def check(self, case) -> tuple:
         try:

@@ -4,10 +4,12 @@ import json
 import os
 import sys
 import tempfile
+import time
 import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import run  # noqa: E402
 import suite  # noqa: E402
 from suite import Outcome  # noqa: E402
 
@@ -244,6 +246,52 @@ class GoldenFiles(unittest.TestCase):
             self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, b"a\n", b""), directory))
             failed = case.evaluate(lambda a, s: Outcome(2, b"a\nb\n", b"bad"), directory)
             self.assertTrue(failed.startswith("exit code 2"))
+
+
+class Timeouts(unittest.TestCase):
+    def runner(self, directory):
+        runner = run.Runner(sys.executable, directory, 1.0, directory)
+        runner.pandoc = sys.executable
+        return runner
+
+    def test_timeout_stops_the_children(self):
+        child = (
+            "import subprocess,sys,time;"
+            "subprocess.Popen([sys.executable,'-c','import time;time.sleep(10)']);"
+            "time.sleep(30)"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            started = time.monotonic()
+            outcome = self.runner(directory).execute(("-c", child), b"")
+            elapsed = time.monotonic() - started
+        self.assertTrue(outcome.timed_out)
+        self.assertLess(elapsed, 4.0)
+
+    def test_timeout_of_a_shell_command(self):
+        with tempfile.TemporaryDirectory() as directory:
+            started = time.monotonic()
+            outcome = self.runner(directory).execute("sleep 10 | sleep 10", b"")
+            elapsed = time.monotonic() - started
+        self.assertTrue(outcome.timed_out)
+        self.assertLess(elapsed, 4.0)
+
+    def test_cleanup_has_a_limit_when_a_process_leaves_the_group(self):
+        child = (
+            "import subprocess,sys,time;"
+            "subprocess.Popen([sys.executable,'-c','import time;time.sleep(10)'], start_new_session=True);"
+            "time.sleep(30)"
+        )
+        saved = run.CLEANUP_SECONDS
+        run.CLEANUP_SECONDS = 0.3
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                started = time.monotonic()
+                outcome = self.runner(directory).execute(("-c", child), b"")
+                elapsed = time.monotonic() - started
+        finally:
+            run.CLEANUP_SECONDS = saved
+        self.assertTrue(outcome.timed_out)
+        self.assertLess(elapsed, 4.0)
 
 
 class Counting(unittest.TestCase):
