@@ -9,7 +9,7 @@
 //! let input = r#"{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}"#;
 //! let doc = reader.read(&Sources::from_text(input), &ReaderOptions::default(), &mut context).unwrap();
 //! let output = writer.write(&doc, &WriterOptions::default(), &mut context).unwrap();
-//! assert_eq!(output.into_bytes(), format!("{input}\n").into_bytes());
+//! assert_eq!(output.into_bytes(), input.as_bytes());
 //! ```
 
 pub mod formats;

@@ -34,9 +34,7 @@ fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<P
 }
 
 fn write(doc: &Pandoc, _: &WriterOptions, _: &mut Context) -> Result<Text> {
-    let mut out = json::to_json(doc);
-    out.push('\n');
-    Ok(out)
+    Ok(json::to_json(doc))
 }
 
 #[cfg(test)]
@@ -46,7 +44,9 @@ mod tests {
     const EMPTY: &str = r#"{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}"#;
 
     #[test]
-    fn output_ends_with_a_newline_as_in_pandoc() {
+    fn the_writer_adds_no_final_newline() {
+        // `pandoc -f json -t json -s` prints the document with no final newline.
+        // The program adds the newline when the output is not standalone.
         let mut context = Context::pure();
         let doc = read(
             &Sources::from_text(EMPTY),
@@ -55,7 +55,7 @@ mod tests {
         )
         .unwrap();
         let text = write(&doc, &WriterOptions::default(), &mut context).unwrap();
-        assert_eq!(text, format!("{EMPTY}\n"));
+        assert_eq!(text, EMPTY);
     }
 
     #[test]

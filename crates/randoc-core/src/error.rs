@@ -11,8 +11,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// exit code from the "Exit codes" section of the Pandoc manual. The `Display`
 /// form is the text that Pandoc prints to standard error.
 ///
-/// The messages of `UnknownReader`, `UnknownWriter`, `UnsupportedExtension`
-/// and `Parse` are verified against Pandoc 3.13. Verify each other message
+/// The messages of `UnknownReader`, `UnknownWriter`, `UnsupportedExtension`,
+/// `Parse`, `CouldNotFindDataFile` and `CouldNotFindMetadataFile` are verified
+/// against Pandoc 3.13. Verify each other message
 /// against the oracle when a workstream first produces it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Error {
@@ -223,12 +224,12 @@ impl fmt::Display for Error {
                  If you intended to convert from binary format, verify that it's supported and use\n\
                  explicit -f FORMAT."
             ),
-            Error::CouldNotFindDataFile(name) => write!(f, "Could not find data file {name}"),
+            Error::CouldNotFindDataFile(name) => write!(f, "Could not find data file '{name}'"),
             Error::CouldNotFindMetadataFile(name) => {
-                write!(f, "Could not find metadata file {name}")
+                write!(f, "Could not find metadata file '{name}'")
             }
             Error::ResourceNotFound(name) => {
-                write!(f, "File {name} not found in resource path")
+                write!(f, "File '{name}' not found in resource path")
             }
         }
     }
@@ -250,6 +251,14 @@ mod tests {
         assert_eq!(
             Error::UnknownWriter("nosuch".into()).to_string(),
             "Unknown output format 'nosuch'"
+        );
+        assert_eq!(
+            Error::CouldNotFindDataFile("nosuch.x".into()).to_string(),
+            "Could not find data file 'nosuch.x'"
+        );
+        assert_eq!(
+            Error::CouldNotFindMetadataFile("nosuch.yaml".into()).to_string(),
+            "Could not find metadata file 'nosuch.yaml'"
         );
         assert_eq!(
             Error::UnsupportedExtension {
