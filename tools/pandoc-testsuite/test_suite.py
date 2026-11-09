@@ -224,16 +224,66 @@ class ReaderTests(unittest.TestCase):
         spec = suite.format_with_exact_extensions(execute, "fmtx", frozenset({"gamma", "beta"}))
         self.assertEqual(spec, "fmtx-alpha+beta")
 
-    def test_ast_case_compares_json(self):
-        doc = json.dumps({"blocks": [], "meta": {}}).encode()
+    def test_ast_case_reads_the_expected_file_with_the_reference(self):
+        empty = json.dumps({"blocks": [], "meta": {}}).encode()
+        full = json.dumps({"blocks": [{"t": "Para", "c": []}], "meta": {}}).encode()
+        calls = []
 
-        def execute(args, stdin):
-            return Outcome(0, doc if "in.x" in args else b'{"blocks": [1], "meta": {}}', b"")
+        def constant(args, stdin):
+            calls.append(args)
+            return Outcome(0, empty, b"")
+
+        def reference(args, stdin):
+            return Outcome(0, full, b"")
 
         case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
-        self.assertIsNotNone(case.evaluate(execute, "."))
-        same = suite.AstCase("r/1", "r", "x", "in.x", "native", "in.x")
-        self.assertIsNone(same.evaluate(execute, "."))
+        self.assertIsNotNone(case.evaluate(constant, ".", reference))
+        self.assertEqual(calls, [("-f", "x", "-t", "json", "in.x")])
+        self.assertIsNone(case.evaluate(reference, ".", reference))
+
+    def test_ast_case_without_reference_does_not_pass(self):
+        case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
+        ok = lambda args, stdin: Outcome(0, b"{}", b"")  # noqa: E731
+        self.assertIsNotNone(case.evaluate(ok, "."))
+
+    def test_without_oracle_the_reader_groups_are_not_run(self):
+        found = suite.Discovery(
+            [
+                suite.CommandCase("c#1", "command", "pandoc", "", ""),
+                suite.AstCase("r/1", "readers/x", "x", "a", "native", "b"),
+                suite.AstCase("r/2", "readers/x", "x", "c", "native", "d"),
+            ],
+            [],
+        )
+        moved = run.without_reference_cases(found)
+        self.assertEqual([c.id for c in moved.cases], ["c#1"])
+        self.assertEqual(moved.unsupported, [suite.Unsupported("readers/x", 2, run.NO_ORACLE)])
+
+
+ORACLE = os.environ.get("RANDOC_ORACLE_PANDOC", "")
+SUITE = os.path.join(os.environ.get("RANDOC_PANDOC_SRC", ""), "test")
+
+
+@unittest.skipUnless(os.path.isfile(ORACLE) and os.path.isdir(SUITE), "needs the oracle and the Pandoc tree")
+class ConstantProgram(unittest.TestCase):
+    """A program that always prints one empty document must fail each reader group."""
+
+    def test_each_reader_group_fails(self):
+        empty = json.dumps({"pandoc-api-version": [1, 23, 1], "meta": {}, "blocks": []}).encode()
+        constant = lambda args, stdin: Outcome(0, empty, b"")  # noqa: E731
+        cases = {}
+        for case in suite.discover(SUITE).cases:
+            if case.needs_reference:
+                cases.setdefault(case.group, case)
+        self.assertEqual(
+            sorted(cases), ["readers/docx", "readers/odt", "readers/pptx", "readers/xlsx"]
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            oracle = run.Runner(ORACLE, SUITE, 60.0, directory)
+            for group, case in cases.items():
+                with self.subTest(group=group):
+                    self.assertIsNotNone(case.evaluate(constant, SUITE, oracle.execute))
+                    self.assertIsNone(case.evaluate(oracle.execute, SUITE, oracle.execute))
 
 
 class GoldenFiles(unittest.TestCase):

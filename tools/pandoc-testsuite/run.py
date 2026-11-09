@@ -35,6 +35,7 @@ class Runner:
         self.suite = suite
         self.timeout = timeout
         self.pandoc = os.path.join(bin_dir, "pandoc")
+        os.makedirs(bin_dir, exist_ok=True)
         os.symlink(os.path.abspath(program), self.pandoc)
         # Tests/Helpers.hs sets TMP and HOME to the test directory. TZ and
         # LC_ALL come from the conformance harness. SOURCE_DATE_EPOCH is
@@ -47,6 +48,7 @@ class Runner:
             "LC_ALL": "en_US.UTF-8",
             "TZ": "UTC",
         }
+        self.reference: Runner | None = None
 
     def execute(self, command, stdin: bytes) -> testsuite.Outcome:
         if isinstance(command, str):
@@ -86,10 +88,23 @@ class Runner:
         return testsuite.Outcome(-1, out or b"", err or b"", timed_out=True)
 
     def check(self, case) -> tuple:
+        reference = self.reference.execute if self.reference else None
         try:
-            return case.id, case.evaluate(self.execute, self.suite)
+            return case.id, case.evaluate(self.execute, self.suite, reference)
         except OSError as error:
             return case.id, f"[tool] {error}"
+
+
+NO_ORACLE = "not run: the expected files need a trusted program to read them (--oracle)"
+
+
+def without_reference_cases(found):
+    """Moves the cases that need a reference program to the unsupported groups."""
+    kept = [case for case in found.cases if not case.needs_reference]
+    counts = Counter(case.group for case in found.cases if case.needs_reference)
+    unsupported = list(found.unsupported)
+    unsupported += [testsuite.Unsupported(group, count, NO_ORACLE) for group, count in sorted(counts.items())]
+    return testsuite.Discovery(kept, unsupported)
 
 
 def load_exclusions(path: str) -> dict:
@@ -160,6 +175,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pandoc", required=True, help="the program to test")
     parser.add_argument("--suite", required=True, help="the test/ directory of the Pandoc source tree")
+    parser.add_argument("--oracle", help="the trusted Pandoc that reads the expected files of the reader tests")
     parser.add_argument("--out", help="write the results as JSON to this file")
     parser.add_argument("--label", help="store the results under this key of the --out file and keep the other keys")
     parser.add_argument("--filter", default="", help="run only the tests whose identifier contains this text")
@@ -174,13 +190,17 @@ def main(argv=None) -> int:
 
     suite = os.path.abspath(args.suite)
     found = testsuite.discover(suite)
+    if not args.oracle:
+        found = without_reference_cases(found)
     excluded = load_exclusions(args.exclusions)
     selected = [c for c in found.cases if args.filter in c.id and c.id not in excluded]
 
     bin_dir = tempfile.mkdtemp(prefix="pandoc-testsuite-")
     started = time.monotonic()
     try:
-        runner = Runner(args.pandoc, suite, args.timeout, bin_dir)
+        runner = Runner(args.pandoc, suite, args.timeout, os.path.join(bin_dir, "program"))
+        if args.oracle:
+            runner.reference = Runner(args.oracle, suite, args.timeout, os.path.join(bin_dir, "oracle"))
         with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
             results = dict(pool.map(runner.check, selected))
     finally:

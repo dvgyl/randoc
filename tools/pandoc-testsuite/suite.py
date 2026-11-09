@@ -39,7 +39,9 @@ class CommandCase:
     stdin: str
     expected: str
 
-    def evaluate(self, execute: Execute, suite: str) -> str | None:
+    needs_reference = False
+
+    def evaluate(self, execute: Execute, suite: str, reference: Execute | None = None) -> str | None:
         out = execute(self.command, self.stdin.encode("utf-8"))
         if out.timed_out:
             return "timeout"
@@ -57,7 +59,9 @@ class GoldenCase:
     expected_path: str
     normalize: str = ""
 
-    def evaluate(self, execute: Execute, suite: str) -> str | None:
+    needs_reference = False
+
+    def evaluate(self, execute: Execute, suite: str, reference: Execute | None = None) -> str | None:
         out = execute(self.args, b"")
         if out.timed_out:
             return "timeout"
@@ -76,7 +80,9 @@ class AstCase:
 
     `reader` is the format of `input_path`. `extensions` is None for the
     default extensions of the reader, or the exact set of enabled extensions.
-    `expected_format` reads `expected_path` with the same program.
+    The reference program (the oracle) reads `expected_path` in the format
+    `expected_format`. The program under test reads only `input_path`, so a
+    defect of that program cannot change both sides of the comparison.
     """
 
     id: str
@@ -88,12 +94,16 @@ class AstCase:
     extensions: frozenset | None = None
     extra_args: tuple = ()
 
-    def evaluate(self, execute: Execute, suite: str) -> str | None:
+    needs_reference = True
+
+    def evaluate(self, execute: Execute, suite: str, reference: Execute | None = None) -> str | None:
+        if reference is None:
+            return "[tool] this test needs a reference program (--oracle)"
         spec = self.reader
         if self.extensions is not None:
-            spec = format_with_exact_extensions(execute, self.reader, self.extensions)
+            spec = format_with_exact_extensions(reference, self.reader, self.extensions)
         actual = execute(("-f", spec, "-t", "json", *self.extra_args, self.input_path), b"")
-        expected = execute(("-f", self.expected_format, "-t", "json", self.expected_path), b"")
+        expected = reference(("-f", self.expected_format, "-t", "json", self.expected_path), b"")
         for name, out in (("actual", actual), ("expected", expected)):
             if out.timed_out:
                 return f"timeout ({name})"
@@ -187,8 +197,8 @@ def format_with_exact_extensions(execute: Execute, reader: str, enabled: frozens
     """A format string that enables exactly `enabled` for `reader`.
 
     The Haskell tests set `readerExtensions` to a full set. The command line
-    can only change the default set, so the tool asks the program for the
-    defaults of the reader.
+    can only change the default set, so the tool asks the reference program
+    for the defaults of the reader.
     """
     if reader not in _EXTENSION_CACHE:
         out = execute((f"--list-extensions={reader}",), b"")
