@@ -883,4 +883,276 @@ mod tests {
             shown.join("\n")
         );
     }
+
+    /// The render cases of `test/test.hs` in `doclayout` 0.6, with the
+    /// expected values of that file. The case "lblock with blank line"
+    /// uses the `Block` constructor directly and has no equivalent here.
+    const PORTED_RENDERS: &[(&str, Option<usize>, &str)] = &[
+        (r#"(lblock 4 "hi there")"#, None, "hi t\nhere"),
+        (r#"(lblock 3 "abcdefg")"#, None, "abc\ndef\ng"),
+        (r#"(lblock 2 "ab\u{302}cd")"#, None, "ab\u{302}\ncd"),
+        (r#"(nest 3 "abcdefghi")"#, Some(10), "   abcdefghi"),
+        (
+            r#"(vcat (chomp "aaa") (chomp "bbb") (chomp "ccc"))"#,
+            Some(10),
+            "aaa\nbbb\nccc",
+        ),
+        (
+            r#"(above (chomp "aaa") (above (chomp "bbb") (chomp "ccc")))"#,
+            Some(10),
+            "aaa\nbbb\nccc",
+        ),
+        (r#"(sp "hello" "there")"#, Some(4), "hello\nthere"),
+        (r#"(cat "hello" cr "there")"#, Some(60), "hello\nthere"),
+        (r#"(above "x" cr)"#, None, "x\n"),
+        (
+            r#"(hsep "hello" "there" "this" "is" "a" "test")"#,
+            Some(10),
+            "hello\nthere this\nis a test",
+        ),
+        (
+            r#"(cat (lblock 3 "aa") (lblock 3 "bb") (lblock 3 (sp "aa" "bbbb")))"#,
+            Some(50),
+            "aa bb aa\n      bbb\n      b",
+        ),
+        (
+            r#"(prefixed "> " (cat (sp "foo" "bar") cr "baz" blankline (sp "bim" "bam")))"#,
+            Some(80),
+            "> foo bar\n> baz\n>\n> bim bam",
+        ),
+        (r#"(prefixed "> " (hsep "a" "b" "c"))"#, None, "> a b c"),
+        (
+            r#"(nest 4 "aa\u{A}\u{A}bb\u{A}cc")"#,
+            None,
+            "    aa\n\n    bb\n    cc",
+        ),
+        (
+            r#"(cat (hang 4 "  - " (cat (chomp "aa\u{A}\u{A}bb\u{A}cc") cr)) (hang 4 "  - " (cat (chomp "dd\u{A}") cr)))"#,
+            None,
+            "  - aa\n\n    bb\n    cc\n  - dd\n",
+        ),
+        (
+            r#"(cat "aa" (lblock 2 (above "bb" "cc")) "dd")"#,
+            None,
+            "aabb\n  ccdd",
+        ),
+        (
+            r#"(cat "aa" (cblock 4 (above "bb" "cc")))"#,
+            None,
+            "aa bb\n   cc",
+        ),
+        (r#"(cat (blanklines 2) "aa")"#, None, "\naa"),
+        (r#"(cat "aa" (blanklines 2))"#, None, "aa\n"),
+        (
+            r#"(cat "aa" cr (blanklines 2) (blanklines 0))"#,
+            None,
+            "aa\n",
+        ),
+        (
+            r#"(cat (nest 2 (cat (nest 3 (cat "aa" blankline)) cr (blanklines 2))) (blanklines 2))"#,
+            None,
+            "     aa\n",
+        ),
+        (
+            r#"(cat "aa" blankline cr blankline "bb")"#,
+            None,
+            "aa\n\nbb",
+        ),
+        (
+            r#"(vcat (hang 2 "- " (chomp (cat "aaaaa" space "bbb"))) (hang 2 "- " "aoeu"))"#,
+            Some(8),
+            "- aaaaa\n  bbb\n- aoeu",
+        ),
+        (
+            r#"(cat "aaaaa" space "bbbbb" blankline "ccccc")"#,
+            Some(8),
+            "aaaaa\nbbbbb\n\nccccc",
+        ),
+        (
+            r#"(cat (chomp (cat (cat "aa" space) blankline)) "bb")"#,
+            None,
+            "aabb",
+        ),
+        (r#"(cat (chomp (cat "aa" space)) "bb")"#, None, "aabb"),
+        (r#"(chomp "aa")"#, None, "aa"),
+        (r#"(chomp (nest 3 (cat "aa" blankline)))"#, None, "   aa"),
+        (
+            r#"(cat "aa" cr (chomp (cat (lblock 2 (cat "aa" blankline)) blankline)))"#,
+            None,
+            "aa\naa",
+        ),
+        (r#"(above "aa" (above empty "bb"))"#, None, "aa\nbb"),
+        (
+            r#"(vcat (cat (rblock 4 "aa") (lblock 3 " | ") (cblock 4 "bb") (lblock 3 " | ") (lblock 4 "cc")) (cat (rblock 4 "----") (lblock 3 " | ") (cblock 4 "----") (lblock 3 " | ") (lblock 4 "----")) (cat (rblock 4 "dd") (lblock 3 " | ") (cblock 4 "ee") (lblock 3 " | ") (lblock 4 "ff")))"#,
+            None,
+            "  aa |  bb  | cc\n---- | ---- | ----\n  dd |  ee  | ff",
+        ),
+        (
+            r#"(cat "aa" space "bbbbb" "ccccc")"#,
+            Some(10),
+            "aa\nbbbbbccccc",
+        ),
+        (
+            r#"(cat (nest 5 (hsep "hi" "there" "my" "friend")) cr)"#,
+            Some(10),
+            "     hi\n     there\n     my\n     friend\n",
+        ),
+        (r#"(cblock 7 (sp "hi" "there"))"#, None, "  hi\n there"),
+        (
+            r#"(cat (sp "hi" (after_break "!")) (after_break "?") "x" (after_break "?"))"#,
+            Some(2),
+            "hi\n!x",
+        ),
+        (
+            r#"(cat "[" (nest 1 (above "aaaaaaaaa" "bbbbbbb")) "]")"#,
+            Some(5),
+            "[aaaaaaaaa\n bbbbbbb]",
+        ),
+        (
+            r#"(above "aa" (above (nest 3 empty) "bb"))"#,
+            None,
+            "aa\nbb",
+        ),
+        (r#"(hsep "a" empty "b")"#, None, "a b"),
+        (r#"(sp "a" (sp empty "b"))"#, None, "a b"),
+        (r#"(cat (vcat "aa" "bb") "cc")"#, None, "aa\nbbcc"),
+        ("(vcat)", None, ""),
+        (
+            r#"(nestle (above (blanklines 2) (above "aa" (cat (blanklines 2) cr))))"#,
+            None,
+            "aa\n",
+        ),
+        (
+            r#"(prefixed "> " (cblock 4 (above "aa" "bb")))"#,
+            None,
+            ">  aa\n>  bb",
+        ),
+        (r#"(cat empty space "x")"#, None, "x"),
+        (r#"(hang 5 (nowrap "xxx") empty)"#, None, "xxx"),
+        (
+            r#"(above (cat (before_non_blank "!!") " ab") (cat (before_non_blank "!!") "a b"))"#,
+            None,
+            " ab\n!!a b",
+        ),
+        (
+            r#"(cat (vfill "|") (cblock 5 (vcat "a" "bbb" "ccccc")) (lblock 3 "dd") (vfill "+"))"#,
+            None,
+            "|  a  dd +\n| bbb    +\n|ccccc   +",
+        ),
+        (
+            r#"(cat (vfill "| ") (cblock 5 (vcat "a" "bbb")) (vfill " | ") (lblock 2 (vcat "dd" "ee" "ff")) (vfill " |"))"#,
+            None,
+            "|   a   | dd |\n|  bbb  | ee |\n|       | ff |",
+        ),
+        (r#"(cat "\u{366}" space "a")"#, None, "\u{366} a"),
+        (r#"(cat "a" cr "\u{A}b" cr "c")"#, None, "a\n\nb\nc"),
+        (r#"(nowrap (bold (cat "aa" space "bb")))"#, Some(4), "aa bb"),
+        (
+            r#"(nowrap (prefixed "> " (cat "aa" space "bb")))"#,
+            Some(4),
+            "> aa bb",
+        ),
+        (
+            r#"(sp "hi" (fg blue (sp "mom" (sp "and" "dad"))))"#,
+            Some(5),
+            "hi\nmom\nand\ndad",
+        ),
+    ];
+
+    #[test]
+    fn ported_doclayout_renders() {
+        for (src, width, want) in PORTED_RENDERS {
+            let doc = build(&parse(src).0);
+            assert_eq!(doc.render(*width), *want, "{src} at {width:?}");
+        }
+    }
+
+    #[test]
+    fn ported_doclayout_offsets_and_lengths() {
+        let offset = |src: &str| build(&parse(src).0).offset();
+        assert_eq!(
+            offset(r#"(cat (nest 3 (cat "**" "thisIsGoingToBeTooLongAnyway" "**")) blankline)"#),
+            35
+        );
+        assert_eq!(offset(r#"(cat "hello" (nest 2 "world"))"#), 10);
+        assert_eq!(offset(r#"(cat "aa" (nest 2 (cat "bb" cr "cc")))"#), 4);
+        let bold_chopped = lblock(4, bold(literal("hi there"))).render_ansi(None);
+        assert!(bold_chopped.contains("\u{1b}[1m"));
+        let lengths: &[(&str, usize)] = &[
+            ("This is going to be too long anyway", 35),
+            ("Circle\u{25EF}Circle", 13),
+            ("*a", 2),
+            ("*\u{FE0F}\u{20E3}a", 3),
+            ("\u{231A}", 2),
+            ("\u{A9}\u{FE0F}", 2),
+            ("\u{A9}", 1),
+            ("\u{1F170}\u{FE0F}\u{1F1E6}\u{1F1E8}", 4),
+            ("\u{1F590}\u{1F3FF}", 2),
+            ("1\u{1F3FF}", 3),
+        ];
+        for (text, want) in lengths {
+            assert_eq!(real_length(text), *want, "{text:?}");
+        }
+        for &(cp, _, _) in tables::EMOJI {
+            let Some(c) = std::char::from_u32(cp) else {
+                continue;
+            };
+            let base = real_length(&c.to_string());
+            assert!(base == 1 || base == 2, "U+{cp:04X}");
+        }
+    }
+
+    #[test]
+    fn links_render_as_osc8() {
+        let doc = literal("see") + space() + link("https://a.b", bold(literal("here")));
+        assert_eq!(
+            doc.render_ansi(None),
+            "see \u{1b}[1m\u{1b}[23m\u{1b}[39m\u{1b}[49m\u{1b}[24m\u{1b}[29m\
+             \u{1b}]8;;https://a.b\u{1b}\\here\u{1b}[0m\u{1b}]8;;\u{1b}\\"
+        );
+        assert_eq!(doc.render(None), "see here");
+        let nested = link("x", literal("a") + link("y", literal("b")) + literal("c"));
+        assert_eq!(
+            nested.render_ansi(None),
+            "\u{1b}]8;;x\u{1b}\\abc\u{1b}[0m\u{1b}]8;;\u{1b}\\"
+        );
+        let after = link("x", literal("a") + link("y", literal("b"))) + literal("c");
+        assert_eq!(
+            after.render_ansi(None),
+            "\u{1b}]8;;x\u{1b}\\ab\u{1b}]8;;\u{1b}\\c\u{1b}[0m\u{1b}]8;;\u{1b}\\"
+        );
+        let filled = link("x", vfill("|")) + lblock(1, literal("a"));
+        assert_eq!(
+            filled.render_ansi(None),
+            "\u{1b}]8;;x\u{1b}\\|\u{1b}]8;;\u{1b}\\a\u{1b}[0m\u{1b}]8;;\u{1b}\\"
+        );
+        assert!(!link("x", empty()).is_empty());
+        assert_eq!(
+            link("x", empty()).render_ansi(None),
+            "\u{1b}[0m\u{1b}]8;;\u{1b}\\"
+        );
+    }
+
+    #[test]
+    fn small_constructors() {
+        assert_eq!(char('x'), literal("x"));
+        assert_eq!(text("a b"), literal("a b"));
+        assert_eq!(Doc::from("a"), literal("a"));
+        assert_eq!(Doc::from(String::from("a")), literal("a"));
+        let summed: Doc = ["a", "b"].into_iter().map(literal).sum();
+        assert_eq!(summed.render(None), "ab");
+        let mut doc = literal("a");
+        doc += literal("b") + (literal("c") + literal("d"));
+        assert_eq!(doc.render(None), "abcd");
+        assert_eq!((space() + literal("a")).render(None), "a");
+        assert!(before_non_blank(empty()).render(None).is_empty());
+        assert!(!before_non_blank(empty()).is_empty());
+        assert!(!after_break("").is_empty());
+        assert_eq!(empty().height(), 1);
+        assert_eq!(literal("a\nb\n").height(), 3);
+        assert_eq!(real_length("\u{FE0F}\u{200D}"), 0);
+        assert_eq!(char_width('\u{1F3FB}'), 2);
+        assert_eq!(char_width('\u{200D}'), 0);
+        assert_eq!(char_width('\u{FE0F}'), 0);
+    }
 }
