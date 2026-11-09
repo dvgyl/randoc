@@ -19,6 +19,9 @@ const CONVERSION_STACK_BYTES: usize = 1 << 30;
 /// 32 KB of stack for one level, so this depth fits in the stack.
 const CLI_MAX_NESTING_DEPTH: usize = 16_384;
 
+/// The default of the `--columns` option in Pandoc.
+const DEFAULT_COLUMNS: i64 = 72;
+
 /// Runs the program with the given arguments and returns the exit code.
 ///
 /// The first argument is the program name.
@@ -204,6 +207,8 @@ fn run_checked(args: &[String]) -> Result<()> {
     let writer = formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to.clone()))?;
 
     let mut reader_options = ReaderOptions::default();
+    // Pandoc gives the value of `--columns` to the reader also. Its default is 72.
+    reader_options.columns = DEFAULT_COLUMNS;
     reader_options.extensions = from_spec.extensions()?;
     let mut writer_options = WriterOptions::default();
     writer_options.extensions = to_spec.extensions()?;
