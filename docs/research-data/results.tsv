@@ -1745,3 +1745,233 @@ writers	ferrodoc	md/skylighting-README.md#markdown>gfm	identical	0.018	stderr-sa
 writers	pandoc	md/skylighting-README.md#markdown>native	exit 0	0.194	
 writers	carta	md/skylighting-README.md#markdown>native	identical	0.037	stderr-same
 writers	ferrodoc	md/skylighting-README.md#markdown>native	unsupported	0.012	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+rescribe-run	rescribe	md/carta-README.md#markdown>html	differ	0.017	bytes oracle 9004 tool 4490
+rescribe-run	rescribe	md/carta-README.md#markdown>json	differ	0.026	bytes oracle 13967 tool 6158
+rescribe-run	rescribe	md/carta-README.md#markdown>latex	differ	0.012	bytes oracle 6080 tool 1329
+rescribe-run	rescribe	md/carta-README.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/carta-README.md#commonmark>html	differ	0.047	bytes oracle 8784 tool 4490
+rescribe-run	rescribe	md/carta-README.md#gfm>html	differ	0.013	bytes oracle 9000 tool 3545
+rescribe-run	rescribe	md/ferrodoc-code-and-raw.md#markdown>html	differ	0.013	bytes oracle 659 tool 702
+rescribe-run	rescribe	md/ferrodoc-code-and-raw.md#markdown>json	differ	0.019	bytes oracle 2561 tool 1366
+rescribe-run	rescribe	md/ferrodoc-code-and-raw.md#markdown>latex	differ	0.012	bytes oracle 572 tool 154
+rescribe-run	rescribe	md/ferrodoc-code-and-raw.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-code-and-raw.md#commonmark>html	differ	0.015	bytes oracle 928 tool 702
+rescribe-run	rescribe	md/ferrodoc-code-and-raw.md#gfm>html	differ	0.011	bytes oracle 928 tool 601
+rescribe-run	rescribe	md/ferrodoc-edge-cases.md#markdown>html	differ	0.016	bytes oracle 1004 tool 920
+rescribe-run	rescribe	md/ferrodoc-edge-cases.md#markdown>json	differ	0.062	bytes oracle 3425 tool 2093
+rescribe-run	rescribe	md/ferrodoc-edge-cases.md#markdown>latex	differ	0.017	bytes oracle 976 tool 283
+rescribe-run	rescribe	md/ferrodoc-edge-cases.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-edge-cases.md#commonmark>html	differ	0.012	bytes oracle 961 tool 920
+rescribe-run	rescribe	md/ferrodoc-edge-cases.md#gfm>html	differ	0.012	bytes oracle 1001 tool 885
+rescribe-run	rescribe	md/ferrodoc-headings.md#markdown>html	differ	0.007	bytes oracle 776 tool 575
+rescribe-run	rescribe	md/ferrodoc-headings.md#markdown>json	differ	0.015	bytes oracle 3442 tool 1200
+rescribe-run	rescribe	md/ferrodoc-headings.md#markdown>latex	differ	0.014	bytes oracle 787 tool 499
+rescribe-run	rescribe	md/ferrodoc-headings.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-headings.md#commonmark>html	ws-only	0.036	
+rescribe-run	rescribe	md/ferrodoc-headings.md#gfm>html	differ	0.020	bytes oracle 774 tool 577
+rescribe-run	rescribe	md/ferrodoc-images.md#markdown>html	differ	0.014	bytes oracle 379 tool 308
+rescribe-run	rescribe	md/ferrodoc-images.md#markdown>json	differ	0.021	bytes oracle 1374 tool 695
+rescribe-run	rescribe	md/ferrodoc-images.md#markdown>latex	differ	0.011	bytes oracle 468 tool 107
+rescribe-run	rescribe	md/ferrodoc-images.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-images.md#commonmark>html	differ	0.011	bytes oracle 314 tool 308
+rescribe-run	rescribe	md/ferrodoc-images.md#gfm>html	differ	0.012	bytes oracle 314 tool 231
+rescribe-run	rescribe	md/ferrodoc-nested-structures.md#markdown>html	differ	0.016	bytes oracle 1092 tool 742
+rescribe-run	rescribe	md/ferrodoc-nested-structures.md#markdown>json	differ	0.019	bytes oracle 2689 tool 1288
+rescribe-run	rescribe	md/ferrodoc-nested-structures.md#markdown>latex	differ	0.012	bytes oracle 1179 tool 0
+rescribe-run	rescribe	md/ferrodoc-nested-structures.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-nested-structures.md#commonmark>html	differ	0.014	bytes oracle 1092 tool 742
+rescribe-run	rescribe	md/ferrodoc-nested-structures.md#gfm>html	differ	0.009	bytes oracle 1092 tool 660
+rescribe-run	rescribe	md/ferrodoc-readme-style.md#markdown>html	differ	0.024	bytes oracle 1134 tool 875
+rescribe-run	rescribe	md/ferrodoc-readme-style.md#markdown>json	differ	0.018	bytes oracle 3065 tool 1523
+rescribe-run	rescribe	md/ferrodoc-readme-style.md#markdown>latex	differ	0.021	bytes oracle 1169 tool 228
+rescribe-run	rescribe	md/ferrodoc-readme-style.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-readme-style.md#commonmark>html	differ	0.050	bytes oracle 1075 tool 875
+rescribe-run	rescribe	md/ferrodoc-readme-style.md#gfm>html	differ	0.011	bytes oracle 1134 tool 757
+rescribe-run	rescribe	md/ferrodoc-truncation-cases.md#markdown>html	differ	0.010	bytes oracle 666 tool 663
+rescribe-run	rescribe	md/ferrodoc-truncation-cases.md#markdown>json	differ	0.014	bytes oracle 2535 tool 1128
+rescribe-run	rescribe	md/ferrodoc-truncation-cases.md#markdown>latex	differ	0.013	bytes oracle 643 tool 126
+rescribe-run	rescribe	md/ferrodoc-truncation-cases.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/ferrodoc-truncation-cases.md#commonmark>html	differ	0.014	bytes oracle 692 tool 663
+rescribe-run	rescribe	md/ferrodoc-truncation-cases.md#gfm>html	differ	0.014	bytes oracle 692 tool 570
+rescribe-run	rescribe	md/pandoc-MANUAL.md#markdown>html	differ	0.189	bytes oracle 389523 tool 355098
+rescribe-run	rescribe	md/pandoc-MANUAL.md#markdown>json	differ	1.017	bytes oracle 1463591 tool 593717
+rescribe-run	rescribe	md/pandoc-MANUAL.md#markdown>latex	differ	0.067	bytes oracle 362709 tool 134806
+rescribe-run	rescribe	md/pandoc-MANUAL.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-MANUAL.md#commonmark>html	differ	0.500	bytes oracle 336172 tool 355098
+rescribe-run	rescribe	md/pandoc-MANUAL.md#gfm>html	differ	6.812	bytes oracle 343688 tool 293179
+rescribe-run	rescribe	md/pandoc-doc-custom-readers.md#markdown>html	differ	0.040	bytes oracle 91970 tool 18042
+rescribe-run	rescribe	md/pandoc-doc-custom-readers.md#markdown>json	differ	0.062	bytes oracle 45614 tool 24194
+rescribe-run	rescribe	md/pandoc-doc-custom-readers.md#markdown>latex	differ	0.031	bytes oracle 47024 tool 4311
+rescribe-run	rescribe	md/pandoc-doc-custom-readers.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-custom-readers.md#commonmark>html	differ	0.065	bytes oracle 91818 tool 18042
+rescribe-run	rescribe	md/pandoc-doc-custom-readers.md#gfm>html	differ	0.022	bytes oracle 91944 tool 6755
+rescribe-run	rescribe	md/pandoc-doc-customizing-pandoc.md#markdown>html	differ	0.029	bytes oracle 7616 tool 6510
+rescribe-run	rescribe	md/pandoc-doc-customizing-pandoc.md#markdown>json	differ	0.079	bytes oracle 31627 tool 14150
+rescribe-run	rescribe	md/pandoc-doc-customizing-pandoc.md#markdown>latex	differ	0.044	bytes oracle 7246 tool 3739
+rescribe-run	rescribe	md/pandoc-doc-customizing-pandoc.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-customizing-pandoc.md#commonmark>html	differ	0.018	bytes oracle 6595 tool 6510
+rescribe-run	rescribe	md/pandoc-doc-customizing-pandoc.md#gfm>html	differ	0.019	bytes oracle 7473 tool 6607
+rescribe-run	rescribe	md/pandoc-doc-epub.md#markdown>html	differ	0.034	bytes oracle 6885 tool 6671
+rescribe-run	rescribe	md/pandoc-doc-epub.md#markdown>json	differ	0.022	bytes oracle 29066 tool 10065
+rescribe-run	rescribe	md/pandoc-doc-epub.md#markdown>latex	differ	0.053	bytes oracle 6436 tool 3141
+rescribe-run	rescribe	md/pandoc-doc-epub.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-epub.md#commonmark>html	differ	0.040	bytes oracle 6576 tool 6671
+rescribe-run	rescribe	md/pandoc-doc-epub.md#gfm>html	differ	0.017	bytes oracle 6849 tool 5553
+rescribe-run	rescribe	md/pandoc-doc-faqs.md#markdown>html	differ	0.060	bytes oracle 13942 tool 9014
+rescribe-run	rescribe	md/pandoc-doc-faqs.md#markdown>json	differ	0.021	bytes oracle 40696 tool 14860
+rescribe-run	rescribe	md/pandoc-doc-faqs.md#markdown>latex	differ	0.025	bytes oracle 12104 tool 4901
+rescribe-run	rescribe	md/pandoc-doc-faqs.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-faqs.md#commonmark>html	differ	0.028	bytes oracle 12410 tool 9014
+rescribe-run	rescribe	md/pandoc-doc-faqs.md#gfm>html	differ	0.037	bytes oracle 13913 tool 7124
+rescribe-run	rescribe	md/pandoc-doc-filters.md#markdown>html	differ	0.014	bytes oracle 31014 tool 18712
+rescribe-run	rescribe	md/pandoc-doc-filters.md#markdown>json	differ	0.030	bytes oracle 77532 tool 29503
+rescribe-run	rescribe	md/pandoc-doc-filters.md#markdown>latex	differ	0.051	bytes oracle 22952 tool 7220
+rescribe-run	rescribe	md/pandoc-doc-filters.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-filters.md#commonmark>html	differ	0.077	bytes oracle 18562 tool 18712
+rescribe-run	rescribe	md/pandoc-doc-filters.md#gfm>html	differ	0.041	bytes oracle 18851 tool 13554
+rescribe-run	rescribe	md/pandoc-doc-getting-started.md#markdown>html	differ	0.019	bytes oracle 11806 tool 11485
+rescribe-run	rescribe	md/pandoc-doc-getting-started.md#markdown>json	differ	0.022	bytes oracle 58106 tool 19372
+rescribe-run	rescribe	md/pandoc-doc-getting-started.md#markdown>latex	differ	0.019	bytes oracle 11328 tool 5859
+rescribe-run	rescribe	md/pandoc-doc-getting-started.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-getting-started.md#commonmark>html	differ	0.057	bytes oracle 11579 tool 11485
+rescribe-run	rescribe	md/pandoc-doc-getting-started.md#gfm>html	differ	0.044	bytes oracle 11723 tool 10937
+rescribe-run	rescribe	md/pandoc-doc-jats.md#markdown>html	differ	0.018	bytes oracle 30135 tool 27759
+rescribe-run	rescribe	md/pandoc-doc-jats.md#markdown>json	differ	0.123	bytes oracle 92682 tool 48426
+rescribe-run	rescribe	md/pandoc-doc-jats.md#markdown>latex	differ	0.012	bytes oracle 27377 tool 474
+rescribe-run	rescribe	md/pandoc-doc-jats.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-jats.md#commonmark>html	differ	0.035	bytes oracle 19145 tool 27759
+rescribe-run	rescribe	md/pandoc-doc-jats.md#gfm>html	differ	0.021	bytes oracle 19160 tool 4987
+rescribe-run	rescribe	md/pandoc-doc-lua-filters.md#markdown>html	differ	0.083	bytes oracle 290239 tool 214129
+rescribe-run	rescribe	md/pandoc-doc-lua-filters.md#markdown>json	differ	0.929	bytes oracle 806265 tool 376187
+rescribe-run	rescribe	md/pandoc-doc-lua-filters.md#markdown>latex	differ	0.156	bytes oracle 241984 tool 73755
+rescribe-run	rescribe	md/pandoc-doc-lua-filters.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-lua-filters.md#commonmark>html	differ	0.133	bytes oracle 275035 tool 214129
+rescribe-run	rescribe	md/pandoc-doc-lua-filters.md#gfm>html	differ	0.129	bytes oracle 287727 tool 186427
+rescribe-run	rescribe	md/pandoc-doc-org.md#markdown>html	differ	0.017	bytes oracle 15495 tool 11510
+rescribe-run	rescribe	md/pandoc-doc-org.md#markdown>json	differ	0.040	bytes oracle 55576 tool 19968
+rescribe-run	rescribe	md/pandoc-doc-org.md#markdown>latex	differ	0.077	bytes oracle 12587 tool 5294
+rescribe-run	rescribe	md/pandoc-doc-org.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-org.md#commonmark>html	differ	0.023	bytes oracle 15233 tool 11510
+rescribe-run	rescribe	md/pandoc-doc-org.md#gfm>html	differ	0.018	bytes oracle 15450 tool 10498
+rescribe-run	rescribe	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html	differ	0.077	bytes oracle 31869 tool 30403
+rescribe-run	rescribe	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>json	differ	0.055	bytes oracle 172108 tool 57026
+rescribe-run	rescribe	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>latex	differ	0.016	bytes oracle 29920 tool 21937
+rescribe-run	rescribe	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-twenty-years-of-pandoc.md#commonmark>html	differ	0.017	bytes oracle 29924 tool 30403
+rescribe-run	rescribe	md/pandoc-doc-twenty-years-of-pandoc.md#gfm>html	differ	0.036	bytes oracle 30807 tool 30473
+rescribe-run	rescribe	md/pandoc-doc-xml.md#markdown>html	differ	0.015	bytes oracle 39408 tool 15155
+rescribe-run	rescribe	md/pandoc-doc-xml.md#markdown>json	differ	0.024	bytes oracle 42923 tool 22376
+rescribe-run	rescribe	md/pandoc-doc-xml.md#markdown>latex	differ	0.014	bytes oracle 29452 tool 2336
+rescribe-run	rescribe	md/pandoc-doc-xml.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/pandoc-doc-xml.md#commonmark>html	differ	0.020	bytes oracle 39183 tool 15155
+rescribe-run	rescribe	md/pandoc-doc-xml.md#gfm>html	differ	0.018	bytes oracle 39370 tool 9198
+rescribe-run	rescribe	md/rescribe-README.md#markdown>html	differ	0.019	bytes oracle 7750 tool 3918
+rescribe-run	rescribe	md/rescribe-README.md#markdown>json	differ	0.016	bytes oracle 14014 tool 7243
+rescribe-run	rescribe	md/rescribe-README.md#markdown>latex	differ	0.038	bytes oracle 5826 tool 1265
+rescribe-run	rescribe	md/rescribe-README.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/rescribe-README.md#commonmark>html	differ	0.208	bytes oracle 7293 tool 3918
+rescribe-run	rescribe	md/rescribe-README.md#gfm>html	differ	0.020	bytes oracle 7640 tool 2848
+rescribe-run	rescribe	md/skylighting-README.md#markdown>html	differ	0.067	bytes oracle 7150 tool 6933
+rescribe-run	rescribe	md/skylighting-README.md#markdown>json	differ	0.025	bytes oracle 29509 tool 9599
+rescribe-run	rescribe	md/skylighting-README.md#markdown>latex	differ	0.046	bytes oracle 6680 tool 3144
+rescribe-run	rescribe	md/skylighting-README.md#markdown>html-s	no-cli		the tool has no matching command line
+rescribe-run	rescribe	md/skylighting-README.md#commonmark>html	differ	0.022	bytes oracle 6972 tool 6933
+rescribe-run	rescribe	md/skylighting-README.md#gfm>html	differ	0.023	bytes oracle 7098 tool 6380
+rescribe-run	rescribe	html/carta-blocks.html#html>markdown	differ	0.025	bytes oracle 172 tool 73
+rescribe-run	rescribe	html/carta-blocks.html#html>json	differ	0.012	bytes oracle 488 tool 448
+rescribe-run	rescribe	html/carta-citation.html#html>markdown	differ	0.014	bytes oracle 37 tool 14
+rescribe-run	rescribe	html/carta-citation.html#html>json	differ	0.017	bytes oracle 244 tool 181
+rescribe-run	rescribe	html/carta-dropped-elements.html#html>markdown	identical	0.013	stderr-differs
+rescribe-run	rescribe	html/carta-dropped-elements.html#html>json	differ	0.022	bytes oracle 440 tool 249
+rescribe-run	rescribe	html/carta-footnotes.html#html>markdown	differ	0.012	bytes oracle 144 tool 183
+rescribe-run	rescribe	html/carta-footnotes.html#html>json	differ	0.010	bytes oracle 953 tool 846
+rescribe-run	rescribe	html/carta-inline.html#html>markdown	identical	0.011	stderr-differs
+rescribe-run	rescribe	html/carta-inline.html#html>json	differ	0.038	bytes oracle 935 tool 672
+rescribe-run	rescribe	html/carta-lists.html#html>markdown	differ	0.035	bytes oracle 72 tool 59
+rescribe-run	rescribe	html/carta-lists.html#html>json	differ	0.022	bytes oracle 629 tool 274
+rescribe-run	rescribe	html/carta-raw-style.html#html>markdown	identical	0.026	stderr-same
+rescribe-run	rescribe	html/carta-raw-style.html#html>json	differ	0.038	bytes oracle 504 tool 243
+rescribe-run	rescribe	html/carta-task-list.html#html>markdown	identical	0.070	stderr-same
+rescribe-run	rescribe	html/carta-task-list.html#html>json	differ	0.010	bytes oracle 424 tool 81
+rescribe-run	rescribe	html/ferrodoc-footnotes.html#html>markdown	differ	0.010	bytes oracle 269 tool 274
+rescribe-run	rescribe	html/ferrodoc-footnotes.html#html>json	differ	0.086	bytes oracle 1763 tool 1044
+rescribe-run	rescribe	html/ferrodoc-hidden-content.html#html>markdown	differ	0.038	bytes oracle 492 tool 319
+rescribe-run	rescribe	html/ferrodoc-hidden-content.html#html>json	differ	0.047	bytes oracle 3296 tool 485
+rescribe-run	rescribe	html/ferrodoc-inline-edges.html#html>markdown	differ	0.036	bytes oracle 563 tool 539
+rescribe-run	rescribe	html/ferrodoc-inline-edges.html#html>json	differ	0.025	bytes oracle 4235 tool 1846
+rescribe-run	rescribe	html/ferrodoc-inline-elements.html#html>markdown	differ	0.041	bytes oracle 1725 tool 1487
+rescribe-run	rescribe	html/ferrodoc-inline-elements.html#html>json	differ	0.015	bytes oracle 10477 tool 4203
+rescribe-run	rescribe	html/ferrodoc-inline-svg.html#html>markdown	differ	0.012	bytes oracle 682 tool 223
+rescribe-run	rescribe	html/ferrodoc-inline-svg.html#html>json	differ	0.042	bytes oracle 1978 tool 567
+rescribe-run	rescribe	html/ferrodoc-main-content.html#html>markdown	differ	0.020	bytes oracle 84 tool 147
+rescribe-run	rescribe	html/ferrodoc-main-content.html#html>json	differ	0.053	bytes oracle 616 tool 510
+rescribe-run	rescribe	html/ferrodoc-sectioning.html#html>markdown	differ	0.014	bytes oracle 286 tool 203
+rescribe-run	rescribe	html/ferrodoc-sectioning.html#html>json	differ	0.023	bytes oracle 1725 tool 669
+rescribe-run	rescribe	html/ferrodoc-tables-and-attributes.html#html>markdown	differ	0.016	bytes oracle 1244 tool 796
+rescribe-run	rescribe	html/ferrodoc-tables-and-attributes.html#html>json	differ	0.018	bytes oracle 5075 tool 3951
+rescribe-run	rescribe	html/ferrodoc-task-lists.html#html>markdown	differ	0.015	bytes oracle 383 tool 357
+rescribe-run	rescribe	html/ferrodoc-task-lists.html#html>json	differ	0.025	bytes oracle 2816 tool 376
+rescribe-run	rescribe	html/ferrodoc-verbatim.html#html>markdown	differ	0.014	bytes oracle 1025 tool 621
+rescribe-run	rescribe	html/ferrodoc-verbatim.html#html>json	differ	0.020	bytes oracle 2424 tool 2126
+rescribe-run	rescribe	conformance/json/roundtrip.toml/empty#json>json	ast-equal	0.057	api version [1, 23]
+rescribe-run	rescribe	conformance/json/roundtrip.toml/empty#json>html	ws-only	0.017	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/empty#json>markdown	identical	0.030	stderr-same
+rescribe-run	rescribe	conformance/json/roundtrip.toml/empty#json>native	differ	0.023	bytes oracle 3 tool 39
+rescribe-run	rescribe	conformance/json/roundtrip.toml/empty#json>latex	ws-only	0.012	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/inlines#json>json	differ	0.017	bytes oracle 1369 tool 1352
+rescribe-run	rescribe	conformance/json/roundtrip.toml/inlines#json>html	differ	0.025	bytes oracle 773 tool 436
+rescribe-run	rescribe	conformance/json/roundtrip.toml/inlines#json>markdown	differ	0.032	bytes oracle 132 tool 104
+rescribe-run	rescribe	conformance/json/roundtrip.toml/inlines#json>native	differ	0.018	bytes oracle 1093 tool 1851
+rescribe-run	rescribe	conformance/json/roundtrip.toml/inlines#json>latex	differ	0.016	bytes oracle 235 tool 45
+rescribe-run	rescribe	conformance/json/roundtrip.toml/blocks#json>json	differ	0.021	bytes oracle 1279 tool 917
+rescribe-run	rescribe	conformance/json/roundtrip.toml/blocks#json>html	differ	0.032	bytes oracle 934 tool 294
+rescribe-run	rescribe	conformance/json/roundtrip.toml/blocks#json>markdown	differ	0.055	bytes oracle 456 tool 94
+rescribe-run	rescribe	conformance/json/roundtrip.toml/blocks#json>native	differ	0.018	bytes oracle 1230 tool 1064
+rescribe-run	rescribe	conformance/json/roundtrip.toml/blocks#json>latex	differ	0.038	bytes oracle 1234 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/string-escapes#json>json	ast-equal	0.015	api version [1, 23]
+rescribe-run	rescribe	conformance/json/roundtrip.toml/string-escapes#json>html	ws-only	0.014	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/string-escapes#json>markdown	differ	0.027	bytes oracle 28 tool 27
+rescribe-run	rescribe	conformance/json/roundtrip.toml/string-escapes#json>native	differ	0.018	bytes oracle 63 tool 156
+rescribe-run	rescribe	conformance/json/roundtrip.toml/string-escapes#json>latex	differ	0.012	bytes oracle 57 tool 23
+rescribe-run	rescribe	conformance/json/roundtrip.toml/numbers#json>json	differ	0.015	bytes oracle 1066 tool 167
+rescribe-run	rescribe	conformance/json/roundtrip.toml/numbers#json>html	differ	0.016	bytes oracle 850 tool 29
+rescribe-run	rescribe	conformance/json/roundtrip.toml/numbers#json>markdown	exit-differ	0.035	oracle 251 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/numbers#json>native	differ	0.037	bytes oracle 898 tool 133
+rescribe-run	rescribe	conformance/json/roundtrip.toml/numbers#json>latex	differ	0.019	bytes oracle 1693 tool 15
+rescribe-run	rescribe	conformance/json/roundtrip.toml/version-two-parts#json>json	ast-equal	0.016	api version [1, 23]
+rescribe-run	rescribe	conformance/json/roundtrip.toml/version-two-parts#json>html	ws-only	0.011	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/version-two-parts#json>markdown	identical	0.016	stderr-same
+rescribe-run	rescribe	conformance/json/roundtrip.toml/version-two-parts#json>native	differ	0.017	bytes oracle 3 tool 39
+rescribe-run	rescribe	conformance/json/roundtrip.toml/version-two-parts#json>latex	ws-only	0.016	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/key-order#json>json	ast-equal	0.041	api version [1, 23]
+rescribe-run	rescribe	conformance/json/roundtrip.toml/key-order#json>html	ws-only	0.011	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/key-order#json>markdown	identical	0.014	stderr-same
+rescribe-run	rescribe	conformance/json/roundtrip.toml/key-order#json>native	differ	0.019	bytes oracle 21 tool 107
+rescribe-run	rescribe	conformance/json/roundtrip.toml/key-order#json>latex	ws-only	0.014	
+rescribe-run	rescribe	conformance/json/roundtrip.toml/old-version#json>json	exit-differ	0.009	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/old-version#json>html	exit-differ	0.012	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/old-version#json>markdown	exit-differ	0.010	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/old-version#json>native	exit-differ	0.015	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/old-version#json>latex	exit-differ	0.019	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/missing-version#json>json	exit-differ	0.053	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/missing-version#json>html	exit-differ	0.013	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/missing-version#json>markdown	exit-differ	0.021	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/missing-version#json>native	exit-differ	0.030	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/missing-version#json>latex	exit-differ	0.023	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/not-json#json>json	exit-differ	0.018	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/not-json#json>html	exit-differ	0.013	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/not-json#json>markdown	exit-differ	0.011	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/not-json#json>native	exit-differ	0.014	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/not-json#json>latex	exit-differ	0.017	oracle 64 tool 1
+rescribe-run	rescribe	conformance/json/roundtrip.toml/unknown-block#json>json	exit-differ	0.008	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/unknown-block#json>html	exit-differ	0.018	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/unknown-block#json>markdown	exit-differ	0.029	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/unknown-block#json>native	exit-differ	0.012	oracle 64 tool 0
+rescribe-run	rescribe	conformance/json/roundtrip.toml/unknown-block#json>latex	exit-differ	0.013	oracle 64 tool 0
+rescribe-run	rescribe	conformance/cli/formats.toml/unknown-input-format#cmd	no-cli		the tool has no matching command line
+rescribe-run	rescribe	conformance/cli/formats.toml/unknown-output-format#cmd	no-cli		the tool has no matching command line
+rescribe-run	rescribe	conformance/cli/formats.toml/extension-not-supported#cmd	no-cli		the tool has no matching command line
+rescribe-run	rescribe	conformance/cli/formats.toml/missing-input-file#cmd	no-cli		the tool has no matching command line
+rescribe-run	rescribe	conformance/cli/formats.toml/input-file#cmd	no-cli		the tool has no matching command line
+rescribe-run	rescribe	conformance/cli/formats.toml/long-options#cmd	no-cli		the tool has no matching command line
+rescribe-run	rescribe	conformance/cli/formats.toml/unknown-option#cmd	no-cli		the tool has no matching command line

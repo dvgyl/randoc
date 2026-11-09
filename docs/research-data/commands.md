@@ -73,7 +73,7 @@ v0.0.13 `carta-aarch64-apple-darwin.tar.gz` 6 205 602 bytes; ferrodoc v1.0.1
 | --- | --- | ---: | ---: |
 | ferrodoc 1.0.1 | exit 0 | 176 s | 20 168 136 bytes |
 | carta 0.0.13 | exit 0 | 1 261 s | 47 634 072 bytes |
-| rescribe 0.1.0 | RESCRIBE-BUILD | | |
+| rescribe 0.1.0 | exit 0 | 3 306 s | 72 970 856 bytes |
 
 The wall times are long because other agents used the same 8 cores and the
 drive uses exFAT.
@@ -219,3 +219,33 @@ curl -s -A 'randoc-research' "https://crates.io/api/v1/crates/NAME"
 
 The fields used: `max_stable_version`, `versions[0].license`, `updated_at`,
 `recent_downloads`, `repository`.
+
+## rescribe run
+
+rescribe has its own command line (`rescribe convert IN --from F --to T`),
+so `probe.py` runs it with that form and reads JSON input from `-`. It has
+no standalone option and no Pandoc options, so the standalone units and the
+command-line cases are `no-cli`. The rows are in `results.tsv` with the run
+name `rescribe-run`. The oracle rows of this run are not repeated.
+
+```sh
+export PROBE_TOOLS="rescribe=${R}/rescribe/target/debug/rescribe"
+python3 -I docs/research-data/probe.py "$R/probe" "$RANDOC_WT/research" "$R/probe-rescribe.tsv"
+```
+
+```text
+rescribe   cli                          n=  7 no-cli=7
+rescribe   commonmark>html              n= 22 differ=21 ws-only=1
+rescribe   gfm>html                     n= 22 differ=22
+rescribe   html>json                    n= 18 differ=18
+rescribe   html>markdown                n= 18 differ=14 identical=4
+rescribe   json                         n= 55 ast-equal=4 differ=20 exit-differ=21 identical=3 ws-only=7
+rescribe   markdown>html                n= 22 differ=22
+rescribe   markdown>html-s              n= 22 no-cli=22
+rescribe   markdown>json                n= 22 differ=22
+rescribe   markdown>latex               n= 22 differ=22
+```
+
+Median time for one document unit: 0.022 s (debug build, 146 units).
+Example: `# Hi *there*` gives `<h1>Hi <em>there</em></h1>` without a final
+newline and without the `id="hi-there"` that Pandoc writes.

@@ -26,7 +26,8 @@ claim compatibility with it. Each number comes from a command in
    3.8.2.1. Against Pandoc 3.13 the same script gives 22 of 48.
 4. **rescribe** (Rust, `MIT OR Apache-2.0`, 754 000 lines) is not a Pandoc
    replacement. It has its own document model and its own command line. It
-   claims many formats, but it does not claim identical output.
+   claims 54 readers and 64 writers but no identical output, and it passed
+   11 of the 201 probe units that it could run.
 5. **Neither carta nor ferrodoc copies Pandoc's exit codes.** For an unknown
    format, a JSON parse error or an unknown option, Pandoc exits with 21, 22,
    64 or 6. Both tools exit with 1 or 2. Both accept a JSON document with
@@ -253,7 +254,21 @@ What it does not do: Pandoc Markdown in full, most formats, exit codes,
 | Formats claimed | 54 readers and 64 writers | `crates/rescribe-cli/src/main.rs` line 3, `FORMATS.md` |
 | Tests | Unit tests, round-trip tests, 128 fuzz targets. No differential test against Pandoc output. | `TESTING.md`, `fuzz/` |
 
-RESCRIBE-RESULTS
+Probe results (debug build, 49 minutes on the shared machine). rescribe has
+no standalone option and no Pandoc options, so those units did not run.
+
+| Conversion | Units | Identical or ast-equal |
+| --- | ---: | ---: |
+| `markdown`, `commonmark`, `gfm` to `html` | 66 | 0 (1 differs only in white space) |
+| `markdown` to `json`, `latex` | 44 | 0 |
+| `html` to `markdown` | 18 | 4 |
+| `html` to `json` | 18 | 0 |
+| JSON cases to 5 writers | 55 | 7 |
+
+The differences are basic: for `# Hi *there*` rescribe writes
+`<h1>Hi <em>there</em></h1>` without the identifier `id="hi-there"` and
+without a final newline. There were no crashes and no time-outs. The median
+time for one document was 0.022 s.
 
 What Randoc can learn: the large set of fuzz targets, and the idea of
 fidelity warnings for lossy conversions. rescribe is not a competitor for
