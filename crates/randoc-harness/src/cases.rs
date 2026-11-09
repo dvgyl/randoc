@@ -82,6 +82,23 @@ pub struct Unit {
 }
 
 impl Unit {
+    /// Returns a value that changes when the command line, the standard input
+    /// or the files of the unit change. A stored result with a different
+    /// value is out of date.
+    pub fn fingerprint(&self, stdin: &[u8]) -> String {
+        let mut hash = Fnv::default();
+        for arg in &self.args {
+            hash.field(arg.as_bytes());
+        }
+        hash.field(b"\0stdin");
+        hash.field(stdin);
+        for (name, contents) in &self.files {
+            hash.field(name.as_bytes());
+            hash.field(contents);
+        }
+        format!("{:016x}", hash.0)
+    }
+
     /// The local identifier of the read unit of the same case.
     pub fn read_unit_id(&self) -> String {
         let case = self.local_id.split('#').next().unwrap_or(&self.local_id);
@@ -192,6 +209,15 @@ fn expand_case(
         (Some(_), Some(_)) => return Err("give 'input' or 'input_file', not both".to_owned()),
         (Some(text), None) => text.clone().into_bytes(),
         (None, Some(name)) => {
+            let relative = Path::new(name);
+            let inside = relative
+                .components()
+                .all(|part| matches!(part, std::path::Component::Normal(_)));
+            if name.is_empty() || !inside {
+                return Err(format!(
+                    "input_file '{name}' is not a path in the fixtures directory"
+                ));
+            }
             let path = fixtures_dir.join(name);
             fs::read(&path).map_err(|e| format!("{}: {e}", path.display()))?
         }
@@ -202,12 +228,7 @@ fn expand_case(
         .iter()
         .map(|(name, text)| (name.clone(), text.clone().into_bytes()))
         .collect();
-    let extra_args: Vec<String> = file
-        .args
-        .iter()
-        .chain(case.args.iter().flatten())
-        .cloned()
-        .collect();
+    let extra_args: Vec<String> = case.args.clone().unwrap_or_else(|| file.args.clone());
 
     let make = |unit: &str,
                 kind: UnitKind,
@@ -296,48 +317,101 @@ fn expand_case(
     Ok(())
 }
 
+/// The 64-bit FNV-1a hash. It finds changed test input. It is not for security.
+struct Fnv(u64);
+
+impl Default for Fnv {
+    fn default() -> Self {
+        Fnv(0xcbf2_9ce4_8422_2325)
+    }
+}
+
+impl Fnv {
+    fn bytes(&mut self, bytes: &[u8]) {
+        for byte in bytes {
+            self.0 ^= u64::from(*byte);
+            self.0 = self.0.wrapping_mul(0x0000_0100_0000_01b3);
+        }
+    }
+
+    /// Adds one field with its length, so that two field lists with the same
+    /// joined bytes give different hashes.
+    fn field(&mut self, bytes: &[u8]) {
+        self.bytes(&(bytes.len() as u64).to_le_bytes());
+        self.bytes(bytes);
+    }
+}
+
+/// Output bytes: text when the bytes are valid UTF-8, hexadecimal digits when they are not.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+enum Captured {
+    Text(String),
+    Hex { hex: String },
+}
+
+impl Default for Captured {
+    fn default() -> Self {
+        Captured::Text(String::new())
+    }
+}
+
+impl Captured {
+    fn new(bytes: Vec<u8>) -> Self {
+        match String::from_utf8(bytes) {
+            Ok(text) => Captured::Text(text),
+            Err(error) => Captured::Hex {
+                hex: to_hex(error.as_bytes()),
+            },
+        }
+    }
+
+    fn bytes(&self) -> Vec<u8> {
+        match self {
+            Captured::Text(text) => text.clone().into_bytes(),
+            Captured::Hex { hex } => from_hex(hex),
+        }
+    }
+}
+
 /// The result of one program run.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Outcome {
-    /// The exit code. A run that timed out or did not start has the code -1.
+    /// The fingerprint of the unit input when the oracle result was recorded.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub key: String,
+    /// The exit code.
     pub exit: i32,
-    /// The standard output when it is valid UTF-8.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub stdout: Option<String>,
-    /// The standard output in hexadecimal when it is not valid UTF-8.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub stdout_hex: Option<String>,
-    /// The standard error output. Bytes that are not valid UTF-8 are replaced.
-    pub stderr: String,
+    #[serde(default)]
+    stdout: Captured,
+    #[serde(default)]
+    stderr: Captured,
 }
 
 impl Outcome {
     /// Makes an outcome from raw process output.
-    pub fn new(exit: i32, stdout: Vec<u8>, stderr: &[u8]) -> Self {
-        let stderr = String::from_utf8_lossy(stderr).into_owned();
-        match String::from_utf8(stdout) {
-            Ok(text) => Outcome {
-                exit,
-                stdout: Some(text),
-                stdout_hex: None,
-                stderr,
-            },
-            Err(error) => Outcome {
-                exit,
-                stdout: None,
-                stdout_hex: Some(to_hex(error.as_bytes())),
-                stderr,
-            },
+    pub fn new(exit: i32, stdout: Vec<u8>, stderr: Vec<u8>) -> Self {
+        Outcome {
+            key: String::new(),
+            exit,
+            stdout: Captured::new(stdout),
+            stderr: Captured::new(stderr),
         }
     }
 
     /// Returns the standard output as bytes.
     pub fn stdout_bytes(&self) -> Vec<u8> {
-        match (&self.stdout, &self.stdout_hex) {
-            (Some(text), _) => text.clone().into_bytes(),
-            (None, Some(hex)) => from_hex(hex),
-            (None, None) => Vec::new(),
-        }
+        self.stdout.bytes()
+    }
+
+    /// Returns the standard error output as bytes.
+    pub fn stderr_bytes(&self) -> Vec<u8> {
+        self.stderr.bytes()
+    }
+
+    /// Returns `true` when the exit code and both outputs are equal. The fingerprint does not count.
+    pub fn same_result(&self, other: &Outcome) -> bool {
+        self.exit == other.exit && self.stdout == other.stdout && self.stderr == other.stderr
     }
 }
 
@@ -491,6 +565,14 @@ cmd = ["--version"]
             "missing.bin",
         );
         check("from = \"json\"\nunknown = 1\n", "unknown");
+        check(
+            "from = \"json\"\n[[case]]\nid = \"a\"\ninput_file = \"../x\"\n",
+            "not a path in",
+        );
+        check(
+            "from = \"json\"\n[[case]]\nid = \"a\"\ninput_file = \"/etc/hosts\"\n",
+            "not a path in",
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 
@@ -515,13 +597,74 @@ cmd = ["--version"]
     }
 
     #[test]
-    fn binary_output_round_trips_through_the_expected_file() {
+    fn the_arguments_of_a_case_replace_the_arguments_of_the_file() {
+        let dir = temp_dir("args");
+        fs::create_dir_all(dir.join("cases")).unwrap();
+        fs::write(
+            dir.join("cases/x.toml"),
+            "from = \"json\"\nargs = [\"--wrap=none\"]\n[[case]]\nid = \"a\"\nargs = []\n[[case]]\nid = \"b\"\nargs = [\"-s\"]\n[[case]]\nid = \"c\"\n",
+        )
+        .unwrap();
+        let units = load_units(&dir.join("cases"), &dir).unwrap();
+        assert_eq!(units[0].args, ["-f", "json", "-t", "json"]);
+        assert_eq!(units[1].args, ["-f", "json", "-t", "json", "-s"]);
+        assert_eq!(units[2].args, ["-f", "json", "-t", "json", "--wrap=none"]);
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn the_fingerprint_depends_on_each_part_of_the_input() {
+        let unit = |args: &[&str], files: &[(&str, &str)]| Unit {
+            id: String::new(),
+            file_key: String::new(),
+            local_id: String::new(),
+            kind: UnitKind::Command,
+            args: args.iter().map(|s| (*s).to_owned()).collect(),
+            stdin: Stdin::Bytes(Vec::new()),
+            files: files
+                .iter()
+                .map(|(k, v)| ((*k).to_owned(), v.as_bytes().to_vec()))
+                .collect(),
+            from: None,
+            to: None,
+            covers: Vec::new(),
+        };
+        let base = unit(&["-f", "json"], &[("a", "1")]).fingerprint(b"in");
+        assert_eq!(base.len(), 16);
+        assert_eq!(
+            base,
+            unit(&["-f", "json"], &[("a", "1")]).fingerprint(b"in")
+        );
+        assert_ne!(
+            base,
+            unit(&["-f", "json"], &[("a", "1")]).fingerprint(b"in2")
+        );
+        assert_ne!(
+            base,
+            unit(&["-f", "jso", "n"], &[("a", "1")]).fingerprint(b"in")
+        );
+        assert_ne!(base, unit(&["-fjson"], &[("a", "1")]).fingerprint(b"in"));
+        assert_ne!(
+            base,
+            unit(&["-f", "json"], &[("a", "2")]).fingerprint(b"in")
+        );
+        assert_ne!(
+            base,
+            unit(&["-f", "json"], &[("b", "1")]).fingerprint(b"in")
+        );
+        assert_ne!(base, unit(&["-f", "json"], &[]).fingerprint(b"in"));
+    }
+
+    #[test]
+    fn output_bytes_round_trip_through_the_expected_file() {
         let dir = temp_dir("expected");
-        let binary = Outcome::new(0, vec![0x50, 0x4b, 0xff, 0x00], b"warn\n");
-        assert_eq!(binary.stdout, None);
+        let mut binary = Outcome::new(0, vec![0x50, 0x4b, 0xff, 0x00], vec![0xfe, b'w']);
+        binary.key = "k1".into();
         assert_eq!(binary.stdout_bytes(), [0x50, 0x4b, 0xff, 0x00]);
-        let text = Outcome::new(3, b"ok\n".to_vec(), b"");
-        assert_eq!(text.stdout.as_deref(), Some("ok\n"));
+        assert_eq!(binary.stderr_bytes(), [0xfe, b'w']);
+        let text = Outcome::new(3, b"ok\n".to_vec(), b"warn\n".to_vec());
+        assert_eq!(text.stdout_bytes(), b"ok\n");
+        assert_eq!(text.stderr_bytes(), b"warn\n");
 
         let mut expected = ExpectedFile {
             oracle: "pandoc 3.13".into(),
@@ -535,6 +678,12 @@ cmd = ["--version"]
         assert_eq!(loaded.units.get("a#read"), Some(&binary));
         assert_eq!(loaded.units.get("b#cmd"), Some(&text));
         assert!(load_expected(&dir, "suite/none").unwrap().units.is_empty());
+
+        let mut other_key = binary.clone();
+        other_key.key = "k2".into();
+        assert!(binary.same_result(&other_key));
+        assert!(!binary.same_result(&text));
+        assert!(!text.same_result(&Outcome::new(3, b"ok\n".to_vec(), b"other\n".to_vec())));
         fs::remove_dir_all(&dir).unwrap();
     }
 }

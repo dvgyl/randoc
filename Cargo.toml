@@ -11,7 +11,18 @@ members = [
     "crates/randoc-harness",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
-exclude = ["crates/randoc-ast/fuzz"]
+# Cargo has no glob for this list. A path that does not exist yet does no harm.
+exclude = [
+    "crates/randoc-ast/fuzz",
+    "crates/randoc-cli/fuzz",
+    "crates/randoc-commonmark/fuzz",
+    "crates/randoc-html/fuzz",
+    "crates/randoc-latex/fuzz",
+    "crates/randoc-layout/fuzz",
+    "crates/randoc-markdown/fuzz",
+    "crates/randoc-native/fuzz",
+    "crates/randoc-templates/fuzz",
+]
 
 [workspace.package]
 version = "0.1.0"

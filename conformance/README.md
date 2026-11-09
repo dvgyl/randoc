@@ -84,3 +84,10 @@ cargo run -q -p randoc-harness -- run --filter markdown/
   make one of them fail. Only the coordinator updates the baseline, after a merge.
 - The harness runs each program with a fixed environment and a fixed clock
   (`SOURCE_DATE_EPOCH=1700000000`), under the program name `pandoc`.
+- A stored result belongs to one command line, one standard input and one set
+  of files. When you change a case, its stored results are out of date. `run`
+  reports such a unit as "not recorded", which is a failure. Run `record` again.
+- A run that the harness stops (time limit) or cannot start is never a result.
+  `record` refuses it, and `run` reports the unit as "no result".
+- `run` without `--baseline` exits with 0 also when units fail. Use
+  `--baseline spec/baseline.json` to get a failure exit code for a regression.

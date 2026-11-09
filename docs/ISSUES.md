@@ -7,7 +7,7 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | ID | Difference | Reason |
 | --- | --- | --- |
 | D-001 | `--version` prints a second line that names Randoc and its version. | Required by the project goal. The first line is equal to the Pandoc line, so tools that check the version keep working. |
-| D-002 | Randoc stops at a nesting limit (`Limits::max_nesting_depth`). Pandoc has no limit. | Input is not trusted. The limit of the program is 16384 levels. |
+| D-002 | Randoc stops at a nesting limit (`Limits::max_nesting_depth`). Pandoc has no limit. | Input is not trusted. The limit of the program is 16384 levels. The JSON reader counts JSON levels: it accepts 32768 nested arrays and objects, so the document depth that it accepts depends on the node type (for example about 16000 nested block quotes or 10900 nested divs). |
 
 ## Open divergences
 

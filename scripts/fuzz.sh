@@ -24,7 +24,7 @@ if [ -d "fuzz/seeds/$target" ]; then
 fi
 
 set -- "-max_total_time=$seconds" "-artifact_prefix=fuzz/artifacts/$target/" \
-  -rss_limit_mb=4096 -timeout=25 -print_final_stats=1
+  -rss_limit_mb=2048 -timeout=25 -print_final_stats=1
 if [ -n "$seeds" ]; then
   set -- "$@" "-seed_inputs=$seeds"
 fi

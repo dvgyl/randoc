@@ -908,7 +908,7 @@
         "passing": 7,
         "total": 11
       },
-      "status": "passing",
+      "status": "partial",
       "write": {
         "passing": 7,
         "total": 7
@@ -1038,7 +1038,7 @@
     },
     "output_formats": {
       "not_started": 76,
-      "passing": 1
+      "partial": 1
     },
     "units": {
       "passing": 28,
