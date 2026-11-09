@@ -19,6 +19,9 @@ const CONVERSION_STACK_BYTES: usize = 1 << 30;
 /// 32 KB of stack for one level, so this depth fits in the stack.
 const CLI_MAX_NESTING_DEPTH: usize = 16_384;
 
+/// The default of the `--columns` option in Pandoc.
+const DEFAULT_COLUMNS: i64 = 72;
+
 /// Runs the program with the given arguments and returns the exit code.
 ///
 /// The first argument is the program name.
@@ -204,6 +207,8 @@ fn run_checked(args: &[String]) -> Result<()> {
     let writer = formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to.clone()))?;
 
     let mut reader_options = ReaderOptions::default();
+    // Pandoc gives the value of `--columns` to the reader also. Its default is 72.
+    reader_options.columns = DEFAULT_COLUMNS;
     reader_options.extensions = from_spec.extensions()?;
     let mut writer_options = WriterOptions::default();
     writer_options.extensions = to_spec.extensions()?;
@@ -228,7 +233,7 @@ fn run_checked(args: &[String]) -> Result<()> {
         }
     };
     let bytes = match writer.write(&doc, &writer_options, &mut context)? {
-        Output::Text(text) => text.into_bytes(),
+        Output::Text(text) => end_with_newline(text).into_bytes(),
         Output::Binary(bytes) => bytes,
     };
     match &invocation.output {
@@ -238,6 +243,15 @@ fn run_checked(args: &[String]) -> Result<()> {
             .map_err(|error| Error::Io(format!("{path}: {error}"))),
         _ => write_stdout(&bytes),
     }
+}
+
+/// Adds the final newline of output that is not standalone, as Pandoc does.
+/// This first program has no standalone output.
+fn end_with_newline(mut text: Text) -> Text {
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+    text
 }
 
 fn write_stdout(bytes: &[u8]) -> Result<()> {
@@ -327,6 +341,14 @@ mod tests {
                 byte: 0xff
             }
         );
+    }
+
+    #[test]
+    fn text_output_ends_with_one_newline() {
+        // Pandoc 3.13 prints one newline for an empty document: `pandoc -f json -t html`.
+        assert_eq!(end_with_newline(Text::new()), "\n");
+        assert_eq!(end_with_newline("<p>a</p>".into()), "<p>a</p>\n");
+        assert_eq!(end_with_newline("a\n".into()), "a\n");
     }
 
     #[test]

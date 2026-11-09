@@ -16,6 +16,8 @@
 //! ```
 
 pub mod json;
+#[cfg(test)]
+mod type_tests;
 mod types;
 pub mod walk;
 

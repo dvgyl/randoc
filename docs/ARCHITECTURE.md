@@ -80,6 +80,14 @@ The program decodes text input as UTF-8, removes a byte order mark and removes
 each carriage return before it calls a text reader, as Pandoc does. A reader
 gets `Sources`: one named text for each input file.
 
+## Output
+
+A text writer returns the text as the Pandoc writer function gives it: with no
+final newline for a fragment. The program adds one newline when the output is
+not standalone and the text does not end with a newline. Thus an empty
+document gives one newline. Standalone output comes from the template and is
+written as it is.
+
 ## Stack depth
 
 The `randoc` program runs the conversion on a thread with a 1 GiB stack and

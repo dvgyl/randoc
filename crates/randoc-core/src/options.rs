@@ -63,14 +63,14 @@ impl Default for ReaderOptions {
 /// How an HTML writer shows math.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub enum HtmlMathMethod {
-    /// Plain HTML with Unicode characters where possible. This is the default.
-    #[default]
+    /// Plain HTML with Unicode characters where possible.
     PlainMath,
     /// Images from a web service. The text is the service URL.
     WebTex(Text),
     /// GladTeX markup.
     GladTex,
-    /// MathML.
+    /// MathML. This is the default of Pandoc 3.13.
+    #[default]
     MathMl,
     /// MathJax. The text is the script URL.
     MathJax(Text),
@@ -283,5 +283,19 @@ impl Default for WriterOptions {
             prefer_ascii: false,
             link_images: false,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_default_math_method_is_mathml_as_in_pandoc_3_13() {
+        // `pandoc lua` prints `mathml` for `pandoc.WriterOptions({}).html_math_method`.
+        assert_eq!(
+            WriterOptions::default().html_math_method,
+            HtmlMathMethod::MathMl
+        );
     }
 }

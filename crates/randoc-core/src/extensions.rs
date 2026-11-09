@@ -130,8 +130,12 @@ pub struct FormatSpec {
 impl FormatSpec {
     /// Splits a format specification into the name and the extension changes.
     ///
-    /// This function does not check the names.
+    /// Letter case does not matter: Pandoc makes the specification lowercase
+    /// first, and its error messages show the lowercase form. This function
+    /// does not check the names.
     pub fn parse(spec: &str) -> FormatSpec {
+        let spec = spec.to_lowercase();
+        let spec = spec.as_str();
         let name_end = spec.find(['+', '-']).unwrap_or(spec.len());
         let (name, mut rest) = spec.split_at(name_end);
         let mut changes = Vec::new();
@@ -233,6 +237,14 @@ mod tests {
         let plain = FormatSpec::parse("html");
         assert_eq!(plain.name, "html");
         assert!(plain.changes.is_empty());
+
+        // Pandoc 3.13 accepts `-f MARKDOWN+SMART` and prints `Unknown input format 'nosuch'` for `-f NOSUCH`.
+        let upper = FormatSpec::parse("MARKDOWN+Smart-EMOJI");
+        assert_eq!(upper.name, "markdown");
+        assert_eq!(
+            upper.changes,
+            [(true, "smart".to_owned()), (false, "emoji".to_owned())]
+        );
     }
 
     #[test]

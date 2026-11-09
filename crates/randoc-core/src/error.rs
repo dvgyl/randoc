@@ -11,8 +11,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// exit code from the "Exit codes" section of the Pandoc manual. The `Display`
 /// form is the text that Pandoc prints to standard error.
 ///
-/// The messages of `UnknownReader`, `UnknownWriter`, `UnsupportedExtension`
-/// and `Parse` are verified against Pandoc 3.13. Verify each other message
+/// The messages of `UnknownReader`, `UnknownWriter`, `UnsupportedExtension`,
+/// `Parse`, `CouldNotFindDataFile` and `CouldNotFindMetadataFile` are verified
+/// against Pandoc 3.13. Verify each other message
 /// against the oracle when a workstream first produces it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Error {
@@ -26,6 +27,9 @@ pub enum Error {
     Template(Text),
     /// A command-line option or a defaults file is not valid.
     Option(Text),
+    /// A format specification has a syntax error. The text is the full message.
+    /// The Pandoc manual does not list this error. Pandoc 3.13 exits with 20.
+    Format(Text),
     /// The input format is not known.
     UnknownReader(Text),
     /// The output format is not known.
@@ -121,6 +125,7 @@ impl Error {
             Error::App(_) => 4,
             Error::Template(_) => 5,
             Error::Option(_) => 6,
+            Error::Format(_) => 20,
             Error::UnknownReader(_) => 21,
             Error::UnknownWriter(_) => 22,
             Error::UnsupportedExtension { .. } => 23,
@@ -155,6 +160,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::Io(message)
+            | Error::Format(message)
             | Error::App(message)
             | Error::Option(message)
             | Error::Some(message)
@@ -218,12 +224,12 @@ impl fmt::Display for Error {
                  If you intended to convert from binary format, verify that it's supported and use\n\
                  explicit -f FORMAT."
             ),
-            Error::CouldNotFindDataFile(name) => write!(f, "Could not find data file {name}"),
+            Error::CouldNotFindDataFile(name) => write!(f, "Could not find data file '{name}'"),
             Error::CouldNotFindMetadataFile(name) => {
-                write!(f, "Could not find metadata file {name}")
+                write!(f, "Could not find metadata file '{name}'")
             }
             Error::ResourceNotFound(name) => {
-                write!(f, "File {name} not found in resource path")
+                write!(f, "File '{name}' not found in resource path")
             }
         }
     }
@@ -247,6 +253,14 @@ mod tests {
             "Unknown output format 'nosuch'"
         );
         assert_eq!(
+            Error::CouldNotFindDataFile("nosuch.x".into()).to_string(),
+            "Could not find data file 'nosuch.x'"
+        );
+        assert_eq!(
+            Error::CouldNotFindMetadataFile("nosuch.yaml".into()).to_string(),
+            "Could not find metadata file 'nosuch.yaml'"
+        );
+        assert_eq!(
             Error::UnsupportedExtension {
                 extension: "smart".into(),
                 format: "json".into()
@@ -267,6 +281,7 @@ mod tests {
             (Error::App(text()), 4),
             (Error::Template(text()), 5),
             (Error::Option(text()), 6),
+            (Error::Format(text()), 20),
             (Error::UnknownReader(text()), 21),
             (Error::UnknownWriter(text()), 22),
             (

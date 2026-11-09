@@ -1,11 +1,16 @@
 {
-  "updated": "2026-11-09T22:10:00Z",
+  "updated": "2026-11-09T23:50:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
     "release_file_sha256": "f436d18bebbfb3ddd326597686dacab9fac5dc23bd060495020f35a28a43a7c3",
     "binary_sha256": "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44",
-    "api_version": [1, 23, 1, 2],
+    "api_version": [
+      1,
+      23,
+      1,
+      2
+    ],
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
@@ -16,14 +21,71 @@
     "content_identical": 28,
     "baseline_units": 28
   },
-  "pandoc_test_suite": { "status": "not_run" },
-  "corpus": { "status": "not_built" },
+  "pandoc_test_suite": {
+    "status": "measured",
+    "run": 2231,
+    "oracle_pass": 2231,
+    "randoc_pass": 0,
+    "cannot_run_estimate": 1939,
+    "details": "spec/pandoc-testsuite.json"
+  },
+  "corpus": {
+    "status": "not_built"
+  },
   "workstreams": [
-    { "id": "foundation", "state": "merged", "owner": "coordinator" }
+    {
+      "id": "foundation",
+      "state": "merged",
+      "note": "gate 5 open: JSON and command-line findings are in json-codec and cli"
+    },
+    {
+      "id": "testsuite",
+      "state": "merged"
+    },
+    {
+      "id": "bench",
+      "state": "review"
+    },
+    {
+      "id": "corpus",
+      "state": "review"
+    },
+    {
+      "id": "layout",
+      "state": "in_work"
+    },
+    {
+      "id": "markdown-reader",
+      "state": "in_work"
+    },
+    {
+      "id": "html-writer",
+      "state": "in_work"
+    },
+    {
+      "id": "cli",
+      "state": "in_work"
+    },
+    {
+      "id": "native",
+      "state": "in_work"
+    },
+    {
+      "id": "json-codec",
+      "state": "in_work"
+    },
+    {
+      "id": "commonmark-reader",
+      "state": "in_work"
+    },
+    {
+      "id": "research",
+      "state": "in_work"
+    }
   ],
   "next_tasks": [
-    "Start the first wave of workstreams: layout, Markdown reader, HTML writer, native format, command line, test-suite runner, competitive analysis.",
-    "Run the two reviews of the foundation and fix the findings.",
-    "Build the corpus of openly licensed documents."
+    "Review and merge each wave 1 workstream when it reports: layout, native, json-codec, html-writer, markdown-reader, cli, bench, corpus, research.",
+    "Start templates, the LaTeX writer and the Markdown writer after layout merges.",
+    "Add the harness rule for random values (H-001) before an EPUB or ipynb writer starts."
   ]
 }

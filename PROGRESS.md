@@ -5,21 +5,44 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-09 22:10 UTC.
+Updated: 2026-11-09 23:50 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
   log messages and the conversion context (`randoc-core`).
 - The conformance harness exists (`randoc-harness`). It records oracle results,
   compares Randoc with them, keeps a baseline and writes the capability matrix.
-- One format works: `json` (reader and writer).
+  The suite also runs as a test of the program (`crates/randoc-cli/tests/conformance.rs`).
+- One format works on `main`: `json` (reader and writer).
 - Harness result on `main`: 36 units, 28 pass, 8 fail. All 28 passing units are
   byte-identical. The 8 failing units are JSON error messages (issue I-001).
-- Capability matrix (`spec/capabilities.json`): 1 of 52 input formats is
-  partial, 1 of 77 output formats is passing, 0 of 90 extensions and 2 of 109
-  options have passing units.
-- Pandoc's own test suite: not run yet.
-- Corpus of real documents: not built yet.
+- Capability matrix (`spec/capabilities.json`): 1 of 52 input formats and 1 of
+  77 output formats are partial. 0 of 90 extensions and 2 of 109 options have
+  passing units.
+- Pandoc's own test suite (`tools/pandoc-testsuite`, `docs/PANDOC_TESTSUITE.md`):
+  the tool runs 2231 tests. The oracle passes 2231. Randoc passes 0. About 1939
+  more tests need Haskell and cannot run.
+- Corpus of real documents: built by the workstream corpus (242 documents),
+  not merged yet.
+
+## Workstreams
+
+| Workstream | Branch | State at 23:50 UTC |
+| --- | --- | --- |
+| testsuite | `ws/testsuite` | Merged. |
+| bench | `ws/bench` | Review round 2. |
+| corpus | `ws/corpus` | Review round 1. |
+| layout | `ws/layout` | The worker runs its gate checks. |
+| markdown-reader | `ws/markdown-reader` | In work. |
+| html-writer | `ws/html-writer` | In work. |
+| cli | `ws/cli` | In work. |
+| native | `ws/native` | In work. |
+| json-codec | `ws/json-codec` | In work. It corrects the JSON findings of the foundation reviews. |
+| commonmark-reader | `ws/commonmark-reader` | In work. |
+| research | `ws/research` | In work. |
+
+The brief, the report and the reviews of each workstream are in
+`/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).
 
 ## The oracle
 
@@ -70,6 +93,3 @@ Gates that could not apply:
 | Foundation commit | 5 (two reviews) | The reviews of the foundation run after the first push, so that the workstreams can start. Findings are fixed in follow-up commits. |
 | Foundation commit | 6 (benchmarks) | There is no earlier version to compare with. |
 
-## Workstreams
-
-See `spec/status.json`.

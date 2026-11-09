@@ -179,6 +179,7 @@ name = "randoc-cli"
 version = "0.1.0"
 dependencies = [
  "randoc",
+ "randoc-harness",
 ]
 
 [[package]]

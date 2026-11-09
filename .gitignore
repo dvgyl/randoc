@@ -9,3 +9,4 @@ mutants.out*/
 .DS_Store
 # macOS writes these files on FAT and exFAT volumes.
 ._*
+__pycache__/
