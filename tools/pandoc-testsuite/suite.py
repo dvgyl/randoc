@@ -722,22 +722,78 @@ TEST_MARKERS = re.compile(
 )
 
 
+SYMBOL = set("!#$%&*+./<=>?@\\^|-~:")
+
+
+def active_code(source: str) -> str:
+    """The source without Haskell comments. Strings and line breaks stay.
+
+    Block comments `{- -}` nest. A line comment starts with two or more
+    dashes that are not part of an operator.
+    """
+    out = []
+    pos, depth, size = 0, 0, len(source)
+    while pos < size:
+        char = source[pos]
+        if source.startswith("{-", pos):
+            depth += 1
+            pos += 2
+        elif depth and source.startswith("-}", pos):
+            depth -= 1
+            pos += 2
+        elif depth:
+            out.append("\n" if char == "\n" else "")
+            pos += 1
+        elif char == '"':
+            match = re.compile(HS_STRING).match(source, pos)
+            end = match.end() if match else size
+            out.append(source[pos:end])
+            pos = end
+        elif char == "'" and (pos == 0 or not (source[pos - 1].isalnum() or source[pos - 1] in "_'")):
+            match = re.compile(r"'(?:[^'\\]|\\[^']*)'").match(source, pos)
+            end = match.end() if match else pos + 1
+            out.append(source[pos:end])
+            pos = end
+        elif source.startswith("--", pos):
+            dashes = pos
+            while dashes < size and source[dashes] == "-":
+                dashes += 1
+            if dashes < size and source[dashes] in SYMBOL:
+                out.append(source[pos:dashes])
+                pos = dashes
+            else:
+                while pos < size and source[pos] != "\n":
+                    pos += 1
+        else:
+            out.append(char)
+            pos += 1
+    return "".join(out)
+
+
 def count_tests(source: str) -> int:
     """An estimate of the number of tests in a Haskell module.
 
-    Each `=?>` pair is one test. A line without a pair and with a call of a
-    test constructor is one test. The definitions of the constructors (lines
-    with `::`) do not count.
+    Comments do not count. Each `=?>` pair is one test. A line without a
+    pair and with a call of a test constructor is one test. Type
+    declarations (lines with `::`) and imports do not count.
     """
     total = 0
-    for line in source.split("\n"):
+    for line in active_code(source).split("\n"):
         stripped = line.strip()
-        if stripped.startswith("--") or "::" in stripped or stripped.startswith("import"):
+        if "::" in stripped or stripped.startswith("import"):
             continue
         markers = TEST_MARKERS.findall(line)
         pairs = markers.count("=?>")
         total += pairs if pairs else min(1, len(markers))
     return total
+
+
+def count_entries(source: str, names: str) -> int:
+    """The number of calls of the functions `names` (a regex alternation) as
+    list entries or indented lines. A definition starts in column 0 and does
+    not count."""
+    pattern = r"(?:^[ \t]+|[\[,][ \t]*)(?:" + names + r")\b"
+    return len(re.findall(pattern, active_code(source), re.M))
 
 
 BINARY_READERS = {"Docx.hs": "docx", "Pptx.hs": "pptx", "Xlsx.hs": "xlsx"}
@@ -793,18 +849,18 @@ def discover_modules(suite: str, found: Discovery) -> None:
 
     for module, reader in BINARY_READERS.items():
         source = read(f"Readers/{module}")
-        cases, skipped = parse_compare_tests(source, reader, f"readers/{reader}")
+        cases, skipped = parse_compare_tests(active_code(source), reader, f"readers/{reader}")
         found.cases.extend(cases)
         if skipped:
             found.unsupported.append(Unsupported(f"readers/{reader}", skipped, "reader options with no command line equivalent"))
-        others = len(re.findall(r"^\s*(?:,\s*)?(testMediaBag|testForWarningsWithOpts)\b", source, re.M))
+        others = count_entries(source, "testMediaBag|testForWarningsWithOpts")
         if others:
             found.unsupported.append(Unsupported(
                 f"readers/{reader}", others,
                 "media bag and warning-list tests inspect reader state that the command line does not show"))
     odt = read("Readers/ODT.hs")
     found.cases.extend(parse_odt(odt))
-    media = len(re.findall(r"^\s*(?:,\s*)?testMediaBag\b", odt, re.M))
+    media = count_entries(odt, "testMediaBag")
     if media:
         found.unsupported.append(Unsupported("readers/odt", media, "media bag tests inspect reader state that the command line does not show"))
     found.cases.extend(parse_fb2(read("Readers/FB2.hs")))

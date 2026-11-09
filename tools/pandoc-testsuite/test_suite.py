@@ -355,6 +355,30 @@ class Counting(unittest.TestCase):
         )
         self.assertEqual(suite.count_tests(source), 3)
 
+    def test_comments_do_not_count(self):
+        source = (
+            "{- doc\n  \"x\" =: X =?> Y\n  {- inner -} still =?> comment\n-}\n"
+            '  [ "a" =: "-- not a comment" =?> para "x" -- "b" =?> c\n'
+            '  , "c" =?> d\n'
+        )
+        self.assertEqual(suite.count_tests(source), 2)
+
+    def test_active_code_keeps_strings_operators_and_lines(self):
+        source = 'a = "{- s -}" --> \'"\' -- note\n{- c\n -}b\n'
+        self.assertEqual(suite.active_code(source), 'a = "{- s -}" --> \'"\' \n\nb\n')
+
+    def test_entries_skip_declarations_definitions_and_comments(self):
+        source = (
+            "testMediaBag :: String -> TestTree\n"
+            "testMediaBag name file = run name file\n"
+            "tests = [ testMediaBag \"one\" \"a\"\n"
+            "        , testForWarningsWithOpts def \"two\" \"b\" []\n"
+            "        ]\n"
+            "{-\nold = [ testMediaBag \"three\" \"c\" ]\n-}\n"
+            "-- , testMediaBag \"four\" \"d\"\n"
+        )
+        self.assertEqual(suite.count_entries(source, "testMediaBag|testForWarningsWithOpts"), 2)
+
 
 if __name__ == "__main__":
     unittest.main()
