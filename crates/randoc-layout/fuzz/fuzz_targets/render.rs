@@ -8,6 +8,10 @@ use randoc_layout::*;
 /// The harness thread has a small stack. Writers limit the nesting of a
 /// document with the nesting limit of the input.
 const MAX_DEPTH: usize = 48;
+/// A block re-wraps its content at its own width, so a narrow block around
+/// a wide block multiplies the number of lines. `doclayout` has the same
+/// cost, and writers nest blocks only for tables in tables.
+const MAX_BLOCKS: usize = 4;
 const WORDS: &[&str] = &[
     "a", "bb", "hello", "x y", " lead", "trail ", "日本", "e\u{301}", "\u{1F600}", "a\nb", "",
     "\n", "\u{301}", "\u{200D}", "\u{FE0F}", "\u{1F3FB}", "\t", "supercalifragilistic",
@@ -16,6 +20,7 @@ const WORDS: &[&str] = &[
 fuzz_target!(|data: &[u8]| {
     let mut stack: Vec<(Doc, usize)> = Vec::new();
     let mut bytes = data.iter().copied();
+    let mut blocks = 0;
     while let Some(op) = bytes.next() {
         let arg = usize::from(op >> 5);
         let unary = |stack: &mut Vec<(Doc, usize)>, f: &dyn Fn(Doc) -> Doc| {
@@ -34,6 +39,13 @@ fuzz_target!(|data: &[u8]| {
                 stack.push((f(a, b), da.max(db)));
             }
         };
+        let mut op = op;
+        if matches!(op & 31, 17..=19) {
+            if blocks >= MAX_BLOCKS {
+                op = 31;
+            }
+            blocks += 1;
+        }
         match op & 31 {
             0 => stack.push((literal(WORDS[usize::from(op >> 3) % WORDS.len()]), 0)),
             1 => stack.push((space(), 0)),
