@@ -35,6 +35,7 @@ Options:
   --filter TEXT       Use only the units whose identifier contains TEXT. Repeat for more.
   --all               record: run the oracle again for each unit.
   --randoc PATH       The Randoc program. Default: target/debug/randoc.
+  --oracle PATH       The oracle program. Default: the RANDOC_ORACLE_PANDOC environment variable.
   --baseline FILE     run: fail when a unit in FILE does not pass.
   --update-baseline   run: write the passing units to the baseline file.
   --matrix FILE       run: write the capability matrix to FILE.
@@ -43,7 +44,7 @@ Options:
   --timeout SECONDS   The time limit for one program run. Default: 30.
   --root DIR          The repository root. Default: the current directory.
 
-The oracle path comes from the RANDOC_ORACLE_PANDOC environment variable.
+record and verify-oracle need the oracle: Pandoc 3.13.
 ";
 
 #[derive(Debug)]
@@ -53,6 +54,7 @@ struct Config {
     filters: Vec<String>,
     all: bool,
     randoc: Option<PathBuf>,
+    oracle: Option<PathBuf>,
     baseline: Option<PathBuf>,
     update_baseline: bool,
     matrix: Option<PathBuf>,
@@ -84,6 +86,7 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
         filters: Vec::new(),
         all: false,
         randoc: None,
+        oracle: None,
         baseline: None,
         update_baseline: false,
         matrix: None,
@@ -99,6 +102,7 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
             "--filter" => config.filters.push(value()?),
             "--all" => config.all = true,
             "--randoc" => config.randoc = Some(PathBuf::from(value()?)),
+            "--oracle" => config.oracle = Some(PathBuf::from(value()?)),
             "--baseline" => config.baseline = Some(PathBuf::from(value()?)),
             "--update-baseline" => config.update_baseline = true,
             "--matrix" => config.matrix = Some(PathBuf::from(value()?)),
@@ -179,7 +183,13 @@ impl Session {
                 );
             }
         }
-        let scratch = std::env::temp_dir().join(format!("randoc-harness-{}", std::process::id()));
+        // Each session has its own directory, so that two sessions of one process do not share files.
+        static SESSIONS: AtomicUsize = AtomicUsize::new(0);
+        let scratch = std::env::temp_dir().join(format!(
+            "randoc-harness-{}-{}",
+            std::process::id(),
+            SESSIONS.fetch_add(1, Ordering::Relaxed)
+        ));
         Ok(Session {
             config,
             units,
@@ -194,10 +204,15 @@ impl Session {
     }
 
     fn oracle(&self) -> Result<Program, String> {
-        let path = std::env::var("RANDOC_ORACLE_PANDOC")
-            .map_err(|_| "set RANDOC_ORACLE_PANDOC to the Pandoc 3.13 program")?;
+        let binary =
+            match &self.config.oracle {
+                Some(path) => path.clone(),
+                None => PathBuf::from(std::env::var("RANDOC_ORACLE_PANDOC").map_err(
+                    |_| "set RANDOC_ORACLE_PANDOC or --oracle to the Pandoc 3.13 program",
+                )?),
+            };
         Ok(Program {
-            binary: PathBuf::from(path),
+            binary,
             timeout: self.config.timeout,
         })
     }
@@ -839,5 +854,319 @@ mod tests {
             assert!(load_baseline(&path).is_err(), "{bad}");
         }
         fs::remove_dir_all(&dir).unwrap();
+    }
+
+    /// A temporary repository root with case files, an inventory and programs that are shell scripts.
+    struct Fixture {
+        root: PathBuf,
+    }
+
+    impl Fixture {
+        fn new(name: &str) -> Fixture {
+            let root = std::env::temp_dir()
+                .join(format!("randoc-harness-flow-{name}-{}", std::process::id()));
+            let _ = fs::remove_dir_all(&root);
+            let inventory = root.join("spec/inventory");
+            fs::create_dir_all(&inventory).unwrap();
+            fs::create_dir_all(root.join("conformance/cases/s")).unwrap();
+            fs::write(inventory.join("oracle.json"), r#"{"version":"fake 1"}"#).unwrap();
+            fs::write(inventory.join("input-formats.json"), r#"["markdown"]"#).unwrap();
+            fs::write(inventory.join("output-formats.json"), r#"["html"]"#).unwrap();
+            fs::write(inventory.join("extensions.json"), r#"{"extensions":[]}"#).unwrap();
+            fs::write(inventory.join("options.json"), "[]").unwrap();
+            let fixture = Fixture { root };
+            fixture.cases("from = \"markdown\"\nto = [\"html\"]\n[[case]]\nid = \"a\"\ninput = \"abc\\n\"\n[[case]]\nid = \"b\"\ninput = \"xyz\\n\"\n");
+            fixture
+        }
+
+        fn cases(&self, text: &str) {
+            fs::write(self.root.join("conformance/cases/s/f.toml"), text).unwrap();
+        }
+
+        /// Writes an executable shell script and returns its path.
+        fn program(&self, name: &str, body: &str) -> PathBuf {
+            use std::os::unix::fs::PermissionsExt;
+            let path = self.root.join(name);
+            fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o755)).unwrap();
+            path
+        }
+
+        /// A converter that prints its standard input. `--version` prints a version line.
+        fn echo(&self, name: &str) -> PathBuf {
+            self.program(
+                name,
+                "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\ncat",
+            )
+        }
+
+        /// A converter that changes each `a` of its input to `A`.
+        fn changed(&self, name: &str) -> PathBuf {
+            self.program(name, "tr a A")
+        }
+
+        fn session(&self, command: &str, extra: &[&str], oracle: &Path, randoc: &Path) -> Session {
+            let mut list = vec![
+                command.to_owned(),
+                "--root".to_owned(),
+                self.root.to_str().unwrap().to_owned(),
+                "--oracle".to_owned(),
+                oracle.to_str().unwrap().to_owned(),
+                "--randoc".to_owned(),
+                randoc.to_str().unwrap().to_owned(),
+                "--timeout".to_owned(),
+                "20".to_owned(),
+                "--report".to_owned(),
+                self.root.join("report.json").to_str().unwrap().to_owned(),
+            ];
+            list.extend(extra.iter().map(|s| (*s).to_owned()));
+            Session::open(parse_config(&list).unwrap()).unwrap()
+        }
+
+        fn baseline(&self) -> PathBuf {
+            self.root.join("spec/baseline.json")
+        }
+
+        fn report_statuses(&self) -> BTreeMap<String, String> {
+            let text = fs::read_to_string(self.root.join("report.json")).unwrap();
+            let value: serde_json::Value = serde_json::from_str(&text).unwrap();
+            value["units"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|u| {
+                    (
+                        u["id"].as_str().unwrap().to_owned(),
+                        u["status"].as_str().unwrap().to_owned(),
+                    )
+                })
+                .collect()
+        }
+    }
+
+    impl Drop for Fixture {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.root);
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn record_then_run_passes_and_writes_the_baseline_and_the_matrix() {
+        let fixture = Fixture::new("pass");
+        let oracle = fixture.echo("oracle");
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+
+        let baseline = fixture.baseline();
+        let matrix = fixture.root.join("spec/capabilities.json");
+        let extra = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--update-baseline",
+            "--matrix",
+            matrix.to_str().unwrap(),
+        ];
+        assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
+
+        let ids: Vec<String> = load_baseline(&baseline).unwrap().into_iter().collect();
+        assert_eq!(
+            ids,
+            [
+                "s/f/a#e2e:html",
+                "s/f/a#read",
+                "s/f/a#write:html",
+                "s/f/b#e2e:html",
+                "s/f/b#read",
+                "s/f/b#write:html"
+            ]
+        );
+        let matrix: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&matrix).unwrap()).unwrap();
+        assert_eq!(
+            matrix["summary"]["units"],
+            serde_json::json!({"passing": 6, "total": 6})
+        );
+        assert_eq!(matrix["output_formats"]["html"]["status"], "passing");
+        assert!(verify_oracle(fixture.session("verify-oracle", &[], &oracle, &oracle)).unwrap());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_different_output_fails_and_a_baseline_unit_that_fails_is_a_regression() {
+        let fixture = Fixture::new("regress");
+        let oracle = fixture.echo("oracle");
+        let wrong = fixture.changed("wrong");
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        let baseline = fixture.baseline();
+        let extra = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--update-baseline",
+        ];
+        assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
+
+        // Case `a` has the letter that the wrong program changes. Case `b` does not.
+        let check = ["--baseline", baseline.to_str().unwrap()];
+        assert!(!run(fixture.session("run", &check, &oracle, &wrong)).unwrap());
+        let statuses = fixture.report_statuses();
+        assert_eq!(statuses["s/f/a#read"], "fail");
+        assert_eq!(statuses["s/f/a#write:html"], "fail");
+        assert_eq!(statuses["s/f/b#read"], "pass");
+
+        // A filter that selects only passing units reports no regression.
+        let filtered = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--filter",
+            "s/f/b",
+        ];
+        assert!(run(fixture.session("run", &filtered, &oracle, &wrong)).unwrap());
+        // The baseline is not updated when there are regressions or when a filter is active.
+        assert!(run(fixture.session("run", &extra, &oracle, &wrong)).is_err());
+        let update_filtered = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--update-baseline",
+            "--filter",
+            "s/f/b",
+        ];
+        assert!(run(fixture.session("run", &update_filtered, &oracle, &oracle)).is_err());
+        assert_eq!(load_baseline(&baseline).unwrap().len(), 6);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_changed_or_removed_case_does_not_pass_against_old_results() {
+        let fixture = Fixture::new("stale");
+        let oracle = fixture.echo("oracle");
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        let baseline = fixture.baseline();
+        let extra = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--update-baseline",
+        ];
+        assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
+
+        // Change the input of case `a` and remove case `b`.
+        fixture.cases(
+            "from = \"markdown\"\nto = [\"html\"]\n[[case]]\nid = \"a\"\ninput = \"new\\n\"\n",
+        );
+        let check = ["--baseline", baseline.to_str().unwrap()];
+        assert!(!run(fixture.session("run", &check, &oracle, &oracle)).unwrap());
+        let statuses = fixture.report_statuses();
+        assert_eq!(statuses["s/f/a#read"], "not_recorded");
+        assert_eq!(statuses["s/f/a#e2e:html"], "not_recorded");
+        assert!(!statuses.contains_key("s/f/b#read"));
+        // The stored results are not current, so the oracle check fails too.
+        assert!(!verify_oracle(fixture.session("verify-oracle", &[], &oracle, &oracle)).unwrap());
+
+        // A filtered run reports the removed unit of the baseline.
+        let filtered = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--filter",
+            "s/f/b",
+        ];
+        assert!(!run(fixture.session("run", &filtered, &oracle, &oracle)).unwrap());
+
+        // After a new record, case `a` passes again, and the result of case `b` is removed.
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        let stored =
+            cases::load_expected(&fixture.root.join("conformance/expected"), "s/f").unwrap();
+        let keys: Vec<&str> = stored.units.keys().map(String::as_str).collect();
+        assert_eq!(keys, ["a#e2e:html", "a#read", "a#write:html"]);
+        assert!(!run(fixture.session("run", &check, &oracle, &oracle)).unwrap());
+        let statuses = fixture.report_statuses();
+        assert_eq!(statuses["s/f/a#read"], "pass");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_program_with_no_result_is_never_recorded_and_never_passes() {
+        let fixture = Fixture::new("noresult");
+        let oracle = fixture.echo("oracle");
+        let hang = fixture.program(
+            "hang",
+            "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\nsleep 60",
+        );
+
+        // The oracle gives no result: record reports the error and stores nothing.
+        let quick = ["--timeout", "1"];
+        assert!(!record(fixture.session("record", &quick, &hang, &hang)).unwrap());
+        let stored =
+            cases::load_expected(&fixture.root.join("conformance/expected"), "s/f").unwrap();
+        assert!(stored.units.is_empty());
+
+        // Randoc gives no result: the unit has the status "no_result".
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        let baseline = fixture.baseline();
+        let extra = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--update-baseline",
+        ];
+        assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
+        let check = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--timeout",
+            "1",
+            "--filter",
+            "s/f/a#read",
+        ];
+        assert!(!run(fixture.session("run", &check, &oracle, &hang)).unwrap());
+        assert_eq!(fixture.report_statuses()["s/f/a#read"], "no_result");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_write_unit_is_skipped_when_the_oracle_has_no_tree() {
+        let fixture = Fixture::new("skip");
+        // The reader fails for input with `x`, so case `b` has no document tree.
+        let oracle = fixture.program(
+            "oracle",
+            "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\nif [ \"$2\" = markdown ] && grep -q x; then echo bad >&2; exit 64; fi\ncat",
+        );
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        let stored =
+            cases::load_expected(&fixture.root.join("conformance/expected"), "s/f").unwrap();
+        assert!(!stored.units.contains_key("b#write:html"));
+        assert_eq!(stored.units["b#read"].exit, 64);
+
+        let baseline = fixture.baseline();
+        let extra = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--update-baseline",
+        ];
+        assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
+        let statuses = fixture.report_statuses();
+        assert_eq!(statuses["s/f/b#write:html"], "skipped");
+        assert_eq!(statuses["s/f/b#read"], "pass");
+        assert!(
+            !load_baseline(&baseline)
+                .unwrap()
+                .contains("s/f/b#write:html")
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn show_runs_one_unit_and_reports_whether_it_passes() {
+        let fixture = Fixture::new("show");
+        let oracle = fixture.echo("oracle");
+        let wrong = fixture.changed("wrong");
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        assert!(show(fixture.session("show", &["s/f/a#read"], &oracle, &oracle)).unwrap());
+        assert!(!show(fixture.session("show", &["s/f/a#read"], &oracle, &wrong)).unwrap());
+        let config = parse_config(&args(&[
+            "show",
+            "--root",
+            fixture.root.to_str().unwrap(),
+            "s/f/none#read",
+        ]))
+        .unwrap();
+        assert!(Session::open(config).is_err());
     }
 }
