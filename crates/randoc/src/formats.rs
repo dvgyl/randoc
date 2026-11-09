@@ -9,12 +9,24 @@ use randoc_core::{Reader, TextReader, Writer};
 
 use crate::json_format;
 
+type ReaderLookup = fn(&str) -> Option<Reader>;
+type WriterLookup = fn(&str) -> Option<Writer>;
+
+/// The reader lookup of each format crate. Add one line for a new crate.
+#[rustfmt::skip]
+const READERS: &[ReaderLookup] = &[
+    json_format::reader,
+];
+
+/// The writer lookup of each format crate. Add one line for a new crate.
+#[rustfmt::skip]
+const WRITERS: &[WriterLookup] = &[
+    json_format::writer,
+];
+
 /// Returns the reader for a format name without extension changes, for example `markdown`.
 pub fn reader(name: &str) -> Option<Reader> {
-    match name {
-        "json" => Some(Reader::Text(Arc::new(json_format::read))),
-        _ => None,
-    }
+    READERS.iter().find_map(|lookup| lookup(name))
 }
 
 /// Returns the text reader for a format name, or `None` for a binary format or an unknown format.
@@ -27,10 +39,7 @@ pub fn text_reader(name: &str) -> Option<Arc<dyn TextReader>> {
 
 /// Returns the writer for a format name without extension changes, for example `html`.
 pub fn writer(name: &str) -> Option<Writer> {
-    match name {
-        "json" => Some(Writer::Text(Arc::new(json_format::write))),
-        _ => None,
-    }
+    WRITERS.iter().find_map(|lookup| lookup(name))
 }
 
 #[cfg(test)]

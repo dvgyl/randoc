@@ -1,12 +1,24 @@
 //! The `json` reader and writer.
 
+use std::sync::Arc;
+
 use randoc_ast::{Pandoc, Text, json};
-use randoc_core::{Context, Error, ReaderOptions, Result, Sources, WriterOptions};
+use randoc_core::{Context, Error, Reader, ReaderOptions, Result, Sources, Writer, WriterOptions};
+
+/// Returns the reader when the format name is `json`.
+pub(crate) fn reader(format: &str) -> Option<Reader> {
+    (format == "json").then(|| Reader::Text(Arc::new(read)))
+}
+
+/// Returns the writer when the format name is `json`.
+pub(crate) fn writer(format: &str) -> Option<Writer> {
+    (format == "json").then(|| Writer::Text(Arc::new(write)))
+}
 
 /// The JSON nesting levels that one level of the document tree can use.
 const JSON_LEVELS_PER_NODE: usize = 2;
 
-pub(crate) fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
+fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
     let text = sources.concat();
     let max_depth = context
         .limits
@@ -21,7 +33,7 @@ pub(crate) fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) 
         .map_err(|error| Error::Parse(format!("JSON parse error: Error in $: {error}")))
 }
 
-pub(crate) fn write(doc: &Pandoc, _: &WriterOptions, _: &mut Context) -> Result<Text> {
+fn write(doc: &Pandoc, _: &WriterOptions, _: &mut Context) -> Result<Text> {
     let mut out = json::to_json(doc);
     out.push('\n');
     Ok(out)
