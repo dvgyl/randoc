@@ -1,33 +1,36 @@
 {
  "program": "pandoc 3.13",
  "oracle": "pandoc 3.13",
+ "program_path": "target/debug/randoc",
+ "program_sha256": "53cb2dc2c9a6ee1be95408e9cff6e9bb58944142efea391ac78e0794b5f6ece6",
+ "oracle_sha256": "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44",
  "targets": [
   "json",
   "html",
   "markdown"
  ],
- "timeout_seconds": 180,
- "documents": 242,
+ "timeout_seconds": 60,
+ "documents": 233,
  "totals": {
-  "units": 726,
+  "units": 699,
   "pass": 0,
-  "fail": 726
+  "fail": 699
  },
  "by_target": {
   "html": {
-   "units": 242,
+   "units": 233,
    "pass": 0,
-   "fail": 242
+   "fail": 233
   },
   "json": {
-   "units": 242,
+   "units": 233,
    "pass": 0,
-   "fail": 242
+   "fail": 233
   },
   "markdown": {
-   "units": 242,
+   "units": 233,
    "pass": 0,
-   "fail": 242
+   "fail": 233
   }
  },
  "by_format": {
@@ -62,9 +65,9 @@
    "fail": 15
   },
   "csv": {
-   "units": 15,
+   "units": 12,
    "pass": 0,
-   "fail": 15
+   "fail": 12
   },
   "djot": {
    "units": 15,
@@ -82,14 +85,9 @@
    "fail": 36
   },
   "epub": {
-   "units": 24,
+   "units": 21,
    "pass": 0,
-   "fail": 24
-  },
-  "fb2": {
-   "units": 3,
-   "pass": 0,
-   "fail": 3
+   "fail": 21
   },
   "gfm": {
    "units": 36,
@@ -177,9 +175,9 @@
    "fail": 48
   },
   "rtf": {
-   "units": 30,
+   "units": 24,
    "pass": 0,
-   "fail": 30
+   "fail": 24
   },
   "t2t": {
    "units": 9,
@@ -192,9 +190,9 @@
    "fail": 12
   },
   "typst": {
-   "units": 24,
+   "units": 12,
    "pass": 0,
-   "fail": 24
+   "fail": 12
   },
   "xlsx": {
    "units": 12,
@@ -257,9 +255,6 @@
   "csv-gdp:html": "fail exit,stderr,output",
   "csv-gdp:json": "fail exit,stderr,output",
   "csv-gdp:markdown": "fail exit,stderr,output",
-  "csv-population:html": "fail exit,stderr,output",
-  "csv-population:json": "fail exit,stderr,output",
-  "csv-population:markdown": "fail exit,stderr,output",
   "csv-top-economies:html": "fail exit,stderr,output",
   "csv-top-economies:json": "fail exit,stderr,output",
   "csv-top-economies:markdown": "fail exit,stderr,output",
@@ -698,9 +693,6 @@
   "tika-footnotes-docx:html": "fail exit,stderr,output",
   "tika-footnotes-docx:json": "fail exit,stderr,output",
   "tika-footnotes-docx:markdown": "fail exit,stderr,output",
-  "tika-test-fb2:html": "fail exit,stderr,output",
-  "tika-test-fb2:json": "fail exit,stderr,output",
-  "tika-test-fb2:markdown": "fail exit,stderr,output",
   "tika-testcomment-docx:html": "fail exit,stderr,output",
   "tika-testcomment-docx:json": "fail exit,stderr,output",
   "tika-testcomment-docx:markdown": "fail exit,stderr,output",
@@ -716,9 +708,6 @@
   "tika-testepub-multi-metadata-vals-epub:html": "fail exit,stderr,output",
   "tika-testepub-multi-metadata-vals-epub:json": "fail exit,stderr,output",
   "tika-testepub-multi-metadata-vals-epub:markdown": "fail exit,stderr,output",
-  "tika-testepub-xml-ext-epub:html": "fail exit,stderr,output",
-  "tika-testepub-xml-ext-epub:json": "fail exit,stderr,output",
-  "tika-testepub-xml-ext-epub:markdown": "fail exit,stderr,output",
   "tika-testexcel-dateformats-xlsx:html": "fail exit,stderr,output",
   "tika-testexcel-dateformats-xlsx:json": "fail exit,stderr,output",
   "tika-testexcel-dateformats-xlsx:markdown": "fail exit,stderr,output",
@@ -773,9 +762,6 @@
   "tika-testrtfhyperlink-rtf:html": "fail exit,stderr,output",
   "tika-testrtfhyperlink-rtf:json": "fail exit,stderr,output",
   "tika-testrtfhyperlink-rtf:markdown": "fail exit,stderr,output",
-  "tika-testrtfjapanese-rtf:html": "fail exit,stderr,output",
-  "tika-testrtfjapanese-rtf:json": "fail exit,stderr,output",
-  "tika-testrtfjapanese-rtf:markdown": "fail exit,stderr,output",
   "tika-testrtflistlibreoffice-rtf:html": "fail exit,stderr,output",
   "tika-testrtflistlibreoffice-rtf:json": "fail exit,stderr,output",
   "tika-testrtflistlibreoffice-rtf:markdown": "fail exit,stderr,output",
@@ -788,9 +774,6 @@
   "tika-testrtfvarious-rtf:html": "fail exit,stderr,output",
   "tika-testrtfvarious-rtf:json": "fail exit,stderr,output",
   "tika-testrtfvarious-rtf:markdown": "fail exit,stderr,output",
-  "tika-testrtfword2010czechcharacters-rtf:html": "fail exit,stderr,output",
-  "tika-testrtfword2010czechcharacters-rtf:json": "fail exit,stderr,output",
-  "tika-testrtfword2010czechcharacters-rtf:markdown": "fail exit,stderr,output",
   "tika-teststyles-odt:html": "fail exit,stderr,output",
   "tika-teststyles-odt:json": "fail exit,stderr,output",
   "tika-teststyles-odt:markdown": "fail exit,stderr,output",
@@ -827,24 +810,12 @@
   "typst-appreciated-letter-lib:html": "fail exit,stderr,output",
   "typst-appreciated-letter-lib:json": "fail exit,stderr,output",
   "typst-appreciated-letter-lib:markdown": "fail exit,stderr,output",
-  "typst-badformer-lib:html": "fail exit,stderr",
-  "typst-badformer-lib:json": "fail exit,stderr",
-  "typst-badformer-lib:markdown": "fail exit,stderr",
   "typst-charged-ieee-lib:html": "fail exit,stderr,output",
   "typst-charged-ieee-lib:json": "fail exit,stderr,output",
   "typst-charged-ieee-lib:markdown": "fail exit,stderr,output",
-  "typst-charged-ieee-main:html": "fail exit,stderr",
-  "typst-charged-ieee-main:json": "fail exit,stderr",
-  "typst-charged-ieee-main:markdown": "fail exit,stderr",
-  "typst-dashing-dept-news-main:html": "fail exit,stderr",
-  "typst-dashing-dept-news-main:json": "fail exit,stderr",
-  "typst-dashing-dept-news-main:markdown": "fail exit,stderr",
   "typst-icicle-lib:html": "fail exit,stderr,output",
   "typst-icicle-lib:json": "fail exit,stderr,output",
   "typst-icicle-lib:markdown": "fail exit,stderr,output",
-  "typst-unequivocal-ams-main:html": "fail exit,stderr",
-  "typst-unequivocal-ams-main:json": "fail exit,stderr",
-  "typst-unequivocal-ams-main:markdown": "fail exit,stderr",
   "typst-wonderous-book-lib:html": "fail exit,stderr,output",
   "typst-wonderous-book-lib:json": "fail exit,stderr,output",
   "typst-wonderous-book-lib:markdown": "fail exit,stderr,output",
