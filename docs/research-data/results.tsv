@@ -1,0 +1,1747 @@
+run	tool	unit	status	seconds	detail
+main	pandoc	md/carta-README.md#markdown>html	exit 0	15.857	
+main	carta	md/carta-README.md#markdown>html	differ	0.780	bytes oracle 9004 tool 8686
+main	ferrodoc	md/carta-README.md#markdown>html	differ	0.348	bytes oracle 9004 tool 8998
+main	pandoc	md/carta-README.md#markdown>json	exit 0	0.420	
+main	carta	md/carta-README.md#markdown>json	identical	0.087	stderr-same
+main	ferrodoc	md/carta-README.md#markdown>json	differ	0.057	bytes oracle 13967 tool 13977
+main	pandoc	md/carta-README.md#markdown>latex	exit 0	17.921	
+main	carta	md/carta-README.md#markdown>latex	differ	0.196	bytes oracle 6080 tool 5857
+main	ferrodoc	md/carta-README.md#markdown>latex	differ	0.059	bytes oracle 6080 tool 6069
+main	pandoc	md/carta-README.md#markdown>html-s	exit 0	14.663	
+main	carta	md/carta-README.md#markdown>html-s	differ	0.653	bytes oracle 16515 tool 13459
+main	ferrodoc	md/carta-README.md#markdown>html-s	differ	0.598	bytes oracle 16515 tool 16217
+main	pandoc	md/carta-README.md#commonmark>html	exit 0	14.644	
+main	carta	md/carta-README.md#commonmark>html	differ	0.186	bytes oracle 8784 tool 8466
+main	ferrodoc	md/carta-README.md#commonmark>html	ws-only	0.112	
+main	pandoc	md/carta-README.md#gfm>html	exit 0	13.316	
+main	carta	md/carta-README.md#gfm>html	differ	1.211	bytes oracle 9000 tool 8682
+main	ferrodoc	md/carta-README.md#gfm>html	differ	0.381	bytes oracle 9000 tool 8967
+main	pandoc	md/ferrodoc-code-and-raw.md#markdown>html	exit 0	1.172	
+main	carta	md/ferrodoc-code-and-raw.md#markdown>html	differ	0.112	bytes oracle 659 tool 646
+main	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>html	identical	0.118	stderr-same
+main	pandoc	md/ferrodoc-code-and-raw.md#markdown>json	exit 0	0.853	
+main	carta	md/ferrodoc-code-and-raw.md#markdown>json	differ	0.134	bytes oracle 2561 tool 2460
+main	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>json	ast-equal	0.059	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-code-and-raw.md#markdown>latex	exit 0	0.648	
+main	carta	md/ferrodoc-code-and-raw.md#markdown>latex	differ	0.157	bytes oracle 572 tool 513
+main	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>latex	identical	0.112	stderr-same
+main	pandoc	md/ferrodoc-code-and-raw.md#markdown>html-s	exit 0	1.260	
+main	carta	md/ferrodoc-code-and-raw.md#markdown>html-s	differ	0.162	bytes oracle 4820 tool 2069
+main	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>html-s	differ	0.066	bytes oracle 4820 tool 4528
+main	pandoc	md/ferrodoc-code-and-raw.md#commonmark>html	exit 0	15.359	
+main	carta	md/ferrodoc-code-and-raw.md#commonmark>html	identical	1.655	stderr-same
+main	ferrodoc	md/ferrodoc-code-and-raw.md#commonmark>html	identical	0.486	stderr-same
+main	pandoc	md/ferrodoc-code-and-raw.md#gfm>html	exit 0	17.538	
+main	carta	md/ferrodoc-code-and-raw.md#gfm>html	identical	0.240	stderr-same
+main	ferrodoc	md/ferrodoc-code-and-raw.md#gfm>html	identical	0.236	stderr-same
+main	pandoc	md/ferrodoc-edge-cases.md#markdown>html	exit 0	0.474	
+main	carta	md/ferrodoc-edge-cases.md#markdown>html	identical	0.094	stderr-same
+main	ferrodoc	md/ferrodoc-edge-cases.md#markdown>html	identical	0.057	stderr-same
+main	pandoc	md/ferrodoc-edge-cases.md#markdown>json	exit 0	0.305	
+main	carta	md/ferrodoc-edge-cases.md#markdown>json	identical	0.083	stderr-same
+main	ferrodoc	md/ferrodoc-edge-cases.md#markdown>json	ast-equal	0.106	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-edge-cases.md#markdown>latex	exit 0	0.341	
+main	carta	md/ferrodoc-edge-cases.md#markdown>latex	identical	0.066	stderr-same
+main	ferrodoc	md/ferrodoc-edge-cases.md#markdown>latex	differ	0.112	bytes oracle 976 tool 976
+main	pandoc	md/ferrodoc-edge-cases.md#markdown>html-s	exit 0	0.559	
+main	carta	md/ferrodoc-edge-cases.md#markdown>html-s	differ	0.068	bytes oracle 5163 tool 2425
+main	ferrodoc	md/ferrodoc-edge-cases.md#markdown>html-s	differ	0.062	bytes oracle 5163 tool 4871
+main	pandoc	md/ferrodoc-edge-cases.md#commonmark>html	exit 0	0.331	
+main	carta	md/ferrodoc-edge-cases.md#commonmark>html	identical	0.053	stderr-same
+main	ferrodoc	md/ferrodoc-edge-cases.md#commonmark>html	identical	0.065	stderr-same
+main	pandoc	md/ferrodoc-edge-cases.md#gfm>html	exit 0	0.440	
+main	carta	md/ferrodoc-edge-cases.md#gfm>html	identical	0.021	stderr-same
+main	ferrodoc	md/ferrodoc-edge-cases.md#gfm>html	identical	0.043	stderr-same
+main	pandoc	md/ferrodoc-headings.md#markdown>html	exit 0	0.288	
+main	carta	md/ferrodoc-headings.md#markdown>html	identical	0.060	stderr-same
+main	ferrodoc	md/ferrodoc-headings.md#markdown>html	identical	0.093	stderr-same
+main	pandoc	md/ferrodoc-headings.md#markdown>json	exit 0	0.185	
+main	carta	md/ferrodoc-headings.md#markdown>json	identical	0.055	stderr-same
+main	ferrodoc	md/ferrodoc-headings.md#markdown>json	ast-equal	0.026	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-headings.md#markdown>latex	exit 0	0.279	
+main	carta	md/ferrodoc-headings.md#markdown>latex	identical	0.055	stderr-same
+main	ferrodoc	md/ferrodoc-headings.md#markdown>latex	identical	0.082	stderr-same
+main	pandoc	md/ferrodoc-headings.md#markdown>html-s	exit 0	0.370	
+main	carta	md/ferrodoc-headings.md#markdown>html-s	differ	0.029	bytes oracle 4933 tool 2195
+main	ferrodoc	md/ferrodoc-headings.md#markdown>html-s	differ	0.012	bytes oracle 4933 tool 4641
+main	pandoc	md/ferrodoc-headings.md#commonmark>html	exit 0	0.227	
+main	carta	md/ferrodoc-headings.md#commonmark>html	identical	0.091	stderr-same
+main	ferrodoc	md/ferrodoc-headings.md#commonmark>html	identical	0.046	stderr-same
+main	pandoc	md/ferrodoc-headings.md#gfm>html	exit 0	0.271	
+main	carta	md/ferrodoc-headings.md#gfm>html	identical	0.056	stderr-same
+main	ferrodoc	md/ferrodoc-headings.md#gfm>html	identical	0.062	stderr-same
+main	pandoc	md/ferrodoc-images.md#markdown>html	exit 0	0.327	
+main	carta	md/ferrodoc-images.md#markdown>html	identical	0.070	stderr-same
+main	ferrodoc	md/ferrodoc-images.md#markdown>html	identical	0.025	stderr-same
+main	pandoc	md/ferrodoc-images.md#markdown>json	exit 0	0.388	
+main	carta	md/ferrodoc-images.md#markdown>json	identical	0.050	stderr-same
+main	ferrodoc	md/ferrodoc-images.md#markdown>json	ast-equal	0.037	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-images.md#markdown>latex	exit 0	0.387	
+main	carta	md/ferrodoc-images.md#markdown>latex	ws-only	0.029	
+main	ferrodoc	md/ferrodoc-images.md#markdown>latex	ws-only	0.062	
+main	pandoc	md/ferrodoc-images.md#markdown>html-s	exit 0	1.102	
+main	carta	md/ferrodoc-images.md#markdown>html-s	differ	0.038	bytes oracle 4534 tool 1796
+main	ferrodoc	md/ferrodoc-images.md#markdown>html-s	differ	0.059	bytes oracle 4534 tool 4242
+main	pandoc	md/ferrodoc-images.md#commonmark>html	exit 0	0.311	
+main	carta	md/ferrodoc-images.md#commonmark>html	identical	0.033	stderr-same
+main	ferrodoc	md/ferrodoc-images.md#commonmark>html	identical	0.058	stderr-same
+main	pandoc	md/ferrodoc-images.md#gfm>html	exit 0	0.755	
+main	carta	md/ferrodoc-images.md#gfm>html	identical	0.050	stderr-same
+main	ferrodoc	md/ferrodoc-images.md#gfm>html	identical	0.019	stderr-same
+main	pandoc	md/ferrodoc-nested-structures.md#markdown>html	exit 0	0.701	
+main	carta	md/ferrodoc-nested-structures.md#markdown>html	differ	0.087	bytes oracle 1092 tool 788
+main	ferrodoc	md/ferrodoc-nested-structures.md#markdown>html	identical	0.072	stderr-same
+main	pandoc	md/ferrodoc-nested-structures.md#markdown>json	exit 0	0.367	
+main	carta	md/ferrodoc-nested-structures.md#markdown>json	identical	0.039	stderr-same
+main	ferrodoc	md/ferrodoc-nested-structures.md#markdown>json	ast-equal	0.030	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-nested-structures.md#markdown>latex	exit 0	0.533	
+main	carta	md/ferrodoc-nested-structures.md#markdown>latex	differ	0.097	bytes oracle 1179 tool 1153
+main	ferrodoc	md/ferrodoc-nested-structures.md#markdown>latex	identical	0.117	stderr-same
+main	pandoc	md/ferrodoc-nested-structures.md#markdown>html-s	exit 0	1.467	
+main	carta	md/ferrodoc-nested-structures.md#markdown>html-s	differ	0.061	bytes oracle 8617 tool 2216
+main	ferrodoc	md/ferrodoc-nested-structures.md#markdown>html-s	differ	0.147	bytes oracle 8617 tool 8325
+main	pandoc	md/ferrodoc-nested-structures.md#commonmark>html	exit 0	0.482	
+main	carta	md/ferrodoc-nested-structures.md#commonmark>html	differ	0.140	bytes oracle 1092 tool 788
+main	ferrodoc	md/ferrodoc-nested-structures.md#commonmark>html	identical	0.029	stderr-same
+main	pandoc	md/ferrodoc-nested-structures.md#gfm>html	exit 0	1.068	
+main	carta	md/ferrodoc-nested-structures.md#gfm>html	differ	0.119	bytes oracle 1092 tool 788
+main	ferrodoc	md/ferrodoc-nested-structures.md#gfm>html	identical	0.057	stderr-same
+main	pandoc	md/ferrodoc-readme-style.md#markdown>html	exit 0	1.123	
+main	carta	md/ferrodoc-readme-style.md#markdown>html	differ	0.094	bytes oracle 1134 tool 958
+main	ferrodoc	md/ferrodoc-readme-style.md#markdown>html	identical	0.170	stderr-same
+main	pandoc	md/ferrodoc-readme-style.md#markdown>json	exit 0	0.249	
+main	carta	md/ferrodoc-readme-style.md#markdown>json	identical	0.086	stderr-same
+main	ferrodoc	md/ferrodoc-readme-style.md#markdown>json	ast-equal	0.024	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-readme-style.md#markdown>latex	exit 0	0.619	
+main	carta	md/ferrodoc-readme-style.md#markdown>latex	differ	0.051	bytes oracle 1169 tool 1154
+main	ferrodoc	md/ferrodoc-readme-style.md#markdown>latex	identical	0.075	stderr-same
+main	pandoc	md/ferrodoc-readme-style.md#markdown>html-s	exit 0	0.623	
+main	carta	md/ferrodoc-readme-style.md#markdown>html-s	differ	0.084	bytes oracle 8654 tool 2381
+main	ferrodoc	md/ferrodoc-readme-style.md#markdown>html-s	differ	0.055	bytes oracle 8654 tool 8362
+main	pandoc	md/ferrodoc-readme-style.md#commonmark>html	exit 0	0.485	
+main	carta	md/ferrodoc-readme-style.md#commonmark>html	differ	0.046	bytes oracle 1075 tool 899
+main	ferrodoc	md/ferrodoc-readme-style.md#commonmark>html	identical	0.052	stderr-same
+main	pandoc	md/ferrodoc-readme-style.md#gfm>html	exit 0	0.885	
+main	carta	md/ferrodoc-readme-style.md#gfm>html	differ	0.025	bytes oracle 1134 tool 958
+main	ferrodoc	md/ferrodoc-readme-style.md#gfm>html	identical	0.050	stderr-same
+main	pandoc	md/ferrodoc-truncation-cases.md#markdown>html	exit 0	0.462	
+main	carta	md/ferrodoc-truncation-cases.md#markdown>html	differ	0.085	bytes oracle 666 tool 641
+main	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>html	identical	0.026	stderr-same
+main	pandoc	md/ferrodoc-truncation-cases.md#markdown>json	exit 0	0.396	
+main	carta	md/ferrodoc-truncation-cases.md#markdown>json	differ	0.052	bytes oracle 2535 tool 2038
+main	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>json	ast-equal	0.046	api version [1, 23, 1]
+main	pandoc	md/ferrodoc-truncation-cases.md#markdown>latex	exit 0	0.424	
+main	carta	md/ferrodoc-truncation-cases.md#markdown>latex	differ	0.076	bytes oracle 643 tool 497
+main	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>latex	identical	0.044	stderr-same
+main	pandoc	md/ferrodoc-truncation-cases.md#markdown>html-s	exit 0	1.081	
+main	carta	md/ferrodoc-truncation-cases.md#markdown>html-s	differ	0.125	bytes oracle 4831 tool 2068
+main	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>html-s	differ	0.067	bytes oracle 4831 tool 4539
+main	pandoc	md/ferrodoc-truncation-cases.md#commonmark>html	exit 0	0.489	
+main	carta	md/ferrodoc-truncation-cases.md#commonmark>html	identical	0.019	stderr-same
+main	ferrodoc	md/ferrodoc-truncation-cases.md#commonmark>html	identical	0.033	stderr-same
+main	pandoc	md/ferrodoc-truncation-cases.md#gfm>html	exit 0	0.486	
+main	carta	md/ferrodoc-truncation-cases.md#gfm>html	identical	0.048	stderr-same
+main	ferrodoc	md/ferrodoc-truncation-cases.md#gfm>html	identical	0.053	stderr-same
+main	pandoc	md/pandoc-MANUAL.md#markdown>html	exit 0	37.204	
+main	carta	md/pandoc-MANUAL.md#markdown>html	differ	5.399	bytes oracle 389523 tool 357985
+main	ferrodoc	md/pandoc-MANUAL.md#markdown>html	differ	9.114	bytes oracle 389523 tool 350547
+main	pandoc	md/pandoc-MANUAL.md#markdown>json	exit 0	9.782	
+main	carta	md/pandoc-MANUAL.md#markdown>json	differ	4.477	bytes oracle 1463591 tool 1463679
+main	ferrodoc	md/pandoc-MANUAL.md#markdown>json	differ	3.138	bytes oracle 1463591 tool 1501967
+main	pandoc	md/pandoc-MANUAL.md#markdown>latex	exit 0	29.099	
+main	carta	md/pandoc-MANUAL.md#markdown>latex	differ	6.360	bytes oracle 362709 tool 358049
+main	ferrodoc	md/pandoc-MANUAL.md#markdown>latex	differ	7.611	bytes oracle 362709 tool 350639
+main	pandoc	md/pandoc-MANUAL.md#markdown>html-s	exit 0	32.962	
+main	carta	md/pandoc-MANUAL.md#markdown>html-s	differ	3.655	bytes oracle 397303 tool 363023
+main	ferrodoc	md/pandoc-MANUAL.md#markdown>html-s	differ	13.503	bytes oracle 397303 tool 354672
+main	pandoc	md/pandoc-MANUAL.md#commonmark>html	exit 0	24.068	
+main	carta	md/pandoc-MANUAL.md#commonmark>html	differ	2.281	bytes oracle 336172 tool 332715
+main	ferrodoc	md/pandoc-MANUAL.md#commonmark>html	differ	11.725	bytes oracle 336172 tool 331361
+main	pandoc	md/pandoc-MANUAL.md#gfm>html	exit 0	28.576	
+main	carta	md/pandoc-MANUAL.md#gfm>html	differ	1.768	bytes oracle 343688 tool 340231
+main	ferrodoc	md/pandoc-MANUAL.md#gfm>html	differ	10.904	bytes oracle 343688 tool 339030
+main	pandoc	md/pandoc-doc-custom-readers.md#markdown>html	exit 0	2.182	
+main	carta	md/pandoc-doc-custom-readers.md#markdown>html	differ	0.202	bytes oracle 91970 tool 19713
+main	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>html	differ	0.403	bytes oracle 91970 tool 19713
+main	pandoc	md/pandoc-doc-custom-readers.md#markdown>json	exit 0	0.585	
+main	carta	md/pandoc-doc-custom-readers.md#markdown>json	identical	0.249	stderr-same
+main	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>json	ast-equal	0.250	api version [1, 23, 1]
+main	pandoc	md/pandoc-doc-custom-readers.md#markdown>latex	exit 0	1.682	
+main	carta	md/pandoc-doc-custom-readers.md#markdown>latex	differ	0.411	bytes oracle 47024 tool 23731
+main	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>latex	differ	0.390	bytes oracle 47024 tool 22857
+main	pandoc	md/pandoc-doc-custom-readers.md#markdown>html-s	exit 0	2.520	
+main	carta	md/pandoc-doc-custom-readers.md#markdown>html-s	differ	0.072	bytes oracle 99789 tool 21438
+main	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>html-s	differ	0.517	bytes oracle 99789 tool 23888
+main	pandoc	md/pandoc-doc-custom-readers.md#commonmark>html	exit 0	2.240	
+main	carta	md/pandoc-doc-custom-readers.md#commonmark>html	differ	0.040	bytes oracle 91818 tool 19561
+main	ferrodoc	md/pandoc-doc-custom-readers.md#commonmark>html	differ	0.584	bytes oracle 91818 tool 19561
+main	pandoc	md/pandoc-doc-custom-readers.md#gfm>html	exit 0	2.100	
+main	carta	md/pandoc-doc-custom-readers.md#gfm>html	differ	0.270	bytes oracle 91944 tool 19687
+main	ferrodoc	md/pandoc-doc-custom-readers.md#gfm>html	differ	0.229	bytes oracle 91944 tool 19823
+main	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>html	exit 0	1.291	
+main	carta	md/pandoc-doc-customizing-pandoc.md#markdown>html	differ	0.074	bytes oracle 7616 tool 7485
+main	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>html	differ	0.065	bytes oracle 7616 tool 7227
+main	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>json	exit 0	1.059	
+main	carta	md/pandoc-doc-customizing-pandoc.md#markdown>json	differ	0.036	bytes oracle 31627 tool 31563
+main	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>json	differ	0.086	bytes oracle 31627 tool 31317
+main	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>latex	exit 0	0.615	
+main	carta	md/pandoc-doc-customizing-pandoc.md#markdown>latex	differ	0.051	bytes oracle 7246 tool 6702
+main	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>latex	differ	0.048	bytes oracle 7246 tool 6481
+main	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>html-s	exit 0	1.099	
+main	carta	md/pandoc-doc-customizing-pandoc.md#markdown>html-s	differ	0.061	bytes oracle 12027 tool 9154
+main	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>html-s	differ	0.257	bytes oracle 12027 tool 11346
+main	pandoc	md/pandoc-doc-customizing-pandoc.md#commonmark>html	exit 0	0.738	
+main	carta	md/pandoc-doc-customizing-pandoc.md#commonmark>html	identical	0.040	stderr-same
+main	ferrodoc	md/pandoc-doc-customizing-pandoc.md#commonmark>html	identical	0.108	stderr-differs
+main	pandoc	md/pandoc-doc-customizing-pandoc.md#gfm>html	exit 0	1.084	
+main	carta	md/pandoc-doc-customizing-pandoc.md#gfm>html	identical	0.045	stderr-same
+main	ferrodoc	md/pandoc-doc-customizing-pandoc.md#gfm>html	differ	0.205	bytes oracle 7473 tool 7584
+main	pandoc	md/pandoc-doc-epub.md#markdown>html	exit 0	0.881	
+main	carta	md/pandoc-doc-epub.md#markdown>html	identical	0.134	stderr-same
+main	ferrodoc	md/pandoc-doc-epub.md#markdown>html	identical	0.148	stderr-same
+main	pandoc	md/pandoc-doc-epub.md#markdown>json	exit 0	0.431	
+main	carta	md/pandoc-doc-epub.md#markdown>json	identical	0.077	stderr-same
+main	ferrodoc	md/pandoc-doc-epub.md#markdown>json	ast-equal	0.127	api version [1, 23, 1]
+main	pandoc	md/pandoc-doc-epub.md#markdown>latex	exit 0	0.571	
+main	carta	md/pandoc-doc-epub.md#markdown>latex	identical	0.049	stderr-same
+main	ferrodoc	md/pandoc-doc-epub.md#markdown>latex	identical	0.056	stderr-same
+main	pandoc	md/pandoc-doc-epub.md#markdown>html-s	exit 0	1.270	
+main	carta	md/pandoc-doc-epub.md#markdown>html-s	differ	0.079	bytes oracle 11239 tool 8499
+main	ferrodoc	md/pandoc-doc-epub.md#markdown>html-s	differ	0.197	bytes oracle 11239 tool 10947
+main	pandoc	md/pandoc-doc-epub.md#commonmark>html	exit 0	0.618	
+main	carta	md/pandoc-doc-epub.md#commonmark>html	identical	0.031	stderr-same
+main	ferrodoc	md/pandoc-doc-epub.md#commonmark>html	identical	0.226	stderr-differs
+main	pandoc	md/pandoc-doc-epub.md#gfm>html	exit 0	0.892	
+main	carta	md/pandoc-doc-epub.md#gfm>html	identical	0.092	stderr-same
+main	ferrodoc	md/pandoc-doc-epub.md#gfm>html	differ	0.065	bytes oracle 6849 tool 6990
+main	pandoc	md/pandoc-doc-faqs.md#markdown>html	exit 0	0.690	
+main	carta	md/pandoc-doc-faqs.md#markdown>html	differ	0.093	bytes oracle 13942 tool 10654
+main	ferrodoc	md/pandoc-doc-faqs.md#markdown>html	differ	0.288	bytes oracle 13942 tool 10668
+main	pandoc	md/pandoc-doc-faqs.md#markdown>json	exit 0	0.556	
+main	carta	md/pandoc-doc-faqs.md#markdown>json	identical	0.071	stderr-same
+main	ferrodoc	md/pandoc-doc-faqs.md#markdown>json	differ	0.050	bytes oracle 40696 tool 40827
+main	pandoc	md/pandoc-doc-faqs.md#markdown>latex	exit 0	0.565	
+main	carta	md/pandoc-doc-faqs.md#markdown>latex	differ	0.047	bytes oracle 12104 tool 11237
+main	ferrodoc	md/pandoc-doc-faqs.md#markdown>latex	differ	0.026	bytes oracle 12104 tool 11223
+main	pandoc	md/pandoc-doc-faqs.md#markdown>html-s	exit 0	0.441	
+main	carta	md/pandoc-doc-faqs.md#markdown>html-s	differ	0.066	bytes oracle 21516 tool 12131
+main	ferrodoc	md/pandoc-doc-faqs.md#markdown>html-s	differ	0.348	bytes oracle 21516 tool 14531
+main	pandoc	md/pandoc-doc-faqs.md#commonmark>html	exit 0	0.817	
+main	carta	md/pandoc-doc-faqs.md#commonmark>html	differ	0.043	bytes oracle 12410 tool 9122
+main	ferrodoc	md/pandoc-doc-faqs.md#commonmark>html	differ	0.062	bytes oracle 12410 tool 9122
+main	pandoc	md/pandoc-doc-faqs.md#gfm>html	exit 0	1.109	
+main	carta	md/pandoc-doc-faqs.md#gfm>html	differ	0.119	bytes oracle 13913 tool 10625
+main	ferrodoc	md/pandoc-doc-faqs.md#gfm>html	differ	0.196	bytes oracle 13913 tool 10625
+main	pandoc	md/pandoc-doc-filters.md#markdown>html	exit 0	1.095	
+main	carta	md/pandoc-doc-filters.md#markdown>html	differ	0.115	bytes oracle 31014 tool 19806
+main	ferrodoc	md/pandoc-doc-filters.md#markdown>html	differ	0.132	bytes oracle 31014 tool 20979
+main	pandoc	md/pandoc-doc-filters.md#markdown>json	exit 0	1.008	
+main	carta	md/pandoc-doc-filters.md#markdown>json	differ	0.175	bytes oracle 77532 tool 77550
+main	ferrodoc	md/pandoc-doc-filters.md#markdown>json	differ	0.115	bytes oracle 77532 tool 76592
+main	pandoc	md/pandoc-doc-filters.md#markdown>latex	exit 0	0.792	
+main	carta	md/pandoc-doc-filters.md#markdown>latex	differ	0.208	bytes oracle 22952 tool 20307
+main	ferrodoc	md/pandoc-doc-filters.md#markdown>latex	differ	0.078	bytes oracle 22952 tool 19583
+main	pandoc	md/pandoc-doc-filters.md#markdown>html-s	exit 0	1.194	
+main	carta	md/pandoc-doc-filters.md#markdown>html-s	differ	0.068	bytes oracle 38697 tool 21390
+main	ferrodoc	md/pandoc-doc-filters.md#markdown>html-s	differ	0.556	bytes oracle 38697 tool 28204
+main	pandoc	md/pandoc-doc-filters.md#commonmark>html	exit 0	11.420	
+main	carta	md/pandoc-doc-filters.md#commonmark>html	identical	0.180	stderr-same
+main	ferrodoc	md/pandoc-doc-filters.md#commonmark>html	identical	0.114	stderr-same
+main	pandoc	md/pandoc-doc-filters.md#gfm>html	exit 0	11.075	
+main	carta	md/pandoc-doc-filters.md#gfm>html	identical	0.079	stderr-same
+main	ferrodoc	md/pandoc-doc-filters.md#gfm>html	identical	0.657	stderr-same
+main	pandoc	md/pandoc-doc-getting-started.md#markdown>html	exit 0	1.392	
+main	carta	md/pandoc-doc-getting-started.md#markdown>html	identical	0.057	stderr-same
+main	ferrodoc	md/pandoc-doc-getting-started.md#markdown>html	identical	0.128	stderr-same
+main	pandoc	md/pandoc-doc-getting-started.md#markdown>json	exit 0	0.344	
+main	carta	md/pandoc-doc-getting-started.md#markdown>json	identical	0.094	stderr-same
+main	ferrodoc	md/pandoc-doc-getting-started.md#markdown>json	ast-equal	0.040	api version [1, 23, 1]
+main	pandoc	md/pandoc-doc-getting-started.md#markdown>latex	exit 0	0.814	
+main	carta	md/pandoc-doc-getting-started.md#markdown>latex	identical	0.051	stderr-same
+main	ferrodoc	md/pandoc-doc-getting-started.md#markdown>latex	identical	0.027	stderr-same
+main	pandoc	md/pandoc-doc-getting-started.md#markdown>html-s	exit 0	1.105	
+main	carta	md/pandoc-doc-getting-started.md#markdown>html-s	differ	0.075	bytes oracle 16156 tool 13416
+main	ferrodoc	md/pandoc-doc-getting-started.md#markdown>html-s	differ	0.414	bytes oracle 16156 tool 15864
+main	pandoc	md/pandoc-doc-getting-started.md#commonmark>html	exit 0	0.791	
+main	carta	md/pandoc-doc-getting-started.md#commonmark>html	identical	0.088	stderr-same
+main	ferrodoc	md/pandoc-doc-getting-started.md#commonmark>html	identical	0.498	stderr-differs
+main	pandoc	md/pandoc-doc-getting-started.md#gfm>html	exit 0	1.827	
+main	carta	md/pandoc-doc-getting-started.md#gfm>html	identical	0.053	stderr-same
+main	ferrodoc	md/pandoc-doc-getting-started.md#gfm>html	differ	0.053	bytes oracle 11723 tool 11860
+main	pandoc	md/pandoc-doc-jats.md#markdown>html	exit 0	2.316	
+main	carta	md/pandoc-doc-jats.md#markdown>html	differ	0.053	bytes oracle 30135 tool 27623
+main	ferrodoc	md/pandoc-doc-jats.md#markdown>html	differ	0.801	bytes oracle 30135 tool 27623
+main	pandoc	md/pandoc-doc-jats.md#markdown>json	exit 0	1.434	
+main	carta	md/pandoc-doc-jats.md#markdown>json	identical	0.036	stderr-same
+main	ferrodoc	md/pandoc-doc-jats.md#markdown>json	ast-equal	0.032	api version [1, 23, 1]
+main	pandoc	md/pandoc-doc-jats.md#markdown>latex	exit 0	2.172	
+main	carta	md/pandoc-doc-jats.md#markdown>latex	differ	0.065	bytes oracle 27377 tool 26877
+main	ferrodoc	md/pandoc-doc-jats.md#markdown>latex	differ	0.052	bytes oracle 27377 tool 26849
+main	pandoc	md/pandoc-doc-jats.md#markdown>html-s	exit 0	2.080	
+main	carta	md/pandoc-doc-jats.md#markdown>html-s	differ	0.110	bytes oracle 37800 tool 29189
+main	ferrodoc	md/pandoc-doc-jats.md#markdown>html-s	differ	1.131	bytes oracle 37800 tool 31637
+main	pandoc	md/pandoc-doc-jats.md#commonmark>html	exit 0	0.818	
+main	carta	md/pandoc-doc-jats.md#commonmark>html	identical	0.046	stderr-same
+main	ferrodoc	md/pandoc-doc-jats.md#commonmark>html	identical	0.434	stderr-differs
+main	pandoc	md/pandoc-doc-jats.md#gfm>html	exit 0	0.943	
+main	carta	md/pandoc-doc-jats.md#gfm>html	identical	0.152	stderr-same
+main	ferrodoc	md/pandoc-doc-jats.md#gfm>html	differ	0.535	bytes oracle 19160 tool 19253
+main	pandoc	md/pandoc-doc-lua-filters.md#markdown>html	exit 0	13.922	
+main	carta	md/pandoc-doc-lua-filters.md#markdown>html	differ	4.383	bytes oracle 290239 tool 221515
+main	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>html	differ	10.957	bytes oracle 290239 tool 219866
+main	pandoc	md/pandoc-doc-lua-filters.md#markdown>json	exit 0	13.943	
+main	carta	md/pandoc-doc-lua-filters.md#markdown>json	differ	2.637	bytes oracle 806265 tool 806266
+main	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>json	differ	3.635	bytes oracle 806265 tool 805376
+main	pandoc	md/pandoc-doc-lua-filters.md#markdown>latex	exit 0	14.468	
+main	carta	md/pandoc-doc-lua-filters.md#markdown>latex	differ	2.890	bytes oracle 241984 tool 222086
+main	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>latex	differ	3.595	bytes oracle 241984 tool 219125
+main	pandoc	md/pandoc-doc-lua-filters.md#markdown>html-s	exit 0	15.090	
+main	carta	md/pandoc-doc-lua-filters.md#markdown>html-s	differ	3.626	bytes oracle 298110 tool 226648
+main	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>html-s	differ	9.031	bytes oracle 298110 tool 224092
+main	pandoc	md/pandoc-doc-lua-filters.md#commonmark>html	exit 0	8.543	
+main	carta	md/pandoc-doc-lua-filters.md#commonmark>html	differ	1.480	bytes oracle 275035 tool 208366
+main	ferrodoc	md/pandoc-doc-lua-filters.md#commonmark>html	differ	7.615	bytes oracle 275035 tool 207173
+main	pandoc	md/pandoc-doc-lua-filters.md#gfm>html	exit 0	12.497	
+main	carta	md/pandoc-doc-lua-filters.md#gfm>html	differ	1.687	bytes oracle 287727 tool 221058
+main	ferrodoc	md/pandoc-doc-lua-filters.md#gfm>html	differ	8.274	bytes oracle 287727 tool 220007
+main	pandoc	md/pandoc-doc-org.md#markdown>html	exit 0	1.056	
+main	carta	md/pandoc-doc-org.md#markdown>html	differ	0.121	bytes oracle 15495 tool 11996
+main	ferrodoc	md/pandoc-doc-org.md#markdown>html	differ	0.457	bytes oracle 15495 tool 11967
+main	pandoc	md/pandoc-doc-org.md#markdown>json	exit 0	0.465	
+main	carta	md/pandoc-doc-org.md#markdown>json	differ	0.136	bytes oracle 55576 tool 55608
+main	ferrodoc	md/pandoc-doc-org.md#markdown>json	differ	0.059	bytes oracle 55576 tool 55691
+main	pandoc	md/pandoc-doc-org.md#markdown>latex	exit 0	1.323	
+main	carta	md/pandoc-doc-org.md#markdown>latex	differ	0.099	bytes oracle 12587 tool 11893
+main	ferrodoc	md/pandoc-doc-org.md#markdown>latex	differ	0.086	bytes oracle 12587 tool 11689
+main	pandoc	md/pandoc-doc-org.md#markdown>html-s	exit 0	1.731	
+main	carta	md/pandoc-doc-org.md#markdown>html-s	differ	0.186	bytes oracle 23218 tool 13620
+main	ferrodoc	md/pandoc-doc-org.md#markdown>html-s	differ	0.869	bytes oracle 23218 tool 16039
+main	pandoc	md/pandoc-doc-org.md#commonmark>html	exit 0	1.551	
+main	carta	md/pandoc-doc-org.md#commonmark>html	differ	0.043	bytes oracle 15233 tool 11714
+main	ferrodoc	md/pandoc-doc-org.md#commonmark>html	differ	0.428	bytes oracle 15233 tool 11714
+main	pandoc	md/pandoc-doc-org.md#gfm>html	exit 0	1.663	
+main	carta	md/pandoc-doc-org.md#gfm>html	differ	0.095	bytes oracle 15450 tool 11931
+main	ferrodoc	md/pandoc-doc-org.md#gfm>html	differ	0.555	bytes oracle 15450 tool 12082
+main	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html	exit 0	2.452	
+main	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html	differ	0.171	bytes oracle 31869 tool 31141
+main	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html	differ	1.076	bytes oracle 31869 tool 31869
+main	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>json	exit 0	2.186	
+main	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>json	differ	0.917	bytes oracle 172108 tool 170972
+main	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>json	differ	0.188	bytes oracle 172108 tool 172296
+main	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>latex	exit 0	2.550	
+main	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>latex	differ	0.099	bytes oracle 29920 tool 30346
+main	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>latex	differ	0.693	bytes oracle 29920 tool 29917
+main	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html-s	exit 0	2.385	
+main	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html-s	differ	0.612	bytes oracle 36042 tool 32576
+main	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>html-s	differ	1.608	bytes oracle 36042 tool 35750
+main	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#commonmark>html	exit 0	2.215	
+main	carta	md/pandoc-doc-twenty-years-of-pandoc.md#commonmark>html	identical	0.113	stderr-same
+main	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#commonmark>html	identical	0.886	stderr-same
+main	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#gfm>html	exit 0	1.683	
+main	carta	md/pandoc-doc-twenty-years-of-pandoc.md#gfm>html	identical	0.078	stderr-same
+main	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#gfm>html	identical	0.605	stderr-same
+main	pandoc	md/pandoc-doc-xml.md#markdown>html	exit 0	1.398	
+main	carta	md/pandoc-doc-xml.md#markdown>html	differ	0.075	bytes oracle 39408 tool 16225
+main	ferrodoc	md/pandoc-doc-xml.md#markdown>html	differ	0.853	bytes oracle 39408 tool 16225
+main	pandoc	md/pandoc-doc-xml.md#markdown>json	exit 0	0.452	
+main	carta	md/pandoc-doc-xml.md#markdown>json	differ	0.065	bytes oracle 42923 tool 42923
+main	ferrodoc	md/pandoc-doc-xml.md#markdown>json	ast-equal	0.046	api version [1, 23, 1]
+main	pandoc	md/pandoc-doc-xml.md#markdown>latex	exit 0	1.099	
+main	carta	md/pandoc-doc-xml.md#markdown>latex	differ	0.097	bytes oracle 29452 tool 21990
+main	ferrodoc	md/pandoc-doc-xml.md#markdown>latex	differ	0.090	bytes oracle 29452 tool 16646
+main	pandoc	md/pandoc-doc-xml.md#markdown>html-s	exit 0	0.980	
+main	carta	md/pandoc-doc-xml.md#markdown>html-s	differ	0.055	bytes oracle 47075 tool 17793
+main	ferrodoc	md/pandoc-doc-xml.md#markdown>html-s	differ	0.664	bytes oracle 47075 tool 20241
+main	pandoc	md/pandoc-doc-xml.md#commonmark>html	exit 0	1.119	
+main	carta	md/pandoc-doc-xml.md#commonmark>html	differ	0.054	bytes oracle 39183 tool 16000
+main	ferrodoc	md/pandoc-doc-xml.md#commonmark>html	differ	0.780	bytes oracle 39183 tool 16000
+main	pandoc	md/pandoc-doc-xml.md#gfm>html	exit 0	1.937	
+main	carta	md/pandoc-doc-xml.md#gfm>html	differ	0.203	bytes oracle 39370 tool 16187
+main	ferrodoc	md/pandoc-doc-xml.md#gfm>html	differ	0.522	bytes oracle 39370 tool 16320
+main	pandoc	md/rescribe-README.md#markdown>html	exit 0	1.097	
+main	carta	md/rescribe-README.md#markdown>html	differ	0.668	bytes oracle 7750 tool 5822
+main	ferrodoc	md/rescribe-README.md#markdown>html	differ	0.494	bytes oracle 7750 tool 7646
+main	pandoc	md/rescribe-README.md#markdown>json	exit 0	1.116	
+main	carta	md/rescribe-README.md#markdown>json	differ	0.223	bytes oracle 14014 tool 13965
+main	ferrodoc	md/rescribe-README.md#markdown>json	differ	0.138	bytes oracle 14014 tool 13963
+main	pandoc	md/rescribe-README.md#markdown>latex	exit 0	1.052	
+main	carta	md/rescribe-README.md#markdown>latex	differ	0.200	bytes oracle 5826 tool 5169
+main	ferrodoc	md/rescribe-README.md#markdown>latex	differ	0.023	bytes oracle 5826 tool 5323
+main	pandoc	md/rescribe-README.md#markdown>html-s	exit 0	0.897	
+main	carta	md/rescribe-README.md#markdown>html-s	differ	0.111	bytes oracle 15264 tool 10598
+main	ferrodoc	md/rescribe-README.md#markdown>html-s	differ	0.308	bytes oracle 15264 tool 14868
+main	pandoc	md/rescribe-README.md#commonmark>html	exit 0	1.234	
+main	carta	md/rescribe-README.md#commonmark>html	differ	0.056	bytes oracle 7293 tool 5469
+main	ferrodoc	md/rescribe-README.md#commonmark>html	identical	0.605	stderr-same
+main	pandoc	md/rescribe-README.md#gfm>html	exit 0	0.525	
+main	carta	md/rescribe-README.md#gfm>html	differ	0.175	bytes oracle 7640 tool 5816
+main	ferrodoc	md/rescribe-README.md#gfm>html	identical	0.254	stderr-same
+main	pandoc	md/skylighting-README.md#markdown>html	exit 0	1.666	
+main	carta	md/skylighting-README.md#markdown>html	identical	0.174	stderr-same
+main	ferrodoc	md/skylighting-README.md#markdown>html	identical	0.598	stderr-same
+main	pandoc	md/skylighting-README.md#markdown>json	exit 0	1.313	
+main	carta	md/skylighting-README.md#markdown>json	identical	0.046	stderr-same
+main	ferrodoc	md/skylighting-README.md#markdown>json	ast-equal	0.039	api version [1, 23, 1]
+main	pandoc	md/skylighting-README.md#markdown>latex	exit 0	1.094	
+main	carta	md/skylighting-README.md#markdown>latex	identical	0.023	stderr-same
+main	ferrodoc	md/skylighting-README.md#markdown>latex	differ	0.104	bytes oracle 6680 tool 6719
+main	pandoc	md/skylighting-README.md#markdown>html-s	exit 0	0.755	
+main	carta	md/skylighting-README.md#markdown>html-s	differ	0.040	bytes oracle 11308 tool 8570
+main	ferrodoc	md/skylighting-README.md#markdown>html-s	differ	0.037	bytes oracle 11308 tool 11016
+main	pandoc	md/skylighting-README.md#commonmark>html	exit 0	1.344	
+main	carta	md/skylighting-README.md#commonmark>html	identical	0.033	stderr-same
+main	ferrodoc	md/skylighting-README.md#commonmark>html	identical	0.674	stderr-same
+main	pandoc	md/skylighting-README.md#gfm>html	exit 0	1.238	
+main	carta	md/skylighting-README.md#gfm>html	identical	0.178	stderr-same
+main	ferrodoc	md/skylighting-README.md#gfm>html	identical	0.026	stderr-same
+main	pandoc	html/carta-blocks.html#html>markdown	exit 0	0.488	
+main	carta	html/carta-blocks.html#html>markdown	identical	0.153	stderr-same
+main	ferrodoc	html/carta-blocks.html#html>markdown	identical	0.270	stderr-same
+main	pandoc	html/carta-blocks.html#html>json	exit 0	0.699	
+main	carta	html/carta-blocks.html#html>json	identical	0.021	stderr-same
+main	ferrodoc	html/carta-blocks.html#html>json	ast-equal	0.031	api version [1, 23, 1]
+main	pandoc	html/carta-citation.html#html>markdown	exit 0	1.012	
+main	carta	html/carta-citation.html#html>markdown	identical	0.236	stderr-same
+main	ferrodoc	html/carta-citation.html#html>markdown	identical	0.166	stderr-same
+main	pandoc	html/carta-citation.html#html>json	exit 0	0.392	
+main	carta	html/carta-citation.html#html>json	identical	0.026	stderr-same
+main	ferrodoc	html/carta-citation.html#html>json	ast-equal	0.049	api version [1, 23, 1]
+main	pandoc	html/carta-dropped-elements.html#html>markdown	exit 0	0.424	
+main	carta	html/carta-dropped-elements.html#html>markdown	identical	0.042	stderr-same
+main	ferrodoc	html/carta-dropped-elements.html#html>markdown	identical	0.045	stderr-same
+main	pandoc	html/carta-dropped-elements.html#html>json	exit 0	0.257	
+main	carta	html/carta-dropped-elements.html#html>json	identical	0.046	stderr-same
+main	ferrodoc	html/carta-dropped-elements.html#html>json	ast-equal	0.081	api version [1, 23, 1]
+main	pandoc	html/carta-footnotes.html#html>markdown	exit 0	0.242	
+main	carta	html/carta-footnotes.html#html>markdown	identical	0.027	stderr-same
+main	ferrodoc	html/carta-footnotes.html#html>markdown	identical	0.053	stderr-same
+main	pandoc	html/carta-footnotes.html#html>json	exit 0	0.586	
+main	carta	html/carta-footnotes.html#html>json	identical	0.191	stderr-same
+main	ferrodoc	html/carta-footnotes.html#html>json	ast-equal	0.025	api version [1, 23, 1]
+main	pandoc	html/carta-inline.html#html>markdown	exit 0	0.616	
+main	carta	html/carta-inline.html#html>markdown	identical	0.048	stderr-same
+main	ferrodoc	html/carta-inline.html#html>markdown	identical	0.041	stderr-same
+main	pandoc	html/carta-inline.html#html>json	exit 0	0.216	
+main	carta	html/carta-inline.html#html>json	identical	0.065	stderr-same
+main	ferrodoc	html/carta-inline.html#html>json	ast-equal	0.054	api version [1, 23, 1]
+main	pandoc	html/carta-lists.html#html>markdown	exit 0	0.302	
+main	carta	html/carta-lists.html#html>markdown	identical	0.044	stderr-same
+main	ferrodoc	html/carta-lists.html#html>markdown	identical	0.080	stderr-same
+main	pandoc	html/carta-lists.html#html>json	exit 0	0.122	
+main	carta	html/carta-lists.html#html>json	identical	0.048	stderr-same
+main	ferrodoc	html/carta-lists.html#html>json	ast-equal	0.039	api version [1, 23, 1]
+main	pandoc	html/carta-raw-style.html#html>markdown	exit 0	0.438	
+main	carta	html/carta-raw-style.html#html>markdown	differ	0.031	bytes oracle 84 tool 249
+main	ferrodoc	html/carta-raw-style.html#html>markdown	identical	0.040	stderr-same
+main	pandoc	html/carta-raw-style.html#html>json	exit 0	0.081	
+main	carta	html/carta-raw-style.html#html>json	differ	0.116	bytes oracle 504 tool 799
+main	ferrodoc	html/carta-raw-style.html#html>json	ast-equal	0.064	api version [1, 23, 1]
+main	pandoc	html/carta-task-list.html#html>markdown	exit 0	0.415	
+main	carta	html/carta-task-list.html#html>markdown	identical	0.190	stderr-same
+main	ferrodoc	html/carta-task-list.html#html>markdown	identical	0.041	stderr-same
+main	pandoc	html/carta-task-list.html#html>json	exit 0	0.245	
+main	carta	html/carta-task-list.html#html>json	identical	0.014	stderr-same
+main	ferrodoc	html/carta-task-list.html#html>json	ast-equal	0.031	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-footnotes.html#html>markdown	exit 0	0.349	
+main	carta	html/ferrodoc-footnotes.html#html>markdown	identical	0.032	stderr-same
+main	ferrodoc	html/ferrodoc-footnotes.html#html>markdown	identical	0.025	stderr-same
+main	pandoc	html/ferrodoc-footnotes.html#html>json	exit 0	0.173	
+main	carta	html/ferrodoc-footnotes.html#html>json	identical	0.014	stderr-same
+main	ferrodoc	html/ferrodoc-footnotes.html#html>json	ast-equal	0.031	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-hidden-content.html#html>markdown	exit 0	0.098	
+main	carta	html/ferrodoc-hidden-content.html#html>markdown	differ	0.036	bytes oracle 492 tool 491
+main	ferrodoc	html/ferrodoc-hidden-content.html#html>markdown	identical	0.044	stderr-same
+main	pandoc	html/ferrodoc-hidden-content.html#html>json	exit 0	0.208	
+main	carta	html/ferrodoc-hidden-content.html#html>json	identical	0.037	stderr-same
+main	ferrodoc	html/ferrodoc-hidden-content.html#html>json	ast-equal	0.013	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-inline-edges.html#html>markdown	exit 0	0.271	
+main	carta	html/ferrodoc-inline-edges.html#html>markdown	differ	0.015	bytes oracle 563 tool 474
+main	ferrodoc	html/ferrodoc-inline-edges.html#html>markdown	differ	0.035	bytes oracle 563 tool 562
+main	pandoc	html/ferrodoc-inline-edges.html#html>json	exit 0	0.276	
+main	carta	html/ferrodoc-inline-edges.html#html>json	differ	0.043	bytes oracle 4235 tool 3900
+main	ferrodoc	html/ferrodoc-inline-edges.html#html>json	ast-equal	0.036	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-inline-elements.html#html>markdown	exit 0	0.175	
+main	carta	html/ferrodoc-inline-elements.html#html>markdown	differ	0.012	bytes oracle 1725 tool 1742
+main	ferrodoc	html/ferrodoc-inline-elements.html#html>markdown	ws-only	0.011	
+main	pandoc	html/ferrodoc-inline-elements.html#html>json	exit 0	0.095	
+main	carta	html/ferrodoc-inline-elements.html#html>json	differ	0.016	bytes oracle 10477 tool 10781
+main	ferrodoc	html/ferrodoc-inline-elements.html#html>json	ast-equal	0.021	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-inline-svg.html#html>markdown	exit 0	0.103	
+main	carta	html/ferrodoc-inline-svg.html#html>markdown	differ	0.027	bytes oracle 682 tool 208
+main	ferrodoc	html/ferrodoc-inline-svg.html#html>markdown	identical	0.024	stderr-same
+main	pandoc	html/ferrodoc-inline-svg.html#html>json	exit 0	0.324	
+main	carta	html/ferrodoc-inline-svg.html#html>json	differ	0.036	bytes oracle 1978 tool 1500
+main	ferrodoc	html/ferrodoc-inline-svg.html#html>json	ast-equal	0.017	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-main-content.html#html>markdown	exit 0	0.265	
+main	carta	html/ferrodoc-main-content.html#html>markdown	differ	0.038	bytes oracle 84 tool 162
+main	ferrodoc	html/ferrodoc-main-content.html#html>markdown	identical	0.025	stderr-same
+main	pandoc	html/ferrodoc-main-content.html#html>json	exit 0	0.166	
+main	carta	html/ferrodoc-main-content.html#html>json	differ	0.036	bytes oracle 616 tool 1044
+main	ferrodoc	html/ferrodoc-main-content.html#html>json	ast-equal	0.020	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-sectioning.html#html>markdown	exit 0	0.269	
+main	carta	html/ferrodoc-sectioning.html#html>markdown	identical	0.022	stderr-same
+main	ferrodoc	html/ferrodoc-sectioning.html#html>markdown	differ	0.017	bytes oracle 286 tool 264
+main	pandoc	html/ferrodoc-sectioning.html#html>json	exit 0	0.137	
+main	carta	html/ferrodoc-sectioning.html#html>json	identical	0.018	stderr-same
+main	ferrodoc	html/ferrodoc-sectioning.html#html>json	differ	0.024	bytes oracle 1725 tool 1677
+main	pandoc	html/ferrodoc-tables-and-attributes.html#html>markdown	exit 0	0.453	
+main	carta	html/ferrodoc-tables-and-attributes.html#html>markdown	differ	0.024	bytes oracle 1244 tool 1239
+main	ferrodoc	html/ferrodoc-tables-and-attributes.html#html>markdown	differ	0.016	bytes oracle 1244 tool 1096
+main	pandoc	html/ferrodoc-tables-and-attributes.html#html>json	exit 0	0.157	
+main	carta	html/ferrodoc-tables-and-attributes.html#html>json	differ	0.021	bytes oracle 5075 tool 5070
+main	ferrodoc	html/ferrodoc-tables-and-attributes.html#html>json	ast-equal	0.094	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-task-lists.html#html>markdown	exit 0	0.390	
+main	carta	html/ferrodoc-task-lists.html#html>markdown	differ	0.027	bytes oracle 383 tool 382
+main	ferrodoc	html/ferrodoc-task-lists.html#html>markdown	differ	0.023	bytes oracle 383 tool 383
+main	pandoc	html/ferrodoc-task-lists.html#html>json	exit 0	0.340	
+main	carta	html/ferrodoc-task-lists.html#html>json	identical	0.020	stderr-same
+main	ferrodoc	html/ferrodoc-task-lists.html#html>json	ast-equal	0.056	api version [1, 23, 1]
+main	pandoc	html/ferrodoc-verbatim.html#html>markdown	exit 0	0.302	
+main	carta	html/ferrodoc-verbatim.html#html>markdown	differ	0.025	bytes oracle 1025 tool 1052
+main	ferrodoc	html/ferrodoc-verbatim.html#html>markdown	differ	0.039	bytes oracle 1025 tool 1088
+main	pandoc	html/ferrodoc-verbatim.html#html>json	exit 0	0.110	
+main	carta	html/ferrodoc-verbatim.html#html>json	differ	0.033	bytes oracle 2424 tool 2323
+main	ferrodoc	html/ferrodoc-verbatim.html#html>json	differ	0.027	bytes oracle 2424 tool 2318
+main	pandoc	conformance/json/roundtrip.toml/empty#json>json	exit 0	0.166	
+main	carta	conformance/json/roundtrip.toml/empty#json>json	identical	0.043	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/empty#json>json	identical	0.015	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/empty#json>html	exit 0	0.128	
+main	carta	conformance/json/roundtrip.toml/empty#json>html	identical	0.028	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/empty#json>html	identical	0.047	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/empty#json>markdown	exit 0	0.192	
+main	carta	conformance/json/roundtrip.toml/empty#json>markdown	identical	0.090	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/empty#json>markdown	ws-only	0.098	
+main	pandoc	conformance/json/roundtrip.toml/empty#json>native	exit 0	0.362	
+main	carta	conformance/json/roundtrip.toml/empty#json>native	identical	0.049	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/empty#json>native	unsupported	0.027	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/empty#json>latex	exit 0	0.478	
+main	carta	conformance/json/roundtrip.toml/empty#json>latex	identical	0.098	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/empty#json>latex	identical	0.017	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/inlines#json>json	exit 0	0.247	
+main	carta	conformance/json/roundtrip.toml/inlines#json>json	identical	0.165	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/inlines#json>json	identical	0.014	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/inlines#json>html	exit 0	0.187	
+main	carta	conformance/json/roundtrip.toml/inlines#json>html	differ	0.030	bytes oracle 773 tool 655
+main	ferrodoc	conformance/json/roundtrip.toml/inlines#json>html	differ	0.082	bytes oracle 773 tool 655
+main	pandoc	conformance/json/roundtrip.toml/inlines#json>markdown	exit 0	0.267	
+main	carta	conformance/json/roundtrip.toml/inlines#json>markdown	differ	0.028	bytes oracle 132 tool 147
+main	ferrodoc	conformance/json/roundtrip.toml/inlines#json>markdown	differ	0.084	bytes oracle 132 tool 147
+main	pandoc	conformance/json/roundtrip.toml/inlines#json>native	exit 0	0.315	
+main	carta	conformance/json/roundtrip.toml/inlines#json>native	identical	0.019	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/inlines#json>native	unsupported	0.014	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/inlines#json>latex	exit 0	0.090	
+main	carta	conformance/json/roundtrip.toml/inlines#json>latex	identical	0.064	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/inlines#json>latex	identical	0.275	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/blocks#json>json	exit 0	0.158	
+main	carta	conformance/json/roundtrip.toml/blocks#json>json	ast-equal	0.065	
+main	ferrodoc	conformance/json/roundtrip.toml/blocks#json>json	ast-equal	0.027	
+main	pandoc	conformance/json/roundtrip.toml/blocks#json>html	exit 0	0.489	
+main	carta	conformance/json/roundtrip.toml/blocks#json>html	differ	0.078	bytes oracle 934 tool 808
+main	ferrodoc	conformance/json/roundtrip.toml/blocks#json>html	differ	0.044	bytes oracle 934 tool 817
+main	pandoc	conformance/json/roundtrip.toml/blocks#json>markdown	exit 0	0.315	
+main	carta	conformance/json/roundtrip.toml/blocks#json>markdown	differ	0.034	bytes oracle 456 tool 554
+main	ferrodoc	conformance/json/roundtrip.toml/blocks#json>markdown	differ	0.031	bytes oracle 456 tool 518
+main	pandoc	conformance/json/roundtrip.toml/blocks#json>native	exit 0	0.273	
+main	carta	conformance/json/roundtrip.toml/blocks#json>native	identical	0.062	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/blocks#json>native	unsupported	0.032	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/blocks#json>latex	exit 0	0.190	
+main	carta	conformance/json/roundtrip.toml/blocks#json>latex	differ	0.045	bytes oracle 1234 tool 1122
+main	ferrodoc	conformance/json/roundtrip.toml/blocks#json>latex	differ	0.016	bytes oracle 1234 tool 1111
+main	pandoc	conformance/json/roundtrip.toml/string-escapes#json>json	exit 0	0.244	
+main	carta	conformance/json/roundtrip.toml/string-escapes#json>json	ast-equal	0.015	
+main	ferrodoc	conformance/json/roundtrip.toml/string-escapes#json>json	ast-equal	0.010	
+main	pandoc	conformance/json/roundtrip.toml/string-escapes#json>html	exit 0	0.161	
+main	carta	conformance/json/roundtrip.toml/string-escapes#json>html	identical	0.020	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/string-escapes#json>html	differ	0.024	bytes oracle 41 tool 41
+main	pandoc	conformance/json/roundtrip.toml/string-escapes#json>markdown	exit 0	0.088	
+main	carta	conformance/json/roundtrip.toml/string-escapes#json>markdown	differ	0.012	bytes oracle 28 tool 27
+main	ferrodoc	conformance/json/roundtrip.toml/string-escapes#json>markdown	differ	0.017	bytes oracle 28 tool 32
+main	pandoc	conformance/json/roundtrip.toml/string-escapes#json>native	exit 0	0.286	
+main	carta	conformance/json/roundtrip.toml/string-escapes#json>native	identical	0.057	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/string-escapes#json>native	unsupported	0.010	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/string-escapes#json>latex	exit 0	0.318	
+main	carta	conformance/json/roundtrip.toml/string-escapes#json>latex	identical	0.083	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/string-escapes#json>latex	differ	0.036	bytes oracle 57 tool 57
+main	pandoc	conformance/json/roundtrip.toml/numbers#json>json	exit 0	0.197	
+main	carta	conformance/json/roundtrip.toml/numbers#json>json	ast-equal	0.017	
+main	ferrodoc	conformance/json/roundtrip.toml/numbers#json>json	ast-equal	0.023	
+main	pandoc	conformance/json/roundtrip.toml/numbers#json>html	exit 0	0.119	
+main	carta	conformance/json/roundtrip.toml/numbers#json>html	differ	0.012	bytes oracle 850 tool 535
+main	ferrodoc	conformance/json/roundtrip.toml/numbers#json>html	differ	0.014	bytes oracle 850 tool 570
+main	pandoc	conformance/json/roundtrip.toml/numbers#json>markdown	exit 251	0.244	
+main	carta	conformance/json/roundtrip.toml/numbers#json>markdown	exit-differ	0.019	oracle 251 tool 0
+main	ferrodoc	conformance/json/roundtrip.toml/numbers#json>markdown	crash	0.041	thread 'main' (1386454) panicked at /rustc/58cf8f9c35b355199727627d07ae34a4e2846d67/library/core/src/iter/traits/accum.r
+main	pandoc	conformance/json/roundtrip.toml/numbers#json>native	exit 0	0.233	
+main	carta	conformance/json/roundtrip.toml/numbers#json>native	differ	0.039	bytes oracle 898 tool 896
+main	ferrodoc	conformance/json/roundtrip.toml/numbers#json>native	unsupported	0.020	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/numbers#json>latex	exit 0	0.110	
+main	carta	conformance/json/roundtrip.toml/numbers#json>latex	differ	0.031	bytes oracle 1693 tool 1795
+main	ferrodoc	conformance/json/roundtrip.toml/numbers#json>latex	differ	0.038	bytes oracle 1693 tool 1784
+main	pandoc	conformance/json/roundtrip.toml/version-two-parts#json>json	exit 0	0.110	
+main	carta	conformance/json/roundtrip.toml/version-two-parts#json>json	ast-equal	0.027	api version [1, 23]
+main	ferrodoc	conformance/json/roundtrip.toml/version-two-parts#json>json	ast-equal	0.074	api version [1, 23]
+main	pandoc	conformance/json/roundtrip.toml/version-two-parts#json>html	exit 0	0.178	
+main	carta	conformance/json/roundtrip.toml/version-two-parts#json>html	identical	0.027	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/version-two-parts#json>html	identical	0.035	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/version-two-parts#json>markdown	exit 0	0.146	
+main	carta	conformance/json/roundtrip.toml/version-two-parts#json>markdown	identical	0.050	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/version-two-parts#json>markdown	ws-only	0.038	
+main	pandoc	conformance/json/roundtrip.toml/version-two-parts#json>native	exit 0	0.378	
+main	carta	conformance/json/roundtrip.toml/version-two-parts#json>native	identical	0.019	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/version-two-parts#json>native	unsupported	0.018	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/version-two-parts#json>latex	exit 0	0.104	
+main	carta	conformance/json/roundtrip.toml/version-two-parts#json>latex	identical	0.041	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/version-two-parts#json>latex	identical	0.044	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/key-order#json>json	exit 0	0.147	
+main	carta	conformance/json/roundtrip.toml/key-order#json>json	identical	0.038	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/key-order#json>json	identical	0.064	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/key-order#json>html	exit 0	0.103	
+main	carta	conformance/json/roundtrip.toml/key-order#json>html	identical	0.039	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/key-order#json>html	identical	0.017	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/key-order#json>markdown	exit 0	0.172	
+main	carta	conformance/json/roundtrip.toml/key-order#json>markdown	identical	0.022	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/key-order#json>markdown	identical	0.032	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/key-order#json>native	exit 0	0.062	
+main	carta	conformance/json/roundtrip.toml/key-order#json>native	identical	0.013	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/key-order#json>native	unsupported	0.008	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+main	pandoc	conformance/json/roundtrip.toml/key-order#json>latex	exit 0	0.168	
+main	carta	conformance/json/roundtrip.toml/key-order#json>latex	identical	0.017	stderr-same
+main	ferrodoc	conformance/json/roundtrip.toml/key-order#json>latex	identical	0.019	stderr-same
+main	pandoc	conformance/json/roundtrip.toml/old-version#json>json	exit 64	0.081	
+main	carta	conformance/json/roundtrip.toml/old-version#json>json	exit-differ	0.017	oracle 64 tool 0
+main	ferrodoc	conformance/json/roundtrip.toml/old-version#json>json	exit-differ	0.013	oracle 64 tool 0
+main	pandoc	conformance/json/roundtrip.toml/old-version#json>html	exit 64	0.118	
+main	carta	conformance/json/roundtrip.toml/old-version#json>html	exit-differ	0.012	oracle 64 tool 0
+main	ferrodoc	conformance/json/roundtrip.toml/old-version#json>html	exit-differ	0.011	oracle 64 tool 0
+main	pandoc	conformance/json/roundtrip.toml/old-version#json>markdown	exit 64	0.100	
+main	carta	conformance/json/roundtrip.toml/old-version#json>markdown	exit-differ	0.026	oracle 64 tool 0
+main	ferrodoc	conformance/json/roundtrip.toml/old-version#json>markdown	exit-differ	0.021	oracle 64 tool 0
+main	pandoc	conformance/json/roundtrip.toml/old-version#json>native	exit 64	0.192	
+main	carta	conformance/json/roundtrip.toml/old-version#json>native	exit-differ	0.031	oracle 64 tool 0
+main	ferrodoc	conformance/json/roundtrip.toml/old-version#json>native	exit-differ	0.025	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/old-version#json>latex	exit 64	0.289	
+main	carta	conformance/json/roundtrip.toml/old-version#json>latex	exit-differ	0.014	oracle 64 tool 0
+main	ferrodoc	conformance/json/roundtrip.toml/old-version#json>latex	exit-differ	0.012	oracle 64 tool 0
+main	pandoc	conformance/json/roundtrip.toml/missing-version#json>json	exit 64	0.150	
+main	carta	conformance/json/roundtrip.toml/missing-version#json>json	exit-differ	0.022	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/missing-version#json>json	exit-differ	0.021	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/missing-version#json>html	exit 64	0.099	
+main	carta	conformance/json/roundtrip.toml/missing-version#json>html	exit-differ	0.019	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/missing-version#json>html	exit-differ	0.022	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/missing-version#json>markdown	exit 64	0.192	
+main	carta	conformance/json/roundtrip.toml/missing-version#json>markdown	exit-differ	0.017	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/missing-version#json>markdown	exit-differ	0.017	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/missing-version#json>native	exit 64	0.070	
+main	carta	conformance/json/roundtrip.toml/missing-version#json>native	exit-differ	0.024	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/missing-version#json>native	exit-differ	0.025	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/missing-version#json>latex	exit 64	0.114	
+main	carta	conformance/json/roundtrip.toml/missing-version#json>latex	exit-differ	0.032	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/missing-version#json>latex	exit-differ	0.018	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/not-json#json>json	exit 64	0.148	
+main	carta	conformance/json/roundtrip.toml/not-json#json>json	exit-differ	0.038	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/not-json#json>json	exit-differ	0.048	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/not-json#json>html	exit 64	0.153	
+main	carta	conformance/json/roundtrip.toml/not-json#json>html	exit-differ	0.021	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/not-json#json>html	exit-differ	0.019	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/not-json#json>markdown	exit 64	0.078	
+main	carta	conformance/json/roundtrip.toml/not-json#json>markdown	exit-differ	0.027	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/not-json#json>markdown	exit-differ	0.010	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/not-json#json>native	exit 64	0.072	
+main	carta	conformance/json/roundtrip.toml/not-json#json>native	exit-differ	0.013	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/not-json#json>native	exit-differ	0.007	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/not-json#json>latex	exit 64	0.128	
+main	carta	conformance/json/roundtrip.toml/not-json#json>latex	exit-differ	0.021	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/not-json#json>latex	exit-differ	0.020	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/unknown-block#json>json	exit 64	0.125	
+main	carta	conformance/json/roundtrip.toml/unknown-block#json>json	exit-differ	0.039	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/unknown-block#json>json	exit-differ	0.033	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/unknown-block#json>html	exit 64	0.108	
+main	carta	conformance/json/roundtrip.toml/unknown-block#json>html	exit-differ	0.032	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/unknown-block#json>html	exit-differ	0.011	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/unknown-block#json>markdown	exit 64	0.100	
+main	carta	conformance/json/roundtrip.toml/unknown-block#json>markdown	exit-differ	0.033	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/unknown-block#json>markdown	exit-differ	0.019	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/unknown-block#json>native	exit 64	0.120	
+main	carta	conformance/json/roundtrip.toml/unknown-block#json>native	exit-differ	0.025	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/unknown-block#json>native	exit-differ	0.047	oracle 64 tool 1
+main	pandoc	conformance/json/roundtrip.toml/unknown-block#json>latex	exit 64	0.258	
+main	carta	conformance/json/roundtrip.toml/unknown-block#json>latex	exit-differ	0.018	oracle 64 tool 1
+main	ferrodoc	conformance/json/roundtrip.toml/unknown-block#json>latex	exit-differ	0.012	oracle 64 tool 1
+main	pandoc	conformance/cli/formats.toml/unknown-input-format#cmd	exit 21	0.124	
+main	carta	conformance/cli/formats.toml/unknown-input-format#cmd	exit-differ	0.040	oracle 21 tool 1
+main	ferrodoc	conformance/cli/formats.toml/unknown-input-format#cmd	exit-differ	0.046	oracle 21 tool 1
+main	pandoc	conformance/cli/formats.toml/unknown-output-format#cmd	exit 22	0.157	
+main	carta	conformance/cli/formats.toml/unknown-output-format#cmd	exit-differ	0.018	oracle 22 tool 1
+main	ferrodoc	conformance/cli/formats.toml/unknown-output-format#cmd	exit-differ	0.012	oracle 22 tool 1
+main	pandoc	conformance/cli/formats.toml/extension-not-supported#cmd	exit 23	0.142	
+main	carta	conformance/cli/formats.toml/extension-not-supported#cmd	identical	0.019	stderr-differs
+main	ferrodoc	conformance/cli/formats.toml/extension-not-supported#cmd	exit-differ	0.021	oracle 23 tool 1
+main	pandoc	conformance/cli/formats.toml/missing-input-file#cmd	exit 1	0.120	
+main	carta	conformance/cli/formats.toml/missing-input-file#cmd	identical	0.046	stderr-differs
+main	ferrodoc	conformance/cli/formats.toml/missing-input-file#cmd	identical	0.024	stderr-differs
+main	pandoc	conformance/cli/formats.toml/input-file#cmd	exit 0	0.357	
+main	carta	conformance/cli/formats.toml/input-file#cmd	identical	0.048	stderr-same
+main	ferrodoc	conformance/cli/formats.toml/input-file#cmd	identical	0.046	stderr-same
+main	pandoc	conformance/cli/formats.toml/long-options#cmd	exit 0	0.170	
+main	carta	conformance/cli/formats.toml/long-options#cmd	identical	0.034	stderr-same
+main	ferrodoc	conformance/cli/formats.toml/long-options#cmd	identical	0.019	stderr-same
+main	pandoc	conformance/cli/formats.toml/unknown-option#cmd	exit 6	0.094	
+main	carta	conformance/cli/formats.toml/unknown-option#cmd	exit-differ	0.033	oracle 6 tool 2
+main	ferrodoc	conformance/cli/formats.toml/unknown-option#cmd	exit-differ	0.039	oracle 6 tool 1
+writers	pandoc	md/carta-README.md#markdown>rst	exit 0	0.497	
+writers	carta	md/carta-README.md#markdown>rst	identical	0.081	stderr-same
+writers	ferrodoc	md/carta-README.md#markdown>rst	differ	0.034	bytes oracle 4004 tool 3982
+writers	pandoc	md/carta-README.md#markdown>org	exit 0	0.642	
+writers	carta	md/carta-README.md#markdown>org	differ	0.041	bytes oracle 4191 tool 4091
+writers	ferrodoc	md/carta-README.md#markdown>org	unsupported	0.011	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/carta-README.md#markdown>asciidoc	exit 0	0.272	
+writers	carta	md/carta-README.md#markdown>asciidoc	differ	0.025	bytes oracle 3689 tool 3596
+writers	ferrodoc	md/carta-README.md#markdown>asciidoc	differ	0.017	bytes oracle 3689 tool 3688
+writers	pandoc	md/carta-README.md#markdown>mediawiki	exit 0	0.465	
+writers	carta	md/carta-README.md#markdown>mediawiki	differ	0.015	bytes oracle 4498 tool 4252
+writers	ferrodoc	md/carta-README.md#markdown>mediawiki	unsupported	0.009	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/carta-README.md#markdown>docbook5	exit 0	8.591	
+writers	carta	md/carta-README.md#markdown>docbook5	differ	0.088	bytes oracle 7183 tool 7177
+writers	ferrodoc	md/carta-README.md#markdown>docbook5	unsupported	0.012	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/carta-README.md#markdown>man	exit 0	7.226	
+writers	carta	md/carta-README.md#markdown>man	differ	0.080	bytes oracle 4031 tool 4001
+writers	ferrodoc	md/carta-README.md#markdown>man	unsupported	0.039	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/carta-README.md#markdown>typst	exit 0	0.319	
+writers	carta	md/carta-README.md#markdown>typst	differ	0.020	bytes oracle 3918 tool 3844
+writers	ferrodoc	md/carta-README.md#markdown>typst	unsupported	0.014	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/carta-README.md#markdown>rtf	exit 0	2.106	
+writers	carta	md/carta-README.md#markdown>rtf	differ	0.022	bytes oracle 6609 tool 6149
+writers	ferrodoc	md/carta-README.md#markdown>rtf	unsupported	0.046	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/carta-README.md#markdown>ipynb	exit 0	7.578	
+writers	carta	md/carta-README.md#markdown>ipynb	differ	0.022	bytes oracle 5048 tool 5048
+writers	ferrodoc	md/carta-README.md#markdown>ipynb	differ	0.063	bytes oracle 5048 tool 5683
+writers	pandoc	md/carta-README.md#markdown>dokuwiki	exit 0	0.223	
+writers	carta	md/carta-README.md#markdown>dokuwiki	differ	0.029	bytes oracle 3793 tool 3686
+writers	ferrodoc	md/carta-README.md#markdown>dokuwiki	unsupported	0.010	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/carta-README.md#markdown>jira	exit 0	0.355	
+writers	carta	md/carta-README.md#markdown>jira	differ	0.024	bytes oracle 3798 tool 3770
+writers	ferrodoc	md/carta-README.md#markdown>jira	unsupported	0.012	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/carta-README.md#markdown>opml	exit 0	0.167	
+writers	carta	md/carta-README.md#markdown>opml	identical	0.043	stderr-same
+writers	ferrodoc	md/carta-README.md#markdown>opml	unsupported	0.018	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/carta-README.md#markdown>plain	exit 0	0.350	
+writers	carta	md/carta-README.md#markdown>plain	identical	0.019	stderr-same
+writers	ferrodoc	md/carta-README.md#markdown>plain	differ	0.037	bytes oracle 2892 tool 2893
+writers	pandoc	md/carta-README.md#markdown>commonmark	exit 0	7.022	
+writers	carta	md/carta-README.md#markdown>commonmark	identical	0.029	stderr-same
+writers	ferrodoc	md/carta-README.md#markdown>commonmark	differ	0.020	bytes oracle 3684 tool 3678
+writers	pandoc	md/carta-README.md#markdown>gfm	exit 0	7.893	
+writers	carta	md/carta-README.md#markdown>gfm	identical	0.020	stderr-same
+writers	ferrodoc	md/carta-README.md#markdown>gfm	differ	0.031	bytes oracle 3684 tool 3678
+writers	pandoc	md/carta-README.md#markdown>native	exit 0	0.312	
+writers	carta	md/carta-README.md#markdown>native	identical	0.047	stderr-same
+writers	ferrodoc	md/carta-README.md#markdown>native	unsupported	0.020	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>rst	exit 0	0.169	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>rst	differ	0.023	bytes oracle 622 tool 640
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>rst	identical	0.020	stderr-same
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>org	exit 0	0.109	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>org	differ	0.016	bytes oracle 769 tool 732
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>org	unsupported	0.010	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>asciidoc	exit 0	0.137	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>asciidoc	differ	0.013	bytes oracle 463 tool 417
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>asciidoc	identical	0.013	stderr-same
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>mediawiki	exit 0	0.167	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>mediawiki	differ	0.023	bytes oracle 599 tool 592
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>mediawiki	unsupported	0.012	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>docbook5	exit 0	0.142	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>docbook5	differ	0.019	bytes oracle 715 tool 663
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>docbook5	unsupported	0.010	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>man	exit 0	0.170	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>man	differ	0.027	bytes oracle 517 tool 484
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>man	unsupported	0.014	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>typst	exit 0	0.145	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>typst	differ	0.016	bytes oracle 452 tool 416
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>typst	unsupported	0.011	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>rtf	exit 0	0.199	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>rtf	differ	0.021	bytes oracle 905 tool 749
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>rtf	unsupported	0.018	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>ipynb	exit 0	0.074	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>ipynb	differ	0.015	bytes oracle 1019 tool 1067
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>ipynb	differ	0.015	bytes oracle 1019 tool 1247
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>dokuwiki	exit 0	0.196	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>dokuwiki	differ	0.015	bytes oracle 439 tool 407
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>dokuwiki	unsupported	0.014	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>jira	exit 0	0.312	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>jira	differ	0.026	bytes oracle 433 tool 414
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>jira	unsupported	0.026	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>opml	exit 0	0.201	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>opml	identical	0.022	stderr-same
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>opml	unsupported	0.014	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>plain	exit 0	0.121	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>plain	differ	0.024	bytes oracle 400 tool 370
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>plain	ws-only	0.023	
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>commonmark	exit 0	0.088	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>commonmark	differ	0.019	bytes oracle 542 tool 536
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>commonmark	ws-only	0.011	
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>gfm	exit 0	0.230	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>gfm	differ	0.015	bytes oracle 542 tool 537
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>gfm	ws-only	0.015	
+writers	pandoc	md/ferrodoc-code-and-raw.md#markdown>native	exit 0	0.173	
+writers	carta	md/ferrodoc-code-and-raw.md#markdown>native	differ	0.050	bytes oracle 2097 tool 2029
+writers	ferrodoc	md/ferrodoc-code-and-raw.md#markdown>native	unsupported	0.016	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>rst	exit 0	0.102	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>rst	identical	0.016	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>rst	identical	0.012	stderr-same
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>org	exit 0	0.100	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>org	identical	0.051	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>org	unsupported	0.024	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>asciidoc	exit 0	0.125	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>asciidoc	differ	0.040	bytes oracle 587 tool 612
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>asciidoc	identical	0.031	stderr-same
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>mediawiki	exit 0	0.223	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>mediawiki	identical	0.057	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>mediawiki	unsupported	0.057	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>docbook5	exit 0	0.268	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>docbook5	identical	0.019	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>docbook5	unsupported	0.010	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>man	exit 0	0.286	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>man	identical	0.038	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>man	unsupported	0.013	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>typst	exit 0	0.134	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>typst	differ	0.023	bytes oracle 728 tool 734
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>typst	unsupported	0.012	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>rtf	exit 0	0.091	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>rtf	differ	0.013	bytes oracle 1887 tool 1617
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>rtf	unsupported	0.012	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>ipynb	exit 0	0.314	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>ipynb	differ	0.029	bytes oracle 1174 tool 1174
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>ipynb	differ	0.015	bytes oracle 1174 tool 1421
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>dokuwiki	exit 0	0.083	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>dokuwiki	identical	0.016	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>dokuwiki	unsupported	0.009	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>jira	exit 0	0.105	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>jira	differ	0.021	bytes oracle 600 tool 617
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>jira	unsupported	0.009	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>opml	exit 0	0.124	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>opml	identical	0.027	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>opml	unsupported	0.009	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>plain	exit 0	0.082	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>plain	identical	0.019	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>plain	identical	0.019	stderr-same
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>commonmark	exit 0	0.143	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>commonmark	identical	0.036	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>commonmark	differ	0.020	bytes oracle 674 tool 676
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>gfm	exit 0	0.166	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>gfm	identical	0.022	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>gfm	differ	0.021	bytes oracle 674 tool 676
+writers	pandoc	md/ferrodoc-edge-cases.md#markdown>native	exit 0	0.117	
+writers	carta	md/ferrodoc-edge-cases.md#markdown>native	identical	0.022	stderr-same
+writers	ferrodoc	md/ferrodoc-edge-cases.md#markdown>native	unsupported	0.011	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-headings.md#markdown>rst	exit 0	0.084	
+writers	carta	md/ferrodoc-headings.md#markdown>rst	identical	0.022	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>rst	identical	0.013	stderr-same
+writers	pandoc	md/ferrodoc-headings.md#markdown>org	exit 0	0.099	
+writers	carta	md/ferrodoc-headings.md#markdown>org	differ	0.028	bytes oracle 844 tool 846
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>org	unsupported	0.011	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-headings.md#markdown>asciidoc	exit 0	0.127	
+writers	carta	md/ferrodoc-headings.md#markdown>asciidoc	identical	0.020	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>asciidoc	identical	0.013	stderr-same
+writers	pandoc	md/ferrodoc-headings.md#markdown>mediawiki	exit 0	0.143	
+writers	carta	md/ferrodoc-headings.md#markdown>mediawiki	identical	0.036	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>mediawiki	unsupported	0.012	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-headings.md#markdown>docbook5	exit 0	0.208	
+writers	carta	md/ferrodoc-headings.md#markdown>docbook5	identical	0.017	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>docbook5	unsupported	0.014	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-headings.md#markdown>man	exit 0	0.207	
+writers	carta	md/ferrodoc-headings.md#markdown>man	identical	0.023	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>man	unsupported	0.024	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-headings.md#markdown>typst	exit 0	0.258	
+writers	carta	md/ferrodoc-headings.md#markdown>typst	identical	0.017	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>typst	unsupported	0.013	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-headings.md#markdown>rtf	exit 0	0.119	
+writers	carta	md/ferrodoc-headings.md#markdown>rtf	differ	0.029	bytes oracle 1043 tool 971
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>rtf	unsupported	0.010	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-headings.md#markdown>ipynb	exit 0	0.076	
+writers	carta	md/ferrodoc-headings.md#markdown>ipynb	differ	0.016	bytes oracle 880 tool 880
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>ipynb	differ	0.016	bytes oracle 880 tool 984
+writers	pandoc	md/ferrodoc-headings.md#markdown>dokuwiki	exit 0	0.097	
+writers	carta	md/ferrodoc-headings.md#markdown>dokuwiki	identical	0.020	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>dokuwiki	unsupported	0.010	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-headings.md#markdown>jira	exit 0	0.137	
+writers	carta	md/ferrodoc-headings.md#markdown>jira	identical	0.056	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>jira	unsupported	0.018	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-headings.md#markdown>opml	exit 0	0.173	
+writers	carta	md/ferrodoc-headings.md#markdown>opml	identical	0.024	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>opml	unsupported	0.016	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-headings.md#markdown>plain	exit 0	0.198	
+writers	carta	md/ferrodoc-headings.md#markdown>plain	identical	0.027	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>plain	identical	0.020	stderr-same
+writers	pandoc	md/ferrodoc-headings.md#markdown>commonmark	exit 0	0.182	
+writers	carta	md/ferrodoc-headings.md#markdown>commonmark	identical	0.027	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>commonmark	identical	0.019	stderr-same
+writers	pandoc	md/ferrodoc-headings.md#markdown>gfm	exit 0	0.357	
+writers	carta	md/ferrodoc-headings.md#markdown>gfm	identical	0.031	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>gfm	identical	0.047	stderr-same
+writers	pandoc	md/ferrodoc-headings.md#markdown>native	exit 0	0.247	
+writers	carta	md/ferrodoc-headings.md#markdown>native	identical	0.041	stderr-same
+writers	ferrodoc	md/ferrodoc-headings.md#markdown>native	unsupported	0.021	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-images.md#markdown>rst	exit 0	0.311	
+writers	carta	md/ferrodoc-images.md#markdown>rst	identical	0.029	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>rst	identical	0.035	stderr-same
+writers	pandoc	md/ferrodoc-images.md#markdown>org	exit 0	0.739	
+writers	carta	md/ferrodoc-images.md#markdown>org	identical	0.109	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>org	unsupported	0.052	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-images.md#markdown>asciidoc	exit 0	0.652	
+writers	carta	md/ferrodoc-images.md#markdown>asciidoc	identical	0.228	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>asciidoc	identical	0.367	stderr-same
+writers	pandoc	md/ferrodoc-images.md#markdown>mediawiki	exit 0	0.666	
+writers	carta	md/ferrodoc-images.md#markdown>mediawiki	identical	0.082	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>mediawiki	unsupported	0.179	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-images.md#markdown>docbook5	exit 0	1.246	
+writers	carta	md/ferrodoc-images.md#markdown>docbook5	identical	0.146	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>docbook5	unsupported	0.053	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-images.md#markdown>man	exit 0	0.484	
+writers	carta	md/ferrodoc-images.md#markdown>man	identical	0.087	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>man	unsupported	0.089	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-images.md#markdown>typst	exit 0	0.377	
+writers	carta	md/ferrodoc-images.md#markdown>typst	identical	0.090	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>typst	unsupported	0.038	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-images.md#markdown>rtf	exit 0	0.175	
+writers	carta	md/ferrodoc-images.md#markdown>rtf	differ	0.056	bytes oracle 496 tool 460
+writers	ferrodoc	md/ferrodoc-images.md#markdown>rtf	unsupported	0.025	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-images.md#markdown>ipynb	exit 99	0.369	
+writers	carta	md/ferrodoc-images.md#markdown>ipynb	exit-differ	0.020	oracle 99 tool 0
+writers	ferrodoc	md/ferrodoc-images.md#markdown>ipynb	exit-differ	0.018	oracle 99 tool 0
+writers	pandoc	md/ferrodoc-images.md#markdown>dokuwiki	exit 0	0.703	
+writers	carta	md/ferrodoc-images.md#markdown>dokuwiki	identical	0.052	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>dokuwiki	unsupported	0.024	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-images.md#markdown>jira	exit 0	0.230	
+writers	carta	md/ferrodoc-images.md#markdown>jira	identical	0.083	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>jira	unsupported	0.058	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-images.md#markdown>opml	exit 0	0.257	
+writers	carta	md/ferrodoc-images.md#markdown>opml	identical	0.025	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>opml	unsupported	0.022	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-images.md#markdown>plain	exit 0	0.469	
+writers	carta	md/ferrodoc-images.md#markdown>plain	identical	0.058	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>plain	identical	0.027	stderr-same
+writers	pandoc	md/ferrodoc-images.md#markdown>commonmark	exit 0	0.347	
+writers	carta	md/ferrodoc-images.md#markdown>commonmark	identical	0.044	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>commonmark	identical	0.069	stderr-same
+writers	pandoc	md/ferrodoc-images.md#markdown>gfm	exit 0	0.916	
+writers	carta	md/ferrodoc-images.md#markdown>gfm	identical	0.027	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>gfm	identical	0.069	stderr-same
+writers	pandoc	md/ferrodoc-images.md#markdown>native	exit 0	0.370	
+writers	carta	md/ferrodoc-images.md#markdown>native	identical	0.036	stderr-same
+writers	ferrodoc	md/ferrodoc-images.md#markdown>native	unsupported	0.052	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>rst	exit 0	0.296	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>rst	identical	0.126	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>rst	identical	0.111	stderr-same
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>org	exit 0	0.497	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>org	identical	0.137	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>org	unsupported	0.112	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>asciidoc	exit 0	0.755	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>asciidoc	identical	0.037	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>asciidoc	identical	0.035	stderr-same
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>mediawiki	exit 0	0.428	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>mediawiki	identical	0.064	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>mediawiki	unsupported	0.087	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>docbook5	exit 0	8.291	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>docbook5	identical	0.143	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>docbook5	unsupported	0.037	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>man	exit 0	0.201	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>man	differ	0.059	bytes oracle 665 tool 645
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>man	unsupported	0.038	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>typst	exit 0	0.455	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>typst	differ	0.032	bytes oracle 555 tool 560
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>typst	unsupported	0.026	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>rtf	exit 0	0.223	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>rtf	differ	0.058	bytes oracle 1695 tool 1313
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>rtf	unsupported	0.016	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>ipynb	exit 0	0.385	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>ipynb	differ	0.049	bytes oracle 1065 tool 1063
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>ipynb	differ	0.051	bytes oracle 1065 tool 1213
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>dokuwiki	exit 0	0.414	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>dokuwiki	differ	0.054	bytes oracle 531 tool 524
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>dokuwiki	unsupported	0.085	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>jira	exit 0	0.278	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>jira	differ	0.090	bytes oracle 490 tool 490
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>jira	unsupported	0.072	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>opml	exit 0	0.216	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>opml	identical	0.091	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>opml	unsupported	0.047	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>plain	exit 0	0.229	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>plain	differ	0.070	bytes oracle 549 tool 547
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>plain	identical	0.027	stderr-same
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>commonmark	exit 0	0.212	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>commonmark	differ	0.025	bytes oracle 589 tool 587
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>commonmark	identical	0.032	stderr-same
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>gfm	exit 0	0.191	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>gfm	differ	0.024	bytes oracle 589 tool 587
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>gfm	identical	0.037	stderr-same
+writers	pandoc	md/ferrodoc-nested-structures.md#markdown>native	exit 0	0.877	
+writers	carta	md/ferrodoc-nested-structures.md#markdown>native	identical	0.051	stderr-same
+writers	ferrodoc	md/ferrodoc-nested-structures.md#markdown>native	unsupported	0.034	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>rst	exit 0	0.457	
+writers	carta	md/ferrodoc-readme-style.md#markdown>rst	identical	0.048	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>rst	identical	0.092	stderr-same
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>org	exit 0	0.568	
+writers	carta	md/ferrodoc-readme-style.md#markdown>org	identical	0.089	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>org	unsupported	0.033	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>asciidoc	exit 0	0.577	
+writers	carta	md/ferrodoc-readme-style.md#markdown>asciidoc	identical	0.073	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>asciidoc	identical	0.059	stderr-same
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>mediawiki	exit 0	0.490	
+writers	carta	md/ferrodoc-readme-style.md#markdown>mediawiki	identical	0.074	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>mediawiki	unsupported	0.046	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>docbook5	exit 0	0.363	
+writers	carta	md/ferrodoc-readme-style.md#markdown>docbook5	differ	0.035	bytes oracle 2365 tool 2349
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>docbook5	unsupported	0.015	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>man	exit 0	0.199	
+writers	carta	md/ferrodoc-readme-style.md#markdown>man	identical	0.034	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>man	unsupported	0.116	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>typst	exit 0	0.308	
+writers	carta	md/ferrodoc-readme-style.md#markdown>typst	differ	0.041	bytes oracle 694 tool 699
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>typst	unsupported	0.022	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>rtf	exit 0	0.190	
+writers	carta	md/ferrodoc-readme-style.md#markdown>rtf	differ	0.055	bytes oracle 2030 tool 1678
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>rtf	unsupported	0.039	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>ipynb	exit 99	0.136	
+writers	carta	md/ferrodoc-readme-style.md#markdown>ipynb	exit-differ	0.043	oracle 99 tool 0
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>ipynb	exit-differ	0.048	oracle 99 tool 0
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>dokuwiki	exit 0	0.116	
+writers	carta	md/ferrodoc-readme-style.md#markdown>dokuwiki	identical	0.056	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>dokuwiki	unsupported	0.049	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>jira	exit 0	0.262	
+writers	carta	md/ferrodoc-readme-style.md#markdown>jira	identical	0.052	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>jira	unsupported	0.051	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>opml	exit 0	0.209	
+writers	carta	md/ferrodoc-readme-style.md#markdown>opml	identical	0.037	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>opml	unsupported	0.022	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>plain	exit 0	0.215	
+writers	carta	md/ferrodoc-readme-style.md#markdown>plain	identical	0.063	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>plain	identical	0.066	stderr-same
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>commonmark	exit 0	0.287	
+writers	carta	md/ferrodoc-readme-style.md#markdown>commonmark	identical	0.041	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>commonmark	identical	0.039	stderr-same
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>gfm	exit 0	0.178	
+writers	carta	md/ferrodoc-readme-style.md#markdown>gfm	identical	0.052	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>gfm	identical	0.032	stderr-same
+writers	pandoc	md/ferrodoc-readme-style.md#markdown>native	exit 0	0.277	
+writers	carta	md/ferrodoc-readme-style.md#markdown>native	identical	0.045	stderr-same
+writers	ferrodoc	md/ferrodoc-readme-style.md#markdown>native	unsupported	0.070	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>rst	exit 0	0.377	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>rst	differ	0.029	bytes oracle 502 tool 570
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>rst	identical	0.036	stderr-same
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>org	exit 0	0.214	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>org	differ	0.040	bytes oracle 551 tool 639
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>org	unsupported	0.017	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>asciidoc	exit 0	0.244	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>asciidoc	differ	0.032	bytes oracle 448 tool 341
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>asciidoc	identical	0.017	stderr-same
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>mediawiki	exit 0	0.144	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>mediawiki	differ	0.033	bytes oracle 516 tool 614
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>mediawiki	unsupported	0.024	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>docbook5	exit 0	0.173	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>docbook5	differ	0.023	bytes oracle 1027 tool 808
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>docbook5	unsupported	0.017	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>man	exit 0	0.338	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>man	differ	0.130	bytes oracle 503 tool 386
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>man	unsupported	0.046	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>typst	exit 0	0.406	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>typst	differ	0.064	bytes oracle 443 tool 333
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>typst	unsupported	0.071	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>rtf	exit 0	0.414	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>rtf	differ	0.053	bytes oracle 1187 tool 677
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>rtf	unsupported	0.042	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>ipynb	exit 0	0.293	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>ipynb	differ	0.061	bytes oracle 944 tool 935
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>ipynb	differ	0.060	bytes oracle 944 tool 1080
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>dokuwiki	exit 0	0.741	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>dokuwiki	differ	0.023	bytes oracle 402 tool 319
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>dokuwiki	unsupported	0.012	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>jira	exit 0	0.163	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>jira	differ	0.028	bytes oracle 392 tool 298
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>jira	unsupported	0.019	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>opml	exit 0	0.173	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>opml	identical	0.027	stderr-same
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>opml	unsupported	0.016	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>plain	exit 0	0.375	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>plain	differ	0.014	bytes oracle 400 tool 292
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>plain	identical	0.013	stderr-same
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>commonmark	exit 0	0.272	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>commonmark	differ	0.061	bytes oracle 489 tool 483
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>commonmark	differ	0.016	bytes oracle 489 tool 485
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>gfm	exit 0	0.154	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>gfm	differ	0.039	bytes oracle 489 tool 479
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>gfm	differ	0.008	bytes oracle 489 tool 485
+writers	pandoc	md/ferrodoc-truncation-cases.md#markdown>native	exit 0	0.372	
+writers	carta	md/ferrodoc-truncation-cases.md#markdown>native	differ	0.085	bytes oracle 2375 tool 1845
+writers	ferrodoc	md/ferrodoc-truncation-cases.md#markdown>native	unsupported	0.077	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-MANUAL.md#markdown>rst	exit 0	13.659	
+writers	carta	md/pandoc-MANUAL.md#markdown>rst	differ	4.723	bytes oracle 323686 tool 322153
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>rst	differ	3.296	bytes oracle 323686 tool 305421
+writers	pandoc	md/pandoc-MANUAL.md#markdown>org	exit 0	12.486	
+writers	carta	md/pandoc-MANUAL.md#markdown>org	differ	4.675	bytes oracle 317810 tool 318051
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>org	unsupported	0.042	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-MANUAL.md#markdown>asciidoc	exit 0	16.633	
+writers	carta	md/pandoc-MANUAL.md#markdown>asciidoc	differ	4.067	bytes oracle 283775 tool 284278
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>asciidoc	differ	2.253	bytes oracle 283775 tool 297881
+writers	pandoc	md/pandoc-MANUAL.md#markdown>mediawiki	exit 0	10.017	
+writers	carta	md/pandoc-MANUAL.md#markdown>mediawiki	differ	3.359	bytes oracle 337181 tool 337210
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>mediawiki	unsupported	0.115	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-MANUAL.md#markdown>docbook5	exit 0	22.868	
+writers	carta	md/pandoc-MANUAL.md#markdown>docbook5	differ	3.433	bytes oracle 558995 tool 556612
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>docbook5	unsupported	0.122	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-MANUAL.md#markdown>man	exit 0	25.510	
+writers	carta	md/pandoc-MANUAL.md#markdown>man	differ	4.093	bytes oracle 317278 tool 315722
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>man	unsupported	0.111	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-MANUAL.md#markdown>typst	exit 0	12.436	
+writers	carta	md/pandoc-MANUAL.md#markdown>typst	differ	3.794	bytes oracle 292450 tool 293111
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>typst	unsupported	0.042	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-MANUAL.md#markdown>rtf	exit 0	15.493	
+writers	carta	md/pandoc-MANUAL.md#markdown>rtf	differ	6.060	bytes oracle 468107 tool 430506
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>rtf	unsupported	0.128	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-MANUAL.md#markdown>ipynb	exit 0	32.895	
+writers	carta	md/pandoc-MANUAL.md#markdown>ipynb	differ	5.263	bytes oracle 396092 tool 364989
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>ipynb	differ	3.520	bytes oracle 396092 tool 388291
+writers	pandoc	md/pandoc-MANUAL.md#markdown>dokuwiki	exit 0	12.300	
+writers	carta	md/pandoc-MANUAL.md#markdown>dokuwiki	differ	6.345	bytes oracle 311389 tool 311162
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>dokuwiki	unsupported	0.560	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-MANUAL.md#markdown>jira	exit 0	13.638	
+writers	carta	md/pandoc-MANUAL.md#markdown>jira	differ	4.845	bytes oracle 294761 tool 294770
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>jira	unsupported	0.049	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-MANUAL.md#markdown>opml	exit 0	24.131	
+writers	carta	md/pandoc-MANUAL.md#markdown>opml	differ	4.766	bytes oracle 350157 tool 348965
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>opml	unsupported	0.053	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-MANUAL.md#markdown>plain	exit 0	11.920	
+writers	carta	md/pandoc-MANUAL.md#markdown>plain	differ	4.293	bytes oracle 270439 tool 269168
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>plain	differ	2.348	bytes oracle 270439 tool 271709
+writers	pandoc	md/pandoc-MANUAL.md#markdown>commonmark	exit 0	25.329	
+writers	carta	md/pandoc-MANUAL.md#markdown>commonmark	differ	3.351	bytes oracle 322620 tool 294864
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>commonmark	differ	3.279	bytes oracle 322620 tool 287590
+writers	pandoc	md/pandoc-MANUAL.md#markdown>gfm	exit 0	23.149	
+writers	carta	md/pandoc-MANUAL.md#markdown>gfm	differ	4.045	bytes oracle 320111 tool 292355
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>gfm	differ	1.840	bytes oracle 320111 tool 288473
+writers	pandoc	md/pandoc-MANUAL.md#markdown>native	exit 0	10.898	
+writers	carta	md/pandoc-MANUAL.md#markdown>native	differ	3.867	bytes oracle 1592292 tool 1592364
+writers	ferrodoc	md/pandoc-MANUAL.md#markdown>native	unsupported	0.097	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>rst	exit 0	0.305	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>rst	differ	0.049	bytes oracle 18401 tool 18403
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>rst	differ	0.109	bytes oracle 18401 tool 18403
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>org	exit 0	0.217	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>org	differ	0.050	bytes oracle 17681 tool 17695
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>org	unsupported	0.025	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>asciidoc	exit 0	0.390	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>asciidoc	identical	0.020	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>asciidoc	identical	0.020	stderr-same
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>mediawiki	exit 0	0.180	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>mediawiki	identical	0.022	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>mediawiki	unsupported	0.022	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>docbook5	exit 0	3.978	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>docbook5	differ	0.038	bytes oracle 21920 tool 21770
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>docbook5	unsupported	0.018	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>man	exit 0	0.956	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>man	differ	0.030	bytes oracle 20835 tool 18695
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>man	unsupported	0.027	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>typst	exit 0	0.295	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>typst	identical	0.027	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>typst	unsupported	0.015	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>rtf	exit 0	0.392	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>rtf	differ	0.035	bytes oracle 22250 tool 21610
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>rtf	unsupported	0.018	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>ipynb	exit 0	0.541	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>ipynb	differ	0.037	bytes oracle 22840 tool 22840
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>ipynb	differ	0.024	bytes oracle 22840 tool 25184
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>dokuwiki	exit 0	0.442	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>dokuwiki	identical	0.020	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>dokuwiki	unsupported	0.013	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>jira	exit 0	0.371	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>jira	identical	0.033	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>jira	unsupported	0.014	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>opml	exit 0	0.238	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>opml	identical	0.020	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>opml	unsupported	0.016	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>plain	exit 0	0.308	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>plain	identical	0.037	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>plain	identical	0.022	stderr-same
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>commonmark	exit 0	0.537	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>commonmark	identical	0.047	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>commonmark	identical	0.037	stderr-same
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>gfm	exit 0	0.741	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>gfm	identical	0.043	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>gfm	identical	0.018	stderr-same
+writers	pandoc	md/pandoc-doc-custom-readers.md#markdown>native	exit 0	0.301	
+writers	carta	md/pandoc-doc-custom-readers.md#markdown>native	identical	0.029	stderr-same
+writers	ferrodoc	md/pandoc-doc-custom-readers.md#markdown>native	unsupported	0.013	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>rst	exit 0	0.347	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>rst	differ	0.024	bytes oracle 8996 tool 8041
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>rst	differ	0.021	bytes oracle 8996 tool 6064
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>org	exit 0	0.225	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>org	differ	0.017	bytes oracle 7451 tool 7463
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>org	unsupported	0.010	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>asciidoc	exit 0	0.234	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>asciidoc	differ	0.015	bytes oracle 5542 tool 5479
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>asciidoc	differ	0.015	bytes oracle 5542 tool 5306
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>mediawiki	exit 0	0.546	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>mediawiki	identical	0.074	stderr-same
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>mediawiki	unsupported	0.019	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>docbook5	exit 0	0.416	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>docbook5	differ	0.053	bytes oracle 10485 tool 10425
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>docbook5	unsupported	0.023	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>man	exit 0	0.395	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>man	differ	0.049	bytes oracle 6150 tool 6118
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>man	unsupported	0.012	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>typst	exit 0	0.366	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>typst	differ	0.042	bytes oracle 6212 tool 6181
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>typst	unsupported	0.020	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>rtf	exit 0	0.585	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>rtf	differ	0.024	bytes oracle 9891 tool 9369
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>rtf	unsupported	0.010	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>ipynb	exit 0	0.250	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>ipynb	differ	0.025	bytes oracle 7204 tool 7147
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>ipynb	differ	0.023	bytes oracle 7204 tool 7797
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>dokuwiki	exit 0	0.507	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>dokuwiki	identical	0.029	stderr-same
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>dokuwiki	unsupported	0.012	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>jira	exit 0	0.266	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>jira	identical	0.041	stderr-same
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>jira	unsupported	0.008	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>opml	exit 0	0.744	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>opml	differ	0.093	bytes oracle 8063 tool 6971
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>opml	unsupported	0.009	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>plain	exit 0	0.541	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>plain	differ	0.034	bytes oracle 4856 tool 4598
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>plain	differ	0.016	bytes oracle 4856 tool 4607
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>commonmark	exit 0	0.541	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>commonmark	differ	0.034	bytes oracle 6457 tool 6326
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>commonmark	differ	0.043	bytes oracle 6457 tool 6068
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>gfm	exit 0	0.526	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>gfm	identical	0.025	stderr-same
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>gfm	differ	0.011	bytes oracle 5656 tool 5698
+writers	pandoc	md/pandoc-doc-customizing-pandoc.md#markdown>native	exit 0	0.811	
+writers	carta	md/pandoc-doc-customizing-pandoc.md#markdown>native	differ	0.044	bytes oracle 29472 tool 29424
+writers	ferrodoc	md/pandoc-doc-customizing-pandoc.md#markdown>native	unsupported	0.014	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-epub.md#markdown>rst	exit 0	0.337	
+writers	carta	md/pandoc-doc-epub.md#markdown>rst	identical	0.081	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>rst	identical	0.028	stderr-same
+writers	pandoc	md/pandoc-doc-epub.md#markdown>org	exit 0	0.547	
+writers	carta	md/pandoc-doc-epub.md#markdown>org	differ	0.085	bytes oracle 6215 tool 6247
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>org	unsupported	0.012	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-epub.md#markdown>asciidoc	exit 0	0.210	
+writers	carta	md/pandoc-doc-epub.md#markdown>asciidoc	differ	0.024	bytes oracle 5805 tool 5787
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>asciidoc	differ	0.017	bytes oracle 5805 tool 5787
+writers	pandoc	md/pandoc-doc-epub.md#markdown>mediawiki	exit 0	0.518	
+writers	carta	md/pandoc-doc-epub.md#markdown>mediawiki	identical	0.016	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>mediawiki	unsupported	0.011	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-epub.md#markdown>docbook5	exit 0	0.437	
+writers	carta	md/pandoc-doc-epub.md#markdown>docbook5	identical	0.032	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>docbook5	unsupported	0.026	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-epub.md#markdown>man	exit 0	0.313	
+writers	carta	md/pandoc-doc-epub.md#markdown>man	identical	0.104	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>man	unsupported	0.010	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-epub.md#markdown>typst	exit 0	0.639	
+writers	carta	md/pandoc-doc-epub.md#markdown>typst	differ	0.015	bytes oracle 5944 tool 5946
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>typst	unsupported	0.011	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-epub.md#markdown>rtf	exit 0	0.493	
+writers	carta	md/pandoc-doc-epub.md#markdown>rtf	differ	0.031	bytes oracle 9011 tool 8557
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>rtf	unsupported	0.011	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-epub.md#markdown>ipynb	exit 0	0.554	
+writers	carta	md/pandoc-doc-epub.md#markdown>ipynb	differ	0.021	bytes oracle 7514 tool 7514
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>ipynb	differ	0.024	bytes oracle 7514 tool 8189
+writers	pandoc	md/pandoc-doc-epub.md#markdown>dokuwiki	exit 0	0.398	
+writers	carta	md/pandoc-doc-epub.md#markdown>dokuwiki	identical	0.047	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>dokuwiki	unsupported	0.009	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-epub.md#markdown>jira	exit 0	0.675	
+writers	carta	md/pandoc-doc-epub.md#markdown>jira	identical	0.148	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>jira	unsupported	0.012	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-epub.md#markdown>opml	exit 0	0.301	
+writers	carta	md/pandoc-doc-epub.md#markdown>opml	identical	0.059	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>opml	unsupported	0.010	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-epub.md#markdown>plain	exit 0	0.243	
+writers	carta	md/pandoc-doc-epub.md#markdown>plain	identical	0.048	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>plain	identical	0.021	stderr-same
+writers	pandoc	md/pandoc-doc-epub.md#markdown>commonmark	exit 0	0.499	
+writers	carta	md/pandoc-doc-epub.md#markdown>commonmark	identical	0.040	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>commonmark	identical	0.081	stderr-same
+writers	pandoc	md/pandoc-doc-epub.md#markdown>gfm	exit 0	0.327	
+writers	carta	md/pandoc-doc-epub.md#markdown>gfm	identical	0.020	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>gfm	ws-only	0.019	
+writers	pandoc	md/pandoc-doc-epub.md#markdown>native	exit 0	0.625	
+writers	carta	md/pandoc-doc-epub.md#markdown>native	identical	0.207	stderr-same
+writers	ferrodoc	md/pandoc-doc-epub.md#markdown>native	unsupported	0.029	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>rst	exit 0	0.611	
+writers	carta	md/pandoc-doc-faqs.md#markdown>rst	identical	0.082	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>rst	differ	0.027	bytes oracle 10450 tool 9584
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>org	exit 0	0.252	
+writers	carta	md/pandoc-doc-faqs.md#markdown>org	differ	0.039	bytes oracle 10257 tool 10287
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>org	unsupported	0.039	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>asciidoc	exit 0	0.355	
+writers	carta	md/pandoc-doc-faqs.md#markdown>asciidoc	identical	0.063	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>asciidoc	differ	0.011	bytes oracle 8071 tool 8093
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>mediawiki	exit 0	0.508	
+writers	carta	md/pandoc-doc-faqs.md#markdown>mediawiki	identical	0.042	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>mediawiki	unsupported	0.017	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>docbook5	exit 0	4.213	
+writers	carta	md/pandoc-doc-faqs.md#markdown>docbook5	differ	0.035	bytes oracle 13714 tool 13699
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>docbook5	unsupported	0.012	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>man	exit 0	0.527	
+writers	carta	md/pandoc-doc-faqs.md#markdown>man	differ	0.029	bytes oracle 8931 tool 8721
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>man	unsupported	0.009	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>typst	exit 0	0.405	
+writers	carta	md/pandoc-doc-faqs.md#markdown>typst	differ	0.021	bytes oracle 9441 tool 9440
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>typst	unsupported	0.015	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>rtf	exit 0	0.211	
+writers	carta	md/pandoc-doc-faqs.md#markdown>rtf	differ	0.036	bytes oracle 11953 tool 11245
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>rtf	unsupported	0.013	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>ipynb	exit 0	0.547	
+writers	carta	md/pandoc-doc-faqs.md#markdown>ipynb	differ	0.200	bytes oracle 10025 tool 10025
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>ipynb	differ	0.018	bytes oracle 10025 tool 10961
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>dokuwiki	exit 0	0.516	
+writers	carta	md/pandoc-doc-faqs.md#markdown>dokuwiki	identical	0.154	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>dokuwiki	unsupported	0.015	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>jira	exit 0	0.162	
+writers	carta	md/pandoc-doc-faqs.md#markdown>jira	identical	0.109	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>jira	unsupported	0.059	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>opml	exit 0	0.138	
+writers	carta	md/pandoc-doc-faqs.md#markdown>opml	identical	0.024	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>opml	unsupported	0.014	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>plain	exit 0	0.192	
+writers	carta	md/pandoc-doc-faqs.md#markdown>plain	identical	0.021	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>plain	differ	0.019	bytes oracle 7505 tool 7527
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>commonmark	exit 0	0.268	
+writers	carta	md/pandoc-doc-faqs.md#markdown>commonmark	identical	0.025	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>commonmark	differ	0.024	bytes oracle 7986 tool 7980
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>gfm	exit 0	0.284	
+writers	carta	md/pandoc-doc-faqs.md#markdown>gfm	identical	0.026	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>gfm	differ	0.021	bytes oracle 7986 tool 7980
+writers	pandoc	md/pandoc-doc-faqs.md#markdown>native	exit 0	0.395	
+writers	carta	md/pandoc-doc-faqs.md#markdown>native	identical	0.028	stderr-same
+writers	ferrodoc	md/pandoc-doc-faqs.md#markdown>native	unsupported	0.012	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-filters.md#markdown>rst	exit 0	0.603	
+writers	carta	md/pandoc-doc-filters.md#markdown>rst	ws-only	0.057	
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>rst	differ	0.037	bytes oracle 16971 tool 16866
+writers	pandoc	md/pandoc-doc-filters.md#markdown>org	exit 0	0.964	
+writers	carta	md/pandoc-doc-filters.md#markdown>org	differ	0.171	bytes oracle 17270 tool 17319
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>org	unsupported	0.015	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-filters.md#markdown>asciidoc	exit 0	0.637	
+writers	carta	md/pandoc-doc-filters.md#markdown>asciidoc	differ	0.051	bytes oracle 16143 tool 16144
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>asciidoc	differ	0.034	bytes oracle 16143 tool 16122
+writers	pandoc	md/pandoc-doc-filters.md#markdown>mediawiki	exit 0	0.751	
+writers	carta	md/pandoc-doc-filters.md#markdown>mediawiki	identical	0.060	stderr-same
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>mediawiki	unsupported	0.015	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-filters.md#markdown>docbook5	exit 0	9.200	
+writers	carta	md/pandoc-doc-filters.md#markdown>docbook5	differ	0.077	bytes oracle 27875 tool 27766
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>docbook5	unsupported	0.011	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-filters.md#markdown>man	exit 0	0.868	
+writers	carta	md/pandoc-doc-filters.md#markdown>man	differ	0.040	bytes oracle 18201 tool 17731
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>man	unsupported	0.012	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-filters.md#markdown>typst	exit 0	0.387	
+writers	carta	md/pandoc-doc-filters.md#markdown>typst	differ	0.034	bytes oracle 16471 tool 16543
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>typst	unsupported	0.011	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-filters.md#markdown>rtf	exit 0	0.428	
+writers	carta	md/pandoc-doc-filters.md#markdown>rtf	differ	0.044	bytes oracle 26287 tool 24360
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>rtf	unsupported	0.014	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-filters.md#markdown>ipynb	exit 0	0.651	
+writers	carta	md/pandoc-doc-filters.md#markdown>ipynb	differ	0.037	bytes oracle 20924 tool 20925
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>ipynb	differ	0.028	bytes oracle 20924 tool 22822
+writers	pandoc	md/pandoc-doc-filters.md#markdown>dokuwiki	exit 0	0.644	
+writers	carta	md/pandoc-doc-filters.md#markdown>dokuwiki	ws-only	0.060	
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>dokuwiki	unsupported	0.022	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-filters.md#markdown>jira	exit 0	0.363	
+writers	carta	md/pandoc-doc-filters.md#markdown>jira	ws-only	0.050	
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>jira	unsupported	0.013	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-filters.md#markdown>opml	exit 0	0.302	
+writers	carta	md/pandoc-doc-filters.md#markdown>opml	differ	0.044	bytes oracle 19019 tool 19020
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>opml	unsupported	0.013	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-filters.md#markdown>plain	exit 0	0.435	
+writers	carta	md/pandoc-doc-filters.md#markdown>plain	ws-only	0.062	
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>plain	differ	0.022	bytes oracle 15424 tool 15462
+writers	pandoc	md/pandoc-doc-filters.md#markdown>commonmark	exit 0	0.543	
+writers	carta	md/pandoc-doc-filters.md#markdown>commonmark	ws-only	0.101	
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>commonmark	differ	0.019	bytes oracle 16827 tool 16162
+writers	pandoc	md/pandoc-doc-filters.md#markdown>gfm	exit 0	0.672	
+writers	carta	md/pandoc-doc-filters.md#markdown>gfm	ws-only	0.059	
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>gfm	differ	0.028	bytes oracle 16243 tool 16162
+writers	pandoc	md/pandoc-doc-filters.md#markdown>native	exit 0	0.477	
+writers	carta	md/pandoc-doc-filters.md#markdown>native	differ	0.072	bytes oracle 74252 tool 74272
+writers	ferrodoc	md/pandoc-doc-filters.md#markdown>native	unsupported	0.031	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>rst	exit 0	0.439	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>rst	identical	0.026	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>rst	identical	0.024	stderr-same
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>org	exit 0	0.311	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>org	differ	0.043	bytes oracle 10527 tool 10585
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>org	unsupported	0.016	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>asciidoc	exit 0	0.456	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>asciidoc	identical	0.029	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>asciidoc	identical	0.023	stderr-same
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>mediawiki	exit 0	0.265	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>mediawiki	identical	0.033	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>mediawiki	unsupported	0.026	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>docbook5	exit 0	0.553	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>docbook5	identical	0.053	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>docbook5	unsupported	0.014	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>man	exit 0	0.464	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>man	ws-only	0.049	
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>man	unsupported	0.015	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>typst	exit 0	0.575	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>typst	identical	0.068	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>typst	unsupported	0.013	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>rtf	exit 0	0.319	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>rtf	differ	0.093	bytes oracle 16424 tool 14778
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>rtf	unsupported	0.018	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>ipynb	exit 0	0.499	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>ipynb	differ	0.214	bytes oracle 12407 tool 12407
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>ipynb	differ	0.027	bytes oracle 12407 tool 13651
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>dokuwiki	exit 0	0.348	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>dokuwiki	identical	0.038	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>dokuwiki	unsupported	0.017	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>jira	exit 0	0.324	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>jira	identical	0.061	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>jira	unsupported	0.031	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>opml	exit 0	0.785	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>opml	identical	0.060	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>opml	unsupported	0.051	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>plain	exit 0	0.579	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>plain	identical	0.148	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>plain	identical	0.044	stderr-same
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>commonmark	exit 0	0.250	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>commonmark	identical	0.042	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>commonmark	identical	0.024	stderr-same
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>gfm	exit 0	0.686	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>gfm	identical	0.121	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>gfm	identical	0.058	stderr-same
+writers	pandoc	md/pandoc-doc-getting-started.md#markdown>native	exit 0	0.999	
+writers	carta	md/pandoc-doc-getting-started.md#markdown>native	identical	0.032	stderr-same
+writers	ferrodoc	md/pandoc-doc-getting-started.md#markdown>native	unsupported	0.011	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-jats.md#markdown>rst	exit 0	1.305	
+writers	carta	md/pandoc-doc-jats.md#markdown>rst	ws-only	0.398	
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>rst	ws-only	0.094	
+writers	pandoc	md/pandoc-doc-jats.md#markdown>org	exit 0	1.336	
+writers	carta	md/pandoc-doc-jats.md#markdown>org	differ	0.224	bytes oracle 23607 tool 23648
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>org	unsupported	0.015	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-jats.md#markdown>asciidoc	exit 0	2.079	
+writers	carta	md/pandoc-doc-jats.md#markdown>asciidoc	differ	0.091	bytes oracle 23462 tool 23574
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>asciidoc	differ	0.094	bytes oracle 23462 tool 23518
+writers	pandoc	md/pandoc-doc-jats.md#markdown>mediawiki	exit 0	1.737	
+writers	carta	md/pandoc-doc-jats.md#markdown>mediawiki	ws-only	0.044	
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>mediawiki	unsupported	0.014	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-jats.md#markdown>docbook5	exit 0	8.630	
+writers	carta	md/pandoc-doc-jats.md#markdown>docbook5	differ	0.307	bytes oracle 53114 tool 53034
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>docbook5	unsupported	0.014	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-jats.md#markdown>man	exit 0	1.368	
+writers	carta	md/pandoc-doc-jats.md#markdown>man	differ	0.450	bytes oracle 25443 tool 25263
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>man	unsupported	0.012	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-jats.md#markdown>typst	exit 0	1.856	
+writers	carta	md/pandoc-doc-jats.md#markdown>typst	differ	0.042	bytes oracle 23218 tool 22966
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>typst	unsupported	0.019	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-jats.md#markdown>rtf	exit 0	2.151	
+writers	carta	md/pandoc-doc-jats.md#markdown>rtf	differ	0.073	bytes oracle 38969 tool 36145
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>rtf	unsupported	0.010	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-jats.md#markdown>ipynb	exit 0	1.938	
+writers	carta	md/pandoc-doc-jats.md#markdown>ipynb	differ	0.060	bytes oracle 27077 tool 27077
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>ipynb	differ	0.030	bytes oracle 27077 tool 29369
+writers	pandoc	md/pandoc-doc-jats.md#markdown>dokuwiki	exit 0	1.740	
+writers	carta	md/pandoc-doc-jats.md#markdown>dokuwiki	differ	0.071	bytes oracle 23966 tool 24010
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>dokuwiki	unsupported	0.036	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-jats.md#markdown>jira	exit 0	1.504	
+writers	carta	md/pandoc-doc-jats.md#markdown>jira	ws-only	0.077	
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>jira	unsupported	0.030	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-jats.md#markdown>opml	exit 0	1.305	
+writers	carta	md/pandoc-doc-jats.md#markdown>opml	differ	0.024	bytes oracle 25548 tool 25588
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>opml	unsupported	0.011	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-jats.md#markdown>plain	exit 0	1.445	
+writers	carta	md/pandoc-doc-jats.md#markdown>plain	ws-only	0.055	
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>plain	ws-only	0.036	
+writers	pandoc	md/pandoc-doc-jats.md#markdown>commonmark	exit 0	1.683	
+writers	carta	md/pandoc-doc-jats.md#markdown>commonmark	identical	0.261	stderr-same
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>commonmark	identical	0.131	stderr-same
+writers	pandoc	md/pandoc-doc-jats.md#markdown>gfm	exit 0	1.859	
+writers	carta	md/pandoc-doc-jats.md#markdown>gfm	identical	0.048	stderr-same
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>gfm	identical	0.065	stderr-same
+writers	pandoc	md/pandoc-doc-jats.md#markdown>native	exit 0	1.433	
+writers	carta	md/pandoc-doc-jats.md#markdown>native	identical	0.102	stderr-same
+writers	ferrodoc	md/pandoc-doc-jats.md#markdown>native	unsupported	0.016	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>rst	exit 0	9.064	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>rst	differ	2.367	bytes oracle 174640 tool 175060
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>rst	differ	1.787	bytes oracle 174640 tool 174677
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>org	exit 0	8.083	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>org	differ	1.813	bytes oracle 179729 tool 179467
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>org	unsupported	0.013	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>asciidoc	exit 0	7.415	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>asciidoc	differ	3.838	bytes oracle 166593 tool 167048
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>asciidoc	differ	2.110	bytes oracle 166593 tool 167060
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>mediawiki	exit 0	7.683	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>mediawiki	differ	1.872	bytes oracle 193373 tool 193391
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>mediawiki	unsupported	0.052	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>docbook5	exit 0	19.863	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>docbook5	differ	9.886	bytes oracle 448891 tool 447646
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>docbook5	unsupported	0.096	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>man	exit 0	13.060	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>man	differ	4.651	bytes oracle 166564 tool 163881
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>man	unsupported	0.246	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>typst	exit 0	15.193	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>typst	differ	3.991	bytes oracle 166984 tool 171684
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>typst	unsupported	0.272	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>rtf	exit 0	12.982	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>rtf	differ	3.257	bytes oracle 359298 tool 323271
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>rtf	unsupported	0.051	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>ipynb	exit 0	12.025	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>ipynb	differ	3.108	bytes oracle 224270 tool 223645
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>ipynb	differ	1.802	bytes oracle 224270 tool 253011
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>dokuwiki	exit 0	10.481	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>dokuwiki	differ	2.906	bytes oracle 168651 tool 168761
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>dokuwiki	unsupported	0.132	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>jira	exit 0	10.682	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>jira	differ	3.057	bytes oracle 168065 tool 168380
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>jira	unsupported	0.194	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>opml	exit 0	8.561	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>opml	differ	2.888	bytes oracle 196798 tool 196711
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>opml	unsupported	0.036	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>plain	exit 0	9.824	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>plain	differ	2.834	bytes oracle 138752 tool 138616
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>plain	differ	1.634	bytes oracle 138752 tool 140405
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>commonmark	exit 0	9.377	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>commonmark	differ	3.569	bytes oracle 157678 tool 157215
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>commonmark	differ	3.012	bytes oracle 157678 tool 156711
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>gfm	exit 0	11.410	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>gfm	differ	9.394	bytes oracle 157394 tool 156952
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>gfm	differ	5.974	bytes oracle 157394 tool 156795
+writers	pandoc	md/pandoc-doc-lua-filters.md#markdown>native	exit 0	25.385	
+writers	carta	md/pandoc-doc-lua-filters.md#markdown>native	differ	2.043	bytes oracle 810172 tool 808682
+writers	ferrodoc	md/pandoc-doc-lua-filters.md#markdown>native	unsupported	0.084	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-org.md#markdown>rst	exit 0	0.657	
+writers	carta	md/pandoc-doc-org.md#markdown>rst	differ	0.027	bytes oracle 10626 tool 10724
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>rst	differ	0.026	bytes oracle 10626 tool 10586
+writers	pandoc	md/pandoc-doc-org.md#markdown>org	exit 0	0.289	
+writers	carta	md/pandoc-doc-org.md#markdown>org	differ	0.094	bytes oracle 10874 tool 10988
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>org	unsupported	0.011	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-org.md#markdown>asciidoc	exit 0	0.493	
+writers	carta	md/pandoc-doc-org.md#markdown>asciidoc	differ	0.047	bytes oracle 10229 tool 10327
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>asciidoc	differ	0.022	bytes oracle 10229 tool 10226
+writers	pandoc	md/pandoc-doc-org.md#markdown>mediawiki	exit 0	0.546	
+writers	carta	md/pandoc-doc-org.md#markdown>mediawiki	differ	0.050	bytes oracle 11341 tool 11439
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>mediawiki	unsupported	0.146	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-org.md#markdown>docbook5	exit 0	3.065	
+writers	carta	md/pandoc-doc-org.md#markdown>docbook5	differ	0.038	bytes oracle 15583 tool 15666
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>docbook5	unsupported	0.012	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-org.md#markdown>man	exit 0	0.348	
+writers	carta	md/pandoc-doc-org.md#markdown>man	differ	0.036	bytes oracle 11343 tool 11191
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>man	unsupported	0.011	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-org.md#markdown>typst	exit 0	0.303	
+writers	carta	md/pandoc-doc-org.md#markdown>typst	differ	0.055	bytes oracle 10492 tool 10591
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>typst	unsupported	0.011	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-org.md#markdown>rtf	exit 0	0.337	
+writers	carta	md/pandoc-doc-org.md#markdown>rtf	differ	0.024	bytes oracle 15126 tool 14042
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>rtf	unsupported	0.013	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-org.md#markdown>ipynb	exit 0	0.208	
+writers	carta	md/pandoc-doc-org.md#markdown>ipynb	differ	0.053	bytes oracle 12951 tool 13002
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>ipynb	differ	0.038	bytes oracle 12951 tool 14083
+writers	pandoc	md/pandoc-doc-org.md#markdown>dokuwiki	exit 0	0.287	
+writers	carta	md/pandoc-doc-org.md#markdown>dokuwiki	differ	0.034	bytes oracle 10619 tool 10717
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>dokuwiki	unsupported	0.026	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-org.md#markdown>jira	exit 0	0.402	
+writers	carta	md/pandoc-doc-org.md#markdown>jira	differ	0.026	bytes oracle 10546 tool 10644
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>jira	unsupported	0.011	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-org.md#markdown>opml	exit 0	0.287	
+writers	carta	md/pandoc-doc-org.md#markdown>opml	differ	0.049	bytes oracle 11674 tool 11702
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>opml	unsupported	0.013	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-org.md#markdown>plain	exit 0	0.418	
+writers	carta	md/pandoc-doc-org.md#markdown>plain	identical	0.070	stderr-same
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>plain	differ	0.017	bytes oracle 9614 tool 9643
+writers	pandoc	md/pandoc-doc-org.md#markdown>commonmark	exit 0	0.628	
+writers	carta	md/pandoc-doc-org.md#markdown>commonmark	differ	0.210	bytes oracle 10448 tool 10474
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>commonmark	differ	0.019	bytes oracle 10448 tool 10437
+writers	pandoc	md/pandoc-doc-org.md#markdown>gfm	exit 0	0.521	
+writers	carta	md/pandoc-doc-org.md#markdown>gfm	differ	0.246	bytes oracle 10448 tool 10470
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>gfm	differ	0.157	bytes oracle 10448 tool 10437
+writers	pandoc	md/pandoc-doc-org.md#markdown>native	exit 0	0.637	
+writers	carta	md/pandoc-doc-org.md#markdown>native	differ	0.160	bytes oracle 50438 tool 50470
+writers	ferrodoc	md/pandoc-doc-org.md#markdown>native	unsupported	0.148	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>rst	exit 0	0.900	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>rst	differ	0.378	bytes oracle 29239 tool 29163
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>rst	differ	0.170	bytes oracle 29239 tool 29227
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>org	exit 0	0.961	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>org	differ	0.347	bytes oracle 29414 tool 29280
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>org	unsupported	0.408	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>asciidoc	exit 0	1.149	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>asciidoc	differ	0.395	bytes oracle 28190 tool 28476
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>asciidoc	differ	0.173	bytes oracle 28190 tool 28171
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>mediawiki	exit 0	1.164	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>mediawiki	differ	0.288	bytes oracle 29332 tool 29255
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>mediawiki	unsupported	0.017	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>docbook5	exit 0	0.779	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>docbook5	differ	0.416	bytes oracle 44780 tool 40748
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>docbook5	unsupported	0.010	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>man	exit 0	1.398	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>man	differ	0.308	bytes oracle 30310 tool 30040
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>man	unsupported	0.011	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>typst	exit 0	0.965	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>typst	differ	0.094	bytes oracle 29451 tool 29154
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>typst	unsupported	0.010	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>rtf	exit 0	1.169	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>rtf	differ	0.360	bytes oracle 44775 tool 39247
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>rtf	unsupported	0.016	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>ipynb	exit 99	1.178	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>ipynb	exit-differ	0.307	oracle 99 tool 0
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>ipynb	exit-differ	0.062	oracle 99 tool 0
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>dokuwiki	exit 0	1.294	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>dokuwiki	differ	0.097	bytes oracle 29091 tool 28996
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>dokuwiki	unsupported	0.014	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>jira	exit 0	1.678	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>jira	differ	0.611	bytes oracle 28782 tool 28691
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>jira	unsupported	0.089	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>opml	exit 0	1.526	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>opml	differ	0.617	bytes oracle 31369 tool 31194
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>opml	unsupported	0.018	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>plain	exit 0	1.388	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>plain	differ	0.157	bytes oracle 26241 tool 26017
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>plain	differ	0.299	bytes oracle 26241 tool 26279
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>commonmark	exit 0	1.273	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>commonmark	differ	0.150	bytes oracle 30188 tool 29424
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>commonmark	differ	0.047	bytes oracle 30188 tool 30187
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>gfm	exit 0	1.064	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>gfm	differ	0.245	bytes oracle 29496 tool 29228
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>gfm	differ	0.038	bytes oracle 29496 tool 29495
+writers	pandoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>native	exit 0	1.201	
+writers	carta	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>native	differ	0.063	bytes oracle 159051 tool 150770
+writers	ferrodoc	md/pandoc-doc-twenty-years-of-pandoc.md#markdown>native	unsupported	0.010	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/pandoc-doc-xml.md#markdown>rst	exit 0	0.357	
+writers	carta	md/pandoc-doc-xml.md#markdown>rst	differ	0.032	bytes oracle 12188 tool 12188
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>rst	identical	0.029	stderr-same
+writers	pandoc	md/pandoc-doc-xml.md#markdown>org	exit 0	0.378	
+writers	carta	md/pandoc-doc-xml.md#markdown>org	differ	0.025	bytes oracle 11783 tool 11801
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>org	unsupported	0.009	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-xml.md#markdown>asciidoc	exit 0	0.260	
+writers	carta	md/pandoc-doc-xml.md#markdown>asciidoc	differ	0.050	bytes oracle 11609 tool 11609
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>asciidoc	identical	0.047	stderr-same
+writers	pandoc	md/pandoc-doc-xml.md#markdown>mediawiki	exit 0	0.300	
+writers	carta	md/pandoc-doc-xml.md#markdown>mediawiki	differ	0.018	bytes oracle 13683 tool 13683
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>mediawiki	unsupported	0.013	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/pandoc-doc-xml.md#markdown>docbook5	exit 0	6.424	
+writers	carta	md/pandoc-doc-xml.md#markdown>docbook5	differ	0.037	bytes oracle 22322 tool 22217
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>docbook5	unsupported	0.011	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-xml.md#markdown>man	exit 0	0.334	
+writers	carta	md/pandoc-doc-xml.md#markdown>man	differ	0.024	bytes oracle 15594 tool 13324
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>man	unsupported	0.010	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-xml.md#markdown>typst	exit 0	0.551	
+writers	carta	md/pandoc-doc-xml.md#markdown>typst	differ	0.020	bytes oracle 11388 tool 11373
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>typst	unsupported	0.012	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/pandoc-doc-xml.md#markdown>rtf	exit 0	0.151	
+writers	carta	md/pandoc-doc-xml.md#markdown>rtf	differ	0.021	bytes oracle 18772 tool 16532
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>rtf	unsupported	0.011	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/pandoc-doc-xml.md#markdown>ipynb	exit 0	0.354	
+writers	carta	md/pandoc-doc-xml.md#markdown>ipynb	differ	0.024	bytes oracle 15080 tool 15080
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>ipynb	differ	0.018	bytes oracle 15080 tool 16660
+writers	pandoc	md/pandoc-doc-xml.md#markdown>dokuwiki	exit 0	0.259	
+writers	carta	md/pandoc-doc-xml.md#markdown>dokuwiki	differ	0.026	bytes oracle 12131 tool 12131
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>dokuwiki	unsupported	0.012	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/pandoc-doc-xml.md#markdown>jira	exit 0	0.146	
+writers	carta	md/pandoc-doc-xml.md#markdown>jira	differ	0.030	bytes oracle 11683 tool 11683
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>jira	unsupported	0.025	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-xml.md#markdown>opml	exit 0	0.298	
+writers	carta	md/pandoc-doc-xml.md#markdown>opml	identical	0.024	stderr-same
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>opml	unsupported	0.008	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/pandoc-doc-xml.md#markdown>plain	exit 0	0.445	
+writers	carta	md/pandoc-doc-xml.md#markdown>plain	differ	0.023	bytes oracle 11397 tool 11397
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>plain	identical	0.018	stderr-same
+writers	pandoc	md/pandoc-doc-xml.md#markdown>commonmark	exit 0	0.426	
+writers	carta	md/pandoc-doc-xml.md#markdown>commonmark	differ	0.029	bytes oracle 11210 tool 11210
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>commonmark	identical	0.013	stderr-same
+writers	pandoc	md/pandoc-doc-xml.md#markdown>gfm	exit 0	0.437	
+writers	carta	md/pandoc-doc-xml.md#markdown>gfm	differ	0.098	bytes oracle 11210 tool 11210
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>gfm	identical	0.083	stderr-same
+writers	pandoc	md/pandoc-doc-xml.md#markdown>native	exit 0	0.474	
+writers	carta	md/pandoc-doc-xml.md#markdown>native	differ	0.081	bytes oracle 43545 tool 43545
+writers	ferrodoc	md/pandoc-doc-xml.md#markdown>native	unsupported	0.054	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/rescribe-README.md#markdown>rst	exit 0	0.275	
+writers	carta	md/rescribe-README.md#markdown>rst	differ	0.156	bytes oracle 4306 tool 4306
+writers	ferrodoc	md/rescribe-README.md#markdown>rst	differ	0.125	bytes oracle 4306 tool 3709
+writers	pandoc	md/rescribe-README.md#markdown>org	exit 0	0.250	
+writers	carta	md/rescribe-README.md#markdown>org	differ	0.019	bytes oracle 3887 tool 3894
+writers	ferrodoc	md/rescribe-README.md#markdown>org	unsupported	0.010	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/rescribe-README.md#markdown>asciidoc	exit 0	0.265	
+writers	carta	md/rescribe-README.md#markdown>asciidoc	differ	0.020	bytes oracle 3324 tool 3298
+writers	ferrodoc	md/rescribe-README.md#markdown>asciidoc	differ	0.015	bytes oracle 3324 tool 3298
+writers	pandoc	md/rescribe-README.md#markdown>mediawiki	exit 0	0.264	
+writers	carta	md/rescribe-README.md#markdown>mediawiki	identical	0.019	stderr-same
+writers	ferrodoc	md/rescribe-README.md#markdown>mediawiki	unsupported	0.012	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/rescribe-README.md#markdown>docbook5	exit 0	4.844	
+writers	carta	md/rescribe-README.md#markdown>docbook5	differ	0.016	bytes oracle 6649 tool 6556
+writers	ferrodoc	md/rescribe-README.md#markdown>docbook5	unsupported	0.015	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/rescribe-README.md#markdown>man	exit 0	0.458	
+writers	carta	md/rescribe-README.md#markdown>man	differ	0.027	bytes oracle 3773 tool 3689
+writers	ferrodoc	md/rescribe-README.md#markdown>man	unsupported	0.017	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/rescribe-README.md#markdown>typst	exit 0	0.156	
+writers	carta	md/rescribe-README.md#markdown>typst	differ	0.019	bytes oracle 3581 tool 3558
+writers	ferrodoc	md/rescribe-README.md#markdown>typst	unsupported	0.010	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/rescribe-README.md#markdown>rtf	exit 0	0.149	
+writers	carta	md/rescribe-README.md#markdown>rtf	differ	0.013	bytes oracle 6651 tool 6163
+writers	ferrodoc	md/rescribe-README.md#markdown>rtf	unsupported	0.020	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/rescribe-README.md#markdown>ipynb	exit 0	0.371	
+writers	carta	md/rescribe-README.md#markdown>ipynb	differ	0.023	bytes oracle 4582 tool 4588
+writers	ferrodoc	md/rescribe-README.md#markdown>ipynb	differ	0.026	bytes oracle 4582 tool 5024
+writers	pandoc	md/rescribe-README.md#markdown>dokuwiki	exit 0	0.180	
+writers	carta	md/rescribe-README.md#markdown>dokuwiki	identical	0.016	stderr-same
+writers	ferrodoc	md/rescribe-README.md#markdown>dokuwiki	unsupported	0.011	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/rescribe-README.md#markdown>jira	exit 0	0.306	
+writers	carta	md/rescribe-README.md#markdown>jira	identical	0.025	stderr-same
+writers	ferrodoc	md/rescribe-README.md#markdown>jira	unsupported	0.021	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/rescribe-README.md#markdown>opml	exit 0	0.389	
+writers	carta	md/rescribe-README.md#markdown>opml	differ	0.067	bytes oracle 4317 tool 4006
+writers	ferrodoc	md/rescribe-README.md#markdown>opml	unsupported	0.012	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/rescribe-README.md#markdown>plain	exit 0	0.271	
+writers	carta	md/rescribe-README.md#markdown>plain	differ	0.014	bytes oracle 3529 tool 3298
+writers	ferrodoc	md/rescribe-README.md#markdown>plain	differ	0.014	bytes oracle 3529 tool 3298
+writers	pandoc	md/rescribe-README.md#markdown>commonmark	exit 0	0.341	
+writers	carta	md/rescribe-README.md#markdown>commonmark	differ	0.018	bytes oracle 3633 tool 3529
+writers	ferrodoc	md/rescribe-README.md#markdown>commonmark	differ	0.010	bytes oracle 3633 tool 3529
+writers	pandoc	md/rescribe-README.md#markdown>gfm	exit 0	0.118	
+writers	carta	md/rescribe-README.md#markdown>gfm	identical	0.027	stderr-same
+writers	ferrodoc	md/rescribe-README.md#markdown>gfm	identical	0.014	stderr-same
+writers	pandoc	md/rescribe-README.md#markdown>native	exit 0	0.160	
+writers	carta	md/rescribe-README.md#markdown>native	differ	0.024	bytes oracle 15114 tool 15077
+writers	ferrodoc	md/rescribe-README.md#markdown>native	unsupported	0.012	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
+writers	pandoc	md/skylighting-README.md#markdown>rst	exit 0	0.321	
+writers	carta	md/skylighting-README.md#markdown>rst	identical	0.016	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>rst	ws-only	0.021	
+writers	pandoc	md/skylighting-README.md#markdown>org	exit 0	0.394	
+writers	carta	md/skylighting-README.md#markdown>org	differ	0.044	bytes oracle 6375 tool 6363
+writers	ferrodoc	md/skylighting-README.md#markdown>org	unsupported	0.017	ferrodoc: unknown format "org"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/skylighting-README.md#markdown>asciidoc	exit 0	0.318	
+writers	carta	md/skylighting-README.md#markdown>asciidoc	ws-only	0.019	
+writers	ferrodoc	md/skylighting-README.md#markdown>asciidoc	identical	0.015	stderr-same
+writers	pandoc	md/skylighting-README.md#markdown>mediawiki	exit 0	0.325	
+writers	carta	md/skylighting-README.md#markdown>mediawiki	identical	0.016	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>mediawiki	unsupported	0.013	ferrodoc: unknown format "mediawiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, 
+writers	pandoc	md/skylighting-README.md#markdown>docbook5	exit 0	0.226	
+writers	carta	md/skylighting-README.md#markdown>docbook5	identical	0.047	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>docbook5	unsupported	0.034	ferrodoc: unknown format "docbook5"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/skylighting-README.md#markdown>man	exit 0	0.464	
+writers	carta	md/skylighting-README.md#markdown>man	identical	0.024	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>man	unsupported	0.010	ferrodoc: unknown format "man"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/skylighting-README.md#markdown>typst	exit 0	0.316	
+writers	carta	md/skylighting-README.md#markdown>typst	differ	0.029	bytes oracle 6166 tool 6168
+writers	ferrodoc	md/skylighting-README.md#markdown>typst	unsupported	0.011	ferrodoc: unknown format "typst"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipyn
+writers	pandoc	md/skylighting-README.md#markdown>rtf	exit 0	2.058	
+writers	carta	md/skylighting-README.md#markdown>rtf	differ	0.021	bytes oracle 9281 tool 8649
+writers	ferrodoc	md/skylighting-README.md#markdown>rtf	unsupported	0.013	ferrodoc: unknown format "rtf"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb,
+writers	pandoc	md/skylighting-README.md#markdown>ipynb	exit 0	0.220	
+writers	carta	md/skylighting-README.md#markdown>ipynb	differ	0.038	bytes oracle 7521 tool 7521
+writers	ferrodoc	md/skylighting-README.md#markdown>ipynb	differ	0.024	bytes oracle 7521 tool 8133
+writers	pandoc	md/skylighting-README.md#markdown>dokuwiki	exit 0	0.185	
+writers	carta	md/skylighting-README.md#markdown>dokuwiki	identical	0.020	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>dokuwiki	unsupported	0.042	ferrodoc: unknown format "dokuwiki"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, i
+writers	pandoc	md/skylighting-README.md#markdown>jira	exit 0	0.442	
+writers	carta	md/skylighting-README.md#markdown>jira	identical	0.021	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>jira	unsupported	0.011	ferrodoc: unknown format "jira"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/skylighting-README.md#markdown>opml	exit 0	0.552	
+writers	carta	md/skylighting-README.md#markdown>opml	identical	0.028	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>opml	unsupported	0.011	ferrodoc: unknown format "opml"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipynb
+writers	pandoc	md/skylighting-README.md#markdown>plain	exit 0	0.496	
+writers	carta	md/skylighting-README.md#markdown>plain	identical	0.020	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>plain	identical	0.017	stderr-same
+writers	pandoc	md/skylighting-README.md#markdown>commonmark	exit 0	0.585	
+writers	carta	md/skylighting-README.md#markdown>commonmark	identical	0.028	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>commonmark	identical	0.015	stderr-same
+writers	pandoc	md/skylighting-README.md#markdown>gfm	exit 0	0.433	
+writers	carta	md/skylighting-README.md#markdown>gfm	identical	0.030	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>gfm	identical	0.018	stderr-same
+writers	pandoc	md/skylighting-README.md#markdown>native	exit 0	0.194	
+writers	carta	md/skylighting-README.md#markdown>native	identical	0.037	stderr-same
+writers	ferrodoc	md/skylighting-README.md#markdown>native	unsupported	0.012	ferrodoc: unknown format "native"; known formats: markdown, commonmark, gfm, pandoc_markdown, html, docx, odt, epub, ipy
