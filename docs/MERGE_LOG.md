@@ -37,3 +37,22 @@ A sample of 1 in 6 of the 577 mutants in `randoc-ast`, `randoc-core`,
 The mutation tool did not run again after these changes. The next sample runs
 when the workstreams json-codec and cli merge, because they replace most of
 the code with missed mutants.
+
+## Workstream testsuite (branch `ws/testsuite`, head 4fefb11)
+
+Content: `tools/pandoc-testsuite` runs Pandoc's own test suite, from the Pandoc
+source tree outside this repository, against a program. Results are in
+`spec/pandoc-testsuite.json`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 28 units pass, 0 regressions. |
+| 2. Measured progress | The work adds a measure and no product code. Pandoc test suite: the tool runs 2231 tests and cannot run about 1939 (they need Haskell). The oracle passes 2231 of 2231. Randoc passes 0 of 2231, because `main` has only the JSON format. |
+| 3. Tests | 53 unit tests of the tool pass on `main`. Mutation tests and coverage are for Rust code and did not run. |
+| 4. No panics | Not applicable: the change has no Rust parser. |
+| 5. Two reviews | Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES (2 high, 1 medium, 1 low), round 2 REQUEST CHANGES (2 medium), round 3 APPROVE at 4fefb11. Opus 5.5 with a new context: round 1 REQUEST CHANGES (1 high, 2 medium, 3 low), round 2 APPROVE at a3a3fec with 2 low findings, round 3 APPROVE at 4fefb11. Each finding is corrected with a test. The reports are in the coordinator store (`reviews/testsuite-*.md`). |
+| 6. No slowdowns | Not applicable: no product code changed. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Check by the coordinator on the merged tree: the unit tests pass, the oracle
+passes 174 of 174 tests of the group `old`, and Randoc passes 0 of 174.

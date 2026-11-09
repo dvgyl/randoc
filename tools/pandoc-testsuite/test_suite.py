@@ -1,0 +1,489 @@
+"""Unit tests for the parsers of the test tool. The examples are written for these tests."""
+
+import json
+import os
+import sys
+import tempfile
+import time
+import unittest
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import run  # noqa: E402
+import suite  # noqa: E402
+from suite import Outcome  # noqa: E402
+
+
+class CodeBlocks(unittest.TestCase):
+    def test_backtick_and_tilde_fences(self):
+        text = "intro\n\n```\none\n```\n\ntext\n\n~~~~ {.x}\ntwo\n~~~~\n"
+        self.assertEqual(suite.code_blocks(text), ["one", "two"])
+
+    def test_closing_fence_must_be_as_long_as_the_opening_fence(self):
+        text = "````\na\n```\nb\n`````\nafter\n"
+        self.assertEqual(suite.code_blocks(text), ["a\n```\nb"])
+
+    def test_other_fence_character_does_not_close(self):
+        self.assertEqual(suite.code_blocks("~~~\n```\nx\n~~~\n"), ["```\nx"])
+
+    def test_html_comment_hides_a_block(self):
+        text = "<!-- note\n\n```\nhidden\n```\n-->\n\n```\nshown\n```\n"
+        self.assertEqual(suite.code_blocks(text), ["shown"])
+
+    def test_one_line_comment(self):
+        self.assertEqual(suite.code_blocks("<!-- x -->\n```\ny\n```\n"), ["y"])
+
+    def test_tabs_stay(self):
+        self.assertEqual(suite.code_blocks("```\n\tz\n```\n"), ["\tz"])
+
+    def test_unclosed_fence_is_not_a_block(self):
+        self.assertEqual(suite.code_blocks("```\nopen\n"), [])
+
+    def test_backtick_in_info_string_is_not_a_fence(self):
+        self.assertEqual(suite.code_blocks("``` a`b\nc\n```\n"), [])
+
+    def test_indented_fence_removes_its_indent(self):
+        self.assertEqual(suite.code_blocks("  ```\n  a\n b\n  ```\n"), ["a\nb"])
+
+    def test_empty_block(self):
+        self.assertEqual(suite.code_blocks("```\n```\n"), [""])
+
+
+class CommandBlock(unittest.TestCase):
+    def test_parts(self):
+        block = "% pandoc -t html\n*x*\n^D\n<p><em>x</em></p>"
+        self.assertEqual(
+            suite.parse_command_block(block), ("pandoc -t html", "*x*\n", "<p><em>x</em></p>\n")
+        )
+
+    def test_continuation_lines_join_with_spaces(self):
+        block = "% pandoc \\\n-t \\\nhtml\n^D\nout"
+        self.assertEqual(suite.parse_command_block(block)[0], "pandoc  -t  html")
+
+    def test_expected_output_stops_at_dot_line(self):
+        block = "% pandoc\nin\n^D\nline\n.\nignored"
+        self.assertEqual(suite.parse_command_block(block)[2], "line\n")
+
+    def test_no_end_of_input_marker(self):
+        self.assertEqual(suite.parse_command_block("% pandoc\na\nb"), ("pandoc", "a\nb\n", ""))
+
+    def test_block_without_command(self):
+        self.assertIsNone(suite.parse_command_block("just code"))
+
+
+class CommandOutput(unittest.TestCase):
+    def test_success(self):
+        self.assertEqual(suite.command_output(Outcome(0, b"a\r\nb\n", b"")), "a\nb\n")
+
+    def test_failure_with_stderr(self):
+        out = Outcome(3, b"x\n", b"first\nsecond")
+        self.assertEqual(suite.command_output(out), "2> first\n2> second\nx\n=> 3\n")
+
+    def test_case_compares_the_text(self):
+        case = suite.CommandCase("c#1", "command", "pandoc", "in\n", "2> w\n=> 1\n")
+        calls = []
+
+        def execute(command, stdin):
+            calls.append((command, stdin))
+            return Outcome(1, b"", b"w\n")
+
+        self.assertIsNone(case.evaluate(execute, "."))
+        self.assertEqual(calls, [("pandoc", b"in\n")])
+        self.assertIsNotNone(case.evaluate(lambda c, s: Outcome(0, b"", b""), "."))
+
+    def test_timeout_fails(self):
+        case = suite.CommandCase("c#1", "command", "pandoc", "", "")
+        self.assertEqual(case.evaluate(lambda c, s: Outcome(-1, b"", b"", True), "."), "timeout")
+
+
+class Fb2Normalize(unittest.TestCase):
+    def test_breaks_between_tags_and_drops_binary(self):
+        text = '<a><b>t</b><binary id="x">AAA</binary></a>'
+        self.assertEqual(suite.fb2_normalize(text), "<a>\n<b>t</b>\n</a>\n")
+
+    def test_short_text(self):
+        self.assertEqual(suite.fb2_normalize("x"), "")
+
+    def test_drops_empty_lines(self):
+        self.assertEqual(suite.fb2_normalize("<a></a>\n\n"), "<a>\n</a>\n")
+
+    def test_last_pair_is_not_split(self):
+        self.assertEqual(suite.split_tags("<a><b><"), "<a>\n<b><")
+        self.assertEqual(suite.fb2_normalize("<a><b><"), "<a>\n<b><\n")
+
+    def test_drops_a_line_that_is_a_prefix_of_the_tag(self):
+        self.assertEqual(suite.fb2_normalize("<a>\n<bi\n<b>x</b>\n"), "<a>\n<b>x</b>\n")
+
+
+OLD_SAMPLE = '''
+module Tests.Old (tests) where
+
+tests :: FilePath -> [TestTree]
+tests pandocPath =
+  [ testGroup "fmt"
+    [ testGroup "writer" $ writerTests' "fmt" ++ lhsWriterTests' "fmt"
+    , test' "reader" ["-r", "fmt", "-w", "native"] "in.fmt" "out.native"
+    , test' "reader" ["-r", "fmt"] ("in" <.> "x") ("dir" </> "out")
+    -- a comment
+    ]
+  , testGroup "more" $ map (\\f -> testGroup f $ writerTests' f) [ "p", "q" ]
+  , testGroup "m" $ mconcat [ extWriterTests' "z" ]
+  , testGroup "fb" [ fb2WriterTest' "basic" [] "a.md" "a.fb2" ]
+  , s5WriterTest' "basic" ["-s"] "s5"
+  , lhsReaderTest' "markdown+lhs"
+  ]
+ where
+    test' = test pandocPath
+'''
+
+
+class OldParser(unittest.TestCase):
+    def setUp(self):
+        self.tests = dict(suite.parse_old(OLD_SAMPLE))
+
+    def test_identifiers(self):
+        self.assertEqual(
+            list(self.tests),
+            [
+                "old/fmt/writer/basic", "old/fmt/writer/tables",
+                "old/fmt/writer/lhs to normal", "old/fmt/writer/lhs to lhs",
+                "old/fmt/reader", "old/fmt/reader#2",
+                "old/more/p/basic", "old/more/p/tables", "old/more/q/basic", "old/more/q/tables",
+                "old/m/basic", "old/m/tables", "old/m/planets table",
+                "old/m/nordics table", "old/m/students table",
+                "old/fb/basic", "old/s5 writer (basic)", "old/lhs",
+            ],
+        )
+
+    def test_writer_test_arguments(self):
+        golden = self.tests["old/fmt/writer/basic"]
+        self.assertEqual(golden.input, "testsuite.native")
+        self.assertEqual(golden.norm, "writer.fmt")
+        self.assertEqual(
+            golden.args,
+            ("-r", "native", "-w", "fmt", "--columns=80", "--variable", "pandoc-version=", "-s"),
+        )
+
+    def test_path_operators(self):
+        golden = self.tests["old/fmt/reader#2"]
+        self.assertEqual((golden.input, golden.norm), ("in.x", "dir/out"))
+
+    def test_lhs_and_fb2(self):
+        self.assertEqual(self.tests["old/fmt/writer/lhs to lhs"].norm, "lhs-test.fmt+lhs")
+        self.assertEqual(self.tests["old/lhs"].norm, "lhs-test-markdown.native")
+        self.assertEqual(self.tests["old/fb/basic"].normalize, "fb2")
+        self.assertEqual(self.tests["old/m/planets table"].input, "tables/planets.native")
+
+    def test_unknown_function(self):
+        source = "tests p =\n  [ strange \"x\" ]\n where\n"
+        with self.assertRaises(suite.HaskellError):
+            suite.parse_old(source)
+
+
+READER_SAMPLE = '''
+tests = [ testCompare "one" "d/a.docx" "d/a.native"
+        , testCompareWithOpts def{readerTrackChanges=AllChanges}
+            "two" "d/b.docx" "d/b.native"
+        , testCompareWithOpts def{readerExtensions =
+              extensionsFromList [Ext_styles]}
+            "three" "d/c.docx" "d/c.native"
+        , testCompareWithOpts def{readerAbbreviations=x}
+            "four" "d/e.docx" "d/e.native"
+        , testCompare "one" "d/f.docx" "d/f.native"
+        ]
+'''
+
+
+class ReaderTests(unittest.TestCase):
+    def test_compare_entries(self):
+        cases, skipped = suite.parse_compare_tests(READER_SAMPLE, "docx", "readers/docx")
+        self.assertEqual(skipped, 1)
+        self.assertEqual(
+            [c.id for c in cases],
+            ["readers/docx/one", "readers/docx/two", "readers/docx/three", "readers/docx/one#2"],
+        )
+        self.assertIsNone(cases[0].extensions)
+        self.assertEqual(cases[1].extensions, frozenset())
+        self.assertEqual(cases[1].extra_args, ("--track-changes=all",))
+        self.assertEqual(cases[2].extensions, frozenset({"styles"}))
+        self.assertEqual((cases[2].input_path, cases[2].expected_path), ("d/c.docx", "d/c.native"))
+
+    def test_options(self):
+        self.assertEqual(
+            suite.parse_reader_options("def{readerStandalone=True}"), (frozenset(), ("--standalone",))
+        )
+        self.assertIsNone(suite.parse_reader_options("def{readerColumns=3}"))
+
+    def test_string_list_skips_comments(self):
+        source = 'names :: [String]\nnames = [ "a"\n--      , "b"\n        , "c"\n        ]\n'
+        self.assertEqual(suite.string_list(source, "names"), ["a", "c"])
+
+    def test_exact_extensions(self):
+        suite._EXTENSION_CACHE.clear()
+
+        def execute(args, stdin):
+            self.assertEqual(args, ("--list-extensions=fmtx",))
+            return Outcome(0, b"+alpha\n-beta\n+gamma\n", b"")
+
+        spec = suite.format_with_exact_extensions(execute, "fmtx", frozenset({"gamma", "beta"}))
+        self.assertEqual(spec, "fmtx-alpha+beta")
+
+    def test_ast_case_reads_the_expected_file_with_the_reference(self):
+        version = [1, 23, 1]
+        empty = json.dumps({"pandoc-api-version": version, "blocks": [], "meta": {}}).encode()
+        full = json.dumps({"pandoc-api-version": version, "blocks": [{"t": "Para", "c": []}], "meta": {}}).encode()
+        calls = []
+
+        def constant(args, stdin):
+            calls.append(args)
+            return Outcome(0, empty, b"")
+
+        def reference(args, stdin):
+            return Outcome(0, full, b"")
+
+        case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
+        self.assertIsNotNone(case.evaluate(constant, ".", reference))
+        self.assertEqual(calls, [("-f", "x", "-t", "json", "in.x")])
+        self.assertIsNone(case.evaluate(reference, ".", reference))
+
+    def test_ast_case_reports_a_different_api_version(self):
+        def program(args, stdin):
+            return Outcome(0, b'{"pandoc-api-version": [1, 22], "meta": {}, "blocks": []}', b"")
+
+        def reference(args, stdin):
+            return Outcome(0, b'{"pandoc-api-version": [1, 23], "meta": {}, "blocks": []}', b"")
+
+        case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
+        self.assertIn("pandoc-api-version", case.evaluate(program, ".", reference))
+
+    def test_boolean_api_version_is_rejected(self):
+        expected = b'{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+        actual = b'{"pandoc-api-version":[true,23,1,2],"meta":{},"blocks":[]}'
+        case = suite.AstCase("r/1", "r", "docx", "in.docx", "native", "out.native")
+        failure = case.evaluate(
+            lambda a, s: Outcome(0, actual, b""), ".", lambda a, s: Outcome(0, expected, b"")
+        )
+        self.assertIsNotNone(failure)
+
+    def test_types_of_values_are_compared(self):
+        self.assertFalse(suite.json_equal({"a": [True]}, {"a": [1]}))
+        self.assertFalse(suite.json_equal([1.0], [1]))
+        self.assertFalse(suite.json_equal({"a": 1}, {"a": 1, "b": 2}))
+        self.assertTrue(suite.json_equal({"a": [1, "x", None, 2.5]}, {"a": [1, "x", None, 2.5]}))
+
+    def test_strict_json(self):
+        for text in (b'{"a": NaN}', b'{"a": 1, "a": 2}'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                suite.parse_strict_json(text)
+
+    def test_failed_extension_lookup_is_rejected(self):
+        doc = b'{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+        for lookup in (Outcome(-1, b"", b"", True), Outcome(42, b"", b"lookup failed"), Outcome(0, b"", b"")):
+            suite._EXTENSION_CACHE.clear()
+
+            def reference(args, stdin, lookup=lookup):
+                if args[0].startswith("--list-extensions="):
+                    return lookup
+                return Outcome(0, doc, b"")
+
+            case = suite.AstCase("r/1", "r", "docx", "in.docx", "native", "out.native", frozenset())
+            with self.subTest(lookup=lookup):
+                self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, doc, b""), ".", reference))
+                self.assertNotIn("docx", suite._EXTENSION_CACHE)
+
+    def test_ast_case_without_reference_does_not_pass(self):
+        case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
+        ok = lambda args, stdin: Outcome(0, b"{}", b"")  # noqa: E731
+        self.assertIsNotNone(case.evaluate(ok, "."))
+
+    def test_without_oracle_the_reader_groups_are_not_run(self):
+        found = suite.Discovery(
+            [
+                suite.CommandCase("c#1", "command", "pandoc", "", ""),
+                suite.AstCase("r/1", "readers/x", "x", "a", "native", "b"),
+                suite.AstCase("r/2", "readers/x", "x", "c", "native", "d"),
+            ],
+            [],
+        )
+        moved = run.without_reference_cases(found)
+        self.assertEqual([c.id for c in moved.cases], ["c#1"])
+        self.assertEqual(moved.unsupported, [suite.Unsupported("readers/x", 2, run.NO_ORACLE)])
+
+
+ORACLE = os.environ.get("RANDOC_ORACLE_PANDOC", "")
+SUITE = os.path.join(os.environ.get("RANDOC_PANDOC_SRC", ""), "test")
+
+
+@unittest.skipUnless(os.path.isfile(ORACLE) and os.path.isdir(SUITE), "needs the oracle and the Pandoc tree")
+class ConstantProgram(unittest.TestCase):
+    """A program that always prints one empty document must fail each reader group."""
+
+    def test_without_oracle_a_line_says_why(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": ["readers/pptx/text extraction"]}, handle)
+            out = io.StringIO()
+            with mock.patch.dict(os.environ, {"RANDOC_ORACLE_PANDOC": ""}), contextlib.redirect_stdout(out):
+                code = run.main(["--pandoc", sys.executable, "--suite", SUITE,
+                                 "--filter", "readers/pptx", "--baseline", baseline])
+        self.assertEqual(code, 1)
+        self.assertIn("1 reader tests not checked: no reference program", out.getvalue())
+        self.assertIn("REGRESSION readers/pptx/text extraction (not checked: no reference program)", out.getvalue())
+
+    def test_each_reader_group_fails(self):
+        empty = json.dumps({"pandoc-api-version": [1, 23, 1], "meta": {}, "blocks": []}).encode()
+        constant = lambda args, stdin: Outcome(0, empty, b"")  # noqa: E731
+        cases = {}
+        for case in suite.discover(SUITE).cases:
+            if case.needs_reference:
+                cases.setdefault(case.group, case)
+        self.assertEqual(
+            sorted(cases), ["readers/docx", "readers/odt", "readers/pptx", "readers/xlsx"]
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            oracle = run.Runner(ORACLE, SUITE, 60.0, directory)
+            for group, case in cases.items():
+                with self.subTest(group=group):
+                    self.assertIsNotNone(case.evaluate(constant, SUITE, oracle.execute))
+                    self.assertIsNone(case.evaluate(oracle.execute, SUITE, oracle.execute))
+
+
+class GoldenFiles(unittest.TestCase):
+    def test_golden_case(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with open(os.path.join(directory, "want.txt"), "wb") as handle:
+                handle.write(b"a\r\nb\n")
+            case = suite.GoldenCase("g", "old", ("x",), "want.txt")
+            # Tests/Old.hs removes carriage returns from the output, not from the expected file.
+            self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, b"a\nb\n", b""), directory))
+            with open(os.path.join(directory, "want.txt"), "wb") as handle:
+                handle.write(b"a\nb\n")
+            self.assertIsNone(case.evaluate(lambda a, s: Outcome(0, b"a\r\nb\n", b""), directory))
+            self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, b"a\n", b""), directory))
+            failed = case.evaluate(lambda a, s: Outcome(2, b"a\nb\n", b"bad"), directory)
+            self.assertTrue(failed.startswith("exit code 2"))
+
+
+class RunnerErrors(unittest.TestCase):
+    def test_an_exception_in_a_test_is_a_failure(self):
+        class Broken:
+            id = "broken"
+
+            def evaluate(self, execute, suite_dir, reference=None):
+                raise RecursionError("deep")
+
+        with tempfile.TemporaryDirectory() as directory:
+            runner = run.Runner(sys.executable, directory, 1.0, directory)
+            ident, failure = runner.check(Broken())
+        self.assertEqual(ident, "broken")
+        self.assertIn("RecursionError", failure)
+
+    def test_interrupted_write_keeps_the_old_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "out.json")
+            run.write_json(path, {"old": 1})
+
+            class Stop(Exception):
+                pass
+
+            class Bad:
+                def __repr__(self):
+                    raise Stop()
+
+            with self.assertRaises(TypeError):
+                run.write_json(path, {"new": Bad()})
+            with open(path, encoding="utf-8") as handle:
+                self.assertEqual(json.load(handle), {"old": 1})
+            names = [n for n in os.listdir(directory) if not n.startswith("._")]
+            self.assertEqual(names, ["out.json"])
+
+
+class Timeouts(unittest.TestCase):
+    def runner(self, directory):
+        runner = run.Runner(sys.executable, directory, 1.0, directory)
+        runner.pandoc = sys.executable
+        return runner
+
+    def test_timeout_stops_the_children(self):
+        child = (
+            "import subprocess,sys,time;"
+            "subprocess.Popen([sys.executable,'-c','import time;time.sleep(10)']);"
+            "time.sleep(30)"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            started = time.monotonic()
+            outcome = self.runner(directory).execute(("-c", child), b"")
+            elapsed = time.monotonic() - started
+        self.assertTrue(outcome.timed_out)
+        self.assertLess(elapsed, 4.0)
+
+    def test_timeout_of_a_shell_command(self):
+        with tempfile.TemporaryDirectory() as directory:
+            started = time.monotonic()
+            outcome = self.runner(directory).execute("sleep 10 | sleep 10", b"")
+            elapsed = time.monotonic() - started
+        self.assertTrue(outcome.timed_out)
+        self.assertLess(elapsed, 4.0)
+
+    def test_cleanup_has_a_limit_when_a_process_leaves_the_group(self):
+        child = (
+            "import subprocess,sys,time;"
+            "subprocess.Popen([sys.executable,'-c','import time;time.sleep(3)'], start_new_session=True);"
+            "time.sleep(30)"
+        )
+        saved = run.CLEANUP_SECONDS
+        run.CLEANUP_SECONDS = 0.3
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                started = time.monotonic()
+                outcome = self.runner(directory).execute(("-c", child), b"")
+                elapsed = time.monotonic() - started
+        finally:
+            run.CLEANUP_SECONDS = saved
+        self.assertTrue(outcome.timed_out)
+        self.assertLess(elapsed, 4.0)
+
+
+class Counting(unittest.TestCase):
+    def test_count(self):
+        source = (
+            "testCase :: String -> Assertion\n"
+            '  [ "a" =: "x" =?> para "x"\n'
+            "  -- \"b\" =?> skipped\n"
+            '  , testCase "c" $ assert True\n'
+            '  , testProperty "d" prop ]\n'
+        )
+        self.assertEqual(suite.count_tests(source), 3)
+
+    def test_comments_do_not_count(self):
+        source = (
+            "{- doc\n  \"x\" =: X =?> Y\n  {- inner -} still =?> comment\n-}\n"
+            '  [ "a" =: "-- not a comment" =?> para "x" -- "b" =?> c\n'
+            '  , "c" =?> d\n'
+        )
+        self.assertEqual(suite.count_tests(source), 2)
+
+    def test_active_code_keeps_strings_operators_and_lines(self):
+        source = 'a = "{- s -}" --> \'"\' -- note\n{- c\n -}b\n'
+        self.assertEqual(suite.active_code(source), 'a = "{- s -}" --> \'"\' \n\nb\n')
+
+    def test_entries_skip_declarations_definitions_and_comments(self):
+        source = (
+            "testMediaBag :: String -> TestTree\n"
+            "testMediaBag name file = run name file\n"
+            "tests = [ testMediaBag \"one\" \"a\"\n"
+            "        , testForWarningsWithOpts def \"two\" \"b\" []\n"
+            "        ]\n"
+            "{-\nold = [ testMediaBag \"three\" \"c\" ]\n-}\n"
+            "-- , testMediaBag \"four\" \"d\"\n"
+        )
+        self.assertEqual(suite.count_entries(source, "testMediaBag|testForWarningsWithOpts"), 2)
+
+
+if __name__ == "__main__":
+    unittest.main()
