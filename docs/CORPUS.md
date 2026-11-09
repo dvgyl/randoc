@@ -59,12 +59,14 @@ compares the `json` output by JSON equality and the other outputs by bytes.
 
 Each program runs under the name `pandoc`, in the corpus directory, with the
 fixed environment of the conformance harness: `PATH=/usr/bin:/bin:/usr/sbin:/sbin`,
-an empty temporary `HOME`, `LANG=en_US.UTF-8`, `LC_ALL=en_US.UTF-8`, `TZ=UTC`
+`HOME=/var/empty`, `LANG=en_US.UTF-8`, `LC_ALL=en_US.UTF-8`, `TZ=UTC`
 and `SOURCE_DATE_EPOCH=1700000000`.
 
 The tool stores the oracle results in `$RANDOC_CORPUS/.oracle-cache`, one
-SQLite file. The key of a result is the oracle (its version text and its file
-size), the document hash and the arguments. A second run starts only the
+SQLite file. The key of a result is the SHA-256 hash of the oracle program file,
+the hash of the document file and the arguments. Before a run, `run.py`
+checks the size and the hash of each document file against the manifest and
+stops when one differs. A second run starts only the
 program under test. A result after a timeout is not stored.
 
 The status of a unit in `spec/corpus.json` is one of these:
@@ -75,6 +77,11 @@ The status of a unit in `spec/corpus.json` is one of these:
 | `fail PARTS` | `PARTS` names the parts that differ: `exit`, `stderr`, `output`. |
 | `timeout` | The program under test did not stop in the time limit. |
 | `oracle timeout` | The oracle did not stop in the time limit. |
+| `error TEXT` | The tool failed on this unit, for example on a Python error. The unit counts as a failure. |
+
+Each program runs in its own process session. At the time limit, `run.py`
+stops the whole process group. It keeps at most 64 MB of standard output
+and 64 MB of standard error output for one run.
 
 ## Rules for the manifest
 
@@ -82,7 +89,14 @@ The status of a unit in `spec/corpus.json` is one of these:
   GitHub files, a revision identifier for Wikipedia. The hash detects a change
   of the other sources.
 - Each document has an SPDX licence expression. `LicenseRef-Public-Domain`
-  marks a document in the public domain.
+  marks a document in the public domain. `LicenseRef-Public-Domain-US AND
+  CC0-1.0` marks an ebook whose text is in the public domain in the United
+  States and whose contributor work is under CC0.
+- A file from a collection of test files can have its own rights statement.
+  Read the statement inside the file (for example `dc:rights` in an EPUB
+  package file). Do not take the licence of the repository for such a file.
+  Leave out a file whose content comes from a third party without a clear
+  licence.
 - One document is 2 MB or less. The corpus is 300 MB or less. `corpuslib.check`
   enforces both limits.
 - The drive is exFAT, and each file uses 2 MB or more there. Each document is
@@ -105,7 +119,7 @@ that they match the manifest.
 | adamgreen/CrashCatcher | Apache-2.0 | creole | 1 |
 | adamgreen/mri | Apache-2.0 | creole | 2 |
 | alexott/muse | GPL-3.0-or-later | muse | 2 |
-| apache/tika | Apache-2.0 | docx, epub, fb2, odt, pptx, rtf, xlsx | 43 |
+| apache/tika | Apache-2.0; LicenseRef-Public-Domain-US AND CC0-1.0 | docx, epub, odt, pptx, rtf, xlsx | 39 |
 | asciidoctor/asciidoctor | MIT | asciidoc | 8 |
 | astral-sh/ruff | MIT | gfm | 1 |
 | BurntSushi/ripgrep | Unlicense OR MIT | gfm | 1 |
@@ -137,7 +151,7 @@ that they match the manifest.
 | Perl/perl5 | Artistic-1.0-Perl OR GPL-1.0-or-later | pod | 5 |
 | plk/biblatex | LPPL-1.3c | biblatex | 1 |
 | psf/requests | Apache-2.0 | gfm | 1 |
-| python/peps | LicenseRef-Public-Domain OR CC0-1.0 | rst | 8 |
+| python/peps | LicenseRef-Public-Domain; LicenseRef-Public-Domain OR CC0-1.0 | rst | 8 |
 | RailsApps/rails_layout | MIT | textile | 1 |
 | rust-lang/book | MIT OR Apache-2.0 | markdown | 14 |
 | rust-lang/cargo | MIT OR Apache-2.0 | gfm | 1 |
@@ -145,7 +159,7 @@ that they match the manifest.
 | Sephiroth87/ODRefreshControl | MIT | textile | 1 |
 | sharkdp/bat | MIT OR Apache-2.0 | gfm | 1 |
 | sphinx-doc/sphinx | BSD-2-Clause | rst | 8 |
-| standardebooks.org | CC0-1.0 | epub | 5 |
+| standardebooks.org | LicenseRef-Public-Domain-US AND CC0-1.0 | epub | 5 |
 | systemd/systemd | LGPL-2.1-or-later | docbook | 8 |
 | tokio-rs/tokio | MIT | gfm | 1 |
 | typst/templates | MIT-0 | typst | 8 |
@@ -167,8 +181,7 @@ that they match the manifest.
 | djot | 5 | 92461 |
 | docbook | 8 | 214704 |
 | docx | 12 | 199713 |
-| epub | 8 | 3574928 |
-| fb2 | 1 | 29826 |
+| epub | 7 | 3567105 |
 | gfm | 12 | 117005 |
 | html | 11 | 3797438 |
 | ipynb | 8 | 138916 |
@@ -186,17 +199,26 @@ that they match the manifest.
 | pptx | 5 | 220314 |
 | ris | 1 | 3096 |
 | rst | 16 | 518846 |
-| rtf | 10 | 280613 |
+| rtf | 8 | 218956 |
 | t2t | 3 | 39673 |
 | textile | 4 | 29884 |
 | typst | 8 | 40149 |
 | xlsx | 4 | 36560 |
-| all | 242 | 15683840 |
+| all | 238 | 15584534 |
 
 ## Documents that Pandoc rejects
 
-Pandoc 3.13 exits with code 64 (a parse error) for 19 documents, for example
-`latex2e-cfgguide` (`unexpected @`), `wp-haskell` (an unclosed `<ref>`),
-`openbsd-ksh` (the `Xo` macro) and the Typst templates that import packages.
-These documents stay in the corpus. Randoc must give the same exit code and
-the same error message.
+Pandoc 3.13 rejects 19 documents. They stay in the corpus, because Randoc
+must give the same exit code and the same error message.
+
+- Pandoc exits with code 64 (a parse error) for 17 of them, for example
+  `latex2e-cfgguide` (`unexpected @`), `wp-haskell` (an unclosed `<ref>`),
+  `openbsd-ksh` (the `Xo` macro) and `deep-review-manual-references` (a CSL
+  JSON type error).
+- `systemd-systemd-vmspawn` exits with code 44: the XML has an entity that is
+  not resolved (`&fedora_latest_version;`).
+- `asciidoctor-manpage-backend-index` exits with code 1: it includes a file
+  that is not in the corpus.
+
+These two documents test error handling for missing resources. They do not
+test the reader on a complete document.

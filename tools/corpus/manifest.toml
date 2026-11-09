@@ -610,7 +610,7 @@ size = 41653
 name = "pep-0008"
 format = "rst"
 url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0008.rst"
-license = "LicenseRef-Public-Domain OR CC0-1.0"
+license = "LicenseRef-Public-Domain"
 source = "python/peps@efec2601611c"
 sha256 = "6028935c6cb2c674d5f4d512c7ba6ce2923713b1c47ce1a78adc690db817fc5d"
 size = 50796
@@ -619,7 +619,7 @@ size = 50796
 name = "pep-0020"
 format = "rst"
 url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0020.rst"
-license = "LicenseRef-Public-Domain OR CC0-1.0"
+license = "LicenseRef-Public-Domain"
 source = "python/peps@efec2601611c"
 sha256 = "742999637cc96eef52e8148fdf65a6065a0953daee92bb48b8c739efcf6def07"
 size = 1648
@@ -628,7 +628,7 @@ size = 1648
 name = "pep-0257"
 format = "rst"
 url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0257.rst"
-license = "LicenseRef-Public-Domain OR CC0-1.0"
+license = "LicenseRef-Public-Domain"
 source = "python/peps@efec2601611c"
 sha256 = "7db41c5aaea3bfde0463307c72b38d735dc604491cadd059d7f9fe94b8142c0e"
 size = 10581
@@ -637,7 +637,7 @@ size = 10581
 name = "pep-0287"
 format = "rst"
 url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0287.rst"
-license = "LicenseRef-Public-Domain OR CC0-1.0"
+license = "LicenseRef-Public-Domain"
 source = "python/peps@efec2601611c"
 sha256 = "4b4b5c86c8496d0fe137d4196bb323c7421815fd48bba10219afd8e01827fa48"
 size = 31893
@@ -646,7 +646,7 @@ size = 31893
 name = "pep-0484"
 format = "rst"
 url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0484.rst"
-license = "LicenseRef-Public-Domain OR CC0-1.0"
+license = "LicenseRef-Public-Domain"
 source = "python/peps@efec2601611c"
 sha256 = "ddfe61c36a61b3ba926aaf23f4934ab17493a1cb7ea5d45497235b552c4a9f7c"
 size = 88614
@@ -655,7 +655,7 @@ size = 88614
 name = "pep-0572"
 format = "rst"
 url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0572.rst"
-license = "LicenseRef-Public-Domain OR CC0-1.0"
+license = "LicenseRef-Public-Domain"
 source = "python/peps@efec2601611c"
 sha256 = "abf5401ec523a03d59a6f3173842784f426bfd49d8b0a87a512646557bcef8b1"
 size = 47028
@@ -1372,24 +1372,6 @@ sha256 = "e537545d53983fc66306a70d1738fe00d026eee7bdb0e62c972cee08a69f98a7"
 size = 7337
 
 [[document]]
-name = "tika-testrtfjapanese-rtf"
-format = "rtf"
-url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFJapanese.rtf"
-license = "Apache-2.0"
-source = "apache/tika@a40d54f6a6d9"
-sha256 = "99dc05c1bcbddf00e3421b04fabd6014c62194ea4fe82b67b25045667a90669b"
-size = 24956
-
-[[document]]
-name = "tika-testrtfword2010czechcharacters-rtf"
-format = "rtf"
-url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFWord2010CzechCharacters.rtf"
-license = "Apache-2.0"
-source = "apache/tika@a40d54f6a6d9"
-sha256 = "8b29de22ed7f53ad264c2dd12c3af5a43a26df37dade8ca03325b14c07447cfd"
-size = 36701
-
-[[document]]
 name = "tika-testrtfbolditalic-rtf"
 format = "rtf"
 url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFBoldItalic.rtf"
@@ -1510,34 +1492,16 @@ size = 30552
 name = "tika-testepub-multi-metadata-vals-epub"
 format = "epub"
 url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testEPUB_multi-metadata-vals.epub"
-license = "Apache-2.0"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
 source = "apache/tika@a40d54f6a6d9"
 sha256 = "a1a3772b7e718c6bddead4c9acded6c0dd466e5c1c1f6d4f6cae5484c3e6fe33"
 size = 571926
 
 [[document]]
-name = "tika-testepub-xml-ext-epub"
-format = "epub"
-url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testEPUB_xml_ext.epub"
-license = "Apache-2.0"
-source = "apache/tika@a40d54f6a6d9"
-sha256 = "610c2a2f65a6fe4f631d8685c17310f914a9fb00ea6e7174e8f008510099bb43"
-size = 7823
-
-[[document]]
-name = "tika-test-fb2"
-format = "fb2"
-url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-xml-module/src/test/resources/test-documents/test.fb2"
-license = "Apache-2.0"
-source = "apache/tika@a40d54f6a6d9"
-sha256 = "72a33d899fc296dff978dc56289aefc9dc09a9f16d0c0661b52b1ffb0548f22a"
-size = 29826
-
-[[document]]
 name = "se-pride-and-prejudice"
 format = "epub"
 url = "https://standardebooks.org/ebooks/jane-austen/pride-and-prejudice/downloads/jane-austen_pride-and-prejudice.epub?source=download"
-license = "CC0-1.0"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
 source = "standardebooks.org"
 sha256 = "85814417c1a74d2ca7f3b077b47454d0cfc728392d40d846d1c97d44f24c5279"
 size = 831959
@@ -1546,7 +1510,7 @@ size = 831959
 name = "se-frankenstein"
 format = "epub"
 url = "https://standardebooks.org/ebooks/mary-shelley/frankenstein/downloads/mary-shelley_frankenstein.epub?source=download"
-license = "CC0-1.0"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
 source = "standardebooks.org"
 sha256 = "0b5c070e2cde4d8bb36ef707f9d024465b00d0c49c078f0a148270f55b8c8780"
 size = 685797
@@ -1555,7 +1519,7 @@ size = 685797
 name = "se-the-time-machine"
 format = "epub"
 url = "https://standardebooks.org/ebooks/h-g-wells/the-time-machine/downloads/h-g-wells_the-time-machine.epub?source=download"
-license = "CC0-1.0"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
 source = "standardebooks.org"
 sha256 = "3931b56fecfb0b0d00737f5fabcd00a46a96c26a6b1c9b8a60751d154057d9a6"
 size = 535571
@@ -1564,7 +1528,7 @@ size = 535571
 name = "se-the-strange-case-of-dr-jekyll-and-mr-hyde"
 format = "epub"
 url = "https://standardebooks.org/ebooks/robert-louis-stevenson/the-strange-case-of-dr-jekyll-and-mr-hyde/downloads/robert-louis-stevenson_the-strange-case-of-dr-jekyll-and-mr-hyde.epub?source=download"
-license = "CC0-1.0"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
 source = "standardebooks.org"
 sha256 = "9f0306972d1c6a21dcdf0be8a752a58a42f7470fda0613c4dc40090923f08adc"
 size = 492233
@@ -1573,7 +1537,7 @@ size = 492233
 name = "se-the-importance-of-being-earnest"
 format = "epub"
 url = "https://standardebooks.org/ebooks/oscar-wilde/the-importance-of-being-earnest/downloads/oscar-wilde_the-importance-of-being-earnest.epub?source=download"
-license = "CC0-1.0"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
 source = "standardebooks.org"
 sha256 = "1b9d41ec39fdcd23c939fb60f7d8191ff51ea9a4b40d106c63a1e1c172691064"
 size = 419067

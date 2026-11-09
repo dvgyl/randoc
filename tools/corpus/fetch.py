@@ -24,10 +24,22 @@ import corpuslib
 DELAY_SECONDS = 0.5
 
 
+class HttpsOnlyRedirects(urllib.request.HTTPRedirectHandler):
+    """Follows a redirect only to an https URL."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urllib.parse.urlsplit(newurl).scheme != "https":
+            raise urllib.error.HTTPError(newurl, code, f"redirect to a non-https URL: {newurl}", headers, fp)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+OPENER = urllib.request.build_opener(HttpsOnlyRedirects)
+
+
 def download(url, timeout=60):
     """Returns the bytes at `url`. Raises `ValueError` for a document that is too large."""
     request = urllib.request.Request(url, headers={"User-Agent": corpuslib.USER_AGENT})
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    with OPENER.open(request, timeout=timeout) as response:
         data = response.read(corpuslib.MAX_DOCUMENT_BYTES + 1)
     if len(data) > corpuslib.MAX_DOCUMENT_BYTES:
         raise ValueError(f"more than {corpuslib.MAX_DOCUMENT_BYTES} bytes")
@@ -41,11 +53,12 @@ def write_atomic(path, data):
     os.replace(temporary, path)
 
 
-def fetch_one(document, corpus, get=download, pin=False):
+def fetch_one(document, corpus, get=download, pin=False, budget=corpuslib.MAX_TOTAL_BYTES):
     """Makes sure that the corpus holds `document`.
 
     Returns a pair: the status text and the document, with the hash and the
-    size filled when `pin` is true and the manifest had no hash.
+    size filled when `pin` is true and the manifest had no hash. `budget` is
+    the number of bytes that a newly pinned document can add to the corpus.
     """
     path = corpus / document.file_name
     unpinned = not document.sha256
@@ -57,9 +70,13 @@ def fetch_one(document, corpus, get=download, pin=False):
     if unpinned:
         if not pin:
             return "unpinned: run with --pin", document
+        if len(data) > budget:
+            return f"over the total limit: {len(data)} bytes, {budget} left", document
         document = dataclasses.replace(document, sha256=digest, size=len(data))
     elif digest != document.sha256:
         return f"hash mismatch: got {digest}", document
+    elif len(data) != document.size:
+        return f"size mismatch: got {len(data)} bytes", document
     write_atomic(path, data)
     return "downloaded", document
 
@@ -86,6 +103,7 @@ def main(argv=None, get=download, delay=DELAY_SECONDS):
     args.corpus.mkdir(parents=True, exist_ok=True)
 
     failures = 0
+    budget = corpuslib.MAX_TOTAL_BYTES - sum(document.size for document in documents)
     last_request = {}
     result = []
     for document in documents:
@@ -97,7 +115,10 @@ def main(argv=None, get=download, delay=DELAY_SECONDS):
         if wait > 0:
             time.sleep(wait)
         try:
-            status, document = fetch_one(document, args.corpus, get, args.pin)
+            unpinned = not document.sha256
+            status, document = fetch_one(document, args.corpus, get, args.pin, budget)
+            if unpinned and document.sha256:
+                budget -= document.size
         except (OSError, ValueError, urllib.error.URLError) as error:
             status = f"error: {error}"
         if status != "present":
@@ -108,6 +129,11 @@ def main(argv=None, get=download, delay=DELAY_SECONDS):
         result.append(document)
 
     if args.pin:
+        try:
+            corpuslib.check(result, require_hashes=False)
+        except corpuslib.ManifestError as error:
+            print(f"the manifest is not written: {error}", file=sys.stderr)
+            return 1
         pinned = corpuslib.format_manifest(result, corpuslib.manifest_header(text))
         args.manifest.write_text(pinned, encoding="utf-8")
     print(f"{len(documents)} documents, {failures} failures")

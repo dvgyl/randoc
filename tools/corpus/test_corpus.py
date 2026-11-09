@@ -6,7 +6,10 @@ import json
 import shutil
 import sqlite3
 import tempfile
+import time
 import unittest
+import urllib.error
+import urllib.request
 from pathlib import Path
 from unittest import mock
 
@@ -255,8 +258,9 @@ class RunTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(report["totals"], {"units": 6, "pass": 6, "fail": 0})
         self.assertEqual(report["program"], "pandoc 1.0")
-        rows = sqlite3.connect(self.corpus / run.CACHE_NAME).execute("SELECT COUNT(*) FROM result")
-        self.assertEqual(rows.fetchone()[0], 6)
+        with contextlib.closing(sqlite3.connect(self.corpus / run.CACHE_NAME)) as connection:
+            rows = connection.execute("SELECT COUNT(*) FROM result").fetchone()[0]
+        self.assertEqual(rows, 6)
 
     def test_a_second_run_uses_the_cached_oracle_results(self):
         oracle = self.program("pandoc")
@@ -288,3 +292,117 @@ class RunTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReviewCorrectionTests(unittest.TestCase):
+    """Tests for the findings of the first review (COR-01 to COR-10)."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="randoc-corpus-review-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def test_cor01_entries_use_the_rights_statement_inside_the_file(self):
+        docs = {d.name: d for d in corpuslib.load_manifest()}
+        removed = {"tika-testepub-xml-ext-epub", "tika-test-fb2", "tika-testrtfjapanese-rtf",
+                   "tika-testrtfword2010czechcharacters-rtf"}
+        self.assertFalse(removed & set(docs))
+        ebooks = [d for d in docs.values() if d.name.startswith("se-")]
+        ebooks.append(docs["tika-testepub-multi-metadata-vals-epub"])
+        self.assertEqual(len(ebooks), 6)
+        for d in ebooks:
+            self.assertEqual(d.license, "LicenseRef-Public-Domain-US AND CC0-1.0", d.name)
+
+    def test_cor08_peps_record_the_declaration_of_each_file(self):
+        docs = {d.name: d.license for d in corpuslib.load_manifest() if d.name.startswith("pep-")}
+        for name in ("pep-0008", "pep-0020", "pep-0257", "pep-0287", "pep-0484", "pep-0572"):
+            self.assertEqual(docs[name], "LicenseRef-Public-Domain", name)
+        self.assertEqual(docs["pep-0001"], "LicenseRef-Public-Domain OR CC0-1.0")
+
+    def test_cor02_the_fingerprint_is_the_hash_of_the_program_file(self):
+        first, second = self.dir / "a", self.dir / "b"
+        first.write_bytes(b"program one")
+        second.write_bytes(b"program two")
+        self.assertNotEqual(run.fingerprint(first), run.fingerprint(second))
+        self.assertEqual(run.fingerprint(first), corpuslib.sha256_of(b"program one"))
+        self.assertEqual(run.HOME, Path("/var/empty"))
+
+    def test_cor03_a_changed_document_file_stops_the_run(self):
+        corpus = self.dir / "corpus"
+        corpus.mkdir()
+        doc = document("one")
+        manifest = self.dir / "manifest.toml"
+        manifest.write_text(corpuslib.format_manifest([doc]))
+        (corpus / "one.md").write_bytes(b"alphb")
+        self.assertEqual(run.verify_documents([doc], corpus), ["one"])
+        (corpus / "one.md").write_bytes(b"alpha")
+        self.assertEqual(run.verify_documents([doc], corpus), [])
+        self.assertEqual(run.verify_documents([document("one", size=4)], corpus), ["one"])
+        (corpus / "one.md").write_bytes(b"changed")
+        with contextlib.redirect_stderr(io.StringIO()) as err:
+            code = run.main(["--pandoc", "/usr/bin/true", "--oracle", "/usr/bin/true",
+                             "--manifest", str(manifest), "--corpus", str(corpus)])
+        self.assertEqual(code, 2)
+        self.assertIn("changed documents", err.getvalue())
+
+    def test_cor04_json_comparison_keeps_types_apart(self):
+        self.assertEqual(run.status(outcome(stdout=b'{"x":true}'), outcome(stdout=b'{"x":1}'), "json"),
+                         "fail output")
+        self.assertEqual(run.status(outcome(stdout=b"[1]"), outcome(stdout=b"[1.0]"), "json"), "fail output")
+        self.assertEqual(run.status(outcome(stdout=b'{"a":[1,{"b":null}]}'),
+                                    outcome(stdout=b'{ "a": [1, {"b": null}] }'), "json"), "pass")
+        self.assertFalse(run.json_equal({"a": 1}, {"b": 1}))
+        self.assertFalse(run.json_equal([1], [1, 2]))
+
+    def test_cor05_the_time_limit_stops_child_processes(self):
+        start = time.monotonic()
+        result = run.execute("/bin/sh", ["-c", "sleep 3; :"], self.dir, self.dir, 0.2)
+        self.assertLess(time.monotonic() - start, 2)
+        self.assertTrue(result.timed_out)
+
+    def test_cor05_pipe_reads_are_limited(self):
+        result = run.execute("/bin/sh", ["-c", "printf 0123456789abcdef"], self.dir, self.dir, 10, limit=10)
+        self.assertEqual((result.exit, result.stdout), (-1, b"0123456789"))
+        self.assertIn(b"output larger than 10 bytes", result.stderr)
+
+    def test_cor06_deep_json_and_unit_errors_become_failed_units(self):
+        depth = 100000
+        expected = outcome(stdout=b"[" * depth + b"0" + b"]" * depth)
+        actual = outcome(stdout=b"[" * depth + b"1" + b"]" * depth)
+        self.assertEqual(run.status(expected, actual, "json"), "fail output")
+        cache = run.OracleCache(":memory:", "f")
+        with mock.patch.object(run, "execute", side_effect=RuntimeError("boom")):
+            units = run.run_units([document("a")], ("json",), "p", "o", self.dir, cache, 1, 1, self.dir)
+        cache.close()
+        self.assertEqual([u[2] for u in units], ["error RuntimeError: boom"])
+
+    def test_cor07_fetch_checks_the_size_and_the_total_limit(self):
+        status, _ = fetch.fetch_one(document("a", size=1), self.dir, lambda url: b"alpha")
+        self.assertEqual(status, "size mismatch: got 5 bytes")
+        self.assertFalse((self.dir / "a.md").exists())
+        manifest = self.dir / "manifest.toml"
+        docs = [document(name, sha256="", size=0) for name in ("a", "b", "c")]
+        manifest.write_text(corpuslib.format_manifest(docs))
+        with mock.patch.object(corpuslib, "MAX_TOTAL_BYTES", 5), contextlib.redirect_stdout(io.StringIO()) as out:
+            code = fetch.main(["--manifest", str(manifest), "--corpus", str(self.dir), "--pin"],
+                              lambda url: b"abc", 0)
+        self.assertEqual(code, 1)
+        self.assertIn("b: over the total limit: 3 bytes, 2 left", out.getvalue())
+        pinned = corpuslib.parse_manifest(manifest.read_text(), require_hashes=False)
+        self.assertEqual(sum(d.size for d in pinned), 3)
+
+    def test_cor09_the_documentation_separates_the_rejection_causes(self):
+        text = (Path(__file__).parents[2] / "docs" / "CORPUS.md").read_text(encoding="utf-8")
+        self.assertIn("Pandoc 3.13 rejects 19 documents", text)
+        self.assertIn("code 64 (a parse error) for 17", text)
+
+    def test_cor10_a_redirect_to_http_is_refused(self):
+        handler = fetch.HttpsOnlyRedirects()
+        with self.assertRaises(urllib.error.HTTPError) as refused:
+            handler.redirect_request(urllib.request.Request("https://example.org/a"), None, 302,
+                                     "Found", {}, "http://example.org/a")
+        refused.exception.close()
+        allowed = handler.redirect_request(urllib.request.Request("https://example.org/a"), None, 302,
+                                           "Found", {}, "https://example.org/b")
+        self.assertEqual(allowed.full_url, "https://example.org/b")

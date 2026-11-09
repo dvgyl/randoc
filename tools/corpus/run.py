@@ -14,13 +14,14 @@ import argparse
 import collections
 import concurrent.futures
 import dataclasses
+import hashlib
 import json
 import os
-import shutil
+import signal
 import sqlite3
 import subprocess
 import sys
-import tempfile
+import threading
 from pathlib import Path
 
 import corpuslib
@@ -28,6 +29,11 @@ import corpuslib
 TARGETS = ("json", "html", "markdown")
 SOURCE_DATE_EPOCH = "1700000000"
 CACHE_NAME = ".oracle-cache"
+# A fixed HOME that does not depend on the run, because Pandoc prints the
+# path of its user data directory in some messages and in `--version`.
+HOME = Path("/var/empty")
+MAX_OUTPUT_BYTES = 64_000_000
+CLEANUP_SECONDS = 5
 
 
 @dataclasses.dataclass(frozen=True)
@@ -52,27 +58,94 @@ def environment(home):
     }
 
 
-def execute(binary, args, cwd, home, timeout):
-    """Runs `binary` under the name `pandoc` and returns the outcome."""
+class _PipeReader(threading.Thread):
+    """Reads a pipe to its end and keeps at most `limit` bytes."""
+
+    def __init__(self, pipe, limit):
+        super().__init__(daemon=True)
+        self.pipe = pipe
+        self.limit = limit
+        self.data = bytearray()
+        self.overflow = False
+
+    def run(self):
+        try:
+            while chunk := self.pipe.read(65536):
+                room = self.limit - len(self.data)
+                self.data += chunk[:max(room, 0)]
+                self.overflow = self.overflow or len(chunk) > room
+        except (OSError, ValueError):
+            pass
+
+
+def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
+    """Runs `binary` under the name `pandoc` and returns the outcome.
+
+    The program runs in its own session. At the time limit, the function
+    stops the whole process group, so that a child process cannot keep the
+    pipes open. Each pipe keeps at most `limit` bytes.
+    """
     try:
         process = subprocess.Popen(
             ["pandoc", *args], executable=str(binary), cwd=cwd, env=environment(home),
-            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            start_new_session=True)
     except OSError as error:
         return Outcome(-1, b"", f"[corpus] {binary}: {error}\n".encode())
+    readers = [_PipeReader(process.stdout, limit), _PipeReader(process.stderr, limit)]
+    for reader in readers:
+        reader.start()
+    timed_out = False
     try:
-        stdout, stderr = process.communicate(timeout=timeout)
+        process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
-        process.kill()
-        stdout, stderr = process.communicate()
+        timed_out = True
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+    process.wait()
+    for reader in readers:
+        reader.join(CLEANUP_SECONDS)
+    for pipe in (process.stdout, process.stderr):
+        pipe.close()
+    stdout, stderr = (bytes(reader.data) for reader in readers)
+    if timed_out:
         stderr += f"[corpus] no result after {timeout} s\n".encode()
         return Outcome(-1, stdout, stderr, timed_out=True)
+    if any(reader.overflow for reader in readers):
+        stderr += f"[corpus] output larger than {limit} bytes\n".encode()
+        return Outcome(-1, stdout, stderr)
     return Outcome(process.returncode, stdout, stderr)
 
 
 def arguments(document, target):
     """Returns the command-line arguments that convert `document` to `target`."""
     return ["-f", document.format, "-t", target, document.file_name]
+
+
+def json_equal(left, right):
+    """Equality of decoded JSON values that keeps Booleans, integers, floats and strings apart.
+
+    In Python, `True == 1` and `1 == 1.0`. The comparison uses a stack, so
+    deep nesting cannot exhaust the Python stack.
+    """
+    stack = [(left, right)]
+    while stack:
+        a, b = stack.pop()
+        if type(a) is not type(b):
+            return False
+        if isinstance(a, dict):
+            if a.keys() != b.keys():
+                return False
+            stack.extend((a[key], b[key]) for key in a)
+        elif isinstance(a, list):
+            if len(a) != len(b):
+                return False
+            stack.extend(zip(a, b))
+        elif a != b:
+            return False
+    return True
 
 
 def differences(expected, actual, target):
@@ -85,8 +158,8 @@ def differences(expected, actual, target):
     same = expected.stdout == actual.stdout
     if not same and target == "json":
         try:
-            same = json.loads(expected.stdout) == json.loads(actual.stdout)
-        except ValueError:
+            same = json_equal(json.loads(expected.stdout), json.loads(actual.stdout))
+        except (ValueError, RecursionError):
             same = False
     if not same:
         parts.append("output")
@@ -113,9 +186,9 @@ class OracleCache:
             "CREATE TABLE IF NOT EXISTS result "
             "(key TEXT PRIMARY KEY, exit INTEGER, stdout BLOB, stderr BLOB)")
 
-    def key(self, document, args):
-        """Returns the cache key: the oracle, the document content and the arguments."""
-        material = json.dumps([self.fingerprint, document.sha256, args])
+    def key(self, content_hash, args):
+        """Returns the cache key: the oracle, the hash of the document file and the arguments."""
+        material = json.dumps([self.fingerprint, content_hash, args])
         return corpuslib.sha256_of(material.encode())
 
     def keys(self):
@@ -149,10 +222,28 @@ def version_line(binary, home):
     return lines[0] if lines else f"unknown (exit {outcome.exit})"
 
 
-def fingerprint(binary, home):
-    """Identifies the oracle program by its version text and its file size."""
-    text = execute(binary, ["--version"], home, home, 60).stdout
-    return corpuslib.sha256_of(text + str(Path(binary).stat().st_size).encode())
+def fingerprint(binary):
+    """Identifies the oracle program by the SHA-256 hash of its file."""
+    digest = hashlib.sha256()
+    with open(binary, "rb") as file:
+        while chunk := file.read(1 << 20):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def verify_documents(documents, corpus):
+    """Returns the names of the documents whose file is missing or differs from the manifest."""
+    bad = []
+    for document in documents:
+        path = corpus / document.file_name
+        try:
+            data = path.read_bytes()
+        except OSError:
+            bad.append(document.name)
+            continue
+        if len(data) != document.size or corpuslib.sha256_of(data) != document.sha256:
+            bad.append(document.name)
+    return bad
 
 
 def summarize(units, program, oracle, targets, timeout):
@@ -194,23 +285,30 @@ def run_units(documents, targets, program, oracle, corpus, cache, jobs, timeout,
     for document in documents:
         for target in targets:
             args = arguments(document, target)
-            tasks.append((document, target, args, cache.key(document, args)))
+            tasks.append((document, target, args, cache.key(document.sha256, args)))
 
     def work(task):
-        _, _, args, key = task
-        actual = execute(program, args, corpus, home, timeout)
-        expected = None if key in stored else execute(oracle, args, corpus, home, timeout)
-        return actual, expected
+        _, target, args, key = task
+        try:
+            actual = execute(program, args, corpus, home, timeout)
+            expected = None if key in stored else execute(oracle, args, corpus, home, timeout)
+            unit_status = None if expected is None else status(expected, actual, target)
+            return actual, expected, unit_status
+        except Exception as error:  # one unit must not stop the run
+            return None, None, f"error {type(error).__name__}: {error}"
 
     units = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
-        for task, (actual, expected) in zip(tasks, pool.map(work, tasks)):
+        for task, (actual, expected, unit_status) in zip(tasks, pool.map(work, tasks)):
             document, target, _, key = task
-            if expected is None:
-                expected = cache.get(key)
-            else:
+            if actual is not None and expected is None:
+                try:
+                    unit_status = status(cache.get(key), actual, target)
+                except Exception as error:  # one unit must not stop the run
+                    unit_status = f"error {type(error).__name__}: {error}"
+            elif expected is not None:
                 cache.put(key, expected)
-            units.append((document, target, status(expected, actual, target)))
+            units.append((document, target, unit_status))
     return units
 
 
@@ -241,26 +339,22 @@ def main(argv=None):
         return 2
     if args.only:
         documents = [d for d in documents if any(part in d.name for part in args.only)]
-    missing = [d.name for d in documents if not (args.corpus / d.file_name).is_file()]
-    if missing:
-        print(f"missing documents, run fetch.py: {', '.join(missing)}", file=sys.stderr)
+    bad = verify_documents(documents, args.corpus)
+    if bad:
+        print(f"missing or changed documents, run fetch.py: {', '.join(bad)}", file=sys.stderr)
         return 2
 
     targets = tuple(args.target or TARGETS)
     program = args.pandoc.resolve()
     oracle = args.oracle.resolve()
-    home = Path(tempfile.mkdtemp(prefix="randoc-corpus-home-"))
+    cache = OracleCache(args.corpus / CACHE_NAME, fingerprint(oracle))
     try:
-        cache = OracleCache(args.corpus / CACHE_NAME, fingerprint(oracle, home))
-        try:
-            units = run_units(documents, targets, program, oracle, args.corpus.resolve(),
-                              cache, args.jobs, args.timeout, home)
-        finally:
-            cache.close()
-        report = summarize(units, version_line(program, home), version_line(oracle, home),
-                           targets, args.timeout)
+        units = run_units(documents, targets, program, oracle, args.corpus.resolve(),
+                          cache, args.jobs, args.timeout, HOME)
     finally:
-        shutil.rmtree(home, ignore_errors=True)
+        cache.close()
+    report = summarize(units, version_line(program, HOME), version_line(oracle, HOME),
+                       targets, args.timeout)
 
     text = json.dumps(report, indent=1, ensure_ascii=False) + "\n"
     if args.out:
