@@ -15,5 +15,8 @@ path = "src/main.rs"
 [dependencies]
 randoc = { workspace = true }
 
+[dev-dependencies]
+randoc-harness = { path = "../randoc-harness" }
+
 [lints]
 workspace = true

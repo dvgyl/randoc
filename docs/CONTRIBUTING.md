@@ -46,11 +46,18 @@ cargo run -q -p randoc-harness -- record
 cargo build -p randoc-cli && cargo run -q -p randoc-harness -- run --baseline spec/baseline.json
 cargo run -q -p randoc-harness -- show 'SUITE/FILE/CASE#UNIT'
 
-# Mutation tests on the lines that your branch changes.
+# Make the conformance suite a part of `cargo test` for the units of your branch.
+# The test `crates/randoc-cli/tests/conformance.rs` checks spec/baseline.json and this local file.
+target/debug/randoc-harness run --baseline target/harness/local-baseline.json --update-baseline
+
+# Mutation tests on the lines that your branch changes. The tests of your crate
+# and the conformance test of the program judge each mutant.
 git diff main...HEAD > /tmp/branch.diff
-cargo mutants --in-diff /tmp/branch.diff --package YOUR_CRATE --timeout 120
+cargo mutants --in-diff /tmp/branch.diff --package YOUR_CRATE \
+    --test-package YOUR_CRATE --test-package randoc-cli --timeout 120
 # A new crate can have thousands of mutants. Test a sample and report its size.
-cargo mutants --package YOUR_CRATE --shard 1/20 --timeout 60
+cargo mutants --package YOUR_CRATE --test-package YOUR_CRATE --test-package randoc-cli \
+    --shard 1/20 --timeout 120
 
 # Coverage of your crate.
 cargo llvm-cov --package YOUR_CRATE --summary-only

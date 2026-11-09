@@ -21,3 +21,19 @@ format, the first program, the conformance harness, the inventory.
 Gate 5 is not complete for the foundation. The foundation is on `main`
 because each workstream needs it as its base. This exception is recorded in
 `PROGRESS.md`.
+
+### Foundation: mutation tests
+
+A sample of 1 in 6 of the 577 mutants in `randoc-ast`, `randoc-core`,
+`randoc`, `randoc-cli` and `randoc-harness` ran on commit 7b4bd0f:
+97 mutants, 60 caught, 35 missed, 1 timeout, 1 not viable.
+
+| Missed mutants | Count | Action |
+| --- | --- | --- |
+| `Format` equality in `randoc-ast/src/types.rs` | 13 | New tests in `randoc-ast/src/type_tests.rs`, with the behaviour checked against the oracle. |
+| `walk::query` in `randoc-ast/src/walk.rs` | 1 | New test in the same file. |
+| The first program in `randoc-cli/src/lib.rs` and `main.rs` | 21 | Unit tests cannot see the exit code and the output of the program. The conformance suite now runs as a test of `randoc-cli` (`tests/conformance.rs`), so `cargo test` and the mutation tool judge the program by its conformance units. The command-line workstream replaces this file. |
+
+The mutation tool did not run again after these changes. The next sample runs
+when the workstreams json-codec and cli merge, because they replace most of
+the code with missed mutants.
