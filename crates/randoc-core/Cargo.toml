@@ -1,0 +1,17 @@
+[package]
+name = "randoc-core"
+description = "Shared contracts for Randoc readers and writers: options, extensions, errors and the conversion context"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-layout = { workspace = true }
+randoc-templates = { workspace = true }
+
+[lints]
+workspace = true

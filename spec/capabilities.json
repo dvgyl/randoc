@@ -1,0 +1,1048 @@
+{
+  "extensions": {
+    "abbreviations": {
+      "status": "not_started"
+    },
+    "alerts": {
+      "status": "not_started"
+    },
+    "all_symbols_escapable": {
+      "status": "not_started"
+    },
+    "amuse": {
+      "status": "not_started"
+    },
+    "angle_brackets_escapable": {
+      "status": "not_started"
+    },
+    "ascii_identifiers": {
+      "status": "not_started"
+    },
+    "attributes": {
+      "status": "not_started"
+    },
+    "auto_identifiers": {
+      "status": "not_started"
+    },
+    "autolink_bare_uris": {
+      "status": "not_started"
+    },
+    "backtick_code_blocks": {
+      "status": "not_started"
+    },
+    "blank_before_blockquote": {
+      "status": "not_started"
+    },
+    "blank_before_header": {
+      "status": "not_started"
+    },
+    "bracketed_spans": {
+      "status": "not_started"
+    },
+    "citations": {
+      "status": "not_started"
+    },
+    "definition_lists": {
+      "status": "not_started"
+    },
+    "east_asian_line_breaks": {
+      "status": "not_started"
+    },
+    "element_citations": {
+      "status": "not_started"
+    },
+    "emoji": {
+      "status": "not_started"
+    },
+    "empty_paragraphs": {
+      "status": "not_started"
+    },
+    "epub_html_exts": {
+      "status": "not_started"
+    },
+    "escaped_line_breaks": {
+      "status": "not_started"
+    },
+    "example_lists": {
+      "status": "not_started"
+    },
+    "fancy_lists": {
+      "status": "not_started"
+    },
+    "fenced_code_attributes": {
+      "status": "not_started"
+    },
+    "fenced_code_blocks": {
+      "status": "not_started"
+    },
+    "fenced_divs": {
+      "status": "not_started"
+    },
+    "footnotes": {
+      "status": "not_started"
+    },
+    "four_space_rule": {
+      "status": "not_started"
+    },
+    "gfm_auto_identifiers": {
+      "status": "not_started"
+    },
+    "grid_tables": {
+      "status": "not_started"
+    },
+    "gutenberg": {
+      "status": "not_started"
+    },
+    "hard_line_breaks": {
+      "status": "not_started"
+    },
+    "header_attributes": {
+      "status": "not_started"
+    },
+    "ignore_line_breaks": {
+      "status": "not_started"
+    },
+    "implicit_figures": {
+      "status": "not_started"
+    },
+    "implicit_header_references": {
+      "status": "not_started"
+    },
+    "inline_code_attributes": {
+      "status": "not_started"
+    },
+    "inline_notes": {
+      "status": "not_started"
+    },
+    "intraword_underscores": {
+      "status": "not_started"
+    },
+    "latex_macros": {
+      "status": "not_started"
+    },
+    "line_blocks": {
+      "status": "not_started"
+    },
+    "link_attributes": {
+      "status": "not_started"
+    },
+    "lists_without_preceding_blankline": {
+      "status": "not_started"
+    },
+    "literate_haskell": {
+      "status": "not_started"
+    },
+    "mark": {
+      "status": "not_started"
+    },
+    "markdown_attribute": {
+      "status": "not_started"
+    },
+    "markdown_in_html_blocks": {
+      "status": "not_started"
+    },
+    "mmd_header_identifiers": {
+      "status": "not_started"
+    },
+    "mmd_link_attributes": {
+      "status": "not_started"
+    },
+    "mmd_title_block": {
+      "status": "not_started"
+    },
+    "multiline_tables": {
+      "status": "not_started"
+    },
+    "native_divs": {
+      "status": "not_started"
+    },
+    "native_numbering": {
+      "status": "not_started"
+    },
+    "native_spans": {
+      "status": "not_started"
+    },
+    "ntb": {
+      "status": "not_started"
+    },
+    "old_dashes": {
+      "status": "not_started"
+    },
+    "pandoc_title_block": {
+      "status": "not_started"
+    },
+    "pipe_tables": {
+      "status": "not_started"
+    },
+    "raw_attribute": {
+      "status": "not_started"
+    },
+    "raw_html": {
+      "status": "not_started"
+    },
+    "raw_markdown": {
+      "status": "not_started"
+    },
+    "raw_tex": {
+      "status": "not_started"
+    },
+    "rebase_relative_paths": {
+      "status": "not_started"
+    },
+    "short_subsuperscripts": {
+      "status": "not_started"
+    },
+    "shortcut_reference_links": {
+      "status": "not_started"
+    },
+    "simple_tables": {
+      "status": "not_started"
+    },
+    "smart": {
+      "status": "not_started"
+    },
+    "smart_quotes": {
+      "status": "not_started"
+    },
+    "sourcepos": {
+      "status": "not_started"
+    },
+    "space_in_atx_header": {
+      "status": "not_started"
+    },
+    "spaced_reference_links": {
+      "status": "not_started"
+    },
+    "special_strings": {
+      "status": "not_started"
+    },
+    "startnum": {
+      "status": "not_started"
+    },
+    "strikeout": {
+      "status": "not_started"
+    },
+    "styles": {
+      "status": "not_started"
+    },
+    "subscript": {
+      "status": "not_started"
+    },
+    "superscript": {
+      "status": "not_started"
+    },
+    "table_attributes": {
+      "status": "not_started"
+    },
+    "table_captions": {
+      "status": "not_started"
+    },
+    "tagging": {
+      "status": "not_started"
+    },
+    "task_lists": {
+      "status": "not_started"
+    },
+    "tex_math_dollars": {
+      "status": "not_started"
+    },
+    "tex_math_double_backslash": {
+      "status": "not_started"
+    },
+    "tex_math_gfm": {
+      "status": "not_started"
+    },
+    "tex_math_single_backslash": {
+      "status": "not_started"
+    },
+    "wikilinks_title_after_pipe": {
+      "status": "not_started"
+    },
+    "wikilinks_title_before_pipe": {
+      "status": "not_started"
+    },
+    "xrefs_name": {
+      "status": "not_started"
+    },
+    "xrefs_number": {
+      "status": "not_started"
+    },
+    "yaml_metadata_block": {
+      "status": "not_started"
+    }
+  },
+  "generated_by": "randoc-harness run --matrix",
+  "input_formats": {
+    "asciidoc": {
+      "status": "not_started"
+    },
+    "biblatex": {
+      "status": "not_started"
+    },
+    "bibtex": {
+      "status": "not_started"
+    },
+    "bits": {
+      "status": "not_started"
+    },
+    "commonmark": {
+      "status": "not_started"
+    },
+    "commonmark_x": {
+      "status": "not_started"
+    },
+    "creole": {
+      "status": "not_started"
+    },
+    "csljson": {
+      "status": "not_started"
+    },
+    "csv": {
+      "status": "not_started"
+    },
+    "djot": {
+      "status": "not_started"
+    },
+    "docbook": {
+      "status": "not_started"
+    },
+    "docx": {
+      "status": "not_started"
+    },
+    "dokuwiki": {
+      "status": "not_started"
+    },
+    "endnotexml": {
+      "status": "not_started"
+    },
+    "epub": {
+      "status": "not_started"
+    },
+    "fb2": {
+      "status": "not_started"
+    },
+    "fodt": {
+      "status": "not_started"
+    },
+    "gfm": {
+      "status": "not_started"
+    },
+    "haddock": {
+      "status": "not_started"
+    },
+    "html": {
+      "status": "not_started"
+    },
+    "ipynb": {
+      "status": "not_started"
+    },
+    "jats": {
+      "status": "not_started"
+    },
+    "jira": {
+      "status": "not_started"
+    },
+    "json": {
+      "end_to_end": {
+        "passing": 7,
+        "total": 11
+      },
+      "read": {
+        "passing": 7,
+        "total": 11
+      },
+      "status": "partial"
+    },
+    "latex": {
+      "status": "not_started"
+    },
+    "man": {
+      "status": "not_started"
+    },
+    "markdown": {
+      "status": "not_started"
+    },
+    "markdown_github": {
+      "status": "not_started"
+    },
+    "markdown_mmd": {
+      "status": "not_started"
+    },
+    "markdown_phpextra": {
+      "status": "not_started"
+    },
+    "markdown_strict": {
+      "status": "not_started"
+    },
+    "mdoc": {
+      "status": "not_started"
+    },
+    "mediawiki": {
+      "status": "not_started"
+    },
+    "muse": {
+      "status": "not_started"
+    },
+    "native": {
+      "status": "not_started"
+    },
+    "odt": {
+      "status": "not_started"
+    },
+    "opml": {
+      "status": "not_started"
+    },
+    "org": {
+      "status": "not_started"
+    },
+    "pod": {
+      "status": "not_started"
+    },
+    "pptx": {
+      "status": "not_started"
+    },
+    "ris": {
+      "status": "not_started"
+    },
+    "rst": {
+      "status": "not_started"
+    },
+    "rtf": {
+      "status": "not_started"
+    },
+    "t2t": {
+      "status": "not_started"
+    },
+    "textile": {
+      "status": "not_started"
+    },
+    "tikiwiki": {
+      "status": "not_started"
+    },
+    "tsv": {
+      "status": "not_started"
+    },
+    "twiki": {
+      "status": "not_started"
+    },
+    "typst": {
+      "status": "not_started"
+    },
+    "vimwiki": {
+      "status": "not_started"
+    },
+    "xlsx": {
+      "status": "not_started"
+    },
+    "xml": {
+      "status": "not_started"
+    }
+  },
+  "options": {
+    "abbreviations": {
+      "status": "not_started"
+    },
+    "ascii": {
+      "status": "not_started"
+    },
+    "base-header-level": {
+      "status": "not_started"
+    },
+    "bash-completion": {
+      "status": "not_started"
+    },
+    "biblatex": {
+      "status": "not_started"
+    },
+    "bibliography": {
+      "status": "not_started"
+    },
+    "chunk-template": {
+      "status": "not_started"
+    },
+    "citation-abbreviations": {
+      "status": "not_started"
+    },
+    "citeproc": {
+      "status": "not_started"
+    },
+    "columns": {
+      "status": "not_started"
+    },
+    "completion": {
+      "status": "not_started"
+    },
+    "csl": {
+      "status": "not_started"
+    },
+    "css": {
+      "status": "not_started"
+    },
+    "data-dir": {
+      "status": "not_started"
+    },
+    "default-image-extension": {
+      "status": "not_started"
+    },
+    "defaults": {
+      "status": "not_started"
+    },
+    "dpi": {
+      "status": "not_started"
+    },
+    "dump-args": {
+      "status": "not_started"
+    },
+    "email-obfuscation": {
+      "status": "not_started"
+    },
+    "embed-resources": {
+      "status": "not_started"
+    },
+    "eol": {
+      "status": "not_started"
+    },
+    "epub-chapter-level": {
+      "status": "not_started"
+    },
+    "epub-cover-image": {
+      "status": "not_started"
+    },
+    "epub-embed-font": {
+      "status": "not_started"
+    },
+    "epub-metadata": {
+      "status": "not_started"
+    },
+    "epub-subdirectory": {
+      "status": "not_started"
+    },
+    "epub-title-page": {
+      "status": "not_started"
+    },
+    "extract-media": {
+      "status": "not_started"
+    },
+    "fail-if-warnings": {
+      "status": "not_started"
+    },
+    "figure-caption-position": {
+      "status": "not_started"
+    },
+    "file-scope": {
+      "status": "not_started"
+    },
+    "filter": {
+      "status": "not_started"
+    },
+    "from": {
+      "status": "passing",
+      "units": {
+        "passing": 1,
+        "total": 1
+      }
+    },
+    "gladtex": {
+      "status": "not_started"
+    },
+    "help": {
+      "status": "not_started"
+    },
+    "highlight-style": {
+      "status": "not_started"
+    },
+    "html-q-tags": {
+      "status": "not_started"
+    },
+    "id-prefix": {
+      "status": "not_started"
+    },
+    "ignore-args": {
+      "status": "not_started"
+    },
+    "include-after-body": {
+      "status": "not_started"
+    },
+    "include-before-body": {
+      "status": "not_started"
+    },
+    "include-in-header": {
+      "status": "not_started"
+    },
+    "incremental": {
+      "status": "not_started"
+    },
+    "indented-code-classes": {
+      "status": "not_started"
+    },
+    "ipynb-output": {
+      "status": "not_started"
+    },
+    "katex": {
+      "status": "not_started"
+    },
+    "link-images": {
+      "status": "not_started"
+    },
+    "list-extensions": {
+      "status": "not_started"
+    },
+    "list-highlight-languages": {
+      "status": "not_started"
+    },
+    "list-highlight-styles": {
+      "status": "not_started"
+    },
+    "list-input-formats": {
+      "status": "not_started"
+    },
+    "list-output-formats": {
+      "status": "not_started"
+    },
+    "list-tables": {
+      "status": "not_started"
+    },
+    "listings": {
+      "status": "not_started"
+    },
+    "lof": {
+      "status": "not_started"
+    },
+    "log": {
+      "status": "not_started"
+    },
+    "lot": {
+      "status": "not_started"
+    },
+    "lua-filter": {
+      "status": "not_started"
+    },
+    "markdown-headings": {
+      "status": "not_started"
+    },
+    "math-method": {
+      "status": "not_started"
+    },
+    "mathjax": {
+      "status": "not_started"
+    },
+    "mathml": {
+      "status": "not_started"
+    },
+    "metadata": {
+      "status": "not_started"
+    },
+    "metadata-file": {
+      "status": "not_started"
+    },
+    "natbib": {
+      "status": "not_started"
+    },
+    "no-check-certificate": {
+      "status": "not_started"
+    },
+    "no-highlight": {
+      "status": "not_started"
+    },
+    "number-offset": {
+      "status": "not_started"
+    },
+    "number-sections": {
+      "status": "not_started"
+    },
+    "output": {
+      "status": "not_started"
+    },
+    "pdf-engine": {
+      "status": "not_started"
+    },
+    "pdf-engine-opt": {
+      "status": "not_started"
+    },
+    "preserve-tabs": {
+      "status": "not_started"
+    },
+    "print-default-data-file": {
+      "status": "not_started"
+    },
+    "print-default-template": {
+      "status": "not_started"
+    },
+    "print-highlight-style": {
+      "status": "not_started"
+    },
+    "quiet": {
+      "status": "not_started"
+    },
+    "reference-doc": {
+      "status": "not_started"
+    },
+    "reference-links": {
+      "status": "not_started"
+    },
+    "reference-location": {
+      "status": "not_started"
+    },
+    "request-header": {
+      "status": "not_started"
+    },
+    "resource-path": {
+      "status": "not_started"
+    },
+    "sandbox": {
+      "status": "not_started"
+    },
+    "section-divs": {
+      "status": "not_started"
+    },
+    "self-contained": {
+      "status": "not_started"
+    },
+    "shift-heading-level-by": {
+      "status": "not_started"
+    },
+    "slide-level": {
+      "status": "not_started"
+    },
+    "split-level": {
+      "status": "not_started"
+    },
+    "standalone": {
+      "status": "not_started"
+    },
+    "strip-comments": {
+      "status": "not_started"
+    },
+    "syntax-definition": {
+      "status": "not_started"
+    },
+    "syntax-highlighting": {
+      "status": "not_started"
+    },
+    "tab-stop": {
+      "status": "not_started"
+    },
+    "table-caption-position": {
+      "status": "not_started"
+    },
+    "template": {
+      "status": "not_started"
+    },
+    "title-prefix": {
+      "status": "not_started"
+    },
+    "to": {
+      "status": "passing",
+      "units": {
+        "passing": 1,
+        "total": 1
+      }
+    },
+    "toc": {
+      "status": "not_started"
+    },
+    "toc-depth": {
+      "status": "not_started"
+    },
+    "top-level-division": {
+      "status": "not_started"
+    },
+    "trace": {
+      "status": "not_started"
+    },
+    "track-changes": {
+      "status": "not_started"
+    },
+    "typst-input": {
+      "status": "not_started"
+    },
+    "variable": {
+      "status": "not_started"
+    },
+    "variable-json": {
+      "status": "not_started"
+    },
+    "verbose": {
+      "status": "not_started"
+    },
+    "version": {
+      "status": "not_started"
+    },
+    "webtex": {
+      "status": "not_started"
+    },
+    "wrap": {
+      "status": "not_started"
+    }
+  },
+  "oracle": "pandoc 3.13",
+  "output_formats": {
+    "ansi": {
+      "status": "not_started"
+    },
+    "asciidoc": {
+      "status": "not_started"
+    },
+    "asciidoc_legacy": {
+      "status": "not_started"
+    },
+    "asciidoctor": {
+      "status": "not_started"
+    },
+    "bbcode": {
+      "status": "not_started"
+    },
+    "bbcode_fluxbb": {
+      "status": "not_started"
+    },
+    "bbcode_hubzilla": {
+      "status": "not_started"
+    },
+    "bbcode_phpbb": {
+      "status": "not_started"
+    },
+    "bbcode_steam": {
+      "status": "not_started"
+    },
+    "bbcode_xenforo": {
+      "status": "not_started"
+    },
+    "beamer": {
+      "status": "not_started"
+    },
+    "biblatex": {
+      "status": "not_started"
+    },
+    "bibtex": {
+      "status": "not_started"
+    },
+    "chunkedhtml": {
+      "status": "not_started"
+    },
+    "commonmark": {
+      "status": "not_started"
+    },
+    "commonmark_x": {
+      "status": "not_started"
+    },
+    "context": {
+      "status": "not_started"
+    },
+    "csljson": {
+      "status": "not_started"
+    },
+    "djot": {
+      "status": "not_started"
+    },
+    "docbook": {
+      "status": "not_started"
+    },
+    "docbook4": {
+      "status": "not_started"
+    },
+    "docbook5": {
+      "status": "not_started"
+    },
+    "docx": {
+      "status": "not_started"
+    },
+    "dokuwiki": {
+      "status": "not_started"
+    },
+    "dzslides": {
+      "status": "not_started"
+    },
+    "epub": {
+      "status": "not_started"
+    },
+    "epub2": {
+      "status": "not_started"
+    },
+    "epub3": {
+      "status": "not_started"
+    },
+    "fb2": {
+      "status": "not_started"
+    },
+    "fodt": {
+      "status": "not_started"
+    },
+    "gfm": {
+      "status": "not_started"
+    },
+    "haddock": {
+      "status": "not_started"
+    },
+    "html": {
+      "status": "not_started"
+    },
+    "html4": {
+      "status": "not_started"
+    },
+    "html5": {
+      "status": "not_started"
+    },
+    "icml": {
+      "status": "not_started"
+    },
+    "ipynb": {
+      "status": "not_started"
+    },
+    "jats": {
+      "status": "not_started"
+    },
+    "jats_archiving": {
+      "status": "not_started"
+    },
+    "jats_articleauthoring": {
+      "status": "not_started"
+    },
+    "jats_publishing": {
+      "status": "not_started"
+    },
+    "jira": {
+      "status": "not_started"
+    },
+    "json": {
+      "end_to_end": {
+        "passing": 7,
+        "total": 11
+      },
+      "status": "passing",
+      "write": {
+        "passing": 7,
+        "total": 7
+      }
+    },
+    "latex": {
+      "status": "not_started"
+    },
+    "man": {
+      "status": "not_started"
+    },
+    "markdown": {
+      "status": "not_started"
+    },
+    "markdown_github": {
+      "status": "not_started"
+    },
+    "markdown_mmd": {
+      "status": "not_started"
+    },
+    "markdown_phpextra": {
+      "status": "not_started"
+    },
+    "markdown_strict": {
+      "status": "not_started"
+    },
+    "markua": {
+      "status": "not_started"
+    },
+    "mediawiki": {
+      "status": "not_started"
+    },
+    "ms": {
+      "status": "not_started"
+    },
+    "muse": {
+      "status": "not_started"
+    },
+    "native": {
+      "status": "not_started"
+    },
+    "odt": {
+      "status": "not_started"
+    },
+    "opendocument": {
+      "status": "not_started"
+    },
+    "opml": {
+      "status": "not_started"
+    },
+    "org": {
+      "status": "not_started"
+    },
+    "pdf": {
+      "status": "not_started"
+    },
+    "plain": {
+      "status": "not_started"
+    },
+    "pptx": {
+      "status": "not_started"
+    },
+    "revealjs": {
+      "status": "not_started"
+    },
+    "rst": {
+      "status": "not_started"
+    },
+    "rtf": {
+      "status": "not_started"
+    },
+    "s5": {
+      "status": "not_started"
+    },
+    "slideous": {
+      "status": "not_started"
+    },
+    "slidy": {
+      "status": "not_started"
+    },
+    "t2t": {
+      "status": "not_started"
+    },
+    "tei": {
+      "status": "not_started"
+    },
+    "texinfo": {
+      "status": "not_started"
+    },
+    "textile": {
+      "status": "not_started"
+    },
+    "typst": {
+      "status": "not_started"
+    },
+    "vimdoc": {
+      "status": "not_started"
+    },
+    "xml": {
+      "status": "not_started"
+    },
+    "xwiki": {
+      "status": "not_started"
+    },
+    "zimwiki": {
+      "status": "not_started"
+    }
+  },
+  "status_values": [
+    "not_started",
+    "partial",
+    "passing",
+    "failing",
+    "not_applicable"
+  ],
+  "summary": {
+    "extensions": {
+      "not_started": 90
+    },
+    "input_formats": {
+      "not_started": 51,
+      "partial": 1
+    },
+    "options": {
+      "not_started": 107,
+      "passing": 2
+    },
+    "output_formats": {
+      "not_started": 76,
+      "passing": 1
+    },
+    "units": {
+      "passing": 28,
+      "total": 36
+    }
+  }
+}

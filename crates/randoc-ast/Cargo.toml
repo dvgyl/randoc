@@ -1,0 +1,16 @@
+[package]
+name = "randoc-ast"
+description = "The Pandoc document model for Randoc, with Pandoc-compatible JSON"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true, features = ["unbounded_depth", "float_roundtrip"] }
+
+[lints]
+workspace = true

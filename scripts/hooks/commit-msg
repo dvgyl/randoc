@@ -1,0 +1,17 @@
+#!/bin/sh
+# Removes AI attribution lines from the commit message.
+# init.sh installs this hook.
+set -eu
+message_file="$1"
+filtered="$message_file.filtered.$$"
+
+grep -v -E '^[[:space:]]*([Cc][Oo]-[Aa][Uu][Tt][Hh][Oo][Rr][Ee][Dd]-[Bb][Yy]:|[Cc][Ll][Aa][Uu][Dd][Ee]-[Ss][Ee][Ss][Ss][Ii][Oo][Nn]:)|Generated with' "$message_file" > "$filtered" || true
+
+# Remove blank lines that the deleted lines leave at the end.
+awk '{ lines[NR] = $0 }
+     END {
+       last = NR
+       while (last > 0 && lines[last] ~ /^[[:space:]]*$/) last--
+       for (i = 1; i <= last; i++) print lines[i]
+     }' "$filtered" > "$message_file"
+rm -f "$filtered"

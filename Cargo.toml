@@ -1,0 +1,57 @@
+[workspace]
+resolver = "3"
+# List each member. Do not use a glob: the coordinator adds one line for each new crate.
+members = [
+    "crates/randoc-ast",
+    "crates/randoc-layout",
+    "crates/randoc-templates",
+    "crates/randoc-core",
+    "crates/randoc",
+    "crates/randoc-cli",
+    "crates/randoc-harness",
+]
+# Each fuzz crate is its own workspace because it needs the nightly toolchain.
+exclude = ["crates/randoc-ast/fuzz"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/dvgyl/randoc"
+homepage = "https://github.com/dvgyl/randoc"
+authors = ["The Randoc contributors"]
+
+[workspace.dependencies]
+randoc-ast = { path = "crates/randoc-ast", version = "0.1.0" }
+randoc-layout = { path = "crates/randoc-layout", version = "0.1.0" }
+randoc-templates = { path = "crates/randoc-templates", version = "0.1.0" }
+randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
+randoc = { path = "crates/randoc", version = "0.1.0" }
+randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1"
+zip = { version = "9", default-features = false, features = ["deflate"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+todo = "warn"
+unimplemented = "warn"
+panic = "warn"
+dbg_macro = "warn"
+
+# Debug information is off to keep builds fast and the target directory small.
+[profile.dev]
+debug = false
+
+[profile.test]
+debug = false
+
+[profile.release]
+debug = false

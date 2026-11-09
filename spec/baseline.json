@@ -1,0 +1,32 @@
+{
+  "passing": [
+    "cli/formats/extension-not-supported#cmd",
+    "cli/formats/input-file#cmd",
+    "cli/formats/long-options#cmd",
+    "cli/formats/missing-input-file#cmd",
+    "cli/formats/unknown-input-format#cmd",
+    "cli/formats/unknown-option#cmd",
+    "cli/formats/unknown-output-format#cmd",
+    "json/roundtrip/blocks#e2e:json",
+    "json/roundtrip/blocks#read",
+    "json/roundtrip/blocks#write:json",
+    "json/roundtrip/empty#e2e:json",
+    "json/roundtrip/empty#read",
+    "json/roundtrip/empty#write:json",
+    "json/roundtrip/inlines#e2e:json",
+    "json/roundtrip/inlines#read",
+    "json/roundtrip/inlines#write:json",
+    "json/roundtrip/key-order#e2e:json",
+    "json/roundtrip/key-order#read",
+    "json/roundtrip/key-order#write:json",
+    "json/roundtrip/numbers#e2e:json",
+    "json/roundtrip/numbers#read",
+    "json/roundtrip/numbers#write:json",
+    "json/roundtrip/string-escapes#e2e:json",
+    "json/roundtrip/string-escapes#read",
+    "json/roundtrip/string-escapes#write:json",
+    "json/roundtrip/version-two-parts#e2e:json",
+    "json/roundtrip/version-two-parts#read",
+    "json/roundtrip/version-two-parts#write:json"
+  ]
+}

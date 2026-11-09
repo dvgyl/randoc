@@ -1,0 +1,23 @@
+[package]
+name = "randoc-harness"
+description = "The differential conformance harness that compares Randoc with Pandoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[[bin]]
+name = "randoc-harness"
+path = "src/main.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+zip = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,51 @@
+# The JSON reader and the JSON writer.
+from = "json"
+to = ["json"]
+
+[[case]]
+id = "empty"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[case]]
+id = "inlines"
+input = '''
+{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"T"}]}},"blocks":[{"t":"Header","c":[1,["x",["c"],[["k","v"]]],[{"t":"Str","c":"Head"}]]},{"t":"Para","c":[{"t":"Str","c":"A"},{"t":"Space"},{"t":"Emph","c":[{"t":"Str","c":"b"}]},{"t":"Space"},{"t":"Strong","c":[{"t":"Str","c":"c"}]},{"t":"Space"},{"t":"Code","c":[["",[],[]],"d"]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"l"}],["u","t"]]},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"i"}],["s",""]]},{"t":"Space"},{"t":"Str","c":"x"},{"t":"Superscript","c":[{"t":"Str","c":"2"}]},{"t":"Space"},{"t":"Subscript","c":[{"t":"Str","c":"2"}]},{"t":"Space"},{"t":"Strikeout","c":[{"t":"Str","c":"s"}]},{"t":"Space"},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"q"}]]},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"},"m"]},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[{"t":"Space"},{"t":"Str","c":"p. 3"}],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k"},{"t":"Space"},{"t":"Str","c":"p."},{"t":"Space"},{"t":"Str","c":"3]"}]]},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]},{"t":"SoftBreak"},{"t":"LineBreak"},{"t":"Underline","c":[]},{"t":"SmallCaps","c":[]},{"t":"RawInline","c":["html","<b>"]},{"t":"Span","c":[["",[],[]],[]]}]}]}
+'''
+
+[[case]]
+id = "blocks"
+input = '''
+{"pandoc-api-version":[1,23,1,2],"meta":{"m":{"t":"MetaMap","c":{"b":{"t":"MetaBool","c":true},"l":{"t":"MetaList","c":[{"t":"MetaString","c":"s"}]},"k":{"t":"MetaBlocks","c":[{"t":"HorizontalRule"}]}}}},"blocks":[{"t":"Plain","c":[]},{"t":"LineBlock","c":[[{"t":"Str","c":"a"}],[]]},{"t":"CodeBlock","c":[["",["rust"],[]],"fn main() {}"]},{"t":"RawBlock","c":["latex","\\x"]},{"t":"BlockQuote","c":[{"t":"Para","c":[]}]},{"t":"OrderedList","c":[[3,{"t":"UpperRoman"},{"t":"TwoParens"}],[[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]},{"t":"BulletList","c":[[],[{"t":"HorizontalRule"}]]},{"t":"DefinitionList","c":[[[{"t":"Str","c":"term"}],[[{"t":"Plain","c":[{"t":"Str","c":"def"}]}]]]]},{"t":"Div","c":[["d",[],[]],[]]},{"t":"Figure","c":[["f",[],[]],[[{"t":"Str","c":"short"}],[{"t":"Plain","c":[{"t":"Str","c":"cap"}]}]],[{"t":"Plain","c":[]}]]},{"t":"Table","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"cap"}]}]],[[{"t":"AlignLeft"},{"t":"ColWidthDefault"}],[{"t":"AlignRight"},{"t":"ColWidth","c":0.5}],[{"t":"AlignCenter"},{"t":"ColWidth","c":1.0e-3}]],[["",[],[]],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"a"}]}]]]]]],[[["",[],[]],1,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},2,3,[]]]]]]],[["",[],[]],[]]]}]}
+'''
+
+[[case]]
+id = "string-escapes"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\u0001\u007f\b\f\n\r\t<>&é 😀\/\\\""}]}]}'
+
+[[case]]
+id = "numbers"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Table","c":[["",[],[]],[null,[]],[[{"t":"AlignDefault"},{"t":"ColWidth","c":0.5}],[{"t":"AlignDefault"},{"t":"ColWidth","c":1}],[{"t":"AlignDefault"},{"t":"ColWidth","c":0.001}],[{"t":"AlignDefault"},{"t":"ColWidth","c":0.1}],[{"t":"AlignDefault"},{"t":"ColWidth","c":0.3333333333333333}],[{"t":"AlignDefault"},{"t":"ColWidth","c":12345678.9}],[{"t":"AlignDefault"},{"t":"ColWidth","c":1e22}],[{"t":"AlignDefault"},{"t":"ColWidth","c":-2.5}],[{"t":"AlignDefault"},{"t":"ColWidth","c":1e-7}],[{"t":"AlignDefault"},{"t":"ColWidth","c":0}],[{"t":"AlignDefault"},{"t":"ColWidth","c":5e-324}],[{"t":"AlignDefault"},{"t":"ColWidth","c":1.7976931348623157e308}],[{"t":"AlignDefault"},{"t":"ColWidth","c":9999999.999999998}],[{"t":"AlignDefault"},{"t":"ColWidth","c":0.09999999999999999}],[{"t":"AlignDefault"},{"t":"ColWidth","c":123456.789}]],[["",[],[]],[]],[],[["",[],[]],[]]]},{"t":"Header","c":[9007199254740993,["",[],[]],[]]},{"t":"OrderedList","c":[[-5,{"t":"Decimal"},{"t":"Period"}],[]]}]}'
+
+[[case]]
+id = "version-two-parts"
+input = '{"pandoc-api-version":[1,23],"meta":{},"blocks":[]}'
+
+[[case]]
+id = "key-order"
+input = '{"blocks":[{"c":[{"c":"x","t":"Str"}],"t":"Para"}],"meta":{},"pandoc-api-version":[1,23,1,2]}'
+
+[[case]]
+id = "old-version"
+input = '{"pandoc-api-version":[1,22],"meta":{},"blocks":[]}'
+
+[[case]]
+id = "missing-version"
+input = '{"meta":{},"blocks":[]}'
+
+[[case]]
+id = "not-json"
+input = 'hello'
+
+[[case]]
+id = "unknown-block"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Nonsense"}]}'

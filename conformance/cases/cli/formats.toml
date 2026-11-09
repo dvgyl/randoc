@@ -1,0 +1,35 @@
+# Format selection and the errors for formats that are not known.
+
+[[case]]
+id = "unknown-input-format"
+cmd = ["-f", "nosuch", "-t", "json"]
+input = "x"
+
+[[case]]
+id = "unknown-output-format"
+cmd = ["-f", "json", "-t", "nosuch"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[case]]
+id = "extension-not-supported"
+cmd = ["-f", "json+smart", "-t", "json"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[case]]
+id = "missing-input-file"
+cmd = ["-f", "json", "-t", "json", "nosuchfile.json"]
+
+[[case]]
+id = "input-file"
+cmd = ["-f", "json", "-t", "json", "in.json"]
+files = { "in.json" = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}' }
+
+[[case]]
+id = "long-options"
+cmd = ["--from=json", "--to=json"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[case]]
+id = "unknown-option"
+cmd = ["--nosuch-option"]
+input = ""

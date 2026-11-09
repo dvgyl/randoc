@@ -1,0 +1,915 @@
+[
+ {
+  "long": [
+   "from",
+   "read"
+  ],
+  "short": [
+   "f",
+   "r"
+  ],
+  "argument": "FORMAT",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "to",
+   "write"
+  ],
+  "short": [
+   "t",
+   "w"
+  ],
+  "argument": "FORMAT",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "output"
+  ],
+  "short": [
+   "o"
+  ],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "data-dir"
+  ],
+  "short": [],
+  "argument": "DIRECTORY",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "metadata"
+  ],
+  "short": [
+   "M"
+  ],
+  "argument": "KEY[=VALUE",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "metadata-file"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "defaults"
+  ],
+  "short": [
+   "d"
+  ],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "file-scope"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "sandbox"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "standalone"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "template"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "variable"
+  ],
+  "short": [
+   "V"
+  ],
+  "argument": "KEY[=VALUE",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "variable-json"
+  ],
+  "short": [],
+  "argument": "KEY[:JSON",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "wrap"
+  ],
+  "short": [],
+  "argument": "auto|none|preserve",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "ascii"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "toc",
+   "table-of-contents"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "toc-depth"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "lof",
+   "list-of-figures"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "lot",
+   "list-of-tables"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "number-sections"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "number-offset"
+  ],
+  "short": [],
+  "argument": "NUMBERS",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "top-level-division"
+  ],
+  "short": [],
+  "argument": "section|chapter|part",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "extract-media"
+  ],
+  "short": [],
+  "argument": "PATH",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "resource-path"
+  ],
+  "short": [],
+  "argument": "SEARCHPATH",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "include-in-header"
+  ],
+  "short": [
+   "H"
+  ],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "include-before-body"
+  ],
+  "short": [
+   "B"
+  ],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "include-after-body"
+  ],
+  "short": [
+   "A"
+  ],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "no-highlight"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "highlight-style"
+  ],
+  "short": [],
+  "argument": "STYLE|FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "syntax-definition"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "syntax-highlighting"
+  ],
+  "short": [],
+  "argument": "none|default|idiomatic|<stylename>|<themepath>",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "dpi"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "eol"
+  ],
+  "short": [],
+  "argument": "crlf|lf|native",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "columns"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "preserve-tabs"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "tab-stop"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "pdf-engine"
+  ],
+  "short": [],
+  "argument": "PROGRAM",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "pdf-engine-opt"
+  ],
+  "short": [],
+  "argument": "STRING",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "reference-doc"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "self-contained"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "embed-resources"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "link-images"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "request-header"
+  ],
+  "short": [],
+  "argument": "NAME=VALUE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "no-check-certificate"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "abbreviations"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "typst-input"
+  ],
+  "short": [],
+  "argument": "KEY=VALUE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "indented-code-classes"
+  ],
+  "short": [],
+  "argument": "STRING",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "default-image-extension"
+  ],
+  "short": [],
+  "argument": "extension",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "filter"
+  ],
+  "short": [
+   "F"
+  ],
+  "argument": "PROGRAM",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "lua-filter"
+  ],
+  "short": [
+   "L"
+  ],
+  "argument": "SCRIPTPATH",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "shift-heading-level-by"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "base-header-level"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "track-changes"
+  ],
+  "short": [],
+  "argument": "accept|reject|all",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "strip-comments"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "reference-links"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "reference-location"
+  ],
+  "short": [],
+  "argument": "block|section|document",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "figure-caption-position"
+  ],
+  "short": [],
+  "argument": "above|below",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "table-caption-position"
+  ],
+  "short": [],
+  "argument": "above|below",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "markdown-headings"
+  ],
+  "short": [],
+  "argument": "setext|atx",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "list-tables"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "listings"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "incremental"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "slide-level"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "section-divs"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "html-q-tags"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "email-obfuscation"
+  ],
+  "short": [],
+  "argument": "none|javascript|references",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "id-prefix"
+  ],
+  "short": [],
+  "argument": "STRING",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "title-prefix"
+  ],
+  "short": [
+   "T"
+  ],
+  "argument": "STRING",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "css"
+  ],
+  "short": [
+   "c"
+  ],
+  "argument": "URL",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "epub-subdirectory"
+  ],
+  "short": [],
+  "argument": "DIRNAME",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "epub-cover-image"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "epub-title-page"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "epub-metadata"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "epub-embed-font"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "split-level"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "chunk-template"
+  ],
+  "short": [],
+  "argument": "PATHTEMPLATE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "epub-chapter-level"
+  ],
+  "short": [],
+  "argument": "NUMBER",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "ipynb-output"
+  ],
+  "short": [],
+  "argument": "all|none|best",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "citeproc"
+  ],
+  "short": [
+   "C"
+  ],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "bibliography"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "csl"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "citation-abbreviations"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "natbib"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "biblatex"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "math-method"
+  ],
+  "short": [],
+  "argument": "METHOD",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "mathml"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "webtex"
+  ],
+  "short": [],
+  "argument": "URL",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "mathjax"
+  ],
+  "short": [],
+  "argument": "URL",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "katex"
+  ],
+  "short": [],
+  "argument": "URL",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "gladtex"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "trace"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "dump-args"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "ignore-args"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "verbose"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "quiet"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "fail-if-warnings"
+  ],
+  "short": [],
+  "argument": "true|false",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "log"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "completion"
+  ],
+  "short": [],
+  "argument": "SHELL",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "bash-completion"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "list-input-formats"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "list-output-formats"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "list-extensions"
+  ],
+  "short": [],
+  "argument": "FORMAT",
+  "optional_argument": true
+ },
+ {
+  "long": [
+   "list-highlight-languages"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "list-highlight-styles"
+  ],
+  "short": [],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "print-default-template"
+  ],
+  "short": [
+   "D"
+  ],
+  "argument": "FORMAT",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "print-default-data-file"
+  ],
+  "short": [],
+  "argument": "FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "print-highlight-style"
+  ],
+  "short": [],
+  "argument": "STYLE|FILE",
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "version"
+  ],
+  "short": [
+   "v"
+  ],
+  "argument": null,
+  "optional_argument": false
+ },
+ {
+  "long": [
+   "help"
+  ],
+  "short": [
+   "h"
+  ],
+  "argument": null,
+  "optional_argument": false
+ }
+]

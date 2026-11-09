@@ -1,0 +1,40 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "extension-not-supported#cmd": {
+      "exit": 23,
+      "stdout": "",
+      "stderr": "The extension 'smart' is not supported for json.\nUse --list-extensions=json to list supported extensions.\n"
+    },
+    "input-file#cmd": {
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "long-options#cmd": {
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "missing-input-file#cmd": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuchfile.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "unknown-input-format#cmd": {
+      "exit": 21,
+      "stdout": "",
+      "stderr": "Unknown input format 'nosuch'\n"
+    },
+    "unknown-option#cmd": {
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch-option.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-output-format#cmd": {
+      "exit": 22,
+      "stdout": "",
+      "stderr": "Unknown output format 'nosuch'\n"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+/target/
+**/fuzz/target/
+**/fuzz/artifacts/
+**/fuzz/corpus/
+**/fuzz/Cargo.lock
+/.local/
+mutants.out*/
+*.profraw
+.DS_Store
+# macOS writes these files on FAT and exFAT volumes.
+._*
