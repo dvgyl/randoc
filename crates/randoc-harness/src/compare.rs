@@ -8,7 +8,15 @@ use serde::Serialize;
 use crate::cases::{Outcome, Unit, UnitKind};
 
 /// The output formats that are ZIP archives.
-const ZIP_FORMATS: [&str; 6] = ["docx", "odt", "epub", "epub2", "epub3", "pptx"];
+const ZIP_FORMATS: [&str; 7] = [
+    "docx",
+    "odt",
+    "epub",
+    "epub2",
+    "epub3",
+    "pptx",
+    "chunkedhtml",
+];
 
 /// The largest total size of the entries that the harness reads from one archive.
 const MAX_ARCHIVE_BYTES: u64 = 512 << 20;

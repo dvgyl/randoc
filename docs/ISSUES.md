@@ -20,7 +20,8 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 
 | ID | Limit | State |
 | --- | --- | --- |
-| H-001 | The harness has no rule for output with random values. Pandoc 3.13 writes a random `id` for each cell of `ipynb` output, so an `ipynb` unit cannot pass. EPUB identifiers can have the same problem. | Open. Add a rule that replaces such values with a fixed text before the comparison, and make `record` run the oracle two times to find output that is not stable. Do this before the first `ipynb` or EPUB writer workstream. |
+| H-001 | The harness has no rule for output with random values. A test with the oracle on 76 writers (not `pdf`) showed: with `SOURCE_DATE_EPOCH` set, which the harness does, only two kinds of output change from run to run: the `urn:uuid` identifier of `epub`, `epub2` and `epub3`, and the `id` of each `ipynb` cell. | Open. Add a rule that replaces these two values with a fixed text before the comparison, and make `record` run the oracle two times to find output that is not stable. Do this before the first `ipynb` or EPUB writer workstream. |
+| H-002 | The harness always sets `SOURCE_DATE_EPOCH`. Pandoc output can depend on the variable (for example, standalone LaTeX output gets a PDF trailer identifier when it is set). The behaviour without the variable has no units. | Open. Add a case field that removes a variable from the environment of one case. |
 
 ## Review findings with low severity
 

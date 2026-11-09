@@ -48,7 +48,8 @@ The read unit tests a reader without a writer. The write unit tests a writer
 without a reader. A unit also needs the same exit code and the same standard
 error output as the oracle.
 
-Text output must have the same bytes. A ZIP format (DOCX, ODT, EPUB, PPTX) must
+Text output must have the same bytes. A ZIP format (DOCX, ODT, EPUB, PPTX,
+chunked HTML) must
 have the same entries with the same content. The harness ignores the order,
 the time stamps and the compression of the entries. The report counts
 byte-identical and content-identical results separately.
