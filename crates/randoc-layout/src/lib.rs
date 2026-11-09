@@ -1155,4 +1155,12 @@ mod tests {
         assert_eq!(char_width('\u{200D}'), 0);
         assert_eq!(char_width('\u{FE0F}'), 0);
     }
+
+    #[test]
+    fn offset_looks_into_flushed_concatenations() {
+        let joined = before_non_blank(literal("xx")) + flush(literal("a") + literal("b"));
+        assert_eq!((joined.offset(), joined.update_column(0)), (4, 4));
+        let broken = before_non_blank(literal("xx")) + flush(cr() + literal("b"));
+        assert_eq!(broken.offset(), 1);
+    }
 }
