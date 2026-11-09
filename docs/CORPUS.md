@@ -17,7 +17,7 @@ them, and `tools/corpus/fetch.py` downloads them to `$RANDOC_CORPUS`.
 | `tools/corpus/run.py` | Converts each document with two programs and compares the results. |
 | `tools/corpus/corpuslib.py` | Reads, checks and writes the manifest. |
 | `tools/corpus/test_corpus.py` | The unit tests of the tools. |
-| `spec/corpus.json` | The result of the last Randoc run. |
+| `spec/corpus.json` | The result of the last Randoc run, with the path and the SHA-256 hash of the tested program and the hash of the oracle. |
 
 The tools use Python 3.11 or later and only the standard library.
 
@@ -47,7 +47,7 @@ Useful options of `run.py`:
 - `--only TEXT`: use only the documents whose name contains `TEXT`.
 - `--target FORMAT`: use only one target format (`json`, `html` or `markdown`). Repeat for more.
 - `--jobs N`: the number of parallel conversions. The default is 4.
-- `--timeout S`: the time limit of one conversion in seconds. The default is 180. Pandoc needs about 100 s for `jupyter-running-code`.
+- `--timeout S`: the time limit of one conversion in seconds. The default is 60. A manifest entry can set its own limit with `timeout`. `jupyter-running-code` has `timeout = 300`, because Pandoc needs about 40 to 105 s of wall time for it.
 
 ## What `run.py` compares
 
@@ -126,7 +126,6 @@ that they match the manifest.
 | CDCgov/influenza-generation_time-us | Apache-2.0 | ris | 1 |
 | datasets/co2-ppm | ODC-PDDL-1.0 | csv | 2 |
 | datasets/gdp | CC-BY-4.0 | csv | 2 |
-| datasets/population | ODC-PDDL-1.0 | csv | 1 |
 | denoland/deno | MIT | gfm | 1 |
 | doomemacs/doomemacs | MIT | org | 9 |
 | en.wikipedia.org | CC-BY-SA-4.0 | html, mediawiki | 24 |
@@ -155,14 +154,14 @@ that they match the manifest.
 | RailsApps/rails_layout | MIT | textile | 1 |
 | rust-lang/book | MIT OR Apache-2.0 | markdown | 14 |
 | rust-lang/cargo | MIT OR Apache-2.0 | gfm | 1 |
-| scripting/concord | GPL-3.0-only | opml | 2 |
+| scripting/concord | GPL-3.0-or-later | opml | 2 |
 | Sephiroth87/ODRefreshControl | MIT | textile | 1 |
 | sharkdp/bat | MIT OR Apache-2.0 | gfm | 1 |
 | sphinx-doc/sphinx | BSD-2-Clause | rst | 8 |
 | standardebooks.org | LicenseRef-Public-Domain-US AND CC0-1.0 | epub | 5 |
 | systemd/systemd | LGPL-2.1-or-later | docbook | 8 |
 | tokio-rs/tokio | MIT | gfm | 1 |
-| typst/templates | MIT-0 | typst | 8 |
+| typst/templates | MIT-0 | typst | 4 |
 | ufal/udpipe | MPL-2.0 | t2t | 3 |
 | vuejs/core | MIT | gfm | 1 |
 | xyfeng/XYPieChart | MIT | textile | 1 |
@@ -177,7 +176,7 @@ that they match the manifest.
 | commonmark | 10 | 82691 |
 | creole | 3 | 34402 |
 | csljson | 5 | 909802 |
-| csv | 5 | 1148969 |
+| csv | 4 | 592251 |
 | djot | 5 | 92461 |
 | docbook | 8 | 214704 |
 | docx | 12 | 199713 |
@@ -202,16 +201,16 @@ that they match the manifest.
 | rtf | 8 | 218956 |
 | t2t | 3 | 39673 |
 | textile | 4 | 29884 |
-| typst | 8 | 40149 |
+| typst | 4 | 18471 |
 | xlsx | 4 | 36560 |
-| all | 238 | 15584534 |
+| all | 233 | 15006138 |
 
 ## Documents that Pandoc rejects
 
-Pandoc 3.13 rejects 19 documents. They stay in the corpus, because Randoc
+Pandoc 3.13 rejects 15 documents. They stay in the corpus, because Randoc
 must give the same exit code and the same error message.
 
-- Pandoc exits with code 64 (a parse error) for 17 of them, for example
+- Pandoc exits with code 64 (a parse error) for 13 of them, for example
   `latex2e-cfgguide` (`unexpected @`), `wp-haskell` (an unclosed `<ref>`),
   `openbsd-ksh` (the `Xo` macro) and `deep-review-manual-references` (a CSL
   JSON type error).
@@ -222,3 +221,8 @@ must give the same exit code and the same error message.
 
 These two documents test error handling for missing resources. They do not
 test the reader on a complete document.
+
+The corpus has no Typst document that imports a package (`#import "@...`).
+Pandoc looks for the package under `HOME` and fails with a message that
+contains that path. Such a document tests the environment, not the reader.
+A unit test enforces this rule when `$RANDOC_CORPUS` is present.

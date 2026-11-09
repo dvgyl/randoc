@@ -73,9 +73,11 @@ def fetch_one(document, corpus, get=download, pin=False, budget=corpuslib.MAX_TO
         if len(data) > budget:
             return f"over the total limit: {len(data)} bytes, {budget} left", document
         document = dataclasses.replace(document, sha256=digest, size=len(data))
-    elif digest != document.sha256:
-        return f"hash mismatch: got {digest}", document
-    elif len(data) != document.size:
+    elif digest != document.sha256 or len(data) != document.size:
+        # An old file with other content must not stay, or a run could use it.
+        path.unlink(missing_ok=True)
+        if digest != document.sha256:
+            return f"hash mismatch: got {digest}", document
         return f"size mismatch: got {len(data)} bytes", document
     write_atomic(path, data)
     return "downloaded", document

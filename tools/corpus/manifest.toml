@@ -1012,15 +1012,6 @@ sha256 = "f15c22912c6be090a7b04d1f86ae72af155a833c8c6265656170a726f7daa4d2"
 size = 1141
 
 [[document]]
-name = "typst-badformer-lib"
-format = "typst"
-url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/badformer/lib.typ"
-license = "MIT-0"
-source = "typst/templates@71b01c6b0a82"
-sha256 = "4cad35b66f7681e59e7407276dd01fdd77259e91318396bb5f7451c79e14a014"
-size = 11085
-
-[[document]]
 name = "typst-charged-ieee-lib"
 format = "typst"
 url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/charged-ieee/lib.typ"
@@ -1030,24 +1021,6 @@ sha256 = "8f9d67760ad25f41a99d7b49dfb978bed86f281c297f0fd48c76ebac1443e5b4"
 size = 7243
 
 [[document]]
-name = "typst-charged-ieee-main"
-format = "typst"
-url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/charged-ieee/template/main.typ"
-license = "MIT-0"
-source = "typst/templates@71b01c6b0a82"
-sha256 = "c0395f2e8d69382e2534e84aaceed04adefb2ce0e1b6ada922cebf10539fa5e8"
-size = 4482
-
-[[document]]
-name = "typst-dashing-dept-news-main"
-format = "typst"
-url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/dashing-dept-news/template/main.typ"
-license = "MIT-0"
-source = "typst/templates@71b01c6b0a82"
-sha256 = "d05349d8da73929f13ec4cd0df928110c265fcded5c2edbae25a17c7c0d3808e"
-size = 2761
-
-[[document]]
 name = "typst-icicle-lib"
 format = "typst"
 url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/icicle/lib.typ"
@@ -1055,15 +1028,6 @@ license = "MIT-0"
 source = "typst/templates@71b01c6b0a82"
 sha256 = "ecc09260f76d407c272b56f4a992698ce90bd3be27d0ff62e0a8f77eedae0b6f"
 size = 6300
-
-[[document]]
-name = "typst-unequivocal-ams-main"
-format = "typst"
-url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/unequivocal-ams/template/main.typ"
-license = "MIT-0"
-source = "typst/templates@71b01c6b0a82"
-sha256 = "012b1b632088389e802d907cad6394cd82c6aed4d01a9c94f5de205b7c52db41"
-size = 3350
 
 [[document]]
 name = "typst-wonderous-book-lib"
@@ -1118,6 +1082,7 @@ license = "BSD-3-Clause"
 source = "jupyter/notebook@55a698a3816d"
 sha256 = "29fb6234ed3bd6960433e7265b17922de509e62a3558ddab3926bdfb66fe1d73"
 size = 52012
+timeout = 300
 
 [[document]]
 name = "jupyter-typesetting-equations"
@@ -1777,15 +1742,6 @@ sha256 = "b1548ededea6f9b7eecac370753de8d8da6e0afafe1041f749a11db78c2e33c4"
 size = 1161
 
 [[document]]
-name = "csv-population"
-format = "csv"
-url = "https://raw.githubusercontent.com/datasets/population/d4b1a4a9a17e2123baf0ef119de05bceced1ab1b/data/population.csv"
-license = "ODC-PDDL-1.0"
-source = "datasets/population@d4b1a4a9a17e"
-sha256 = "2c697c3e668c8cb06ee467cd0d475b37b52844fdc48cb7725b79b58f18bf0b02"
-size = 556718
-
-[[document]]
 name = "csv-gdp"
 format = "csv"
 url = "https://raw.githubusercontent.com/datasets/gdp/36d761dc5617982d3e50b213e02b9a1b47c4e958/data/gdp.csv"
@@ -2131,7 +2087,7 @@ size = 3544
 name = "concord-opml-worknotes"
 format = "opml"
 url = "https://raw.githubusercontent.com/scripting/concord/de5ec87ff976aeeff8a8349a569cc86c46dc17d2/opml/worknotes.opml"
-license = "GPL-3.0-only"
+license = "GPL-3.0-or-later"
 source = "scripting/concord@de5ec87ff976"
 sha256 = "be902dfb3d7cab32ff9e1a98de387fd0fc3d626729a80a375925ad8c69a5abab"
 size = 8448
@@ -2140,7 +2096,7 @@ size = 8448
 name = "concord-example1-source"
 format = "opml"
 url = "https://raw.githubusercontent.com/scripting/concord/de5ec87ff976aeeff8a8349a569cc86c46dc17d2/example1/source.opml"
-license = "GPL-3.0-only"
+license = "GPL-3.0-or-later"
 source = "scripting/concord@de5ec87ff976"
 sha256 = "30be0c7ceed17cf74e5978e587b4aca00fc73d75bffe8632d53ee9d2d49eae40"
 size = 30944

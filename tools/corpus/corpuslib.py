@@ -55,6 +55,8 @@ FORMAT_EXTENSIONS = {
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 FIELDS = ("name", "format", "url", "license", "source", "sha256", "size")
+# An optional field: the time limit of one conversion of this document in seconds.
+OPTIONAL_FIELDS = ("timeout",)
 
 
 class ManifestError(Exception):
@@ -72,6 +74,7 @@ class Document:
     source: str
     sha256: str
     size: int
+    timeout: int = 0
 
     @property
     def file_name(self):
@@ -100,10 +103,11 @@ def parse_manifest(text, require_hashes=True):
         missing = [field for field in FIELDS if field not in entry]
         if missing:
             raise ManifestError(f"{where}: missing {', '.join(missing)}")
-        extra = sorted(set(entry) - set(FIELDS))
+        extra = sorted(set(entry) - set(FIELDS) - set(OPTIONAL_FIELDS))
         if extra:
             raise ManifestError(f"{where}: unknown field {', '.join(extra)}")
-        documents.append(Document(**{field: entry[field] for field in FIELDS}))
+        known = [field for field in FIELDS + OPTIONAL_FIELDS if field in entry]
+        documents.append(Document(**{field: entry[field] for field in known}))
     check(documents, require_hashes)
     return documents
 
@@ -128,6 +132,8 @@ def check(documents, require_hashes=True):
         pinned = bool(SHA256_PATTERN.match(document.sha256)) and document.size > 0
         if not pinned and (require_hashes or document.sha256 or document.size):
             raise ManifestError(f"{where}: sha256 and size must both be set")
+        if not isinstance(document.timeout, int) or document.timeout < 0:
+            raise ManifestError(f"{where}: the timeout must be a positive number of seconds")
         if document.size > MAX_DOCUMENT_BYTES:
             raise ManifestError(f"{where}: {document.size} bytes is more than {MAX_DOCUMENT_BYTES}")
         total += document.size
@@ -151,8 +157,10 @@ def format_manifest(documents, header=""):
     for document in documents:
         lines.append("")
         lines.append("[[document]]")
-        for field in FIELDS:
+        for field in FIELDS + OPTIONAL_FIELDS:
             value = getattr(document, field)
+            if field in OPTIONAL_FIELDS and not value:
+                continue
             rendered = str(value) if isinstance(value, int) else _toml_string(value)
             lines.append(f"{field} = {rendered}")
     return "\n".join(lines).lstrip("\n") + "\n"

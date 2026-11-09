@@ -202,8 +202,12 @@ class OracleCache:
         return None if row is None else Outcome(row[0], bytes(row[1]), bytes(row[2]))
 
     def put(self, key, outcome):
-        """Stores `outcome`. An outcome after a timeout is not stored."""
-        if outcome.timed_out:
+        """Stores `outcome`.
+
+        An outcome after a timeout, a start failure or a stop by a signal
+        (a negative exit code) is not stored, because it can be transient.
+        """
+        if outcome.timed_out or outcome.exit < 0:
             return
         self.connection.execute(
             "INSERT OR REPLACE INTO result VALUES (?, ?, ?, ?)",
@@ -246,7 +250,7 @@ def verify_documents(documents, corpus):
     return bad
 
 
-def summarize(units, program, oracle, targets, timeout):
+def summarize(units, program, oracle, targets, timeout, identity=None):
     """Returns the report: totals and one status line for each document and target.
 
     `units` is a list of (document, target, status) triples.
@@ -268,6 +272,7 @@ def summarize(units, program, oracle, targets, timeout):
     return {
         "program": program,
         "oracle": oracle,
+        **(identity or {}),
         "targets": list(targets),
         "timeout_seconds": timeout,
         "documents": len({document.name for document, _, _ in units}),
@@ -288,10 +293,11 @@ def run_units(documents, targets, program, oracle, corpus, cache, jobs, timeout,
             tasks.append((document, target, args, cache.key(document.sha256, args)))
 
     def work(task):
-        _, target, args, key = task
+        document, target, args, key = task
+        limit = document.timeout or timeout
         try:
-            actual = execute(program, args, corpus, home, timeout)
-            expected = None if key in stored else execute(oracle, args, corpus, home, timeout)
+            actual = execute(program, args, corpus, home, limit)
+            expected = None if key in stored else execute(oracle, args, corpus, home, limit)
             unit_status = None if expected is None else status(expected, actual, target)
             return actual, expected, unit_status
         except Exception as error:  # one unit must not stop the run
@@ -321,7 +327,8 @@ def main(argv=None):
     parser.add_argument("--corpus", type=Path, default=os.environ.get("RANDOC_CORPUS"),
                         help="the corpus directory (default: $RANDOC_CORPUS)")
     parser.add_argument("--jobs", type=int, default=4, help="the number of parallel runs")
-    parser.add_argument("--timeout", type=int, default=180, help="seconds for one run")
+    parser.add_argument("--timeout", type=int, default=60,
+                        help="seconds for one run, unless the manifest entry sets a timeout")
     parser.add_argument("--target", action="append", choices=TARGETS,
                         help="a target format (default: all)")
     parser.add_argument("--only", action="append", default=[],
@@ -339,6 +346,9 @@ def main(argv=None):
         return 2
     if args.only:
         documents = [d for d in documents if any(part in d.name for part in args.only)]
+    if not documents:
+        print("no document matches the selection", file=sys.stderr)
+        return 2
     bad = verify_documents(documents, args.corpus)
     if bad:
         print(f"missing or changed documents, run fetch.py: {', '.join(bad)}", file=sys.stderr)
@@ -347,14 +357,17 @@ def main(argv=None):
     targets = tuple(args.target or TARGETS)
     program = args.pandoc.resolve()
     oracle = args.oracle.resolve()
-    cache = OracleCache(args.corpus / CACHE_NAME, fingerprint(oracle))
+    cache_identity = fingerprint(oracle)
+    cache = OracleCache(args.corpus / CACHE_NAME, cache_identity)
     try:
         units = run_units(documents, targets, program, oracle, args.corpus.resolve(),
                           cache, args.jobs, args.timeout, HOME)
     finally:
         cache.close()
+    identity = {"program_path": str(args.pandoc), "program_sha256": fingerprint(program),
+                "oracle_sha256": cache_identity}
     report = summarize(units, version_line(program, HOME), version_line(oracle, HOME),
-                       targets, args.timeout)
+                       targets, args.timeout, identity)
 
     text = json.dumps(report, indent=1, ensure_ascii=False) + "\n"
     if args.out:

@@ -3,6 +3,7 @@
 import contextlib
 import io
 import json
+import os
 import shutil
 import sqlite3
 import tempfile
@@ -394,8 +395,8 @@ class ReviewCorrectionTests(unittest.TestCase):
 
     def test_cor09_the_documentation_separates_the_rejection_causes(self):
         text = (Path(__file__).parents[2] / "docs" / "CORPUS.md").read_text(encoding="utf-8")
-        self.assertIn("Pandoc 3.13 rejects 19 documents", text)
-        self.assertIn("code 64 (a parse error) for 17", text)
+        self.assertIn("Pandoc 3.13 rejects 15 documents", text)
+        self.assertIn("code 64 (a parse error) for 13", text)
 
     def test_cor10_a_redirect_to_http_is_refused(self):
         handler = fetch.HttpsOnlyRedirects()
@@ -406,3 +407,105 @@ class ReviewCorrectionTests(unittest.TestCase):
         allowed = handler.redirect_request(urllib.request.Request("https://example.org/a"), None, 302,
                                            "Found", {}, "https://example.org/b")
         self.assertEqual(allowed.full_url, "https://example.org/b")
+
+
+class SecondReviewTests(unittest.TestCase):
+    """Tests for the findings of the second review (C-01 to C-10)."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="randoc-corpus-review2-"))
+        self.corpus = self.dir / "corpus"
+        self.corpus.mkdir()
+        self.docs = [document("one", data=b'{"a": 1}'), document("two", "org", data=b"[1]")]
+        (self.corpus / "one.md").write_bytes(b'{"a": 1}')
+        (self.corpus / "two.org").write_bytes(b"[1]")
+        self.manifest = self.dir / "manifest.toml"
+        self.manifest.write_text(corpuslib.format_manifest(self.docs))
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def script(self, name, body):
+        path = self.dir / name
+        path.write_text("#!/bin/sh\n" + body)
+        path.chmod(0o755)
+        return path
+
+    def main(self, program, oracle, *extra):
+        out = self.dir / "report.json"
+        argv = ["--pandoc", str(program), "--oracle", str(oracle), "--out", str(out),
+                "--manifest", str(self.manifest), "--corpus", str(self.corpus), *extra]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            code = run.main(argv)
+        return code, (json.loads(out.read_text()) if out.exists() else None)
+
+    def test_c01_a_second_run_uses_the_cache_when_version_text_contains_home(self):
+        oracle = self.script("pandoc", 'if [ "$1" = --version ]; then echo "pandoc 1.0"; echo "dir $HOME"; exit 0; fi\n'
+                                       'echo "$5 $4" >> "$(dirname "$0")/pandoc.log"\ncat "$5"\n')
+        self.main(oracle, oracle)
+        self.main(oracle, oracle)
+        self.assertEqual(len((self.dir / "pandoc.log").read_text().splitlines()), 12 + 6)
+
+    def test_c03_each_run_sees_the_same_fixed_home(self):
+        program = self.script("pandoc", 'echo "$HOME" >> "$(dirname "$0")/home.log"\ncat "$5"\n')
+        self.main(program, program, "--target", "json")
+        self.main(program, program, "--target", "json")
+        homes = set((self.dir / "home.log").read_text().splitlines())
+        self.assertEqual(homes, {str(run.HOME)})
+
+    @unittest.skipUnless(os.environ.get("RANDOC_CORPUS"), "needs the corpus")
+    def test_c03_no_typst_document_imports_a_package(self):
+        corpus = Path(os.environ["RANDOC_CORPUS"])
+        for d in corpuslib.load_manifest():
+            path = corpus / d.file_name
+            if d.format == "typst" and path.exists():
+                self.assertNotIn(b'#import "@', path.read_bytes(), d.name)
+
+    def test_c04_a_hash_mismatch_removes_the_old_file(self):
+        (self.corpus / "x.md").write_bytes(b"old stale text")
+        status, _ = fetch.fetch_one(document("x"), self.corpus, lambda url: b"other")
+        self.assertTrue(status.startswith("hash mismatch"))
+        self.assertFalse((self.corpus / "x.md").exists())
+
+    def test_c05_a_start_failure_or_a_signal_is_not_cached(self):
+        cache = run.OracleCache(":memory:", "f")
+        cache.put("start", run.Outcome(-1, b"", b"[corpus] cannot start\n"))
+        cache.put("signal", run.Outcome(-9, b"", b""))
+        cache.put("ok", run.Outcome(64, b"", b"parse error\n"))
+        self.assertEqual(cache.keys(), {"ok"})
+        cache.close()
+
+    def test_c07_an_empty_selection_is_an_error(self):
+        program = self.script("pandoc", 'cat "$5"\n')
+        code, report = self.main(program, program, "--only", "no-such-document", "--expect-all-pass")
+        self.assertEqual((code, report), (2, None))
+
+    def test_c08_the_report_identifies_the_tested_program(self):
+        program = self.script("randoc", 'if [ "$1" = --version ]; then echo "pandoc 3.13"; exit 0; fi\ncat "$5"\n')
+        oracle = self.script("pandoc", 'if [ "$1" = --version ]; then echo "pandoc 3.13"; exit 0; fi\ncat "$5"\n')
+        _, report = self.main(program, oracle)
+        self.assertEqual(report["program_path"], str(program))
+        self.assertEqual(report["program_sha256"], corpuslib.sha256_of(program.read_bytes()))
+        self.assertEqual(report["oracle_sha256"], corpuslib.sha256_of(oracle.read_bytes()))
+        self.assertNotIn(str(run.HOME), json.dumps(report))
+
+    def test_c09_licence_corrections(self):
+        docs = {d.name: d for d in corpuslib.load_manifest()}
+        self.assertNotIn("csv-population", docs)
+        for name in ("concord-opml-worknotes", "concord-example1-source"):
+            self.assertEqual(docs[name].license, "GPL-3.0-or-later")
+
+    def test_c10_a_manifest_entry_sets_its_own_time_limit(self):
+        slow = document("one", data=b'{"a": 1}', timeout=3)
+        self.manifest.write_text(corpuslib.format_manifest([slow, self.docs[1]]))
+        self.assertIn("timeout = 3\n", self.manifest.read_text())
+        self.assertEqual(corpuslib.parse_manifest(self.manifest.read_text())[0].timeout, 3)
+        program = self.script("pandoc", 'sleep 2\ncat "$5"\n')
+        _, report = self.main(program, program, "--timeout", "1", "--target", "json")
+        self.assertEqual(report["results"], {"one:json": "pass", "two:json": "timeout"})
+        self.assertEqual(report["timeout_seconds"], 1)
+        with self.assertRaisesRegex(corpuslib.ManifestError, "timeout"):
+            corpuslib.check([document("x", timeout=-1)])
+        timeouts = {d.name: d.timeout for d in corpuslib.load_manifest()}
+        self.assertEqual(timeouts["jupyter-running-code"], 300)
+        self.assertEqual(sum(1 for t in timeouts.values() if t), 1)
