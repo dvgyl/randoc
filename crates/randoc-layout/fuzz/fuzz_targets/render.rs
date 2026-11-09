@@ -9,9 +9,10 @@ use randoc_layout::*;
 /// document with the nesting limit of the input.
 const MAX_DEPTH: usize = 48;
 /// A block re-wraps its content at its own width, so a narrow block around
-/// a wide block multiplies the number of lines. `doclayout` has the same
+/// wide content multiplies the number of lines. `doclayout` has the same
 /// cost, and writers nest blocks only for tables in tables.
-const MAX_BLOCKS: usize = 4;
+const MAX_BLOCKS: usize = 2;
+const MAX_BLOCK_CONTENT: usize = 64;
 const WORDS: &[&str] = &[
     "a", "bb", "hello", "x y", " lead", "trail ", "日本", "e\u{301}", "\u{1F600}", "a\nb", "",
     "\n", "\u{301}", "\u{200D}", "\u{FE0F}", "\u{1F3FB}", "\t", "supercalifragilistic",
@@ -41,7 +42,8 @@ fuzz_target!(|data: &[u8]| {
         };
         let mut op = op;
         if matches!(op & 31, 17..=19) {
-            if blocks >= MAX_BLOCKS {
+            let wide = stack.last().is_some_and(|(d, _)| d.offset() > MAX_BLOCK_CONTENT);
+            if blocks >= MAX_BLOCKS || wide {
                 op = 31;
             }
             blocks += 1;
