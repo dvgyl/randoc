@@ -2,11 +2,11 @@
  "oracle": {
   "program": "pandoc",
   "totals": {
-   "run": 2229,
-   "pass": 2229,
+   "run": 2231,
+   "pass": 2231,
    "fail": 0,
-   "excluded": 2,
-   "unsupported": 1917
+   "excluded": 0,
+   "unsupported": 1939
   },
   "groups": {
    "command": {
@@ -16,10 +16,10 @@
     "excluded": 0
    },
    "old": {
-    "run": 172,
-    "pass": 172,
+    "run": 174,
+    "pass": 174,
     "fail": 0,
-    "excluded": 2
+    "excluded": 0
    },
    "readers/docx": {
     "run": 105,
@@ -97,7 +97,7 @@
    ],
    "hs/Readers/JATS": [
     {
-     "count": 13,
+     "count": 14,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -253,19 +253,19 @@
    ],
    "hs/Writers/ConTeXt": [
     {
-     "count": 10,
+     "count": 8,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/DocBook": [
     {
-     "count": 28,
+     "count": 26,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/Docx": [
     {
-     "count": 50,
+     "count": 48,
      "reason": "the tests compare the XML parts of the output archive with a Haskell normalization"
     }
    ],
@@ -277,13 +277,13 @@
    ],
    "hs/Writers/HTML": [
     {
-     "count": 19,
+     "count": 17,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/JATS": [
     {
-     "count": 23,
+     "count": 21,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -295,19 +295,19 @@
    ],
    "hs/Writers/LaTeX": [
     {
-     "count": 32,
+     "count": 30,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/Markdown": [
     {
-     "count": 28,
+     "count": 26,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/Markua": [
     {
-     "count": 6,
+     "count": 4,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -332,7 +332,7 @@
    "hs/Writers/ODT": [
     {
      "count": 1,
-     "reason": "the tests compare the XML parts of the output archive with a Haskell normalization"
+     "reason": "the test calls the FODT writer in Haskell and checks the image references in the XML output"
     }
    ],
    "hs/Writers/Org": [
@@ -349,7 +349,7 @@
    ],
    "hs/Writers/Powerpoint": [
     {
-     "count": 46,
+     "count": 90,
      "reason": "the tests compare the XML parts of the output archive with a Haskell normalization"
     }
    ],
@@ -361,7 +361,7 @@
    ],
    "hs/Writers/TEI": [
     {
-     "count": 7,
+     "count": 5,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -379,14 +379,8 @@
    ],
    "readers/docx": [
     {
-     "count": 11,
+     "count": 8,
      "reason": "media bag and warning-list tests inspect reader state that the command line does not show"
-    }
-   ],
-   "readers/odt": [
-    {
-     "count": 2,
-     "reason": "media bag tests inspect reader state that the command line does not show"
     }
    ]
   },
@@ -2307,8 +2301,10 @@
    "old/fb2/images",
    "old/fb2/images-embedded",
    "old/fb2/math",
+   "old/fb2/meta",
    "old/fb2/tables",
    "old/fb2/testsuite",
+   "old/fb2/titles",
    "old/haddock/reader",
    "old/haddock/writer/basic",
    "old/haddock/writer/tables",
@@ -2625,11 +2621,11 @@
  "randoc": {
   "program": "randoc",
   "totals": {
-   "run": 2229,
+   "run": 2231,
    "pass": 0,
-   "fail": 2229,
-   "excluded": 2,
-   "unsupported": 1917
+   "fail": 2231,
+   "excluded": 0,
+   "unsupported": 1939
   },
   "groups": {
    "command": {
@@ -2639,10 +2635,10 @@
     "excluded": 0
    },
    "old": {
-    "run": 172,
+    "run": 174,
     "pass": 0,
-    "fail": 172,
-    "excluded": 2
+    "fail": 174,
+    "excluded": 0
    },
    "readers/docx": {
     "run": 105,
@@ -2720,7 +2716,7 @@
    ],
    "hs/Readers/JATS": [
     {
-     "count": 13,
+     "count": 14,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -2876,19 +2872,19 @@
    ],
    "hs/Writers/ConTeXt": [
     {
-     "count": 10,
+     "count": 8,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/DocBook": [
     {
-     "count": 28,
+     "count": 26,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/Docx": [
     {
-     "count": 50,
+     "count": 48,
      "reason": "the tests compare the XML parts of the output archive with a Haskell normalization"
     }
    ],
@@ -2900,13 +2896,13 @@
    ],
    "hs/Writers/HTML": [
     {
-     "count": 19,
+     "count": 17,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/JATS": [
     {
-     "count": 23,
+     "count": 21,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -2918,19 +2914,19 @@
    ],
    "hs/Writers/LaTeX": [
     {
-     "count": 32,
+     "count": 30,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/Markdown": [
     {
-     "count": 28,
+     "count": 26,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
    "hs/Writers/Markua": [
     {
-     "count": 6,
+     "count": 4,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -2955,7 +2951,7 @@
    "hs/Writers/ODT": [
     {
      "count": 1,
-     "reason": "the tests compare the XML parts of the output archive with a Haskell normalization"
+     "reason": "the test calls the FODT writer in Haskell and checks the image references in the XML output"
     }
    ],
    "hs/Writers/Org": [
@@ -2972,7 +2968,7 @@
    ],
    "hs/Writers/Powerpoint": [
     {
-     "count": 46,
+     "count": 90,
      "reason": "the tests compare the XML parts of the output archive with a Haskell normalization"
     }
    ],
@@ -2984,7 +2980,7 @@
    ],
    "hs/Writers/TEI": [
     {
-     "count": 7,
+     "count": 5,
      "reason": "the tests give Haskell values (Pandoc builders) that only Haskell can evaluate"
     }
    ],
@@ -3002,14 +2998,8 @@
    ],
    "readers/docx": [
     {
-     "count": 11,
+     "count": 8,
      "reason": "media bag and warning-list tests inspect reader state that the command line does not show"
-    }
-   ],
-   "readers/odt": [
-    {
-     "count": 2,
-     "reason": "media bag tests inspect reader state that the command line does not show"
     }
    ]
   },
