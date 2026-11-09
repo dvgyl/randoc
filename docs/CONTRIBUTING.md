@@ -49,6 +49,8 @@ cargo run -q -p randoc-harness -- show 'SUITE/FILE/CASE#UNIT'
 # Mutation tests on the lines that your branch changes.
 git diff main...HEAD > /tmp/branch.diff
 cargo mutants --in-diff /tmp/branch.diff --package YOUR_CRATE --timeout 120
+# A new crate can have thousands of mutants. Test a sample and report its size.
+cargo mutants --package YOUR_CRATE --shard 1/20 --timeout 60
 
 # Coverage of your crate.
 cargo llvm-cov --package YOUR_CRATE --summary-only
