@@ -36,9 +36,12 @@ python3 -B -m unittest discover -s tools/pandoc-testsuite
 
 Other options:
 
-- `--oracle PROGRAM` names the trusted Pandoc that reads the expected files
-  of the DOCX, ODT, PPTX and XLSX reader tests. Without this option, the tool
-  does not run these groups and reports them as not run.
+- `--oracle PROGRAM` names the reference Pandoc that reads the expected files
+  of the DOCX, ODT, PPTX and XLSX reader tests. The default is
+  `$RANDOC_ORACLE_PANDOC`. Without a reference program, the tool does not run
+  these groups, prints one line with the reason, and reports them as "not
+  checked". A `--baseline` check then names each of these tests with the
+  same reason.
 - `--label NAME` stores the results under the key `NAME` of the `--out` file
   and keeps the other keys. `spec/pandoc-testsuite.json` has the keys
   `oracle` and `randoc`.
@@ -59,6 +62,8 @@ The tool makes a temporary directory with a link `pandoc` to the program. It
 runs each test in the `test/` directory of the source tree, as the Pandoc test
 driver does. Each run starts in a new process session. At the time limit, the
 tool stops the whole process group and waits at most 5 seconds for the pipes.
+A process that starts its own session leaves the group. The tool cannot stop
+such a process, and it can continue to run after the time limit.
 The environment is fixed:
 
 | Variable | Value | Source |
@@ -108,6 +113,9 @@ The tool has three kinds of test:
    documents, not text. So for DOCX, PPTX, XLSX and ODT the program under
    test converts the input file to Pandoc JSON, and the oracle (`--oracle`)
    converts the expected file. The tool compares the two JSON values. The
+   comparison keeps Booleans, integers, floats and strings apart, and each
+   element of `pandoc-api-version` must be an integer. If the
+   `--list-extensions` call of the oracle fails, the test fails. The
    program under test never reads the expected file, so a program with a
    constant output fails these tests. A `def{readerExtensions = ...}` record
    sets the exact set of extensions: the tool asks the oracle for the

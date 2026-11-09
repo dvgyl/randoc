@@ -205,7 +205,13 @@ def main(argv=None) -> int:
     suite = os.path.abspath(args.suite)
     found = testsuite.discover(suite)
     if not args.oracle:
+        unchecked = {case.id for case in found.cases if case.needs_reference and args.filter in case.id}
         found = without_reference_cases(found)
+        if unchecked:
+            print(f"{len(unchecked)} reader tests not checked: no reference program "
+                  "(set --oracle or $RANDOC_ORACLE_PANDOC)")
+    else:
+        unchecked = set()
     excluded = load_exclusions(args.exclusions)
     selected = [c for c in found.cases if args.filter in c.id and c.id not in excluded]
 
@@ -252,7 +258,8 @@ def main(argv=None) -> int:
     if args.baseline:
         missing = [i for i in load_baseline(args.baseline) if args.filter in i and i not in excluded and results.get(i, "") is not None]
         for ident in missing:
-            print(f"REGRESSION {ident}")
+            reason = " (not checked: no reference program)" if ident in unchecked else ""
+            print(f"REGRESSION {ident}{reason}")
         if missing:
             print(f"{len(missing)} tests of the baseline do not pass")
             return 1

@@ -229,8 +229,9 @@ class ReaderTests(unittest.TestCase):
         self.assertEqual(spec, "fmtx-alpha+beta")
 
     def test_ast_case_reads_the_expected_file_with_the_reference(self):
-        empty = json.dumps({"blocks": [], "meta": {}}).encode()
-        full = json.dumps({"blocks": [{"t": "Para", "c": []}], "meta": {}}).encode()
+        version = [1, 23, 1]
+        empty = json.dumps({"pandoc-api-version": version, "blocks": [], "meta": {}}).encode()
+        full = json.dumps({"pandoc-api-version": version, "blocks": [{"t": "Para", "c": []}], "meta": {}}).encode()
         calls = []
 
         def constant(args, stdin):
@@ -254,6 +255,41 @@ class ReaderTests(unittest.TestCase):
 
         case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
         self.assertIn("pandoc-api-version", case.evaluate(program, ".", reference))
+
+    def test_boolean_api_version_is_rejected(self):
+        expected = b'{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+        actual = b'{"pandoc-api-version":[true,23,1,2],"meta":{},"blocks":[]}'
+        case = suite.AstCase("r/1", "r", "docx", "in.docx", "native", "out.native")
+        failure = case.evaluate(
+            lambda a, s: Outcome(0, actual, b""), ".", lambda a, s: Outcome(0, expected, b"")
+        )
+        self.assertIsNotNone(failure)
+
+    def test_types_of_values_are_compared(self):
+        self.assertFalse(suite.json_equal({"a": [True]}, {"a": [1]}))
+        self.assertFalse(suite.json_equal([1.0], [1]))
+        self.assertFalse(suite.json_equal({"a": 1}, {"a": 1, "b": 2}))
+        self.assertTrue(suite.json_equal({"a": [1, "x", None, 2.5]}, {"a": [1, "x", None, 2.5]}))
+
+    def test_strict_json(self):
+        for text in (b'{"a": NaN}', b'{"a": 1, "a": 2}'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                suite.parse_strict_json(text)
+
+    def test_failed_extension_lookup_is_rejected(self):
+        doc = b'{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+        for lookup in (Outcome(-1, b"", b"", True), Outcome(42, b"", b"lookup failed"), Outcome(0, b"", b"")):
+            suite._EXTENSION_CACHE.clear()
+
+            def reference(args, stdin, lookup=lookup):
+                if args[0].startswith("--list-extensions="):
+                    return lookup
+                return Outcome(0, doc, b"")
+
+            case = suite.AstCase("r/1", "r", "docx", "in.docx", "native", "out.native", frozenset())
+            with self.subTest(lookup=lookup):
+                self.assertIsNotNone(case.evaluate(lambda a, s: Outcome(0, doc, b""), ".", reference))
+                self.assertNotIn("docx", suite._EXTENSION_CACHE)
 
     def test_ast_case_without_reference_does_not_pass(self):
         case = suite.AstCase("r/1", "r", "x", "in.x", "native", "out.native")
@@ -281,6 +317,23 @@ SUITE = os.path.join(os.environ.get("RANDOC_PANDOC_SRC", ""), "test")
 @unittest.skipUnless(os.path.isfile(ORACLE) and os.path.isdir(SUITE), "needs the oracle and the Pandoc tree")
 class ConstantProgram(unittest.TestCase):
     """A program that always prints one empty document must fail each reader group."""
+
+    def test_without_oracle_a_line_says_why(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": ["readers/pptx/text extraction"]}, handle)
+            out = io.StringIO()
+            with mock.patch.dict(os.environ, {"RANDOC_ORACLE_PANDOC": ""}), contextlib.redirect_stdout(out):
+                code = run.main(["--pandoc", sys.executable, "--suite", SUITE,
+                                 "--filter", "readers/pptx", "--baseline", baseline])
+        self.assertEqual(code, 1)
+        self.assertIn("1 reader tests not checked: no reference program", out.getvalue())
+        self.assertIn("REGRESSION readers/pptx/text extraction (not checked: no reference program)", out.getvalue())
 
     def test_each_reader_group_fails(self):
         empty = json.dumps({"pandoc-api-version": [1, 23, 1], "meta": {}, "blocks": []}).encode()
@@ -380,7 +433,7 @@ class Timeouts(unittest.TestCase):
     def test_cleanup_has_a_limit_when_a_process_leaves_the_group(self):
         child = (
             "import subprocess,sys,time;"
-            "subprocess.Popen([sys.executable,'-c','import time;time.sleep(10)'], start_new_session=True);"
+            "subprocess.Popen([sys.executable,'-c','import time;time.sleep(3)'], start_new_session=True);"
             "time.sleep(30)"
         )
         saved = run.CLEANUP_SECONDS

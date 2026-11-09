@@ -102,7 +102,10 @@ class AstCase:
             return "not checked: this test needs a reference program (--oracle)"
         spec = self.reader
         if self.extensions is not None:
-            spec = format_with_exact_extensions(reference, self.reader, self.extensions)
+            try:
+                spec = format_with_exact_extensions(reference, self.reader, self.extensions)
+            except HelperError as error:
+                return str(error)
         actual = execute(("-f", spec, "-t", "json", *self.extra_args, self.input_path), b"")
         expected = reference(("-f", self.expected_format, "-t", "json", self.expected_path), b"")
         for name, out in (("actual", actual), ("expected", expected)):
@@ -111,16 +114,58 @@ class AstCase:
             if out.code != 0:
                 return f"exit code {out.code} ({name})\n{decode(out.stderr)}"
         try:
-            left, right = json.loads(actual.stdout), json.loads(expected.stdout)
+            left, right = parse_strict_json(actual.stdout), parse_strict_json(expected.stdout)
         except ValueError as error:
             return f"output is not JSON: {error}"
-        if not (isinstance(left, dict) and isinstance(right, dict)):
-            return "output is not a Pandoc JSON document"
-        if left.get("pandoc-api-version") != right.get("pandoc-api-version"):
-            return f"pandoc-api-version {left.get('pandoc-api-version')} is not {right.get('pandoc-api-version')}"
-        if left == right:
+        for name, doc in (("actual", left), ("expected", right)):
+            problem = document_problem(doc)
+            if problem:
+                return f"{name} output is not a Pandoc JSON document: {problem}"
+        if not json_equal(left["pandoc-api-version"], right["pandoc-api-version"]):
+            return f"pandoc-api-version {left['pandoc-api-version']} is not {right['pandoc-api-version']}"
+        if json_equal(left, right):
             return None
         return diff_text(json.dumps(right, indent=1), json.dumps(left, indent=1))
+
+
+def _reject_constant(name: str):
+    raise ValueError(f"{name} is not JSON")
+
+
+def _unique_keys(pairs: list) -> dict:
+    keys = [key for key, _ in pairs]
+    if len(keys) != len(set(keys)):
+        raise ValueError("an object has a key two times")
+    return dict(pairs)
+
+
+def parse_strict_json(data: bytes):
+    """Parses JSON and rejects NaN, Infinity and repeated keys."""
+    return json.loads(data, parse_constant=_reject_constant, object_pairs_hook=_unique_keys)
+
+
+def document_problem(doc) -> str:
+    """A description of the first defect of the top level of a Pandoc JSON document, or ""."""
+    if not isinstance(doc, dict):
+        return "the top level is not an object"
+    version = doc.get("pandoc-api-version")
+    if not isinstance(version, list) or not version or not all(type(part) is int for part in version):
+        return "pandoc-api-version is not a list of integers"
+    if not isinstance(doc.get("blocks"), list) or not isinstance(doc.get("meta"), dict):
+        return "blocks or meta is missing"
+    return ""
+
+
+def json_equal(left, right) -> bool:
+    """Equality of decoded JSON values that keeps Booleans, integers, floats
+    and strings apart. In Python, True == 1 and 1 == 1.0."""
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return left.keys() == right.keys() and all(json_equal(left[k], right[k]) for k in left)
+    if isinstance(left, list):
+        return len(left) == len(right) and all(json_equal(a, b) for a, b in zip(left, right))
+    return left == right
 
 
 Case = Union[CommandCase, GoldenCase, AstCase]
@@ -213,17 +258,27 @@ NORMALIZERS = {"": lambda text: text, "fb2": fb2_normalize}
 _EXTENSION_CACHE: dict = {}
 
 
+class HelperError(Exception):
+    """A helper call of the reference program failed. The test fails."""
+
+
 def format_with_exact_extensions(execute: Execute, reader: str, enabled: frozenset) -> str:
     """A format string that enables exactly `enabled` for `reader`.
 
     The Haskell tests set `readerExtensions` to a full set. The command line
     can only change the default set, so the tool asks the reference program
-    for the defaults of the reader.
+    for the defaults of the reader. Only a successful answer goes in the cache.
     """
     if reader not in _EXTENSION_CACHE:
         out = execute((f"--list-extensions={reader}",), b"")
-        defaults = {line[1:] for line in decode(out.stdout).split() if line.startswith("+")}
-        _EXTENSION_CACHE[reader] = defaults
+        if out.timed_out:
+            raise HelperError(f"timeout (--list-extensions={reader})")
+        if out.code != 0:
+            raise HelperError(f"exit code {out.code} (--list-extensions={reader})\n{decode(out.stderr)}")
+        words = decode(out.stdout).split()
+        if not words or not all(re.fullmatch(r"[+-][a-z0-9_]+", word) for word in words):
+            raise HelperError(f"--list-extensions={reader} did not give a list of extensions")
+        _EXTENSION_CACHE[reader] = {word[1:] for word in words if word.startswith("+")}
     defaults = _EXTENSION_CACHE[reader]
     off = "".join(f"-{name}" for name in sorted(defaults - enabled))
     on = "".join(f"+{name}" for name in sorted(enabled - defaults))
