@@ -56,3 +56,27 @@ source tree outside this repository, against a program. Results are in
 
 Check by the coordinator on the merged tree: the unit tests pass, the oracle
 passes 174 of 174 tests of the group `old`, and Randoc passes 0 of 174.
+
+## Workstream bench (branch `ws/bench`, head b35473d, merged as one commit)
+
+Content: `tools/bench` measures the CPU time of a program for startup and
+conversion, compares two programs in paired rounds, and keeps raw data in
+`benchmarks/`. `docs/BENCHMARKS.md` gives the method and the gate procedure.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 28 units pass, 0 regressions. |
+| 2. Measured progress | The work adds a measure and no product code. It gives gate 6 its tool. |
+| 3. Tests | 30 unit tests of the tool pass on `main`. Mutation tests and coverage are for Rust code and did not run. |
+| 4. No panics | Not applicable: the change has no Rust parser. |
+| 5. Two reviews | Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES (4 medium, 1 low), round 2 REQUEST CHANGES (2 medium), round 3 REQUEST CHANGES (1 medium), round 4 APPROVE at b35473d with 1 low finding. Opus 5.5 with a new context: round 1 REQUEST CHANGES (1 high, 2 medium, 4 low), round 2 APPROVE at 9b80ef5 with 4 low findings, final check APPROVE at b35473d with 1 low finding. The two open low findings are L-001 and L-002 in `docs/ISSUES.md`. |
+| 6. No slowdowns | Not applicable: no product code changed. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+The branch is merged as one squashed commit, because two of its older commits
+held a local home path in a result file. The files on `main` hold no user name
+and no local path (checked with a search).
+
+Limit of the tool under the present machine load: a comparison of a program
+with itself often ends as "inconclusive" (exit code 3). Gate 6 then has the
+result "not decided", and the merge log must say so.

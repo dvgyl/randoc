@@ -25,4 +25,7 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 
 ## Review findings with low severity
 
-None yet.
+| ID | Area | Finding | Source |
+| --- | --- | --- | --- |
+| L-001 | `tools/bench/run.py` | In a very small time window, the timer of the time limit can send a kill signal to the process group after the measured program ended. The run result stays correct. | Codex review of bench, round 4 (R2-3) |
+| L-002 | `tools/bench/run.py` | The fallback that stops a child which left its process group has no test. | Opus review of bench, final check (R4-1) |

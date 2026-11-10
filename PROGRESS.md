@@ -30,7 +30,7 @@ Updated: 2026-11-09 23:50 UTC.
 | Workstream | Branch | State at 23:50 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
-| bench | `ws/bench` | Review round 2. |
+| bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
 | corpus | `ws/corpus` | Review round 1. |
 | layout | `ws/layout` | The worker runs its gate checks. |
 | markdown-reader | `ws/markdown-reader` | In work. |

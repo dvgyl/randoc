@@ -1,0 +1,49 @@
+# The benchmarks of tools/bench/run.py. See docs/BENCHMARKS.md.
+#
+# [[benchmark]] is one command line and one standard input.
+#   name     A unique name.
+#   args     The arguments after the program path.
+#   input    A file, relative to this directory, that is the standard input.
+#   stdin    Literal text that is the standard input. Use `input` or `stdin`, not both.
+#                No `input` and no `stdin` gives an empty standard input.
+#
+# [[series]] expands to one benchmark for each scale, with the name NAME-xSCALE,
+# and to the startup benchmark NAME-startup.
+#   name, args     As for [[benchmark]].
+#   input          A file pattern. The tool replaces {scale} with the scale.
+#   scales         The scales. The input with scale N repeats one section N times.
+#   startup_stdin  An empty document in the input format. NAME-startup runs the
+#                  same arguments with this standard input. The tool subtracts
+#                  its minimum CPU time to give the conversion time.
+
+[[benchmark]]
+name = "startup-version"
+args = ["--version"]
+
+[[series]]
+name = "json-to-json"
+args = ["-f", "json", "-t", "json"]
+input = "inputs/doc-x{scale}.json"
+scales = [1, 10, 100]
+startup_stdin = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[series]]
+name = "json-to-html"
+args = ["-f", "json", "-t", "html"]
+input = "inputs/doc-x{scale}.json"
+scales = [1, 10, 100]
+startup_stdin = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[series]]
+name = "markdown-to-json"
+args = ["-f", "markdown", "-t", "json"]
+input = "inputs/doc-x{scale}.md"
+scales = [1, 10, 100]
+startup_stdin = ""
+
+[[series]]
+name = "markdown-to-html"
+args = ["-f", "markdown", "-t", "html"]
+input = "inputs/doc-x{scale}.md"
+scales = [1, 10, 100]
+startup_stdin = ""
