@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-10 03:00 UTC.
+Updated: 2026-11-10 02:55 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -31,7 +31,7 @@ Updated: 2026-11-10 03:00 UTC.
 
 ## Workstreams
 
-| Workstream | Branch | State at 03:00 UTC |
+| Workstream | Branch | State at 02:55 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
