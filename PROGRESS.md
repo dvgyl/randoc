@@ -47,7 +47,7 @@ Updated: 2026-11-10 06:05 UTC.
 | templates | `ws/templates` | Review round 2. |
 | latex-writer | `ws/latex-writer` | The worker corrects the findings of review round 1. |
 | yaml | `ws/yaml` | The worker corrects the findings of review round 1 (medium findings only). |
-| shared | `ws/shared` | The worker corrects the findings of review round 1 (1 high). |
+| shared | `ws/shared` | Merged. |
 | highlight | `ws/highlight` | In work. Syntax highlighting: a port of `skylighting-core` with the 63 syntax definitions that have a permissive licence. |
 | markdown-writer | `ws/markdown-writer` | In work. The writer for `markdown`, `gfm`, `commonmark`, `plain` and the other Markdown variants. |
 

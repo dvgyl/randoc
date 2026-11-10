@@ -15,6 +15,7 @@ mod extensions_data;
 mod format;
 mod logging;
 mod options;
+pub mod shared;
 
 pub use context::{
     CommonState, Context, Host, Limits, MediaBag, MediaItem, NativeHost, PureHost, Timestamp,

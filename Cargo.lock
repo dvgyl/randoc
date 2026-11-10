@@ -186,6 +186,7 @@ dependencies = [
  "randoc-ast",
  "randoc-layout",
  "randoc-templates",
+ "serde_json",
 ]
 
 [[package]]

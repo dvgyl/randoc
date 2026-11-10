@@ -221,3 +221,48 @@ Changes that the coordinator made in the merge:
   the JSON text of the oracle a second time before it compared; that read
   turns -0.0 into 0.0, as Pandoc does. The test now compares with the JSON
   text of the oracle directly.
+
+## Workstream shared (branch `ws/shared`, head a7c6387, one squashed commit)
+
+Content: the module `randoc_core::shared`, in place of copies that four
+workstreams wrote for themselves: the plain text of a tree (`stringify`),
+heading identifiers for the rules of Pandoc and for the rules of the
+CommonMark reader with their sets for unique identifiers, one table of HTML
+entities with numeric references, the emoji tables, the default abbreviation
+list, and Unicode normalization (NFC). No program on `main` calls the module
+yet. The readers and writers move to it at their next merge.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 2217 units pass, 0 regressions. |
+| 2. Measured progress | No harness unit changes, because no format on `main` uses the module yet. Replay tests compare the module with oracle results that tool scripts made: 94,752 headings (7,896 in each of 12 identifier modes), 800 blocks and 60 metadata values for the plain text, 2,551 entity references, 1,917 emoji aliases, 376 abbreviation candidates and 9,070 strings for NFC, all with 0 differences. Recorded: I-SHARED-01 to I-SHARED-05. |
+| 3. Tests | 43 unit tests, 6 replay tests and 20 documentation tests pass on the merged tree. Line coverage of the module 99.8%. Mutation tests: 78 mutants of the first version (1 missed, killed by a new test), 105 of the NFC part (7 missed at the Hangul boundaries, each killed by a new test), 31 and 13 of the two correction rounds (0 missed). |
+| 4. No panics | The module has no parser of a document format. No fuzz target. The reviewers ran trees with 100,000 nested levels on a 2 MB stack and 1,000,000 combining marks with no failure; two tests count steps to prove linear time. |
+| 5. Two reviews | Three rounds. Codex (GPT-6.1 Sol, fast tier): round 1 APPROVE at aaacd23 (2 low), round 2 REQUEST CHANGES at 20f03a1 (1 medium: the NFC tables did not match the Unicode version of the oracle), round 3 APPROVE at a7c6387 (2 low, documentation). Opus 5.5 with a new context: round 1 REQUEST CHANGES at aaacd23 (1 high: an emoji alias in an identifier must come from the source text; 2 medium), round 2 REQUEST CHANGES at 20f03a1 (2 medium: the NFC version, and emoji in code and math), round 3 APPROVE at a7c6387 after 145,752 NFC strings and 5,120 headings with 0 differences (1 low: two test comments). |
+| 6. No slowdowns | Not applicable: no conversion path on `main` uses the module. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Findings of the worker that only the oracle could give: Pandoc classifies
+letters for identifiers with Unicode 15.1 data and normalizes with Unicode
+18.0 data (818,502 probes for 272,834 code points: 142, 119, 55 and 0
+differences from the versions 15.1, 16.0, 17.0 and 18.0). The abbreviation
+list has 76 entries from 3,926,072 candidates that a script made mechanically
+(each string of 1 to 4 letters, forms with one inner period, and the system
+word list); no hand-written list and no Pandoc data file was used.
+
+Changes that the coordinator made in the merge, after the reviewed commit:
+
+- The replay test read its data files with the old generic JSON function,
+  which the new JSON codec does not offer for types outside the document
+  model. The test now reads the lists with `serde_json` (a development
+  dependency) and each document with the codec. The production code of the
+  module is unchanged.
+- The low findings of round 3 on source comments: the documentation of
+  `auto_identifier` and `commonmark_auto_identifier` now states the emoji
+  rule of each, and two test comments stand at their tests.
+- The branch added `third_party/licences/unicode.txt`; `main` already had
+  `Unicode.txt` with the same content. Two names that differ only in letter
+  case are one file on macOS and Windows, so the merge keeps `Unicode.txt`.
+- Not corrected: the low finding on the text of the worker's report (later
+  sections still name "explicit identifiers" and Unicode 16.0). The source
+  documentation and `docs/ISSUES.md` are correct.

@@ -13,5 +13,9 @@ randoc-ast = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-templates = { workspace = true }
 
+[dev-dependencies]
+# The replay tests read their data files with a general JSON parser.
+serde_json = { workspace = true }
+
 [lints]
 workspace = true
