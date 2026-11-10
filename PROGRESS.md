@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-10 01:35 UTC.
+Updated: 2026-11-10 02:17 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -30,23 +30,25 @@ Updated: 2026-11-10 01:35 UTC.
 
 ## Workstreams
 
-| Workstream | Branch | State at 01:35 UTC |
+| Workstream | Branch | State at 02:17 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
 | corpus | `ws/corpus` | Merged. |
 | layout | `ws/layout` | Merged. |
-| markdown-reader | `ws/markdown-reader` | Review round 1. |
+| markdown-reader | `ws/markdown-reader` | The worker corrects the findings of review round 1 (1 critical, 6 high). |
 | html-writer | `ws/html-writer` | The worker corrects the findings of review round 1. |
-| cli | `ws/cli` | The worker corrects the findings of review round 1. |
-| native | `ws/native` | The worker corrects one finding of review round 2. |
+| cli | `ws/cli` | The worker corrects the findings of review round 2 (medium findings only). |
+| native | `ws/native` | Review round 3. |
 | json-codec | `ws/json-codec` | Both reviewers approve. Gate 6 is open: the branch is slower than `main`. The worker optimizes. |
-| commonmark-reader | `ws/commonmark-reader` | In work. |
+| commonmark-reader | `ws/commonmark-reader` | Review round 1. The worker moves the examples of the CommonMark specification out of the repository (decision D5). |
 | research | `ws/research` | Merged. |
-| templates | `ws/templates` | In work. It builds on `ws/layout`. |
-| latex-writer | `ws/latex-writer` | In work. It builds on `ws/layout`. |
+| templates | `ws/templates` | The worker corrects the findings of review round 1 (2 high). |
+| latex-writer | `ws/latex-writer` | Review round 1. |
 | yaml | `ws/yaml` | In work. One YAML crate (`randoc-yaml`) for the Markdown reader, the CommonMark reader and the command line. |
 | shared | `ws/shared` | In work. The module `randoc_core::shared`: text of inlines, identifiers, entities, emoji. |
+| highlight | `ws/highlight` | In work. Syntax highlighting: a port of `skylighting-core` with the 63 syntax definitions that have a permissive licence. |
+| markdown-writer | `ws/markdown-writer` | In work. The writer for `markdown`, `gfm`, `commonmark`, `plain` and the other Markdown variants. |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).
