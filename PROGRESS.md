@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-10 04:00 UTC.
+Updated: 2026-11-10 06:05 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -31,7 +31,7 @@ Updated: 2026-11-10 04:00 UTC.
 
 ## Workstreams
 
-| Workstream | Branch | State at 04:00 UTC |
+| Workstream | Branch | State at 06:05 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
@@ -78,6 +78,16 @@ exFAT drive:
 
 Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command. The file
 sets `CARGO_HOME`, `RUSTUP_HOME`, `TMPDIR` and `RANDOC_ORACLE_PANDOC`.
+
+The computer has 16 GB of memory. On 2026-11-10 at about 04:40 UTC it stopped
+with a kernel panic, because the memory ran out (the panic report shows the
+memory compressor at 100% of its limit). About 15 agents with their builds,
+fuzz runs and reviews ran at that time, next to other work of the owner. The
+work started again at 05:50 UTC. Nothing was lost on `main`: each merge was
+pushed. Since then the `cargo` wrapper in `env/bin` makes each heavy cargo
+command wait for one of 3 slots and for 20% free memory, `CARGO_BUILD_JOBS`
+is 2, and standing order 18a limits each agent to one heavy command at a
+time. A new session must keep these limits.
 
 The exFAT file system has effects that a new session must know:
 

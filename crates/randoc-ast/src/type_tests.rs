@@ -2,7 +2,7 @@
 
 use crate::walk::{Visitor, query};
 use crate::{
-    Alignment, Attr, Block, Cell, Format, Inline, MetaValue, Pandoc, Row, Table, TableBody,
+    Alignment, Attr, Block, Cell, Format, Inline, Meta, MetaValue, Pandoc, Row, Table, TableBody,
 };
 
 #[test]
@@ -75,6 +75,22 @@ fn attributes_report_classes_and_the_first_value_of_a_key() {
     assert!(!Attr::new("x", vec![], vec![]).is_empty());
     assert!(!Attr::new("", vec!["c".into()], vec![]).is_empty());
     assert!(!Attr::new("", vec![], vec![("k".into(), "v".into())]).is_empty());
+}
+
+#[test]
+fn metadata_fields_can_be_set_read_and_replaced() {
+    let mut meta = Meta::default();
+    assert!(meta.is_empty());
+    assert_eq!(meta.get("title"), None);
+    assert_eq!(meta.insert("title", MetaValue::MetaBool(true)), None);
+    assert!(!meta.is_empty());
+    assert_eq!(meta.get("title"), Some(&MetaValue::MetaBool(true)));
+    assert_eq!(meta.get("Title"), None);
+    assert_eq!(
+        meta.insert("title", MetaValue::MetaString("x".into())),
+        Some(MetaValue::MetaBool(true))
+    );
+    assert_eq!(meta.get("title"), Some(&MetaValue::MetaString("x".into())));
 }
 
 /// The depths that the crate documentation gives as safe on a 2 MB stack.
