@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Handoff
 
-Written: 2026-11-10 12:28 UTC, at the end of the second session. The owner
+Written: 2026-11-10 12:31 UTC, at the end of the second session. The owner
 asked for the handoff because the limit of the model Fable 5.2 was almost
 reached. Each worker committed its state on its branch and stopped.
 
@@ -20,8 +20,8 @@ Key points:
   built by Randoc for Lua.
 - No code branch merged. Each review round of this session found real
   defects with the level medium or higher. The branch `yaml` is the
-  nearest: its reader has no open finding, and one finding in its replay
-  test is open.
+  nearest: round 5 left three medium findings, two small ones in the
+  reader (flow collections) and one in its replay test.
 - Two new workstreams started: `lua` and `html-reader`.
 - A reviewer agent deleted the briefs folder of the coordinator by mistake.
   All files are rebuilt. The store is now a local Git repository.
@@ -54,10 +54,9 @@ Key points:
    and `commit`). If files of the store are lost, `git checkout` restores
    them; `env/bin/recover-briefs` can rebuild the briefs from the session
    transcripts.
-7. Two Codex review runs were possibly still in progress when this text was
-   written: `yaml` round 5 and `latex-writer` round 2. Their reports are
-   `env/store/reviews/yaml-codex-r5.md` and
-   `env/store/reviews/latex-writer-codex-r2.md`. Read them first. If a
+7. One Codex review run was possibly still in progress when this text was
+   written: `latex-writer` round 2. Its report is
+   `env/store/reviews/latex-writer-codex-r2.md`. Read it first. If the
    file is missing, the run did not end: start it again with
    `env/bin/codex-review-file BRIEF NAME`.
 
@@ -100,7 +99,7 @@ trust a row of this table, because each worker wrote it after this table.
 
 | Workstream | Branch head at the stop | State | Next step |
 | --- | --- | --- | --- |
-| yaml | `ws/yaml` `f96ec26` | Five review rounds. Gate passed at `f96ec26`. Round 5: Opus found no defect in the reader in about 4,700 texts; all round 4 findings of level medium or higher are closed. One medium finding is open (R5-01): the replay comparison of the tests removes Markdown characters and, in file mode, compares only letters and digits, so a wrong string of ordinary form can pass. The Codex report of round 5 was not here at the stop. | Read `reviews/yaml-codex-r5.md`. Make the replay comparison exact for each string (find an entrance of the oracle that keeps strings literal; check whether the `metadata` key of a defaults file is one). Review round 6 on the diff. Merge. Then move the Markdown reader, the CommonMark reader and the command line to `randoc-yaml`. |
+| yaml | `ws/yaml` `f96ec26` | Five review rounds. Gate passed at `f96ec26`. All round 4 findings of level medium or higher are closed. Round 5: both reviewers request changes. Opus found no defect in the reader in about 4,700 texts, and one medium finding in the replay test (R5-01): the comparison removes Markdown characters and, in file mode, compares only letters and digits, so a wrong string of ordinary form can pass. Codex found two medium findings in the reader: properties on separate lines inside a flow collection are read as content (YAML-R5-01), and a property before an alias after a line break is accepted (`a: [&a,!` / ` *a]`; Pandoc refuses it) (YAML-R5-02). | Correct the two reader findings with one oracle matrix for properties in flow collections (each property form, each kind of next token, with and without a line break). Make the replay comparison exact for each string (find an entrance of the oracle that keeps strings literal; check whether the `metadata` key of a defaults file is one). Review round 6 on the diff. Merge. Then move the Markdown reader, the CommonMark reader and the command line to `randoc-yaml`. |
 | cli | `ws/cli` `78bb0d7` | Six review rounds. Gate passed at `2c28b35`. Round 6: both reviewers request changes (1 high: a repeated `--resource-path` replaces the earlier folders; 9 medium: the template search, a folder as a defaults name, named files that are missing, with and without `--sandbox`). The sandbox probes found no file that Randoc reads and the oracle refuses. Unit 2 (brief `cli-s2b.md`) was stopped at `78bb0d7`: each round 6 finding has code and a matrix case (the resource replay gives 2182 of 2182 cases), and the approved change in `randoc-core` is made. Warning from the worker: the cli suite of the harness gives 3455 passes on `78bb0d7`, and it gave 3457 before, so 2 or more units that passed now fail; the gate did not run on this commit. | Find the units that fail now (`randoc-harness run --baseline spec/baseline.json`) and correct the cause. Run the 40 reproductions (`env/tmp/cli-s2b/repro.py`), the gate, the mutation sample and the fuzz targets. Then review round 7, the merge, and the units "templates in the program" and "defaults files on `randoc-yaml`". |
 | commonmark-reader | `ws/commonmark-reader` `9615173` | Five review rounds. Gate passed at `5b7cc50`; the specification run gave 652 of 652. Round 5: both reviewers request changes (7 medium: the emphasis rule for delimiter runs of different length, reference definitions and metadata links with `rebase_relative_paths`, a definition list after a note definition, a YAML tag that changes a value, an extra list block, a missing notice row). Unit 2 (brief `commonmark-reader-s2b.md`) was stopped at `9615173`: the delimiter algorithm is a port of `commonmark` 0.3.1 (BSD-3-Clause) and a matrix of 3,810 paragraphs shows 0 differences; each round 5 finding with the level medium or higher has a correction and oracle cases; the suite gives 1724 of 1740 passing units (the 16 others are the `sourcepos` gap); the specification run gives 652 of 652; fuzzing 901 s with 0 crashes. The gate on `9615173` was stopped in its test step, so it has no result. The comparison with the upstream source is half-done (the report lists the modules that are not compared). | Run the gate on `9615173` and the other mutation shards. Then review round 6. The decision record on the branch has the title `ADR (commonmark-hs)`: give it the next free number at the merge. |
 | html-writer | `ws/html-writer` `5d91b64` (wip) | Four review rounds. Gate passed at `eee175e`. One decision function for section containers from an oracle matrix of 14,092 cases. Round 4: both reviewers request changes (1 high: a div with the class `columns` or `column`; 14 medium: classes with a special meaning, the place of block notes, heading attributes, time that grows faster than linear with the nesting depth). Unit 2 (brief `html-writer-s2b.md`) was stopped after 12 minutes at a `wip` commit that adds tools and probe data only (`src/classes.jsonl`, 3,856 oracle cases; the Rust code is the code of `aff07e3`). The report lists 7 rules that the data shows and that are not implemented. | Finish `html-writer-s2b.md` from step 1: the class table and its function, the note matrix (`tools/notes.py record`), the section axes, the nesting time. Then review round 5. |
@@ -121,7 +120,7 @@ and the `lua` and `server` modes.
 ### Open issues
 
 - **The review pattern.** In this session, 12 review runs on code gave 12
-  times "request changes", each with real findings. Three methods lowered
+  times "request changes", each with real findings (13 of 13 with the Codex report of `yaml` round 5). Three methods lowered
   the number of new findings and must stay: (1) one rule from a full oracle
   matrix that stays as replay data, not a correction of single cases;
   (2) a port from the upstream source where its licence permits; (3) a
