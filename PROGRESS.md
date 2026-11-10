@@ -111,6 +111,22 @@ decides.
 
 See `docs/MERGE_LOG.md` for the evidence of each merge.
 
+Severity levels for gate 5 (decision of the coordinator, 2026-11-10 04:30 UTC):
+the gate text says "fix every critical, high or medium finding, record low
+findings", but it does not define the levels. Until this time, the reviewers
+gave almost each difference from Pandoc the level medium, also for malformed
+input that no author writes on purpose. For the large readers and writers, each
+review round then found 10 to 20 new differences of that kind, and no branch
+could reach an approval. `docs/CONTRIBUTING.md` now defines the four levels.
+The main rule: a crash, a run that does not end, growth faster than linear,
+lost text, and wrong output for input that an author can plausibly write are
+critical, high or medium and must be corrected before a merge; a difference
+only for malformed or adversarial input with no lost text is low, is recorded
+in `docs/ISSUES.md` with its smallest input, and stays open work. The merges
+before this time (testsuite, bench, research, corpus, layout, native,
+json-codec) used the stricter reading. Each later merge record gives the
+number of findings that were recorded as low.
+
 Gates that could not apply:
 
 | Change | Gate | Reason |

@@ -24,6 +24,13 @@ Read [`ARCHITECTURE.md`](ARCHITECTURE.md) first.
    Codex CLI. One review is from an Opus 5.5 agent with a new context. Each
    reviewer tries to break the work. Critical, high and medium findings are
    fixed. Low findings go to `docs/ISSUES.md`.
+   Severity levels of a finding:
+   - **Critical.** Memory unsafety. A crash (panic, abort, stack overflow) or a run that does not end in 60 seconds, for an input below 1 MB through the program with default settings. Loss of document text for an input form that the Pandoc manual shows. A licence violation.
+   - **High.** A crash or a stack overflow that needs the library interface with its default limits. Time or memory that grows faster than linear so that an input of 100 KB needs more than 5 seconds in a debug build. Wrong output, a wrong exit code or lost text for an input that occurs in real documents (the corpus, the Pandoc manual, or a form that the manual documents as normal use).
+   - **Medium.** Wrong output for a form that an author can plausibly write on purpose, when the difference changes the meaning or the structure of the result (a different element, lost or added text, a wrong attribute). Time that grows faster than linear at any size. A wrong warning or a wrong error for a common mistake. A claim of the report that the tests do not support. A missing licence notice.
+   - **Low.** A difference only for malformed or adversarial input (unbalanced or cut delimiters, random mixes that no author writes on purpose) where no text is lost. A difference only in the text or the position of an error or a warning for broken input. Documentation and code-quality items.
+
+   A low finding is recorded as a known divergence in `docs/ISSUES.md` with its smallest input, and it stays open work. If you are not sure between two levels, choose the higher one.
 6. **No slowdowns.** Benchmarks of the changed paths are not more than 5%
    slower than `main`.
 7. **Clean build.** `cargo fmt --all -- --check`, `cargo clippy` with
