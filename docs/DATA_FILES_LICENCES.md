@@ -79,7 +79,7 @@ data files to the repository.
 | "With the exceptions noted below, this code is released under the GPL, version 2 or later" | Each file without an exception |
 | "Pandoc's templates (in `data/templates`) are dual-licensed as either GPL (v2 or higher, same as pandoc) or (at your option) the BSD 3-clause license. Copyright (c) 2014--2024, John MacFarlane" | `data/templates/*` |
 | "The dzslides template contains JavaScript and CSS from Paul Rouget's dzslides template ... Released under the Do What the Fuck You Want To Public License." | `data/dzslides/template.html` |
-| BSD-3-Clause for the `pandoc-types` modules | Not a data file. Randoc already records it in `THIRD_PARTY.md`. |
+| BSD-3-Clause for the `pandoc-types` modules | Not a data file. Randoc already records it in `THIRD_PARTY_NOTICES.md`. |
 | MIT licence for Lua (via hslua) | Not a data file. Relevant to Lua embedding. |
 
 `COPYRIGHT` gives no exception for the reference documents, the translations,
@@ -93,8 +93,8 @@ Size is the sum of the bytes of the files in the group.
 
 | File or group | Files | Bytes | Licence | Proof | Randoc can include? | Attribution |
 | --- | ---: | ---: | --- | --- | --- | --- |
-| `templates/*` (all `default.*`, `styles.html`, `styles.citations.html`, the LaTeX parts, `affiliations.jats`, `article.jats_publishing`, `template.typst`) | 62 | 105 556 | GPL-2.0-or-later or BSD-3-Clause | `COPYRIGHT`, templates paragraph | **Yes**, under BSD-3-Clause | Keep "Copyright (c) 2014--2024, John MacFarlane" and the BSD-3-Clause text in `THIRD_PARTY.md` and in the distribution. Do not use the name of the author to promote Randoc. |
-| `dzslides/template.html` | 1 | 18 800 | WTFPL (JavaScript and CSS of Paul Rouget) | `COPYRIGHT`, dzslides paragraph | **Yes** | None necessary. Give credit to Paul Rouget in `THIRD_PARTY.md`. The rest of the file is a sample page; record it as part of the same WTFPL file. |
+| `templates/*` (all `default.*`, `styles.html`, `styles.citations.html`, the LaTeX parts, `affiliations.jats`, `article.jats_publishing`, `template.typst`) | 62 | 105 556 | GPL-2.0-or-later or BSD-3-Clause | `COPYRIGHT`, templates paragraph | **Yes**, under BSD-3-Clause | Keep "Copyright (c) 2014--2024, John MacFarlane" and the BSD-3-Clause text in `THIRD_PARTY_NOTICES.md` and in the distribution. Do not use the name of the author to promote Randoc. |
+| `dzslides/template.html` | 1 | 18 800 | WTFPL (JavaScript and CSS of Paul Rouget) | `COPYRIGHT`, dzslides paragraph | **Yes** | None necessary. Give credit to Paul Rouget in `THIRD_PARTY_NOTICES.md`. The rest of the file is a sample page; record it as part of the same WTFPL file. |
 | `docx/*` (unpacked `reference.docx`: `styles.xml`, `numbering.xml`, `theme1.xml`, `settings.xml` and others) | 16 | 55 021 | GPL-2.0-or-later | No exception in `COPYRIGHT`; no notice in the files | **No** | Not applicable |
 | `odt/*` (unpacked `reference.odt`) | 6 | 69 104 | GPL-2.0-or-later | Same | **No** | Not applicable |
 | `pptx/*` (unpacked `reference.pptx`) | 49 | 108 140 | GPL-2.0-or-later | Same | **No** | Not applicable |
@@ -275,10 +275,10 @@ package" means the optional package of decision D1.
   start (b) at once for the most used languages (C, Python, JavaScript, Lua,
   SQL); use (a) for each language where (b) fails.
 
-## Attribution text for `THIRD_PARTY.md`
+## Attribution text for `THIRD_PARTY_NOTICES.md`
 
 When a workstream adds one of the "Yes" files, it adds a row to
-`THIRD_PARTY.md` with this content:
+`THIRD_PARTY_NOTICES.md` with this content:
 
 | Material | Source | Licence | Notice to keep |
 | --- | --- | --- | --- |

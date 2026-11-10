@@ -3,53 +3,144 @@
 This file and `spec/status.json` hold the project state. Read both at the start
 of a session, then run `./init.sh`.
 
-## Current state
+## Handoff
 
-Updated: 2026-11-10 06:05 UTC.
+Written: 2026-11-10 09:06 UTC, at the end of the first session. The owner
+stopped the session and starts a new one later. All background work is
+stopped. Each workstream committed its state on its branch.
 
-- The shared contracts exist: the document tree with Pandoc-compatible JSON
-  (`randoc-ast`), the reader and writer traits, options, extensions, errors,
-  log messages and the conversion context (`randoc-core`).
-- The conformance harness exists (`randoc-harness`). It records oracle results,
-  compares Randoc with them, keeps a baseline and writes the capability matrix.
-  The suite also runs as a test of the program (`crates/randoc-cli/tests/conformance.rs`).
-- Two formats work on `main`: `json` and `native` (reader and writer of each).
-- The layout engine (`randoc-layout`, a port of `doclayout`) is on `main`. No
-  writer on `main` uses it yet.
-- Harness result on `main`: 3574 units, 2217 pass, 987 fail, 370 skipped. Each
-  failing unit needs a part that is not on `main` yet (options, the Markdown
-  reader) or is a recorded divergence.
-- Capability matrix (`spec/capabilities.json`): 2 of 52 input formats and 2 of
-  77 output formats are partial. 0 of 90 extensions and 2 of 109 options have
-  passing units.
-- Pandoc's own test suite (`tools/pandoc-testsuite`, `docs/PANDOC_TESTSUITE.md`):
-  the tool runs 2231 tests. The oracle passes 2231. Randoc passes 0. About 1939
-  more tests need Haskell and cannot run.
-- Corpus of real documents (`tools/corpus`, `docs/CORPUS.md`): 230 documents in
-  33 formats, 690 units. The oracle against itself passes 690. Randoc passes 0
-  (`spec/corpus.json`), because `main` has only the JSON format.
+### How to start the next session
 
-## Workstreams
+1. Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command, then
+   `./init.sh` in `/Volumes/Extreme Pro/Randoc/randoc`.
+2. Start `env/bin/randoc-watchdog` in the background and keep the memory
+   limits (section "Local environment").
+3. Read `env/store/standing-orders.md` (the rules for each worker),
+   `env/store/decisions.tsv` (the decision log, one row for each decision),
+   `env/store/agents.tsv` and, for each workstream, the section "State at the
+   stop" at the top of `env/store/reports/NAME.md`.
+4. Read `docs/PRIOR_ART.md` and `docs/ADR.md`: the owner's rule of 2026-11-10
+   says to study and reuse open source before writing new code.
+5. The worktrees are in `/Volumes/Extreme Pro/Randoc/wt/NAME`, one for each
+   branch `ws/NAME`. The branches exist only on this drive. They are not
+   pushed on purpose: the early history of some branches holds files that
+   must not be published (examples of the CommonMark specification, text of
+   the Pandoc manual, completion scripts of Pandoc, a local path). Each
+   workstream reaches `main` as one squashed commit (`env/bin/merge-ws`).
 
-| Workstream | Branch | State at 06:05 UTC |
-| --- | --- | --- |
-| testsuite | `ws/testsuite` | Merged. |
-| bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
-| corpus | `ws/corpus` | Merged. |
-| layout | `ws/layout` | Merged. |
-| markdown-reader | `ws/markdown-reader` | Review round 2 on a frozen copy. The worker corrects six open medium findings. |
-| html-writer | `ws/html-writer` | The worker corrects the findings of review round 2. |
-| cli | `ws/cli` | The worker corrects the findings of review round 3 (medium findings only). |
-| native | `ws/native` | Merged. |
-| json-codec | `ws/json-codec` | Merged. |
-| commonmark-reader | `ws/commonmark-reader` | Review round 2. |
-| research | `ws/research` | Merged. |
-| templates | `ws/templates` | Review round 2. |
-| latex-writer | `ws/latex-writer` | The worker corrects the findings of review round 1. |
-| yaml | `ws/yaml` | The worker corrects the findings of review round 1 (medium findings only). |
-| shared | `ws/shared` | Merged. |
-| highlight | `ws/highlight` | In work. Syntax highlighting: a port of `skylighting-core` with the 63 syntax definitions that have a permissive licence. |
-| markdown-writer | `ws/markdown-writer` | In work. The writer for `markdown`, `gfm`, `commonmark`, `plain` and the other Markdown variants. |
+### What works
+
+- `main` is at the commit that holds this text. It compiles, passes
+  `scripts/gate.sh`, and is pushed to <https://github.com/dvgyl/randoc>.
+- Formats on `main`: `json` and `native`, reader and writer of each.
+- Libraries on `main` that no program path uses yet: the layout engine
+  (`randoc-layout`), the template engine with the default templates
+  (`randoc-templates`, `randoc-data`), and the shared utilities
+  (`randoc_core::shared`: plain text of a tree, heading identifiers, HTML
+  entities, emoji, the default abbreviation list, NFC).
+- Conformance harness on `main`: 4546 units, 2217 pass, 1959 fail, 370 skipped, 0 regressions (measured on the merge commit 3dbc884).
+  Each failing unit needs a part that is not on `main` yet (the command-line
+  options, the Markdown reader, the HTML writer) or is a recorded divergence.
+- Capability matrix (`spec/capabilities.json`): 2 of 52 input formats and 2 of 77 output formats are partial (`json`, `native`). 0 of 90 extensions and 2 of 109 options have passing units.
+- Pandoc's own test suite (`tools/pandoc-testsuite`): the tool runs 2231 tests. The oracle passes 2231 (measured by the workstream testsuite). Randoc passes 0 (measured on 3dbc884 at 09:01 UTC). About 1939 more tests need Haskell and cannot run.
+- Corpus of real documents (`tools/corpus`): 230 documents in 33 formats, 690 units. The oracle against itself passes 690 (measured by the workstream corpus). Randoc passes 0 (measured on 3dbc884 at 09:01 UTC), because `main` reads only `json` and `native`.
+- Quarto and R Markdown: not measured. No path that they use (Markdown
+  reader, HTML writer, Lua filters, citations) is on `main`.
+- Nine workstream merges passed the full merge gate: testsuite, bench,
+  research, corpus, layout, native, json-codec, shared, templates
+  (`docs/MERGE_LOG.md` has the evidence of each). The foundation commit has
+  two recorded gate exceptions (section "Merge gate records").
+
+### What does not work
+
+`main` converts only between `json` and `native`. Each other format, each
+extension, almost each option, templates in the program, filters, Lua,
+citations, highlighting, math conversion and the `lua` and `server` modes
+are not on `main`. The branches below hold the work in progress. No branch
+except `templates` had the approval of both reviewers at the stop.
+
+| Workstream | Branch head | State at the stop | Next step |
+| --- | --- | --- | --- |
+| cli | `ws/cli` 9954e7b (wip) | Five review rounds. Round 5: both reviewers requested changes (the resource search for include files and templates, the read order, two sandbox defects). The corrections are written and not tested; the oracle matrix with 1010 cases is committed. Last gate pass: 2da6375. | Generate the UTF-8 test data, run the replay test and the gate, then review round 6. |
+| yaml | `ws/yaml` 50d9b28 | Three review rounds. Round 3 items 1, 2, 3, 4 and 6 are corrected with oracle tests. Item 7 (scheme of a verbatim tag) is half-done; items 5 and 8 are not started. Last gate pass: 800a66a. | Finish items 5, 7, 8; gate; 15 minutes of fuzzing; review round 4. Then the Markdown reader, the CommonMark reader and the command line move to `randoc-yaml`. |
+| commonmark-reader | `ws/commonmark-reader` 723475d (wip) | Four review rounds. All 8 round 4 items are corrected with oracle cases, and the reader uses `randoc_core::shared`. The last commit (a counter that overflowed) has no test run. Specification run: 652 of 652 at 6e79ef4. Last gate pass: 6e46f9a. | Tests and gate on 723475d, the specification tool, fuzzing, a mutation sample, then review round 5. |
+| html-writer | `ws/html-writer` c803b4e | Three review rounds. Round 3: R3-01 to R3-04, R3-06, R3-07, O01 to O03, I-HTML-15 and I-HTML-17 are corrected with tests. Open: one decision function for a `Div` that starts with a heading, from the full matrix of `tools/sections.py` (R3-05 and the rest of N09). Last full gate pass: 31709f6. | The section matrix and the single rule, the gate, two differential runs, then review round 4. |
+| templates | `ws/templates` 8d63d0b | Merged. | The command line connects `randoc-templates` and `randoc-data`. |
+| highlight | `ws/highlight` dfec7d9 | No review verdict yet: round 1 started and was stopped with the session. All 1,386 samples and 12,600 mutations are equal to the oracle when all 200 definitions are loaded; 63 definitions are embedded (licence). Speed: 1 MiB in 2.84 s. Two step limits were added (I-HL-03). The gate passes at dfec7d9. | Review round 1 (`env/store/briefs/review-highlight-round1-codex.md`). Then the HTML and LaTeX writers call the crate. |
+| markdown-reader | `ws/markdown-reader` 4c1edf9 | Two review rounds. `MANUAL.txt` gives the same JSON bytes as the oracle. Uses `randoc_core::shared`. Two high time findings are open: I-MD-28 (8 of 156 pairs of openers are still quadratic) and I-MD-27 (nested labels copy the text). Last gate pass: 2d3fb48. | The memo of inline results by (construct, start, context), then one shared text buffer; the gate; review round 3. |
+| latex-writer | `ws/latex-writer` f85d334 | One review round. A signature report found the dominant difference classes; about 17 rules corrected. Random trees that differ: 4 of 500 for `latex`, 13 of 500 for `beamer` (before: 136 of 200). Last gate pass: b0f4099. | Gate on f85d334, fuzzing, a mutation sample, the classes of I-LATEX-09, then review round 2. |
+| markdown-writer | `ws/markdown-writer` 235b8a8 | No review yet. 10,633 of 11,302 units of its suite pass. Small random trees that differ: 4 of 400. Open and high: table forms (I-MDW-02), `markua` (I-MDW-08). Math conversion waits for the workstream math. Last gate pass: ac1b191. | The table rule matrix, `markua`, the medium rows, the gate, then review round 1. |
+| math | `ws/math` 1af6155 (wip) | First version of `randoc-math` (TeX math to MathML and to an inline list), written from oracle output because `texmath` is GPL. Equal to the oracle: MathML for 2,550 of 4,110 formulas, the inline list for 3,425 of 4,110, the warning text for 973 of 2,378. The full gate did not run. | Read `docs/PRIOR_ART.md` ("TeX math") for a permissive base, then the rows I-MATH-01 to I-MATH-04. |
+
+Not started: each other reader and writer (HTML reader, `docx`, `odt`,
+`epub`, `rst`, `org`, `typst`, `djot`, `man`, `docbook`, `jats`, wiki formats
+and the rest of the 52 input and 77 output formats), Lua filters and custom
+readers and writers, JSON filters, `--citeproc`, `--embed-resources`, PDF
+output through an engine, and the `lua` and `server` modes.
+
+### Open issues
+
+- `docs/ISSUES.md` on `main` has 41 rows. Each branch has its own rows,
+  which reach `main` with its merge.
+- Decisions that wait for the owner: D1 to D5 (section below), and two
+  coordinator decisions that the owner can reverse: the severity levels of
+  gate 5 and the rule that a recorded scope gap is not a review finding
+  (`docs/CONTRIBUTING.md`).
+- The Codex service stopped 5 review runs with a content flag. A prompt
+  that is a plain conformance review (`env/bin/codex-review-file`, the files
+  `env/store/briefs/review-*-codex.md`) completes. Such a round does not
+  cover the `--sandbox` path probes; the merge record must say so.
+- The computer stopped one time (memory), and one oracle process used 22 GB.
+  The limits in "Local environment" prevent both; keep them.
+- The reuse rule is new. `THIRD_PARTY_NOTICES.md` is the new name of
+  `THIRD_PARTY.md` on `main`. Each branch still has the old name; Git follows
+  the rename in a merge, and `env/bin/resolve-tables` knows both names.
+- Gate items that are open for merged work: mutation tests of the
+  document-model helpers were run only in part (58 caught, 2 missed and now
+  tested), H-001 and H-002 in `docs/ISSUES.md`.
+- Housekeeping on the drive: the empty folder
+  `/Volumes/Extreme Pro/Randoc.images` is not needed (an early attempt with
+  a disk image). The worktrees of the merged workstreams (`wt/layout`,
+  `wt/native`, `wt/json-codec`, `wt/shared`, `wt/templates`) can be removed
+  with `git worktree remove`. The internal disk is small (about 14 GB free);
+  the Codex folder and other caches there are not Randoc files.
+
+### Next three tasks
+
+1. **Bring the nearest branches to `main`.** Order: `yaml`, `cli`,
+   `commonmark-reader`, `html-writer`, `highlight`. For each: run the gate on
+   the head commit, finish the open items of its report, then one review
+   round with both reviewers, then `merge-ws`. With the command line, one
+   reader and one writer on `main`, measure the first end-to-end slice
+   (CommonMark to HTML) with the harness, the Pandoc test suite and the
+   corpus, and update `spec/`.
+2. **Apply the reuse rule to the open work** (`docs/PRIOR_ART.md`, ADR 1).
+   Check the licence of each candidate first. Compare the CommonMark reader
+   with `commonmark-hs` to close its open rows; choose a permissive base for
+   `randoc-math`; choose pinned crates for ZIP, XML and Lua before the
+   workstreams that need them start; decide for the Markdown reader whether
+   the memo design or another inline-parser design removes the two high
+   time findings.
+3. **Start the next wave** when the command line is on `main`: the HTML
+   reader, the container formats (`docx`, `odt`, `epub`) on the chosen ZIP
+   and XML crates, `rst` and `org`, JSON filters and Lua filters, and
+   `--citeproc` (a port of `citeproc`, BSD-2-Clause, if its licence check
+   passes). Each one is a workstream with a brief in `env/store/briefs/`.
+
+## Workstreams that are merged
+
+| Workstream | Content |
+| --- | --- |
+| foundation | Workspace, document model, shared contracts, conformance harness |
+| testsuite | `tools/pandoc-testsuite`: runs Pandoc's own tests outside the repository |
+| bench | `tools/bench` and the benchmark inputs (one squashed commit; do not push the branch, its old commits hold a local path) |
+| research | `docs/DATA_FILES_LICENCES.md`: the licence of each Pandoc data file |
+| corpus | `tools/corpus`: 230 real documents in 33 formats |
+| layout | `randoc-layout`, a port of `doclayout` |
+| native | The `native` reader and writer |
+| json-codec | The JSON codec of the document model, with the error texts of the oracle |
+| shared | `randoc_core::shared` |
+| templates | `randoc-templates` and `randoc-data` |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).
@@ -125,7 +216,7 @@ decides.
 | --- | --- |
 | D1. GPL data files of Pandoc (reference documents, translations, `epub.css`, Lua files, 98 copyleft syntax definitions) | Not in this repository. A later data package with its own licences can hold them. Randoc looks for them in a data directory at run time. |
 | D2. `default.csl` (CC BY-SA 3.0) | Not in this repository. Same data package as D1. |
-| D3. The abbreviation list and the DocBook entity list | Randoc does not copy the Pandoc files. The Markdown reader gets a list from black-box tests of the oracle with candidates that the worker wrote. The list can be incomplete. |
+| D3. The abbreviation list and the DocBook entity list | Randoc does not copy the Pandoc files. The abbreviation list of `randoc_core::shared` has 76 entries that black-box tests of the oracle confirmed, from 3,926,072 candidates that a script made mechanically. The list can be incomplete (I-SHARED-03). The DocBook entity list is not started. |
 | D4. 34 syntax definitions with no licence grant (C, Python, JavaScript, Lua, SQL and others) | In no package. Load them at run time from a Pandoc, skylighting or KDE installation of the user. Byte-identical highlighting for these languages is a gap until a grant exists or new definitions are written. |
 | D5. Test inputs from documents with a copyleft licence: the examples of the CommonMark specification (CC-BY-SA-4.0) and example text of the Pandoc manual (GPL) | Not in this repository. Workers write their own inputs. A tool under `tools/` downloads a public test suite at a pinned version, runs it outside the repository and stores only numbers in `spec/`. Each workstream merges as one squashed commit, so that an early commit with such a file does not reach `main`. Many CommonMark projects with a permissive licence keep the specification file in their repository as test data; the owner can decide to do the same. |
 

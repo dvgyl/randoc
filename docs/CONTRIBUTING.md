@@ -42,6 +42,28 @@ Read [`ARCHITECTURE.md`](ARCHITECTURE.md) first.
 A gate that cannot apply to a change is recorded with its reason in
 `PROGRESS.md`. The bar is never lowered without a record.
 
+## Reuse of open source
+
+Rule of the owner (2026-11-10): do not build each part from zero. Study the
+open-source code that does the same work, and build on it where that is
+faster or more reliable. The full rule, the material in use and the list of
+candidates are in [`PRIOR_ART.md`](PRIOR_ART.md).
+
+Before you reuse anything:
+
+1. Check its licence at the exact release. It must be compatible with
+   `MIT OR Apache-2.0`. Pandoc itself and `texmath` are GPL and are not
+   permitted.
+2. Add a row to `docs/PRIOR_ART.md`.
+3. Write a short record in [`ADR.md`](ADR.md) that says why you chose it.
+4. Keep the attribution in `THIRD_PARTY_NOTICES.md` and the full licence
+   text in `third_party/licences/`.
+
+Prefer a dependency on a pinned upstream release to a copy of the code. Fork
+or vendor only when you must change the code; keep the changes small,
+describe them, and cover them with Randoc tests. Reused code passes the same
+merge gate as your own code.
+
 ## Commands
 
 Run each command from the root of your worktree.

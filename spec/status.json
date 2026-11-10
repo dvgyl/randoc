@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T06:05:00Z",
+  "updated": "2026-11-10T09:01:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,9 +14,9 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 3574,
+    "units": 4546,
     "pass": 2217,
-    "fail": 987,
+    "fail": 1959,
     "skipped": 370,
     "baseline_units": 2217
   },
@@ -26,7 +26,8 @@
     "oracle_pass": 2231,
     "randoc_pass": 0,
     "cannot_run_estimate": 1939,
-    "details": "spec/pandoc-testsuite.json"
+    "details": "spec/pandoc-testsuite.json",
+    "measured": "2026-11-10T09:01:00Z on 3dbc884"
   },
   "corpus": {
     "status": "measured",
@@ -34,7 +35,8 @@
     "units": 690,
     "oracle_pass": 690,
     "randoc_pass": 0,
-    "details": "spec/corpus.json"
+    "details": "spec/corpus.json",
+    "measured": "2026-11-10T09:01:00Z on 3dbc884"
   },
   "workstreams": [
     {
@@ -60,15 +62,18 @@
     },
     {
       "id": "markdown-reader",
-      "state": "review"
+      "state": "in_work",
+      "note": "head 4c1edf9: two high time findings open (I-MD-27, I-MD-28); last gate pass 2d3fb48"
     },
     {
       "id": "html-writer",
-      "state": "review"
+      "state": "review",
+      "note": "head c803b4e: round 3 single items corrected, the section rule matrix is open; last full gate pass 31709f6"
     },
     {
       "id": "cli",
-      "state": "review"
+      "state": "review",
+      "note": "head 9954e7b (wip): round 5 corrections written, not tested; last gate pass 2da6375"
     },
     {
       "id": "native",
@@ -80,7 +85,8 @@
     },
     {
       "id": "commonmark-reader",
-      "state": "review"
+      "state": "review",
+      "note": "head 723475d (wip): 8 round 4 items corrected, last commit not tested; last gate pass 6e46f9a"
     },
     {
       "id": "research",
@@ -88,15 +94,18 @@
     },
     {
       "id": "templates",
-      "state": "review"
+      "state": "merged",
+      "note": "head 8d63d0b; both reviewers approved in round 5"
     },
     {
       "id": "latex-writer",
-      "state": "review"
+      "state": "in_work",
+      "note": "head f85d334: 4 of 500 random latex trees differ; gate not run on the head; last gate pass b0f4099"
     },
     {
       "id": "yaml",
-      "state": "review"
+      "state": "review",
+      "note": "head 50d9b28: 5 of 8 round 3 items corrected; last gate pass 800a66a"
     },
     {
       "id": "shared",
@@ -104,16 +113,24 @@
     },
     {
       "id": "highlight",
-      "state": "in_work"
+      "state": "review",
+      "note": "head dfec7d9: gate passes; review round 1 was stopped with the session, no verdict"
     },
     {
       "id": "markdown-writer",
-      "state": "in_work"
+      "state": "in_work",
+      "note": "head 235b8a8: tables and markua open; last gate pass ac1b191"
+    },
+    {
+      "id": "math",
+      "state": "in_work",
+      "note": "head 1af6155 (wip): first version of randoc-math from oracle output; gate not run"
     }
   ],
   "next_tasks": [
-    "Review and merge each workstream when it reports: layout, json-codec, native, cli, html-writer, markdown-reader, commonmark-reader, templates, latex-writer.",
-    "After the Markdown reader and the HTML writer merge: measure Markdown to HTML in the harness, and run the Pandoc test-suite tool and the corpus tool again.",
-    "Add the harness rule for random values (H-001) before an EPUB or ipynb writer starts."
-  ]
+    "Bring the nearest branches to main, in this order: yaml, cli, commonmark-reader, html-writer, highlight. For each: gate on the head commit, the open items of its report, one review round with both reviewers, merge-ws. Then measure CommonMark to HTML with the harness, the Pandoc test suite and the corpus.",
+    "Apply the reuse rule (docs/PRIOR_ART.md, docs/ADR.md ADR 1): check the licence of each candidate; compare the CommonMark reader with commonmark-hs; choose a permissive base for randoc-math; choose pinned crates for ZIP, XML and Lua; decide the inline-parser design of the Markdown reader.",
+    "Start the next wave when the command line is on main: HTML reader, docx, odt and epub containers, rst, org, JSON and Lua filters, citeproc."
+  ],
+  "handoff": "PROGRESS.md, section Handoff"
 }

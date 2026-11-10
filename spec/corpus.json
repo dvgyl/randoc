@@ -2,7 +2,7 @@
  "program": "pandoc 3.13",
  "oracle": "pandoc 3.13",
  "program_path": "target/debug/randoc",
- "program_sha256": "53cb2dc2c9a6ee1be95408e9cff6e9bb58944142efea391ac78e0794b5f6ece6",
+ "program_sha256": "f477f44b26ba359cb174dc21d68cfa7e91e604da4e343001e290977509192ce2",
  "oracle_sha256": "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44",
  "targets": [
   "json",

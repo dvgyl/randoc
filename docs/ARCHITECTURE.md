@@ -101,5 +101,7 @@ Pandoc is GPL-2.0-or-later. Randoc is MIT OR Apache-2.0. Do not read Pandoc
 source code to write Randoc code, and do not copy Pandoc test files. Use the
 Pandoc manual, the documented interfaces and the output of the oracle.
 Libraries with permissive licences (for example `doclayout`, `doctemplates`,
-`commonmark-hs`, `pandoc-types`, `citeproc`: BSD) can be studied and ported
-with attribution in `THIRD_PARTY.md`. Check the licence first.
+`commonmark-hs`, `pandoc-types`, `citeproc`: BSD) can be studied, used as
+dependencies and ported. Follow the reuse rule in `docs/PRIOR_ART.md`:
+check the licence first, record the choice in `docs/PRIOR_ART.md` and
+`docs/ADR.md`, and keep the attribution in `THIRD_PARTY_NOTICES.md`.

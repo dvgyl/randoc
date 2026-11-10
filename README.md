@@ -57,4 +57,4 @@ Randoc is licensed under either of the [MIT licence](LICENSE-MIT) or the
 
 Randoc is an independent implementation. It contains no Pandoc source code.
 Files from other projects are listed with their licences in
-[`THIRD_PARTY.md`](THIRD_PARTY.md).
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

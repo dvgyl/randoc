@@ -1,10 +1,15 @@
-# Third-party material
+# Third-party notices
 
 Randoc is an independent implementation of the behaviour of Pandoc. Pandoc is
 licensed under GPL-2.0-or-later. Randoc contains no Pandoc source code and no
 Pandoc test files.
 
-This file lists each file or design that comes from a different project.
+This file lists each file or design that comes from a different project,
+with its licence and its attribution. The full licence texts are in
+`third_party/licences/`. The rule for reuse and the list of candidates are
+in [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md); the reason for each choice is
+in [`docs/ADR.md`](docs/ADR.md). The name of this file was `THIRD_PARTY.md`
+until 2026-11-10.
 
 | Material | Source | Licence | Where | Licence text |
 | --- | --- | --- | --- | --- |
