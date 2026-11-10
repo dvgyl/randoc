@@ -125,14 +125,12 @@ pinned revisions one hour later. The corpus does not use such URLs.
 
 ### How the hashes of this manifest were checked
 
-`fetch.py --pin` made the hashes in one run. Then a second download without
-`--pin` into a scratch folder checked a sample of 30 documents. The sample
-came from 28 sources on 4 hosts (`raw.githubusercontent.com`,
-`en.wikipedia.org`, `standardebooks.org`, `www.ebi.ac.uk`). The final check
-gave 30 equal hashes. An earlier check found that 5 of the 8 Wikipedia HTML
-pages had changed, so I replaced them with 6 pages from `mdn/learning-area`
-at a pinned commit (CC0-1.0). A second download checked those 6 pages too.
-The other documents have only the hash of the first download.
+`fetch.py --pin` made the hashes in one run. On 2026-11-10, a second
+download of the whole corpus without `--pin` into an empty scratch folder
+gave the same hash for each of the 230 documents. An earlier check of a
+sample found that 5 of the 8 Wikipedia REST HTML pages had changed, so the
+corpus has no such pages. It has 6 pages from `mdn/learning-area` at a
+pinned commit (CC0-1.0) in their place.
 
 ## Sources and licences
 
