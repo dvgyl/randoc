@@ -80,3 +80,23 @@ and no local path (checked with a search).
 Limit of the tool under the present machine load: a comparison of a program
 with itself often ends as "inconclusive" (exit code 3). Gate 6 then has the
 result "not decided", and the merge log must say so.
+
+## Workstream research (branch `ws/research`, head e768696)
+
+Content: `docs/COMPETITIVE_ANALYSIS.md`, `docs/DATA_FILES_LICENCES.md` and the
+probe data in `docs/research-data/`. No product code.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 28 units pass, 0 regressions. |
+| 2. Measured progress | Documents only. They give the tested state of three other projects and the licence state of each Pandoc data file. |
+| 3. Tests | Not applicable: no code. Each number in the documents comes from a recorded command. |
+| 4. No panics | Not applicable. |
+| 5. Two reviews | Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES (1 high, 3 medium, 3 low), round 2 APPROVE at e768696 with 1 low finding. Opus 5.5 with a new context: round 1 REQUEST CHANGES (1 medium, 8 low), round 2 APPROVE at e768696 with 1 low finding. The two open low findings are L-003 and L-004 in `docs/ISSUES.md`. |
+| 6. No slowdowns | Not applicable. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Not checked by a reviewer: the competitor programs could not run again in the
+reviews, because the worker deleted its clones to free disk space. The
+reviewers checked the numbers against the stored result rows and the public
+repositories.

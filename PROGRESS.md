@@ -39,7 +39,7 @@ Updated: 2026-11-09 23:50 UTC.
 | native | `ws/native` | In work. |
 | json-codec | `ws/json-codec` | In work. It corrects the JSON findings of the foundation reviews. |
 | commonmark-reader | `ws/commonmark-reader` | In work. |
-| research | `ws/research` | In work. |
+| research | `ws/research` | Merged. |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).
@@ -81,6 +81,19 @@ The exFAT file system has effects that a new session must know:
 - Incremental compilation is off (`CARGO_INCREMENTAL=0`) to keep the target
   directory small.
 - The fuzz script keeps the corpus in memory for the same reason.
+
+## Decisions that wait for the owner
+
+The licence research (`docs/DATA_FILES_LICENCES.md`, "Decisions for the owner")
+found four decisions. The coordinator uses a working rule for each one until
+the owner decides.
+
+| Decision | Working rule now |
+| --- | --- |
+| D1. GPL data files of Pandoc (reference documents, translations, `epub.css`, Lua files, 98 copyleft syntax definitions) | Not in this repository. A later data package with its own licences can hold them. Randoc looks for them in a data directory at run time. |
+| D2. `default.csl` (CC BY-SA 3.0) | Not in this repository. Same data package as D1. |
+| D3. The abbreviation list and the DocBook entity list | Randoc does not copy the Pandoc files. The Markdown reader gets a list from black-box tests of the oracle with candidates that the worker wrote. The list can be incomplete. |
+| D4. 34 syntax definitions with no licence grant (C, Python, JavaScript, Lua, SQL and others) | In no package. Load them at run time from a Pandoc, skylighting or KDE installation of the user. Byte-identical highlighting for these languages is a gap until a grant exists or new definitions are written. |
 
 ## Merge gate records
 

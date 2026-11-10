@@ -29,3 +29,5 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | --- | --- | --- | --- |
 | L-001 | `tools/bench/run.py` | In a very small time window, the timer of the time limit can send a kill signal to the process group after the measured program ended. The run result stays correct. | Codex review of bench, round 4 (R2-3) |
 | L-002 | `tools/bench/run.py` | The fallback that stops a child which left its process group has no test. | Opus review of bench, final check (R4-1) |
+| L-003 | `docs/research-data/commands.md` | The merge command reads `probe-cf.tsv`, but the recorded probe run writes `probe.tsv`. The recorded commands cannot make `results.tsv` again as written. | Opus review of research, round 2 (N-1) |
+| L-004 | `docs/DATA_FILES_LICENCES.md` | The notice rule for `julia.xml` omits the author that the file header names (Timothy E. Holy). Keep that credit when Randoc ships the file. | Codex review of research, round 2 (R2-001) |
