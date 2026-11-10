@@ -21,7 +21,9 @@
 //! The layout engine, the queries, `clone`, `==` and drop use explicit
 //! stacks, so the stack cost does not grow with the nesting depth of a
 //! document. Only `Debug` output recurses. The engine uses wrapping
-//! integer arithmetic, as Haskell `Int` does.
+//! integer arithmetic, as Haskell `Int` does. Each level of a non-empty
+//! indent or prefix adds to the prefix of each line below it, so deep
+//! nesting of such levels takes quadratic time, as in `doclayout`.
 //!
 //! ```
 //! use randoc_layout::{hsep, literal, nest};
@@ -342,7 +344,9 @@ impl Doc {
     /// `Functor` instance of `doclayout` does. Each stored width stays the
     /// same, so the layout uses the widths of the old text. Prefixes,
     /// after-break text and link targets do not change. `f` must map the
-    /// empty string to the empty string.
+    /// empty string to the empty string. Pandoc changes the case of each
+    /// character on its own, so a caller who wants the Pandoc result must
+    /// map each character on its own and not use `str::to_lowercase`.
     ///
     /// ```
     /// use randoc_layout::{literal, space};
@@ -773,19 +777,23 @@ fn pad_left(count: isize, line: Line) -> Line {
 }
 
 /// A block of width `width` with the content of `doc`, aligned to the left.
-/// The content is wrapped at the width, and longer words are split.
+/// The content is wrapped at the width, and longer words are split. The
+/// width must be a real column width, because the block pads its lines
+/// with spaces to that width.
 pub fn lblock(width: usize, doc: Doc) -> Doc {
     block(width, &doc, |_, line| line)
 }
 
-/// A block like [`lblock`], with the content aligned to the right.
+/// A block like [`lblock`], with the content aligned to the right. The
+/// width must be a real column width.
 pub fn rblock(width: usize, doc: Doc) -> Doc {
     block(width, &doc, |w, line| {
         pad_left(w.wrapping_sub(render::line_length(&line)), line)
     })
 }
 
-/// A block like [`lblock`], with the content centered.
+/// A block like [`lblock`], with the content centered. The width must be
+/// a real column width.
 pub fn cblock(width: usize, doc: Doc) -> Doc {
     block(width, &doc, |w, line| {
         pad_left(
@@ -1408,7 +1416,7 @@ mod tests {
     #[test]
     fn map_text_keeps_stored_widths() {
         let upper = |d: &Doc| d.map_text(&|s| s.to_uppercase());
-        let lower = |d: &Doc| d.map_text(&|s| s.to_lowercase());
+        let lower = |d: &Doc| d.map_text(&|s| s.chars().flat_map(char::to_lowercase).collect());
         let sharp = literal("ßßßß")
             .spaced(literal("ßßßß"))
             .spaced(literal("ab"));
@@ -1589,6 +1597,28 @@ mod tests {
             doc.update_column(0),
         );
         assert_eq!(queries, (0, 0, 1, 0));
+    }
+
+    /// Expected values from `pandoc.layout` in Pandoc 3.13.
+    #[test]
+    fn before_non_blank_looks_at_blocks_and_fills() {
+        let after = |d: Doc| (before_non_blank(literal("x")) + d).render(None);
+        assert_eq!(after(lblock(0, empty())), "x");
+        assert_eq!(after(vfill("|")), "x|");
+        assert_eq!(after(vfill("\t") + lblock(1, literal("a"))), "x\ta");
+        assert_eq!(after(vfill(" ")), " ");
+    }
+
+    /// Skipped content is dropped without recursion. With 100,000 levels a
+    /// recursive drop overflows the stack of the test thread.
+    #[test]
+    fn skipped_deep_content_drops_without_recursion() {
+        let mut deep = literal("x");
+        for _ in 0..100_000 {
+            deep = prefixed("", deep);
+        }
+        let doc = before_non_blank(deep) + literal(" y");
+        assert_eq!(doc.render(None), " y");
     }
 
     #[test]
