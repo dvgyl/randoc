@@ -113,6 +113,27 @@ To add documents, add entries with `sha256 = ""` and `size = 0`, then run
 `python3 tools/corpus/fetch.py --pin`. The tool downloads the new documents
 and writes their hashes and sizes into the manifest.
 
+A pinned hash is trusted by each later run. Before you commit a new hash,
+check it with a second, independent download: run `fetch.py` without
+`--pin` into an empty scratch folder (`--corpus DIR --only NAME`). Commit the
+hash only when the second download gives the same hash.
+
+A URL must give the same bytes on each download. A pinned revision is not
+enough for rendered pages. For example, the Wikipedia REST API
+(`/api/rest_v1/page/html/TITLE/REVISION`) gave different HTML for 5 of 8
+pinned revisions one hour later. The corpus does not use such URLs.
+
+### How the hashes of this manifest were checked
+
+`fetch.py --pin` made the hashes in one run. Then a second download without
+`--pin` into a scratch folder checked a sample of 30 documents. The sample
+came from 28 sources on 4 hosts (`raw.githubusercontent.com`,
+`en.wikipedia.org`, `standardebooks.org`, `www.ebi.ac.uk`). The final check
+gave 30 equal hashes. An earlier check found that 5 of the 8 Wikipedia HTML
+pages had changed, so I replaced them with 6 pages from `mdn/learning-area`
+at a pinned commit (CC0-1.0). A second download checked those 6 pages too.
+The other documents have only the hash of the first download.
+
 ## Sources and licences
 
 `python3 tools/corpus/corpuslib.py` prints the two tables below. A unit test checks
@@ -133,7 +154,7 @@ that they match the manifest.
 | datasets/gdp | CC-BY-4.0 | csv | 2 |
 | denoland/deno | MIT | gfm | 1 |
 | doomemacs/doomemacs | MIT | org | 9 |
-| en.wikipedia.org | CC-BY-SA-4.0 | html, mediawiki | 24 |
+| en.wikipedia.org | CC-BY-SA-4.0 | mediawiki | 16 |
 | europepmc.org | CC-BY-4.0 | jats | 4 |
 | facebook/react | MIT | gfm | 1 |
 | facebook/zstd | BSD-3-Clause OR GPL-2.0-only | man | 1 |
@@ -149,6 +170,7 @@ that they match the manifest.
 | latex3/latex2e | LPPL-1.3c | latex | 8 |
 | lz4/lz4 | GPL-2.0-or-later | man | 1 |
 | mdn/content | CC-BY-SA-2.5 | commonmark | 10 |
+| mdn/learning-area | CC0-1.0 | html | 6 |
 | microsoft/vscode | MIT | gfm | 1 |
 | openbsd/src | BSD-2-Clause AND LicenseRef-SSH-Ylonen; ISC; LicenseRef-Public-Domain | mdoc | 6 |
 | pallets/flask | BSD-3-Clause | gfm | 1 |
@@ -187,7 +209,7 @@ that they match the manifest.
 | docx | 11 | 168410 |
 | epub | 7 | 3567105 |
 | gfm | 12 | 117005 |
-| html | 11 | 3797438 |
+| html | 9 | 394354 |
 | ipynb | 8 | 138916 |
 | jats | 4 | 216938 |
 | latex | 8 | 309365 |
@@ -208,7 +230,7 @@ that they match the manifest.
 | textile | 4 | 29884 |
 | typst | 4 | 18471 |
 | xlsx | 4 | 36560 |
-| all | 232 | 14974835 |
+| all | 230 | 11571751 |
 
 ## Documents that Pandoc rejects
 

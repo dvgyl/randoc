@@ -128,7 +128,9 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES, name="pand
             timed_out = True
     _stop_group(process)
     try:
-        process.wait(timeout=CLEANUP_SECONDS)
+        # The group got SIGKILL, so the program ends at once. A short cleanup
+        # limit in a test must not leave it unreaped.
+        process.wait(timeout=max(CLEANUP_SECONDS, 1.0))
     except subprocess.TimeoutExpired:
         pass
     process.stdout.close()

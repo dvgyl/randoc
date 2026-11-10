@@ -1508,15 +1508,6 @@ sha256 = "5f170e6fe0644c9e72903a7671bfb6bb5246d22f39caa8721259b0774f7854a5"
 size = 98391
 
 [[document]]
-name = "wp-html-ada-lovelace"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Ada_Lovelace/1384127064"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "a207cadb15f71c810596527a66cc24d35f80de3b72c6b76266988ce76bedfb96"
-size = 651503
-
-[[document]]
 name = "wp-alan-turing"
 format = "mediawiki"
 url = "https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1384739096&action=raw"
@@ -1533,15 +1524,6 @@ license = "CC-BY-SA-4.0"
 source = "en.wikipedia.org"
 sha256 = "5a1e5d62f52bc30590509fb03dfcd7b0666d41d62dbaec16142aeb6b30704d49"
 size = 73960
-
-[[document]]
-name = "wp-html-donald-knuth"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Donald_Knuth/1379836531"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "cfb52db9afbeb7578443474ce8789f6f19e74ad5ccc74fe4399cd8218b08c9f6"
-size = 625116
 
 [[document]]
 name = "wp-euclidean-algorithm"
@@ -1562,15 +1544,6 @@ sha256 = "579572e7cfd9e8b1af6fc2dcb283c89c002d0b4e4b08ea9a4cbc759af09a5373"
 size = 52983
 
 [[document]]
-name = "wp-html-haskell"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Haskell/1383723142"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "55fbc4f84c91480bda77e676bfdedc35030cf9cb8377b912e3cda24ec3c2f8b0"
-size = 381166
-
-[[document]]
 name = "wp-latex"
 format = "mediawiki"
 url = "https://en.wikipedia.org/w/index.php?title=LaTeX&oldid=1376089138&action=raw"
@@ -1587,15 +1560,6 @@ license = "CC-BY-SA-4.0"
 source = "en.wikipedia.org"
 sha256 = "47383b4b8bef75132231c4e6921e7ccb9350e67c545d535cdbff0da423def472"
 size = 34677
-
-[[document]]
-name = "wp-html-markdown"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Markdown/1383305779"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "c96f62b5973476a4834159af916d609376473c7801861b63b18d28efa63c83d7"
-size = 243154
 
 [[document]]
 name = "wp-mount-everest"
@@ -1616,15 +1580,6 @@ sha256 = "866e134df54485edc07281c7dd8764a4b66d7a62a790aa90cf67a0e3c630bacb"
 size = 12648
 
 [[document]]
-name = "wp-html-pandoc"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Pandoc/1377420973"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "f671bf7e3d780fa359abc5813629d31fcdd1d56069fa968fefed02debd3d05be"
-size = 143193
-
-[[document]]
 name = "wp-periodic-table"
 format = "mediawiki"
 url = "https://en.wikipedia.org/w/index.php?title=Periodic_table&oldid=1381469771&action=raw"
@@ -1641,15 +1596,6 @@ license = "CC-BY-SA-4.0"
 source = "en.wikipedia.org"
 sha256 = "472dab419e9bafe1b4b35456f72cab412fb14f9c893e9d422ffe6459043125f9"
 size = 111083
-
-[[document]]
-name = "wp-html-photosynthesis"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Photosynthesis/1383248806"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "cd078e807f1345aaba0e2206893435a67478c0689ef75eec296fca454eb5879a"
-size = 784512
 
 [[document]]
 name = "wp-plate-tectonics"
@@ -1670,15 +1616,6 @@ sha256 = "917556ee638ac683080015b6864155e10e3f760bb51e898d6a7398e2413278f9"
 size = 62971
 
 [[document]]
-name = "wp-html-printing-press"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Printing_press/1384322441"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "283c9aa6e53ca2b4e26dac59abccb3d656a2a8d043b64c0e96fa935f29e0ae9e"
-size = 441798
-
-[[document]]
 name = "wp-rust-programming-language"
 format = "mediawiki"
 url = "https://en.wikipedia.org/w/index.php?title=Rust_%28programming_language%29&oldid=1384717120&action=raw"
@@ -1695,15 +1632,6 @@ license = "CC-BY-SA-4.0"
 source = "en.wikipedia.org"
 sha256 = "8902fd9aede6f0358a5e0b08764d9bb6b185e0f2195223d3d6ed01f341df5ada"
 size = 25126
-
-[[document]]
-name = "wp-html-typesetting"
-format = "html"
-url = "https://en.wikipedia.org/api/rest_v1/page/html/Typesetting/1381355247"
-license = "CC-BY-SA-4.0"
-source = "en.wikipedia.org"
-sha256 = "5f6ca61b24c55fedcd5c5ef176c9c1b290860ed0814f2d921a865eb4d2d98335"
-size = 163453
 
 [[document]]
 name = "wp-unicode"
@@ -2091,3 +2019,57 @@ license = "GPL-3.0-or-later"
 source = "scripting/concord@de5ec87ff976"
 sha256 = "30be0c7ceed17cf74e5978e587b4aca00fc73d75bffe8632d53ee9d2d49eae40"
 size = 30944
+
+[[document]]
+name = "mdn-learning-accessibility-assessment-finished"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/accessibility/assessment-finished/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "fd32c1e42285f01145087af48257e16407f31901b3708f777c5beb8c82d39bf8"
+size = 7532
+
+[[document]]
+name = "mdn-learning-accessibility-assessment-start"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/accessibility/assessment-start/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "5c7c09a47a805041981a43eabd2d6ea52d0a02c47981ac7ac841ab008f91face"
+size = 7116
+
+[[document]]
+name = "mdn-learning-css-css-layout-practical-positioning-examples-fixed-info-box"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/css/css-layout/practical-positioning-examples/fixed-info-box.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "d913a12014e00cc1a3103d169889a2ac45c465659125e461b1d46de07b1379f7"
+size = 5157
+
+[[document]]
+name = "mdn-learning-html-introduction-to-html-document-and-website-structure"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/html/introduction-to-html/document_and_website_structure/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "8623d0ff8d0696128844a2315d8c23840cf839d52fab09fcd06eabb3e5e966ec"
+size = 3525
+
+[[document]]
+name = "mdn-learning-html-tables-advanced-items-sold-headers"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/html/tables/advanced/items-sold-headers.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "596e16d053290d570f90078a7776bee55a1e87a011ed369b1d46f3336823f677"
+size = 3179
+
+[[document]]
+name = "mdn-learning-html-tables-planets-data"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/html/tables/planets-data/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "c6026ae2b296ecd13926b139d65bbe60aa20efeb542a8d7e0993651c780ea215"
+size = 4302

@@ -589,18 +589,6 @@ class ThirdReviewTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(set(json.loads(out.read_text())["results"].values()), {"error program"})
 
-    def test_fetch_an_incomplete_download_is_a_failure_and_not_a_crash(self):
-        manifest = self.dir / "manifest.toml"
-        manifest.write_text(corpuslib.format_manifest([document("a")]))
-
-        def get(url):
-            raise http.client.IncompleteRead(b"alp", 2)
-        with contextlib.redirect_stdout(io.StringIO()) as out:
-            code = fetch.main(["--manifest", str(manifest), "--corpus", str(self.dir)], get, 0)
-        self.assertEqual(code, 1)
-        self.assertIn("a: error: IncompleteRead", out.getvalue())
-        self.assertFalse((self.dir / "a.md").exists())
-
     def test_fetch_a_download_has_a_total_time_limit(self):
         source = self.dir / "slow"
         source.write_bytes(b"x" * 100)
@@ -747,6 +735,53 @@ class SlowServerTests(unittest.TestCase):
         before = set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*"))
         self.assert_stops_near_the_limit(b"HTTP/1.1 200 OK\r\nContent-Length: 200\r\n\r\n", b"x" * 200)
         self.assertEqual(set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*")), before)
+
+    def assert_cut_download_fails(self, head, body):
+        before = set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*"))
+        server = SlowServer(head, body, pause=0)
+        try:
+            with self.assertRaisesRegex(OSError, "IncompleteRead"):
+                fetch.download(server.url, total=10)
+        finally:
+            server.close()
+        self.assertEqual(set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*")), before)
+
+    def test_r5_01_a_download_cut_before_content_length_fails(self):
+        self.assert_cut_download_fails(b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\n", b"x" * 10)
+
+    def test_r5_01_a_chunked_download_cut_before_the_last_chunk_fails(self):
+        self.assert_cut_download_fails(b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n", b"5\r\nalpha\r\n")
+        self.assert_cut_download_fails(b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n", b"a\r\nalp")
+
+    def test_no_manifest_url_uses_a_rendering_api_that_changes(self):
+        for d in corpuslib.load_manifest():
+            self.assertNotIn("/api/rest_v1/", d.url, d.name)
+
+    def test_r5_01_pin_does_not_write_a_cut_download(self):
+        corpus = Path(tempfile.mkdtemp(prefix="randoc-corpus-cut-"))
+        try:
+            manifest = corpus / "manifest.toml"
+            text = corpuslib.format_manifest([document("a", sha256="", size=0)])
+            manifest.write_text(text)
+            for _ in range(2):
+                server = SlowServer(b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\n", b"x" * 10, pause=0)
+                try:
+                    if _ == 0:
+                        with self.assertRaises(OSError):
+                            fetch.fetch_one(document("a", sha256="", size=0), corpus,
+                                            lambda url: fetch.download(server.url, total=10), pin=True)
+                    else:
+                        with contextlib.redirect_stdout(io.StringIO()) as out:
+                            code = fetch.main(["--manifest", str(manifest), "--corpus", str(corpus), "--pin"],
+                                              lambda url: fetch.download(server.url, total=10), 0)
+                        self.assertEqual(code, 1)
+                        self.assertIn("a: error:", out.getvalue())
+                finally:
+                    server.close()
+                self.assertFalse((corpus / "a.md").exists())
+            self.assertEqual(manifest.read_text(), text)
+        finally:
+            shutil.rmtree(corpus, ignore_errors=True)
 
     def test_a_server_error_is_an_os_error(self):
         server = SlowServer(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n", b"", pause=0)

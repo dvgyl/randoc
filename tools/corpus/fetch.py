@@ -57,6 +57,11 @@ def transfer(url, output, max_bytes, timeout):
             if size > max_bytes:
                 raise ValueError(f"more than {max_bytes} bytes")
             file.write(chunk)
+        # read1() returns b"" when the server closes the connection early.
+        # The response then still expects bytes.
+        missing = getattr(response, "length", None)
+        if missing:
+            raise http.client.IncompleteRead(b"", missing)
 
 
 def download_main(argv):
@@ -73,7 +78,7 @@ def download_main(argv):
     return 0
 
 
-def download(url, timeout=10, total=DOWNLOAD_SECONDS):
+def download(url, timeout=60, total=DOWNLOAD_SECONDS):
     """Returns the bytes at `url`.
 
     A child process downloads the document to a temporary file. The parent
