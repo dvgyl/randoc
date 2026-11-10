@@ -1,0 +1,672 @@
+NOTICE
+The test files of doctemplates 0.11.1 (https://github.com/jgm/doctemplates), BSD-3-Clause, Copyright John MacFarlane. See crates/randoc-templates/NOTICE.md.
+basic-with-braces.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+${ for(employee) }
+Hi, ${employee.name.first}. ${ if(employee.salary) }You make $$${ employee.salary }.${ else }No salary data.${ endif }
+${ endfor }
+.
+Hi, John. No salary data.
+Hi, Omar. You make $30000.
+Hi, Sara. You make $60000.
+basic-with-it.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+$for(employee)$
+Hi, $it.name.first$. $if(it.salary)$You make $$$it.salary$.$else$No salary data.$endif$
+$endfor$
+.
+Hi, John. No salary data.
+Hi, Omar. You make $30000.
+Hi, Sara. You make $60000.
+basic.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+$for(employee)$
+Hi, $employee.name.first$. $if(employee.salary)$You make $$$employee.salary$.$else$No salary data.$endif$
+$ endfor $
+.
+Hi, John. No salary data.
+Hi, Omar. You make $30000.
+Hi, Sara. You make $60000.
+boolean.test
+{ "foo": true,
+  "bar": false
+}
+.
+$foo$
+$bar$
+$if(foo)$XXX$else$YYY$endif$
+$if(bar)$XXX$else$YYY$endif$
+.
+true
+false
+XXX
+YYY
+comments.test
+{ "foo": 3 }
+.
+$-- a comment
+$--${foo} more comment
+$$-- not a comment
+a$-- comment
+.
+$-- not a comment
+a
+conditionals.test
+{ "foo": 1,
+  "bar": null,
+  "baz": ["a", "b"],
+  "bim": { "zub": "sim" },
+  "sup": [ { "biz": "qux" }
+         , { "sax": "" }
+         ]
+}
+.
+${if(sup.sax)}
+XXX
+${else}
+YYY
+${endif}
+${if(bar)}
+BAR
+${endif}
+${if(bar)}BAR${endif}
+${if(foo)}
+FOO
+${endif}
+${if(baz)}
+BAZ
+${endif}
+${if(bim)}
+BIM
+${endif}
+${if(sup)}
+SUP
+${endif}
+.
+YYY
+
+FOO
+BAZ
+BIM
+SUP
+elseif.test
+{ "foo": 1,
+  "bar": null,
+  "baz": ["a", "b"],
+  "bim": { "zub": "sim" },
+  "sup": [ { "biz": "qux" }
+         , { "sax": "" }
+         ]
+}
+.
+$if(sup.sax)$
+XXX
+$elseif(baz)$
+YYY
+$else$
+ZZZ
+$endif$
+
+$if(sup.sax)$
+XXX
+$elseif(baz.nonexist)$
+YYY
+$elseif(sup.sax)$
+ZZZ
+$else$
+WWW
+$endif$
+.
+YYY
+
+WWW
+empty.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": [] }
+  ]
+}
+.
+$for(employee)$
+Hi, $employee.name.first$. $if(employee.salary)$You make $$$employee.salary$.$else$No salary data.$endif$
+$ endfor $
+.
+Hi, John. No salary data.
+Hi, Omar. No salary data.
+Hi, Sara. No salary data.
+final-newline.test
+{ "employee":
+  [ { "name": "John\n" }
+  , { "name": "Sara\n\n" }
+  , { "name": "Omar" }
+  ]
+}
+.
+$for(employee)$
+$employee.name$
+$ endfor $
+.
+John
+Sara
+
+Omar
+forloop.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" }
+    , "salary": "30000" }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "60000" }
+  , { "name": { "first": "Sara", "last": "Chen" } }
+  ]
+}
+.
+$for(employee)$
+$employee.name.first$ $employee.name.last$$sep$;
+$endfor$
+
+
+$for(employee)$$employee.salary$$sep$; $endfor$
+.
+John Doe;
+Omar Smith;
+Sara Chen
+
+30000; 60000; 
+indent.test
+{ "foo": "FOO1\nFOO2"
+, "bar": [ "LINE1\n LINE2"
+         , "LINE3\n LINE4"
+         ]
+}
+.
+$if(foo)$
+   $foo$
+$endif$
+$for(bar)$
+  $bar$
+$endfor$
+
+- $foo$
+  $foo$ -
+  $if(foo)$$foo$$endif$
+.
+   FOO1
+   FOO2
+  LINE1
+   LINE2
+  LINE3
+   LINE4
+
+- FOO1
+FOO2
+  FOO1
+FOO2 -
+  FOO1
+FOO2
+loop-in-object.test
+{ "worksite":
+  { "name": "canyon"
+  , "workers":
+       [ { "name": { "first": "John", "last": "Doe" } }
+       , { "name": { "first": "Omar", "last": "Smith" }
+         , "salary": "30000" }
+       , { "name": { "first": "Sara", "last": "Chen" }
+         , "salary": "60000" }
+       ]
+  }
+}
+.
+${ for(worksite.workers) }
+${it.name.last}, ${it.name.first}
+${ endfor }
+.
+Doe, John
+Smith, Omar
+Chen, Sara
+loop-in-partial.test
+{}
+.
+$loop1()$
+
+.
+(loop)
+nest.test
+{ "foo": 1,
+  "baz": ["a", "b"],
+  "bim": { "zub": "sim" },
+  "sup": "a multiline\nstring"
+}
+.
+    $sup$
+   $sup$
+
+   $^$$sup$
+
+$bim.zub$ $^$$sup$
+
+$bim.zub$ $^$$foo$
+          bar $sup$
+
+$for(baz)$
+1. $^$Hello
+   $if(it)$
+     $it$
+   $endif$
+$endfor$
+
+  $^$hey $sup$
+  hey $sup$
+
+  hey $sup$
+
+  hey
+  $if(foo)$
+
+  $foo$
+  $endif$
+  hey
+.
+    a multiline
+    string
+   a multiline
+   string
+
+   a multiline
+   string
+
+sim a multiline
+    string
+
+sim 1
+    bar a multiline
+    string
+
+1. Hello
+     a
+1. Hello
+     b
+
+  hey a multiline
+  string
+  hey a multiline
+  string
+
+  hey a multiline
+  string
+
+  hey
+
+  1
+  hey
+nested-loop.test
+{
+  "pages": [
+    {
+      "subpages": [
+        {
+          "slug": "subpage-1"
+        },
+        {
+          "slug": "subpage-2"
+        }
+      ],
+      "slug": "page-1"
+    },
+    {
+      "subpages": [
+        {
+          "slug": "subpage-1"
+        },
+        {
+          "slug": "subpage-2"
+        }
+      ],
+      "slug": "page-2"
+    }
+  ]
+}
+.
+$-- see #15
+$for(pages)$
+/$pages.slug$
+$for(pages.subpages)$
+  /$pages.slug$/$pages.subpages.slug$
+$endfor$
+$endfor$
+.
+/page-1
+  /page-1/subpage-1
+  /page-1/subpage-2
+/page-2
+  /page-2/subpage-1
+  /page-2/subpage-2
+numbers.test
+{ "m": 5
+, "n": 7.3
+}
+.
+$m$ and $n$
+.
+5 and 7.3
+pad.test
+{ "sup": "a multiline\nstring",
+  "baz": ["a\nb", "b\nc\nd"],
+  "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+$sup/right 15$$sup/center 15$$sup/left 15$
+
+$for(baz/pairs)$
+$it.key/alpha/right 4$. $^$$it.value$
+$endfor$
+
++------+-----------+
+$for(baz/pairs)$
+$it.key/right 4 "| " " | "$$it.value/left 10 "" "|"$
++------+-----------+
+$endfor$
+
+|------------|------------|
+$for(employee)$
+$it.name.first/uppercase/left 10 "| "$$it.salary/right 10 " | " " |"$
+$endfor$
+|------------|------------|
+
+.
+    a multiline  a multiline  a multiline
+         string    string     string
+
+   a. a
+      b
+   b. b
+      c
+      d
+
++------+-----------+
+|    1 | a         |
+|      | b         |
++------+-----------+
+|    2 | b         |
+|      | c         |
+|      | d         |
++------+-----------+
+
+|------------|------------|
+| JOHN       |            |
+| OMAR       |      30000 |
+| SARA       |      60000 |
+|------------|------------|
+partials.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+$for(employee)$
+$it:name()$
+$endfor$
+
+$employee:name()[, ]$
+
+$employee:name()$
+
+$employee:name.tex()[; ]$
+
+---
+  $boilerplate()$
+---
+$partial_foo()$
+.
+(John) Doe
+(Omar) Smith
+(Sara) Chen
+
+(John) Doe, (Omar) Smith, (Sara) Chen
+
+(John) Doe(Omar) Smith(Sara) Chen
+
+\name{John}{Doe}; \name{Omar}{Smith}; \name{Sara}{Chen}
+
+---
+  BOILERPLATE
+  HERE
+---
+Hello
+pipe-and-partial.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+$for(employee)$
+$it:name()/uppercase$
+$endfor$
+.
+(JOHN) DOE
+(OMAR) SMITH
+(SARA) CHEN
+pipes.test
+{ "foo": 1,
+  "bar": null,
+  "baz": ["a", "b"],
+  "bim": { "Zub": "Sim" },
+  "sup": [ { "biz": "qux" },
+           { "sax": 2 } ],
+  "items": [ "one with\na line break",
+            "two",
+            "three with\na line break" ],
+  "hasblanks": "hello\n\n",
+  "hasblanksmap": { "a": "hello\n\n",
+                    "b": "there\n\n" },
+  "digits": [1, 5, 20]
+}
+.
+$bar/length$
+$baz/length$
+$bim.Zub/length$
+$bim/length$
+$sup/length$
+
+$baz/uppercase[, ]$
+
+$for(baz)$
+$it$
+$it/uppercase$
+$baz$
+$baz/uppercase$
+$endfor$
+
+$for(bim/pairs)$
+$it.key$: $it.value$
+$bim.key$: $bim.value/lowercase$
+$endfor$
+
+$for(baz/pairs)$
+$it.key/roman/uppercase/right 4$. $it.value$
+$endfor$
+
+$items/pairs/reverse:enum()$
+
+($hasblanks/chomp$)
+
+$for(hasblanksmap/chomp/pairs/uppercase)$
+$it.key$ ($it.value$)
+$endfor$
+
+$digits/roman[ ]$
+
+$for(bim/uppercase)$
+$it.Zub$
+$endfor$
+
+$digits/first$
+$digits/last$
+$for(digits/rest)$
+$it$
+$endfor$
+$for(digits/allbutlast)$
+$it$
+$endfor$
+$foo/first$
+.
+0
+2
+3
+1
+2
+
+A, B
+
+a
+A
+a
+A
+b
+B
+b
+B
+
+Zub: Sim
+Zub: sim
+
+   I. a
+  II. b
+
+C.  three with
+    a line break
+B.  two
+A.  one with
+    a line break
+
+
+(hello)
+
+A (HELLO)
+B (THERE)
+
+i v xx
+
+SIM
+
+1
+20
+5
+20
+1
+5
+1
+space-in-loop.test
+{ "employee":
+  [ { "name": { "first": "John", "last": "Doe" } }
+  , { "name": { "first": "Omar", "last": "Smith" }
+    , "salary": "30000" }
+  , { "name": { "first": "Sara", "last": "Chen" }
+    , "salary": "60000" }
+  ]
+}
+.
+$for(employee)$
+$employee.name.first$
+
+$endfor$
+---
+$for(nonexistent)$
+
+$endfor$
+---
+.
+John
+
+Omar
+
+Sara
+
+---
+---
+values.test
+{ "foo": 1,
+  "bar": null,
+  "baz": ["a", "b"],
+  "bim": { "zub": "sim" },
+  "sup": [ { "biz": "qux" }
+         , { "sax": 2 }
+         ]
+}
+.
+$foo$
+$bar$
+$baz$
+$bim$
+$sup$
+.
+1
+
+ab
+true
+truetrue
+bad.txt
+partial
+$with syntax error
+boilerplate.txt
+BOILERPLATE
+HERE
+
+enum.txt
+$it.key/alpha/uppercase$.  $^$$it.value$
+
+inparens.txt
+($it$)
+loop1.txt
+$loop2()$
+loop2.txt
+$loop1()$
+name.txt
+$it.name.first:inparens()$ $it.name.last$
+partial_foo.txt
+Hello
+$if(foo)$
+$foo$
+$endif$
+name.tex
+\name{$it.name.first$}{$it.name.last$}

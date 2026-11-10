@@ -190,6 +190,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-data"
+version = "0.1.0"
+
+[[package]]
 name = "randoc-harness"
 version = "0.1.0"
 dependencies = [
@@ -218,7 +222,10 @@ dependencies = [
 name = "randoc-templates"
 version = "0.1.0"
 dependencies = [
+ "randoc-ast",
+ "randoc-data",
  "randoc-layout",
+ "serde_json",
 ]
 
 [[package]]

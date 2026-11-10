@@ -5,6 +5,7 @@ members = [
     "crates/randoc-ast",
     "crates/randoc-layout",
     "crates/randoc-templates",
+    "crates/randoc-data",
     "crates/randoc-core",
     "crates/randoc",
     "crates/randoc-cli",
@@ -38,6 +39,7 @@ authors = ["The Randoc contributors"]
 randoc-ast = { path = "crates/randoc-ast", version = "0.1.0" }
 randoc-layout = { path = "crates/randoc-layout", version = "0.1.0" }
 randoc-templates = { path = "crates/randoc-templates", version = "0.1.0" }
+randoc-data = { path = "crates/randoc-data", version = "0.1.0" }
 randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
 randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }

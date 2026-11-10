@@ -10,14 +10,15 @@ Randoc converts a document in three steps, as Pandoc does:
 
 | Crate | Purpose | Depends on |
 | --- | --- | --- |
-| `randoc-ast` | The document tree, its Pandoc-compatible JSON form, and tree traversal | `serde` |
+| `randoc-ast` | The document tree, its Pandoc-compatible JSON form, and tree traversal | none |
 | `randoc-layout` | The `Doc` type: text with breakable spaces, indentation and wrapping | none |
-| `randoc-templates` | The Pandoc template language and the template variables | `randoc-layout` |
-| `randoc-core` | The shared contracts (see below) | the three crates above |
-| `randoc-FORMAT` | One crate for each format family: the reader and the writer | `randoc-core` |
+| `randoc-templates` | The Pandoc template language: parser, renderer, pipes and partials | `randoc-ast`, `randoc-layout` |
+| `randoc-data` | The data files that the Randoc licence permits: the default templates and their partials | none |
+| `randoc-core` | The shared contracts (see below) and the shared utilities (`randoc_core::shared`) | `randoc-ast`, `randoc-layout`, `randoc-templates` |
+| `randoc-FORMAT` | One crate for each format family: the reader and the writer (`randoc-native` is the first one) | `randoc-ast`, `randoc-core` |
 | `randoc` | The library facade and the registry of formats | all format crates |
 | `randoc-cli` | The `randoc` program: options, defaults files, input and output | `randoc` |
-| `randoc-harness` | The conformance harness. It runs programs and does not link Randoc. | none |
+| `randoc-harness` | The conformance harness. It runs programs and does not link Randoc. | no Randoc crate |
 
 ## Shared contracts
 

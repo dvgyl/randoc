@@ -266,3 +266,39 @@ Changes that the coordinator made in the merge, after the reviewed commit:
 - Not corrected: the low finding on the text of the worker's report (later
   sections still name "explicit identifiers" and Unicode 16.0). The source
   documentation and `docs/ISSUES.md` are correct.
+
+## Workstream templates (branch `ws/templates`, head 8d63d0b, one squashed commit)
+
+Content: the crate `randoc-templates` (the Pandoc template language: parser
+with the error texts of the oracle, renderer on views, the 16 pipes, partials
+with a cache for one compile call) as a port of `doctemplates` 0.11.1, and the
+new crate `randoc-data` with the 62 default template files and the dzslides
+template (the files of Pandoc that have a permissive licence option). No
+program on `main` calls the two crates yet: the command line connects them in
+its own workstream.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 4546 units, 2217 pass, 1959 fail, 370 skipped, 0 regressions against the baseline of 2217 units. The 972 new units are the `templates/` suite; they fail until the command line has `--template` and `-s`. |
+| 2. Measured progress | New suite `templates/` (2 case files). The `templates/*` units need `--template` and `-s` of the command line, so they fail until `ws/cli` merges. The crate has its own oracle tests: 1,188 results from the Lua template interface of the oracle (`oracle_cases`: each construct, 508 error texts, 407 loop cases), and each of the 69 default templates gives the same bytes as the oracle for three contexts. Recorded: I-TPL-01 to I-TPL-04 and I-DATA-01 to I-DATA-05. |
+| 3. Tests | `randoc-templates`: 33 tests pass, 1 ignored (a time measurement). `randoc-data`: 7 tests pass. Line coverage: 97.8% for `randoc-templates` and 100% for `randoc-data` (measured at a4e8c71, before the correction rounds, which added tests). Mutation tests: 160 mutants of the first version (3 missed, each killed by a new test or explained in the report), 39 and 17 of round 2 (9 and 1 missed; 9 killed by new tests), 30 of round 3 (1 missed: the `Pair` arm, killed in round 5 by `pairs_of_a_pairs_item`; the rerun of that mutant: caught). |
+| 4. No panics | Fuzz target `render` (compile and render on a 2 MB thread for each input): 900 s, 59,002 runs, 0 crashes, 0 timeouts at c32addf. The last commit (8d63d0b) changes 23 lines of the renderer and no line of the parser; no new fuzz run. Depth: compile, render, clone and drop at the limit of 128 on a 2 MB thread; 10,000 and 100,000 levels give `TooDeep`. Time: step-count tests for 552 loop templates and for the 7 `pairs` forms. |
+| 5. Two reviews | Five rounds. Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES at d5c90a2 (1 high, 1 medium), round 2 REQUEST CHANGES at 68309f6 (1 high: a lookup in a loop over a dotted variable copied data), round 3: the service stopped the run with a content flag before a report (no verdict), round 4 REQUEST CHANGES at c32addf (1 medium: `pairs` of `pairs` of a map was quadratic; 1 low), round 5 APPROVE at 8d63d0b (0 findings; 20,000 value results, 60 loop forms at two sizes, 69 default templates). Opus 5.5 with a new context: round 1 REQUEST CHANGES at d5c90a2 (1 high: a loop copied the context for each item; 2 medium), round 2: the review was lost when the computer stopped at 04:40 UTC (no verdict; the worker did its loop-scope task), round 3 REQUEST CHANGES at 46fb603 (1 high: six more loop forms were quadratic; 3 low), round 4 APPROVE at c32addf (2 low), round 5 APPROVE at 8d63d0b (0 findings; 28 `pairs` forms up to 64,000 entries, 824 templates at four widths, 69 default templates). Rounds 4 and 5 of Codex used a conformance prompt (values, time, error texts); they did not repeat the depth tests, which Opus round 4 covered. |
+| 6. No slowdowns | No conversion path on `main` calls the two crates. A check with release builds of `main` before and after the merge (15 alternating pairs, CPU time, a 17.7 MB document, `-f json -t json`, equal output bytes) gave 0.098 s and 0.100 s: ratio of minimums 1.020, median paired ratio 1.017. The limit is 1.05. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Changes that the coordinator made in the merge, after the reviewed commit:
+
+- The crate table in `docs/ARCHITECTURE.md` now has the row `randoc-data`,
+  the real dependencies of `randoc-templates`, and the shared module of
+  `randoc-core` (the repeated low finding TPL-R2-02 / TPL-R3-04).
+- Row I-DATA-05 said that Randoc has no abbreviation list. Since the merge of
+  the workstream shared, `randoc_core::shared::default_abbreviations` exists.
+  The row now says so and points to I-SHARED-03.
+- `THIRD_PARTY.md` and `docs/ISSUES.md`: the rows of `main` stay, and the 4
+  and 9 rows of the branch are added.
+
+Open after this merge: the command line must remove each CR and a byte order
+mark from a template file before it calls `Template::compile` (the crate
+documents this caller rule), and the command line branch has its own copy of
+some default templates, which it must replace by `randoc-data`.

@@ -1,0 +1,1036 @@
+# Default templates: an empty document with -s and three variable sets for each format.
+
+[[case]]
+id = "ansi-empty"
+cmd = ["-f", "json", "-t", "ansi", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "ansi-title"
+cmd = ["-f", "json", "-t", "ansi", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "ansi-many"
+cmd = ["-f", "json", "-t", "ansi", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoc-empty"
+cmd = ["-f", "json", "-t", "asciidoc", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoc-title"
+cmd = ["-f", "json", "-t", "asciidoc", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoc-many"
+cmd = ["-f", "json", "-t", "asciidoc", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoc_legacy-empty"
+cmd = ["-f", "json", "-t", "asciidoc_legacy", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoc_legacy-title"
+cmd = ["-f", "json", "-t", "asciidoc_legacy", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoc_legacy-many"
+cmd = ["-f", "json", "-t", "asciidoc_legacy", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoctor-empty"
+cmd = ["-f", "json", "-t", "asciidoctor", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoctor-title"
+cmd = ["-f", "json", "-t", "asciidoctor", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "asciidoctor-many"
+cmd = ["-f", "json", "-t", "asciidoctor", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode-empty"
+cmd = ["-f", "json", "-t", "bbcode", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode-title"
+cmd = ["-f", "json", "-t", "bbcode", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode-many"
+cmd = ["-f", "json", "-t", "bbcode", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_fluxbb-empty"
+cmd = ["-f", "json", "-t", "bbcode_fluxbb", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_fluxbb-title"
+cmd = ["-f", "json", "-t", "bbcode_fluxbb", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_fluxbb-many"
+cmd = ["-f", "json", "-t", "bbcode_fluxbb", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_hubzilla-empty"
+cmd = ["-f", "json", "-t", "bbcode_hubzilla", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_hubzilla-title"
+cmd = ["-f", "json", "-t", "bbcode_hubzilla", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_hubzilla-many"
+cmd = ["-f", "json", "-t", "bbcode_hubzilla", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_phpbb-empty"
+cmd = ["-f", "json", "-t", "bbcode_phpbb", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_phpbb-title"
+cmd = ["-f", "json", "-t", "bbcode_phpbb", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_phpbb-many"
+cmd = ["-f", "json", "-t", "bbcode_phpbb", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_steam-empty"
+cmd = ["-f", "json", "-t", "bbcode_steam", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_steam-title"
+cmd = ["-f", "json", "-t", "bbcode_steam", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_steam-many"
+cmd = ["-f", "json", "-t", "bbcode_steam", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_xenforo-empty"
+cmd = ["-f", "json", "-t", "bbcode_xenforo", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_xenforo-title"
+cmd = ["-f", "json", "-t", "bbcode_xenforo", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bbcode_xenforo-many"
+cmd = ["-f", "json", "-t", "bbcode_xenforo", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "beamer-empty"
+cmd = ["-f", "json", "-t", "beamer", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "beamer-title"
+cmd = ["-f", "json", "-t", "beamer", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "beamer-many"
+cmd = ["-f", "json", "-t", "beamer", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "biblatex-empty"
+cmd = ["-f", "json", "-t", "biblatex", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "biblatex-title"
+cmd = ["-f", "json", "-t", "biblatex", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "biblatex-many"
+cmd = ["-f", "json", "-t", "biblatex", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bibtex-empty"
+cmd = ["-f", "json", "-t", "bibtex", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bibtex-title"
+cmd = ["-f", "json", "-t", "bibtex", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bibtex-many"
+cmd = ["-f", "json", "-t", "bibtex", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "chunkedhtml-empty"
+cmd = ["-f", "json", "-t", "chunkedhtml", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "chunkedhtml-title"
+cmd = ["-f", "json", "-t", "chunkedhtml", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "chunkedhtml-many"
+cmd = ["-f", "json", "-t", "chunkedhtml", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "commonmark-empty"
+cmd = ["-f", "json", "-t", "commonmark", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "commonmark-title"
+cmd = ["-f", "json", "-t", "commonmark", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "commonmark-many"
+cmd = ["-f", "json", "-t", "commonmark", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "commonmark_x-empty"
+cmd = ["-f", "json", "-t", "commonmark_x", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "commonmark_x-title"
+cmd = ["-f", "json", "-t", "commonmark_x", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "commonmark_x-many"
+cmd = ["-f", "json", "-t", "commonmark_x", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "context-empty"
+cmd = ["-f", "json", "-t", "context", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "context-title"
+cmd = ["-f", "json", "-t", "context", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "context-many"
+cmd = ["-f", "json", "-t", "context", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "djot-empty"
+cmd = ["-f", "json", "-t", "djot", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "djot-title"
+cmd = ["-f", "json", "-t", "djot", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "djot-many"
+cmd = ["-f", "json", "-t", "djot", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook-empty"
+cmd = ["-f", "json", "-t", "docbook", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook-title"
+cmd = ["-f", "json", "-t", "docbook", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook-many"
+cmd = ["-f", "json", "-t", "docbook", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook4-empty"
+cmd = ["-f", "json", "-t", "docbook4", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook4-title"
+cmd = ["-f", "json", "-t", "docbook4", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook4-many"
+cmd = ["-f", "json", "-t", "docbook4", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook5-empty"
+cmd = ["-f", "json", "-t", "docbook5", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook5-title"
+cmd = ["-f", "json", "-t", "docbook5", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docbook5-many"
+cmd = ["-f", "json", "-t", "docbook5", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docx-empty"
+cmd = ["-f", "json", "-t", "docx", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docx-title"
+cmd = ["-f", "json", "-t", "docx", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "docx-many"
+cmd = ["-f", "json", "-t", "docx", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dokuwiki-empty"
+cmd = ["-f", "json", "-t", "dokuwiki", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dokuwiki-title"
+cmd = ["-f", "json", "-t", "dokuwiki", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dokuwiki-many"
+cmd = ["-f", "json", "-t", "dokuwiki", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dzslides-empty"
+cmd = ["-f", "json", "-t", "dzslides", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dzslides-title"
+cmd = ["-f", "json", "-t", "dzslides", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dzslides-many"
+cmd = ["-f", "json", "-t", "dzslides", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub-empty"
+cmd = ["-f", "json", "-t", "epub", "-s", "-M", "identifier=urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub-title"
+cmd = ["-f", "json", "-t", "epub", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02", "-M", "identifier=urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub-many"
+cmd = ["-f", "json", "-t", "epub", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub2-empty"
+cmd = ["-f", "json", "-t", "epub2", "-s", "-M", "identifier=urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub2-title"
+cmd = ["-f", "json", "-t", "epub2", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02", "-M", "identifier=urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub2-many"
+cmd = ["-f", "json", "-t", "epub2", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub3-empty"
+cmd = ["-f", "json", "-t", "epub3", "-s", "-M", "identifier=urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub3-title"
+cmd = ["-f", "json", "-t", "epub3", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02", "-M", "identifier=urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub3-many"
+cmd = ["-f", "json", "-t", "epub3", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "fodt-empty"
+cmd = ["-f", "json", "-t", "fodt", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "fodt-title"
+cmd = ["-f", "json", "-t", "fodt", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "fodt-many"
+cmd = ["-f", "json", "-t", "fodt", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "gfm-empty"
+cmd = ["-f", "json", "-t", "gfm", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "gfm-title"
+cmd = ["-f", "json", "-t", "gfm", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "gfm-many"
+cmd = ["-f", "json", "-t", "gfm", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "haddock-empty"
+cmd = ["-f", "json", "-t", "haddock", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "haddock-title"
+cmd = ["-f", "json", "-t", "haddock", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "haddock-many"
+cmd = ["-f", "json", "-t", "haddock", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html-empty"
+cmd = ["-f", "json", "-t", "html", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html-title"
+cmd = ["-f", "json", "-t", "html", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html-many"
+cmd = ["-f", "json", "-t", "html", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html4-empty"
+cmd = ["-f", "json", "-t", "html4", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html4-title"
+cmd = ["-f", "json", "-t", "html4", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html4-many"
+cmd = ["-f", "json", "-t", "html4", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html5-empty"
+cmd = ["-f", "json", "-t", "html5", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html5-title"
+cmd = ["-f", "json", "-t", "html5", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "html5-many"
+cmd = ["-f", "json", "-t", "html5", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "icml-empty"
+cmd = ["-f", "json", "-t", "icml", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "icml-title"
+cmd = ["-f", "json", "-t", "icml", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "icml-many"
+cmd = ["-f", "json", "-t", "icml", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats-empty"
+cmd = ["-f", "json", "-t", "jats", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats-title"
+cmd = ["-f", "json", "-t", "jats", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats-many"
+cmd = ["-f", "json", "-t", "jats", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_archiving-empty"
+cmd = ["-f", "json", "-t", "jats_archiving", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_archiving-title"
+cmd = ["-f", "json", "-t", "jats_archiving", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_archiving-many"
+cmd = ["-f", "json", "-t", "jats_archiving", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_articleauthoring-empty"
+cmd = ["-f", "json", "-t", "jats_articleauthoring", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_articleauthoring-title"
+cmd = ["-f", "json", "-t", "jats_articleauthoring", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_articleauthoring-many"
+cmd = ["-f", "json", "-t", "jats_articleauthoring", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_publishing-empty"
+cmd = ["-f", "json", "-t", "jats_publishing", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_publishing-title"
+cmd = ["-f", "json", "-t", "jats_publishing", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jats_publishing-many"
+cmd = ["-f", "json", "-t", "jats_publishing", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jira-empty"
+cmd = ["-f", "json", "-t", "jira", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jira-title"
+cmd = ["-f", "json", "-t", "jira", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "jira-many"
+cmd = ["-f", "json", "-t", "jira", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "latex-empty"
+cmd = ["-f", "json", "-t", "latex", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "latex-title"
+cmd = ["-f", "json", "-t", "latex", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "latex-many"
+cmd = ["-f", "json", "-t", "latex", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "man-empty"
+cmd = ["-f", "json", "-t", "man", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "man-title"
+cmd = ["-f", "json", "-t", "man", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "man-many"
+cmd = ["-f", "json", "-t", "man", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown-empty"
+cmd = ["-f", "json", "-t", "markdown", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown-title"
+cmd = ["-f", "json", "-t", "markdown", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown-many"
+cmd = ["-f", "json", "-t", "markdown", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_github-empty"
+cmd = ["-f", "json", "-t", "markdown_github", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_github-title"
+cmd = ["-f", "json", "-t", "markdown_github", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_github-many"
+cmd = ["-f", "json", "-t", "markdown_github", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_mmd-empty"
+cmd = ["-f", "json", "-t", "markdown_mmd", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_mmd-title"
+cmd = ["-f", "json", "-t", "markdown_mmd", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_mmd-many"
+cmd = ["-f", "json", "-t", "markdown_mmd", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_phpextra-empty"
+cmd = ["-f", "json", "-t", "markdown_phpextra", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_phpextra-title"
+cmd = ["-f", "json", "-t", "markdown_phpextra", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_phpextra-many"
+cmd = ["-f", "json", "-t", "markdown_phpextra", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_strict-empty"
+cmd = ["-f", "json", "-t", "markdown_strict", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_strict-title"
+cmd = ["-f", "json", "-t", "markdown_strict", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markdown_strict-many"
+cmd = ["-f", "json", "-t", "markdown_strict", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markua-empty"
+cmd = ["-f", "json", "-t", "markua", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markua-title"
+cmd = ["-f", "json", "-t", "markua", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "markua-many"
+cmd = ["-f", "json", "-t", "markua", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "mediawiki-empty"
+cmd = ["-f", "json", "-t", "mediawiki", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "mediawiki-title"
+cmd = ["-f", "json", "-t", "mediawiki", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "mediawiki-many"
+cmd = ["-f", "json", "-t", "mediawiki", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "ms-empty"
+cmd = ["-f", "json", "-t", "ms", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "ms-title"
+cmd = ["-f", "json", "-t", "ms", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "ms-many"
+cmd = ["-f", "json", "-t", "ms", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "muse-empty"
+cmd = ["-f", "json", "-t", "muse", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "muse-title"
+cmd = ["-f", "json", "-t", "muse", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "muse-many"
+cmd = ["-f", "json", "-t", "muse", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "odt-empty"
+cmd = ["-f", "json", "-t", "odt", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "odt-title"
+cmd = ["-f", "json", "-t", "odt", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "odt-many"
+cmd = ["-f", "json", "-t", "odt", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "opendocument-empty"
+cmd = ["-f", "json", "-t", "opendocument", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "opendocument-title"
+cmd = ["-f", "json", "-t", "opendocument", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "opendocument-many"
+cmd = ["-f", "json", "-t", "opendocument", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "opml-empty"
+cmd = ["-f", "json", "-t", "opml", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "opml-title"
+cmd = ["-f", "json", "-t", "opml", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "opml-many"
+cmd = ["-f", "json", "-t", "opml", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "org-empty"
+cmd = ["-f", "json", "-t", "org", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "org-title"
+cmd = ["-f", "json", "-t", "org", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "org-many"
+cmd = ["-f", "json", "-t", "org", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "plain-empty"
+cmd = ["-f", "json", "-t", "plain", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "plain-title"
+cmd = ["-f", "json", "-t", "plain", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "plain-many"
+cmd = ["-f", "json", "-t", "plain", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "revealjs-empty"
+cmd = ["-f", "json", "-t", "revealjs", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "revealjs-title"
+cmd = ["-f", "json", "-t", "revealjs", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "revealjs-many"
+cmd = ["-f", "json", "-t", "revealjs", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "rst-empty"
+cmd = ["-f", "json", "-t", "rst", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "rst-title"
+cmd = ["-f", "json", "-t", "rst", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "rst-many"
+cmd = ["-f", "json", "-t", "rst", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "rtf-empty"
+cmd = ["-f", "json", "-t", "rtf", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "rtf-title"
+cmd = ["-f", "json", "-t", "rtf", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "rtf-many"
+cmd = ["-f", "json", "-t", "rtf", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "s5-empty"
+cmd = ["-f", "json", "-t", "s5", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "s5-title"
+cmd = ["-f", "json", "-t", "s5", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "s5-many"
+cmd = ["-f", "json", "-t", "s5", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slideous-empty"
+cmd = ["-f", "json", "-t", "slideous", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slideous-title"
+cmd = ["-f", "json", "-t", "slideous", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slideous-many"
+cmd = ["-f", "json", "-t", "slideous", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slidy-empty"
+cmd = ["-f", "json", "-t", "slidy", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slidy-title"
+cmd = ["-f", "json", "-t", "slidy", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slidy-many"
+cmd = ["-f", "json", "-t", "slidy", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "t2t-empty"
+cmd = ["-f", "json", "-t", "t2t", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "t2t-title"
+cmd = ["-f", "json", "-t", "t2t", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "t2t-many"
+cmd = ["-f", "json", "-t", "t2t", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "tei-empty"
+cmd = ["-f", "json", "-t", "tei", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "tei-title"
+cmd = ["-f", "json", "-t", "tei", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "tei-many"
+cmd = ["-f", "json", "-t", "tei", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "texinfo-empty"
+cmd = ["-f", "json", "-t", "texinfo", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "texinfo-title"
+cmd = ["-f", "json", "-t", "texinfo", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "texinfo-many"
+cmd = ["-f", "json", "-t", "texinfo", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "textile-empty"
+cmd = ["-f", "json", "-t", "textile", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "textile-title"
+cmd = ["-f", "json", "-t", "textile", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "textile-many"
+cmd = ["-f", "json", "-t", "textile", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "typst-empty"
+cmd = ["-f", "json", "-t", "typst", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "typst-title"
+cmd = ["-f", "json", "-t", "typst", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "typst-many"
+cmd = ["-f", "json", "-t", "typst", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "vimdoc-empty"
+cmd = ["-f", "json", "-t", "vimdoc", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "vimdoc-title"
+cmd = ["-f", "json", "-t", "vimdoc", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "vimdoc-many"
+cmd = ["-f", "json", "-t", "vimdoc", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "xwiki-empty"
+cmd = ["-f", "json", "-t", "xwiki", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "xwiki-title"
+cmd = ["-f", "json", "-t", "xwiki", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "xwiki-many"
+cmd = ["-f", "json", "-t", "xwiki", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "zimwiki-empty"
+cmd = ["-f", "json", "-t", "zimwiki", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "zimwiki-title"
+cmd = ["-f", "json", "-t", "zimwiki", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "zimwiki-many"
+cmd = ["-f", "json", "-t", "zimwiki", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"

@@ -486,7 +486,7 @@
       "status": "failing",
       "units": {
         "passing": 0,
-        "total": 654
+        "total": 667
       }
     },
     "completion": {
@@ -746,7 +746,11 @@
       "status": "not_started"
     },
     "template": {
-      "status": "not_started"
+      "status": "failing",
+      "units": {
+        "passing": 0,
+        "total": 765
+      }
     },
     "title-prefix": {
       "status": "not_started"
@@ -759,7 +763,11 @@
       }
     },
     "toc": {
-      "status": "not_started"
+      "status": "failing",
+      "units": {
+        "passing": 0,
+        "total": 69
+      }
     },
     "toc-depth": {
       "status": "not_started"
@@ -1066,8 +1074,8 @@
       "partial": 2
     },
     "options": {
-      "failing": 2,
-      "not_started": 105,
+      "failing": 4,
+      "not_started": 103,
       "passing": 2
     },
     "output_formats": {
@@ -1076,7 +1084,7 @@
     },
     "units": {
       "passing": 2217,
-      "total": 3204
+      "total": 4176
     }
   }
 }

@@ -9,7 +9,12 @@ repository.workspace = true
 authors.workspace = true
 
 [dependencies]
+randoc-ast = { workspace = true }
 randoc-layout = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+randoc-data = { workspace = true }
 
 [lints]
 workspace = true
