@@ -60,6 +60,17 @@ completely. Its main rules:
    background processes safely, ill start you up in a new threads"
 8. "just please giveme a prompt to paste into a new thread and save every
    instruction and everything in the repo and ask the handoff to read that"
+9. The start message of the second session (2026-11-10): "Continue the
+   Randoc project as coordinator. [...] Then do the start steps of the
+   handoff (env.sh, init.sh, the watchdog, the memory limits) and continue
+   with its "Next three tasks", in order. Work autonomously and do not ask me
+   questions. Keep everything on the external drive. Use
+   /pstack:poteto-mode for all code. Apply the reuse rule: study and reuse
+   open source before you write new code. Commit and push to main after each
+   block that passes the merge gate, with no co-author or AI attribution."
+10. "now please do not handoff before 10 PM UTC and keep working in this
+    thread" (Given in the second session, 2026-11-10. The time is 22:00 UTC
+    on 2026-11-10.)
 
 ## 3. Writing style
 
