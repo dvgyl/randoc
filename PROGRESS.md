@@ -11,6 +11,8 @@ stopped. Each workstream committed its state on its branch.
 
 ### How to start the next session
 
+0. Read `docs/OWNER_INSTRUCTIONS.md` first: each instruction of the owner,
+   in the owner's words, and `docs/ORIGINAL_SPEC.md`, the full task text.
 1. Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command, then
    `./init.sh` in `/Volumes/Extreme Pro/Randoc/randoc`.
 2. Start `env/bin/randoc-watchdog` in the background and keep the memory
