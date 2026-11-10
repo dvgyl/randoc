@@ -18,6 +18,11 @@
 //! | `a $$ b` | `a.above(b)` |
 //! | `a $+$ b` | `a.above_blank(b)` |
 //!
+//! The layout engine, the queries, `clone`, `==` and drop use explicit
+//! stacks, so the stack cost does not grow with the nesting depth of a
+//! document. Only `Debug` output recurses. The engine uses wrapping
+//! integer arithmetic, as Haskell `Int` does.
+//!
 //! ```
 //! use randoc_layout::{hsep, literal, nest};
 //!
@@ -33,16 +38,26 @@ mod width;
 use std::ops::{Add, AddAssign};
 
 pub use style::Color;
-pub use width::{char_width, real_length};
+pub use width::{
+    char_width, is_emoji_variation, is_skin_tone_modifier, is_zwj, real_length,
+    real_length_narrow_context, real_length_narrow_context_no_shortcut,
+};
 
 use render::Line;
 use style::StyleReq;
 use width::str_length;
 
 /// A document that can be rendered at a given line width.
-#[derive(Debug, Clone, PartialEq, Default)]
+///
+/// Each operation on a document, including `clone`, `==` and drop, works
+/// without recursion that grows with the nesting depth of the document.
+/// `Debug` output is the exception.
+#[derive(Debug, Default)]
 pub struct Doc(Node);
 
+/// The node of a document. Only `Doc` clones and compares nodes with
+/// children, so the derived `Clone` and `PartialEq` impls here run on one
+/// level.
 #[derive(Debug, Clone, PartialEq, Default)]
 enum Node {
     #[default]
@@ -72,6 +87,132 @@ enum Node {
     Linked(String, Box<Doc>),
 }
 
+/// A wrapper node without its child.
+enum Shell {
+    Prefixed(String),
+    BeforeNonBlank,
+    Flush,
+    Styled(StyleReq),
+    Linked(String),
+}
+
+impl Shell {
+    fn of(node: &Node) -> Option<(Shell, &Doc)> {
+        Some(match node {
+            Node::Prefixed(prefix, inner) => (Shell::Prefixed(prefix.clone()), inner),
+            Node::BeforeNonBlank(inner) => (Shell::BeforeNonBlank, inner),
+            Node::Flush(inner) => (Shell::Flush, inner),
+            Node::Styled(style, inner) => (Shell::Styled(*style), inner),
+            Node::Linked(target, inner) => (Shell::Linked(target.clone()), inner),
+            _ => return None,
+        })
+    }
+
+    fn wrap(self, doc: Doc) -> Doc {
+        let inner = Box::new(doc);
+        Doc(match self {
+            Shell::Prefixed(prefix) => Node::Prefixed(prefix, inner),
+            Shell::BeforeNonBlank => Node::BeforeNonBlank(inner),
+            Shell::Flush => Node::Flush(inner),
+            Shell::Styled(style) => Node::Styled(style, inner),
+            Shell::Linked(target) => Node::Linked(target, inner),
+        })
+    }
+}
+
+/// Copies `doc` with the same structure. `leaf` makes each node that has no
+/// children.
+fn rebuild(doc: &Doc, leaf: &dyn Fn(&Node) -> Node) -> Doc {
+    enum Step<'a> {
+        Visit(&'a Doc),
+        Wrap(Shell),
+        Join(usize),
+    }
+    let mut steps = vec![Step::Visit(doc)];
+    let mut done: Vec<Doc> = Vec::new();
+    while let Some(step) = steps.pop() {
+        match step {
+            Step::Visit(d) => {
+                if let Node::Concat(items) = &d.0 {
+                    steps.push(Step::Join(items.len()));
+                    steps.extend(items.iter().rev().map(Step::Visit));
+                } else if let Some((shell, inner)) = Shell::of(&d.0) {
+                    steps.push(Step::Wrap(shell));
+                    steps.push(Step::Visit(inner));
+                } else {
+                    done.push(Doc(leaf(&d.0)));
+                }
+            }
+            Step::Wrap(shell) => {
+                let inner = done.pop().unwrap_or_default();
+                done.push(shell.wrap(inner));
+            }
+            Step::Join(count) => {
+                let items = done.split_off(done.len().saturating_sub(count));
+                done.push(Doc(Node::Concat(items)));
+            }
+        }
+    }
+    done.pop().unwrap_or_default()
+}
+
+fn children(node: &Node) -> &[Doc] {
+    match node {
+        Node::Concat(items) => items,
+        _ => Shell::of(node).map_or(&[], |(_, inner)| std::slice::from_ref(inner)),
+    }
+}
+
+impl Clone for Doc {
+    fn clone(&self) -> Doc {
+        rebuild(self, &Node::clone)
+    }
+}
+
+impl PartialEq for Doc {
+    fn eq(&self, other: &Doc) -> bool {
+        let mut pairs = vec![(self, other)];
+        while let Some((a, b)) = pairs.pop() {
+            let (ca, cb) = (children(&a.0), children(&b.0));
+            let same_shell = match (&a.0, &b.0) {
+                (Node::Concat(_), Node::Concat(_)) => true,
+                (Node::Prefixed(x, _), Node::Prefixed(y, _))
+                | (Node::Linked(x, _), Node::Linked(y, _)) => x == y,
+                (Node::Styled(x, _), Node::Styled(y, _)) => x == y,
+                (Node::BeforeNonBlank(_), Node::BeforeNonBlank(_))
+                | (Node::Flush(_), Node::Flush(_)) => true,
+                (x, y) if ca.is_empty() && cb.is_empty() => x == y,
+                _ => false,
+            };
+            if !same_shell || ca.len() != cb.len() {
+                return false;
+            }
+            pairs.extend(ca.iter().zip(cb));
+        }
+        true
+    }
+}
+
+impl Drop for Doc {
+    fn drop(&mut self) {
+        if children(&self.0).is_empty() {
+            return;
+        }
+        let mut nodes = vec![std::mem::take(&mut self.0)];
+        while let Some(mut node) = nodes.pop() {
+            match &mut node {
+                Node::Concat(items) => nodes.extend(items.iter_mut().map(Doc::take_node)),
+                Node::Prefixed(_, inner)
+                | Node::BeforeNonBlank(inner)
+                | Node::Flush(inner)
+                | Node::Styled(_, inner)
+                | Node::Linked(_, inner) => nodes.push(inner.take_node()),
+                _ => {}
+            }
+        }
+    }
+}
+
 fn to_isize(n: usize) -> isize {
     isize::try_from(n).unwrap_or(isize::MAX)
 }
@@ -81,6 +222,14 @@ fn to_usize(n: isize) -> usize {
 }
 
 impl Doc {
+    fn take_node(&mut self) -> Node {
+        std::mem::take(&mut self.0)
+    }
+
+    fn into_node(mut self) -> Node {
+        self.take_node()
+    }
+
     /// Makes a document from literal text. Each newline in the text is a
     /// forced line break. Spaces in the text are not breakable.
     pub fn literal(text: impl Into<String>) -> Self {
@@ -166,21 +315,21 @@ impl Doc {
     /// Returns the width of the widest line of the document when it is not
     /// wrapped.
     pub fn offset(&self) -> usize {
-        let (longest, current) = get_offset(&|_| false, 0, (0, 0), self);
+        let (longest, current) = get_offset(&|_| false, (0, 0), self);
         to_usize(longest.max(current))
     }
 
     /// Returns the minimal width of the document when it is wrapped at each
     /// breakable space.
     pub fn min_offset(&self) -> usize {
-        let (longest, current) = get_offset(&|c| c > 0, 0, (0, 0), self);
+        let (longest, current) = get_offset(&|c| c > 0, (0, 0), self);
         to_usize(longest.max(current))
     }
 
     /// Returns the column after the last character of the document when
     /// the document starts at column `column` and is not wrapped.
     pub fn update_column(&self, column: usize) -> usize {
-        to_usize(get_offset(&|_| false, 0, (0, to_isize(column)), self).1)
+        to_usize(get_offset(&|_| false, (0, to_isize(column)), self).1)
     }
 
     /// Returns the number of lines of the document rendered without
@@ -203,8 +352,7 @@ impl Doc {
     /// ```
     #[must_use]
     pub fn map_text(&self, f: &dyn Fn(&str) -> String) -> Doc {
-        let inner = |doc: &Doc| Box::new(doc.map_text(f));
-        Doc(match &self.0 {
+        rebuild(self, &|node| match node {
             Node::Text(width, text) => Node::Text(*width, f(text)),
             Node::VFill(width, text) => Node::VFill(*width, f(text)),
             Node::Block(width, lines) => Node::Block(
@@ -221,12 +369,6 @@ impl Doc {
                     })
                     .collect(),
             ),
-            Node::Prefixed(prefix, doc) => Node::Prefixed(prefix.clone(), inner(doc)),
-            Node::BeforeNonBlank(doc) => Node::BeforeNonBlank(inner(doc)),
-            Node::Flush(doc) => Node::Flush(inner(doc)),
-            Node::Styled(style, doc) => Node::Styled(*style, inner(doc)),
-            Node::Linked(target, doc) => Node::Linked(target.clone(), inner(doc)),
-            Node::Concat(docs) => Node::Concat(docs.iter().map(|d| d.map_text(f)).collect()),
             other => other.clone(),
         })
     }
@@ -249,7 +391,7 @@ impl Add for Doc {
     type Output = Doc;
 
     fn add(self, other: Doc) -> Doc {
-        match (self.0, other.0) {
+        match (self.into_node(), other.into_node()) {
             (Node::Empty, node) | (node, Node::Empty) => Doc(node),
             (Node::Concat(mut first), Node::Concat(second)) => {
                 first.extend(second);
@@ -284,77 +426,82 @@ impl std::iter::Sum for Doc {
     }
 }
 
-/// Computes `(longest line, current column)`. `prefix` is the width of the
-/// current prefix, to which the column returns after a line break.
+/// Computes `(longest line, current column)`. Each stack entry has the
+/// width of its prefix, to which the column returns after a line break, and
+/// the number of its concatenation chain.
 fn get_offset(
     break_when: &dyn Fn(isize) -> bool,
-    prefix: isize,
     start: (isize, isize),
     doc: &Doc,
 ) -> (isize, isize) {
     let (mut longest, mut column) = start;
-    let mut stack = vec![doc];
-    while let Some(d) = stack.pop() {
+    let mut chains = 0;
+    let mut stack = vec![(doc, 0, chains)];
+    while let Some((d, prefix, chain)) = stack.pop() {
         match &d.0 {
-            Node::Text(n, _) | Node::Block(n, _) | Node::VFill(n, _) => column += n,
+            Node::Text(n, _) | Node::Block(n, _) | Node::VFill(n, _) => {
+                column = column.wrapping_add(*n);
+            }
             Node::Empty => {}
             Node::Styled(_, inner) | Node::Linked(_, inner) => {
-                (longest, column) = get_offset(break_when, prefix, (longest, column), inner);
+                chains += 1;
+                stack.push((inner, prefix, chains));
             }
             Node::CarriageReturn | Node::NewLine | Node::BlankLines(_) => {
                 longest = longest.max(column);
                 column = prefix;
             }
             Node::Prefixed(text, inner) => {
-                let inner_prefix = prefix + str_length(text);
-                let start_column = if column <= prefix {
-                    inner_prefix
-                } else {
-                    column
-                };
-                (longest, column) =
-                    get_offset(break_when, inner_prefix, (longest, start_column), inner);
+                let inner_prefix = prefix.wrapping_add(str_length(text));
+                if column <= prefix {
+                    column = inner_prefix;
+                }
+                chains += 1;
+                stack.push((inner, inner_prefix, chains));
             }
             Node::BeforeNonBlank(inner) => {
-                if stack.last().is_some_and(|next| is_non_blank(next)) {
-                    push_items(&mut stack, inner);
+                let followed = stack
+                    .last()
+                    .is_some_and(|&(next, _, c)| c == chain && is_non_blank(next));
+                if followed {
+                    stack.push((inner, prefix, chain));
                 }
             }
             Node::Flush(inner) => {
-                (longest, column) = get_offset(break_when, 0, (longest, column), inner);
+                chains += 1;
+                stack.push((inner, 0, chains));
             }
             Node::BreakingSpace => {
                 if break_when(column) {
                     longest = longest.max(column);
                     column = prefix;
                 } else {
-                    column += 1;
+                    column = column.wrapping_add(1);
                 }
             }
             Node::AfterBreak(text) => {
                 if column == prefix {
-                    column += str_length(text);
+                    column = column.wrapping_add(str_length(text));
                 }
             }
-            Node::Concat(_) => push_items(&mut stack, d),
+            Node::Concat(items) => stack.extend(items.iter().rev().map(|i| (i, prefix, chain))),
         }
     }
     (longest, column)
 }
 
-fn push_items<'a>(stack: &mut Vec<&'a Doc>, doc: &'a Doc) {
-    match &doc.0 {
-        Node::Concat(items) => stack.extend(items.iter().rev()),
-        _ => stack.push(doc),
-    }
-}
-
 fn is_non_blank(doc: &Doc) -> bool {
-    match &doc.0 {
-        Node::Text(..) => true,
-        Node::BeforeNonBlank(inner) | Node::Flush(inner) => is_non_blank(inner),
-        Node::Concat(items) => items.first().is_some_and(is_non_blank),
-        _ => false,
+    let mut doc = doc;
+    loop {
+        match &doc.0 {
+            Node::Text(..) => return true,
+            Node::BeforeNonBlank(inner) | Node::Flush(inner) => doc = inner,
+            Node::Concat(items) => match items.first() {
+                Some(first) => doc = first,
+                None => return false,
+            },
+            _ => return false,
+        }
     }
 }
 
@@ -478,16 +625,9 @@ pub fn before_non_blank(doc: Doc) -> Doc {
 
 /// Makes each breakable space in `doc` a normal space.
 pub fn nowrap(doc: Doc) -> Doc {
-    let wrap = |inner: Box<Doc>| Box::new(nowrap(*inner));
-    Doc(match doc.0 {
+    rebuild(&doc, &|node| match node {
         Node::BreakingSpace => Node::Text(1, " ".to_owned()),
-        Node::Concat(items) => Node::Concat(items.into_iter().map(nowrap).collect()),
-        Node::Styled(style, inner) => Node::Styled(style, wrap(inner)),
-        Node::Linked(target, inner) => Node::Linked(target, wrap(inner)),
-        Node::Prefixed(prefix, inner) => Node::Prefixed(prefix, wrap(inner)),
-        Node::BeforeNonBlank(inner) => Node::BeforeNonBlank(wrap(inner)),
-        Node::Flush(inner) => Node::Flush(wrap(inner)),
-        other => other,
+        other => other.clone(),
     })
 }
 
@@ -499,25 +639,55 @@ pub fn after_break(text: &str) -> Doc {
 
 /// Removes trailing spaces, line breaks and blank lines from `doc`.
 pub fn chomp(doc: Doc) -> Doc {
-    match doc.0 {
-        Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn | Node::BreakingSpace => empty(),
-        Node::Prefixed(prefix, inner) => Doc(Node::Prefixed(prefix, Box::new(chomp(*inner)))),
-        Node::Concat(mut items) => {
-            while let Some(last) = items.pop() {
-                let chomped = chomp(last);
-                if !chomped.is_empty() {
-                    return hcat(items) + chomped;
-                }
-            }
-            empty()
-        }
-        other => Doc(other),
+    enum Context {
+        Prefixed(String),
+        Before(Vec<Doc>),
     }
+    let is_break = |node: &Node| {
+        matches!(
+            node,
+            Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn | Node::BreakingSpace
+        )
+    };
+    let mut contexts = Vec::new();
+    let mut current = doc;
+    let mut result = 'outer: loop {
+        match current.into_node() {
+            node if is_break(&node) => break empty(),
+            Node::Prefixed(prefix, mut inner) => {
+                contexts.push(Context::Prefixed(prefix));
+                current = Doc(inner.take_node());
+            }
+            Node::Concat(mut items) => {
+                while let Some(last) = items.pop() {
+                    if is_break(&last.0) {
+                        continue;
+                    }
+                    if matches!(last.0, Node::Prefixed(..)) {
+                        contexts.push(Context::Before(items));
+                        current = last;
+                        continue 'outer;
+                    }
+                    items.push(last);
+                    break 'outer hcat(items);
+                }
+                break empty();
+            }
+            other => break Doc(other),
+        }
+    };
+    while let Some(context) = contexts.pop() {
+        result = match context {
+            Context::Prefixed(prefix) => Doc(Node::Prefixed(prefix, Box::new(result))),
+            Context::Before(items) => hcat(items) + result,
+        };
+    }
+    result
 }
 
 /// Removes leading line breaks and blank lines from `doc`.
 pub fn nestle(doc: Doc) -> Doc {
-    match doc.0 {
+    match doc.into_node() {
         Node::BlankLines(_) | Node::NewLine => empty(),
         Node::Concat(items) => {
             let mut rest = items.into_iter().peekable();
@@ -611,14 +781,17 @@ pub fn lblock(width: usize, doc: Doc) -> Doc {
 /// A block like [`lblock`], with the content aligned to the right.
 pub fn rblock(width: usize, doc: Doc) -> Doc {
     block(width, &doc, |w, line| {
-        pad_left(w - render::line_length(&line), line)
+        pad_left(w.wrapping_sub(render::line_length(&line)), line)
     })
 }
 
 /// A block like [`lblock`], with the content centered.
 pub fn cblock(width: usize, doc: Doc) -> Doc {
     block(width, &doc, |w, line| {
-        pad_left((w - render::line_length(&line)).div_euclid(2), line)
+        pad_left(
+            w.wrapping_sub(render::line_length(&line)).div_euclid(2),
+            line,
+        )
     })
 }
 
@@ -681,7 +854,7 @@ pub fn link(target: &str, doc: Doc) -> Doc {
 /// assert_eq!(remove_final_newline(literal("ab\n")).render(None), "ab");
 /// ```
 pub fn remove_final_newline(doc: Doc) -> Doc {
-    match doc.0 {
+    match doc.into_node() {
         Node::NewLine | Node::CarriageReturn => empty(),
         Node::Concat(mut items) => {
             if items
@@ -1306,6 +1479,87 @@ mod tests {
             assert_eq!(queries, (1, 1, 1, 1));
             assert_eq!(block(0, literal("a\nbb")).render(None), "a\nb\nb");
         }
+    }
+
+    /// Review findings LAY-001 and F4. Expected values from `pandoc.layout`
+    /// in Pandoc 3.13 for the same 10000 levels.
+    #[test]
+    fn deep_nesting_uses_no_call_stack() {
+        let mut doc = literal("x") + cr() + literal("y") + space();
+        for i in 1..=10_000 {
+            doc = match i % 4 {
+                0 => bold(doc),
+                1 => prefixed("", doc),
+                2 => flush(doc),
+                _ => before_non_blank(doc) + literal("z"),
+            };
+        }
+        let rendered = doc.render(None);
+        assert_eq!(rendered.len(), 2503);
+        assert!(rendered.starts_with("x\nyzzz"));
+        assert_eq!(
+            (doc.offset(), doc.min_offset(), doc.update_column(0)),
+            (2502, 2500, 2502)
+        );
+        assert!(chomp(doc.clone()).render(None).ends_with("zzzzz"));
+        assert!(
+            nowrap(doc.clone())
+                .render(Some(3))
+                .starts_with("x\ny zzzzzzzz")
+        );
+        assert_eq!(doc.map_text(&|s| s.to_uppercase()).render(None).len(), 2503);
+        assert_eq!(doc.clone(), doc);
+        assert_ne!(doc.clone() + literal("q"), doc);
+        assert!(doc.render_ansi(Some(5)).contains("\u{1b}[1m"));
+        drop(doc);
+        let mut prefixes = literal("x");
+        for _ in 0..10_000 {
+            prefixes = prefixed("", prefixes);
+        }
+        assert_eq!(prefixes.render(None), "x");
+        let mut chain = literal("a");
+        for _ in 0..10_000 {
+            chain = prefixed("", chain + blankline());
+        }
+        assert_eq!(chomp(chain).render(None), "a");
+    }
+
+    /// Review finding F1. Expected values from `pandoc.layout`.
+    #[test]
+    fn rblock_zero_width_drops_empty_line() {
+        assert_eq!(rblock(0, literal("x\n\ny")).render(None), "x\ny");
+        assert_eq!(rblock(0, literal("x\n\ny")).height(), 2);
+    }
+
+    /// Review finding F3. Expected values from `pandoc.layout`, where
+    /// `Int` arithmetic wraps.
+    #[test]
+    fn large_arguments_do_not_panic() {
+        assert!(hang(usize::MAX, empty(), empty()).is_empty());
+        let max = isize::MAX.unsigned_abs();
+        assert!(nest(max, nest(max, empty())).is_empty());
+        let d = literal("a") + blanklines(usize::MAX) + literal("b");
+        assert_eq!(d.render(Some(72)), "ab");
+        let wide = lblock(max, literal("")) + lblock(max, literal("")) + literal("c");
+        assert_eq!(wide.render(None), "c");
+        assert_eq!(wide.offset(), 0);
+    }
+
+    /// Review finding F5. The shortcut and table values come from the
+    /// width sweep of the oracle and from the `doclayout` table.
+    #[test]
+    fn character_predicates_and_length_forms() {
+        assert!(is_skin_tone_modifier('\u{1F3FB}') && is_skin_tone_modifier('\u{1F3FF}'));
+        assert!(!is_skin_tone_modifier('\u{1F3FA}') && !is_skin_tone_modifier('\u{1F400}'));
+        assert!(is_emoji_variation('\u{FE0E}') && is_emoji_variation('\u{FE0F}'));
+        assert!(!is_emoji_variation('\u{FE0D}') && !is_emoji_variation('\u{FE10}'));
+        assert!(is_zwj('\u{200D}') && !is_zwj('\u{200C}'));
+        assert_eq!(real_length_narrow_context("a\u{9C5}"), 2);
+        assert_eq!(real_length_narrow_context_no_shortcut("a\u{9C5}"), 1);
+        assert_eq!(
+            real_length_narrow_context_no_shortcut("日本\u{1F44B}\u{1F3FD}"),
+            6
+        );
     }
 
     #[test]

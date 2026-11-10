@@ -1,7 +1,7 @@
 -- Writes the test vectors of randoc-layout. Run it with Pandoc 3.13:
 --   pandoc lua crates/randoc-layout/tests/vectors.lua > crates/randoc-layout/tests/vectors.txt
 --
--- Line formats of the output:
+-- Line formats of the output (widths none, 0, 1, 5, 10, 20, 40 and 72):
 --   width START END A B C D E   widths for each code point from START to END
 --   len "TEXT" N                real_length of TEXT
 --   doc EXPR                    a Doc expression, followed by its results
@@ -286,6 +286,10 @@ local fixed = {
   '(nowrap (cat "a" space "b" space "c"))', '(nowrap (flush (cat "a" space "b")))',
   '(nowrap (before_non_blank (cat "a" space "b")))', '(nowrap (lblock 3 (cat "a" space "b")))',
   '(lblock 0 "abc")', '(lblock 0 empty)', '(lblock 0 "\\u{A}a")', '(cblock 0 "\\u{A}a")',
+  '(rblock 0 "x\\u{A}\\u{A}y")', '(cat "a" (rblock 0 "x\\u{A}\\u{A}y"))',
+  '(rblock 0 (cat "x" blankline "y"))', '(cblock 0 (cat "x" blankline "y"))',
+  '(lblock 0 (cat "x" cr "" cr "y"))', '(rblock 1 (cat "x" blankline "y"))',
+  '(cblock 1 "\\u{A}a\\u{A}\\u{A}b")', '(lblock 1 (cat "ab" blankline "c"))',
   '(rblock 0 "\\u{A}a")', '(rblock 0 "a\\u{A}bb")', '(cblock 0 "abc")', '(rblock 1 "\\u{A}\\u{A}a")', '(rblock 0 empty)', '(lblock 1 "日本")',
   '(lblock 3 "日本語")', '(rblock 5 "日本")', '(cblock 5 "ab")', '(cblock 6 "abc")',
   '(lblock 4 (cat "a" blankline "b"))', '(lblock 4 (cat "a" cr "" cr "b"))',
@@ -377,7 +381,7 @@ gen = function(depth)
 end
 for _ = 1, 160 do docs[#docs + 1] = gen(4) end
 
-local widths = { nil, 10, 20, 40, 72 }
+local widths = { nil, 0, 1, 5, 10, 20, 40, 72 }
 for _, src in ipairs(docs) do
   local expr = parse(tokenize(src), 1)
   local doc = eval(expr)
@@ -385,7 +389,7 @@ for _, src in ipairs(docs) do
   print(string.format('meta %s %d %d %d %d %d', tostring(L.is_empty(doc)),
     L.offset(doc), L.min_offset(doc), L.height(doc),
     L.update_column(doc, 0), L.update_column(doc, 5)))
-  for i = 1, 5 do
+  for i = 1, 8 do
     local w = widths[i]
     local label = w and tostring(w) or '-'
     print('plain ' .. label .. ' ' .. quote(L.render(doc, w)))

@@ -110,9 +110,10 @@ fn shortcut_class(c: char) -> Option<Class> {
 }
 
 fn class_of(c: char) -> Class {
-    if let Some(class) = shortcut_class(c) {
-        return class;
-    }
+    shortcut_class(c).unwrap_or_else(|| table_class(c))
+}
+
+fn table_class(c: char) -> Class {
     let cp = u32::from(c);
     let index = RANGES.partition_point(|&(start, _)| start <= cp);
     match index.checked_sub(1).and_then(|i| RANGES.get(i)) {
@@ -132,8 +133,19 @@ fn emoji_info(c: char) -> Option<(bool, bool)> {
         .map(|&(_, variation, skin)| (variation, skin))
 }
 
-fn is_skin_tone_modifier(c: char) -> bool {
+/// Returns `true` for an emoji skin tone modifier (U+1F3FB to U+1F3FF).
+pub fn is_skin_tone_modifier(c: char) -> bool {
     ('\u{1F3FB}'..='\u{1F3FF}').contains(&c)
+}
+
+/// Returns `true` for an emoji variation selector (U+FE0E or U+FE0F).
+pub fn is_emoji_variation(c: char) -> bool {
+    ('\u{FE0E}'..='\u{FE0F}').contains(&c)
+}
+
+/// Returns `true` for the zero-width joiner (U+200D).
+pub fn is_zwj(c: char) -> bool {
+    c == '\u{200D}'
 }
 
 /// The state of a width computation over a sequence of characters.
@@ -163,6 +175,10 @@ impl MatchState {
     }
 
     fn step(self, c: char) -> Self {
+        self.step_with(c, class_of(c))
+    }
+
+    fn step_with(self, c: char, class: Class) -> Self {
         let settled = |width| MatchState {
             first: false,
             total: self.total + self.tentative,
@@ -175,7 +191,7 @@ impl MatchState {
             last: c,
             tentative: 2,
         };
-        match class_of(c) {
+        match class {
             Class::Narrow => settled(1),
             Class::Wide => settled(2),
             Class::Combining => settled(if self.first { 1 } else { 0 }),
@@ -238,6 +254,23 @@ pub fn char_width(c: char) -> usize {
 /// ```
 pub fn real_length(text: &str) -> usize {
     usize::try_from(chars_length(text.chars())).unwrap_or(0)
+}
+
+/// Returns the width of a string with ambiguous characters as width 1.
+/// This is the same as [`real_length`].
+pub fn real_length_narrow_context(text: &str) -> usize {
+    real_length(text)
+}
+
+/// Returns the width of a string from the width table only. `doclayout`
+/// exposes this form to test its quick path. For a few code points, for
+/// example U+09C5, the result differs from [`real_length`], and Pandoc uses
+/// [`real_length`].
+pub fn real_length_narrow_context_no_shortcut(text: &str) -> usize {
+    let state = text.chars().fold(MatchState::new(true), |state, c| {
+        state.step_with(c, table_class(c))
+    });
+    usize::try_from(state.length()).unwrap_or(0)
 }
 
 /// The width of a string as the layout engine uses it. The value can be

@@ -65,7 +65,7 @@ enum Flat<'a> {
     LinkClose,
 }
 
-impl Flat<'_> {
+impl<'a> Flat<'a> {
     fn is_breakable(&self) -> bool {
         matches!(
             self,
@@ -96,81 +96,141 @@ impl Flat<'_> {
     }
 
     fn starts_blank(&self) -> bool {
+        let mut item = self;
+        loop {
+            return match item {
+                Flat::Text(_, text) => text_starts_blank(text),
+                Flat::Cooked(_, line) => line_starts_blank(line),
+                Flat::Block(width, lines) => {
+                    *width > 0 && lines.iter().all(|l| line_starts_blank(l))
+                }
+                Flat::VFill(width, text) => *width > 0 && text_starts_blank(text),
+                Flat::BeforeNonBlank(items)
+                | Flat::Prefixed(_, items)
+                | Flat::Flush(items)
+                | Flat::AfterBreak(items) => match items.first() {
+                    Some(first) => {
+                        item = first;
+                        continue;
+                    }
+                    None => false,
+                },
+                Flat::BreakingSpace
+                | Flat::CarriageReturn
+                | Flat::NewLine
+                | Flat::BlankLines(_)
+                | Flat::StyleOpen(_)
+                | Flat::StyleClose
+                | Flat::LinkOpen(_)
+                | Flat::LinkClose => true,
+            };
+        }
+    }
+
+    fn children_mut(&mut self) -> Option<&mut Vec<Flat<'a>>> {
         match self {
-            Flat::Text(_, text) => text_starts_blank(text),
-            Flat::Cooked(_, line) => line_starts_blank(line),
-            Flat::Block(width, lines) => *width > 0 && lines.iter().all(|l| line_starts_blank(l)),
-            Flat::VFill(width, text) => *width > 0 && text_starts_blank(text),
-            Flat::BeforeNonBlank(items)
-            | Flat::Prefixed(_, items)
+            Flat::Prefixed(_, items)
+            | Flat::BeforeNonBlank(items)
             | Flat::Flush(items)
-            | Flat::AfterBreak(items) => items.first().is_some_and(Flat::starts_blank),
-            Flat::BreakingSpace
-            | Flat::CarriageReturn
-            | Flat::NewLine
-            | Flat::BlankLines(_)
-            | Flat::StyleOpen(_)
-            | Flat::StyleClose
-            | Flat::LinkOpen(_)
-            | Flat::LinkClose => true,
+            | Flat::AfterBreak(items) => Some(items),
+            _ => None,
         }
     }
 }
 
-fn flatten<'a>(doc: &'a Doc, out: &mut Vec<Flat<'a>>) {
-    let nested = |inner: &'a Doc| {
-        let mut items = Vec::new();
-        flatten(inner, &mut items);
-        items
-    };
-    match &doc.0 {
-        Node::Empty => {}
-        Node::Text(width, text) => out.push(Flat::Text(*width, text)),
-        Node::Block(width, lines) => out.push(Flat::Block(*width, lines)),
-        Node::VFill(width, text) => out.push(Flat::VFill(*width, text)),
-        Node::Prefixed(prefix, inner) => {
-            let items = nested(inner);
-            if !items.is_empty() {
-                out.push(Flat::Prefixed(prefix, items));
+/// A wrapper item whose content `flatten` is still collecting.
+enum Open<'a> {
+    Prefixed(&'a str),
+    BeforeNonBlank,
+    Flush,
+}
+
+fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
+    enum Work<'a> {
+        Doc(&'a Doc),
+        Emit(Flat<'a>),
+        Close(Open<'a>),
+    }
+    let mut levels: Vec<Vec<Flat<'_>>> = vec![Vec::new()];
+    let mut work = vec![Work::Doc(doc)];
+    while let Some(step) = work.pop() {
+        match step {
+            Work::Emit(item) => push_flat(&mut levels, item),
+            Work::Close(kind) => {
+                let items = levels.pop().unwrap_or_default();
+                if !items.is_empty() {
+                    push_flat(
+                        &mut levels,
+                        match kind {
+                            Open::Prefixed(prefix) => Flat::Prefixed(prefix, items),
+                            Open::BeforeNonBlank => Flat::BeforeNonBlank(items),
+                            Open::Flush => Flat::Flush(items),
+                        },
+                    );
+                }
             }
+            Work::Doc(d) => match &d.0 {
+                Node::Empty => {}
+                Node::Text(width, text) => push_flat(&mut levels, Flat::Text(*width, text)),
+                Node::Block(width, lines) => push_flat(&mut levels, Flat::Block(*width, lines)),
+                Node::VFill(width, text) => push_flat(&mut levels, Flat::VFill(*width, text)),
+                Node::Prefixed(prefix, inner) => {
+                    levels.push(Vec::new());
+                    work.push(Work::Close(Open::Prefixed(prefix)));
+                    work.push(Work::Doc(inner));
+                }
+                Node::BeforeNonBlank(inner) => {
+                    levels.push(Vec::new());
+                    work.push(Work::Close(Open::BeforeNonBlank));
+                    work.push(Work::Doc(inner));
+                }
+                Node::Flush(inner) => {
+                    levels.push(Vec::new());
+                    work.push(Work::Close(Open::Flush));
+                    work.push(Work::Doc(inner));
+                }
+                Node::BreakingSpace => push_flat(&mut levels, Flat::BreakingSpace),
+                Node::CarriageReturn => push_flat(&mut levels, Flat::CarriageReturn),
+                Node::NewLine => push_flat(&mut levels, Flat::NewLine),
+                Node::BlankLines(n) => push_flat(&mut levels, Flat::BlankLines(*n)),
+                Node::AfterBreak(text) => {
+                    let mut items = Vec::new();
+                    flatten_literal(text, &mut items);
+                    if !items.is_empty() {
+                        push_flat(&mut levels, Flat::AfterBreak(items));
+                    }
+                }
+                Node::Concat(docs) => work.extend(docs.iter().rev().map(Work::Doc)),
+                Node::Styled(style, inner) => {
+                    push_flat(&mut levels, Flat::StyleOpen(*style));
+                    work.push(Work::Emit(Flat::StyleClose));
+                    work.push(Work::Doc(inner));
+                }
+                Node::Linked(target, inner) => {
+                    push_flat(&mut levels, Flat::LinkOpen(target));
+                    work.push(Work::Emit(Flat::LinkClose));
+                    work.push(Work::Doc(inner));
+                }
+            },
         }
-        Node::BeforeNonBlank(inner) => {
-            let items = nested(inner);
-            if !items.is_empty() {
-                out.push(Flat::BeforeNonBlank(items));
+    }
+    levels.pop().unwrap_or_default()
+}
+
+fn push_flat<'a>(levels: &mut [Vec<Flat<'a>>], item: Flat<'a>) {
+    if let Some(level) = levels.last_mut() {
+        level.push(item);
+    }
+}
+
+/// Drops nested items without recursion.
+fn dispose(items: Vec<Flat<'_>>) {
+    let mut pending = vec![items];
+    while let Some(mut items) = pending.pop() {
+        for item in &mut items {
+            if let Some(children) = item.children_mut() {
+                pending.push(std::mem::take(children));
             }
-        }
-        Node::Flush(inner) => {
-            let items = nested(inner);
-            if !items.is_empty() {
-                out.push(Flat::Flush(items));
-            }
-        }
-        Node::BreakingSpace => out.push(Flat::BreakingSpace),
-        Node::CarriageReturn => out.push(Flat::CarriageReturn),
-        Node::NewLine => out.push(Flat::NewLine),
-        Node::BlankLines(n) => out.push(Flat::BlankLines(*n)),
-        Node::AfterBreak(text) => {
-            let mut items = Vec::new();
-            flatten_literal(text, &mut items);
-            if !items.is_empty() {
-                out.push(Flat::AfterBreak(items));
-            }
-        }
-        Node::Concat(docs) => {
-            for inner in docs {
-                flatten(inner, out);
-            }
-        }
-        Node::Styled(style, inner) => {
-            out.push(Flat::StyleOpen(*style));
-            flatten(inner, out);
-            out.push(Flat::StyleClose);
-        }
-        Node::Linked(target, inner) => {
-            out.push(Flat::LinkOpen(target));
-            flatten(inner, out);
-            out.push(Flat::LinkClose);
         }
     }
 }
@@ -304,10 +364,10 @@ impl<'a> State<'a> {
         if self.column == 0 && !(prefix.is_empty() && font == Font::default()) {
             self.push(Attr::plain(prefix));
             self.push(attr);
-            self.column = self.prefix.length + width;
+            self.column = self.prefix.length.wrapping_add(width);
         } else {
             self.push(attr);
-            self.column += width;
+            self.column = self.column.wrapping_add(width);
         }
         self.newlines = 0;
     }
@@ -316,9 +376,9 @@ impl<'a> State<'a> {
         let prefix = self.current_prefix().to_owned();
         if self.column == 0 && !prefix.is_empty() {
             self.push(Attr::plain(prefix));
-            self.column = self.prefix.length + width;
+            self.column = self.prefix.length.wrapping_add(width);
         } else {
-            self.column += width;
+            self.column = self.column.wrapping_add(width);
         }
         for attr in line {
             self.push(attr);
@@ -326,122 +386,151 @@ impl<'a> State<'a> {
         self.newlines = 0;
     }
 
-    fn render_list(&mut self, mut items: Vec<Flat<'a>>) {
-        let mut i = 0;
-        while i < items.len() {
-            let Some(item) = items.get_mut(i) else { break };
-            match item {
-                Flat::Text(width, text) => {
-                    let (width, text) = (*width, *text);
-                    self.out_text(width, text);
-                }
-                Flat::Cooked(width, line) => {
-                    let width = *width;
-                    let line = std::mem::take(line);
-                    self.out_cooked(width, line);
-                }
-                Flat::StyleOpen(style) => {
-                    let font = self.font().with(*style);
-                    self.fonts.push(font);
-                }
-                Flat::StyleClose => {
-                    self.fonts.pop();
-                }
-                Flat::LinkOpen(target) => {
-                    if self.link.is_none() {
-                        self.link = Some(*target);
-                    } else {
-                        let mut rest: Vec<Flat<'a>> = items.drain(i + 1..).collect();
-                        if let Some(close) = rest.iter().position(|x| matches!(x, Flat::LinkClose))
-                        {
-                            rest.remove(close);
-                        }
-                        self.render_list(rest);
-                        return;
+    /// Lays out the items. Each nested list is a frame on an explicit
+    /// stack, so the nesting depth does not use the call stack.
+    fn render_list(&mut self, items: Vec<Flat<'a>>) {
+        let mut frames = vec![Frame {
+            items,
+            next: 0,
+            restore: Restore::Nothing,
+        }];
+        while let Some(frame) = frames.last_mut() {
+            if frame.next >= frame.items.len() {
+                if let Some(done) = frames.pop() {
+                    match done.restore {
+                        Restore::Nothing => {}
+                        Restore::Prefix(prefix) => self.prefix = prefix,
+                        Restore::UsePrefix(use_prefix) => self.use_prefix = use_prefix,
                     }
                 }
-                Flat::LinkClose => self.link = None,
-                Flat::Prefixed(prefix, inner) => {
-                    let inner = std::mem::take(inner);
-                    let saved = self.prefix.clone();
-                    self.prefix = Prefix::new(format!("{}{}", saved.text, prefix));
-                    self.render_list(normalize(inner));
-                    self.prefix = saved;
-                }
-                Flat::Flush(inner) => {
-                    let inner = std::mem::take(inner);
-                    let saved = self.use_prefix;
-                    self.use_prefix = false;
-                    self.render_list(normalize(inner));
-                    self.use_prefix = saved;
-                }
-                Flat::BeforeNonBlank(inner) => {
-                    let inner = std::mem::take(inner);
-                    let next = items.iter().skip(i + 1).find(|x| x.is_printable());
-                    if next.is_some_and(|x| !x.starts_blank()) {
-                        self.render_list(normalize(inner));
-                    }
-                }
-                Flat::BlankLines(num) => {
-                    let num = *num;
-                    if self.newlines <= num {
-                        for _ in 0..(1 + num - self.newlines) {
-                            self.newline();
-                        }
-                    }
-                }
-                Flat::CarriageReturn => {
-                    if self.newlines == 0 {
-                        self.newline();
-                    }
-                }
-                Flat::NewLine => self.newline(),
-                Flat::BreakingSpace => {
-                    let mut j = i + 1;
-                    while items
-                        .get(j)
-                        .is_some_and(|x| matches!(x, Flat::BreakingSpace))
-                    {
-                        j += 1;
-                    }
-                    let following: isize = items
-                        .iter()
-                        .skip(j)
-                        .take_while(|x| !x.is_breakable())
-                        .map(Flat::offset)
-                        .sum();
-                    match self.line_length {
-                        Some(limit) if self.column + 1 + following > limit => self.newline(),
-                        _ => {
-                            if self.column > 0 {
-                                self.out_text(1, " ");
-                            }
-                        }
-                    }
-                    i = j;
-                    continue;
-                }
-                Flat::AfterBreak(inner) => {
-                    let inner = std::mem::take(inner);
-                    if self.newlines > 0 {
-                        self.render_list(inner);
-                    }
-                }
-                Flat::Block(..) | Flat::VFill(..) => {
-                    let mut j = i + 1;
-                    while items.get(j).is_some_and(Flat::is_block) {
-                        j += 1;
-                    }
-                    let blocks: Vec<Flat<'a>> = items.drain(i..j).collect();
-                    self.render_blocks(&blocks);
-                    continue;
-                }
+                continue;
             }
-            i += 1;
+            if let Some(child) = self.step(frame) {
+                frames.push(child);
+            }
         }
     }
 
-    fn render_blocks(&mut self, blocks: &[Flat<'a>]) {
+    /// Lays out the next item of `frame`. Returns a frame for the content of
+    /// the item when the item has content to lay out.
+    fn step(&mut self, frame: &mut Frame<'a>) -> Option<Frame<'a>> {
+        let i = frame.next;
+        frame.next = i + 1;
+        let items = &mut frame.items;
+        let item = items.get_mut(i)?;
+        match item {
+            Flat::Text(width, text) => {
+                let (width, text) = (*width, *text);
+                self.out_text(width, text);
+            }
+            Flat::Cooked(width, line) => {
+                let width = *width;
+                let line = std::mem::take(line);
+                self.out_cooked(width, line);
+            }
+            Flat::StyleOpen(style) => {
+                let font = self.font().with(*style);
+                self.fonts.push(font);
+            }
+            Flat::StyleClose => {
+                self.fonts.pop();
+            }
+            Flat::LinkOpen(target) => {
+                if self.link.is_none() {
+                    self.link = Some(*target);
+                } else {
+                    let mut rest = items.split_off(i + 1);
+                    if let Some(close) = rest.iter().position(|x| matches!(x, Flat::LinkClose)) {
+                        rest.remove(close);
+                    }
+                    *items = rest;
+                    frame.next = 0;
+                }
+            }
+            Flat::LinkClose => self.link = None,
+            Flat::Prefixed(prefix, inner) => {
+                let inner = std::mem::take(inner);
+                let saved = self.prefix.clone();
+                self.prefix = Prefix::new(format!("{}{}", saved.text, prefix));
+                return Some(Frame::new(normalize(inner), Restore::Prefix(saved)));
+            }
+            Flat::Flush(inner) => {
+                let inner = std::mem::take(inner);
+                let saved = self.use_prefix;
+                self.use_prefix = false;
+                return Some(Frame::new(normalize(inner), Restore::UsePrefix(saved)));
+            }
+            Flat::BeforeNonBlank(inner) => {
+                let inner = std::mem::take(inner);
+                let next = items.iter().skip(i + 1).find(|x| x.is_printable());
+                if next.is_some_and(|x| !x.starts_blank()) {
+                    return Some(Frame::new(normalize(inner), Restore::Nothing));
+                }
+                dispose(inner);
+            }
+            Flat::BlankLines(num) => {
+                let num = to_isize(*num);
+                let newlines = to_isize(self.newlines);
+                if newlines <= num {
+                    let count = 1isize.wrapping_add(num).wrapping_sub(newlines);
+                    for _ in 0..count {
+                        self.newline();
+                    }
+                }
+            }
+            Flat::CarriageReturn => {
+                if self.newlines == 0 {
+                    self.newline();
+                }
+            }
+            Flat::NewLine => self.newline(),
+            Flat::BreakingSpace => {
+                let mut j = i + 1;
+                while items
+                    .get(j)
+                    .is_some_and(|x| matches!(x, Flat::BreakingSpace))
+                {
+                    j += 1;
+                }
+                let following = items
+                    .iter()
+                    .skip(j)
+                    .take_while(|x| !x.is_breakable())
+                    .fold(0isize, |sum, x| sum.wrapping_add(x.offset()));
+                match self.line_length {
+                    Some(limit) if self.column.wrapping_add(1).wrapping_add(following) > limit => {
+                        self.newline();
+                    }
+                    _ => {
+                        if self.column > 0 {
+                            self.out_text(1, " ");
+                        }
+                    }
+                }
+                frame.next = j;
+            }
+            Flat::AfterBreak(inner) => {
+                let inner = std::mem::take(inner);
+                if self.newlines > 0 {
+                    return Some(Frame::new(inner, Restore::Nothing));
+                }
+            }
+            Flat::Block(..) | Flat::VFill(..) => {
+                let mut j = i + 1;
+                while items.get(j).is_some_and(Flat::is_block) {
+                    j += 1;
+                }
+                let blocks: Vec<Flat<'a>> = items.drain(i..j).collect();
+                frame.next = i;
+                return Some(self.render_blocks(&blocks));
+            }
+        }
+        None
+    }
+
+    /// Joins adjacent blocks line by line. Returns the frame that lays out
+    /// the joined lines with the current column as the prefix.
+    fn render_blocks(&mut self, blocks: &[Flat<'a>]) -> Frame<'a> {
         let font = self.font();
         let height = blocks
             .iter()
@@ -472,11 +561,11 @@ impl<'a> State<'a> {
         let first = specs.next().map(spec).unwrap_or_default();
         let (_, lines) = specs.fold(first, |acc, b| merge_blocks(height, acc, spec(b)));
         let saved = self.prefix.clone();
-        let extra = self.column - saved.length;
+        let extra = self.column.wrapping_sub(saved.length);
         if extra > 0 {
             let spaces = " ".repeat(extra.unsigned_abs());
             self.prefix.text.push_str(&spaces);
-            self.prefix.length += extra;
+            self.prefix.length = self.prefix.length.wrapping_add(extra);
         }
         let mut cooked = Vec::new();
         for (_, line) in lines {
@@ -488,9 +577,36 @@ impl<'a> State<'a> {
             }
             cooked.push(Flat::Cooked(line_length(&line), line));
         }
-        self.render_list(cooked);
-        self.prefix = saved;
+        Frame::new(cooked, Restore::Prefix(saved))
     }
+}
+
+/// What to reset when a frame ends.
+enum Restore {
+    Nothing,
+    Prefix(Prefix),
+    UsePrefix(bool),
+}
+
+/// A list of items that the layout engine works through.
+struct Frame<'a> {
+    items: Vec<Flat<'a>>,
+    next: usize,
+    restore: Restore,
+}
+
+impl<'a> Frame<'a> {
+    fn new(items: Vec<Flat<'a>>, restore: Restore) -> Frame<'a> {
+        Frame {
+            items,
+            next: 0,
+            restore,
+        }
+    }
+}
+
+fn to_isize(n: usize) -> isize {
+    isize::try_from(n).unwrap_or(isize::MAX)
 }
 
 type BlockSpec = (isize, Vec<(isize, Line)>);
@@ -508,18 +624,17 @@ fn merge_blocks(height: usize, first: BlockSpec, second: BlockSpec) -> BlockSpec
         .into_iter()
         .zip(lines2)
         .map(|((len1, mut l1), (len2, l2))| {
-            l1.push(spaces(w1 - len1));
+            l1.push(spaces(w1.wrapping_sub(len1)));
             l1.extend(l2);
-            (w1 + len2, l1)
+            (w1.wrapping_add(len2), l1)
         })
         .collect();
-    (w1 + w2, merged)
+    (w1.wrapping_add(w2), merged)
 }
 
 /// Lays out a document into attributed output text.
 pub(crate) fn prerender(doc: &Doc, line_length: Option<isize>) -> Vec<Attr> {
-    let mut items = Vec::new();
-    flatten(doc, &mut items);
+    let items = flatten(doc);
     let mut state = State {
         output: Vec::new(),
         prefix: Prefix::new(String::new()),
