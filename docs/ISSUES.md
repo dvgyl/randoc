@@ -15,6 +15,8 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | --- | --- | --- | --- |
 | I-001 | JSON reader | The text of a JSON error is different. Pandoc prints the path of the error (`Error in $.blocks[0]: ...`) and its own type names. The exit code is equal. | Open. 8 units fail: `json/roundtrip/{old-version,missing-version,not-json,unknown-block}`. |
 | I-002 | Program | Only `-f`, `-t`, `-o`, `--version` and input files work. | Open. The command-line workstream replaces the first version. |
+| I-CORPUS-01 | Corpus | Randoc fails each unit of the document corpus (`spec/corpus.json`). The corpus has no `json` input, and Randoc has only the JSON reader and writer. | Open. The result changes when the format workstreams merge. See `docs/CORPUS.md`. |
+| I-CORPUS-02 | Corpus (oracle) | Pandoc needs about 100 s of wall time (5 s of CPU time) to read `jupyter-running-code` (`jupyter/notebook`, `Running Code.ipynb`). The other notebooks need less than 1 s. | Kept as found. Its manifest entry sets `timeout = 300`. The default time limit stays 60 s. |
 
 ## Harness limits
 
@@ -31,3 +33,4 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | L-002 | `tools/bench/run.py` | The fallback that stops a child which left its process group has no test. | Opus review of bench, final check (R4-1) |
 | L-003 | `docs/research-data/commands.md` | The merge command reads `probe-cf.tsv`, but the recorded probe run writes `probe.tsv`. The recorded commands cannot make `results.tsv` again as written. | Opus review of research, round 2 (N-1) |
 | L-004 | `docs/DATA_FILES_LICENCES.md` | The notice rule for `julia.xml` omits the author that the file header names (Timothy E. Holy). Keep that credit when Randoc ships the file. | Codex review of research, round 2 (R2-001) |
+| L-005 | `tools/corpus/test_corpus.py` | Three tests of `SlowServerTests` compare the download files in the shared temporary folder before and after one download. They fail when a second download process uses the same folder at the same time. The tool itself is correct. Correction: give each test a private temporary folder. | Opus review of corpus, round 6 (R6-01) |

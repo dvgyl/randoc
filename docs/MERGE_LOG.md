@@ -100,3 +100,29 @@ Not checked by a reviewer: the competitor programs could not run again in the
 reviews, because the worker deleted its clones to free disk space. The
 reviewers checked the numbers against the stored result rows and the public
 repositories.
+
+## Workstream corpus (branch `ws/corpus`, head a0fab04)
+
+Content: `tools/corpus/` (the manifest of 230 real documents in 33 formats
+with a pinned URL, a licence and a SHA-256 hash for each one, the download
+tool and the comparison tool), `docs/CORPUS.md` and `spec/corpus.json`. The
+documents are not in the repository. No product code.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 28 units pass, 0 regressions. |
+| 2. Measured progress | The corpus run is a new measurement: 690 units (230 documents, each to `json`, `html` and `markdown`). The oracle against itself gives 690 equal results. Randoc passes 0 of 690 (issue I-CORPUS-01), because `main` has only the JSON format. |
+| 3. Tests | 72 unit tests of the tools pass on the merged tree (`python3 -B -m unittest discover -s tools/corpus`). Mutation tests and Rust coverage do not apply to Python tools. |
+| 4. No panics | Not applicable: no parser of Randoc changed. The tools limit the download size, the download time and the run time of each program, and they stop a process group that does not end. |
+| 5. Two reviews | Six rounds. Codex (GPT-6.1 Sol, fast tier): rounds 1 to 4 REQUEST CHANGES, round 5 APPROVE, round 6 APPROVE at 206f10a with no open finding. Opus 5.5 with a new context: round 1 REQUEST CHANGES (2 high, 2 medium), rounds 2 to 4 APPROVE, round 5 REQUEST CHANGES (1 medium: a download that the server cut was accepted), round 6 APPROVE at 206f10a with 1 low finding, which is L-005 in `docs/ISSUES.md`. |
+| 6. No slowdowns | Not applicable: no product code changed. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Changes after the last reviewed commit (206f10a), checked by the coordinator:
+
+- Commit a0fab04 changes only `docs/CORPUS.md`. It records a second download
+  of the whole corpus: each of the 230 hashes was equal to the manifest.
+- In the merge commit, the coordinator gave the two corpus issues the
+  identifiers I-CORPUS-01 and I-CORPUS-02, added L-005, and replaced a local
+  path in the run instructions of `docs/CORPUS.md` with the names of the two
+  environment variables.

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-09T23:50:00Z",
+  "updated": "2026-11-10T01:00:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -30,7 +30,12 @@
     "details": "spec/pandoc-testsuite.json"
   },
   "corpus": {
-    "status": "not_built"
+    "status": "measured",
+    "documents": 230,
+    "units": 690,
+    "oracle_pass": 690,
+    "randoc_pass": 0,
+    "details": "spec/corpus.json"
   },
   "workstreams": [
     {
@@ -44,15 +49,15 @@
     },
     {
       "id": "bench",
-      "state": "review"
+      "state": "merged"
     },
     {
       "id": "corpus",
-      "state": "review"
+      "state": "merged"
     },
     {
       "id": "layout",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "markdown-reader",
@@ -60,19 +65,19 @@
     },
     {
       "id": "html-writer",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "cli",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "native",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "json-codec",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "commonmark-reader",
@@ -80,12 +85,20 @@
     },
     {
       "id": "research",
+      "state": "merged"
+    },
+    {
+      "id": "templates",
+      "state": "in_work"
+    },
+    {
+      "id": "latex-writer",
       "state": "in_work"
     }
   ],
   "next_tasks": [
-    "Review and merge each wave 1 workstream when it reports: layout, native, json-codec, html-writer, markdown-reader, cli, bench, corpus, research.",
-    "Start templates, the LaTeX writer and the Markdown writer after layout merges.",
+    "Review and merge each workstream when it reports: layout, json-codec, native, cli, html-writer, markdown-reader, commonmark-reader, templates, latex-writer.",
+    "After the Markdown reader and the HTML writer merge: measure Markdown to HTML in the harness, and run the Pandoc test-suite tool and the corpus tool again.",
     "Add the harness rule for random values (H-001) before an EPUB or ipynb writer starts."
   ]
 }

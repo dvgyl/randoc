@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-09 23:50 UTC.
+Updated: 2026-11-10 01:00 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -22,24 +22,27 @@ Updated: 2026-11-09 23:50 UTC.
 - Pandoc's own test suite (`tools/pandoc-testsuite`, `docs/PANDOC_TESTSUITE.md`):
   the tool runs 2231 tests. The oracle passes 2231. Randoc passes 0. About 1939
   more tests need Haskell and cannot run.
-- Corpus of real documents: built by the workstream corpus (242 documents),
-  not merged yet.
+- Corpus of real documents (`tools/corpus`, `docs/CORPUS.md`): 230 documents in
+  33 formats, 690 units. The oracle against itself passes 690. Randoc passes 0
+  (`spec/corpus.json`), because `main` has only the JSON format.
 
 ## Workstreams
 
-| Workstream | Branch | State at 23:50 UTC |
+| Workstream | Branch | State at 01:00 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
-| corpus | `ws/corpus` | Review round 1. |
-| layout | `ws/layout` | The worker runs its gate checks. |
+| corpus | `ws/corpus` | Merged. |
+| layout | `ws/layout` | Review round 3. One reviewer approves; the second review runs. |
 | markdown-reader | `ws/markdown-reader` | In work. |
-| html-writer | `ws/html-writer` | In work. |
-| cli | `ws/cli` | In work. |
-| native | `ws/native` | In work. |
-| json-codec | `ws/json-codec` | In work. It corrects the JSON findings of the foundation reviews. |
+| html-writer | `ws/html-writer` | Review round 1. |
+| cli | `ws/cli` | The worker corrects the findings of review round 1. |
+| native | `ws/native` | Review round 2. |
+| json-codec | `ws/json-codec` | Review round 2. |
 | commonmark-reader | `ws/commonmark-reader` | In work. |
 | research | `ws/research` | Merged. |
+| templates | `ws/templates` | In work. It builds on `ws/layout`. |
+| latex-writer | `ws/latex-writer` | In work. It builds on `ws/layout`. |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

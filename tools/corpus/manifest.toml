@@ -1,0 +1,2075 @@
+# The Randoc document corpus. See docs/CORPUS.md.
+# Each document has a URL pinned to a commit or a revision where the host allows it,
+# an SPDX license expression, the Pandoc input format, and the SHA-256 hash and size of the file.
+# `fetch.py` downloads the documents to $RANDOC_CORPUS. Never commit a document.
+
+[[document]]
+name = "rust-book-ch00-00-introduction"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch00-00-introduction.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "2eba711175d633b5c6bf2585bcb6382fef4eec2b39f18689a1a2b9134dd9d273"
+size = 10839
+
+[[document]]
+name = "rust-book-ch03-01-variables-and-mutability"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch03-01-variables-and-mutability.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "f8e3bd09891f35846d61ec183508fcd4e88ef3450da1107cb6749eeddc815f60"
+size = 9435
+
+[[document]]
+name = "rust-book-ch04-03-slices"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch04-03-slices.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "fb0ac90f3652f4096624bc008f2a5ade603ed1d7af078281cec7a88da66e82bb"
+size = 13237
+
+[[document]]
+name = "rust-book-ch06-02-match"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch06-02-match.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "db9a32dfa0c24d89d74362e0bbdb9e5793a6e61fe3aa487b67897b1cb3f90899"
+size = 12595
+
+[[document]]
+name = "rust-book-ch07-05-separating-modules-into-different-files"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch07-05-separating-modules-into-different-files.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "f71fdf4512195e4c048c6b9c89e5575fea219332099660464e1b2a279f9d5782"
+size = 6077
+
+[[document]]
+name = "rust-book-ch09-03-to-panic-or-not-to-panic"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch09-03-to-panic-or-not-to-panic.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "a3f14104d56462a27c3d2b3a0cdb19eb7aaa4176ad1d80b82b0d6d667304d54e"
+size = 13532
+
+[[document]]
+name = "rust-book-ch11-01-writing-tests"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch11-01-writing-tests.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "03cec10df505d25d37717447f906d392506c18f4af1ba7ef9cc32f05cfc15359"
+size = 25511
+
+[[document]]
+name = "rust-book-ch12-05-working-with-environment-variables"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch12-05-working-with-environment-variables.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "83185725d64339fa71448b45152abf9cc2c5efb33db6aacda25de9d5b7b456b5"
+size = 9541
+
+[[document]]
+name = "rust-book-ch14-02-publishing-to-crates-io"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch14-02-publishing-to-crates-io.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "dc30b41f9c5d8c5ae3ff2e13d193a7466709483e90ca8d4939b663e39c450a79"
+size = 21548
+
+[[document]]
+name = "rust-book-ch15-04-rc"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch15-04-rc.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "3ef419d9f6d39ad665238bd0ead40f7ad65485e8762a8f8f64dd13d7152e5868"
+size = 8911
+
+[[document]]
+name = "rust-book-ch16-03-shared-state"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch16-03-shared-state.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "9aa8adf23ccf6ceaf7586b9aac35c30769bd13ebfbb8950a185d9b136104f10b"
+size = 12519
+
+[[document]]
+name = "rust-book-ch17-04-streams"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch17-04-streams.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "b494f9019a1e9a79992db4c056377995227764d2822bb8cd0f86d51ce4a08655"
+size = 5159
+
+[[document]]
+name = "rust-book-ch18-03-oo-design-patterns"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch18-03-oo-design-patterns.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "2f87e2bda9a748c973642b0c7f9ded2ac0467059a708aecabe7bd11e08eb305a"
+size = 28054
+
+[[document]]
+name = "rust-book-ch20-03-advanced-types"
+format = "markdown"
+url = "https://raw.githubusercontent.com/rust-lang/book/2771df165f092a4fbb9f46b5b2e7450f19010adb/src/ch20-03-advanced-types.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/book@2771df165f09"
+sha256 = "640f8f52f31cf573a6a1f64dbbdebfe7f36f54a3f42a8cf22c42e7658e75960e"
+size = 14390
+
+[[document]]
+name = "deep-review-00-front-matter"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/00.front-matter.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "ecfdd51ce3859099c24768cb2cdd3ec77c0cc87902e73cc04d10b5708238602e"
+size = 11108
+
+[[document]]
+name = "deep-review-01-abstract"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/01.abstract.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "911e737ebd66dbc6fe3951e72be07dd99e4a1cfe4bd37d00ddcb1e8063866b94"
+size = 1770
+
+[[document]]
+name = "deep-review-02-intro"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/02.intro.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "f528135028313042a37ac28ce7ffe05a2fb78ac913d01dedd49563322dc964d3"
+size = 20678
+
+[[document]]
+name = "deep-review-03-categorize"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/03.categorize.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "9cd3277803fc142a9cee67559e04caf27d245ad9b13560cd351b06719fa8b183"
+size = 52394
+
+[[document]]
+name = "deep-review-05-treat"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/05.treat.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "1299146f67a40ad782c52101d85cd93d224272a48052312b627d97951bdceb17"
+size = 33797
+
+[[document]]
+name = "deep-review-06-discussion"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/06.discussion.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "7cd88b7c9e93b1075b5d7adef0e17537f7f95cc5c68ba46ee5a23a2cbc7e2f25"
+size = 57063
+
+[[document]]
+name = "deep-review-07-conclusions"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/07.conclusions.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "b902b5cfa18ffcfb804c66279d82bd4d37f68cb0e1329fdf3e682a5fe0ec10e0"
+size = 6254
+
+[[document]]
+name = "deep-review-08-methods"
+format = "markdown"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/08.methods.md"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "fa5ee7a6c8068a5ecc1af426d3e9d06cde711dfc68c0ef8726604f7bff0caa22"
+size = 7639
+
+[[document]]
+name = "github-docs-github-command-palette"
+format = "markdown"
+url = "https://raw.githubusercontent.com/github/docs/d59e39205d23d200a029f8824158d15fcec58eed/content/get-started/accessibility/github-command-palette.md"
+license = "CC-BY-4.0"
+source = "github/docs@d59e39205d23"
+sha256 = "fce7590cf91e6806724be20154c6c432f8509f957ef988825b272cef9d5cc630"
+size = 17443
+
+[[document]]
+name = "github-docs-configuring-git-to-handle-line-endings"
+format = "markdown"
+url = "https://raw.githubusercontent.com/github/docs/d59e39205d23d200a029f8824158d15fcec58eed/content/get-started/git-basics/configuring-git-to-handle-line-endings.md"
+license = "CC-BY-4.0"
+source = "github/docs@d59e39205d23"
+sha256 = "111a817f2ce110dc1687a7ca7bbe091879cf8e12f84b7e20084892919874b9f8"
+size = 6370
+
+[[document]]
+name = "github-docs-finding-and-understanding-example-code"
+format = "markdown"
+url = "https://raw.githubusercontent.com/github/docs/d59e39205d23d200a029f8824158d15fcec58eed/content/get-started/learning-to-code/finding-and-understanding-example-code.md"
+license = "CC-BY-4.0"
+source = "github/docs@d59e39205d23"
+sha256 = "b6ed2ac81c3528b12d91bbfe31adb40ced2ef481a27e7dfe47fd19a79220c5aa"
+size = 13354
+
+[[document]]
+name = "github-docs-connecting-to-your-code-locally"
+format = "markdown"
+url = "https://raw.githubusercontent.com/github/docs/d59e39205d23d200a029f8824158d15fcec58eed/content/get-started/start-your-journey/connecting-to-your-code-locally.md"
+license = "CC-BY-4.0"
+source = "github/docs@d59e39205d23"
+sha256 = "62d5c3371096d8306534dcf093ee3011b8a8415a06626649edecb03083e92aa7"
+size = 4451
+
+[[document]]
+name = "github-docs-pushing-commits-to-a-remote-repository"
+format = "markdown"
+url = "https://raw.githubusercontent.com/github/docs/d59e39205d23d200a029f8824158d15fcec58eed/content/get-started/using-git/pushing-commits-to-a-remote-repository.md"
+license = "CC-BY-4.0"
+source = "github/docs@d59e39205d23"
+sha256 = "6f7cf451f1e8af585348db275b36b504174701fb95147e33193dcdf01f1bf3f5"
+size = 5391
+
+[[document]]
+name = "github-docs-supported-browsers"
+format = "markdown"
+url = "https://raw.githubusercontent.com/github/docs/d59e39205d23d200a029f8824158d15fcec58eed/content/get-started/using-github/supported-browsers.md"
+license = "CC-BY-4.0"
+source = "github/docs@d59e39205d23"
+sha256 = "466850c05e2037e3cbe29984652d02418f306a706a146d4b1760d54fdcad2cc2"
+size = 4800
+
+[[document]]
+name = "readme-react"
+format = "gfm"
+url = "https://raw.githubusercontent.com/facebook/react/b05c0b75fd9778536152eead30814c9ca90c810a/README.md"
+license = "MIT"
+source = "facebook/react@b05c0b75fd97"
+sha256 = "9b6ac13cb03c06ae5643376cebd8d0e6cbae7ec0dd30a5cdc443a93160c348eb"
+size = 5296
+
+[[document]]
+name = "readme-vscode"
+format = "gfm"
+url = "https://raw.githubusercontent.com/microsoft/vscode/63f95ae60c8731a843648961e35dcd9e32a87582/README.md"
+license = "MIT"
+source = "microsoft/vscode@63f95ae60c87"
+sha256 = "45a411a3b8d49556fbaa73601befc458ab10ad873fca9088136888c89abb8935"
+size = 6728
+
+[[document]]
+name = "readme-tokio"
+format = "gfm"
+url = "https://raw.githubusercontent.com/tokio-rs/tokio/c1489e0ef85f00f3590585eab1f1712129834742/README.md"
+license = "MIT"
+source = "tokio-rs/tokio@c1489e0ef85f"
+sha256 = "a092a8a31e4aeca60daab0fc3eef011994c5509501224dfaf34d488edb1a403e"
+size = 9505
+
+[[document]]
+name = "readme-ripgrep"
+format = "gfm"
+url = "https://raw.githubusercontent.com/BurntSushi/ripgrep/178cc027e283fd965cb72d0a7395b219eada170c/README.md"
+license = "Unlicense OR MIT"
+source = "BurntSushi/ripgrep@178cc027e283"
+sha256 = "945622d974f65e4e141ef9726c948c2640eebd222c5b101afb6445728283921e"
+size = 21599
+
+[[document]]
+name = "readme-bat"
+format = "gfm"
+url = "https://raw.githubusercontent.com/sharkdp/bat/6561174ab86c5ad59cf246758010034166e950a0/README.md"
+license = "MIT OR Apache-2.0"
+source = "sharkdp/bat@6561174ab86c"
+sha256 = "2d3de14315468b006e4305d0df5086a2788a3a982193395efa45e55255f4e184"
+size = 34235
+
+[[document]]
+name = "readme-deno"
+format = "gfm"
+url = "https://raw.githubusercontent.com/denoland/deno/e7b39ebd55c85aaf6a29290c1f5a99e2e21e09dd/README.md"
+license = "MIT"
+source = "denoland/deno@e7b39ebd55c8"
+sha256 = "83a959d62dea940f94ce1b50024928e34afb447de35197b7ea1d944fd6dbbcf7"
+size = 3807
+
+[[document]]
+name = "readme-ruff"
+format = "gfm"
+url = "https://raw.githubusercontent.com/astral-sh/ruff/d777c9a542883985710f3b78d3fc5715ea72cbb6/README.md"
+license = "MIT"
+source = "astral-sh/ruff@d777c9a54288"
+sha256 = "f25c5e6b098aadfed8313b8c8d2860fe88694114cf42ea7f243235cd28eeb313"
+size = 19636
+
+[[document]]
+name = "readme-flask"
+format = "gfm"
+url = "https://raw.githubusercontent.com/pallets/flask/49943b5a94413a530761350f04e896f76e8d620e/README.md"
+license = "BSD-3-Clause"
+source = "pallets/flask@49943b5a9441"
+sha256 = "1f2de14735b1ee9d3a342fa7c5d5e87b95727276c0a56c8a9d77221f37880602"
+size = 1639
+
+[[document]]
+name = "readme-requests"
+format = "gfm"
+url = "https://raw.githubusercontent.com/psf/requests/3c7baaa05ab4aa49cc819ce3a819d260de19c157/README.md"
+license = "Apache-2.0"
+source = "psf/requests@3c7baaa05ab4"
+sha256 = "2a9268c9be5f4dc9abe9105740be7c5234babc3dd2b25eb11ca376c538a0c67b"
+size = 2906
+
+[[document]]
+name = "readme-kubernetes"
+format = "gfm"
+url = "https://raw.githubusercontent.com/kubernetes/kubernetes/aedeaa614ff0ec29b8f4766d3465b89a830e2978/README.md"
+license = "Apache-2.0"
+source = "kubernetes/kubernetes@aedeaa614ff0"
+sha256 = "0c1159ea384aa0855eaad87f4595da8fd776553830297f3a7c43db81c7708fbd"
+size = 4236
+
+[[document]]
+name = "readme-core"
+format = "gfm"
+url = "https://raw.githubusercontent.com/vuejs/core/8b479a89445868d474f17e2d837765e7c9ece5e4/README.md"
+license = "MIT"
+source = "vuejs/core@8b479a894458"
+sha256 = "ee86575a4126eb9e9e40f94679f85b9b2f090230924cf984153e1a15563e7ffd"
+size = 2741
+
+[[document]]
+name = "readme-cargo"
+format = "gfm"
+url = "https://raw.githubusercontent.com/rust-lang/cargo/7548a1caf165d2a8e7cfb2c924a3487657934162/README.md"
+license = "MIT OR Apache-2.0"
+source = "rust-lang/cargo@7548a1caf165"
+sha256 = "b450788f16be7ed6b8b75233c9e3c0b6da7ebcb3017c39325c29d5f66f074c5e"
+size = 4677
+
+[[document]]
+name = "mdn-a"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/a/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "f9114600b601547cf360d9da7f25baa455392e97824b27cb01d63f728ec9750d"
+size = 26647
+
+[[document]]
+name = "mdn-big"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/big/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "5c74724eaae96a122e37fa7139b537961bdeb9b34621725ec3987f975980c0d9"
+size = 1953
+
+[[document]]
+name = "mdn-datalist"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/datalist/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "6a1cb411a87c91f209512e9ca7ceb45bd3a82280a49e797425d58e61d0191e0b"
+size = 8070
+
+[[document]]
+name = "mdn-fieldset"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/fieldset/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "1c05c1cc01497340b26baa9b6993078745904e05638779391928e8182e93ee9c"
+size = 7539
+
+[[document]]
+name = "mdn-hr"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/hr/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "33d4f132452e11f438139bc3f13634668d175e7fb46bad836d77782d82b0a310"
+size = 5826
+
+[[document]]
+name = "mdn-map"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/map/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "9aa8cb3fbc06b0d5b6b3f4dc2c538b2e011acda40f1632199aa7f4525efdb97b"
+size = 4086
+
+[[document]]
+name = "mdn-optgroup"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/optgroup/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "2b440f97b06aeeae290794082fc5ed4d7d916f597fbc609d59cb41709e7ee7e5"
+size = 4298
+
+[[document]]
+name = "mdn-rt"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/rt/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "715b643c4d9e69e3cc02ccf84072a52d0bfbf19615ed1241580e2023f9e4c7c2"
+size = 2875
+
+[[document]]
+name = "mdn-span"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/span/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "7732247253a31cb8e6b586efa912a943e0f36bf283f9c24e4cf74b2f8a077c0b"
+size = 3705
+
+[[document]]
+name = "mdn-th"
+format = "commonmark"
+url = "https://raw.githubusercontent.com/mdn/content/0a6ff1e3b8887f979b66c34cefdb73f846041879/files/en-us/web/html/reference/elements/th/index.md"
+license = "CC-BY-SA-2.5"
+source = "mdn/content@0a6ff1e3b888"
+sha256 = "d241f47b7361305b961f5280b938aa3a826ba456f37a16a7fea9323dc7b84d98"
+size = 17692
+
+[[document]]
+name = "jaq-advanced"
+format = "djot"
+url = "https://raw.githubusercontent.com/01mf02/jaq/c6cc7d3721ccfb212f153006c4fc90c56567540c/docs/advanced.dj"
+license = "MIT"
+source = "01mf02/jaq@c6cc7d3721cc"
+sha256 = "0e3f50f8251c62dc5ba31c0bbed8ecba939f8e153f9bd055c0d4c955a9faf5f7"
+size = 20409
+
+[[document]]
+name = "jaq-cli"
+format = "djot"
+url = "https://raw.githubusercontent.com/01mf02/jaq/c6cc7d3721ccfb212f153006c4fc90c56567540c/docs/cli.dj"
+license = "MIT"
+source = "01mf02/jaq@c6cc7d3721cc"
+sha256 = "c324a2e335be68904de3b523534d33e7cdb9309e0149b5d146b7ce80dc01ec5e"
+size = 14201
+
+[[document]]
+name = "jaq-corelang"
+format = "djot"
+url = "https://raw.githubusercontent.com/01mf02/jaq/c6cc7d3721ccfb212f153006c4fc90c56567540c/docs/corelang.dj"
+license = "MIT"
+source = "01mf02/jaq@c6cc7d3721cc"
+sha256 = "49f3f581e3ae986934eadebadecc0595dec4e732b9869eb1b9ed5055f8c74334"
+size = 37117
+
+[[document]]
+name = "jaq-formats"
+format = "djot"
+url = "https://raw.githubusercontent.com/01mf02/jaq/c6cc7d3721ccfb212f153006c4fc90c56567540c/docs/formats.dj"
+license = "MIT"
+source = "01mf02/jaq@c6cc7d3721cc"
+sha256 = "67ea86544f2744f61f9c0bf0516ea6ee4c7709289ad0d7b55630d735d5ab271f"
+size = 17922
+
+[[document]]
+name = "jaq-intro"
+format = "djot"
+url = "https://raw.githubusercontent.com/01mf02/jaq/c6cc7d3721ccfb212f153006c4fc90c56567540c/docs/intro.dj"
+license = "MIT"
+source = "01mf02/jaq@c6cc7d3721cc"
+sha256 = "8f62b50a4c7b2d689fd3233e4612e1f8e6acd8aad1db1f52886546e3e78b2f32"
+size = 2812
+
+[[document]]
+name = "go-asm"
+format = "html"
+url = "https://raw.githubusercontent.com/golang/go/9149fae807316a2485c5fe3f02baab3da30a3d7e/doc/asm.html"
+license = "BSD-3-Clause"
+source = "golang/go@9149fae80731"
+sha256 = "3fef70fc8c4cda2a47352947e5e8310aea0ce029db667e5c85885ac666cfec5b"
+size = 37347
+
+[[document]]
+name = "go-go-mem"
+format = "html"
+url = "https://raw.githubusercontent.com/golang/go/9149fae807316a2485c5fe3f02baab3da30a3d7e/doc/go_mem.html"
+license = "BSD-3-Clause"
+source = "golang/go@9149fae80731"
+sha256 = "a7372b4f36c9525ecc7531bbdbb9e53746ae3f58367a25fe8084d5a35bb8ee7c"
+size = 27268
+
+[[document]]
+name = "go-go-spec"
+format = "html"
+url = "https://raw.githubusercontent.com/golang/go/9149fae807316a2485c5fe3f02baab3da30a3d7e/doc/go_spec.html"
+license = "BSD-3-Clause"
+source = "golang/go@9149fae80731"
+sha256 = "5a9de3f74624c9dc8f13e0954be87c7f38df1c0ceae3866939a7e12cad84bfb3"
+size = 298928
+
+[[document]]
+name = "sphinx-development-html-themes-index"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/development/html_themes/index.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "8de9e7a4d2098cad878ac77dbe4eed897e57796c29c75cd4aff5a4a68191321c"
+size = 18386
+
+[[document]]
+name = "sphinx-development-tutorials-extending-syntax"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/development/tutorials/extending_syntax.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "cd48b0d8a198ca2a164fd6a421ee50ac8a40bea0e9742b26a278f11c8faa903c"
+size = 6399
+
+[[document]]
+name = "sphinx-extdev-markupapi"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/extdev/markupapi.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "b555197434dabf3463dba155c14a6f90443d5a5bc2b3de430609fbde04714ff7"
+size = 7653
+
+[[document]]
+name = "sphinx-usage-configuration"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/usage/configuration.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "9e15c4d14c76d64ee9a91c92bcf20e49160fe858f42e360bad282a1309ed2cf1"
+size = 133149
+
+[[document]]
+name = "sphinx-usage-domains-python"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/usage/domains/python.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "d8f294eaa5f12fa9d0be9fe57704d2c80942009daf8356e647f40274e89b8848"
+size = 27143
+
+[[document]]
+name = "sphinx-usage-extensions-coverage"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/usage/extensions/coverage.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "948188ebf745d92215f4df9ee94e81c626484b35f71102a86aa148ea9ab96e96"
+size = 4980
+
+[[document]]
+name = "sphinx-usage-extensions-math"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/usage/extensions/math.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "6d5d22f56d86c43e59056803da870b580b9115050b5db056f2fa568c3020e083"
+size = 15245
+
+[[document]]
+name = "sphinx-usage-referencing"
+format = "rst"
+url = "https://raw.githubusercontent.com/sphinx-doc/sphinx/035a07c32c3241fd3356f4d827800c1f88525272/doc/usage/referencing.rst"
+license = "BSD-2-Clause"
+source = "sphinx-doc/sphinx@035a07c32c32"
+sha256 = "5c8a1e90eb51daf77c1d7408d51f985d4fd5770e163ecaca6a4fa97f40774bf8"
+size = 10510
+
+[[document]]
+name = "pep-0001"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0001.rst"
+license = "LicenseRef-Public-Domain OR CC0-1.0"
+source = "python/peps@efec2601611c"
+sha256 = "7f94574b563a9e3f59c25fe225e0b04d695cb82ad28e83256b76418f8b457adb"
+size = 41653
+
+[[document]]
+name = "pep-0008"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0008.rst"
+license = "LicenseRef-Public-Domain"
+source = "python/peps@efec2601611c"
+sha256 = "6028935c6cb2c674d5f4d512c7ba6ce2923713b1c47ce1a78adc690db817fc5d"
+size = 50796
+
+[[document]]
+name = "pep-0020"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0020.rst"
+license = "LicenseRef-Public-Domain"
+source = "python/peps@efec2601611c"
+sha256 = "742999637cc96eef52e8148fdf65a6065a0953daee92bb48b8c739efcf6def07"
+size = 1648
+
+[[document]]
+name = "pep-0257"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0257.rst"
+license = "LicenseRef-Public-Domain"
+source = "python/peps@efec2601611c"
+sha256 = "7db41c5aaea3bfde0463307c72b38d735dc604491cadd059d7f9fe94b8142c0e"
+size = 10581
+
+[[document]]
+name = "pep-0287"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0287.rst"
+license = "LicenseRef-Public-Domain"
+source = "python/peps@efec2601611c"
+sha256 = "4b4b5c86c8496d0fe137d4196bb323c7421815fd48bba10219afd8e01827fa48"
+size = 31893
+
+[[document]]
+name = "pep-0484"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0484.rst"
+license = "LicenseRef-Public-Domain"
+source = "python/peps@efec2601611c"
+sha256 = "ddfe61c36a61b3ba926aaf23f4934ab17493a1cb7ea5d45497235b552c4a9f7c"
+size = 88614
+
+[[document]]
+name = "pep-0572"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0572.rst"
+license = "LicenseRef-Public-Domain"
+source = "python/peps@efec2601611c"
+sha256 = "abf5401ec523a03d59a6f3173842784f426bfd49d8b0a87a512646557bcef8b1"
+size = 47028
+
+[[document]]
+name = "pep-0634"
+format = "rst"
+url = "https://raw.githubusercontent.com/python/peps/efec2601611c2fa53b1b1791b09b0368840c038c/peps/pep-0634.rst"
+license = "LicenseRef-Public-Domain OR CC0-1.0"
+source = "python/peps@efec2601611c"
+sha256 = "352927baffdbb0fdaba34cf059e95fe2a464a604fdba167a41c6257c90e10e5e"
+size = 23168
+
+[[document]]
+name = "latex2e-cfgguide"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/cfgguide.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "ca5d6146078530f4551e70a95508294c9888828f2714f9b8f630a1e247cfa8cc"
+size = 22720
+
+[[document]]
+name = "latex2e-clsguide"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/clsguide.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "953898f9d8ce8cd88925ec9edfc881c1bfb7f9c61b153127b4220d88943c223c"
+size = 76351
+
+[[document]]
+name = "latex2e-cmdguide"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/cmdguide.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "ab0c6a980328ebcf4f8768106cf8e86337272e3f777ab44a634f90c48a85c37c"
+size = 5163
+
+[[document]]
+name = "latex2e-encguide"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/encguide.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "514ebf9ce8d63fbac91fb19342d95eda05b9e4b77aaebbad50a830a099bfb5b8"
+size = 52813
+
+[[document]]
+name = "latex2e-fntguide"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/fntguide.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "fb6c382c944b7b642e6a98246e1fe79122ad397fa0026bc9a5115f24dfefe88c"
+size = 113913
+
+[[document]]
+name = "latex2e-ltnews"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/ltnews.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "729502323f42e9b4b262258abbbb4f7d414e6b93c63ac5068be67c1175cfe5b3"
+size = 10262
+
+[[document]]
+name = "latex2e-ltnews23"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/ltnews23.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "c64424a867f8f567117bc3fe16178b44e54c1deace1e3be617d94ba8f390fb33"
+size = 10361
+
+[[document]]
+name = "latex2e-cyrguide"
+format = "latex"
+url = "https://raw.githubusercontent.com/latex3/latex2e/2d98e9d2d861c00afe09814991722a0f5edde1c1/base/doc/cyrguide.tex"
+license = "LPPL-1.3c"
+source = "latex3/latex2e@2d98e9d2d861"
+sha256 = "2094ba054179c7f5a6d14e8ef4a3c768e3515e2d74737ea70bd97d006874246f"
+size = 17782
+
+[[document]]
+name = "doom-docs-appendix"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/docs/appendix.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "4520f326524c53520fb0dca3bf7cadbfdfe452b3362eba1b31d8f252629ea034"
+size = 10026
+
+[[document]]
+name = "doom-docs-contributing"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/docs/contributing.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "60040126e2c8fc3f71d8628661f46c39964eebcde1fcc87ec03b4b96b735221a"
+size = 8566
+
+[[document]]
+name = "doom-docs-examples"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/docs/examples.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "d33927ff5a6f06cf838fcc34694adb30c80774216f7d9eddfe590ea5637ca31b"
+size = 12768
+
+[[document]]
+name = "doom-docs-faq"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/docs/faq.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "47f598ce39837240dc568923ad057f703b16236729c0c35cb652fe68f599536f"
+size = 42916
+
+[[document]]
+name = "doom-docs-getting-started"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/docs/getting_started.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "63d9a7105fde9fbdebea1a88b625afc2a622b28766897ac9c2204f7c710e4f31"
+size = 66108
+
+[[document]]
+name = "doom-docs-index"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/docs/index.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "cb525e226e2ce2fa9bc84954adc60b7dbb53310e49ba48b6724b68b7ddc6073e"
+size = 5379
+
+[[document]]
+name = "doom-modules-doom-compat-readme"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/modules/doom/compat/README.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "739c1972e4cd19ac993abf91e001a41853d01ee73ad35dea223819bd84606e09"
+size = 6618
+
+[[document]]
+name = "doom-modules-doom-demos"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/modules/doom/demos.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "4f590be27e4f8cc9917576198fea0f75426e51c96ac0eb4aa233bd63ba0ea977"
+size = 19320
+
+[[document]]
+name = "doom-profiles-readme"
+format = "org"
+url = "https://raw.githubusercontent.com/doomemacs/doomemacs/7ccac7f643ad67baa25b216717cf8617a0903c69/profiles/README.org"
+license = "MIT"
+source = "doomemacs/doomemacs@7ccac7f643ad"
+sha256 = "a7a6cc2df4c1b9979893902d9fa4a80215d143681678b5f12da5a2110374e565"
+size = 6461
+
+[[document]]
+name = "systemd-bootctl"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/bootctl.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "9355803f08453a1488a1c2d88054fd29bc7b6a3b7d33b39c1596a944311f1733"
+size = 49777
+
+[[document]]
+name = "systemd-importctl"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/importctl.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "e787f73ac51b031e326a7381ca5b45ffb04880a8e5d513d764dadb7cc822fd9e"
+size = 26425
+
+[[document]]
+name = "systemd-networkctl"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/networkctl.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "6563bb21a9ef48718f17c78341552f31ee24e9f0eed01a6c352c0abe9119daa2"
+size = 33467
+
+[[document]]
+name = "systemd-sd-varlink"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/sd-varlink.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "019f329cb645b2326a05a663069eafb6560d3bbd6c72b0b9748c65ded7b62a8b"
+size = 8680
+
+[[document]]
+name = "systemd-systemd-cryptsetup-generator"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/systemd-cryptsetup-generator.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "0761917c928351c32cbf9433317761fcde0b422cba8752f00af52e591245674d"
+size = 12075
+
+[[document]]
+name = "systemd-systemd-import-generator"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/systemd-import-generator.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "993bb8c65357db6fb44822d4d00fd4a8c432977743c7d220b04ab266ab472f1e"
+size = 14204
+
+[[document]]
+name = "systemd-systemd-socket-activate"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/systemd-socket-activate.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "197132e8469cef70e1b6028ff7ee67e5cd69107872d54f1a06d85bb1ee894436"
+size = 9337
+
+[[document]]
+name = "systemd-systemd-vmspawn"
+format = "docbook"
+url = "https://raw.githubusercontent.com/systemd/systemd/6cf990ea2931a901aaba4e0e5ee1d8fda86a4a76/man/systemd-vmspawn.xml"
+license = "LGPL-2.1-or-later"
+source = "systemd/systemd@6cf990ea2931"
+sha256 = "db14b7f65078ce43da66492ba34b4f3aed1a62d9f7f0f014dce5dc9d631b2797"
+size = 60739
+
+[[document]]
+name = "textile-odrefreshcontrol"
+format = "textile"
+url = "https://raw.githubusercontent.com/Sephiroth87/ODRefreshControl/27b4e2f7738081dd919e25f1b31d8ee423aaec96/README.textile"
+license = "MIT"
+source = "Sephiroth87/ODRefreshControl@27b4e2f77380"
+sha256 = "7704996b8316baf6b01a50cbb7f306538be260cece8eed4e7870bb091337e222"
+size = 2328
+
+[[document]]
+name = "textile-xypiechart"
+format = "textile"
+url = "https://raw.githubusercontent.com/xyfeng/XYPieChart/fb009d1288fac36a748a742e287078becc1613c6/README.textile"
+license = "MIT"
+source = "xyfeng/XYPieChart@fb009d1288fa"
+sha256 = "bdc67c9e1dd5f3aabea8bc6f891d751d39b8613ba13514a834352e289ef9c308"
+size = 3489
+
+[[document]]
+name = "textile-rails-layout"
+format = "textile"
+url = "https://raw.githubusercontent.com/RailsApps/rails_layout/703e0d7d3e370ef227beb96b241ccc6f5a7019a1/README.textile"
+license = "MIT"
+source = "RailsApps/rails_layout@703e0d7d3e37"
+sha256 = "5e9c36084f269803e725b079c0bb8bbcf4cd767a3d474bf9104745b59b01887b"
+size = 19929
+
+[[document]]
+name = "textile-hacketyhack"
+format = "textile"
+url = "https://raw.githubusercontent.com/hacketyhack/hacketyhack/e30dba94de983a88d3683b8b8534794170bfce0f/README.textile"
+license = "MIT"
+source = "hacketyhack/hacketyhack@e30dba94de98"
+sha256 = "b138b1fd527926fd33607d38d1595d5c8365a1d68723dbc59024035cc22ac4be"
+size = 4138
+
+[[document]]
+name = "asciidoctor-readme"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/README.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "06a9e83bb9419fa968b94763c1f48aabafbe60862df878d2ee7c11a3160986f7"
+size = 20494
+
+[[document]]
+name = "asciidoctor-readme-fr"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/README-fr.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "5380eaf1bbf8e4b9b1e1d3741e9c8c7a5f8c3a5a531fcafb0c3189a887755f02"
+size = 20090
+
+[[document]]
+name = "asciidoctor-contributing"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/CONTRIBUTING.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "26cdb1fbf6f51bfc747fa7961098824f57be97ab6d628fa979f0c4eea3aa6346"
+size = 9660
+
+[[document]]
+name = "asciidoctor-mdbasics"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/benchmark/sample-data/mdbasics.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "48a469f5a39b102db2a4c3b5aa6d13e0585e73eadba8e02e8e0ce46ad0119ddf"
+size = 7840
+
+[[document]]
+name = "asciidoctor-root-errors-and-warnings"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/docs/modules/ROOT/pages/errors-and-warnings.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "7c298c44557cc9574c0427f64f61ad72ef4d743b30d5017a6118eee4c2ae31b0"
+size = 10013
+
+[[document]]
+name = "asciidoctor-api-index"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/docs/modules/api/pages/index.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "a04f404d9ea3400f3cf502633b08f9dcf62bf9d2d99f7c4da803b526417ae1e3"
+size = 7369
+
+[[document]]
+name = "asciidoctor-extensions-logging"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/docs/modules/extensions/pages/logging.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "7fee049a4fba11a42d9b6dead9d0cb1e6b5d595e4123ebfefb58c6f9bd8172e4"
+size = 7141
+
+[[document]]
+name = "asciidoctor-manpage-backend-index"
+format = "asciidoc"
+url = "https://raw.githubusercontent.com/asciidoctor/asciidoctor/1eff07780bf819866b1276e0ccfa8c8e3bc2fad9/docs/modules/manpage-backend/pages/index.adoc"
+license = "MIT"
+source = "asciidoctor/asciidoctor@1eff07780bf8"
+sha256 = "ef4abe9aa0aef669392cb0474b4cee45f956c8a1c8daf67c0eee7328841e86ea"
+size = 12722
+
+[[document]]
+name = "typst-appreciated-letter-lib"
+format = "typst"
+url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/appreciated-letter/lib.typ"
+license = "MIT-0"
+source = "typst/templates@71b01c6b0a82"
+sha256 = "f15c22912c6be090a7b04d1f86ae72af155a833c8c6265656170a726f7daa4d2"
+size = 1141
+
+[[document]]
+name = "typst-charged-ieee-lib"
+format = "typst"
+url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/charged-ieee/lib.typ"
+license = "MIT-0"
+source = "typst/templates@71b01c6b0a82"
+sha256 = "8f9d67760ad25f41a99d7b49dfb978bed86f281c297f0fd48c76ebac1443e5b4"
+size = 7243
+
+[[document]]
+name = "typst-icicle-lib"
+format = "typst"
+url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/icicle/lib.typ"
+license = "MIT-0"
+source = "typst/templates@71b01c6b0a82"
+sha256 = "ecc09260f76d407c272b56f4a992698ce90bd3be27d0ff62e0a8f77eedae0b6f"
+size = 6300
+
+[[document]]
+name = "typst-wonderous-book-lib"
+format = "typst"
+url = "https://raw.githubusercontent.com/typst/templates/71b01c6b0a828649c7a0a38e8167cd82aab76efc/wonderous-book/lib.typ"
+license = "MIT-0"
+source = "typst/templates@71b01c6b0a82"
+sha256 = "e3ef968a34f8c5df6e7e5453322de259f7faab9e8df4be998be04da5cfc2d879"
+size = 3787
+
+[[document]]
+name = "jupyter-connecting-with-the-qt-console"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Connecting%20with%20the%20Qt%20Console.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "6d105043816f5d59ea8a1fb7da9d44de2aba45b447834cc0851d440024388ad9"
+size = 3578
+
+[[document]]
+name = "jupyter-custom-keyboard-shortcuts"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Custom%20Keyboard%20Shortcuts.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "19f864dbf5108d214945aeaff18bc94afe0eb819d9646f3578f652469f493cce"
+size = 1148
+
+[[document]]
+name = "jupyter-importing-notebooks"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Importing%20Notebooks.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "0ca6cd7573ec9a0ef4276598ffed255ab43a49d3601bd3ef5a40d749910d1eec"
+size = 13552
+
+[[document]]
+name = "jupyter-notebook-basics"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Notebook%20Basics.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "737e35d26b31dcfd83caf8e0b2e459052d923a31b1833be9885b3331c26d5162"
+size = 9899
+
+[[document]]
+name = "jupyter-running-code"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Running%20Code.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "29fb6234ed3bd6960433e7265b17922de509e62a3558ddab3926bdfb66fe1d73"
+size = 52012
+timeout = 300
+
+[[document]]
+name = "jupyter-typesetting-equations"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Typesetting%20Equations.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "c2acc0bfaac92a550f3bff7bf9c57582e05838a9239b8c01561770316e2f3352"
+size = 8369
+
+[[document]]
+name = "jupyter-what-is-the-jupyter-notebook"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/What%20is%20the%20Jupyter%20Notebook.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "77a58c94db25dfe1937e3a7484c915875b9f40a4ce67a38a515741626f6cd111"
+size = 7541
+
+[[document]]
+name = "jupyter-working-with-markdown-cells"
+format = "ipynb"
+url = "https://raw.githubusercontent.com/jupyter/notebook/55a698a3816d5305a1053baa22283b2a283b0f5e/docs/source/examples/Notebook/Working%20With%20Markdown%20Cells.ipynb"
+license = "BSD-3-Clause"
+source = "jupyter/notebook@55a698a3816d"
+sha256 = "21c27aabbd9ce89397929b28dc73b3f42ce47783239aa5f8d1a6853db65ba050"
+size = 42817
+
+[[document]]
+name = "tika-testword-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "67797f5691cb5346201f1c40000a959f9f08d05d0b4493b4291e8d5f16e81e65"
+size = 13436
+
+[[document]]
+name = "tika-testword-various-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_various.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "f7761e3893d795ed09f12f89a16d3265c3919da549adf00127b0f7094bccd0ee"
+size = 14470
+
+[[document]]
+name = "tika-testword-features-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_features.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "b0920ec3e38521c02ca75ef0b1ed1b2b19fabcd701b75366e89b818228094e25"
+size = 8169
+
+[[document]]
+name = "tika-footnotes-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/footnotes.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "9070094b27ff5201477f4de4b2c027730c66cb889106a1609c5adeed207a59c1"
+size = 12823
+
+[[document]]
+name = "tika-testcomment-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testComment.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "740337ba9a0f0c9dd4cc0ea07b6a7b413c7b67ee28ec4b430a1a242c688fe5b5"
+size = 11019
+
+[[document]]
+name = "tika-testword-numbered-list-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_numbered_list.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "3e500410c6ce4f56f871bd55beff2476152fc3d0b7049cf5a93781ae7946ff5b"
+size = 24696
+
+[[document]]
+name = "tika-testword-endnote-table-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_endnote_table.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "105709ab279ee6d5642edddf8b5e32257ff9b9cf54c2e886d7d251cb29e39c34"
+size = 18504
+
+[[document]]
+name = "tika-testword-boldhyperlink-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_boldHyperlink.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "dead3afa9ff59b827cea3e9c5e73a9d018d3eadd9c1c51ea63dd19db6edd9060"
+size = 12382
+
+[[document]]
+name = "tika-testword-text-box-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_text_box.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "82d4d863c5e8c1ed0137587323d85f3c66f1c16bbaf0ee69e4806b0bd802b73a"
+size = 25271
+
+[[document]]
+name = "tika-testword-multi-authors-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_multi_authors.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "8435a0e087a5452b0418ba860136683e95ba17ba3be8e22ec21d678b5db1f1b9"
+size = 12054
+
+[[document]]
+name = "tika-testword-charts-docx"
+format = "docx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_charts.docx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "04580520e7577ab4cdf08d289d5c03d6a1b942dd261f4101de53124334a500cd"
+size = 15586
+
+[[document]]
+name = "tika-testopenoffice2-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testOpenOffice2.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "daee7b62602780f2599c19b3593a1e455a21e041959416304c112bdb136640bb"
+size = 26460
+
+[[document]]
+name = "tika-teststyles-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testStyles.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "b70625835f2c1fe8fd4c3b625bb51b0b10e323b1a92d3c338c3be4e2cf16a766"
+size = 11663
+
+[[document]]
+name = "tika-testfooter-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testFooter.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "bb7618380607111c7181867aaf6e9568f490ba0a62a2308e78f120a268d96188"
+size = 8381
+
+[[document]]
+name = "tika-testodfwithooo3-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testODFwithOOo3.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "b6cd74b570a98fcb6d838dd85ab869604e0711812d9533d5ecde0000b24ba7ef"
+size = 24286
+
+[[document]]
+name = "tika-testodtstyles2-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testODTStyles2.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "eaa2f7d3fa686751699227a06b24e9e2b587da9db15d838ff93af8c5b14fabb8"
+size = 17383
+
+[[document]]
+name = "tika-testodtstyles3-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testODTStyles3.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "5a3cef66f7cea05b589632b31038303767014f34e697979006facba9f441c84d"
+size = 17140
+
+[[document]]
+name = "tika-testodtnometa-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testODTNoMeta.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "65f41de9496d3f4e394f82f998df7395f881279aed4209d0160a1665a1c6c415"
+size = 5847
+
+[[document]]
+name = "tika-testphonenumberextractor-odt"
+format = "odt"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-integration-tests/src/test/resources/test-documents/testPhoneNumberExtractor.odt"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "4440a929524b14a4f029c008a6d98a2046a66abe36c89b5102b6ab8bdc6710a3"
+size = 15244
+
+[[document]]
+name = "tika-testrtf-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTF.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "c0f8456daa73640c7c9aeda5c7c2c70284ece2bc1df3ff902f8dc07f0f6ab465"
+size = 3410
+
+[[document]]
+name = "tika-testrtfvarious-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFVarious.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "cf00c56fe7099d14b820a0d751324e415f2c09af580f2c96f08614a2aec42c1e"
+size = 65517
+
+[[document]]
+name = "tika-testrtfhyperlink-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFHyperlink.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "c826803b9800b636c213dcf11a28e081e27e328fb44044f166d779b52a74b4c5"
+size = 29577
+
+[[document]]
+name = "tika-testrtflistmicrosoftword-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFListMicrosoftWord.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "e57b9bfba4d11d1b8b15dd347ed514beab04ccb54146a882e9398ca843afb43d"
+size = 45942
+
+[[document]]
+name = "tika-testrtflistlibreoffice-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFListLibreOffice.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "e537545d53983fc66306a70d1738fe00d026eee7bdb0e62c972cee08a69f98a7"
+size = 7337
+
+[[document]]
+name = "tika-testrtfbolditalic-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFBoldItalic.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "1298d7e5bd4a6a22fcebf525aa3c20a7ab33083ede784544103d6fb69b08f7fe"
+size = 31872
+
+[[document]]
+name = "tika-testcomment-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testComment.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "742ec05361e5c9bfc128ae3f1885acd558ef1a48a9b3a92bb843d7d54cfc3844"
+size = 33481
+
+[[document]]
+name = "tika-testrtftablecellseparation-rtf"
+format = "rtf"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testRTFTableCellSeparation.rtf"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "87eeb5be0d8fa43514279e83a31cf80df3077e5f725747f151b4469e53813047"
+size = 1820
+
+[[document]]
+name = "tika-testppt-pptx"
+format = "pptx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testPPT.pptx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "730a6ade20208eaad375160949db37b2ffb52af4d3704b51976ff45564bff83b"
+size = 36518
+
+[[document]]
+name = "tika-testppt-various-pptx"
+format = "pptx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testPPT_various.pptx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "73e19e877797b9deb87f1d242c3d7aa6edb383258ca90054f9a912d3adb26a73"
+size = 56659
+
+[[document]]
+name = "tika-testppt-mastertext-pptx"
+format = "pptx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testPPT_masterText.pptx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "4c8cabe8c8b068e22eab34b568516b0e9a52be72ed470bc115772dab0ccbab36"
+size = 32270
+
+[[document]]
+name = "tika-testcomment-pptx"
+format = "pptx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testComment.pptx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "2bffe1e73e6b9e57cf07307f3e959f730c057ae3b9e498f1a6b362df83ca4676"
+size = 34979
+
+[[document]]
+name = "tika-testppt-groups-pptx"
+format = "pptx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testPPT_groups.pptx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "e8d4cd55569be22849a584bff949d07e8c16abbd00b59feedc43f17c33b4061f"
+size = 59888
+
+[[document]]
+name = "tika-testexcel-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "960ba8f1cfa5838b563c369d281babe4ac0219100e00cecc93147fad22c549c3"
+size = 9453
+
+[[document]]
+name = "tika-testexcel-formats-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL-formats.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "c56368f9a09166eabe373042afefb651341b4d2f9e1fe779148218f93190a2d2"
+size = 8303
+
+[[document]]
+name = "tika-testexcel-hyperlinks-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_hyperlinks.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "37a527b3212aed31305a63671cb3edc637865cde57f40d02adab5273c0e8f0e6"
+size = 10038
+
+[[document]]
+name = "tika-testexcel-dateformats-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_dateFormats.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "5ccc02513433b1a86253306fc096817633204b835e19855b8c0dceda32caeb2b"
+size = 8766
+
+[[document]]
+name = "tika-testepub-epub"
+format = "epub"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testEPUB.epub"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "a4cc54d0311911edab12911168ce9277d8a20d45f3445f93eac61d0e5fd88d2e"
+size = 30552
+
+[[document]]
+name = "tika-testepub-multi-metadata-vals-epub"
+format = "epub"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-miscoffice-module/src/test/resources/test-documents/testEPUB_multi-metadata-vals.epub"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
+source = "apache/tika@a40d54f6a6d9"
+sha256 = "a1a3772b7e718c6bddead4c9acded6c0dd466e5c1c1f6d4f6cae5484c3e6fe33"
+size = 571926
+
+[[document]]
+name = "se-pride-and-prejudice"
+format = "epub"
+url = "https://standardebooks.org/ebooks/jane-austen/pride-and-prejudice/downloads/jane-austen_pride-and-prejudice.epub?source=download"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
+source = "standardebooks.org"
+sha256 = "85814417c1a74d2ca7f3b077b47454d0cfc728392d40d846d1c97d44f24c5279"
+size = 831959
+
+[[document]]
+name = "se-frankenstein"
+format = "epub"
+url = "https://standardebooks.org/ebooks/mary-shelley/frankenstein/downloads/mary-shelley_frankenstein.epub?source=download"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
+source = "standardebooks.org"
+sha256 = "0b5c070e2cde4d8bb36ef707f9d024465b00d0c49c078f0a148270f55b8c8780"
+size = 685797
+
+[[document]]
+name = "se-the-time-machine"
+format = "epub"
+url = "https://standardebooks.org/ebooks/h-g-wells/the-time-machine/downloads/h-g-wells_the-time-machine.epub?source=download"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
+source = "standardebooks.org"
+sha256 = "3931b56fecfb0b0d00737f5fabcd00a46a96c26a6b1c9b8a60751d154057d9a6"
+size = 535571
+
+[[document]]
+name = "se-the-strange-case-of-dr-jekyll-and-mr-hyde"
+format = "epub"
+url = "https://standardebooks.org/ebooks/robert-louis-stevenson/the-strange-case-of-dr-jekyll-and-mr-hyde/downloads/robert-louis-stevenson_the-strange-case-of-dr-jekyll-and-mr-hyde.epub?source=download"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
+source = "standardebooks.org"
+sha256 = "9f0306972d1c6a21dcdf0be8a752a58a42f7470fda0613c4dc40090923f08adc"
+size = 492233
+
+[[document]]
+name = "se-the-importance-of-being-earnest"
+format = "epub"
+url = "https://standardebooks.org/ebooks/oscar-wilde/the-importance-of-being-earnest/downloads/oscar-wilde_the-importance-of-being-earnest.epub?source=download"
+license = "LicenseRef-Public-Domain-US AND CC0-1.0"
+source = "standardebooks.org"
+sha256 = "1b9d41ec39fdcd23c939fb60f7d8191ff51ea9a4b40d106c63a1e1c172691064"
+size = 419067
+
+[[document]]
+name = "wp-ada-lovelace"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Ada_Lovelace&oldid=1384127064&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "5f170e6fe0644c9e72903a7671bfb6bb5246d22f39caa8721259b0774f7854a5"
+size = 98391
+
+[[document]]
+name = "wp-alan-turing"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1384739096&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "e96e9788580c6494b0492223846026946a86623966aa8845cc7ce679f3214286"
+size = 176403
+
+[[document]]
+name = "wp-donald-knuth"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Donald_Knuth&oldid=1379836531&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "5a1e5d62f52bc30590509fb03dfcd7b0666d41d62dbaec16142aeb6b30704d49"
+size = 73960
+
+[[document]]
+name = "wp-euclidean-algorithm"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Euclidean_algorithm&oldid=1379044559&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "d8e026aa1e592f5551814e6ca6d4d08ae3b62fe610e0fdd0191d74203bc8a762"
+size = 128962
+
+[[document]]
+name = "wp-haskell"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Haskell&oldid=1383723142&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "579572e7cfd9e8b1af6fc2dcb283c89c002d0b4e4b08ea9a4cbc759af09a5373"
+size = 52983
+
+[[document]]
+name = "wp-latex"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=LaTeX&oldid=1376089138&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "0f0a2e6a77acfd8cf361b16f37369aa338a597bbdffc31c1c240a9a01b297e85"
+size = 29461
+
+[[document]]
+name = "wp-markdown"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Markdown&oldid=1383305779&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "47383b4b8bef75132231c4e6921e7ccb9350e67c545d535cdbff0da423def472"
+size = 34677
+
+[[document]]
+name = "wp-mount-everest"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Mount_Everest&oldid=1384445000&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "c168baf070e6e25f244cc969eb619b45116762be787af2f88fa45d559a8318d1"
+size = 256778
+
+[[document]]
+name = "wp-pandoc"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Pandoc&oldid=1377420973&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "866e134df54485edc07281c7dd8764a4b66d7a62a790aa90cf67a0e3c630bacb"
+size = 12648
+
+[[document]]
+name = "wp-periodic-table"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Periodic_table&oldid=1381469771&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "3c3a3d58ee6632feb6f002ec092276d80d630a634115604079f047ab50182c57"
+size = 256401
+
+[[document]]
+name = "wp-photosynthesis"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Photosynthesis&oldid=1383248806&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "472dab419e9bafe1b4b35456f72cab412fb14f9c893e9d422ffe6459043125f9"
+size = 111083
+
+[[document]]
+name = "wp-plate-tectonics"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Plate_tectonics&oldid=1381934246&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "ad93455723000c9e8f1c037f3d6b907a63f61af949fc690d33ccb40f3d1108fe"
+size = 120927
+
+[[document]]
+name = "wp-printing-press"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Printing_press&oldid=1384322441&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "917556ee638ac683080015b6864155e10e3f760bb51e898d6a7398e2413278f9"
+size = 62971
+
+[[document]]
+name = "wp-rust-programming-language"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Rust_%28programming_language%29&oldid=1384717120&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "07cb63b9cc185e6b5c89d75007d34756571b306c85a9e02a0fdaef2a20aa6885"
+size = 120216
+
+[[document]]
+name = "wp-typesetting"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Typesetting&oldid=1381355247&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "8902fd9aede6f0358a5e0b08764d9bb6b185e0f2195223d3d6ed01f341df5ada"
+size = 25126
+
+[[document]]
+name = "wp-unicode"
+format = "mediawiki"
+url = "https://en.wikipedia.org/w/index.php?title=Unicode&oldid=1383618905&action=raw"
+license = "CC-BY-SA-4.0"
+source = "en.wikipedia.org"
+sha256 = "57962d05f5a7a795875dafc0f5266d9ea21a07a062190572154ea622b86b2122"
+size = 115374
+
+[[document]]
+name = "csv-co2-co2-mm-gl"
+format = "csv"
+url = "https://raw.githubusercontent.com/datasets/co2-ppm/52f2be52ee6145eaad67367959af9b1b0a0bd83e/data/co2-mm-gl.csv"
+license = "ODC-PDDL-1.0"
+source = "datasets/co2-ppm@52f2be52ee61"
+sha256 = "0ca9e50f09c8e5eee35de9df79834c7c6b5217e8f2882849316ae2023d275111"
+size = 23443
+
+[[document]]
+name = "csv-co2-co2-annmean-mlo"
+format = "csv"
+url = "https://raw.githubusercontent.com/datasets/co2-ppm/52f2be52ee6145eaad67367959af9b1b0a0bd83e/data/co2-annmean-mlo.csv"
+license = "ODC-PDDL-1.0"
+source = "datasets/co2-ppm@52f2be52ee61"
+sha256 = "b1548ededea6f9b7eecac370753de8d8da6e0afafe1041f749a11db78c2e33c4"
+size = 1161
+
+[[document]]
+name = "csv-gdp"
+format = "csv"
+url = "https://raw.githubusercontent.com/datasets/gdp/36d761dc5617982d3e50b213e02b9a1b47c4e958/data/gdp.csv"
+license = "CC-BY-4.0"
+source = "datasets/gdp@36d761dc5617"
+sha256 = "8d84ef6bcaccf740c01c5ed7566aae8f7b149d0e2c20001e441efd3cb5b2fa86"
+size = 562767
+
+[[document]]
+name = "csv-top-economies"
+format = "csv"
+url = "https://raw.githubusercontent.com/datasets/gdp/36d761dc5617982d3e50b213e02b9a1b47c4e958/data/top-economies.csv"
+license = "CC-BY-4.0"
+source = "datasets/gdp@36d761dc5617"
+sha256 = "1b8228f71436045b1b72cd9d499308903e4a625a15f0432babd4e0d0adf351dc"
+size = 4880
+
+[[document]]
+name = "inbo-reproducible-research"
+format = "bibtex"
+url = "https://raw.githubusercontent.com/inbo/tutorials/ddd90537a27c8d2144cd399ea1e6671fc890cfbb/content/articles/reproducible_research.bib"
+license = "CC-BY-4.0"
+source = "inbo/tutorials@ddd90537a27c"
+sha256 = "012d0b06694e0493c804a05dd90b37c5e3b111818a9c7c97c8c6ebead8b3cdd9"
+size = 81531
+
+[[document]]
+name = "inbo-packages"
+format = "bibtex"
+url = "https://raw.githubusercontent.com/inbo/tutorials/ddd90537a27c8d2144cd399ea1e6671fc890cfbb/content/tutorials/r_citations_markdown/packages.bib"
+license = "CC-BY-4.0"
+source = "inbo/tutorials@ddd90537a27c"
+sha256 = "798ea45e8cc981eee6b557c107a87bce76522256d0449d669ef9f9183c085c9a"
+size = 1718
+
+[[document]]
+name = "biblatex-biblatex-examples"
+format = "biblatex"
+url = "https://raw.githubusercontent.com/plk/biblatex/c89dfc81e592de66eac0b9fe84b51eb973d42102/bibtex/bib/biblatex/biblatex-examples.bib"
+license = "LPPL-1.3c"
+source = "plk/biblatex@c89dfc81e592"
+sha256 = "e7b05fc8d5bc12f9c41e62abc0b9bf6d22198d7e3b780cae24140cb45355f3cc"
+size = 68013
+
+[[document]]
+name = "inbo-spatial-variograms"
+format = "csljson"
+url = "https://raw.githubusercontent.com/inbo/tutorials/ddd90537a27c8d2144cd399ea1e6671fc890cfbb/content/tutorials/spatial_variograms/references_csl.json"
+license = "CC-BY-4.0"
+source = "inbo/tutorials@ddd90537a27c"
+sha256 = "aacfa68858a47e2b3f4970761c7e7ec5e56397c230dee69599d89743295c6799"
+size = 8291
+
+[[document]]
+name = "inbo-spatial-transform-balanced-samples"
+format = "csljson"
+url = "https://raw.githubusercontent.com/inbo/tutorials/ddd90537a27c8d2144cd399ea1e6671fc890cfbb/content/tutorials/spatial_transform_balanced_samples/references_csl.json"
+license = "CC-BY-4.0"
+source = "inbo/tutorials@ddd90537a27c"
+sha256 = "ec942bf581a6c6f5506e916dc9221f07af87eac10c5157c8de5661ac318ba19e"
+size = 4935
+
+[[document]]
+name = "inbo-spatial-crs-coding"
+format = "csljson"
+url = "https://raw.githubusercontent.com/inbo/tutorials/ddd90537a27c8d2144cd399ea1e6671fc890cfbb/content/tutorials/spatial_crs_coding/bibliography.json"
+license = "CC-BY-4.0"
+source = "inbo/tutorials@ddd90537a27c"
+sha256 = "feb84172f0b193ad9a1f5cf971b17b77fb6cf2d2ffc416a124caf7907a90f6d7"
+size = 2045
+
+[[document]]
+name = "deep-review-manual-references"
+format = "csljson"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/manual-references.json"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "e192d8958de2d2ebdedf3b19a344ce2e0a4082467dccc5a37dc67736f7e2721e"
+size = 38973
+
+[[document]]
+name = "deep-review-manual-references-2020-01-29"
+format = "csljson"
+url = "https://raw.githubusercontent.com/greenelab/deep-review/44ff95a2756bd03a32c046eb8983ac9c4f223b0a/content/manual-references-2020-01-29.json"
+license = "CC-BY-4.0"
+source = "greenelab/deep-review@44ff95a2756b"
+sha256 = "92687b64a96bb05d30f1bda66a2feb09f99b01d49c301e97fb2ece4db25cb50c"
+size = 855558
+
+[[document]]
+name = "cdc-citation"
+format = "ris"
+url = "https://raw.githubusercontent.com/CDCgov/influenza-generation_time-us/e5c30f7dc64b85f4bdd93e6b1abd56232ad2eb4c/CITATION.ris"
+license = "Apache-2.0"
+source = "CDCgov/influenza-generation_time-us@e5c30f7dc64b"
+sha256 = "74e0c306553df92f9e0f2964875a711207dacbe7afee60343eced140b5cd9ed4"
+size = 3096
+
+[[document]]
+name = "man-zstd"
+format = "man"
+url = "https://raw.githubusercontent.com/facebook/zstd/e6bd22d135c7331c040f29bef20af44550207e05/programs/zstd.1"
+license = "BSD-3-Clause OR GPL-2.0-only"
+source = "facebook/zstd@e6bd22d135c7"
+sha256 = "5edc9aced6d3960784fb17235a3fa45fc605e82f7b99e0ac0cec581d8fab2186"
+size = 36583
+
+[[document]]
+name = "man-jq"
+format = "man"
+url = "https://raw.githubusercontent.com/jqlang/jq/5c001b18d7237cce1fdba63608732163f978dd23/jq.1.prebuilt"
+license = "CC-BY-3.0"
+source = "jqlang/jq@5c001b18d723"
+sha256 = "7921459526b4c9ea3d02a0cb8ee20404263cecfdde793de71421cd664c4ac5d3"
+size = 128762
+
+[[document]]
+name = "man-lz4"
+format = "man"
+url = "https://raw.githubusercontent.com/lz4/lz4/d04dab3152ffdb8f8e8708e4d135f7293c0f6136/programs/lz4.1"
+license = "GPL-2.0-or-later"
+source = "lz4/lz4@d04dab3152ff"
+sha256 = "1a276424a552681317d1b79d67dfad9b3f2679ce791dbb3f5e74044239d81e30"
+size = 13915
+
+[[document]]
+name = "man-pandoc-citeproc"
+format = "man"
+url = "https://raw.githubusercontent.com/jgm/pandoc-citeproc/473378e588c40a6c3cb3b24330431b89cf4f81b4/man/man1/pandoc-citeproc.1"
+license = "BSD-3-Clause"
+source = "jgm/pandoc-citeproc@473378e588c4"
+sha256 = "4c2a6476aa5feead39831a2339a27cbf4d070575433ded0b6662070ca19d04e0"
+size = 12778
+
+[[document]]
+name = "openbsd-tmux"
+format = "mdoc"
+url = "https://raw.githubusercontent.com/openbsd/src/e02a9bd71150e1c2e178fd7bfbb654f467649b1c/usr.bin/tmux/tmux.1"
+license = "ISC"
+source = "openbsd/src@e02a9bd71150"
+sha256 = "c628a74867c2e044f0ff4f54679071c0f1b28f6819951dd9274e0a4af9b60f86"
+size = 232536
+
+[[document]]
+name = "openbsd-ssh"
+format = "mdoc"
+url = "https://raw.githubusercontent.com/openbsd/src/e02a9bd71150e1c2e178fd7bfbb654f467649b1c/usr.bin/ssh/ssh.1"
+license = "BSD-2-Clause AND LicenseRef-SSH-Ylonen"
+source = "openbsd/src@e02a9bd71150"
+sha256 = "4a405d11103a4c72b067e5a80fc5b2c23bf66e71eeeb5b31cf08f2f2e1d69b31"
+size = 46082
+
+[[document]]
+name = "openbsd-doas"
+format = "mdoc"
+url = "https://raw.githubusercontent.com/openbsd/src/e02a9bd71150e1c2e178fd7bfbb654f467649b1c/usr.bin/doas/doas.1"
+license = "ISC"
+source = "openbsd/src@e02a9bd71150"
+sha256 = "8a1875a71e753c2cfeba53fbfb8811e79aacc2740d5c451bb4672b281f733c63"
+size = 3187
+
+[[document]]
+name = "openbsd-mg"
+format = "mdoc"
+url = "https://raw.githubusercontent.com/openbsd/src/e02a9bd71150e1c2e178fd7bfbb654f467649b1c/usr.bin/mg/mg.1"
+license = "LicenseRef-Public-Domain"
+source = "openbsd/src@e02a9bd71150"
+sha256 = "1d1105b618adc3f3ae81d14a2bfa7313ca1788848d8ae2232dc90af59de65a24"
+size = 33181
+
+[[document]]
+name = "openbsd-ksh"
+format = "mdoc"
+url = "https://raw.githubusercontent.com/openbsd/src/e02a9bd71150e1c2e178fd7bfbb654f467649b1c/bin/ksh/ksh.1"
+license = "LicenseRef-Public-Domain"
+source = "openbsd/src@e02a9bd71150"
+sha256 = "b121bd3bc53876205a5c0f37666e6a5234d899ad0632fdd429fb5d3f598a3fbe"
+size = 135857
+
+[[document]]
+name = "openbsd-httpd-conf"
+format = "mdoc"
+url = "https://raw.githubusercontent.com/openbsd/src/e02a9bd71150e1c2e178fd7bfbb654f467649b1c/usr.sbin/httpd/httpd.conf.5"
+license = "ISC"
+source = "openbsd/src@e02a9bd71150"
+sha256 = "3e322da75fc1001d880fbf88f4715bf2eb3d81a6290466ee5713b8aa86a52cdd"
+size = 28396
+
+[[document]]
+name = "perl-perlintro"
+format = "pod"
+url = "https://raw.githubusercontent.com/Perl/perl5/2b87217f60a8f92ae08828e18ea3ac95a329032d/pod/perlintro.pod"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+source = "Perl/perl5@2b87217f60a8"
+sha256 = "18958bca5fd7082be07ef07df8db50e638418899604853a639d4d8f74142e415"
+size = 29659
+
+[[document]]
+name = "perl-perlsyn"
+format = "pod"
+url = "https://raw.githubusercontent.com/Perl/perl5/2b87217f60a8f92ae08828e18ea3ac95a329032d/pod/perlsyn.pod"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+source = "Perl/perl5@2b87217f60a8"
+sha256 = "588a9ee4273a6b58a8e7c92d9d0ca242ad4481d31ff54d24ed850439522d3692"
+size = 54272
+
+[[document]]
+name = "perl-perlre"
+format = "pod"
+url = "https://raw.githubusercontent.com/Perl/perl5/2b87217f60a8f92ae08828e18ea3ac95a329032d/pod/perlre.pod"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+source = "Perl/perl5@2b87217f60a8"
+sha256 = "8d5f5c2d83c0ca5c3f7943352e1f394baf280ff21e269d7fbc0841062ced276d"
+size = 139647
+
+[[document]]
+name = "perl-perlpod"
+format = "pod"
+url = "https://raw.githubusercontent.com/Perl/perl5/2b87217f60a8f92ae08828e18ea3ac95a329032d/pod/perlpod.pod"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+source = "Perl/perl5@2b87217f60a8"
+sha256 = "e9aba91d19fc5786a3f323be476990b2757f4f55e14f53ffa93a2c7d83073476"
+size = 23715
+
+[[document]]
+name = "perl-perlstyle"
+format = "pod"
+url = "https://raw.githubusercontent.com/Perl/perl5/2b87217f60a8f92ae08828e18ea3ac95a329032d/pod/perlstyle.pod"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+source = "Perl/perl5@2b87217f60a8"
+sha256 = "de4531107b210ffd561f80f71f5f31a5a7d8af724e25f478ad460202a3308f66"
+size = 9019
+
+[[document]]
+name = "jats-pmc13742956"
+format = "jats"
+url = "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13742956/fullTextXML"
+license = "CC-BY-4.0"
+source = "europepmc.org"
+sha256 = "ea291a31f176d891325ea71ff71832df85be37235888dd80cf213426dbaf4814"
+size = 46431
+
+[[document]]
+name = "jats-pmc13674756"
+format = "jats"
+url = "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13674756/fullTextXML"
+license = "CC-BY-4.0"
+source = "europepmc.org"
+sha256 = "c781f8fd795873f3270e753db9c6c40dd80167aa4f938ee2c2f16f8025e9871d"
+size = 51459
+
+[[document]]
+name = "jats-pmc13739162"
+format = "jats"
+url = "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13739162/fullTextXML"
+license = "CC-BY-4.0"
+source = "europepmc.org"
+sha256 = "7530de865c546951c2947f0eeb0245d1697dea88d001af1fe21c62d50b7f2989"
+size = 65216
+
+[[document]]
+name = "jats-pmc13712587"
+format = "jats"
+url = "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13712587/fullTextXML"
+license = "CC-BY-4.0"
+source = "europepmc.org"
+sha256 = "efb63139dc1c357c23179c1d6d537db73e41de473d1ce6b8c8d7f0750071352f"
+size = 53832
+
+[[document]]
+name = "creole-crashcatcher"
+format = "creole"
+url = "https://raw.githubusercontent.com/adamgreen/CrashCatcher/0222f9d3cf07cd9c327a4a7577efd5c1424a55f7/README.creole"
+license = "Apache-2.0"
+source = "adamgreen/CrashCatcher@0222f9d3cf07"
+sha256 = "9a43e4b40d056ff378396d5f6b20601a13b2a0626166dee68ab6843a0aaa12e8"
+size = 22110
+
+[[document]]
+name = "creole-mri-faq"
+format = "creole"
+url = "https://raw.githubusercontent.com/adamgreen/mri/a830d0e8dab6e238861389f8d3a53fab2cd20b1c/notes/mri-faq.creole"
+license = "Apache-2.0"
+source = "adamgreen/mri@a830d0e8dab6"
+sha256 = "97575f6880f67a0d985dcd056f8d8f62986067e7fe1bbfa12dce324e47702907"
+size = 7765
+
+[[document]]
+name = "creole-mri-pros-cons"
+format = "creole"
+url = "https://raw.githubusercontent.com/adamgreen/mri/a830d0e8dab6e238861389f8d3a53fab2cd20b1c/notes/mri-pros-cons.creole"
+license = "Apache-2.0"
+source = "adamgreen/mri@a830d0e8dab6"
+sha256 = "698651d65b992f1e7f47c7ce9d104e1112660af6e4882234f41f5e645d74e9ed"
+size = 4527
+
+[[document]]
+name = "udpipe-manual-user"
+format = "t2t"
+url = "https://raw.githubusercontent.com/ufal/udpipe/9158bf7bb9270fd8d22cc06da36ee9e98b64922c/doc/manual_user.t2t"
+license = "MPL-2.0"
+source = "ufal/udpipe@9158bf7bb927"
+sha256 = "1be27bb3eed1fed39b756a0f0877aad70717a71531d55cbb30869c6499df00b1"
+size = 29692
+
+[[document]]
+name = "udpipe-manual-install"
+format = "t2t"
+url = "https://raw.githubusercontent.com/ufal/udpipe/9158bf7bb9270fd8d22cc06da36ee9e98b64922c/doc/manual_install.t2t"
+license = "MPL-2.0"
+source = "ufal/udpipe@9158bf7bb927"
+sha256 = "e48c5f3c97cc602d41abe3dab83485401dc58ec4449c33a133b937d8fae665fa"
+size = 2970
+
+[[document]]
+name = "udpipe-manual-bindings-api"
+format = "t2t"
+url = "https://raw.githubusercontent.com/ufal/udpipe/9158bf7bb9270fd8d22cc06da36ee9e98b64922c/doc/manual_bindings_api.t2t"
+license = "MPL-2.0"
+source = "ufal/udpipe@9158bf7bb927"
+sha256 = "12a8a68491c755651623fea348b812660a483f04114cfe6e211211f2dbf58131"
+size = 7011
+
+[[document]]
+name = "muse-quickstart"
+format = "muse"
+url = "https://raw.githubusercontent.com/alexott/muse/b22338147ee0a13c9d6adc10216c4a91aa6cc108/examples/QuickStart.muse"
+license = "GPL-3.0-or-later"
+source = "alexott/muse@b22338147ee0"
+sha256 = "3d228059ab0f240dee304d589382a33da9338351470cf5bfd06c6c2a358b11ab"
+size = 15644
+
+[[document]]
+name = "muse-ideas"
+format = "muse"
+url = "https://raw.githubusercontent.com/alexott/muse/b22338147ee0a13c9d6adc10216c4a91aa6cc108/etc/IDEAS.muse"
+license = "GPL-3.0-or-later"
+source = "alexott/muse@b22338147ee0"
+sha256 = "ecf52a1de55ade22753db996602fdb286bcf65f70ce94a747bbef54b1874b556"
+size = 3544
+
+[[document]]
+name = "concord-opml-worknotes"
+format = "opml"
+url = "https://raw.githubusercontent.com/scripting/concord/de5ec87ff976aeeff8a8349a569cc86c46dc17d2/opml/worknotes.opml"
+license = "GPL-3.0-or-later"
+source = "scripting/concord@de5ec87ff976"
+sha256 = "be902dfb3d7cab32ff9e1a98de387fd0fc3d626729a80a375925ad8c69a5abab"
+size = 8448
+
+[[document]]
+name = "concord-example1-source"
+format = "opml"
+url = "https://raw.githubusercontent.com/scripting/concord/de5ec87ff976aeeff8a8349a569cc86c46dc17d2/example1/source.opml"
+license = "GPL-3.0-or-later"
+source = "scripting/concord@de5ec87ff976"
+sha256 = "30be0c7ceed17cf74e5978e587b4aca00fc73d75bffe8632d53ee9d2d49eae40"
+size = 30944
+
+[[document]]
+name = "mdn-learning-accessibility-assessment-finished"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/accessibility/assessment-finished/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "fd32c1e42285f01145087af48257e16407f31901b3708f777c5beb8c82d39bf8"
+size = 7532
+
+[[document]]
+name = "mdn-learning-accessibility-assessment-start"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/accessibility/assessment-start/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "5c7c09a47a805041981a43eabd2d6ea52d0a02c47981ac7ac841ab008f91face"
+size = 7116
+
+[[document]]
+name = "mdn-learning-css-css-layout-practical-positioning-examples-fixed-info-box"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/css/css-layout/practical-positioning-examples/fixed-info-box.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "d913a12014e00cc1a3103d169889a2ac45c465659125e461b1d46de07b1379f7"
+size = 5157
+
+[[document]]
+name = "mdn-learning-html-introduction-to-html-document-and-website-structure"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/html/introduction-to-html/document_and_website_structure/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "8623d0ff8d0696128844a2315d8c23840cf839d52fab09fcd06eabb3e5e966ec"
+size = 3525
+
+[[document]]
+name = "mdn-learning-html-tables-advanced-items-sold-headers"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/html/tables/advanced/items-sold-headers.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "596e16d053290d570f90078a7776bee55a1e87a011ed369b1d46f3336823f677"
+size = 3179
+
+[[document]]
+name = "mdn-learning-html-tables-planets-data"
+format = "html"
+url = "https://raw.githubusercontent.com/mdn/learning-area/21973263ba859ff3477919087b488157f9d618a6/html/tables/planets-data/index.html"
+license = "CC0-1.0"
+source = "mdn/learning-area@21973263ba85"
+sha256 = "c6026ae2b296ecd13926b139d65bbe60aa20efeb542a8d7e0993651c780ea215"
+size = 4302
