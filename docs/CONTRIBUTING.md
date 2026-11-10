@@ -31,6 +31,8 @@ Read [`ARCHITECTURE.md`](ARCHITECTURE.md) first.
    - **Low.** A difference only for malformed or adversarial input (unbalanced or cut delimiters, random mixes that no author writes on purpose) where no text is lost. A difference only in the text or the position of an error or a warning for broken input. Documentation and code-quality items.
 
    A low finding is recorded as a known divergence in `docs/ISSUES.md` with its smallest input, and it stays open work. If you are not sure between two levels, choose the higher one.
+
+   - **Scope gaps.** A row of `docs/ISSUES.md` that says that an extension, an option or a feature of a format is not implemented yet (for example the extension `sourcepos`, syntax highlighting, math conversion) is a scope gap. Gate 2 permits a merge with recorded scope gaps, so a scope gap is not a review finding and does not block an approval. The conditions: the row is exact, the gap loses no document text without a message, and the workstream report does not claim the feature. A row for a defect in behaviour that the workstream implements is a finding with a level: it must be low to stay open.
 6. **No slowdowns.** Benchmarks of the changed paths are not more than 5%
    slower than `main`.
 7. **Clean build.** `cargo fmt --all -- --check`, `cargo clippy` with
