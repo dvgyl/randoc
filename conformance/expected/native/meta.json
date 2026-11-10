@@ -1,0 +1,509 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "blocks#e2e:native": {
+      "key": "99ada7e233da3aec",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"abstract\"\n            , MetaBlocks\n                [ Para [ Str \"Para\" , Space , Str \"one.\" ]\n                , Para [ Str \"Para\" , Space , Str \"two.\" ]\n                ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "blocks#read": {
+      "key": "0391e30e9b17a775",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abstract\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two.\"}]}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "blocks#write:native": {
+      "key": "61c318c34a775b6b",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"abstract\"\n            , MetaBlocks\n                [ Para [ Str \"Para\" , Space , Str \"one.\" ]\n                , Para [ Str \"Para\" , Space , Str \"two.\" ]\n                ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "bool#e2e:native": {
+      "key": "165b57ec86699d92",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"draft\" , MetaBool True )\n          , ( \"published\" , MetaBool False )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "bool#read": {
+      "key": "ef13c3d1c28b1ebf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"draft\":{\"t\":\"MetaBool\",\"c\":true},\"published\":{\"t\":\"MetaBool\",\"c\":false}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "bool#write:native": {
+      "key": "7b5434e6b4031422",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"draft\" , MetaBool True )\n          , ( \"published\" , MetaBool False )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "empty-doc#e2e:native": {
+      "key": "779ce5a1cfb5900d",
+      "exit": 0,
+      "stdout": "Pandoc Meta { unMeta = fromList [] } []\n",
+      "stderr": ""
+    },
+    "empty-doc#read": {
+      "key": "6e4641e042d17756",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "empty-doc#write:native": {
+      "key": "20c1578629f5d170",
+      "exit": 0,
+      "stdout": "Pandoc Meta { unMeta = fromList [] } []\n",
+      "stderr": ""
+    },
+    "empty-value#e2e:native": {
+      "key": "010cc920b7a61e02",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"empty\" , MetaInlines [] )\n          , ( \"nothing\" , MetaString \"\" )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "empty-value#read": {
+      "key": "b4a53e64e4ec169b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"empty\":{\"t\":\"MetaInlines\",\"c\":[]},\"nothing\":{\"t\":\"MetaString\",\"c\":\"\"}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "empty-value#write:native": {
+      "key": "f3592fdabbdfa9d5",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"empty\" , MetaInlines [] )\n          , ( \"nothing\" , MetaString \"\" )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-all-kinds#e2e:native": {
+      "key": "da80ee8a75a55635",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"a\"\n            , MetaMap\n                (fromList\n                   [ ( \"b\" , MetaBool False )\n                   , ( \"l\"\n                     , MetaList\n                         [ MetaString \"s\" , MetaInlines [ Str \"i\" ] ]\n                     )\n                   ])\n            )\n          , ( \"z\" , MetaString \"\\233\" )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-all-kinds#read": {
+      "key": "e7e26a57ee422b74",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaMap\",\"c\":{\"b\":{\"t\":\"MetaBool\",\"c\":false},\"l\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"s\"},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"i\"}]}]}}},\"z\":{\"t\":\"MetaString\",\"c\":\"é\"}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-all-kinds#write:native": {
+      "key": "5be7a87d456017ea",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"a\"\n            , MetaMap\n                (fromList\n                   [ ( \"b\" , MetaBool False )\n                   , ( \"l\"\n                     , MetaList\n                         [ MetaString \"s\" , MetaInlines [ Str \"i\" ] ]\n                     )\n                   ])\n            )\n          , ( \"z\" , MetaString \"\\233\" )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-all-kinds-body-only#e2e:native": {
+      "key": "f8edcd1c12236c80",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-all-kinds-body-only#read": {
+      "key": "6099523885f11641",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaMap\",\"c\":{\"b\":{\"t\":\"MetaBool\",\"c\":false},\"l\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"s\"},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"i\"}]}]}}},\"z\":{\"t\":\"MetaString\",\"c\":\"é\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-all-kinds-body-only#write:native": {
+      "key": "fbd258f45e6872fb",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-key-escapes#e2e:native": {
+      "key": "4a31f376265afef2",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta = fromList [ ( \"k\\\"ey\\n\" , MetaString \"v\" ) ] }\n  []\n",
+      "stderr": ""
+    },
+    "json-key-escapes#read": {
+      "key": "f230763e5cb8f8eb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"k\\\"ey\\n\":{\"t\":\"MetaString\",\"c\":\"v\"}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-key-escapes#write:native": {
+      "key": "dd0d54069271273e",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta = fromList [ ( \"k\\\"ey\\n\" , MetaString \"v\" ) ] }\n  []\n",
+      "stderr": ""
+    },
+    "json-key-escapes-body-only#e2e:native": {
+      "key": "3ea427fe3afb3b9b",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-key-escapes-body-only#read": {
+      "key": "82f92b8108897062",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"k\\\"ey\\n\":{\"t\":\"MetaString\",\"c\":\"v\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-key-escapes-body-only#write:native": {
+      "key": "7d93501144148334",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metablocks#e2e:native": {
+      "key": "77b0655d6da82d85",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"x\" , MetaBlocks [ HorizontalRule , Para [ Str \"p\" ] ] )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-metablocks#read": {
+      "key": "871ae7322515eef4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-metablocks#write:native": {
+      "key": "493178e89e8f7f15",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"x\" , MetaBlocks [ HorizontalRule , Para [ Str \"p\" ] ] )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-metablocks-body-only#e2e:native": {
+      "key": "b9b81c9d66214b80",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metablocks-body-only#read": {
+      "key": "dd701b4ff334e141",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-metablocks-body-only#write:native": {
+      "key": "9132341726dc3441",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metabool#e2e:native": {
+      "key": "e3ebbe98d34b3671",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"b\" , MetaBool True ) ] } []\n",
+      "stderr": ""
+    },
+    "json-metabool#read": {
+      "key": "ba10fde779057136",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"b\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-metabool#write:native": {
+      "key": "3b966f9c868b87ed",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"b\" , MetaBool True ) ] } []\n",
+      "stderr": ""
+    },
+    "json-metabool-body-only#e2e:native": {
+      "key": "ff2411434b237354",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metabool-body-only#read": {
+      "key": "0165f71720701dd3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"b\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-metabool-body-only#write:native": {
+      "key": "7f78baf1fc9024c9",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metainlines-empty#e2e:native": {
+      "key": "3dbc6c2b3511cac8",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"x\" , MetaInlines [] ) ] } []\n",
+      "stderr": ""
+    },
+    "json-metainlines-empty#read": {
+      "key": "4497ddb8ff9ce47d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-metainlines-empty#write:native": {
+      "key": "f355067c813cc028",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"x\" , MetaInlines [] ) ] } []\n",
+      "stderr": ""
+    },
+    "json-metainlines-empty-body-only#e2e:native": {
+      "key": "720120eee970132d",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metainlines-empty-body-only#read": {
+      "key": "ecb02107a2eff7e8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-metainlines-empty-body-only#write:native": {
+      "key": "fe636fcb51a7179a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metalist-empty#e2e:native": {
+      "key": "ac97a501fe00fb05",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"l\" , MetaList [] ) ] } []\n",
+      "stderr": ""
+    },
+    "json-metalist-empty#read": {
+      "key": "2c25bf53803ea892",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"l\":{\"t\":\"MetaList\",\"c\":[]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-metalist-empty#write:native": {
+      "key": "93dc7f51bc293c81",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"l\" , MetaList [] ) ] } []\n",
+      "stderr": ""
+    },
+    "json-metalist-empty-body-only#e2e:native": {
+      "key": "0b9caaa54bd90750",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metalist-empty-body-only#read": {
+      "key": "e9ee99adc0565ddf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"l\":{\"t\":\"MetaList\",\"c\":[]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-metalist-empty-body-only#write:native": {
+      "key": "65aea3a7aa43f221",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metamap-empty#e2e:native": {
+      "key": "8b805f62c9e73bfb",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta = fromList [ ( \"m\" , MetaMap (fromList []) ) ] }\n  []\n",
+      "stderr": ""
+    },
+    "json-metamap-empty#read": {
+      "key": "161dc21c228c78a2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{}}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-metamap-empty#write:native": {
+      "key": "2ae84680ce5586cf",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta = fromList [ ( \"m\" , MetaMap (fromList []) ) ] }\n  []\n",
+      "stderr": ""
+    },
+    "json-metamap-empty-body-only#e2e:native": {
+      "key": "9a3ed8447886c6ba",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metamap-empty-body-only#read": {
+      "key": "7f0fd5f89e5fb653",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{}}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-metamap-empty-body-only#write:native": {
+      "key": "7aab790dcd077b5b",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metastring#e2e:native": {
+      "key": "27ec4efa27a1521a",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList [ ( \"s\" , MetaString \"plain \\\"string\\\"\" ) ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-metastring#read": {
+      "key": "f01c785a5d816cc9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"s\":{\"t\":\"MetaString\",\"c\":\"plain \\\"string\\\"\"}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "json-metastring#write:native": {
+      "key": "b35eaee31f65cf8e",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList [ ( \"s\" , MetaString \"plain \\\"string\\\"\" ) ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "json-metastring-body-only#e2e:native": {
+      "key": "89a2a8fbce0666c3",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "json-metastring-body-only#read": {
+      "key": "43c1d9458821c200",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"s\":{\"t\":\"MetaString\",\"c\":\"plain \\\"string\\\"\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "json-metastring-body-only#write:native": {
+      "key": "50dba165679cd748",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "long-title#e2e:native": {
+      "key": "cf85a6cc2c91650c",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"title\"\n            , MetaInlines\n                [ Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "long-title#read": {
+      "key": "a1a907b4191e9a31",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "long-title#write:native": {
+      "key": "2ded7b8e3b63f041",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"title\"\n            , MetaInlines\n                [ Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                , Space\n                , Str \"long\"\n                ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "many-keys#e2e:native": {
+      "key": "629b7083a77c7e4b",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"k00\" , MetaInlines [ Str \"v0\" ] )\n          , ( \"k01\" , MetaInlines [ Str \"v1\" ] )\n          , ( \"k02\" , MetaInlines [ Str \"v2\" ] )\n          , ( \"k03\" , MetaInlines [ Str \"v3\" ] )\n          , ( \"k04\" , MetaInlines [ Str \"v4\" ] )\n          , ( \"k05\" , MetaInlines [ Str \"v5\" ] )\n          , ( \"k06\" , MetaInlines [ Str \"v6\" ] )\n          , ( \"k07\" , MetaInlines [ Str \"v7\" ] )\n          , ( \"k08\" , MetaInlines [ Str \"v8\" ] )\n          , ( \"k09\" , MetaInlines [ Str \"v9\" ] )\n          , ( \"k10\" , MetaInlines [ Str \"v10\" ] )\n          , ( \"k11\" , MetaInlines [ Str \"v11\" ] )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "many-keys#read": {
+      "key": "a818d73087fd83d8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"k00\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v0\"}]},\"k01\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v1\"}]},\"k02\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v2\"}]},\"k03\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v3\"}]},\"k04\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v4\"}]},\"k05\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v5\"}]},\"k06\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v6\"}]},\"k07\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v7\"}]},\"k08\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v8\"}]},\"k09\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v9\"}]},\"k10\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v10\"}]},\"k11\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"v11\"}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "many-keys#write:native": {
+      "key": "e29557de0ff55f31",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"k00\" , MetaInlines [ Str \"v0\" ] )\n          , ( \"k01\" , MetaInlines [ Str \"v1\" ] )\n          , ( \"k02\" , MetaInlines [ Str \"v2\" ] )\n          , ( \"k03\" , MetaInlines [ Str \"v3\" ] )\n          , ( \"k04\" , MetaInlines [ Str \"v4\" ] )\n          , ( \"k05\" , MetaInlines [ Str \"v5\" ] )\n          , ( \"k06\" , MetaInlines [ Str \"v6\" ] )\n          , ( \"k07\" , MetaInlines [ Str \"v7\" ] )\n          , ( \"k08\" , MetaInlines [ Str \"v8\" ] )\n          , ( \"k09\" , MetaInlines [ Str \"v9\" ] )\n          , ( \"k10\" , MetaInlines [ Str \"v10\" ] )\n          , ( \"k11\" , MetaInlines [ Str \"v11\" ] )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "map#e2e:native": {
+      "key": "c3adc61d81e50e25",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"config\"\n            , MetaMap\n                (fromList\n                   [ ( \"a\" , MetaInlines [ Str \"1\" ] )\n                   , ( \"b\"\n                     , MetaList\n                         [ MetaInlines [ Str \"x\" ]\n                         , MetaInlines [ Str \"y\" ]\n                         ]\n                     )\n                   ])\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "map#read": {
+      "key": "a84516b13889fe18",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"config\":{\"t\":\"MetaMap\",\"c\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]},\"b\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]}}}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "map#write:native": {
+      "key": "b6cac02314e47b98",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"config\"\n            , MetaMap\n                (fromList\n                   [ ( \"a\" , MetaInlines [ Str \"1\" ] )\n                   , ( \"b\"\n                     , MetaList\n                         [ MetaInlines [ Str \"x\" ]\n                         , MetaInlines [ Str \"y\" ]\n                         ]\n                     )\n                   ])\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "nested#e2e:native": {
+      "key": "b52674fb59953a24",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"a\"\n            , MetaMap\n                (fromList\n                   [ ( \"b\"\n                     , MetaMap\n                         (fromList\n                            [ ( \"c\"\n                              , MetaMap\n                                  (fromList\n                                     [ ( \"d\"\n                                       , MetaInlines [ Str \"deep\" ]\n                                       )\n                                     ])\n                              )\n                            ])\n                     )\n                   ])\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "nested#read": {
+      "key": "380257dfc3ae8cc9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaMap\",\"c\":{\"b\":{\"t\":\"MetaMap\",\"c\":{\"c\":{\"t\":\"MetaMap\",\"c\":{\"d\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"deep\"}]}}}}}}}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "nested#write:native": {
+      "key": "26bc81ecca78a1f2",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"a\"\n            , MetaMap\n                (fromList\n                   [ ( \"b\"\n                     , MetaMap\n                         (fromList\n                            [ ( \"c\"\n                              , MetaMap\n                                  (fromList\n                                     [ ( \"d\"\n                                       , MetaInlines [ Str \"deep\" ]\n                                       )\n                                     ])\n                              )\n                            ])\n                     )\n                   ])\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "no-meta#e2e:native": {
+      "key": "fde8cc25ce7b766e",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [] }\n  [ Para [ Str \"Just\" , Space , Str \"text.\" ] ]\n",
+      "stderr": ""
+    },
+    "no-meta#read": {
+      "key": "522f51528cda1311",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Just\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "no-meta#write:native": {
+      "key": "42759587ccbcf257",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [] }\n  [ Para [ Str \"Just\" , Space , Str \"text.\" ] ]\n",
+      "stderr": ""
+    },
+    "string-list#e2e:native": {
+      "key": "01f317da23d72371",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"author\"\n            , MetaList\n                [ MetaInlines [ Str \"A\" ] , MetaInlines [ Str \"B\" ] ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "string-list#read": {
+      "key": "4011f75cebc5be7a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"B\"}]}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "string-list#write:native": {
+      "key": "e094015df3b0fa9f",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"author\"\n            , MetaList\n                [ MetaInlines [ Str \"A\" ] , MetaInlines [ Str \"B\" ] ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "title#e2e:native": {
+      "key": "7a0280a36fe6cc22",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"title\"\n            , MetaInlines [ Str \"The\" , Space , Emph [ Str \"title\" ] ]\n            )\n          ]\n    }\n  [ Para [ Str \"Body.\" ] ]\n",
+      "stderr": ""
+    },
+    "title#read": {
+      "key": "196e2982a9625591",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"title\"}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body.\"}]}]}",
+      "stderr": ""
+    },
+    "title#write:native": {
+      "key": "cc0bae81948233e1",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"title\"\n            , MetaInlines [ Str \"The\" , Space , Emph [ Str \"title\" ] ]\n            )\n          ]\n    }\n  [ Para [ Str \"Body.\" ] ]\n",
+      "stderr": ""
+    },
+    "unicode-key#e2e:native": {
+      "key": "14d8e06126641f87",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"t\\237tulo\"\n            , MetaInlines [ Str \"valor\" , Space , Str \"\\233\" ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "unicode-key#read": {
+      "key": "82cc4c3efbb21644",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"título\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"valor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "unicode-key#write:native": {
+      "key": "60b055730c251b20",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"t\\237tulo\"\n            , MetaInlines [ Str \"valor\" , Space , Str \"\\233\" ]\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    }
+  }
+}

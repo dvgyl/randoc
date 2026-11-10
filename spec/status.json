@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T02:17:00Z",
+  "updated": "2026-11-10T03:00:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,12 +14,11 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 36,
-    "pass": 28,
-    "fail": 8,
-    "byte_identical": 28,
-    "content_identical": 28,
-    "baseline_units": 28
+    "units": 1984,
+    "pass": 949,
+    "fail": 995,
+    "skipped": 40,
+    "baseline_units": 949
   },
   "pandoc_test_suite": {
     "status": "measured",
@@ -73,7 +72,7 @@
     },
     {
       "id": "native",
-      "state": "review"
+      "state": "merged"
     },
     {
       "id": "json-codec",

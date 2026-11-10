@@ -1,0 +1,1949 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "all-blocks#e2e:native": {
+      "key": "924bed22c3c03e85",
+      "exit": 0,
+      "stdout": "[ Plain []\n, Para []\n, LineBlock [ [ Str \"l\" ] , [] ]\n, CodeBlock ( \"\" , [ \"c\" ] , [] ) \"x\"\n, RawBlock (Format \"html\") \"<p>\"\n, BlockQuote []\n, OrderedList\n    ( 3 , UpperRoman , TwoParens ) [ [ Plain [] ] ]\n, BulletList [ [] ]\n, DefinitionList\n    [ ( [ Str \"t\" ] , [ [ Plain [ Str \"d\" ] ] ] ) ]\n, Header 2 ( \"\" , [] , [] ) []\n, HorizontalRule\n, Figure ( \"\" , [] , [] ) (Caption Nothing []) []\n, Div ( \"d\" , [] , [] ) []\n]\n",
+      "stderr": ""
+    },
+    "all-blocks#read": {
+      "key": "65bca41c63fafaa2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[]},{\"t\":\"Para\",\"c\":[]},{\"t\":\"LineBlock\",\"c\":[[{\"t\":\"Str\",\"c\":\"l\"}],[]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"c\"],[]],\"x\"]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"<p>\"]},{\"t\":\"BlockQuote\",\"c\":[]},{\"t\":\"OrderedList\",\"c\":[[3,{\"t\":\"UpperRoman\"},{\"t\":\"TwoParens\"}],[[{\"t\":\"Plain\",\"c\":[]}]]]},{\"t\":\"BulletList\",\"c\":[[]]},{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"t\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]},{\"t\":\"HorizontalRule\"},{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[]],[]]},{\"t\":\"Div\",\"c\":[[\"d\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "all-blocks#write:native": {
+      "key": "a39cff9dfa38cf0a",
+      "exit": 0,
+      "stdout": "[ Plain []\n, Para []\n, LineBlock [ [ Str \"l\" ] , [] ]\n, CodeBlock ( \"\" , [ \"c\" ] , [] ) \"x\"\n, RawBlock (Format \"html\") \"<p>\"\n, BlockQuote []\n, OrderedList\n    ( 3 , UpperRoman , TwoParens ) [ [ Plain [] ] ]\n, BulletList [ [] ]\n, DefinitionList\n    [ ( [ Str \"t\" ] , [ [ Plain [ Str \"d\" ] ] ] ) ]\n, Header 2 ( \"\" , [] , [] ) []\n, HorizontalRule\n, Figure ( \"\" , [] , [] ) (Caption Nothing []) []\n, Div ( \"d\" , [] , [] ) []\n]\n",
+      "stderr": ""
+    },
+    "all-inlines#e2e:native": {
+      "key": "f1c51e2c6533efbe",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Str \"s\"\n    , Emph []\n    , Underline []\n    , Strong []\n    , Strikeout []\n    , Superscript []\n    , Subscript []\n    , SmallCaps []\n    , Quoted SingleQuote []\n    , Code ( \"\" , [] , [] ) \"c\"\n    , Space\n    , SoftBreak\n    , LineBreak\n    , Math DisplayMath \"m\"\n    , RawInline (Format \"tex\") \"\\\\x\"\n    , Link ( \"\" , [] , [] ) [ Str \"l\" ] ( \"u\" , \"t\" )\n    , Image ( \"\" , [] , [] ) [] ( \"i\" , \"\" )\n    , Note [ Para [] ]\n    , Span ( \"\" , [] , [] ) []\n    ]\n]\n",
+      "stderr": ""
+    },
+    "all-inlines#read": {
+      "key": "54bd8fd8b34495df",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"s\"},{\"t\":\"Emph\",\"c\":[]},{\"t\":\"Underline\",\"c\":[]},{\"t\":\"Strong\",\"c\":[]},{\"t\":\"Strikeout\",\"c\":[]},{\"t\":\"Superscript\",\"c\":[]},{\"t\":\"Subscript\",\"c\":[]},{\"t\":\"SmallCaps\",\"c\":[]},{\"t\":\"Quoted\",\"c\":[{\"t\":\"SingleQuote\"},[]]},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"c\"]},{\"t\":\"Space\"},{\"t\":\"SoftBreak\"},{\"t\":\"LineBreak\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"m\"]},{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\x\"]},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"l\"}],[\"u\",\"t\"]]},{\"t\":\"Image\",\"c\":[[\"\",[],[]],[],[\"i\",\"\"]]},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[]}]},{\"t\":\"Span\",\"c\":[[\"\",[],[]],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "all-inlines#write:native": {
+      "key": "643acb27ca673b71",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Str \"s\"\n    , Emph []\n    , Underline []\n    , Strong []\n    , Strikeout []\n    , Superscript []\n    , Subscript []\n    , SmallCaps []\n    , Quoted SingleQuote []\n    , Code ( \"\" , [] , [] ) \"c\"\n    , Space\n    , SoftBreak\n    , LineBreak\n    , Math DisplayMath \"m\"\n    , RawInline (Format \"tex\") \"\\\\x\"\n    , Link ( \"\" , [] , [] ) [ Str \"l\" ] ( \"u\" , \"t\" )\n    , Image ( \"\" , [] , [] ) [] ( \"i\" , \"\" )\n    , Note [ Para [] ]\n    , Span ( \"\" , [] , [] ) []\n    ]\n]\n",
+      "stderr": ""
+    },
+    "binary-literal#e2e:native": {
+      "key": "e53979416dc244b0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "binary-literal#read": {
+      "key": "300c44a4fae99235",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "block#e2e:native": {
+      "key": "c77e425d3b246d74",
+      "exit": 0,
+      "stdout": "[ Header\n    1 ( \"id\" , [ \"c\" ] , [ ( \"k\" , \"v\" ) ] ) [ Str \"H\" ]\n]\n",
+      "stderr": ""
+    },
+    "block#read": {
+      "key": "a9b5b0f6e61c1ce5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"id\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"H\"}]]}]}\n",
+      "stderr": ""
+    },
+    "block#write:native": {
+      "key": "1db1038c78ea04e4",
+      "exit": 0,
+      "stdout": "[ Header\n    1 ( \"id\" , [ \"c\" ] , [ ( \"k\" , \"v\" ) ] ) [ Str \"H\" ]\n]\n",
+      "stderr": ""
+    },
+    "block-codeblock#e2e:native": {
+      "key": "fb90e7f897f1c087",
+      "exit": 0,
+      "stdout": "[ CodeBlock\n    ( \"i\"\n    , [ \"a\" , \"b\" ]\n    , [ ( \"k\" , \"v\" ) , ( \"k2\" , \"v2\" ) ]\n    )\n    \"line1\\nline2\"\n]\n",
+      "stderr": ""
+    },
+    "block-codeblock#read": {
+      "key": "8976799aedab88b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"i\",[\"a\",\"b\"],[[\"k\",\"v\"],[\"k2\",\"v2\"]]],\"line1\\nline2\"]}]}\n",
+      "stderr": ""
+    },
+    "block-codeblock#write:native": {
+      "key": "e09349f0aa3f81c5",
+      "exit": 0,
+      "stdout": "[ CodeBlock\n    ( \"i\"\n    , [ \"a\" , \"b\" ]\n    , [ ( \"k\" , \"v\" ) , ( \"k2\" , \"v2\" ) ]\n    )\n    \"line1\\nline2\"\n]\n",
+      "stderr": ""
+    },
+    "block-deflist-multi#e2e:native": {
+      "key": "47a4e9d3510ebbcd",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"a\" ]\n      , [ [ Plain [ Str \"1\" ] ] , [ Plain [ Str \"2\" ] ] ]\n      )\n    , ( [] , [] )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "block-deflist-multi#read": {
+      "key": "747570a87683cb82",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"a\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]],[[],[]]]}]}\n",
+      "stderr": ""
+    },
+    "block-deflist-multi#write:native": {
+      "key": "e0061bedc6fec187",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"a\" ]\n      , [ [ Plain [ Str \"1\" ] ] , [ Plain [ Str \"2\" ] ] ]\n      )\n    , ( [] , [] )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "block-div-nested#e2e:native": {
+      "key": "6e1b40827abdf092",
+      "exit": 0,
+      "stdout": "[ Div\n    ( \"\" , [ \"a\" ] , [] )\n    [ Div\n        ( \"\" , [ \"b\" ] , [] ) [ Div ( \"\" , [] , [] ) [ Para [] ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "block-div-nested#read": {
+      "key": "3be631855cdd7cc9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"a\"],[]],[{\"t\":\"Div\",\"c\":[[\"\",[\"b\"],[]],[{\"t\":\"Div\",\"c\":[[\"\",[],[]],[{\"t\":\"Para\",\"c\":[]}]]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "block-div-nested#write:native": {
+      "key": "4cc0813026ed6e47",
+      "exit": 0,
+      "stdout": "[ Div\n    ( \"\" , [ \"a\" ] , [] )\n    [ Div\n        ( \"\" , [ \"b\" ] , [] ) [ Div ( \"\" , [] , [] ) [ Para [] ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "block-figure-caption#e2e:native": {
+      "key": "28bb403b6b8069b6",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"f\" , [] , [] )\n    (Caption (Just [ Str \"s\" ]) [ Para [ Str \"c\" ] ])\n    [ Plain [ Image ( \"\" , [] , [] ) [] ( \"i.png\" , \"\" ) ] ]\n]\n",
+      "stderr": ""
+    },
+    "block-figure-caption#read": {
+      "key": "aa019bfe7ce55bab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"f\",[],[]],[[{\"t\":\"Str\",\"c\":\"s\"}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[],[\"i.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "block-figure-caption#write:native": {
+      "key": "d92c9f358c277c98",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"f\" , [] , [] )\n    (Caption (Just [ Str \"s\" ]) [ Para [ Str \"c\" ] ])\n    [ Plain [ Image ( \"\" , [] , [] ) [] ( \"i.png\" , \"\" ) ] ]\n]\n",
+      "stderr": ""
+    },
+    "block-hr#e2e:native": {
+      "key": "28997421c657062b",
+      "exit": 0,
+      "stdout": "[ HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "block-hr#read": {
+      "key": "90e880b7179ca324",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"HorizontalRule\"}]}\n",
+      "stderr": ""
+    },
+    "block-hr#write:native": {
+      "key": "267c22bae83e5cf9",
+      "exit": 0,
+      "stdout": "[ HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "block-lineblock#e2e:native": {
+      "key": "b8d367803da8cc15",
+      "exit": 0,
+      "stdout": "[ LineBlock\n    [ [ Str \"a\" , Space , Str \"b\" ] , [] , [ Str \"c\" ] ]\n]\n",
+      "stderr": ""
+    },
+    "block-lineblock#read": {
+      "key": "eaeab24f987860ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"LineBlock\",\"c\":[[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}],[],[{\"t\":\"Str\",\"c\":\"c\"}]]}]}\n",
+      "stderr": ""
+    },
+    "block-lineblock#write:native": {
+      "key": "6eaa0033dde087e1",
+      "exit": 0,
+      "stdout": "[ LineBlock\n    [ [ Str \"a\" , Space , Str \"b\" ] , [] , [ Str \"c\" ] ]\n]\n",
+      "stderr": ""
+    },
+    "block-orderedlist-example#e2e:native": {
+      "key": "285720099ecacb09",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Example , DefaultDelim )\n    [ [ Plain [ Str \"e\" ] ] , [ Plain [] ] ]\n]\n",
+      "stderr": ""
+    },
+    "block-orderedlist-example#read": {
+      "key": "b8478db769f1ebbc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Example\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"e\"}]}],[{\"t\":\"Plain\",\"c\":[]}]]]}]}\n",
+      "stderr": ""
+    },
+    "block-orderedlist-example#write:native": {
+      "key": "d2206dc20d8ed120",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Example , DefaultDelim )\n    [ [ Plain [ Str \"e\" ] ] , [ Plain [] ] ]\n]\n",
+      "stderr": ""
+    },
+    "block-rawblock#e2e:native": {
+      "key": "363d2f8140d52b65",
+      "exit": 0,
+      "stdout": "[ RawBlock (Format \"latex\") \"\\\\foo\" ]\n",
+      "stderr": ""
+    },
+    "block-rawblock#read": {
+      "key": "96119ea03f38f098",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\foo\"]}]}\n",
+      "stderr": ""
+    },
+    "block-rawblock#write:native": {
+      "key": "ea8d81b1b9631e01",
+      "exit": 0,
+      "stdout": "[ RawBlock (Format \"latex\") \"\\\\foo\" ]\n",
+      "stderr": ""
+    },
+    "blocks#e2e:native": {
+      "key": "d2f1b15fe1f6353b",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "blocks#read": {
+      "key": "74aff2ce6a7ec090",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"HorizontalRule\"}]}\n",
+      "stderr": ""
+    },
+    "blocks#write:native": {
+      "key": "5d9e931fb5b4cbbc",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "cell-spans#e2e:native": {
+      "key": "090fb0e19970dfbd",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidthDefault ) ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot\n       ( \"\" , [] , [] )\n       [ Row\n           ( \"r\" , [] , [] )\n           [ Cell\n               ( \"c\" , [] , [] )\n               AlignRight\n               (RowSpan 3)\n               (ColSpan 4)\n               [ Para [ Str \"f\" ] ]\n           ]\n       ])\n]\n",
+      "stderr": ""
+    },
+    "cell-spans#read": {
+      "key": "5ad9faf24adb5ca8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[],[[\"\",[],[]],[[[\"r\",[],[]],[[[\"c\",[],[]],{\"t\":\"AlignRight\"},3,4,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"f\"}]}]]]]]]]}]}\n",
+      "stderr": ""
+    },
+    "cell-spans#write:native": {
+      "key": "af1c3d6d39899a10",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidthDefault ) ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot\n       ( \"\" , [] , [] )\n       [ Row\n           ( \"r\" , [] , [] )\n           [ Cell\n               ( \"c\" , [] , [] )\n               AlignRight\n               (RowSpan 3)\n               (ColSpan 4)\n               [ Para [ Str \"f\" ] ]\n           ]\n       ])\n]\n",
+      "stderr": ""
+    },
+    "char-list-string#e2e:native": {
+      "key": "f1996840500303e4",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"ab\\233\\n\" ] ]\n",
+      "stderr": ""
+    },
+    "char-list-string#read": {
+      "key": "228002f8e8d38f61",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"abé\\n\"}]}]}\n",
+      "stderr": ""
+    },
+    "char-list-string#write:native": {
+      "key": "60f9433ae8904ce7",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"ab\\233\\n\" ] ]\n",
+      "stderr": ""
+    },
+    "char-quote#e2e:native": {
+      "key": "af6b03d6782c6121",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"'\\\"\" ] ]\n",
+      "stderr": ""
+    },
+    "char-quote#read": {
+      "key": "94dc4d95ec289afa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"'\\\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "char-quote#write:native": {
+      "key": "6367c1645ff8a91c",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"'\\\"\" ] ]\n",
+      "stderr": ""
+    },
+    "citation-pretty#e2e:native": {
+      "key": "41990bc28eacf8b0",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Cite\n        [ Citation\n            { citationId = \"k\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = -1\n            , citationHash = 0\n            }\n        ]\n        []\n    ]\n]\n",
+      "stderr": ""
+    },
+    "citation-pretty#read": {
+      "key": "6a8150b326264855",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":-1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "citation-pretty#write:native": {
+      "key": "6381cf5d3afb2488",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Cite\n        [ Citation\n            { citationId = \"k\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = -1\n            , citationHash = 0\n            }\n        ]\n        []\n    ]\n]\n",
+      "stderr": ""
+    },
+    "citation-record#e2e:native": {
+      "key": "f55ce68d817bf8dd",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Cite\n        [ Citation\n            { citationId = \"k\"\n            , citationPrefix = []\n            , citationSuffix = [ Str \"s\" ]\n            , citationMode = AuthorInText\n            , citationNoteNum = 3\n            , citationHash = 0\n            }\n        ]\n        [ Str \"x\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "citation-record#read": {
+      "key": "6c72e65c91205a3c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"s\"}],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":3,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"x\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "citation-record#write:native": {
+      "key": "9b57103cd7adb8a3",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Cite\n        [ Citation\n            { citationId = \"k\"\n            , citationPrefix = []\n            , citationSuffix = [ Str \"s\" ]\n            , citationMode = AuthorInText\n            , citationNoteNum = 3\n            , citationHash = 0\n            }\n        ]\n        [ Str \"x\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "crlf-free-multiline#e2e:native": {
+      "key": "57f7a64ee24ad5e2",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" , Space , Str \"b\" ] ]\n",
+      "stderr": ""
+    },
+    "crlf-free-multiline#read": {
+      "key": "30ff802b8a8ffba5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "crlf-free-multiline#write:native": {
+      "key": "cb2e02647475c6ed",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" , Space , Str \"b\" ] ]\n",
+      "stderr": ""
+    },
+    "double-forms#e2e:native": {
+      "key": "703b321f0363c3a0",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 1.5e-3 )\n    , ( AlignDefault , ColWidth 200.0 )\n    , ( AlignDefault , ColWidth (-0.5) )\n    , ( AlignDefault , ColWidth (-1.0e-2) )\n    , ( AlignDefault , ColWidth 16.0 )\n    , ( AlignDefault , ColWidth Infinity )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-forms#read": {
+      "key": "a7be20ad33d304ad",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":1.5e-3}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":200.0}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":-0.5}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":-1.0e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":16.0}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":\"+inf\"}]],[[\"\",[],[]],[]],[],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "double-forms#write:native": {
+      "key": "69500932d40b0581",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 1.5e-3 )\n    , ( AlignDefault , ColWidth 200.0 )\n    , ( AlignDefault , ColWidth (-0.5) )\n    , ( AlignDefault , ColWidth (-1.0e-2) )\n    , ( AlignDefault , ColWidth 16.0 )\n    , ( AlignDefault , ColWidth Infinity )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-int#e2e:native": {
+      "key": "dc571c6af72f9e4a",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 1.0 ) ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-int#read": {
+      "key": "6e41684f14b409c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":1.0}]],[[\"\",[],[]],[]],[],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "double-int#write:native": {
+      "key": "3f865ddfdd84d526",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 1.0 ) ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-negative-zero#e2e:native": {
+      "key": "0252104be20077a8",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth (-0.0) )\n    , ( AlignDefault , ColWidth 5.0e-324 )\n    , ( AlignDefault , ColWidth 0.1 )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-negative-zero#read": {
+      "key": "031b8e5ea99bbcc3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":-0.0}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.0e-324}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.1}]],[[\"\",[],[]],[]],[],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "double-negative-zero#write:native": {
+      "key": "b86ca0bb5f22d20a",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 0.0 )\n    , ( AlignDefault , ColWidth 5.0e-324 )\n    , ( AlignDefault , ColWidth 0.1 )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-special#e2e:native": {
+      "key": "cb09bc8005f0ecc5",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth Infinity )\n    , ( AlignDefault , ColWidth NaN )\n    , ( AlignDefault , ColWidth (-Infinity) )\n    , ( AlignDefault , ColWidth (-Infinity) )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "double-special#read": {
+      "key": "7d64cffd18db32c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":\"+inf\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":null}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":\"-inf\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":\"-inf\"}]],[[\"\",[],[]],[]],[],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "double-special#write:native": {
+      "key": "b0d5fd90e148b6f8",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth Infinity )\n    , ( AlignDefault , ColWidth NaN )\n    , ( AlignDefault , ColWidth (-Infinity) )\n    , ( AlignDefault , ColWidth (-Infinity) )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "empty-list#e2e:native": {
+      "key": "94d610286fe7600d",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "empty-list#read": {
+      "key": "8c6f0e2427e68fe2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "empty-list#write:native": {
+      "key": "914976a1597acba3",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "empty-list-string#e2e:native": {
+      "key": "e131ed7244739228",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\" ] ]\n",
+      "stderr": ""
+    },
+    "empty-list-string#read": {
+      "key": "8c17abb36adbe547",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "empty-list-string#write:native": {
+      "key": "89634b5dcd9de142",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\" ] ]\n",
+      "stderr": ""
+    },
+    "err-arity#e2e:native": {
+      "key": "bbffc10f99b0c7ac",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-arity#read": {
+      "key": "c1b9f29b191f51ad",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-bad-escape#e2e:native": {
+      "key": "a94044580363d6af",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-bad-escape#read": {
+      "key": "d3fa544f322b7244",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-caption-no-parens#e2e:native": {
+      "key": "df77087f16a34dc8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-caption-no-parens#read": {
+      "key": "23358a5a8a540c49",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-char-in-string-list#e2e:native": {
+      "key": "9326317ad3800cb2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-char-in-string-list#read": {
+      "key": "afccab9a404d963b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-char-literal#e2e:native": {
+      "key": "17314118571a50c7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-char-literal#read": {
+      "key": "e32f84b990bb504e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-comment#e2e:native": {
+      "key": "e4c4845223e54cc7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-comment#read": {
+      "key": "f23adcad9ab2839c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-control-lower#e2e:native": {
+      "key": "00ffe4a16ec1bf76",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-control-lower#read": {
+      "key": "0fddefd46ae98497",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-double-minus#e2e:native": {
+      "key": "bf008309a3ad04f6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-double-minus#read": {
+      "key": "af2fba323764199d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-empty#e2e:native": {
+      "key": "265d8f05b64eba8f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-empty#read": {
+      "key": "5cae6f71ec8e1d90",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-empty-char#e2e:native": {
+      "key": "a8b678a0fd06d8f4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-empty-char#read": {
+      "key": "cc8136fa4aa179d7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-escape-too-large#e2e:native": {
+      "key": "5b409f9d86e70037",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-escape-too-large#read": {
+      "key": "e521f5e8e4a1bd4c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-garbage#e2e:native": {
+      "key": "6ad30fde11d3990b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-garbage#read": {
+      "key": "1496ac5fb122a6d2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-hex-too-large#e2e:native": {
+      "key": "a6df39137fc16c2a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-hex-too-large#read": {
+      "key": "f4e02f371f73aa29",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-int-exponent#e2e:native": {
+      "key": "2a42ed4b1dea2cbc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-int-exponent#read": {
+      "key": "21b0a9ab596393f3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-int-fraction#e2e:native": {
+      "key": "8ccc02ab496af2ad",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-int-fraction#read": {
+      "key": "0ee1cd2d80fc3b6e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-json#e2e:native": {
+      "key": "1db44da51c96061b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-json#read": {
+      "key": "9646b7c5f912317e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-lowercase-constructor#e2e:native": {
+      "key": "e590f1e1c53aae38",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-lowercase-constructor#read": {
+      "key": "f1f474b489947cb3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-meta-no-record#e2e:native": {
+      "key": "cefefed889c7fb15",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-meta-no-record#read": {
+      "key": "d6cb51f19ab76966",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-metavalue-alone#e2e:native": {
+      "key": "20cb3772fc0db079",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-metavalue-alone#read": {
+      "key": "21b6fc51b0adfc38",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-minus-parens#e2e:native": {
+      "key": "0847720d55e9f507",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-minus-parens#read": {
+      "key": "c30537512e14578e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-missing-parens#e2e:native": {
+      "key": "a2894e0d82bd7ae4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-missing-parens#read": {
+      "key": "5603c5d9bb3142cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-mixed-list#e2e:native": {
+      "key": "6ec1d8141d31942a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-mixed-list#read": {
+      "key": "20f9d708def57131",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-record-missing#e2e:native": {
+      "key": "d8d887ec5a27ad66",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-record-missing#read": {
+      "key": "a295dc51ee904c5b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-record-order#e2e:native": {
+      "key": "a63b0b8ddbbbb834",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-record-order#read": {
+      "key": "3c8c254497e47f11",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-record-unknown-field#e2e:native": {
+      "key": "0c21432c58b8939b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-record-unknown-field#read": {
+      "key": "44cd1a61c03e97f2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-semicolon#e2e:native": {
+      "key": "2509484b2e51d5de",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-semicolon#read": {
+      "key": "714620a448d56501",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-string-not-text#e2e:native": {
+      "key": "6f6a559651fb15ad",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-string-not-text#read": {
+      "key": "22fd1303ea01a968",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-trailing#e2e:native": {
+      "key": "29b6f7b896b730b7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-trailing#read": {
+      "key": "97cb9bf538da78ce",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-trailing-comma#e2e:native": {
+      "key": "75154ad810f28a32",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-trailing-comma#read": {
+      "key": "0b2122552468c445",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-two-values#e2e:native": {
+      "key": "6143292d2dee66a8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-two-values#read": {
+      "key": "069aba197e4de3f5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unbalanced#e2e:native": {
+      "key": "a655e083a3676758",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unbalanced#read": {
+      "key": "94317f0e7dee1181",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unit#e2e:native": {
+      "key": "95e2c42870cbdc42",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unit#read": {
+      "key": "8def6224292d5985",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unknown-constructor#e2e:native": {
+      "key": "3abec3f9f44c4ab1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unknown-constructor#read": {
+      "key": "1a3fdbad26e947e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unterminated-string#e2e:native": {
+      "key": "34f4885730912a98",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-unterminated-string#read": {
+      "key": "4845905004fd44db",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-wrong-tuple#e2e:native": {
+      "key": "ed5c67d2aef9fbef",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "err-wrong-tuple#read": {
+      "key": "b85508dfcd93d27a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "escape-control#e2e:native": {
+      "key": "9403da3bd515b39d",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\SOH\\NUL\\ESC\\US\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-control#read": {
+      "key": "3935539a42eda45a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0001\\u0000\\u001b\\u001f\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-control#write:native": {
+      "key": "b5cf2af324f7264f",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\SOH\\NUL\\ESC\\US\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-decimal#e2e:native": {
+      "key": "47b6c2971858285c",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\233\\&1A\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-decimal#read": {
+      "key": "e50fba48e0d68147",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"é1A\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-decimal#write:native": {
+      "key": "cfa7edeeac12b878",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\233\\&1A\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-empty#e2e:native": {
+      "key": "2238901b3a75cba4",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-empty#read": {
+      "key": "498012e9f754b6b7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-empty#write:native": {
+      "key": "89634b5dcd9de142",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-gap#e2e:native": {
+      "key": "537582c130106166",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"abcd\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-gap#read": {
+      "key": "a780982969aee23d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"abcd\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-gap#write:native": {
+      "key": "829bf8b950c694ce",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"abcd\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-hex#e2e:native": {
+      "key": "af6650fb770773a7",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\\128512\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-hex#read": {
+      "key": "eff83136b43a8c52",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-hex#write:native": {
+      "key": "53c16ea90b1269f5",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\\128512\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-hex-upper#e2e:native": {
+      "key": "50f0e8a6e0a827e1",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-hex-upper#read": {
+      "key": "139d8bf02a98e8ea",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-hex-upper#write:native": {
+      "key": "074a7a85190f2bee",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-hex-upper-mixed#e2e:native": {
+      "key": "504dc8a6e01d9031",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"J\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-hex-upper-mixed#read": {
+      "key": "14ad2bf02b7f78fa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"J\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-hex-upper-mixed#write:native": {
+      "key": "8dd15084dd13854d",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"J\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-letters#e2e:native": {
+      "key": "20e29ce1d40c10b6",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\a\\b\\f\\n\\r\\t\\v\\\\\\\"'\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-letters#read": {
+      "key": "5e5d826ad2f8966d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0007\\u0008\\u000c\\n\\r\\t\\u000b\\\\\\\"'\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-letters#write:native": {
+      "key": "741dc86548884b2e",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\a\\b\\f\\n\\r\\t\\v\\\\\\\"'\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-max#e2e:native": {
+      "key": "5b44059d86e9e360",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\1114111\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-max#read": {
+      "key": "e51e8fe8e49eda23",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"􏿿\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-max#write:native": {
+      "key": "926a417822195327",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\1114111\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-names#e2e:native": {
+      "key": "ee26ae59a9fc0d78",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Str\n        \"\\NUL\\SOH\\STX\\ETX\\EOT\\ENQ\\ACK\\a\\b\\t\\n\\v\\f\\r\\SO\\SI\\DLE\\DC1\\DC2\\DC3\\DC4\\NAK\\SYN\\ETB\\CAN\\EM\\SUB\\ESC\\FS\\GS\\RS\\US \\DEL\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "escape-names#read": {
+      "key": "7c4cbf57ad1108af",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u0008\\t\\n\\u000b\\u000c\\r\\u000e\\u000f\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f \"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-names#write:native": {
+      "key": "c127682b25ece645",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Str\n        \"\\NUL\\SOH\\STX\\ETX\\EOT\\ENQ\\ACK\\a\\b\\t\\n\\v\\f\\r\\SO\\SI\\DLE\\DC1\\DC2\\DC3\\DC4\\NAK\\SYN\\ETB\\CAN\\EM\\SUB\\ESC\\FS\\GS\\RS\\US \\DEL\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "escape-octal#e2e:native": {
+      "key": "cf8f662d9da1c721",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\\a\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-octal#read": {
+      "key": "fcea78c252abb216",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A\\u0007\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-octal#write:native": {
+      "key": "58d935c7851a793e",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\\a\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-octal-upper#e2e:native": {
+      "key": "6aedb6e279a0eae6",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-octal-upper#read": {
+      "key": "20864529b73a643f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-octal-upper#write:native": {
+      "key": "074a7a85190f2bee",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"A\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-octal-upper-short#e2e:native": {
+      "key": "83f05da1b93514db",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\a\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-octal-upper-short#read": {
+      "key": "8e77eed421c58a86",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0007\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-octal-upper-short#write:native": {
+      "key": "b4c6c96087ea80ae",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\a\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-so-h#e2e:native": {
+      "key": "40dda6860f9c70a8",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\SO\\&H\\SOH\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-so-h#read": {
+      "key": "62793b382ea3a14f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u000eH\\u0001\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-so-h#write:native": {
+      "key": "a84e60a8aae74887",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\SO\\&H\\SOH\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-surrogate#e2e:native": {
+      "key": "0fa11541f98d686e",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\65533x\" ] ]\n",
+      "stderr": ""
+    },
+    "escape-surrogate#read": {
+      "key": "3545e97b1e32693f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"�x\"}]}]}\n",
+      "stderr": ""
+    },
+    "escape-surrogate#write:native": {
+      "key": "ef0b40957d1ce6fb",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"\\65533x\" ] ]\n",
+      "stderr": ""
+    },
+    "exponent-upper#e2e:native": {
+      "key": "667edce04c7626ab",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 1.0e-2 )\n    , ( AlignDefault , ColWidth 15.0 )\n    , ( AlignDefault , ColWidth 31.0 )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "exponent-upper#read": {
+      "key": "abd6c8df76f00d52",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":1.0e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":15.0}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":31.0}]],[[\"\",[],[]],[]],[],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "exponent-upper#write:native": {
+      "key": "e2cb61e8dc0e094c",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    [ ( AlignDefault , ColWidth 1.0e-2 )\n    , ( AlignDefault , ColWidth 15.0 )\n    , ( AlignDefault , ColWidth 31.0 )\n    ]\n    (TableHead ( \"\" , [] , [] ) [])\n    []\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "format-uppercase#e2e:native": {
+      "key": "3253051911a00345",
+      "exit": 0,
+      "stdout": "[ RawBlock (Format \"HTML\") \"x\" ]\n",
+      "stderr": ""
+    },
+    "format-uppercase#read": {
+      "key": "4dd7dbf3f182b07e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"HTML\",\"x\"]}]}\n",
+      "stderr": ""
+    },
+    "format-uppercase#write:native": {
+      "key": "054dc92a93c2625f",
+      "exit": 0,
+      "stdout": "[ RawBlock (Format \"HTML\") \"x\" ]\n",
+      "stderr": ""
+    },
+    "hex-int#e2e:native": {
+      "key": "45d18a384de178d7",
+      "exit": 0,
+      "stdout": "[ Header 31 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "hex-int#read": {
+      "key": "12d96442bbdd3bde",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[31,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "hex-int#write:native": {
+      "key": "d6950f32439a11d0",
+      "exit": 0,
+      "stdout": "[ Header 31 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "inline#e2e:native": {
+      "key": "79184ba9433f705e",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"alone\" ] ]\n",
+      "stderr": ""
+    },
+    "inline#read": {
+      "key": "bdcd9b51611ea72b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"alone\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline#write:native": {
+      "key": "28024d7271cc3976",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"alone\" ] ]\n",
+      "stderr": ""
+    },
+    "inline-cite-suppress#e2e:native": {
+      "key": "880e5fc907fc1004",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Cite\n        [ Citation\n            { citationId = \"a\"\n            , citationPrefix = [ Str \"see\" ]\n            , citationSuffix = []\n            , citationMode = SuppressAuthor\n            , citationNoteNum = 0\n            , citationHash = -5\n            }\n        ]\n        []\n    ]\n]\n",
+      "stderr": ""
+    },
+    "inline-cite-suppress#read": {
+      "key": "42ee31c66c1fda49",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":0,\"citationHash\":-5}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-cite-suppress#write:native": {
+      "key": "f089b67d9f8b5992",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Cite\n        [ Citation\n            { citationId = \"a\"\n            , citationPrefix = [ Str \"see\" ]\n            , citationSuffix = []\n            , citationMode = SuppressAuthor\n            , citationNoteNum = 0\n            , citationHash = -5\n            }\n        ]\n        []\n    ]\n]\n",
+      "stderr": ""
+    },
+    "inline-link-attr#e2e:native": {
+      "key": "3d8c31459790d3cc",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Link\n        ( \"l\" , [ \"c\" ] , [ ( \"k\" , \"v\" ) ] )\n        [ Str \"t\" ]\n        ( \"http://x\" , \"title\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "inline-link-attr#read": {
+      "key": "11f466068a4dedb5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Link\",\"c\":[[\"l\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"t\"}],[\"http://x\",\"title\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-link-attr#write:native": {
+      "key": "ed376237ff6f6106",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Link\n        ( \"l\" , [ \"c\" ] , [ ( \"k\" , \"v\" ) ] )\n        [ Str \"t\" ]\n        ( \"http://x\" , \"title\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "inline-list-mixed#e2e:native": {
+      "key": "8d2607fe9f02a338",
+      "exit": 0,
+      "stdout": "[ Plain [ Space , LineBreak , SoftBreak , Str \"z\" ] ]\n",
+      "stderr": ""
+    },
+    "inline-list-mixed#read": {
+      "key": "d90a253c77077683",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"LineBreak\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"z\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-list-mixed#write:native": {
+      "key": "aa8a24e07db1ae03",
+      "exit": 0,
+      "stdout": "[ Plain [ Space , LineBreak , SoftBreak , Str \"z\" ] ]\n",
+      "stderr": ""
+    },
+    "inline-math#e2e:native": {
+      "key": "beca3e86cd9ea35b",
+      "exit": 0,
+      "stdout": "[ Plain [ Math InlineMath \"x^2\" ] ]\n",
+      "stderr": ""
+    },
+    "inline-math#read": {
+      "key": "705fb87d535a0472",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-math#write:native": {
+      "key": "ec7e7601f505d085",
+      "exit": 0,
+      "stdout": "[ Plain [ Math InlineMath \"x^2\" ] ]\n",
+      "stderr": ""
+    },
+    "inline-note#e2e:native": {
+      "key": "f566d8c399063d5e",
+      "exit": 0,
+      "stdout": "[ Plain [ Note [ Para [ Str \"n\" ] , BlockQuote [] ] ] ]\n",
+      "stderr": ""
+    },
+    "inline-note#read": {
+      "key": "ade37c64d19ff733",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]},{\"t\":\"BlockQuote\",\"c\":[]}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-note#write:native": {
+      "key": "3679139850a34b4d",
+      "exit": 0,
+      "stdout": "[ Plain [ Note [ Para [ Str \"n\" ] , BlockQuote [] ] ] ]\n",
+      "stderr": ""
+    },
+    "inline-quoted-double#e2e:native": {
+      "key": "715a2d4325d571b4",
+      "exit": 0,
+      "stdout": "[ Plain [ Quoted DoubleQuote [ Str \"q\" ] ] ]\n",
+      "stderr": ""
+    },
+    "inline-quoted-double#read": {
+      "key": "5ee0f57a96f05843",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"q\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-quoted-double#write:native": {
+      "key": "5b10598eac2c4e25",
+      "exit": 0,
+      "stdout": "[ Plain [ Quoted DoubleQuote [ Str \"q\" ] ] ]\n",
+      "stderr": ""
+    },
+    "inline-space-only#e2e:native": {
+      "key": "b4098177ac3bfca4",
+      "exit": 0,
+      "stdout": "[ Plain [ Space ] ]\n",
+      "stderr": ""
+    },
+    "inline-space-only#read": {
+      "key": "f2ec56e07a660b35",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-space-only#write:native": {
+      "key": "5a9864546a7a5d9f",
+      "exit": 0,
+      "stdout": "[ Plain [ Space ] ]\n",
+      "stderr": ""
+    },
+    "inline-span-nested#e2e:native": {
+      "key": "22e495790d703ac7",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Span\n        ( \"\" , [] , [] )\n        [ Emph [ Strong [ Strikeout [ Str \"x\" ] ] ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "inline-span-nested#read": {
+      "key": "748348775d782e52",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[]],[{\"t\":\"Emph\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}]}]]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-span-nested#write:native": {
+      "key": "8c9205842a3f79a2",
+      "exit": 0,
+      "stdout": "[ Plain\n    [ Span\n        ( \"\" , [] , [] )\n        [ Emph [ Strong [ Strikeout [ Str \"x\" ] ] ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "inlines#e2e:native": {
+      "key": "602007114c710ede",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"a\" , Space , Emph [ Str \"b\" ] ] ]\n",
+      "stderr": ""
+    },
+    "inlines#read": {
+      "key": "842eb09e55a7c11d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inlines#write:native": {
+      "key": "72abbed0787d3682",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"a\" , Space , Emph [ Str \"b\" ] ] ]\n",
+      "stderr": ""
+    },
+    "int-hex-upper#e2e:native": {
+      "key": "b720ea7890510c8c",
+      "exit": 0,
+      "stdout": "[ Header 255 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-hex-upper#read": {
+      "key": "f59dc78367d7dadd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[255,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "int-hex-upper#write:native": {
+      "key": "3bd868be26405817",
+      "exit": 0,
+      "stdout": "[ Header 255 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-negative-zero#e2e:native": {
+      "key": "2ff145f310edc38b",
+      "exit": 0,
+      "stdout": "[ Header 0 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-negative-zero#read": {
+      "key": "7f46dfe4cd0fd4d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[0,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "int-negative-zero#write:native": {
+      "key": "79c1287ef412aff5",
+      "exit": 0,
+      "stdout": "[ Header 0 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-overflow#e2e:native": {
+      "key": "f84d247e48a30a1b",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-overflow#read": {
+      "key": "f8570cf29e4b4d92",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "int-overflow#write:native": {
+      "key": "14373e2a78189da4",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-plus-sign-free#e2e:native": {
+      "key": "3365892475b7388a",
+      "exit": 0,
+      "stdout": "[ Header 7 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "int-plus-sign-free#read": {
+      "key": "e1f5a5ebcf27a86d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[7,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "int-plus-sign-free#write:native": {
+      "key": "2f59e4b924441aba",
+      "exit": 0,
+      "stdout": "[ Header 7 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "leading-newlines#e2e:native": {
+      "key": "12468ffceba110f6",
+      "exit": 0,
+      "stdout": "[ Plain [ Space ] ]\n",
+      "stderr": ""
+    },
+    "leading-newlines#read": {
+      "key": "5fae2b09eeca5b87",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"}]}]}\n",
+      "stderr": ""
+    },
+    "leading-newlines#write:native": {
+      "key": "5a9864546a7a5d9f",
+      "exit": 0,
+      "stdout": "[ Plain [ Space ] ]\n",
+      "stderr": ""
+    },
+    "literal-tab#e2e:native": {
+      "key": "d0be0a291b57ca75",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"a  b\" ] ]\n",
+      "stderr": ""
+    },
+    "literal-tab#read": {
+      "key": "b615d1845ad5dab4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a  b\"}]}]}\n",
+      "stderr": ""
+    },
+    "literal-tab#write:native": {
+      "key": "8f4c5ae087f67a07",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"a  b\" ] ]\n",
+      "stderr": ""
+    },
+    "meta-blocks#e2e:native": {
+      "key": "ef9f4a6f78200484",
+      "exit": 0,
+      "stdout": "[ Plain [] ]\n",
+      "stderr": ""
+    },
+    "meta-blocks#read": {
+      "key": "b9e3ff87af972c93",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abstract\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}},\"blocks\":[{\"t\":\"Plain\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "meta-blocks#write:native": {
+      "key": "c1fe5270ca677e18",
+      "exit": 0,
+      "stdout": "[ Plain [] ]\n",
+      "stderr": ""
+    },
+    "meta-list-of-bools#e2e:native": {
+      "key": "c75d555911d01b84",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "meta-list-of-bools#read": {
+      "key": "d569bdcefd7fbf3b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"l\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaBool\",\"c\":true},{\"t\":\"MetaBool\",\"c\":false}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "meta-list-of-bools#write:native": {
+      "key": "5aa8545733613175",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "meta-nested-map#e2e:native": {
+      "key": "adff13aa0733cb57",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "meta-nested-map#read": {
+      "key": "86c6dd03b5d15ae6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaMap\",\"c\":{\"b\":{\"t\":\"MetaMap\",\"c\":{\"c\":{\"t\":\"MetaString\",\"c\":\"d\"}}}}}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "meta-nested-map#write:native": {
+      "key": "9bd1f707a8e19604",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "metamap-space#e2e:native": {
+      "key": "5a884d323075a232",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "metamap-space#read": {
+      "key": "16f1841521ebfb47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{}}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metamap-space#write:native": {
+      "key": "8ca6d347ca210f1a",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "native-of-native#e2e:native": {
+      "key": "a7d02fc3290354e4",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"Hello\" , Space , Emph [ Str \"world\" ] ]\n, BulletList\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "native-of-native#read": {
+      "key": "0f713c09635c8517",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"world\"}]}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "native-of-native#write:native": {
+      "key": "0d2082d094986b9c",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"Hello\" , Space , Emph [ Str \"world\" ] ]\n, BulletList\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "negative-no-parens#e2e:native": {
+      "key": "37b25cc5a5abc93c",
+      "exit": 0,
+      "stdout": "[ Header (-1) ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "negative-no-parens#read": {
+      "key": "36f38967f74fa0b9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[-1,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "negative-no-parens#write:native": {
+      "key": "c494dff6d7ad3a96",
+      "exit": 0,
+      "stdout": "[ Header (-1) ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "negative-parens#e2e:native": {
+      "key": "4acba065a1b1d1f9",
+      "exit": 0,
+      "stdout": "[ Header (-1) ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "negative-parens#read": {
+      "key": "022c9052a4de09f4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[-1,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "negative-parens#write:native": {
+      "key": "c494dff6d7ad3a96",
+      "exit": 0,
+      "stdout": "[ Header (-1) ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "negative-space#e2e:native": {
+      "key": "2d55be23f9a1c429",
+      "exit": 0,
+      "stdout": "[ Header (-2) ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "negative-space#read": {
+      "key": "86d3f93113fe51aa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[-2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "negative-space#write:native": {
+      "key": "b902af50be0cf7f5",
+      "exit": 0,
+      "stdout": "[ Header (-2) ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "octal-int#e2e:native": {
+      "key": "4cecc17f2567f429",
+      "exit": 0,
+      "stdout": "[ Header 15 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "octal-int#read": {
+      "key": "57148dead412a0dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[15,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "octal-int#write:native": {
+      "key": "7e30829f79a17896",
+      "exit": 0,
+      "stdout": "[ Header 15 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "pandoc-compact#e2e:native": {
+      "key": "a3659ae1a012b559",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "pandoc-compact#read": {
+      "key": "961af415b9500ca6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"T\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "pandoc-compact#write:native": {
+      "key": "56843906237c874b",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "pandoc-meta-all#e2e:native": {
+      "key": "fcbe11f3674ed686",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-meta-all#read": {
+      "key": "a1d1a390abcf2cbb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{\"l\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Plain\",\"c\":[]}]},{\"t\":\"MetaString\",\"c\":\"s\"}]}}}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pandoc-meta-all#write:native": {
+      "key": "1e3398a108bc803c",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-meta-duplicate-keys#e2e:native": {
+      "key": "e19044288672870f",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-meta-duplicate-keys#read": {
+      "key": "b7e753574d89db46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":false}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pandoc-meta-duplicate-keys#write:native": {
+      "key": "d8de56d9f903d8e5",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-meta-unsorted#e2e:native": {
+      "key": "bb0dec2853cf357b",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-meta-unsorted#read": {
+      "key": "93dbeb2ce7558ddc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"2\"},\"z\":{\"t\":\"MetaString\",\"c\":\"1\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pandoc-meta-unsorted#write:native": {
+      "key": "02b41d5eb7f6d632",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-no-parens-meta#e2e:native": {
+      "key": "73948a781e384ddb",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-no-parens-meta#read": {
+      "key": "6b267f2593cf9de2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pandoc-no-parens-meta#write:native": {
+      "key": "914976a1597acba3",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "pandoc-pretty#e2e:native": {
+      "key": "2f34026c815cf1dc",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "pandoc-pretty#read": {
+      "key": "b5dfa793ac3db50b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "pandoc-pretty#write:native": {
+      "key": "e6cc14cf096da5d0",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "parens-everywhere#e2e:native": {
+      "key": "db823389ffe59a28",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "parens-everywhere#read": {
+      "key": "e88dd8af1fe861fb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "parens-everywhere#write:native": {
+      "key": "191e1112aa93e8ba",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-newline-in-string#e2e:native": {
+      "key": "b79b15290d5891e8",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"a\\nb\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-newline-in-string#read": {
+      "key": "cf38c68468d51341",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\nb\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-newline-in-string#write:native": {
+      "key": "9e5b7d46cc188a81",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"a\\nb\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-utf8#e2e:native": {
+      "key": "17b231ff2f9ebaeb",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"caf\\233 \\128512\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-utf8#read": {
+      "key": "e2d5f184569c2658",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"café 😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-utf8#write:native": {
+      "key": "dfea31df77bccd5d",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"caf\\233 \\128512\" ] ]\n",
+      "stderr": ""
+    },
+    "rowheadcolumns-negative#e2e:native": {
+      "key": "14c79e2da94d0ac6",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    []\n    (TableHead ( \"\" , [] , [] ) [])\n    [ TableBody ( \"\" , [] , [] ) (RowHeadColumns (-2)) [] [] ]\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "rowheadcolumns-negative#read": {
+      "key": "8514c54eb44e9c33",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[],[[\"\",[],[]],[]],[[[\"\",[],[]],-2,[],[]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "rowheadcolumns-negative#write:native": {
+      "key": "3ca6a3e4bce80649",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"\" , [] , [] )\n    (Caption Nothing [])\n    []\n    (TableHead ( \"\" , [] , [] ) [])\n    [ TableBody ( \"\" , [] , [] ) (RowHeadColumns (-2)) [] [] ]\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "standalone-read#e2e:native": {
+      "key": "1ea3b915a4ec0720",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"m\"\n            , MetaMap\n                (fromList\n                   [ ( \"l\"\n                     , MetaList\n                         [ MetaBlocks [ Plain [] ] , MetaString \"s\" ]\n                     )\n                   ])\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "standalone-read#read": {
+      "key": "17b7284399e47b35",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{\"l\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Plain\",\"c\":[]}]},{\"t\":\"MetaString\",\"c\":\"s\"}]}}}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "standalone-read#write:native": {
+      "key": "cb0cf43e0f4651b9",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"m\"\n            , MetaMap\n                (fromList\n                   [ ( \"l\"\n                     , MetaList\n                         [ MetaBlocks [ Plain [] ] , MetaString \"s\" ]\n                     )\n                   ])\n            )\n          ]\n    }\n  []\n",
+      "stderr": ""
+    },
+    "string-gap-multiple#e2e:native": {
+      "key": "7fd4fde5c661176d",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"abc\" ] ]\n",
+      "stderr": ""
+    },
+    "string-gap-multiple#read": {
+      "key": "241da281895553c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"abc\"}]}]}\n",
+      "stderr": ""
+    },
+    "string-gap-multiple#write:native": {
+      "key": "16b2c89c9ffa8215",
+      "exit": 0,
+      "stdout": "[ Plain [ Str \"abc\" ] ]\n",
+      "stderr": ""
+    },
+    "table-full#e2e:native": {
+      "key": "46b5934d6cadcbdf",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"t\" , [] , [] )\n    (Caption (Just [ Str \"s\" ]) [ Plain [ Str \"c\" ] ])\n    [ ( AlignLeft , ColWidth 0.5 )\n    , ( AlignRight , ColWidthDefault )\n    ]\n    (TableHead\n       ( \"\" , [] , [] )\n       [ Row\n           ( \"\" , [] , [] )\n           [ Cell\n               ( \"\" , [] , [] )\n               AlignCenter\n               (RowSpan 1)\n               (ColSpan 2)\n               [ Plain [ Str \"h\" ] ]\n           ]\n       ])\n    [ TableBody\n        ( \"\" , [] , [] )\n        (RowHeadColumns 1)\n        []\n        [ Row\n            ( \"\" , [] , [] )\n            [ Cell\n                ( \"\" , [] , [] ) AlignDefault (RowSpan 2) (ColSpan 1) []\n            ]\n        ]\n    ]\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "table-full#read": {
+      "key": "1f90c4b89678816c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"t\",[],[]],[[{\"t\":\"Str\",\"c\":\"s\"}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidth\",\"c\":0.5}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignCenter\"},1,2,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h\"}]}]]]]]],[[[\"\",[],[]],1,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},2,1,[]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-full#write:native": {
+      "key": "e62d1710b5956bfa",
+      "exit": 0,
+      "stdout": "[ Table\n    ( \"t\" , [] , [] )\n    (Caption (Just [ Str \"s\" ]) [ Plain [ Str \"c\" ] ])\n    [ ( AlignLeft , ColWidth 0.5 )\n    , ( AlignRight , ColWidthDefault )\n    ]\n    (TableHead\n       ( \"\" , [] , [] )\n       [ Row\n           ( \"\" , [] , [] )\n           [ Cell\n               ( \"\" , [] , [] )\n               AlignCenter\n               (RowSpan 1)\n               (ColSpan 2)\n               [ Plain [ Str \"h\" ] ]\n           ]\n       ])\n    [ TableBody\n        ( \"\" , [] , [] )\n        (RowHeadColumns 1)\n        []\n        [ Row\n            ( \"\" , [] , [] )\n            [ Cell\n                ( \"\" , [] , [] ) AlignDefault (RowSpan 2) (ColSpan 1) []\n            ]\n        ]\n    ]\n    (TableFoot ( \"\" , [] , [] ) [])\n]\n",
+      "stderr": ""
+    },
+    "trailing-space#e2e:native": {
+      "key": "0860894cc638d40f",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "trailing-space#read": {
+      "key": "046195930a66070a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "trailing-space#write:native": {
+      "key": "191e1112aa93e8ba",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "tuple-parens#e2e:native": {
+      "key": "16a17970f0f43025",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"x\" ]\n",
+      "stderr": ""
+    },
+    "tuple-parens#read": {
+      "key": "8692ff9beb28d20a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"x\"]}]}\n",
+      "stderr": ""
+    },
+    "tuple-parens#write:native": {
+      "key": "c4ca4278f6d617d2",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"x\" ]\n",
+      "stderr": ""
+    },
+    "unicode-space#e2e:native": {
+      "key": "dd9f0b5d2cb38b74",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "unicode-space#read": {
+      "key": "efda2b9d7bfa62f5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "unicode-space#write:native": {
+      "key": "191e1112aa93e8ba",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "whitespace#e2e:native": {
+      "key": "7c58000e5908228f",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    },
+    "whitespace#read": {
+      "key": "c78f1c4f29f27174",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "whitespace#write:native": {
+      "key": "191e1112aa93e8ba",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" ] ]\n",
+      "stderr": ""
+    }
+  }
+}

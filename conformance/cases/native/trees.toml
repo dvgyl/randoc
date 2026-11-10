@@ -1,0 +1,259 @@
+# Trees with each enumeration value, number and record.
+from = "json"
+to = ["native"]
+
+[[case]]
+id = "list-DefaultStyle-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"DefaultStyle\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-DefaultStyle-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"DefaultStyle\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-DefaultStyle-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"DefaultStyle\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-DefaultStyle-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"DefaultStyle\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Example-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Example\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Example-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Example\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Example-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Example\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Example-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Example\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Decimal-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Decimal\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Decimal-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Decimal\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Decimal-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Decimal\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-Decimal-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"Decimal\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerRoman-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerRoman\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerRoman-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerRoman\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerRoman-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerRoman\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerRoman-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerRoman\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperRoman-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperRoman\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperRoman-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperRoman\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperRoman-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperRoman\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperRoman-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperRoman\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerAlpha-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerAlpha\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerAlpha-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerAlpha\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerAlpha-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerAlpha\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-LowerAlpha-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"LowerAlpha\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperAlpha-DefaultDelim"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperAlpha\"}, {\"t\": \"DefaultDelim\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperAlpha-Period"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperAlpha\"}, {\"t\": \"Period\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperAlpha-OneParen"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperAlpha\"}, {\"t\": \"OneParen\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-UpperAlpha-TwoParens"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[1, {\"t\": \"UpperAlpha\"}, {\"t\": \"TwoParens\"}], [[{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]]]}]}"
+
+[[case]]
+id = "list-start--5"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[-5, {\"t\": \"Decimal\"}, {\"t\": \"Period\"}], []]}]}"
+
+[[case]]
+id = "list-start-0"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[0, {\"t\": \"Decimal\"}, {\"t\": \"Period\"}], []]}]}"
+
+[[case]]
+id = "list-start-9223372036854775807"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[9223372036854775807, {\"t\": \"Decimal\"}, {\"t\": \"Period\"}], []]}]}"
+
+[[case]]
+id = "list-start--9223372036854775808"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"OrderedList\", \"c\": [[-9223372036854775808, {\"t\": \"Decimal\"}, {\"t\": \"Period\"}], []]}]}"
+
+[[case]]
+id = "header-level--1"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Header\", \"c\": [-1, [\"\", [], []], []]}]}"
+
+[[case]]
+id = "header-level-0"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Header\", \"c\": [0, [\"\", [], []], []]}]}"
+
+[[case]]
+id = "header-level-7"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Header\", \"c\": [7, [\"\", [], []], []]}]}"
+
+[[case]]
+id = "header-level-100"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Header\", \"c\": [100, [\"\", [], []], []]}]}"
+
+[[case]]
+id = "cite-AuthorInText"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Cite\", \"c\": [[{\"citationId\": \"k\", \"citationPrefix\": [{\"t\": \"Str\", \"c\": \"pre\"}], \"citationSuffix\": [], \"citationMode\": {\"t\": \"AuthorInText\"}, \"citationNoteNum\": -2, \"citationHash\": 7}], [{\"t\": \"Str\", \"c\": \"x\"}]]}]}]}"
+
+[[case]]
+id = "cite-SuppressAuthor"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Cite\", \"c\": [[{\"citationId\": \"k\", \"citationPrefix\": [{\"t\": \"Str\", \"c\": \"pre\"}], \"citationSuffix\": [], \"citationMode\": {\"t\": \"SuppressAuthor\"}, \"citationNoteNum\": -2, \"citationHash\": 7}], [{\"t\": \"Str\", \"c\": \"x\"}]]}]}]}"
+
+[[case]]
+id = "cite-NormalCitation"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Cite\", \"c\": [[{\"citationId\": \"k\", \"citationPrefix\": [{\"t\": \"Str\", \"c\": \"pre\"}], \"citationSuffix\": [], \"citationMode\": {\"t\": \"NormalCitation\"}, \"citationNoteNum\": -2, \"citationHash\": 7}], [{\"t\": \"Str\", \"c\": \"x\"}]]}]}]}"
+
+[[case]]
+id = "cite-empty"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Cite\", \"c\": [[], []]}]}]}"
+
+[[case]]
+id = "quoted-SingleQuote"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Quoted\", \"c\": [{\"t\": \"SingleQuote\"}, []]}]}]}"
+
+[[case]]
+id = "quoted-DoubleQuote"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Quoted\", \"c\": [{\"t\": \"DoubleQuote\"}, []]}]}]}"
+
+[[case]]
+id = "math-InlineMath"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Math\", \"c\": [{\"t\": \"InlineMath\"}, \"\"]}]}]}"
+
+[[case]]
+id = "math-DisplayMath"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Math\", \"c\": [{\"t\": \"DisplayMath\"}, \"\"]}]}]}"
+
+[[case]]
+id = "cell-AlignLeft"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Table\", \"c\": [[\"\", [], []], [null, []], [[{\"t\": \"AlignLeft\"}, {\"t\": \"ColWidthDefault\"}]], [[\"\", [], []], [[[\"\", [], []], [[[\"\", [], []], {\"t\": \"AlignLeft\"}, 1, 1, []]]]]], [], [[\"\", [], []], []]]}]}"
+
+[[case]]
+id = "cell-AlignRight"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Table\", \"c\": [[\"\", [], []], [null, []], [[{\"t\": \"AlignRight\"}, {\"t\": \"ColWidthDefault\"}]], [[\"\", [], []], [[[\"\", [], []], [[[\"\", [], []], {\"t\": \"AlignRight\"}, 1, 1, []]]]]], [], [[\"\", [], []], []]]}]}"
+
+[[case]]
+id = "cell-AlignCenter"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Table\", \"c\": [[\"\", [], []], [null, []], [[{\"t\": \"AlignCenter\"}, {\"t\": \"ColWidthDefault\"}]], [[\"\", [], []], [[[\"\", [], []], [[[\"\", [], []], {\"t\": \"AlignCenter\"}, 1, 1, []]]]]], [], [[\"\", [], []], []]]}]}"
+
+[[case]]
+id = "cell-AlignDefault"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Table\", \"c\": [[\"\", [], []], [null, []], [[{\"t\": \"AlignDefault\"}, {\"t\": \"ColWidthDefault\"}]], [[\"\", [], []], [[[\"\", [], []], [[[\"\", [], []], {\"t\": \"AlignDefault\"}, 1, 1, []]]]]], [], [[\"\", [], []], []]]}]}"
+
+[[case]]
+id = "empty-Emph"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Emph\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-Underline"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Underline\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-Strong"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Strong\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-Strikeout"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Strikeout\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-Superscript"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Superscript\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-Subscript"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Subscript\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-SmallCaps"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"SmallCaps\", \"c\": []}]}]}"
+
+[[case]]
+id = "empty-containers"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Plain\", \"c\": []}, {\"t\": \"Para\", \"c\": []}, {\"t\": \"LineBlock\", \"c\": []}, {\"t\": \"BlockQuote\", \"c\": []}, {\"t\": \"BulletList\", \"c\": []}, {\"t\": \"DefinitionList\", \"c\": []}, {\"t\": \"Div\", \"c\": [[\"\", [], []], []]}, {\"t\": \"Figure\", \"c\": [[\"\", [], []], [null, []], []]}]}"
+
+[[case]]
+id = "figure-short-caption"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Figure\", \"c\": [[\"f\", [], []], [[{\"t\": \"Str\", \"c\": \"s\"}], [{\"t\": \"Plain\", \"c\": [{\"t\": \"Str\", \"c\": \"long\"}]}]], [{\"t\": \"Plain\", \"c\": []}]]}]}"
+
+[[case]]
+id = "breaks"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"SoftBreak\"}, {\"t\": \"LineBreak\"}, {\"t\": \"Space\"}]}]}"
+
+[[case]]
+id = "image-empty"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Image\", \"c\": [[\"\", [], []], [], [\"\", \"\"]]}]}]}"
+
+[[case]]
+id = "note-empty"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Note\", \"c\": []}]}]}"
+
+[[case]]
+id = "attr-many"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Div\", \"c\": [[\"id\", [\"a\", \"b\", \"c\", \"d\"], [[\"k0\", \"v0\"], [\"k1\", \"v1\"], [\"k2\", \"v2\"], [\"k3\", \"v3\"], [\"k4\", \"v4\"], [\"k5\", \"v5\"]]], []]}]}"
+
+[[case]]
+id = "lineblock-empty-lines"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"LineBlock\", \"c\": [[], [{\"t\": \"Str\", \"c\": \"x\"}], []]}]}"
+
+[[case]]
+id = "deflist-no-defs"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"DefinitionList\", \"c\": [[[{\"t\": \"Str\", \"c\": \"t\"}], []]]}]}"
+
+[[case]]
+id = "raw-format-case"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"RawBlock\", \"c\": [\"HTML\", \"<p>\"]}]}"

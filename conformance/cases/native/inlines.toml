@@ -1,0 +1,243 @@
+# Inline elements: Markdown input, native output.
+from = "markdown"
+to = ["native"]
+
+[[case]]
+id = "str"
+input = "word"
+
+[[case]]
+id = "space"
+input = "two words"
+
+[[case]]
+id = "emph"
+input = "*emph*"
+
+[[case]]
+id = "strong"
+input = "**strong**"
+
+[[case]]
+id = "strong-emph"
+input = "***both***"
+
+[[case]]
+id = "strikeout"
+input = "~~gone~~"
+
+[[case]]
+id = "superscript"
+input = "x^2^"
+
+[[case]]
+id = "subscript"
+input = "H~2~O"
+
+[[case]]
+id = "smallcaps"
+input = "[caps]{.smallcaps}"
+
+[[case]]
+id = "underline"
+input = "[under]{.underline}"
+
+[[case]]
+id = "quoted-double"
+input = "\"double\""
+
+[[case]]
+id = "quoted-single"
+input = "'single'"
+
+[[case]]
+id = "quoted-nested"
+input = "\"outer 'inner' outer\""
+
+[[case]]
+id = "code"
+input = "`code`"
+
+[[case]]
+id = "code-attr"
+input = "`code`{#id .haskell key=val}"
+
+[[case]]
+id = "code-backslash"
+input = "`a\\b`"
+
+[[case]]
+id = "softbreak"
+input = "one\ntwo"
+
+[[case]]
+id = "linebreak"
+input = "one\\\ntwo"
+
+[[case]]
+id = "linebreak-spaces"
+input = "one  \ntwo"
+
+[[case]]
+id = "math-inline"
+input = "$x^2$"
+
+[[case]]
+id = "math-display"
+input = "$$\\sum_i x_i$$"
+
+[[case]]
+id = "raw-html"
+input = "<b>bold</b>"
+
+[[case]]
+id = "raw-tex"
+input = "\\emph{x}"
+
+[[case]]
+id = "raw-attr"
+input = "`<i>`{=html}"
+
+[[case]]
+id = "link"
+input = "[text](http://example.com)"
+
+[[case]]
+id = "link-title"
+input = "[text](http://example.com \"The title\")"
+
+[[case]]
+id = "link-attr"
+input = "[text](u){#l .c k=v}"
+
+[[case]]
+id = "link-auto"
+input = "<http://example.com>"
+
+[[case]]
+id = "link-email"
+input = "<me@example.com>"
+
+[[case]]
+id = "link-reference"
+input = "[ref]\n\n[ref]: /url 'T'"
+
+[[case]]
+id = "link-empty"
+input = "[](u)"
+
+[[case]]
+id = "image"
+input = "![alt](img.png)"
+
+[[case]]
+id = "image-title"
+input = "![alt *x*](img.png \"title\")"
+
+[[case]]
+id = "image-attr"
+input = "![a](i.png){width=50%}"
+
+[[case]]
+id = "note"
+input = "Text.[^1]\n\n[^1]: The note."
+
+[[case]]
+id = "note-blocks"
+input = "Text.[^1]\n\n[^1]: Para one.\n\n    Para two."
+
+[[case]]
+id = "note-inline"
+input = "Text.^[inline note]"
+
+[[case]]
+id = "span"
+input = "[span]{#s .c key=\"v\"}"
+
+[[case]]
+id = "span-empty"
+input = "[]{.e}"
+
+[[case]]
+id = "cite-normal"
+input = "[@doe99]"
+
+[[case]]
+id = "cite-intext"
+input = "@doe99 says"
+
+[[case]]
+id = "cite-suppress"
+input = "[-@doe99]"
+
+[[case]]
+id = "cite-locator"
+input = "[see @doe99, pp. 33-35 and *passim*]"
+
+[[case]]
+id = "cite-multi"
+input = "[@a; @b; -@c]"
+
+[[case]]
+id = "cite-intext-locator"
+input = "@doe99 [p. 3]"
+
+[[case]]
+id = "entity"
+input = "&copy; &amp; &lt;"
+
+[[case]]
+id = "nbsp"
+input = "a b"
+
+[[case]]
+id = "emoji"
+input = "smile 😀"
+
+[[case]]
+id = "unicode"
+input = "café 日本 Ж"
+
+[[case]]
+id = "digits-after-escape"
+input = "é1 éa"
+
+[[case]]
+id = "punct"
+input = "a, b; c: d! e? (f) [g]"
+
+[[case]]
+id = "backslash"
+input = "a\\\\b \\* \\_"
+
+[[case]]
+id = "quote-in-str"
+input = "say \"hi\" now"
+
+[[case]]
+id = "smart-dash"
+input = "a -- b --- c"
+
+[[case]]
+id = "ellipsis"
+input = "wait..."
+
+[[case]]
+id = "hard-tab"
+input = "a\tb"
+
+[[case]]
+id = "long-word"
+input = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[[case]]
+id = "many-words"
+input = "w0 w1 w2 w3 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26 w27 w28 w29 w30 w31 w32 w33 w34 w35 w36 w37 w38 w39"
+
+[[case]]
+id = "nested-emph"
+input = "*a **b *c* b** a*"
+
+[[case]]
+id = "deep-inline"
+input = "*[[[[[[[[[[[[x]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}]{.s}*"

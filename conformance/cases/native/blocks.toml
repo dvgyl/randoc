@@ -1,0 +1,223 @@
+# Block elements: Markdown input, native output.
+from = "markdown"
+to = ["native"]
+
+[[case]]
+id = "para"
+input = "A paragraph."
+
+[[case]]
+id = "paras"
+input = "One.\n\nTwo.\n\nThree."
+
+[[case]]
+id = "plain-in-list"
+input = "- tight"
+
+[[case]]
+id = "header-1"
+input = "# One"
+
+[[case]]
+id = "header-6"
+input = "###### Six"
+
+[[case]]
+id = "header-attr"
+input = "## Head {#id .c1 .c2 k=v}"
+
+[[case]]
+id = "header-setext"
+input = "Title\n====="
+
+[[case]]
+id = "header-unnumbered"
+input = "# Head {-}"
+
+[[case]]
+id = "header-long"
+input = "# word word word word word word word word word word word word word word word word word word word word"
+
+[[case]]
+id = "codeblock-indent"
+input = "    code\n    more"
+
+[[case]]
+id = "codeblock-fenced"
+input = "```\nfenced\n```"
+
+[[case]]
+id = "codeblock-lang"
+input = "```haskell\nmain = print 1\n```"
+
+[[case]]
+id = "codeblock-attr"
+input = "```{#c .python startFrom=10}\nx = 1\n```"
+
+[[case]]
+id = "codeblock-tabs"
+input = "```\na\tb\n\"q\" \\ \n```"
+
+[[case]]
+id = "codeblock-empty"
+input = "```\n```"
+
+[[case]]
+id = "rawblock-html"
+input = "<div>\nhtml\n</div>"
+
+[[case]]
+id = "rawblock-fenced"
+input = "```{=latex}\n\\begin{x}\n```"
+
+[[case]]
+id = "rawblock-tex"
+input = "\\begin{center}\nx\n\\end{center}"
+
+[[case]]
+id = "blockquote"
+input = "> quoted"
+
+[[case]]
+id = "blockquote-nested"
+input = "> > > deep"
+
+[[case]]
+id = "blockquote-multi"
+input = "> one\n>\n> two"
+
+[[case]]
+id = "hr"
+input = "---"
+
+[[case]]
+id = "hr-stars"
+input = "* * *"
+
+[[case]]
+id = "bullet-tight"
+input = "- a\n- b\n- c"
+
+[[case]]
+id = "bullet-loose"
+input = "- a\n\n- b"
+
+[[case]]
+id = "bullet-nested"
+input = "- a\n    - b\n        - c"
+
+[[case]]
+id = "bullet-empty-item"
+input = "-\n- b"
+
+[[case]]
+id = "ordered-decimal-period"
+input = "1. a\n2. b"
+
+[[case]]
+id = "ordered-decimal-paren"
+input = "1) a\n2) b"
+
+[[case]]
+id = "ordered-twoparens"
+input = "(1) a\n(2) b"
+
+[[case]]
+id = "ordered-start"
+input = "7. a\n8. b"
+
+[[case]]
+id = "ordered-start-zero"
+input = "0. a"
+
+[[case]]
+id = "ordered-lower-alpha"
+input = "a. x\nb. y"
+
+[[case]]
+id = "ordered-upper-alpha"
+input = "A. x\nB. y"
+
+[[case]]
+id = "ordered-lower-roman"
+input = "i. x\nii. y"
+
+[[case]]
+id = "ordered-upper-roman"
+input = "IV. x\nV. y"
+
+[[case]]
+id = "ordered-upper-alpha-paren"
+input = "A) x\nB) y"
+
+[[case]]
+id = "ordered-example"
+input = "(@) first\n(@) second"
+
+[[case]]
+id = "ordered-default"
+input = "#. a\n#. b"
+
+[[case]]
+id = "ordered-large-start"
+input = "123456789. big"
+
+[[case]]
+id = "deflist"
+input = "Term\n:   Definition"
+
+[[case]]
+id = "deflist-multi"
+input = "Term\n:   Def one\n\n:   Def two\n\nTerm 2\n:   Other"
+
+[[case]]
+id = "deflist-compact"
+input = "T\n  ~ d1\n  ~ d2"
+
+[[case]]
+id = "lineblock"
+input = "| line one\n|   indented\n| three"
+
+[[case]]
+id = "lineblock-empty"
+input = "| a\n|\n| b"
+
+[[case]]
+id = "div"
+input = "::: {#d .note k=v}\nInside.\n:::"
+
+[[case]]
+id = "div-nested"
+input = "::: outer\n::: inner\nx\n:::\n:::"
+
+[[case]]
+id = "div-empty"
+input = "::: e\n:::"
+
+[[case]]
+id = "figure"
+input = "![Caption *x*](img.png)"
+
+[[case]]
+id = "figure-attr"
+input = "![Cap](img.png){#fig:1 width=3in}"
+
+[[case]]
+id = "figure-empty-caption"
+input = "![](img.png)\n"
+
+[[case]]
+id = "mixed"
+input = "# H\n\nPara.\n\n- item\n\n> q\n\n```\nc\n```"
+
+[[case]]
+id = "list-in-quote"
+input = "> - a\n> - b"
+
+[[case]]
+id = "quote-in-list"
+input = "- > q"
+
+[[case]]
+id = "code-in-list"
+input = "- item\n\n      code"

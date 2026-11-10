@@ -1,0 +1,140 @@
+# Metadata of each kind, in standalone output.
+from = "markdown"
+to = ["native"]
+args = ["-s"]
+
+[[case]]
+id = "title"
+input = "---\ntitle: The *title*\n---\nBody."
+
+[[case]]
+id = "string-list"
+input = "---\nauthor:\n- A\n- B\n---\n"
+
+[[case]]
+id = "bool"
+input = "---\ndraft: true\npublished: false\n---\n"
+
+[[case]]
+id = "map"
+input = "---\nconfig:\n  a: 1\n  b: [x, y]\n---\n"
+
+[[case]]
+id = "blocks"
+input = "---\nabstract: |\n  Para one.\n\n  Para two.\n---\n"
+
+[[case]]
+id = "empty-value"
+input = "---\nempty: ''\nnothing:\n---\n"
+
+[[case]]
+id = "nested"
+input = "---\na:\n  b:\n    c:\n      d: deep\n---\n"
+
+[[case]]
+id = "many-keys"
+input = "---\nk00: v0\nk01: v1\nk02: v2\nk03: v3\nk04: v4\nk05: v5\nk06: v6\nk07: v7\nk08: v8\nk09: v9\nk10: v10\nk11: v11\n---\n"
+
+[[case]]
+id = "unicode-key"
+input = "---\ntítulo: valor é\n---\n"
+
+[[case]]
+id = "no-meta"
+input = "Just text."
+
+[[case]]
+id = "empty-doc"
+input = ""
+
+[[case]]
+id = "long-title"
+input = "---\ntitle: long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long\n---\n"
+
+[[case]]
+id = "json-metastring"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"s\": {\"t\": \"MetaString\", \"c\": \"plain \\\"string\\\"\"}}, \"blocks\": []}"
+
+[[case]]
+id = "json-metabool"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"b\": {\"t\": \"MetaBool\", \"c\": true}}, \"blocks\": []}"
+
+[[case]]
+id = "json-metalist-empty"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"l\": {\"t\": \"MetaList\", \"c\": []}}, \"blocks\": []}"
+
+[[case]]
+id = "json-metamap-empty"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"m\": {\"t\": \"MetaMap\", \"c\": {}}}, \"blocks\": []}"
+
+[[case]]
+id = "json-metablocks"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"x\": {\"t\": \"MetaBlocks\", \"c\": [{\"t\": \"HorizontalRule\"}, {\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"p\"}]}]}}, \"blocks\": []}"
+
+[[case]]
+id = "json-metainlines-empty"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"x\": {\"t\": \"MetaInlines\", \"c\": []}}, \"blocks\": []}"
+
+[[case]]
+id = "json-all-kinds"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"a\": {\"t\": \"MetaMap\", \"c\": {\"b\": {\"t\": \"MetaBool\", \"c\": false}, \"l\": {\"t\": \"MetaList\", \"c\": [{\"t\": \"MetaString\", \"c\": \"s\"}, {\"t\": \"MetaInlines\", \"c\": [{\"t\": \"Str\", \"c\": \"i\"}]}]}}}, \"z\": {\"t\": \"MetaString\", \"c\": \"é\"}}, \"blocks\": []}"
+
+[[case]]
+id = "json-key-escapes"
+from = "json"
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"k\\\"ey\\n\": {\"t\": \"MetaString\", \"c\": \"v\"}}, \"blocks\": []}"
+
+[[case]]
+id = "json-metastring-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"s\": {\"t\": \"MetaString\", \"c\": \"plain \\\"string\\\"\"}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-metabool-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"b\": {\"t\": \"MetaBool\", \"c\": true}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-metalist-empty-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"l\": {\"t\": \"MetaList\", \"c\": []}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-metamap-empty-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"m\": {\"t\": \"MetaMap\", \"c\": {}}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-metablocks-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"x\": {\"t\": \"MetaBlocks\", \"c\": [{\"t\": \"HorizontalRule\"}, {\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"p\"}]}]}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-metainlines-empty-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"x\": {\"t\": \"MetaInlines\", \"c\": []}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-all-kinds-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"a\": {\"t\": \"MetaMap\", \"c\": {\"b\": {\"t\": \"MetaBool\", \"c\": false}, \"l\": {\"t\": \"MetaList\", \"c\": [{\"t\": \"MetaString\", \"c\": \"s\"}, {\"t\": \"MetaInlines\", \"c\": [{\"t\": \"Str\", \"c\": \"i\"}]}]}}}, \"z\": {\"t\": \"MetaString\", \"c\": \"é\"}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"
+
+[[case]]
+id = "json-key-escapes-body-only"
+from = "json"
+args = []
+input = "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {\"k\\\"ey\\n\": {\"t\": \"MetaString\", \"c\": \"v\"}}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"x\"}]}]}"

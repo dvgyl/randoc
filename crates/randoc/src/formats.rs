@@ -16,12 +16,14 @@ type WriterLookup = fn(&str) -> Option<Writer>;
 #[rustfmt::skip]
 const READERS: &[ReaderLookup] = &[
     json_format::reader,
+    randoc_native::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.
 #[rustfmt::skip]
 const WRITERS: &[WriterLookup] = &[
     json_format::writer,
+    randoc_native::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.

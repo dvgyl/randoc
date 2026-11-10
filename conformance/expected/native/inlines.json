@@ -1,0 +1,1085 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "backslash#e2e:native": {
+      "key": "4f389c4344fec72d",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\\\\b\" , Space , Str \"*\" , Space , Str \"_\" ] ]\n",
+      "stderr": ""
+    },
+    "backslash#read": {
+      "key": "b9c60eb76df91b12",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"*\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"_\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash#write:native": {
+      "key": "236751df96596171",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\\\\b\" , Space , Str \"*\" , Space , Str \"_\" ] ]\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:native": {
+      "key": "1cd8c6eba3514592",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = AuthorInText\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"@doe99\" ]\n    , Space\n    , Str \"says\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-intext#read": {
+      "key": "cd021249e99fa5df",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe99\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"says\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-intext#write:native": {
+      "key": "5eee93b18ee76247",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = AuthorInText\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"@doe99\" ]\n    , Space\n    , Str \"says\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-intext-locator#e2e:native": {
+      "key": "aba464e82c58d705",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = [ Str \"p.\\160\\&3\" ]\n            , citationMode = AuthorInText\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"@doe99\" , Space , Str \"[p.\" , Space , Str \"3]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-intext-locator#read": {
+      "key": "b5250056c5dacce4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"p. 3\"}],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe99\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-intext-locator#write:native": {
+      "key": "be24d19b963756ca",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = [ Str \"p.\\160\\&3\" ]\n            , citationMode = AuthorInText\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"@doe99\" , Space , Str \"[p.\" , Space , Str \"3]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-locator#e2e:native": {
+      "key": "5a2d4ccf4e2c20bb",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = [ Str \"see\" ]\n            , citationSuffix =\n                [ Str \",\"\n                , Space\n                , Str \"pp.\\160\\&33-35\"\n                , Space\n                , Str \"and\"\n                , Space\n                , Emph [ Str \"passim\" ]\n                ]\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[see\"\n        , Space\n        , Str \"@doe99,\"\n        , Space\n        , Str \"pp.\"\n        , Space\n        , Str \"33-35\"\n        , Space\n        , Str \"and\"\n        , Space\n        , Str \"*passim*]\"\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-locator#read": {
+      "key": "1d90d686953070a4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pp. 33-35\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"passim\"}]}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@doe99,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pp.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"33-35\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"*passim*]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-locator#write:native": {
+      "key": "2b9d10764c4eb6d0",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = [ Str \"see\" ]\n            , citationSuffix =\n                [ Str \",\"\n                , Space\n                , Str \"pp.\\160\\&33-35\"\n                , Space\n                , Str \"and\"\n                , Space\n                , Emph [ Str \"passim\" ]\n                ]\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[see\"\n        , Space\n        , Str \"@doe99,\"\n        , Space\n        , Str \"pp.\"\n        , Space\n        , Str \"33-35\"\n        , Space\n        , Str \"and\"\n        , Space\n        , Str \"*passim*]\"\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-multi#e2e:native": {
+      "key": "48ec67921c3d44c3",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"a\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        , Citation\n            { citationId = \"b\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        , Citation\n            { citationId = \"c\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = SuppressAuthor\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[@a;\" , Space , Str \"@b;\" , Space , Str \"-@c]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-multi#read": {
+      "key": "f51bbba64c24432e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"c\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@b;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-@c]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-multi#write:native": {
+      "key": "9d77574d9140d12a",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"a\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        , Citation\n            { citationId = \"b\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        , Citation\n            { citationId = \"c\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = SuppressAuthor\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[@a;\" , Space , Str \"@b;\" , Space , Str \"-@c]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:native": {
+      "key": "8397d0e00384d0d9",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[@doe99]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-normal#read": {
+      "key": "74c2ccd12ab8345a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe99]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-normal#write:native": {
+      "key": "9a9af7cf5f5ae5a3",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = NormalCitation\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[@doe99]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:native": {
+      "key": "a935b6bffaf09fe3",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = SuppressAuthor\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[-@doe99]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "cite-suppress#read": {
+      "key": "c768a0b7974b0e62",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[-@doe99]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:native": {
+      "key": "4181bd0bdb8b2c67",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Cite\n        [ Citation\n            { citationId = \"doe99\"\n            , citationPrefix = []\n            , citationSuffix = []\n            , citationMode = SuppressAuthor\n            , citationNoteNum = 1\n            , citationHash = 0\n            }\n        ]\n        [ Str \"[-@doe99]\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "code#e2e:native": {
+      "key": "bdb82805b5db705e",
+      "exit": 0,
+      "stdout": "[ Para [ Code ( \"\" , [] , [] ) \"code\" ] ]\n",
+      "stderr": ""
+    },
+    "code#read": {
+      "key": "52489db57efe9f35",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"code\"]}]}]}\n",
+      "stderr": ""
+    },
+    "code#write:native": {
+      "key": "34430bfd04609d4a",
+      "exit": 0,
+      "stdout": "[ Para [ Code ( \"\" , [] , [] ) \"code\" ] ]\n",
+      "stderr": ""
+    },
+    "code-attr#e2e:native": {
+      "key": "bae7b823e345d89d",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Code\n        ( \"id\" , [ \"haskell\" ] , [ ( \"key\" , \"val\" ) ] ) \"code\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "code-attr#read": {
+      "key": "9a00b8578ad1b9e2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"id\",[\"haskell\"],[[\"key\",\"val\"]]],\"code\"]}]}]}\n",
+      "stderr": ""
+    },
+    "code-attr#write:native": {
+      "key": "92a8fe07050206ad",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Code\n        ( \"id\" , [ \"haskell\" ] , [ ( \"key\" , \"val\" ) ] ) \"code\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "code-backslash#e2e:native": {
+      "key": "8bef29f2785fb241",
+      "exit": 0,
+      "stdout": "[ Para [ Code ( \"\" , [] , [] ) \"a\\\\b\" ] ]\n",
+      "stderr": ""
+    },
+    "code-backslash#read": {
+      "key": "089fc51f7dd4ad88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a\\\\b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "code-backslash#write:native": {
+      "key": "e25ebc5977bac078",
+      "exit": 0,
+      "stdout": "[ Para [ Code ( \"\" , [] , [] ) \"a\\\\b\" ] ]\n",
+      "stderr": ""
+    },
+    "deep-inline#e2e:native": {
+      "key": "b7bcceb1f49d6bb8",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Emph\n        [ Span\n            ( \"\" , [ \"s\" ] , [] )\n            [ Span\n                ( \"\" , [ \"s\" ] , [] )\n                [ Span\n                    ( \"\" , [ \"s\" ] , [] )\n                    [ Span\n                        ( \"\" , [ \"s\" ] , [] )\n                        [ Span\n                            ( \"\" , [ \"s\" ] , [] )\n                            [ Span\n                                ( \"\" , [ \"s\" ] , [] )\n                                [ Span\n                                    ( \"\" , [ \"s\" ] , [] )\n                                    [ Span\n                                        ( \"\" , [ \"s\" ] , [] )\n                                        [ Span\n                                            ( \"\" , [ \"s\" ] , [] )\n                                            [ Span\n                                                ( \"\" , [ \"s\" ] , [] )\n                                                [ Span\n                                                    ( \"\"\n                                                    , [ \"s\" ]\n                                                    , []\n                                                    )\n                                                    [ Span\n                                                        ( \"\"\n                                                        , [ \"s\" ]\n                                                        , []\n                                                        )\n                                                        [ Str \"x\" ]\n                                                    ]\n                                                ]\n                                            ]\n                                        ]\n                                    ]\n                                ]\n                            ]\n                        ]\n                    ]\n                ]\n            ]\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "deep-inline#read": {
+      "key": "d0126cf0999a76a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Span\",\"c\":[[\"\",[\"s\"],[]],[{\"t\":\"Str\",\"c\":\"x\"}]]}]]}]]}]]}]]}]]}]]}]]}]]}]]}]]}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "deep-inline#write:native": {
+      "key": "650e643521bd7222",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Emph\n        [ Span\n            ( \"\" , [ \"s\" ] , [] )\n            [ Span\n                ( \"\" , [ \"s\" ] , [] )\n                [ Span\n                    ( \"\" , [ \"s\" ] , [] )\n                    [ Span\n                        ( \"\" , [ \"s\" ] , [] )\n                        [ Span\n                            ( \"\" , [ \"s\" ] , [] )\n                            [ Span\n                                ( \"\" , [ \"s\" ] , [] )\n                                [ Span\n                                    ( \"\" , [ \"s\" ] , [] )\n                                    [ Span\n                                        ( \"\" , [ \"s\" ] , [] )\n                                        [ Span\n                                            ( \"\" , [ \"s\" ] , [] )\n                                            [ Span\n                                                ( \"\" , [ \"s\" ] , [] )\n                                                [ Span\n                                                    ( \"\"\n                                                    , [ \"s\" ]\n                                                    , []\n                                                    )\n                                                    [ Span\n                                                        ( \"\"\n                                                        , [ \"s\" ]\n                                                        , []\n                                                        )\n                                                        [ Str \"x\" ]\n                                                    ]\n                                                ]\n                                            ]\n                                        ]\n                                    ]\n                                ]\n                            ]\n                        ]\n                    ]\n                ]\n            ]\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "digits-after-escape#e2e:native": {
+      "key": "f3e3d9a892b6715c",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"\\233\\&1\" , Space , Str \"\\233a\" ] ]\n",
+      "stderr": ""
+    },
+    "digits-after-escape#read": {
+      "key": "37a827e2479b7859",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"é1\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"éa\"}]}]}\n",
+      "stderr": ""
+    },
+    "digits-after-escape#write:native": {
+      "key": "c63f4d6af857a23a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"\\233\\&1\" , Space , Str \"\\233a\" ] ]\n",
+      "stderr": ""
+    },
+    "ellipsis#e2e:native": {
+      "key": "33da3658cf422825",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"wait\\8230\" ] ]\n",
+      "stderr": ""
+    },
+    "ellipsis#read": {
+      "key": "f3e228288aeef444",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"wait…\"}]}]}\n",
+      "stderr": ""
+    },
+    "ellipsis#write:native": {
+      "key": "fc4fba0c46e3e519",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"wait\\8230\" ] ]\n",
+      "stderr": ""
+    },
+    "emoji#e2e:native": {
+      "key": "ca3ca232d6ddb1f8",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"smile\" , Space , Str \"\\128512\" ] ]\n",
+      "stderr": ""
+    },
+    "emoji#read": {
+      "key": "c3b6415a72100573",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"smile\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "emoji#write:native": {
+      "key": "f9b3adc8312ff0e6",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"smile\" , Space , Str \"\\128512\" ] ]\n",
+      "stderr": ""
+    },
+    "emph#e2e:native": {
+      "key": "907123a3f3e34ebb",
+      "exit": 0,
+      "stdout": "[ Para [ Emph [ Str \"emph\" ] ] ]\n",
+      "stderr": ""
+    },
+    "emph#read": {
+      "key": "b929634c947ccbf0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "emph#write:native": {
+      "key": "4cf259743443cae1",
+      "exit": 0,
+      "stdout": "[ Para [ Emph [ Str \"emph\" ] ] ]\n",
+      "stderr": ""
+    },
+    "entity#e2e:native": {
+      "key": "37d0376db60b2856",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"\\169\" , Space , Str \"&\" , Space , Str \"<\" ] ]\n",
+      "stderr": ""
+    },
+    "entity#read": {
+      "key": "71c9e20ee5cfaa53",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"©\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"}]}]}\n",
+      "stderr": ""
+    },
+    "entity#write:native": {
+      "key": "50e1c9bc7cf54c2a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"\\169\" , Space , Str \"&\" , Space , Str \"<\" ] ]\n",
+      "stderr": ""
+    },
+    "hard-tab#e2e:native": {
+      "key": "b31b93718927f9e0",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" , Space , Str \"b\" ] ]\n",
+      "stderr": ""
+    },
+    "hard-tab#read": {
+      "key": "67b28248128d3005",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "hard-tab#write:native": {
+      "key": "cb2e02647475c6ed",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" , Space , Str \"b\" ] ]\n",
+      "stderr": ""
+    },
+    "image#e2e:native": {
+      "key": "22981f8dfe640f23",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption Nothing [ Plain [ Str \"alt\" ] ])\n    [ Plain\n        [ Image ( \"\" , [] , [] ) [ Str \"alt\" ] ( \"img.png\" , \"\" ) ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "a88b4b3d2c741e6e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"alt\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"alt\"}],[\"img.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "image#write:native": {
+      "key": "907aa785f4dfbad5",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption Nothing [ Plain [ Str \"alt\" ] ])\n    [ Plain\n        [ Image ( \"\" , [] , [] ) [ Str \"alt\" ] ( \"img.png\" , \"\" ) ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "image-attr#e2e:native": {
+      "key": "92c5a783b1134919",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption Nothing [ Plain [ Str \"a\" ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [ ( \"width\" , \"50%\" ) ] )\n            [ Str \"a\" ]\n            ( \"i.png\" , \"\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "image-attr#read": {
+      "key": "2d66d1cee2191772",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"width\",\"50%\"]]],[{\"t\":\"Str\",\"c\":\"a\"}],[\"i.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "image-attr#write:native": {
+      "key": "c07061399f60f9b6",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption Nothing [ Plain [ Str \"a\" ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [ ( \"width\" , \"50%\" ) ] )\n            [ Str \"a\" ]\n            ( \"i.png\" , \"\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "image-title#e2e:native": {
+      "key": "8bfa48e1209c6519",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption\n       Nothing [ Plain [ Str \"alt\" , Space , Emph [ Str \"x\" ] ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [] )\n            [ Str \"alt\" , Space , Emph [ Str \"x\" ] ]\n            ( \"img.png\" , \"title\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "image-title#read": {
+      "key": "d7a1e4849436ab78",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"alt\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"alt\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[\"img.png\",\"title\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "image-title#write:native": {
+      "key": "be96cf67c162362d",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption\n       Nothing [ Plain [ Str \"alt\" , Space , Emph [ Str \"x\" ] ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [] )\n            [ Str \"alt\" , Space , Emph [ Str \"x\" ] ]\n            ( \"img.png\" , \"title\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "linebreak#e2e:native": {
+      "key": "352b78d6433ff983",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"one\" , LineBreak , Str \"two\" ] ]\n",
+      "stderr": ""
+    },
+    "linebreak#read": {
+      "key": "c76041026ef3c304",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"two\"}]}]}\n",
+      "stderr": ""
+    },
+    "linebreak#write:native": {
+      "key": "46b5d2cc4e3cbe1d",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"one\" , LineBreak , Str \"two\" ] ]\n",
+      "stderr": ""
+    },
+    "linebreak-spaces#e2e:native": {
+      "key": "94b92115adcf162e",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"one\" , LineBreak , Str \"two\" ] ]\n",
+      "stderr": ""
+    },
+    "linebreak-spaces#read": {
+      "key": "c3e922157ab01a43",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"two\"}]}]}\n",
+      "stderr": ""
+    },
+    "linebreak-spaces#write:native": {
+      "key": "46b5d2cc4e3cbe1d",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"one\" , LineBreak , Str \"two\" ] ]\n",
+      "stderr": ""
+    },
+    "link#e2e:native": {
+      "key": "527682f508fbe144",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [] , [] )\n        [ Str \"text\" ]\n        ( \"http://example.com\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link#read": {
+      "key": "68ad3a7ee02a6b33",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"text\"}],[\"http://example.com\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link#write:native": {
+      "key": "6a5c6ef9ef335dde",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [] , [] )\n        [ Str \"text\" ]\n        ( \"http://example.com\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-attr#e2e:native": {
+      "key": "d91901f62d19783a",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"l\" , [ \"c\" ] , [ ( \"k\" , \"v\" ) ] )\n        [ Str \"text\" ]\n        ( \"u\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-attr#read": {
+      "key": "8df796276f4108cd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"l\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"text\"}],[\"u\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link-attr#write:native": {
+      "key": "d9a65781eacc3728",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"l\" , [ \"c\" ] , [ ( \"k\" , \"v\" ) ] )\n        [ Str \"text\" ]\n        ( \"u\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-auto#e2e:native": {
+      "key": "64fe10cb44462026",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [ \"uri\" ] , [] )\n        [ Str \"http://example.com\" ]\n        ( \"http://example.com\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-auto#read": {
+      "key": "dc0bc6dce32757bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[\"uri\"],[]],[{\"t\":\"Str\",\"c\":\"http://example.com\"}],[\"http://example.com\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link-auto#write:native": {
+      "key": "078d0f131bf482c3",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [ \"uri\" ] , [] )\n        [ Str \"http://example.com\" ]\n        ( \"http://example.com\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-email#e2e:native": {
+      "key": "2ff6f5ed29d57bec",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [ \"email\" ] , [] )\n        [ Str \"me@example.com\" ]\n        ( \"mailto:me@example.com\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-email#read": {
+      "key": "dbe02945cb87c6bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[\"email\"],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link-email#write:native": {
+      "key": "f5fec35afa46e1bc",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [ \"email\" ] , [] )\n        [ Str \"me@example.com\" ]\n        ( \"mailto:me@example.com\" , \"\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-empty#e2e:native": {
+      "key": "3396cd67258cf618",
+      "exit": 0,
+      "stdout": "[ Para [ Link ( \"\" , [] , [] ) [] ( \"u\" , \"\" ) ] ]\n",
+      "stderr": ""
+    },
+    "link-empty#read": {
+      "key": "d5ef47aba22773a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[],[\"u\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link-empty#write:native": {
+      "key": "c17cbde076e58f20",
+      "exit": 0,
+      "stdout": "[ Para [ Link ( \"\" , [] , [] ) [] ( \"u\" , \"\" ) ] ]\n",
+      "stderr": ""
+    },
+    "link-reference#e2e:native": {
+      "key": "7642fdea3565bf47",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link ( \"\" , [] , [] ) [ Str \"ref\" ] ( \"/url\" , \"T\" ) ]\n]\n",
+      "stderr": ""
+    },
+    "link-reference#read": {
+      "key": "d5c63fdbdd270670",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"ref\"}],[\"/url\",\"T\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link-reference#write:native": {
+      "key": "7625dd8ac35e8e71",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link ( \"\" , [] , [] ) [ Str \"ref\" ] ( \"/url\" , \"T\" ) ]\n]\n",
+      "stderr": ""
+    },
+    "link-title#e2e:native": {
+      "key": "2ef490e123f772a9",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [] , [] )\n        [ Str \"text\" ]\n        ( \"http://example.com\" , \"The title\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "link-title#read": {
+      "key": "3a7e7e49e9aac5c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"text\"}],[\"http://example.com\",\"The title\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "link-title#write:native": {
+      "key": "92b742c2898218e4",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Link\n        ( \"\" , [] , [] )\n        [ Str \"text\" ]\n        ( \"http://example.com\" , \"The title\" )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "long-word#e2e:native": {
+      "key": "bace09891ee2a465",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str\n        \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "long-word#read": {
+      "key": "5e5bb0daea4f0c02",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}]}]}\n",
+      "stderr": ""
+    },
+    "long-word#write:native": {
+      "key": "ce03aa094bbc9833",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str\n        \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "many-words#e2e:native": {
+      "key": "713d9050866d37e8",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"w0\"\n    , Space\n    , Str \"w1\"\n    , Space\n    , Str \"w2\"\n    , Space\n    , Str \"w3\"\n    , Space\n    , Str \"w4\"\n    , Space\n    , Str \"w5\"\n    , Space\n    , Str \"w6\"\n    , Space\n    , Str \"w7\"\n    , Space\n    , Str \"w8\"\n    , Space\n    , Str \"w9\"\n    , Space\n    , Str \"w10\"\n    , Space\n    , Str \"w11\"\n    , Space\n    , Str \"w12\"\n    , Space\n    , Str \"w13\"\n    , Space\n    , Str \"w14\"\n    , Space\n    , Str \"w15\"\n    , Space\n    , Str \"w16\"\n    , Space\n    , Str \"w17\"\n    , Space\n    , Str \"w18\"\n    , Space\n    , Str \"w19\"\n    , Space\n    , Str \"w20\"\n    , Space\n    , Str \"w21\"\n    , Space\n    , Str \"w22\"\n    , Space\n    , Str \"w23\"\n    , Space\n    , Str \"w24\"\n    , Space\n    , Str \"w25\"\n    , Space\n    , Str \"w26\"\n    , Space\n    , Str \"w27\"\n    , Space\n    , Str \"w28\"\n    , Space\n    , Str \"w29\"\n    , Space\n    , Str \"w30\"\n    , Space\n    , Str \"w31\"\n    , Space\n    , Str \"w32\"\n    , Space\n    , Str \"w33\"\n    , Space\n    , Str \"w34\"\n    , Space\n    , Str \"w35\"\n    , Space\n    , Str \"w36\"\n    , Space\n    , Str \"w37\"\n    , Space\n    , Str \"w38\"\n    , Space\n    , Str \"w39\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "many-words#read": {
+      "key": "228b6dfba2062499",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"w0\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w1\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w2\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w3\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w4\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w5\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w6\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w7\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w8\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w9\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w10\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w11\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w12\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w13\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w14\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w15\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w16\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w17\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w18\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w19\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w20\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w21\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w22\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w23\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w24\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w25\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w26\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w27\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w28\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w29\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w30\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w31\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w32\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w33\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w34\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w35\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w36\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w37\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w38\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"w39\"}]}]}\n",
+      "stderr": ""
+    },
+    "many-words#write:native": {
+      "key": "f926741d587e27f1",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"w0\"\n    , Space\n    , Str \"w1\"\n    , Space\n    , Str \"w2\"\n    , Space\n    , Str \"w3\"\n    , Space\n    , Str \"w4\"\n    , Space\n    , Str \"w5\"\n    , Space\n    , Str \"w6\"\n    , Space\n    , Str \"w7\"\n    , Space\n    , Str \"w8\"\n    , Space\n    , Str \"w9\"\n    , Space\n    , Str \"w10\"\n    , Space\n    , Str \"w11\"\n    , Space\n    , Str \"w12\"\n    , Space\n    , Str \"w13\"\n    , Space\n    , Str \"w14\"\n    , Space\n    , Str \"w15\"\n    , Space\n    , Str \"w16\"\n    , Space\n    , Str \"w17\"\n    , Space\n    , Str \"w18\"\n    , Space\n    , Str \"w19\"\n    , Space\n    , Str \"w20\"\n    , Space\n    , Str \"w21\"\n    , Space\n    , Str \"w22\"\n    , Space\n    , Str \"w23\"\n    , Space\n    , Str \"w24\"\n    , Space\n    , Str \"w25\"\n    , Space\n    , Str \"w26\"\n    , Space\n    , Str \"w27\"\n    , Space\n    , Str \"w28\"\n    , Space\n    , Str \"w29\"\n    , Space\n    , Str \"w30\"\n    , Space\n    , Str \"w31\"\n    , Space\n    , Str \"w32\"\n    , Space\n    , Str \"w33\"\n    , Space\n    , Str \"w34\"\n    , Space\n    , Str \"w35\"\n    , Space\n    , Str \"w36\"\n    , Space\n    , Str \"w37\"\n    , Space\n    , Str \"w38\"\n    , Space\n    , Str \"w39\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "math-display#e2e:native": {
+      "key": "bf4a19bb9ac22102",
+      "exit": 0,
+      "stdout": "[ Para [ Math DisplayMath \"\\\\sum_i x_i\" ] ]\n",
+      "stderr": ""
+    },
+    "math-display#read": {
+      "key": "e45fed7814855421",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\sum_i x_i\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-display#write:native": {
+      "key": "c4c91a01aeeeac15",
+      "exit": 0,
+      "stdout": "[ Para [ Math DisplayMath \"\\\\sum_i x_i\" ] ]\n",
+      "stderr": ""
+    },
+    "math-inline#e2e:native": {
+      "key": "99bda2efc47ebb36",
+      "exit": 0,
+      "stdout": "[ Para [ Math InlineMath \"x^2\" ] ]\n",
+      "stderr": ""
+    },
+    "math-inline#read": {
+      "key": "d1514a67f125b103",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-inline#write:native": {
+      "key": "0fbdc2878b4e1000",
+      "exit": 0,
+      "stdout": "[ Para [ Math InlineMath \"x^2\" ] ]\n",
+      "stderr": ""
+    },
+    "nbsp#e2e:native": {
+      "key": "5ab85b4f7cc81f12",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\\160b\" ] ]\n",
+      "stderr": ""
+    },
+    "nbsp#read": {
+      "key": "a34ffc16c6edca1d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a b\"}]}]}\n",
+      "stderr": ""
+    },
+    "nbsp#write:native": {
+      "key": "ea09692e585fa582",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\\160b\" ] ]\n",
+      "stderr": ""
+    },
+    "nested-emph#e2e:native": {
+      "key": "c826a4a43679d6c3",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Emph\n        [ Str \"a\"\n        , Space\n        , Strong\n            [ Str \"b\" , Space , Emph [ Str \"c\" ] , Space , Str \"b\" ]\n        , Space\n        , Str \"a\"\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "nested-emph#read": {
+      "key": "e46373e542a52d0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "nested-emph#write:native": {
+      "key": "b23590c4fee36871",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Emph\n        [ Str \"a\"\n        , Space\n        , Strong\n            [ Str \"b\" , Space , Emph [ Str \"c\" ] , Space , Str \"b\" ]\n        , Space\n        , Str \"a\"\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "note#e2e:native": {
+      "key": "fc79f55b875b679b",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"Text.\"\n    , Note [ Para [ Str \"The\" , Space , Str \"note.\" ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "note#read": {
+      "key": "01ca75d303facbb4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note#write:native": {
+      "key": "122834cb29d129b0",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"Text.\"\n    , Note [ Para [ Str \"The\" , Space , Str \"note.\" ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "note-blocks#e2e:native": {
+      "key": "aaa4add6f254c6bd",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"Text.\"\n    , Note\n        [ Para [ Str \"Para\" , Space , Str \"one.\" ]\n        , Para [ Str \"Para\" , Space , Str \"two.\" ]\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "note-blocks#read": {
+      "key": "bd4f805021c6240c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-blocks#write:native": {
+      "key": "ccbac72f25937186",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"Text.\"\n    , Note\n        [ Para [ Str \"Para\" , Space , Str \"one.\" ]\n        , Para [ Str \"Para\" , Space , Str \"two.\" ]\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "note-inline#e2e:native": {
+      "key": "a1c12f84ffa320ce",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"Text.\"\n    , Note [ Para [ Str \"inline\" , Space , Str \"note\" ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "note-inline#read": {
+      "key": "2f48050276587fdb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"inline\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-inline#write:native": {
+      "key": "974ac22e7c9e7008",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"Text.\"\n    , Note [ Para [ Str \"inline\" , Space , Str \"note\" ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "punct#e2e:native": {
+      "key": "427bf3d92a316051",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"a,\"\n    , Space\n    , Str \"b;\"\n    , Space\n    , Str \"c:\"\n    , Space\n    , Str \"d!\"\n    , Space\n    , Str \"e?\"\n    , Space\n    , Str \"(f)\"\n    , Space\n    , Str \"[g]\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "punct#read": {
+      "key": "abaca374d43e4b5e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"c:\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"d!\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"e?\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"(f)\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[g]\"}]}]}\n",
+      "stderr": ""
+    },
+    "punct#write:native": {
+      "key": "c545490506a8333e",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"a,\"\n    , Space\n    , Str \"b;\"\n    , Space\n    , Str \"c:\"\n    , Space\n    , Str \"d!\"\n    , Space\n    , Str \"e?\"\n    , Space\n    , Str \"(f)\"\n    , Space\n    , Str \"[g]\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "quote-in-str#e2e:native": {
+      "key": "23862b3e5252872b",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"say\"\n    , Space\n    , Quoted DoubleQuote [ Str \"hi\" ]\n    , Space\n    , Str \"now\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "quote-in-str#read": {
+      "key": "01dbde17ea5db1f8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"say\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"hi\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"now\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote-in-str#write:native": {
+      "key": "625bd36a74fd4892",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"say\"\n    , Space\n    , Quoted DoubleQuote [ Str \"hi\" ]\n    , Space\n    , Str \"now\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "quoted-double#e2e:native": {
+      "key": "c42b2f39466c7e38",
+      "exit": 0,
+      "stdout": "[ Para [ Quoted DoubleQuote [ Str \"double\" ] ] ]\n",
+      "stderr": ""
+    },
+    "quoted-double#read": {
+      "key": "5571e20cbb42af1b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"double\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "quoted-double#write:native": {
+      "key": "3f35c17cff01cbf1",
+      "exit": 0,
+      "stdout": "[ Para [ Quoted DoubleQuote [ Str \"double\" ] ] ]\n",
+      "stderr": ""
+    },
+    "quoted-nested#e2e:native": {
+      "key": "cac3e7494b60e392",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Quoted\n        DoubleQuote\n        [ Str \"outer\"\n        , Space\n        , Quoted SingleQuote [ Str \"inner\" ]\n        , Space\n        , Str \"outer\"\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "quoted-nested#read": {
+      "key": "cd63b4c62df9c9ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"outer\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"SingleQuote\"},[{\"t\":\"Str\",\"c\":\"inner\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outer\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "quoted-nested#write:native": {
+      "key": "446cdcdb98ad9364",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Quoted\n        DoubleQuote\n        [ Str \"outer\"\n        , Space\n        , Quoted SingleQuote [ Str \"inner\" ]\n        , Space\n        , Str \"outer\"\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "quoted-single#e2e:native": {
+      "key": "88bde0434d44cb69",
+      "exit": 0,
+      "stdout": "[ Para [ Quoted SingleQuote [ Str \"single\" ] ] ]\n",
+      "stderr": ""
+    },
+    "quoted-single#read": {
+      "key": "ef0eac680af84f9a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"SingleQuote\"},[{\"t\":\"Str\",\"c\":\"single\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "quoted-single#write:native": {
+      "key": "6c3eab6a09a80e03",
+      "exit": 0,
+      "stdout": "[ Para [ Quoted SingleQuote [ Str \"single\" ] ] ]\n",
+      "stderr": ""
+    },
+    "raw-attr#e2e:native": {
+      "key": "582bc9cd9140a858",
+      "exit": 0,
+      "stdout": "[ Para [ RawInline (Format \"html\") \"<i>\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-attr#read": {
+      "key": "ea7d51d44609687f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"html\",\"<i>\"]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-attr#write:native": {
+      "key": "c82c2d9105067a79",
+      "exit": 0,
+      "stdout": "[ Para [ RawInline (Format \"html\") \"<i>\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-html#e2e:native": {
+      "key": "03406e88161031ae",
+      "exit": 0,
+      "stdout": "[ Para\n    [ RawInline (Format \"html\") \"<b>\"\n    , Str \"bold\"\n    , RawInline (Format \"html\") \"</b>\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "raw-html#read": {
+      "key": "0a4a51c610ae9ddb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"html\",\"<b>\"]},{\"t\":\"Str\",\"c\":\"bold\"},{\"t\":\"RawInline\",\"c\":[\"html\",\"</b>\"]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-html#write:native": {
+      "key": "958ec84e52d7a37e",
+      "exit": 0,
+      "stdout": "[ Para\n    [ RawInline (Format \"html\") \"<b>\"\n    , Str \"bold\"\n    , RawInline (Format \"html\") \"</b>\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "raw-tex#e2e:native": {
+      "key": "3de19db115c44abf",
+      "exit": 0,
+      "stdout": "[ Para [ RawInline (Format \"tex\") \"\\\\emph{x}\" ] ]\n",
+      "stderr": ""
+    },
+    "raw-tex#read": {
+      "key": "7e841a1649725b2c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\emph{x}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-tex#write:native": {
+      "key": "25ac4018802eb963",
+      "exit": 0,
+      "stdout": "[ Para [ RawInline (Format \"tex\") \"\\\\emph{x}\" ] ]\n",
+      "stderr": ""
+    },
+    "smallcaps#e2e:native": {
+      "key": "4b2076bee3f58086",
+      "exit": 0,
+      "stdout": "[ Para [ SmallCaps [ Str \"caps\" ] ] ]\n",
+      "stderr": ""
+    },
+    "smallcaps#read": {
+      "key": "cd150375a4644695",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"caps\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "smallcaps#write:native": {
+      "key": "42fe56acaaeb6971",
+      "exit": 0,
+      "stdout": "[ Para [ SmallCaps [ Str \"caps\" ] ] ]\n",
+      "stderr": ""
+    },
+    "smart-dash#e2e:native": {
+      "key": "b2680d37184f72fa",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"a\"\n    , Space\n    , Str \"\\8211\"\n    , Space\n    , Str \"b\"\n    , Space\n    , Str \"\\8212\"\n    , Space\n    , Str \"c\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "smart-dash#read": {
+      "key": "e66a86726740237d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"–\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"—\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"c\"}]}]}\n",
+      "stderr": ""
+    },
+    "smart-dash#write:native": {
+      "key": "5520e8b54e0d8a15",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"a\"\n    , Space\n    , Str \"\\8211\"\n    , Space\n    , Str \"b\"\n    , Space\n    , Str \"\\8212\"\n    , Space\n    , Str \"c\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "softbreak#e2e:native": {
+      "key": "0e9cadacce80c348",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"one\" , SoftBreak , Str \"two\" ] ]\n",
+      "stderr": ""
+    },
+    "softbreak#read": {
+      "key": "c613289e7484c429",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"two\"}]}]}\n",
+      "stderr": ""
+    },
+    "softbreak#write:native": {
+      "key": "90320243f71b3fcf",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"one\" , SoftBreak , Str \"two\" ] ]\n",
+      "stderr": ""
+    },
+    "space#e2e:native": {
+      "key": "ed42b36b0d1b047d",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"two\" , Space , Str \"words\" ] ]\n",
+      "stderr": ""
+    },
+    "space#read": {
+      "key": "6e0c8730fc97b4f0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"words\"}]}]}\n",
+      "stderr": ""
+    },
+    "space#write:native": {
+      "key": "779af43310fc93ed",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"two\" , Space , Str \"words\" ] ]\n",
+      "stderr": ""
+    },
+    "span#e2e:native": {
+      "key": "687bac4ee2a0eab3",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Span\n        ( \"s\" , [ \"c\" ] , [ ( \"key\" , \"v\" ) ] ) [ Str \"span\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "span#read": {
+      "key": "09950b37362ba48a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"s\",[\"c\"],[[\"key\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"span\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "span#write:native": {
+      "key": "5d8234567236b0a6",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Span\n        ( \"s\" , [ \"c\" ] , [ ( \"key\" , \"v\" ) ] ) [ Str \"span\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "span-empty#e2e:native": {
+      "key": "d1fef55cc7030dde",
+      "exit": 0,
+      "stdout": "[ Para [ Span ( \"\" , [ \"e\" ] , [] ) [] ] ]\n",
+      "stderr": ""
+    },
+    "span-empty#read": {
+      "key": "dcef9c60eb6cb115",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[\"e\"],[]],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "span-empty#write:native": {
+      "key": "9ab912bb0292f71a",
+      "exit": 0,
+      "stdout": "[ Para [ Span ( \"\" , [ \"e\" ] , [] ) [] ] ]\n",
+      "stderr": ""
+    },
+    "str#e2e:native": {
+      "key": "c7dfe4e87b6a24ff",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"word\" ] ]\n",
+      "stderr": ""
+    },
+    "str#read": {
+      "key": "a4f90e7f28d1c754",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"}]}]}\n",
+      "stderr": ""
+    },
+    "str#write:native": {
+      "key": "853f2639aa51d239",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"word\" ] ]\n",
+      "stderr": ""
+    },
+    "strikeout#e2e:native": {
+      "key": "c6da6ef4ec503cf0",
+      "exit": 0,
+      "stdout": "[ Para [ Strikeout [ Str \"gone\" ] ] ]\n",
+      "stderr": ""
+    },
+    "strikeout#read": {
+      "key": "6b4a9d091f84e503",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"gone\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "strikeout#write:native": {
+      "key": "3e9d56f8a5bf08a3",
+      "exit": 0,
+      "stdout": "[ Para [ Strikeout [ Str \"gone\" ] ] ]\n",
+      "stderr": ""
+    },
+    "strong#e2e:native": {
+      "key": "777ca01c6538c286",
+      "exit": 0,
+      "stdout": "[ Para [ Strong [ Str \"strong\" ] ] ]\n",
+      "stderr": ""
+    },
+    "strong#read": {
+      "key": "d1a1dbd9091e8549",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"strong\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "strong#write:native": {
+      "key": "568bddf0d166a28b",
+      "exit": 0,
+      "stdout": "[ Para [ Strong [ Str \"strong\" ] ] ]\n",
+      "stderr": ""
+    },
+    "strong-emph#e2e:native": {
+      "key": "b1a35cd8fad81624",
+      "exit": 0,
+      "stdout": "[ Para [ Strong [ Emph [ Str \"both\" ] ] ] ]\n",
+      "stderr": ""
+    },
+    "strong-emph#read": {
+      "key": "fceda9473eeef90b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"both\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "strong-emph#write:native": {
+      "key": "bc258cd0bb08c195",
+      "exit": 0,
+      "stdout": "[ Para [ Strong [ Emph [ Str \"both\" ] ] ] ]\n",
+      "stderr": ""
+    },
+    "subscript#e2e:native": {
+      "key": "2a4656a9bcc29a75",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"H\" , Subscript [ Str \"2\" ] , Str \"O\" ] ]\n",
+      "stderr": ""
+    },
+    "subscript#read": {
+      "key": "9bb2a85f14f5b3b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"}]}]}\n",
+      "stderr": ""
+    },
+    "subscript#write:native": {
+      "key": "40d3a774b0f39163",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"H\" , Subscript [ Str \"2\" ] , Str \"O\" ] ]\n",
+      "stderr": ""
+    },
+    "superscript#e2e:native": {
+      "key": "65369822f9f347a9",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" , Superscript [ Str \"2\" ] ] ]\n",
+      "stderr": ""
+    },
+    "superscript#read": {
+      "key": "f1993f440c8f9f16",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "superscript#write:native": {
+      "key": "51a7a65372728385",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"x\" , Superscript [ Str \"2\" ] ] ]\n",
+      "stderr": ""
+    },
+    "underline#e2e:native": {
+      "key": "276261322cf23486",
+      "exit": 0,
+      "stdout": "[ Para [ Underline [ Str \"under\" ] ] ]\n",
+      "stderr": ""
+    },
+    "underline#read": {
+      "key": "0d5ff7766ca7dc73",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"under\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "underline#write:native": {
+      "key": "00a5188474c5a39f",
+      "exit": 0,
+      "stdout": "[ Para [ Underline [ Str \"under\" ] ] ]\n",
+      "stderr": ""
+    },
+    "unicode#e2e:native": {
+      "key": "3825fafca12b0bd0",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"caf\\233\"\n    , Space\n    , Str \"\\26085\\26412\"\n    , Space\n    , Str \"\\1046\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "unicode#read": {
+      "key": "7bc6f96a5bc73b29",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"café\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ж\"}]}]}\n",
+      "stderr": ""
+    },
+    "unicode#write:native": {
+      "key": "6454274e90ce16b4",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"caf\\233\"\n    , Space\n    , Str \"\\26085\\26412\"\n    , Space\n    , Str \"\\1046\"\n    ]\n]\n",
+      "stderr": ""
+    }
+  }
+}

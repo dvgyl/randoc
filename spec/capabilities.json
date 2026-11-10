@@ -344,12 +344,12 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 7,
-        "total": 11
+        "passing": 165,
+        "total": 396
       },
       "read": {
-        "passing": 7,
-        "total": 11
+        "passing": 166,
+        "total": 396
       },
       "status": "partial"
     },
@@ -360,7 +360,15 @@
       "status": "not_started"
     },
     "markdown": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 0,
+        "total": 143
+      },
+      "read": {
+        "passing": 0,
+        "total": 143
+      },
+      "status": "failing"
     },
     "markdown_github": {
       "status": "not_started"
@@ -384,7 +392,15 @@
       "status": "not_started"
     },
     "native": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 118,
+        "total": 120
+      },
+      "read": {
+        "passing": 116,
+        "total": 120
+      },
+      "status": "partial"
     },
     "odt": {
       "status": "not_started"
@@ -467,7 +483,11 @@
       "status": "not_started"
     },
     "columns": {
-      "status": "not_started"
+      "status": "failing",
+      "units": {
+        "passing": 0,
+        "total": 654
+      }
     },
     "completion": {
       "status": "not_started"
@@ -772,7 +792,11 @@
       "status": "not_started"
     },
     "wrap": {
-      "status": "not_started"
+      "status": "failing",
+      "units": {
+        "passing": 0,
+        "total": 18
+      }
     }
   },
   "oracle": "pandoc 3.13",
@@ -948,7 +972,15 @@
       "status": "not_started"
     },
     "native": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 276,
+        "total": 648
+      },
+      "status": "partial",
+      "write": {
+        "passing": 370,
+        "total": 612
+      }
     },
     "odt": {
       "status": "not_started"
@@ -1029,20 +1061,22 @@
       "not_started": 90
     },
     "input_formats": {
-      "not_started": 51,
-      "partial": 1
+      "failing": 1,
+      "not_started": 49,
+      "partial": 2
     },
     "options": {
-      "not_started": 107,
+      "failing": 2,
+      "not_started": 105,
       "passing": 2
     },
     "output_formats": {
-      "not_started": 76,
-      "partial": 1
+      "not_started": 75,
+      "partial": 2
     },
     "units": {
-      "passing": 28,
-      "total": 36
+      "passing": 949,
+      "total": 1944
     }
   }
 }

@@ -1,0 +1,484 @@
+# The native reader: each accepted form and each error.
+from = "native"
+to = ["native"]
+
+[[case]]
+id = "pandoc-compact"
+input = "Pandoc (Meta {unMeta = fromList [(\"title\",MetaInlines [Str \"T\"])]}) [Para [Str \"x\"]]"
+
+[[case]]
+id = "pandoc-pretty"
+input = "Pandoc\n  Meta { unMeta = fromList [ ( \"a\" , MetaBool True ) ] }\n  [ Para [ Str \"x\" ] ]"
+
+[[case]]
+id = "pandoc-no-parens-meta"
+input = "Pandoc Meta {unMeta = fromList []} []"
+
+[[case]]
+id = "pandoc-meta-duplicate-keys"
+input = "Pandoc (Meta {unMeta = fromList [(\"a\",MetaBool True),(\"a\",MetaBool False)]}) []"
+
+[[case]]
+id = "pandoc-meta-unsorted"
+input = "Pandoc (Meta {unMeta = fromList [(\"z\",MetaString \"1\"),(\"a\",MetaString \"2\")]}) []"
+
+[[case]]
+id = "pandoc-meta-all"
+input = "Pandoc (Meta {unMeta = fromList [(\"m\",MetaMap (fromList [(\"l\",MetaList [MetaBlocks [Plain []],MetaString \"s\"])]))]}) []"
+
+[[case]]
+id = "blocks"
+input = "[Para [Str \"a\"], HorizontalRule]"
+
+[[case]]
+id = "block"
+input = "Header 1 (\"id\",[\"c\"],[(\"k\",\"v\")]) [Str \"H\"]"
+
+[[case]]
+id = "inlines"
+input = "[Str \"a\", Space, Emph [Str \"b\"]]"
+
+[[case]]
+id = "inline"
+input = "Str \"alone\""
+
+[[case]]
+id = "empty-list"
+input = "[]"
+
+[[case]]
+id = "parens-everywhere"
+input = "((([((Para ([(Str (\"x\"))])))])))"
+
+[[case]]
+id = "whitespace"
+input = " \n\t [ Para\n\n [Str\n\"x\"\n]\n]\n\n "
+
+[[case]]
+id = "unicode-space"
+input = "[ Para [Str \"x\"]　]"
+
+[[case]]
+id = "negative-no-parens"
+input = "Header -1 (\"\",[],[]) []"
+
+[[case]]
+id = "negative-parens"
+input = "Header (-1) (\"\",[],[]) []"
+
+[[case]]
+id = "negative-space"
+input = "Header (- 2) (\"\",[],[]) []"
+
+[[case]]
+id = "hex-int"
+input = "Header 0x1F (\"\",[],[]) []"
+
+[[case]]
+id = "octal-int"
+input = "Header 0o17 (\"\",[],[]) []"
+
+[[case]]
+id = "int-overflow"
+input = "Header 18446744073709551617 (\"\",[],[]) []"
+
+[[case]]
+id = "double-int"
+input = "Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidth 1)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "double-forms"
+input = "Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidth 1.5e-3),(AlignDefault,ColWidth 2E2),(AlignDefault,ColWidth -0.5),(AlignDefault,ColWidth (-1.0e-2)),(AlignDefault,ColWidth 0x10),(AlignDefault,ColWidth 1e400)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "double-special"
+input = "Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidth Infinity),(AlignDefault,ColWidth NaN),(AlignDefault,ColWidth -Infinity),(AlignDefault,ColWidth (-Infinity))] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "escape-decimal"
+input = "Str \"\\233\\&1\\65\""
+
+[[case]]
+id = "escape-hex"
+input = "Str \"\\x41\\x1F600\""
+
+[[case]]
+id = "escape-octal"
+input = "Str \"\\o101\\o7\""
+
+[[case]]
+id = "escape-names"
+input = "Str \"\\NUL\\SOH\\STX\\ETX\\EOT\\ENQ\\ACK\\BEL\\BS\\HT\\LF\\VT\\FF\\CR\\SO\\SI\\DLE\\DC1\\DC2\\DC3\\DC4\\NAK\\SYN\\ETB\\CAN\\EM\\SUB\\ESC\\FS\\GS\\RS\\US\\SP\\DEL\""
+
+[[case]]
+id = "escape-so-h"
+input = "Str \"\\SO\\&H\\SOH\""
+
+[[case]]
+id = "escape-letters"
+input = "Str \"\\a\\b\\f\\n\\r\\t\\v\\\\\\\"\\'\""
+
+[[case]]
+id = "escape-control"
+input = "Str \"\\^A\\^@\\^[\\^_\""
+
+[[case]]
+id = "escape-gap"
+input = "Str \"ab\\   \n  \\cd\""
+
+[[case]]
+id = "escape-empty"
+input = "Str \"\\&\\&\""
+
+[[case]]
+id = "escape-surrogate"
+input = "Str \"\\55296x\""
+
+[[case]]
+id = "escape-max"
+input = "Str \"\\1114111\""
+
+[[case]]
+id = "escape-hex-upper"
+input = "Str \"\\X41\""
+
+[[case]]
+id = "escape-hex-upper-mixed"
+input = "Str \"\\X4a\""
+
+[[case]]
+id = "escape-octal-upper"
+input = "Str \"\\O101\""
+
+[[case]]
+id = "escape-octal-upper-short"
+input = "Str \"\\O7\""
+
+[[case]]
+id = "exponent-upper"
+input = "Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidth 1E-2),(AlignDefault,ColWidth 0O17),(AlignDefault,ColWidth 0X1F)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "binary-literal"
+input = "Header 0b11 (\"\",[],[]) []"
+
+[[case]]
+id = "raw-utf8"
+input = "Str \"café 😀\""
+
+[[case]]
+id = "raw-newline-in-string"
+input = "Str \"a\nb\""
+
+[[case]]
+id = "citation-record"
+input = "Cite [Citation {citationId = \"k\", citationPrefix = [], citationSuffix = [Str \"s\"], citationMode = AuthorInText, citationNoteNum = 3, citationHash = 0}] [Str \"x\"]"
+
+[[case]]
+id = "citation-pretty"
+input = "Cite\n  [ Citation\n      { citationId = \"k\"\n      , citationPrefix = []\n      , citationSuffix = []\n      , citationMode = NormalCitation\n      , citationNoteNum = -1\n      , citationHash = 0\n      }\n  ]\n  []"
+
+[[case]]
+id = "table-full"
+input = "Table (\"t\",[],[]) (Caption (Just [Str \"s\"]) [Plain [Str \"c\"]]) [(AlignLeft,ColWidth 0.5),(AlignRight,ColWidthDefault)] (TableHead (\"\",[],[]) [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignCenter (RowSpan 1) (ColSpan 2) [Plain [Str \"h\"]]]]) [TableBody (\"\",[],[]) (RowHeadColumns 1) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 2) (ColSpan 1) []]]] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "all-blocks"
+input = "[Plain [],Para [],LineBlock [[Str \"l\"],[]],CodeBlock (\"\",[\"c\"],[]) \"x\",RawBlock (Format \"html\") \"<p>\",BlockQuote [],OrderedList (3,UpperRoman,TwoParens) [[Plain []]],BulletList [[]],DefinitionList [([Str \"t\"],[[Plain [Str \"d\"]]])],Header 2 (\"\",[],[]) [],HorizontalRule,Figure (\"\",[],[]) (Caption Nothing []) [],Div (\"d\",[],[]) []]"
+
+[[case]]
+id = "all-inlines"
+input = "[Str \"s\",Emph [],Underline [],Strong [],Strikeout [],Superscript [],Subscript [],SmallCaps [],Quoted SingleQuote [],Code (\"\",[],[]) \"c\",Space,SoftBreak,LineBreak,Math DisplayMath \"m\",RawInline (Format \"tex\") \"\\\\x\",Link (\"\",[],[]) [Str \"l\"] (\"u\",\"t\"),Image (\"\",[],[]) [] (\"i\",\"\"),Note [Para []],Span (\"\",[],[]) []]"
+
+[[case]]
+id = "native-of-native"
+input = "[ Para\n    [ Str \"Hello\"\n    , Space\n    , Emph [ Str \"world\" ]\n    ]\n, BulletList\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]"
+
+[[case]]
+id = "format-uppercase"
+input = "RawBlock (Format \"HTML\") \"x\""
+
+[[case]]
+id = "tuple-parens"
+input = "CodeBlock (((\"\",[],[]))) (\"x\")"
+
+[[case]]
+id = "metamap-space"
+input = "Pandoc (Meta {unMeta = fromList [ ( \"m\" , MetaMap ( fromList [ ] ) ) ]}) []"
+
+[[case]]
+id = "char-list-string"
+input = "Str ['a','b','\\233','\\n']"
+
+[[case]]
+id = "empty-list-string"
+input = "Str []"
+
+[[case]]
+id = "char-quote"
+input = "Str ['\\'','\"']"
+
+[[case]]
+id = "trailing-space"
+input = "Para [Str \"x\"] "
+
+[[case]]
+id = "leading-newlines"
+input = "\n\n[Space]"
+
+[[case]]
+id = "crlf-free-multiline"
+input = "[ Para\n    [ Str \"a\"\n    , Space\n    , Str \"b\"\n    ]\n]"
+
+[[case]]
+id = "inline-space-only"
+input = "Space"
+
+[[case]]
+id = "inline-list-mixed"
+input = "[Space, LineBreak, SoftBreak, Str \"z\"]"
+
+[[case]]
+id = "block-hr"
+input = "HorizontalRule"
+
+[[case]]
+id = "block-codeblock"
+input = "CodeBlock (\"i\",[\"a\",\"b\"],[(\"k\",\"v\"),(\"k2\",\"v2\")]) \"line1\\nline2\""
+
+[[case]]
+id = "block-rawblock"
+input = "RawBlock (Format \"latex\") \"\\\\foo\""
+
+[[case]]
+id = "block-orderedlist-example"
+input = "OrderedList (1,Example,DefaultDelim) [[Plain [Str \"e\"]],[Plain []]]"
+
+[[case]]
+id = "block-figure-caption"
+input = "Figure (\"f\",[],[]) (Caption (Just [Str \"s\"]) [Para [Str \"c\"]]) [Plain [Image (\"\",[],[]) [] (\"i.png\",\"\")]]"
+
+[[case]]
+id = "block-div-nested"
+input = "Div (\"\",[\"a\"],[]) [Div (\"\",[\"b\"],[]) [Div (\"\",[],[]) [Para []]]]"
+
+[[case]]
+id = "block-deflist-multi"
+input = "DefinitionList [([Str \"a\"],[[Plain [Str \"1\"]],[Plain [Str \"2\"]]]),([],[])]"
+
+[[case]]
+id = "block-lineblock"
+input = "LineBlock [[Str \"a\",Space,Str \"b\"],[],[Str \"c\"]]"
+
+[[case]]
+id = "inline-quoted-double"
+input = "Quoted DoubleQuote [Str \"q\"]"
+
+[[case]]
+id = "inline-math"
+input = "Math InlineMath \"x^2\""
+
+[[case]]
+id = "inline-link-attr"
+input = "Link (\"l\",[\"c\"],[(\"k\",\"v\")]) [Str \"t\"] (\"http://x\",\"title\")"
+
+[[case]]
+id = "inline-note"
+input = "Note [Para [Str \"n\"],BlockQuote []]"
+
+[[case]]
+id = "inline-span-nested"
+input = "Span (\"\",[],[]) [Emph [Strong [Strikeout [Str \"x\"]]]]"
+
+[[case]]
+id = "inline-cite-suppress"
+input = "Cite [Citation {citationId = \"a\", citationPrefix = [Str \"see\"], citationSuffix = [], citationMode = SuppressAuthor, citationNoteNum = 0, citationHash = -5}] []"
+
+[[case]]
+id = "int-plus-sign-free"
+input = "Header 007 (\"\",[],[]) []"
+
+[[case]]
+id = "int-negative-zero"
+input = "Header -0 (\"\",[],[]) []"
+
+[[case]]
+id = "int-hex-upper"
+input = "Header 0XfF (\"\",[],[]) []"
+
+[[case]]
+id = "rowheadcolumns-negative"
+input = "Table (\"\",[],[]) (Caption Nothing []) [] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns (-2)) [] []] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "cell-spans"
+input = "Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [Row (\"r\",[],[]) [Cell (\"c\",[],[]) AlignRight (RowSpan 3) (ColSpan 4) [Para [Str \"f\"]]]])"
+
+[[case]]
+id = "meta-blocks"
+input = "Pandoc (Meta {unMeta = fromList [(\"abstract\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])]}) [Plain []]"
+
+[[case]]
+id = "meta-nested-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"a\",MetaMap (fromList [(\"b\",MetaMap (fromList [(\"c\",MetaString \"d\")]))]))]}) []"
+
+[[case]]
+id = "meta-list-of-bools"
+input = "Pandoc (Meta {unMeta = fromList [(\"l\",MetaList [MetaBool True,MetaBool False])]}) []"
+
+[[case]]
+id = "string-gap-multiple"
+input = "Str \"a\\ \\b\\\n\\c\""
+
+[[case]]
+id = "double-negative-zero"
+input = "Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidth (-0.0)),(AlignDefault,ColWidth 5.0e-324),(AlignDefault,ColWidth 0.1)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "literal-tab"
+input = "Str \"a\tb\""
+
+[[case]]
+id = "err-empty"
+input = ""
+
+[[case]]
+id = "err-garbage"
+input = "garbage"
+
+[[case]]
+id = "err-trailing"
+input = "[Para [Str \"x\"]] trailing"
+
+[[case]]
+id = "err-trailing-comma"
+input = "[Str \"x\",]"
+
+[[case]]
+id = "err-comment"
+input = "Str \"x\" -- comment"
+
+[[case]]
+id = "err-unknown-constructor"
+input = "Foo [Str \"x\"]"
+
+[[case]]
+id = "err-arity"
+input = "Str \"a\" \"b\""
+
+[[case]]
+id = "err-missing-parens"
+input = "BlockQuote [Para Str \"x\"]"
+
+[[case]]
+id = "err-caption-no-parens"
+input = "Table (\"\",[],[]) Caption Nothing [] [] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])"
+
+[[case]]
+id = "err-meta-no-record"
+input = "Pandoc (Meta (fromList [])) []"
+
+[[case]]
+id = "err-unterminated-string"
+input = "Str \"abc"
+
+[[case]]
+id = "err-bad-escape"
+input = "Str \"\\q\""
+
+[[case]]
+id = "err-escape-too-large"
+input = "Str \"\\1114112\""
+
+[[case]]
+id = "err-int-fraction"
+input = "Header 1.5 (\"\",[],[]) []"
+
+[[case]]
+id = "err-double-minus"
+input = "Header --1 (\"\",[],[]) []"
+
+[[case]]
+id = "err-minus-parens"
+input = "Header -(1) (\"\",[],[]) []"
+
+[[case]]
+id = "err-record-order"
+input = "Cite [Citation {citationPrefix = [], citationId = \"k\", citationSuffix = [], citationMode = AuthorInText, citationNoteNum = 3, citationHash = 0}] []"
+
+[[case]]
+id = "err-record-missing"
+input = "Cite [Citation {citationId = \"k\"}] []"
+
+[[case]]
+id = "err-unbalanced"
+input = "[Para [Str \"x\"]"
+
+[[case]]
+id = "err-string-not-text"
+input = "Str x"
+
+[[case]]
+id = "err-char-literal"
+input = "Str 'x'"
+
+[[case]]
+id = "err-semicolon"
+input = "[Space; Space]"
+
+[[case]]
+id = "err-mixed-list"
+input = "[Para [], Str \"x\"]"
+
+[[case]]
+id = "err-json"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "err-wrong-tuple"
+input = "CodeBlock (\"\",[]) \"x\""
+
+[[case]]
+id = "err-unit"
+input = "()"
+
+[[case]]
+id = "err-int-exponent"
+input = "Header 1e3 (\"\",[],[]) []"
+
+[[case]]
+id = "err-control-lower"
+input = "Str \"\\^a\""
+
+[[case]]
+id = "err-hex-too-large"
+input = "Str \"\\x110000\""
+
+[[case]]
+id = "err-metavalue-alone"
+input = "MetaBool True"
+
+[[case]]
+id = "err-empty-char"
+input = "Str ['']"
+
+[[case]]
+id = "err-char-in-string-list"
+input = "Str ['a',\"b\"]"
+
+[[case]]
+id = "err-record-unknown-field"
+input = "Pandoc (Meta {meta = fromList []}) []"
+
+[[case]]
+id = "err-lowercase-constructor"
+input = "para [Str \"x\"]"
+
+[[case]]
+id = "err-two-values"
+input = "[Space] [Space]"
+
+[[case]]
+id = "standalone-read"
+args = ["-s"]
+input = "Pandoc (Meta {unMeta = fromList [(\"m\",MetaMap (fromList [(\"l\",MetaList [MetaBlocks [Plain []],MetaString \"s\"])]))]}) []"

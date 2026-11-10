@@ -9,6 +9,7 @@ members = [
     "crates/randoc",
     "crates/randoc-cli",
     "crates/randoc-harness",
+    "crates/randoc-native",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
 # Cargo has no glob for this list. A path that does not exist yet does no harm.
@@ -40,6 +41,7 @@ randoc-templates = { path = "crates/randoc-templates", version = "0.1.0" }
 randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
 randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
+randoc-native = { path = "crates/randoc-native", version = "0.1.0" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 toml = "1"

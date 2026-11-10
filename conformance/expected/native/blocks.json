@@ -1,0 +1,995 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "blockquote#e2e:native": {
+      "key": "56559b1850d12ee5",
+      "exit": 0,
+      "stdout": "[ BlockQuote [ Para [ Str \"quoted\" ] ] ]\n",
+      "stderr": ""
+    },
+    "blockquote#read": {
+      "key": "f0c0a7e0cdc22972",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"quoted\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "blockquote#write:native": {
+      "key": "27468f7796114254",
+      "exit": 0,
+      "stdout": "[ BlockQuote [ Para [ Str \"quoted\" ] ] ]\n",
+      "stderr": ""
+    },
+    "blockquote-multi#e2e:native": {
+      "key": "af4a8c0f93b959f2",
+      "exit": 0,
+      "stdout": "[ BlockQuote [ Para [ Str \"one\" ] , Para [ Str \"two\" ] ] ]\n",
+      "stderr": ""
+    },
+    "blockquote-multi#read": {
+      "key": "2c83a170138afc8b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"two\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "blockquote-multi#write:native": {
+      "key": "41a121dc72f60c95",
+      "exit": 0,
+      "stdout": "[ BlockQuote [ Para [ Str \"one\" ] , Para [ Str \"two\" ] ] ]\n",
+      "stderr": ""
+    },
+    "blockquote-nested#e2e:native": {
+      "key": "435cd614a515ed55",
+      "exit": 0,
+      "stdout": "[ BlockQuote\n    [ BlockQuote [ BlockQuote [ Para [ Str \"deep\" ] ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "blockquote-nested#read": {
+      "key": "0656ed37e8ef1c12",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"deep\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "blockquote-nested#write:native": {
+      "key": "eeb2a1e0c0c924a2",
+      "exit": 0,
+      "stdout": "[ BlockQuote\n    [ BlockQuote [ BlockQuote [ Para [ Str \"deep\" ] ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "bullet-empty-item#e2e:native": {
+      "key": "7d7d8fa06c4753ae",
+      "exit": 0,
+      "stdout": "[ BulletList [ [] , [ Plain [ Str \"b\" ] ] ] ]\n",
+      "stderr": ""
+    },
+    "bullet-empty-item#read": {
+      "key": "1b1378fc2ee9147b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-empty-item#write:native": {
+      "key": "692c8edb7ecad578",
+      "exit": 0,
+      "stdout": "[ BulletList [ [] , [ Plain [ Str \"b\" ] ] ] ]\n",
+      "stderr": ""
+    },
+    "bullet-loose#e2e:native": {
+      "key": "7f3b01738755f012",
+      "exit": 0,
+      "stdout": "[ BulletList [ [ Para [ Str \"a\" ] ] , [ Para [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "bullet-loose#read": {
+      "key": "15faa2a5d18f457d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-loose#write:native": {
+      "key": "55b885d0a5a3b9fd",
+      "exit": 0,
+      "stdout": "[ BulletList [ [ Para [ Str \"a\" ] ] , [ Para [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "bullet-nested#e2e:native": {
+      "key": "d88cc473b0cef2b3",
+      "exit": 0,
+      "stdout": "[ BulletList\n    [ [ Plain [ Str \"a\" ]\n      , BulletList\n          [ [ Plain [ Str \"b\" ]\n            , BulletList [ [ Plain [ Str \"c\" ] ] ]\n            ]\n          ]\n      ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "bullet-nested#read": {
+      "key": "02e255afa3fcd16a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-nested#write:native": {
+      "key": "04302d6dab758f28",
+      "exit": 0,
+      "stdout": "[ BulletList\n    [ [ Plain [ Str \"a\" ]\n      , BulletList\n          [ [ Plain [ Str \"b\" ]\n            , BulletList [ [ Plain [ Str \"c\" ] ] ]\n            ]\n          ]\n      ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "bullet-tight#e2e:native": {
+      "key": "52ef8a4f889f4c0f",
+      "exit": 0,
+      "stdout": "[ BulletList\n    [ [ Plain [ Str \"a\" ] ]\n    , [ Plain [ Str \"b\" ] ]\n    , [ Plain [ Str \"c\" ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "bullet-tight#read": {
+      "key": "be311f18aecb339e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-tight#write:native": {
+      "key": "f4de9d6562c5d5c7",
+      "exit": 0,
+      "stdout": "[ BulletList\n    [ [ Plain [ Str \"a\" ] ]\n    , [ Plain [ Str \"b\" ] ]\n    , [ Plain [ Str \"c\" ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "code-in-list#e2e:native": {
+      "key": "be173ec6561c109e",
+      "exit": 0,
+      "stdout": "[ BulletList\n    [ [ Para [ Str \"item\" ]\n      , CodeBlock ( \"\" , [] , [] ) \"code\"\n      ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "code-in-list#read": {
+      "key": "d882bb56b2ed6561",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"item\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "code-in-list#write:native": {
+      "key": "dbfe22470fa05df0",
+      "exit": 0,
+      "stdout": "[ BulletList\n    [ [ Para [ Str \"item\" ]\n      , CodeBlock ( \"\" , [] , [] ) \"code\"\n      ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "codeblock-attr#e2e:native": {
+      "key": "4ac2e21f2d78ac0b",
+      "exit": 0,
+      "stdout": "[ CodeBlock\n    ( \"c\" , [ \"python\" ] , [ ( \"startFrom\" , \"10\" ) ] ) \"x = 1\"\n]\n",
+      "stderr": ""
+    },
+    "codeblock-attr#read": {
+      "key": "07add9e71aaccc8c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"c\",[\"python\"],[[\"startFrom\",\"10\"]]],\"x = 1\"]}]}\n",
+      "stderr": ""
+    },
+    "codeblock-attr#write:native": {
+      "key": "9b79eb6fec012223",
+      "exit": 0,
+      "stdout": "[ CodeBlock\n    ( \"c\" , [ \"python\" ] , [ ( \"startFrom\" , \"10\" ) ] ) \"x = 1\"\n]\n",
+      "stderr": ""
+    },
+    "codeblock-empty#e2e:native": {
+      "key": "758e1574c1e7958a",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-empty#read": {
+      "key": "76851a8162baf08f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"\"]}]}\n",
+      "stderr": ""
+    },
+    "codeblock-empty#write:native": {
+      "key": "698b462aa6e4a287",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-fenced#e2e:native": {
+      "key": "3428971970a361a2",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"fenced\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-fenced#read": {
+      "key": "0711cdbe4b9204c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"fenced\"]}]}\n",
+      "stderr": ""
+    },
+    "codeblock-fenced#write:native": {
+      "key": "6c9265676683e6ce",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"fenced\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-indent#e2e:native": {
+      "key": "0faa8e3161ba6ff6",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"code\\nmore\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-indent#read": {
+      "key": "55867e853d588aef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\\nmore\"]}]}\n",
+      "stderr": ""
+    },
+    "codeblock-indent#write:native": {
+      "key": "cfbedc6185ad8ebb",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"code\\nmore\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-lang#e2e:native": {
+      "key": "672606da50ca7abc",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [ \"haskell\" ] , [] ) \"main = print 1\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-lang#read": {
+      "key": "982395e5ef138c39",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"haskell\"],[]],\"main = print 1\"]}]}\n",
+      "stderr": ""
+    },
+    "codeblock-lang#write:native": {
+      "key": "0a9fc7dac815a01a",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [ \"haskell\" ] , [] ) \"main = print 1\" ]\n",
+      "stderr": ""
+    },
+    "codeblock-tabs#e2e:native": {
+      "key": "dd0633e1f0a67cc4",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"a   b\\n\\\"q\\\" \\\\ \" ]\n",
+      "stderr": ""
+    },
+    "codeblock-tabs#read": {
+      "key": "1c1782902b31e763",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a   b\\n\\\"q\\\" \\\\ \"]}]}\n",
+      "stderr": ""
+    },
+    "codeblock-tabs#write:native": {
+      "key": "f515633ac3e55955",
+      "exit": 0,
+      "stdout": "[ CodeBlock ( \"\" , [] , [] ) \"a   b\\n\\\"q\\\" \\\\ \" ]\n",
+      "stderr": ""
+    },
+    "deflist#e2e:native": {
+      "key": "6a994c4b1bee714f",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"Term\" ] , [ [ Plain [ Str \"Definition\" ] ] ] ) ]\n]\n",
+      "stderr": ""
+    },
+    "deflist#read": {
+      "key": "a0584c7f5b24f5ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Definition\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "deflist#write:native": {
+      "key": "c029082b70672bff",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"Term\" ] , [ [ Plain [ Str \"Definition\" ] ] ] ) ]\n]\n",
+      "stderr": ""
+    },
+    "deflist-compact#e2e:native": {
+      "key": "9344de38ee8cb263",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"T\" ]\n      , [ [ Plain [ Str \"d1\" ] ] , [ Plain [ Str \"d2\" ] ] ]\n      )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "deflist-compact#read": {
+      "key": "e4f61714e80c4392",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"T\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d1\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d2\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "deflist-compact#write:native": {
+      "key": "5985f23acbb3aca6",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"T\" ]\n      , [ [ Plain [ Str \"d1\" ] ] , [ Plain [ Str \"d2\" ] ] ]\n      )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "deflist-multi#e2e:native": {
+      "key": "f56ac1952ca46f42",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"Term\" ]\n      , [ [ Plain [ Str \"Def\" , Space , Str \"one\" ] ]\n        , [ Plain [ Str \"Def\" , Space , Str \"two\" ] ]\n        ]\n      )\n    , ( [ Str \"Term\" , Space , Str \"2\" ]\n      , [ [ Plain [ Str \"Other\" ] ] ]\n      )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "deflist-multi#read": {
+      "key": "124e174a62bc2cbb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Def\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Def\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Term\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Other\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "deflist-multi#write:native": {
+      "key": "ef18a60fe3060fbf",
+      "exit": 0,
+      "stdout": "[ DefinitionList\n    [ ( [ Str \"Term\" ]\n      , [ [ Plain [ Str \"Def\" , Space , Str \"one\" ] ]\n        , [ Plain [ Str \"Def\" , Space , Str \"two\" ] ]\n        ]\n      )\n    , ( [ Str \"Term\" , Space , Str \"2\" ]\n      , [ [ Plain [ Str \"Other\" ] ] ]\n      )\n    ]\n]\n",
+      "stderr": ""
+    },
+    "div#e2e:native": {
+      "key": "5db33c013d516eb6",
+      "exit": 0,
+      "stdout": "[ Div\n    ( \"d\" , [ \"note\" ] , [ ( \"k\" , \"v\" ) ] )\n    [ Para [ Str \"Inside.\" ] ]\n]\n",
+      "stderr": ""
+    },
+    "div#read": {
+      "key": "20666ec9e34012ad",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"d\",[\"note\"],[[\"k\",\"v\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inside.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div#write:native": {
+      "key": "53b4d616a8342b36",
+      "exit": 0,
+      "stdout": "[ Div\n    ( \"d\" , [ \"note\" ] , [ ( \"k\" , \"v\" ) ] )\n    [ Para [ Str \"Inside.\" ] ]\n]\n",
+      "stderr": ""
+    },
+    "div-empty#e2e:native": {
+      "key": "e983c5017fdf7567",
+      "exit": 0,
+      "stdout": "[ Div ( \"\" , [ \"e\" ] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "div-empty#read": {
+      "key": "8241d8e00dc5525a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"e\"],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "div-empty#write:native": {
+      "key": "66bb39355b2bcfac",
+      "exit": 0,
+      "stdout": "[ Div ( \"\" , [ \"e\" ] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "div-nested#e2e:native": {
+      "key": "1e29c875eb2debc5",
+      "exit": 0,
+      "stdout": "[ Div\n    ( \"\" , [ \"outer\" ] , [] )\n    [ Div ( \"\" , [ \"inner\" ] , [] ) [ Para [ Str \"x\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "div-nested#read": {
+      "key": "df1c649f56127edc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"outer\"],[]],[{\"t\":\"Div\",\"c\":[[\"\",[\"inner\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-nested#write:native": {
+      "key": "8ae29c726d79e485",
+      "exit": 0,
+      "stdout": "[ Div\n    ( \"\" , [ \"outer\" ] , [] )\n    [ Div ( \"\" , [ \"inner\" ] , [] ) [ Para [ Str \"x\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "figure#e2e:native": {
+      "key": "004ada3e3accd05a",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption\n       Nothing\n       [ Plain [ Str \"Caption\" , Space , Emph [ Str \"x\" ] ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [] )\n            [ Str \"Caption\" , Space , Emph [ Str \"x\" ] ]\n            ( \"img.png\" , \"\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "figure#read": {
+      "key": "d625a29c19ab1793",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Caption\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Caption\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[\"img.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure#write:native": {
+      "key": "d853b8e380cea7ac",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"\" , [] , [] )\n    (Caption\n       Nothing\n       [ Plain [ Str \"Caption\" , Space , Emph [ Str \"x\" ] ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [] )\n            [ Str \"Caption\" , Space , Emph [ Str \"x\" ] ]\n            ( \"img.png\" , \"\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "figure-attr#e2e:native": {
+      "key": "031c1a8458d173df",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"fig:1\" , [] , [] )\n    (Caption Nothing [ Plain [ Str \"Cap\" ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [ ( \"width\" , \"3in\" ) ] )\n            [ Str \"Cap\" ]\n            ( \"img.png\" , \"\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "figure-attr#read": {
+      "key": "06caccec842dec8a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"fig:1\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"width\",\"3in\"]]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"img.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-attr#write:native": {
+      "key": "cce453ca74d9cfa0",
+      "exit": 0,
+      "stdout": "[ Figure\n    ( \"fig:1\" , [] , [] )\n    (Caption Nothing [ Plain [ Str \"Cap\" ] ])\n    [ Plain\n        [ Image\n            ( \"\" , [] , [ ( \"width\" , \"3in\" ) ] )\n            [ Str \"Cap\" ]\n            ( \"img.png\" , \"\" )\n        ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "figure-empty-caption#e2e:native": {
+      "key": "8d4f409f1bff75c4",
+      "exit": 0,
+      "stdout": "[ Para [ Image ( \"\" , [] , [] ) [] ( \"img.png\" , \"\" ) ] ]\n",
+      "stderr": ""
+    },
+    "figure-empty-caption#read": {
+      "key": "a073145f289ae545",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[],[\"img.png\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "figure-empty-caption#write:native": {
+      "key": "f90cda08e29c4437",
+      "exit": 0,
+      "stdout": "[ Para [ Image ( \"\" , [] , [] ) [] ( \"img.png\" , \"\" ) ] ]\n",
+      "stderr": ""
+    },
+    "header-1#e2e:native": {
+      "key": "967c9f7688b66c83",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"one\" , [] , [] ) [ Str \"One\" ] ]\n",
+      "stderr": ""
+    },
+    "header-1#read": {
+      "key": "91828ef177bd8226",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"one\",[],[]],[{\"t\":\"Str\",\"c\":\"One\"}]]}]}\n",
+      "stderr": ""
+    },
+    "header-1#write:native": {
+      "key": "896dfd465b77ca08",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"one\" , [] , [] ) [ Str \"One\" ] ]\n",
+      "stderr": ""
+    },
+    "header-6#e2e:native": {
+      "key": "02f3e5a8cfdf2ae3",
+      "exit": 0,
+      "stdout": "[ Header 6 ( \"six\" , [] , [] ) [ Str \"Six\" ] ]\n",
+      "stderr": ""
+    },
+    "header-6#read": {
+      "key": "961955cc328219d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[6,[\"six\",[],[]],[{\"t\":\"Str\",\"c\":\"Six\"}]]}]}\n",
+      "stderr": ""
+    },
+    "header-6#write:native": {
+      "key": "4880b4697d400abb",
+      "exit": 0,
+      "stdout": "[ Header 6 ( \"six\" , [] , [] ) [ Str \"Six\" ] ]\n",
+      "stderr": ""
+    },
+    "header-attr#e2e:native": {
+      "key": "320f065ea8af7511",
+      "exit": 0,
+      "stdout": "[ Header\n    2\n    ( \"id\" , [ \"c1\" , \"c2\" ] , [ ( \"k\" , \"v\" ) ] )\n    [ Str \"Head\" ]\n]\n",
+      "stderr": ""
+    },
+    "header-attr#read": {
+      "key": "7f9b1ba07bee6d88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"id\",[\"c1\",\"c2\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Head\"}]]}]}\n",
+      "stderr": ""
+    },
+    "header-attr#write:native": {
+      "key": "c14dd4eccd23e262",
+      "exit": 0,
+      "stdout": "[ Header\n    2\n    ( \"id\" , [ \"c1\" , \"c2\" ] , [ ( \"k\" , \"v\" ) ] )\n    [ Str \"Head\" ]\n]\n",
+      "stderr": ""
+    },
+    "header-long#e2e:native": {
+      "key": "c1854dbaecafc8cb",
+      "exit": 0,
+      "stdout": "[ Header\n    1\n    ( \"word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word\"\n    , []\n    , []\n    )\n    [ Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "header-long#read": {
+      "key": "706fb5e74632211a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word\",[],[]],[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"}]]}]}\n",
+      "stderr": ""
+    },
+    "header-long#write:native": {
+      "key": "f4c4732072e2937c",
+      "exit": 0,
+      "stdout": "[ Header\n    1\n    ( \"word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word\"\n    , []\n    , []\n    )\n    [ Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    , Space\n    , Str \"word\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "header-setext#e2e:native": {
+      "key": "26170b3ae3843d33",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"title\" , [] , [] ) [ Str \"Title\" ] ]\n",
+      "stderr": ""
+    },
+    "header-setext#read": {
+      "key": "996b7185ca7a72de",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"title\",[],[]],[{\"t\":\"Str\",\"c\":\"Title\"}]]}]}\n",
+      "stderr": ""
+    },
+    "header-setext#write:native": {
+      "key": "944f9bf7dabb4f78",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"title\" , [] , [] ) [ Str \"Title\" ] ]\n",
+      "stderr": ""
+    },
+    "header-unnumbered#e2e:native": {
+      "key": "03a45b3f3ccbe523",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"head\" , [ \"unnumbered\" ] , [] ) [ Str \"Head\" ]\n]\n",
+      "stderr": ""
+    },
+    "header-unnumbered#read": {
+      "key": "ae474516d89d6728",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"head\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Head\"}]]}]}\n",
+      "stderr": ""
+    },
+    "header-unnumbered#write:native": {
+      "key": "46ee3e147273c40f",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"head\" , [ \"unnumbered\" ] , [] ) [ Str \"Head\" ]\n]\n",
+      "stderr": ""
+    },
+    "hr#e2e:native": {
+      "key": "abdd66706330c1cd",
+      "exit": 0,
+      "stdout": "[ HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "hr#read": {
+      "key": "1a847f46c4c9f1b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"HorizontalRule\"}]}\n",
+      "stderr": ""
+    },
+    "hr#write:native": {
+      "key": "267c22bae83e5cf9",
+      "exit": 0,
+      "stdout": "[ HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "hr-stars#e2e:native": {
+      "key": "951c53b39e351dc8",
+      "exit": 0,
+      "stdout": "[ HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "hr-stars#read": {
+      "key": "3ce9eedd0a54cd45",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"HorizontalRule\"}]}\n",
+      "stderr": ""
+    },
+    "hr-stars#write:native": {
+      "key": "267c22bae83e5cf9",
+      "exit": 0,
+      "stdout": "[ HorizontalRule ]\n",
+      "stderr": ""
+    },
+    "lineblock#e2e:native": {
+      "key": "e812678d826037e5",
+      "exit": 0,
+      "stdout": "[ LineBlock\n    [ [ Str \"line\" , Space , Str \"one\" ]\n    , [ Str \"\\160\\160indented\" ]\n    , [ Str \"three\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "lineblock#read": {
+      "key": "793462a40cf1a474",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"LineBlock\",\"c\":[[{\"t\":\"Str\",\"c\":\"line\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one\"}],[{\"t\":\"Str\",\"c\":\"  indented\"}],[{\"t\":\"Str\",\"c\":\"three\"}]]}]}\n",
+      "stderr": ""
+    },
+    "lineblock#write:native": {
+      "key": "82759f73c86e6b1b",
+      "exit": 0,
+      "stdout": "[ LineBlock\n    [ [ Str \"line\" , Space , Str \"one\" ]\n    , [ Str \"\\160\\160indented\" ]\n    , [ Str \"three\" ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "lineblock-empty#e2e:native": {
+      "key": "32794db04111663b",
+      "exit": 0,
+      "stdout": "[ LineBlock [ [ Str \"a\" ] , [] , [ Str \"b\" ] ] ]\n",
+      "stderr": ""
+    },
+    "lineblock-empty#read": {
+      "key": "4ddbb03b7e5bf8aa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"LineBlock\",\"c\":[[{\"t\":\"Str\",\"c\":\"a\"}],[],[{\"t\":\"Str\",\"c\":\"b\"}]]}]}\n",
+      "stderr": ""
+    },
+    "lineblock-empty#write:native": {
+      "key": "6a6db20da2533974",
+      "exit": 0,
+      "stdout": "[ LineBlock [ [ Str \"a\" ] , [] , [ Str \"b\" ] ] ]\n",
+      "stderr": ""
+    },
+    "list-in-quote#e2e:native": {
+      "key": "3d3a3875e0fb0cf3",
+      "exit": 0,
+      "stdout": "[ BlockQuote\n    [ BulletList\n        [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "list-in-quote#read": {
+      "key": "20d52037b8722afe",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}]}\n",
+      "stderr": ""
+    },
+    "list-in-quote#write:native": {
+      "key": "c77f2d4d2fcb87a2",
+      "exit": 0,
+      "stdout": "[ BlockQuote\n    [ BulletList\n        [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "mixed#e2e:native": {
+      "key": "f681fb5c1b0de03e",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"h\" , [] , [] ) [ Str \"H\" ]\n, Para [ Str \"Para.\" ]\n, BulletList [ [ Plain [ Str \"item\" ] ] ]\n, BlockQuote [ Para [ Str \"q\" ] ]\n, CodeBlock ( \"\" , [] , [] ) \"c\"\n]\n",
+      "stderr": ""
+    },
+    "mixed#read": {
+      "key": "a397b252df0df0c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"h\",[],[]],[{\"t\":\"Str\",\"c\":\"H\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"item\"}]}]]},{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"c\"]}]}\n",
+      "stderr": ""
+    },
+    "mixed#write:native": {
+      "key": "58c1e4373700233d",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"h\" , [] , [] ) [ Str \"H\" ]\n, Para [ Str \"Para.\" ]\n, BulletList [ [ Plain [ Str \"item\" ] ] ]\n, BlockQuote [ Para [ Str \"q\" ] ]\n, CodeBlock ( \"\" , [] , [] ) \"c\"\n]\n",
+      "stderr": ""
+    },
+    "ordered-decimal-paren#e2e:native": {
+      "key": "bcd1325a28f34d94",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Decimal , OneParen )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-decimal-paren#read": {
+      "key": "1361e91bc2609ac5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-decimal-paren#write:native": {
+      "key": "ab37646fbe23be40",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Decimal , OneParen )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-decimal-period#e2e:native": {
+      "key": "3eafb398e23a8c62",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Decimal , Period )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-decimal-period#read": {
+      "key": "4ccd769f4243a223",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-decimal-period#write:native": {
+      "key": "2537facbfa1cfe6f",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Decimal , Period )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-default#e2e:native": {
+      "key": "017302ef06f42ca9",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , DefaultStyle , DefaultDelim )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-default#read": {
+      "key": "2fa0829e81a96894",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-default#write:native": {
+      "key": "6b81f632364f6988",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , DefaultStyle , DefaultDelim )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-example#e2e:native": {
+      "key": "3cc351bc02fd3bbf",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Example , TwoParens )\n    [ [ Plain [ Str \"first\" ] ] , [ Plain [ Str \"second\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-example#read": {
+      "key": "ddf60d937ec2f094",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Example\"},{\"t\":\"TwoParens\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"second\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-example#write:native": {
+      "key": "ad2d66135117221f",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Example , TwoParens )\n    [ [ Plain [ Str \"first\" ] ] , [ Plain [ Str \"second\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-large-start#e2e:native": {
+      "key": "4388e9d343e30eb8",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 123456789 , Decimal , Period ) [ [ Plain [ Str \"big\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-large-start#read": {
+      "key": "d986bedec04f9543",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[123456789,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"big\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-large-start#write:native": {
+      "key": "a3afb07bfd73ae43",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 123456789 , Decimal , Period ) [ [ Plain [ Str \"big\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-lower-alpha#e2e:native": {
+      "key": "a81efea3d44d1dfa",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , LowerAlpha , Period )\n    [ [ Plain [ Str \"x\" ] ] , [ Plain [ Str \"y\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-lower-alpha#read": {
+      "key": "933a3b364d128bbb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"LowerAlpha\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-lower-alpha#write:native": {
+      "key": "573595db43142f10",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , LowerAlpha , Period )\n    [ [ Plain [ Str \"x\" ] ] , [ Plain [ Str \"y\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-lower-roman#e2e:native": {
+      "key": "b40197ce8144fa3f",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , LowerRoman , Period )\n    [ [ Plain [ Str \"x\" ] ] , [ Plain [ Str \"y\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-lower-roman#read": {
+      "key": "712808090bf03b48",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"LowerRoman\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-lower-roman#write:native": {
+      "key": "5d9aaeb0b395936f",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , LowerRoman , Period )\n    [ [ Plain [ Str \"x\" ] ] , [ Plain [ Str \"y\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-start#e2e:native": {
+      "key": "5b7ee2a1ad41eebe",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 7 , Decimal , Period )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-start#read": {
+      "key": "d13a82c90ac98c0b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[7,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-start#write:native": {
+      "key": "ed9ff993a97a3ed1",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 7 , Decimal , Period )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-start-zero#e2e:native": {
+      "key": "11bbe2c846a387ba",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 0 , Decimal , Period ) [ [ Plain [ Str \"a\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-start-zero#read": {
+      "key": "dc01889baf9a9d01",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[0,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-start-zero#write:native": {
+      "key": "7ff3a261615b7fdf",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 0 , Decimal , Period ) [ [ Plain [ Str \"a\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-twoparens#e2e:native": {
+      "key": "ead97527b1d06a6c",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Decimal , TwoParens )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-twoparens#read": {
+      "key": "92269922f4b7e7d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"TwoParens\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-twoparens#write:native": {
+      "key": "0740be675888cd72",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , Decimal , TwoParens )\n    [ [ Plain [ Str \"a\" ] ] , [ Plain [ Str \"b\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-upper-alpha#e2e:native": {
+      "key": "a5c015b56443adfa",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"A.\"\n    , Space\n    , Str \"x\"\n    , SoftBreak\n    , Str \"B.\"\n    , Space\n    , Str \"y\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-upper-alpha#read": {
+      "key": "3b6d955b39828b7b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"B.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "ordered-upper-alpha#write:native": {
+      "key": "af23f264e7fba8bf",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str \"A.\"\n    , Space\n    , Str \"x\"\n    , SoftBreak\n    , Str \"B.\"\n    , Space\n    , Str \"y\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-upper-alpha-paren#e2e:native": {
+      "key": "4bb70d4b4f38a7a0",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , UpperAlpha , OneParen )\n    [ [ Plain [ Str \"x\" ] ] , [ Plain [ Str \"y\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-upper-alpha-paren#read": {
+      "key": "4a8d730c4e104d89",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"UpperAlpha\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-upper-alpha-paren#write:native": {
+      "key": "c352e21b3b468216",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 1 , UpperAlpha , OneParen )\n    [ [ Plain [ Str \"x\" ] ] , [ Plain [ Str \"y\" ] ] ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-upper-roman#e2e:native": {
+      "key": "05ee0e12ff5197b5",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 4 , UpperRoman , Period )\n    [ [ Plain\n          [ Str \"x\" , SoftBreak , Str \"V.\" , Space , Str \"y\" ]\n      ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "ordered-upper-roman#read": {
+      "key": "edcdae7b1caddcde",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"V.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-upper-roman#write:native": {
+      "key": "447e2ed0f51c8084",
+      "exit": 0,
+      "stdout": "[ OrderedList\n    ( 4 , UpperRoman , Period )\n    [ [ Plain\n          [ Str \"x\" , SoftBreak , Str \"V.\" , Space , Str \"y\" ]\n      ]\n    ]\n]\n",
+      "stderr": ""
+    },
+    "para#e2e:native": {
+      "key": "803603978c1f9182",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A\" , Space , Str \"paragraph.\" ] ]\n",
+      "stderr": ""
+    },
+    "para#read": {
+      "key": "900c47950f50846d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"paragraph.\"}]}]}\n",
+      "stderr": ""
+    },
+    "para#write:native": {
+      "key": "60ea8b4508c6a7f8",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A\" , Space , Str \"paragraph.\" ] ]\n",
+      "stderr": ""
+    },
+    "paras#e2e:native": {
+      "key": "a273821d7f44c199",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"One.\" ]\n, Para [ Str \"Two.\" ]\n, Para [ Str \"Three.\" ]\n]\n",
+      "stderr": ""
+    },
+    "paras#read": {
+      "key": "e6ebe86ca980eb3a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"One.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Two.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Three.\"}]}]}\n",
+      "stderr": ""
+    },
+    "paras#write:native": {
+      "key": "e7c1541a853c329f",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"One.\" ]\n, Para [ Str \"Two.\" ]\n, Para [ Str \"Three.\" ]\n]\n",
+      "stderr": ""
+    },
+    "plain-in-list#e2e:native": {
+      "key": "42e2a041d320f897",
+      "exit": 0,
+      "stdout": "[ BulletList [ [ Plain [ Str \"tight\" ] ] ] ]\n",
+      "stderr": ""
+    },
+    "plain-in-list#read": {
+      "key": "9b148b5dddd2051e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"tight\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "plain-in-list#write:native": {
+      "key": "d12b914ccdecd4df",
+      "exit": 0,
+      "stdout": "[ BulletList [ [ Plain [ Str \"tight\" ] ] ] ]\n",
+      "stderr": ""
+    },
+    "quote-in-list#e2e:native": {
+      "key": "ea5558c92e6a4690",
+      "exit": 0,
+      "stdout": "[ BulletList [ [ BlockQuote [ Para [ Str \"q\" ] ] ] ] ]\n",
+      "stderr": ""
+    },
+    "quote-in-list#read": {
+      "key": "0063859cfcf98edd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "quote-in-list#write:native": {
+      "key": "4567edefa299ef6c",
+      "exit": 0,
+      "stdout": "[ BulletList [ [ BlockQuote [ Para [ Str \"q\" ] ] ] ] ]\n",
+      "stderr": ""
+    },
+    "rawblock-fenced#e2e:native": {
+      "key": "4ff9f3dc912608bc",
+      "exit": 0,
+      "stdout": "[ RawBlock (Format \"latex\") \"\\\\begin{x}\" ]\n",
+      "stderr": ""
+    },
+    "rawblock-fenced#read": {
+      "key": "1832083c86bd51e9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\begin{x}\"]}]}\n",
+      "stderr": ""
+    },
+    "rawblock-fenced#write:native": {
+      "key": "ebdd367299058371",
+      "exit": 0,
+      "stdout": "[ RawBlock (Format \"latex\") \"\\\\begin{x}\" ]\n",
+      "stderr": ""
+    },
+    "rawblock-html#e2e:native": {
+      "key": "ae67a2b6d8b8f288",
+      "exit": 0,
+      "stdout": "[ Div ( \"\" , [] , [] ) [ Para [ Str \"html\" ] ] ]\n",
+      "stderr": ""
+    },
+    "rawblock-html#read": {
+      "key": "714551757c11f191",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"html\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "rawblock-html#write:native": {
+      "key": "d8151d281f15a8c3",
+      "exit": 0,
+      "stdout": "[ Div ( \"\" , [] , [] ) [ Para [ Str \"html\" ] ] ]\n",
+      "stderr": ""
+    },
+    "rawblock-tex#e2e:native": {
+      "key": "85707b368fde261a",
+      "exit": 0,
+      "stdout": "[ RawBlock\n    (Format \"tex\") \"\\\\begin{center}\\nx\\n\\\\end{center}\"\n]\n",
+      "stderr": ""
+    },
+    "rawblock-tex#read": {
+      "key": "e51ddca759068243",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"tex\",\"\\\\begin{center}\\nx\\n\\\\end{center}\"]}]}\n",
+      "stderr": ""
+    },
+    "rawblock-tex#write:native": {
+      "key": "dd7e90df884a51c6",
+      "exit": 0,
+      "stdout": "[ RawBlock\n    (Format \"tex\") \"\\\\begin{center}\\nx\\n\\\\end{center}\"\n]\n",
+      "stderr": ""
+    }
+  }
+}

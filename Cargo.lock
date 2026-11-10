@@ -164,6 +164,7 @@ version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-core",
+ "randoc-native",
 ]
 
 [[package]]
@@ -204,6 +205,17 @@ dependencies = [
 [[package]]
 name = "randoc-layout"
 version = "0.1.0"
+
+[[package]]
+name = "randoc-native"
+version = "0.1.0"
+dependencies = [
+ "nix",
+ "randoc-ast",
+ "randoc-core",
+ "serde_json",
+ "toml",
+]
 
 [[package]]
 name = "randoc-templates"

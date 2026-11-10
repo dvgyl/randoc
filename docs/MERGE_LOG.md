@@ -153,3 +153,36 @@ in the test module).
 Process note: an in-place mutation run changed the worktree during review
 round 2. Both reviewers saw it and tested a clean copy of the commit. The
 standing orders now forbid an in-place mutation run during a review.
+
+## Workstream native (branch `ws/native`, head b097609, one squashed commit)
+
+Content: the crate `randoc-native`, the reader and the writer for the format
+`native` (the Haskell `show` form of the document tree), with the suite
+`native/` (611 cases in 9 files). Pandoc's own test suite stores most expected
+results in this format.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 0 regressions against the baseline of 28 units. |
+| 2. Measured progress | Passing units: 28 before, 949 after (1984 units in all; 921 new passes). Writer units without options: 370 of 373 pass. Reader units: 116 of 119 pass. The failing units are recorded: I-NATIVE-01 (the JSON form of special doubles, which the JSON codec branch corrects), I-NATIVE-04 (literal tabs, which the command line expands) and units that need options or the Markdown reader. |
+| 3. Tests | 16 crate tests pass, with a replay of each recorded unit. Line coverage 94.5% (measured at an earlier commit, 100698e). Mutation tests: a sample of 164 of 562 mutants (54 caught, 10 missed, 100 not viable); new tests kill each of the 10 survivors, and a second run on the affected functions gave 23 caught, 0 missed. The mutants of the round 2 change: 4 of 4 caught. |
+| 4. No panics | Fuzz targets `native_read` (3 runs of 900 s, the last one after the last lexer change: 1,276,887 runs) and `native_roundtrip` (901 s, 2,681,995 runs): no crash. Depth: the reader and the writer return an error at the nesting limit. Time: the reviewers found linear growth for 27 and 16 worst input classes. |
+| 5. Two reviews | Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES (quadratic time for named escapes), round 2 APPROVE at 02b455a, round 3 APPROVE at 16ef15d. Opus 5.5 with a new context: round 1 REQUEST CHANGES (3 medium), round 2 REQUEST CHANGES (1 medium: the ribbon length needs 32-bit arithmetic), round 3 APPROVE at 16ef15d. In round 3 each reviewer compared each width from 1 to 2000 with the oracle (8,000 runs each) and found 0 differences. Low findings: the time test (closed, see below) and one digit of `show_double`, which is L-006 in `docs/ISSUES.md`. |
+| 6. No slowdowns | The format is new, so `main` has no earlier time for it. The JSON path does not change in this merge. Capacity note (I-NATIVE-05): a tree with 10,000 nested levels gives 400 MB of output; a release build needs 8.2 s and the oracle needs 12.1 s on the same machine. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Changes after the last reviewed commit (16ef15d), checked or made by the
+coordinator:
+
+- Commit b097609 of the worker closes the two low findings on the time test.
+  A script listed its changed source lines that are not comments: all 130 are
+  in the test module. The test now measures the CPU time of the test thread
+  (the minimum of 5 runs at 64 KB and 256 KB, with a ratio limit of 10). The
+  worker ran it 10 times on correct code (10 passes) and 2 times with the old
+  quadratic lexer (2 failures).
+- That commit adds the development dependency `nix` (MIT) for the thread CPU
+  time. In the merge, the coordinator made this dependency and the time tests
+  Unix-only (`cfg(unix)`), so that the tests still build on Windows.
+- In the merge, the coordinator set the licence-text cell of the native row
+  in `THIRD_PARTY.md` to "not applicable", because the writer copies no code
+  and no data.

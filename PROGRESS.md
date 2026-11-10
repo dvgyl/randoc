@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-10 02:17 UTC.
+Updated: 2026-11-10 03:00 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -13,12 +13,13 @@ Updated: 2026-11-10 02:17 UTC.
 - The conformance harness exists (`randoc-harness`). It records oracle results,
   compares Randoc with them, keeps a baseline and writes the capability matrix.
   The suite also runs as a test of the program (`crates/randoc-cli/tests/conformance.rs`).
-- One format works on `main`: `json` (reader and writer).
+- Two formats work on `main`: `json` and `native` (reader and writer of each).
 - The layout engine (`randoc-layout`, a port of `doclayout`) is on `main`. No
   writer on `main` uses it yet.
-- Harness result on `main`: 36 units, 28 pass, 8 fail. All 28 passing units are
-  byte-identical. The 8 failing units are JSON error messages (issue I-001).
-- Capability matrix (`spec/capabilities.json`): 1 of 52 input formats and 1 of
+- Harness result on `main`: 1984 units, 949 pass, 995 fail, 40 skipped. Each
+  failing unit needs a part that is not on `main` yet (options, the Markdown
+  reader, the new JSON codec) or is a recorded divergence.
+- Capability matrix (`spec/capabilities.json`): 2 of 52 input formats and 2 of
   77 output formats are partial. 0 of 90 extensions and 2 of 109 options have
   passing units.
 - Pandoc's own test suite (`tools/pandoc-testsuite`, `docs/PANDOC_TESTSUITE.md`):
@@ -30,21 +31,21 @@ Updated: 2026-11-10 02:17 UTC.
 
 ## Workstreams
 
-| Workstream | Branch | State at 02:17 UTC |
+| Workstream | Branch | State at 03:00 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
 | corpus | `ws/corpus` | Merged. |
 | layout | `ws/layout` | Merged. |
 | markdown-reader | `ws/markdown-reader` | The worker corrects the findings of review round 1 (1 critical, 6 high). |
-| html-writer | `ws/html-writer` | The worker corrects the findings of review round 1. |
+| html-writer | `ws/html-writer` | Review round 2. |
 | cli | `ws/cli` | The worker corrects the findings of review round 2 (medium findings only). |
-| native | `ws/native` | Review round 3. |
-| json-codec | `ws/json-codec` | Both reviewers approve. Gate 6 is open: the branch is slower than `main`. The worker optimizes. |
-| commonmark-reader | `ws/commonmark-reader` | Review round 1. The worker moves the examples of the CommonMark specification out of the repository (decision D5). |
+| native | `ws/native` | Merged. |
+| json-codec | `ws/json-codec` | The speed gate passes now. Review round 3 found one stack-use defect in the decoder; the worker corrects it. |
+| commonmark-reader | `ws/commonmark-reader` | The worker corrects the findings of review round 1. The specification examples are out of the repository (decision D5). |
 | research | `ws/research` | Merged. |
 | templates | `ws/templates` | The worker corrects the findings of review round 1 (2 high). |
-| latex-writer | `ws/latex-writer` | Review round 1. |
+| latex-writer | `ws/latex-writer` | The worker corrects the findings of review round 1. |
 | yaml | `ws/yaml` | In work. One YAML crate (`randoc-yaml`) for the Markdown reader, the CommonMark reader and the command line. |
 | shared | `ws/shared` | In work. The module `randoc_core::shared`: text of inlines, identifiers, entities, emoji. |
 | highlight | `ws/highlight` | In work. Syntax highlighting: a port of `skylighting-core` with the 63 syntax definitions that have a permissive licence. |
