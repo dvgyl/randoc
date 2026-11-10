@@ -344,12 +344,12 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 165,
-        "total": 396
+        "passing": 692,
+        "total": 921
       },
       "read": {
-        "passing": 166,
-        "total": 396
+        "passing": 692,
+        "total": 921
       },
       "status": "partial"
     },
@@ -397,7 +397,7 @@
         "total": 120
       },
       "read": {
-        "passing": 116,
+        "passing": 118,
         "total": 120
       },
       "status": "partial"
@@ -929,13 +929,13 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 7,
-        "total": 11
+        "passing": 533,
+        "total": 536
       },
       "status": "partial",
       "write": {
-        "passing": 7,
-        "total": 7
+        "passing": 202,
+        "total": 202
       }
     },
     "latex": {
@@ -973,12 +973,12 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 276,
+        "passing": 277,
         "total": 648
       },
       "status": "partial",
       "write": {
-        "passing": 370,
+        "passing": 373,
         "total": 612
       }
     },
@@ -1075,8 +1075,8 @@
       "partial": 2
     },
     "units": {
-      "passing": 949,
-      "total": 1944
+      "passing": 2217,
+      "total": 3204
     }
   }
 }

@@ -18,14 +18,17 @@
 //! # Depth of a tree
 //!
 //! The tree types use the derived `Clone`, `PartialEq` and `Drop`. These
-//! operations recurse one time for each nested level. A tree with a maximum
-//! of 200 nested levels is safe on a thread with a 2 MB stack: a test of this
-//! crate proves that depth for nested block quotes, nested table cells, nested
-//! emphasis and nested metadata lists. A deeper tree can overflow the stack,
-//! and Rust cannot catch a stack overflow.
+//! operations recurse one time for each nested level. On a thread with a 2 MB
+//! stack, a tree is safe when it has at most 200 nested tables (a table in a
+//! table cell) or at most 510 nested levels of the other containers. A test
+//! of this crate proves these depths for nested table cells, block quotes,
+//! emphasis and metadata lists. A deeper tree can overflow the stack, and
+//! Rust cannot catch a stack overflow.
 //!
-//! The readers of Randoc stop at a depth limit (128 levels by default), so a
-//! tree from a reader is safe. If you build a deeper tree in your own code,
+//! A tree from a reader is inside these depths. The readers of Randoc stop at
+//! a depth limit (128 levels by default). [`json::from_json`] stops at
+//! [`json::DEFAULT_MAX_DEPTH`] JSON levels, which permits 510 nested block
+//! quotes and 127 nested tables. If you build a deeper tree in your own code,
 //! do the work on a thread with a larger stack. The `randoc` program does
 //! that: it permits 16384 levels on a thread with a 1 GiB stack.
 

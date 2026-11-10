@@ -1,0 +1,107 @@
+# Several input files: each file is one document, and the reader joins the documents.
+from = "json"
+to = ["json"]
+
+
+[[case]]
+id = "files-two"
+cmd = ["-f", "json", "-t", "json", "one.json", "two.json"]
+[case.files]
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+"two.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"b\":{\"t\":\"MetaString\",\"c\":\"2\"},\"k\":{\"t\":\"MetaString\",\"c\":\"2\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"y\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"Plain\",\"c\":[]}]}\n"
+
+[[case]]
+id = "files-two-reversed"
+cmd = ["-f", "json", "-t", "json", "two.json", "one.json"]
+[case.files]
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+"two.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"b\":{\"t\":\"MetaString\",\"c\":\"2\"},\"k\":{\"t\":\"MetaString\",\"c\":\"2\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"y\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"Plain\",\"c\":[]}]}\n"
+
+[[case]]
+id = "files-three"
+cmd = ["-f", "json", "-t", "json", "one.json", "two.json", "three.json"]
+[case.files]
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+"three.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"k\":{\"t\":\"MetaString\",\"c\":\"3\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}"
+"two.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"b\":{\"t\":\"MetaString\",\"c\":\"2\"},\"k\":{\"t\":\"MetaString\",\"c\":\"2\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"y\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"Plain\",\"c\":[]}]}\n"
+
+[[case]]
+id = "files-same-twice"
+cmd = ["-f", "json", "-t", "json", "one.json", "one.json"]
+[case.files]
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "files-bad-second"
+cmd = ["-f", "json", "-t", "json", "one.json", "bad.json"]
+[case.files]
+"bad.json" = "hello"
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "files-bad-first"
+cmd = ["-f", "json", "-t", "json", "bad.json", "one.json"]
+[case.files]
+"bad.json" = "hello"
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "files-empty-second"
+cmd = ["-f", "json", "-t", "json", "one.json", "empty.json"]
+[case.files]
+"empty.json" = ""
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "files-empty-only"
+cmd = ["-f", "json", "-t", "json", "empty.json"]
+[case.files]
+"empty.json" = ""
+
+[[case]]
+id = "files-old-second"
+cmd = ["-f", "json", "-t", "json", "one.json", "old.json"]
+[case.files]
+"old.json" = "{\"pandoc-api-version\":[1,22],\"meta\":{},\"blocks\":[]}"
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "files-block-error-second"
+cmd = ["-f", "json", "-t", "json", "one.json", "b5.json"]
+[case.files]
+"b5.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[5]}"
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "files-trailing-second"
+cmd = ["-f", "json", "-t", "json", "one.json", "tg.json"]
+[case.files]
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+"tg.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]} x"
+
+[[case]]
+id = "files-two-bad"
+cmd = ["-f", "json", "-t", "json", "bad.json", "old.json"]
+[case.files]
+"bad.json" = "hello"
+"old.json" = "{\"pandoc-api-version\":[1,22],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "files-two-bad-reversed"
+cmd = ["-f", "json", "-t", "json", "old.json", "bad.json"]
+[case.files]
+"bad.json" = "hello"
+"old.json" = "{\"pandoc-api-version\":[1,22],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "files-concatenated"
+cmd = ["-f", "json", "-t", "json", "cat.json"]
+[case.files]
+"cat.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"k\":{\"t\":\"MetaString\",\"c\":\"3\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}"
+
+[[case]]
+id = "files-whitespace-only"
+cmd = ["-f", "json", "-t", "json", "ws.json", "one.json"]
+[case.files]
+"one.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+"ws.json" = "  \n\n"

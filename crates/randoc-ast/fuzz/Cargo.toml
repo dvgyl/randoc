@@ -9,11 +9,19 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
+arbitrary = "1"
 randoc-ast = { path = ".." }
 
 [[bin]]
 name = "json_read"
 path = "fuzz_targets/json_read.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "json_roundtrip"
+path = "fuzz_targets/json_roundtrip.rs"
 test = false
 doc = false
 bench = false

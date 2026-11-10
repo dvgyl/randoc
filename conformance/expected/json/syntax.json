@@ -1,0 +1,1271 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "syntax-000#e2e:json": {
+      "key": "efe596a62708321f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-000#read": {
+      "key": "efe596a62708321f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-001#e2e:json": {
+      "key": "17e6a5f6be51fe3a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-001#read": {
+      "key": "17e6a5f6be51fe3a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-002#e2e:json": {
+      "key": "17e6bbf6be52239c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-002#read": {
+      "key": "17e6bbf6be52239c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-003#e2e:json": {
+      "key": "69050ae016d44d12",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-003#read": {
+      "key": "69050ae016d44d12",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-004#e2e:json": {
+      "key": "cf03c5fbfcc241d5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hel\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-004#read": {
+      "key": "cf03c5fbfcc241d5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hel\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-005#e2e:json": {
+      "key": "22a44f3c992bffa7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-005#read": {
+      "key": "22a44f3c992bffa7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-006#e2e:json": {
+      "key": "94e2a4433cc4653c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-006#read": {
+      "key": "94e2a4433cc4653c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-007#e2e:json": {
+      "key": "73973889a3e2238f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"abcdefghijklmnopqrstuvwxyzabcd\", expecting JSON value\n"
+    },
+    "syntax-007#read": {
+      "key": "73973889a3e2238f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"abcdefghijklmnopqrstuvwxyzabcd\", expecting JSON value\n"
+    },
+    "syntax-008#e2e:json": {
+      "key": "17e64cf6be5166ff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting record key literal or }\n"
+    },
+    "syntax-008#read": {
+      "key": "17e64cf6be5166ff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting record key literal or }\n"
+    },
+    "syntax-009#e2e:json": {
+      "key": "aec6810427dec0a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting :\n"
+    },
+    "syntax-009#read": {
+      "key": "aec6810427dec0a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting :\n"
+    },
+    "syntax-010#e2e:json": {
+      "key": "4f04d6eb0f73d942",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-010#read": {
+      "key": "4f04d6eb0f73d942",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "syntax-011#e2e:json": {
+      "key": "2c66416dfbbbbe5a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting , or }\n"
+    },
+    "syntax-011#read": {
+      "key": "2c66416dfbbbbe5a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting , or }\n"
+    },
+    "syntax-012#e2e:json": {
+      "key": "a8170fbe4133f2a9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting key literal\n"
+    },
+    "syntax-012#read": {
+      "key": "a8170fbe4133f2a9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting key literal\n"
+    },
+    "syntax-013#e2e:json": {
+      "key": "0fa08f3f80c91e7c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\\"b\\\"\\n\\n\", expecting , or }\n"
+    },
+    "syntax-013#read": {
+      "key": "0fa08f3f80c91e7c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\\"b\\\"\\n\\n\", expecting , or }\n"
+    },
+    "syntax-014#e2e:json": {
+      "key": "e8acb4bdd48ac9ac",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"1}\\n\\n\", expecting :\n"
+    },
+    "syntax-014#read": {
+      "key": "e8acb4bdd48ac9ac",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"1}\\n\\n\", expecting :\n"
+    },
+    "syntax-015#e2e:json": {
+      "key": "4c563290698fb8a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"5:1}\\n\\n\", expecting record key literal or }\n"
+    },
+    "syntax-015#read": {
+      "key": "4c563290698fb8a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"5:1}\\n\\n\", expecting record key literal or }\n"
+    },
+    "syntax-016#e2e:json": {
+      "key": "770422990bd5019b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",}\\n\\n\", expecting key literal\n"
+    },
+    "syntax-016#read": {
+      "key": "770422990bd5019b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",}\\n\\n\", expecting key literal\n"
+    },
+    "syntax-017#e2e:json": {
+      "key": "0d4b5dc4f84d9c75",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",5}\\n\\n\", expecting key literal\n"
+    },
+    "syntax-017#read": {
+      "key": "0d4b5dc4f84d9c75",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",5}\\n\\n\", expecting key literal\n"
+    },
+    "syntax-018#e2e:json": {
+      "key": "5d9617fae64fb180",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-018#read": {
+      "key": "5d9617fae64fb180",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-019#e2e:json": {
+      "key": "e1e677d5b31c7fe7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"2]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-019#read": {
+      "key": "e1e677d5b31c7fe7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"2]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-020#e2e:json": {
+      "key": "17e66cf6be519d5f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value or ]\n"
+    },
+    "syntax-020#read": {
+      "key": "17e66cf6be519d5f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value or ]\n"
+    },
+    "syntax-021#e2e:json": {
+      "key": "d58a4941e164353e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-021#read": {
+      "key": "d58a4941e164353e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-022#e2e:json": {
+      "key": "5d9686fae6506e1d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting , or ]\n"
+    },
+    "syntax-022#read": {
+      "key": "5d9686fae6506e1d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting , or ]\n"
+    },
+    "syntax-023#e2e:json": {
+      "key": "c6b5921681de705f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting , or ]\n"
+    },
+    "syntax-023#read": {
+      "key": "c6b5921681de705f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting , or ]\n"
+    },
+    "syntax-024#e2e:json": {
+      "key": "59eaebb1a67d2052",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"tru}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-024#read": {
+      "key": "59eaebb1a67d2052",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"tru}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-025#e2e:json": {
+      "key": "117c13e5d38ed52b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"}}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-025#read": {
+      "key": "117c13e5d38ed52b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"}}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-026#e2e:json": {
+      "key": "381ca9bef9199b05",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "syntax-026#read": {
+      "key": "381ca9bef9199b05",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "syntax-027#e2e:json": {
+      "key": "6612d0fbc1093e91",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"tru\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-027#read": {
+      "key": "6612d0fbc1093e91",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"tru\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-028#e2e:json": {
+      "key": "bca06ffbf20a6e2f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"nul\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-028#read": {
+      "key": "bca06ffbf20a6e2f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"nul\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-029#e2e:json": {
+      "key": "8ba95bf4a4cf1a0b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"fals\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-029#read": {
+      "key": "8ba95bf4a4cf1a0b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"fals\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-030#e2e:json": {
+      "key": "669c88fdd622c4b1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-030#read": {
+      "key": "669c88fdd622c4b1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-031#e2e:json": {
+      "key": "17e69af6be51eb89",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 10 while parsing number literal\n"
+    },
+    "syntax-031#read": {
+      "key": "17e69af6be51eb89",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 10 while parsing number literal\n"
+    },
+    "syntax-032#e2e:json": {
+      "key": "d6f24e41e295e6c3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 97 while parsing number literal\n"
+    },
+    "syntax-032#read": {
+      "key": "d6f24e41e295e6c3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 97 while parsing number literal\n"
+    },
+    "syntax-033#e2e:json": {
+      "key": "d6e80a41e28d1eb2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Number literal with leading zero\n"
+    },
+    "syntax-033#read": {
+      "key": "d6e80a41e28d1eb2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Number literal with leading zero\n"
+    },
+    "syntax-034#e2e:json": {
+      "key": "8a0fb9fab388cd28",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Number literal with leading zero\n"
+    },
+    "syntax-034#read": {
+      "key": "8a0fb9fab388cd28",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Number literal with leading zero\n"
+    },
+    "syntax-035#e2e:json": {
+      "key": "d6e4fb41e28acf5e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 10 while parsing number literal\n"
+    },
+    "syntax-035#read": {
+      "key": "d6e4fb41e28acf5e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 10 while parsing number literal\n"
+    },
+    "syntax-036#e2e:json": {
+      "key": "9094a842e4cd8d0e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 101 while parsing number literal\n"
+    },
+    "syntax-036#read": {
+      "key": "9094a842e4cd8d0e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 101 while parsing number literal\n"
+    },
+    "syntax-037#e2e:json": {
+      "key": "d6e53241e28b2cd3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\n' while parsing number literal\n"
+    },
+    "syntax-037#read": {
+      "key": "d6e53241e28b2cd3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\n' while parsing number literal\n"
+    },
+    "syntax-038#e2e:json": {
+      "key": "68d527faa11d4a47",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\n' while parsing number literal\n"
+    },
+    "syntax-038#read": {
+      "key": "68d527faa11d4a47",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\n' while parsing number literal\n"
+    },
+    "syntax-039#e2e:json": {
+      "key": "c6657f41e18a864d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 'a' while parsing number literal\n"
+    },
+    "syntax-039#read": {
+      "key": "c6657f41e18a864d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 'a' while parsing number literal\n"
+    },
+    "syntax-040#e2e:json": {
+      "key": "68d561faa11dacd5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 'a' while parsing number literal\n"
+    },
+    "syntax-040#read": {
+      "key": "68d561faa11dacd5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 'a' while parsing number literal\n"
+    },
+    "syntax-041#e2e:json": {
+      "key": "68d525faa11d46e1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\n' while parsing number literal\n"
+    },
+    "syntax-041#read": {
+      "key": "68d525faa11d46e1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\n' while parsing number literal\n"
+    },
+    "syntax-042#e2e:json": {
+      "key": "681369faa078a88e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 97 while parsing number literal\n"
+    },
+    "syntax-042#read": {
+      "key": "681369faa078a88e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 97 while parsing number literal\n"
+    },
+    "syntax-043#e2e:json": {
+      "key": "d6e53641e28b339f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-043#read": {
+      "key": "d6e53641e28b339f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-044#e2e:json": {
+      "key": "d6f27d41e29636a0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-044#read": {
+      "key": "d6f27d41e29636a0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-045#e2e:json": {
+      "key": "d6e85341e28d9abd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-045#read": {
+      "key": "d6e85341e28d9abd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-046#e2e:json": {
+      "key": "d6fc9241e29eaed4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \".5\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-046#read": {
+      "key": "d6fc9241e29eaed4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \".5\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-047#e2e:json": {
+      "key": "d7070241e2a7c1a9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"+1\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-047#read": {
+      "key": "d7070241e2a7c1a9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"+1\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-048#e2e:json": {
+      "key": "73abdbfc5a0abedf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 93 while parsing number literal\n"
+    },
+    "syntax-048#read": {
+      "key": "73abdbfc5a0abedf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 93 while parsing number literal\n"
+    },
+    "syntax-049#e2e:json": {
+      "key": "3aacb3fad276d120",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 120 while parsing number literal\n"
+    },
+    "syntax-049#read": {
+      "key": "3aacb3fad276d120",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 120 while parsing number literal\n"
+    },
+    "syntax-050#e2e:json": {
+      "key": "54f3f2fae16e63a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 93 while parsing number literal\n"
+    },
+    "syntax-050#read": {
+      "key": "54f3f2fae16e63a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 93 while parsing number literal\n"
+    },
+    "syntax-051#e2e:json": {
+      "key": "b38007702da7b8b4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected ']' while parsing number literal\n"
+    },
+    "syntax-051#read": {
+      "key": "b38007702da7b8b4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected ']' while parsing number literal\n"
+    },
+    "syntax-052#e2e:json": {
+      "key": "66bc878a2c7c6bd7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 'x' while parsing number literal\n"
+    },
+    "syntax-052#read": {
+      "key": "66bc878a2c7c6bd7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 'x' while parsing number literal\n"
+    },
+    "syntax-053#e2e:json": {
+      "key": "30fcc17ee6a3b1a7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\195' while parsing number literal\n"
+    },
+    "syntax-053#read": {
+      "key": "30fcc17ee6a3b1a7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\195' while parsing number literal\n"
+    },
+    "syntax-054#e2e:json": {
+      "key": "5768a3eb38f13ce0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 195 while parsing number literal\n"
+    },
+    "syntax-054#read": {
+      "key": "5768a3eb38f13ce0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 195 while parsing number literal\n"
+    },
+    "syntax-055#e2e:json": {
+      "key": "9bd4c0d468f02b1d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\DEL' while parsing number literal\n"
+    },
+    "syntax-055#read": {
+      "key": "9bd4c0d468f02b1d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\DEL' while parsing number literal\n"
+    },
+    "syntax-056#e2e:json": {
+      "key": "9c3d80d46948a766",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\\\' while parsing number literal\n"
+    },
+    "syntax-056#read": {
+      "key": "9c3d80d46948a766",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\\\' while parsing number literal\n"
+    },
+    "syntax-057#e2e:json": {
+      "key": "9cffc0d469ee2605",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\'' while parsing number literal\n"
+    },
+    "syntax-057#read": {
+      "key": "9cffc0d469ee2605",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected '\\'' while parsing number literal\n"
+    },
+    "syntax-058#e2e:json": {
+      "key": "fbb7dafaf4358636",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "syntax-058#read": {
+      "key": "fbb7dafaf4358636",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "syntax-059#e2e:json": {
+      "key": "c2d25fd9bac7ff9e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\195\\169}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-059#read": {
+      "key": "c2d25fd9bac7ff9e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\195\\169}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-060#e2e:json": {
+      "key": "d2ed71fc8ffd1461",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"NaN\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-060#read": {
+      "key": "d2ed71fc8ffd1461",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"NaN\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-061#e2e:json": {
+      "key": "bdca0da60fd8aa57",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"Infinity\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-061#read": {
+      "key": "bdca0da60fd8aa57",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"Infinity\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-062#e2e:json": {
+      "key": "657a4a55b9cc0285",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 73 while parsing number literal\n"
+    },
+    "syntax-062#read": {
+      "key": "657a4a55b9cc0285",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected 73 while parsing number literal\n"
+    },
+    "syntax-063#e2e:json": {
+      "key": "145d8b4901bc20ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"]\\n\\n\", expecting , or }\n"
+    },
+    "syntax-063#read": {
+      "key": "145d8b4901bc20ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"]\\n\\n\", expecting , or }\n"
+    },
+    "syntax-064#e2e:json": {
+      "key": "9efd8a264f41cce4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "syntax-064#read": {
+      "key": "9efd8a264f41cce4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "syntax-065#e2e:json": {
+      "key": "5daf0c94263ea0be",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\SOH\\DEL\\ENQ\\195\\169\\&1\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-065#read": {
+      "key": "5daf0c94263ea0be",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\SOH\\DEL\\ENQ\\195\\169\\&1\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-066#e2e:json": {
+      "key": "43e737fbadd12d2a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\SO\\&H\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-066#read": {
+      "key": "43e737fbadd12d2a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\SO\\&H\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-067#e2e:json": {
+      "key": "115cd81e96f86f80",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\\\\\\"'\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-067#read": {
+      "key": "115cd81e96f86f80",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x\\\\\\\"'\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-068#e2e:json": {
+      "key": "5ee63e86784c9717",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\ESC[31m\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-068#read": {
+      "key": "5ee63e86784c9717",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\ESC[31m\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-069#e2e:json": {
+      "key": "54d06627c44d3805",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-069#read": {
+      "key": "54d06627c44d3805",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-070#e2e:json": {
+      "key": "57a2c9d4429f88cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-070#read": {
+      "key": "57a2c9d4429f88cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-071#e2e:json": {
+      "key": "fc1cb5dcb78e5511",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-071#read": {
+      "key": "fc1cb5dcb78e5511",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-072#e2e:json": {
+      "key": "c2140b2071b44756",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-072#read": {
+      "key": "c2140b2071b44756",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-073#e2e:json": {
+      "key": "c213bc2071b3c119",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-073#read": {
+      "key": "c213bc2071b3c119",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-074#e2e:json": {
+      "key": "c213dc2071b3f779",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-074#read": {
+      "key": "c213dc2071b3f779",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-075#e2e:json": {
+      "key": "e9da4b58c3f40cdb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-075#read": {
+      "key": "e9da4b58c3f40cdb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "syntax-076#e2e:json": {
+      "key": "1f35be0a07312016",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "syntax-076#read": {
+      "key": "1f35be0a07312016",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "syntax-076#write:json": {
+      "key": "c2140d2071b44abc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "syntax-077#e2e:json": {
+      "key": "d1b8af9c0f2362b8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\f{\\\"pandoc-api-version\\\":[1,23,1\", expecting JSON value\n"
+    },
+    "syntax-077#read": {
+      "key": "d1b8af9c0f2362b8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\f{\\\"pandoc-api-version\\\":[1,23,1\", expecting JSON value\n"
+    },
+    "syntax-078#e2e:json": {
+      "key": "8a72e843d70c482d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \", }\\n\\n\", expecting key literal\n"
+    },
+    "syntax-078#read": {
+      "key": "8a72e843d70c482d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \", }\\n\\n\", expecting key literal\n"
+    },
+    "syntax-079#e2e:json": {
+      "key": "4e71a37b91820348",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-079#read": {
+      "key": "4e71a37b91820348",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-080#e2e:json": {
+      "key": "b07e424143ee2f0c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-080#read": {
+      "key": "b07e424143ee2f0c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-081#e2e:json": {
+      "key": "9877b73622d757b5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"}\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-081#read": {
+      "key": "9877b73622d757b5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"}\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-082#e2e:json": {
+      "key": "7e6074352bb2bd7c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"/* c */ {\\\"pandoc-api-version\\\":\", expecting JSON value\n"
+    },
+    "syntax-082#read": {
+      "key": "7e6074352bb2bd7c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"/* c */ {\\\"pandoc-api-version\\\":\", expecting JSON value\n"
+    },
+    "syntax-083#e2e:json": {
+      "key": "c170076f074b4c09",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"// c\\n{\\\"pandoc-api-version\\\":[1,\", expecting JSON value\n"
+    },
+    "syntax-083#read": {
+      "key": "c170076f074b4c09",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"// c\\n{\\\"pandoc-api-version\\\":[1,\", expecting JSON value\n"
+    },
+    "syntax-084#e2e:json": {
+      "key": "df9b39fae3aed245",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"'a'\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-084#read": {
+      "key": "df9b39fae3aed245",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"'a'\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-085#e2e:json": {
+      "key": "4a293fdb32001302",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"'a':1}\\n\\n\", expecting record key literal or }\n"
+    },
+    "syntax-085#read": {
+      "key": "4a293fdb32001302",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"'a':1}\\n\\n\", expecting record key literal or }\n"
+    },
+    "syntax-086#e2e:json": {
+      "key": "03669e80b593773b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \";\\\"b\\\":2}\\n\\n\", expecting , or }\n"
+    },
+    "syntax-086#read": {
+      "key": "03669e80b593773b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \";\\\"b\\\":2}\\n\\n\", expecting , or }\n"
+    },
+    "syntax-087#e2e:json": {
+      "key": "29b18adc494a7868",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",2]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-087#read": {
+      "key": "29b18adc494a7868",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",2]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-088#e2e:json": {
+      "key": "32584efacdd737d6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",1]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-088#read": {
+      "key": "32584efacdd737d6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",1]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-089#e2e:json": {
+      "key": "5da69ffbbc556bc2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",}\\n\\n\", expecting record key literal or }\n"
+    },
+    "syntax-089#read": {
+      "key": "5da69ffbbc556bc2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \",}\\n\\n\", expecting record key literal or }\n"
+    },
+    "syntax-090#e2e:json": {
+      "key": "d50fe59940bfa127",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \":1}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-090#read": {
+      "key": "d50fe59940bfa127",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \":1}\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-091#e2e:json": {
+      "key": "40cfd4e161b8f085",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"TRUE]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-091#read": {
+      "key": "40cfd4e161b8f085",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"TRUE]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-092#e2e:json": {
+      "key": "00a573d4c2ebd565",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"True]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-092#read": {
+      "key": "00a573d4c2ebd565",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"True]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-093#e2e:json": {
+      "key": "05c822e89058b802",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"1]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-093#read": {
+      "key": "05c822e89058b802",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"1]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-094#e2e:json": {
+      "key": "06c6dee891310473",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"l]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-094#read": {
+      "key": "06c6dee891310473",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"l]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-095#e2e:json": {
+      "key": "dab6846e44b583b2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-095#read": {
+      "key": "dab6846e44b583b2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"x]\\n\\n\", expecting , or ]\n"
+    },
+    "syntax-096#e2e:json": {
+      "key": "e0d25cd5b23135ff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-096#read": {
+      "key": "e0d25cd5b23135ff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-097#e2e:json": {
+      "key": "95bf05a11c5a0189",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\194\\160[]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-097#read": {
+      "key": "95bf05a11c5a0189",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\194\\160[]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-098#e2e:json": {
+      "key": "b6ed551a1fc1d31f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\227\\128\\128[]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-098#read": {
+      "key": "b6ed551a1fc1d31f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\227\\128\\128[]\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-099#e2e:json": {
+      "key": "3f0416729a1c36ae",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n\", expecting JSON value\n"
+    },
+    "syntax-099#read": {
+      "key": "3f0416729a1c36ae",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n\", expecting JSON value\n"
+    },
+    "syntax-100#e2e:json": {
+      "key": "943b18f0e1017c18",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", expecting JSON value\n"
+    },
+    "syntax-100#read": {
+      "key": "943b18f0e1017c18",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", expecting JSON value\n"
+    },
+    "syntax-101#e2e:json": {
+      "key": "b1facb17b335b1b7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\", expecting JSON value\n"
+    },
+    "syntax-101#read": {
+      "key": "b1facb17b335b1b7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\\195\\169\", expecting JSON value\n"
+    },
+    "syntax-102#e2e:json": {
+      "key": "17e6c5f6be52349a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\NUL\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-102#read": {
+      "key": "17e6c5f6be52349a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"\\NUL\\n\\n\", expecting JSON value\n"
+    },
+    "syntax-103#e2e:json": {
+      "key": "322057789cf5ada2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-103#read": {
+      "key": "322057789cf5ada2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "syntax-104#e2e:json": {
+      "key": "7663f3990b4c8645",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "syntax-104#read": {
+      "key": "7663f3990b4c8645",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    }
+  }
+}

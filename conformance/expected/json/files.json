@@ -1,0 +1,95 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "files-bad-first#cmd": {
+      "key": "5f66c54af30499a6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "files-bad-second#cmd": {
+      "key": "b5005a8fc8b45df2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "files-block-error-second#cmd": {
+      "key": "f526837f78a1c0d9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "files-concatenated#cmd": {
+      "key": "4870f24dce218d50",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "files-empty-only#cmd": {
+      "key": "e95da9c735f60d57",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "files-empty-second#cmd": {
+      "key": "7c2d3c6865e7188b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "files-old-second#cmd": {
+      "key": "14717227d94867e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "files-same-twice#cmd": {
+      "key": "50ddca4746e510e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"},{\"t\":\"HorizontalRule\"}]}\n",
+      "stderr": ""
+    },
+    "files-three#cmd": {
+      "key": "e8be38ea0faa4ee1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"b\":{\"t\":\"MetaString\",\"c\":\"2\"},\"k\":{\"t\":\"MetaString\",\"c\":\"3\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"y\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"},{\"t\":\"Plain\",\"c\":[]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "files-trailing-second#cmd": {
+      "key": "0ec32f36ac6a5a8d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Trailing garbage\n"
+    },
+    "files-two#cmd": {
+      "key": "af3cb8a83bf3fd2f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"b\":{\"t\":\"MetaString\",\"c\":\"2\"},\"k\":{\"t\":\"MetaString\",\"c\":\"2\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"y\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"HorizontalRule\"},{\"t\":\"Plain\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "files-two-bad#cmd": {
+      "key": "d876599fe2876910",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hello\\n\\n\", expecting JSON value\n"
+    },
+    "files-two-bad-reversed#cmd": {
+      "key": "d73198fe08b96a44",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "files-two-reversed#cmd": {
+      "key": "4361a4bee5a867ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"b\":{\"t\":\"MetaString\",\"c\":\"2\"},\"k\":{\"t\":\"MetaString\",\"c\":\"1\"},\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaBool\",\"c\":true}}}},\"blocks\":[{\"t\":\"Plain\",\"c\":[]},{\"t\":\"HorizontalRule\"}]}\n",
+      "stderr": ""
+    },
+    "files-whitespace-only#cmd": {
+      "key": "fddf22bf075a4301",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    }
+  }
+}

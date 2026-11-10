@@ -1,0 +1,172 @@
+# String literals: escapes, surrogate pairs, lone surrogates, control characters and invalid escapes.
+from = "json"
+to = ["json"]
+
+
+[[case]]
+id = "str-basic-escapes"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\b\\f\\n\\r\\t\\/\\\\\\\"\"}]}]}"
+
+[[case]]
+id = "str-unicode-escape"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u00e9\\u00E9\\u4e2d\"}]}]}"
+
+[[case]]
+id = "str-surrogate-pair"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ud83d\\ude00\"}]}]}"
+
+[[case]]
+id = "str-surrogate-upper"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\uD83D\\uDE00\"}]}]}"
+
+[[case]]
+id = "str-nul"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0000\"}]}]}"
+
+[[case]]
+id = "str-controls"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0001\\u001f\\u007f\\u0080\\u009f\\u00a0\"}]}]}"
+
+[[case]]
+id = "str-separators"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u2028\\u2029\"}]}]}"
+
+[[case]]
+id = "str-noncharacters"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\uFFFF\\uFFFE\\uFEFF\"}]}]}"
+
+[[case]]
+id = "str-raw-unicode"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"é中😀\"}]}]}"
+
+[[case]]
+id = "str-raw-del"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\u007F\"}]}]}"
+
+[[case]]
+id = "str-raw-c1"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}"
+
+[[case]]
+id = "str-html-chars"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"<>&'\"}]}]}"
+
+[[case]]
+id = "str-lone-high"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ud83d\"}]}]}"
+
+[[case]]
+id = "str-lone-low"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ude00\"}]}]}"
+
+[[case]]
+id = "str-high-then-text"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ud83dx\"}]}]}"
+
+[[case]]
+id = "str-high-then-escape"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ud83d\\u0041\"}]}]}"
+
+[[case]]
+id = "str-low-then-high"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ude00\\ud83d\"}]}]}"
+
+[[case]]
+id = "str-two-high"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ud83d\\ud83d\"}]}]}"
+
+[[case]]
+id = "str-high-then-n"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ud83d\\n\"}]}]}"
+
+[[case]]
+id = "str-invalid-escape-q"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\q\"}]}]}"
+
+[[case]]
+id = "str-invalid-escape-x"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\x41\"}]}]}"
+
+[[case]]
+id = "str-invalid-escape-U"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\U0041\"}]}]}"
+
+[[case]]
+id = "str-invalid-escape-quote"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\'\"}]}]}"
+
+[[case]]
+id = "str-short-u"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u12\"}]}]}"
+
+[[case]]
+id = "str-bad-hex"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u12g4\"}]}]}"
+
+[[case]]
+id = "str-escape-space"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\ \"}]}]}"
+
+[[case]]
+id = "str-escape-a"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\a\"}]}]}"
+
+[[case]]
+id = "str-long-text"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}]}]}"
+
+[[case]]
+id = "str-empty"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}"
+
+[[case]]
+id = "str-backslash-end"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\\"}]}]}"
+
+[[case]]
+id = "str-slash"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}"
+
+[[case]]
+id = "str-escaped-slash-only"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\/\"}]}]}"
+
+[[case]]
+id = "raw-control-in-string"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\u0001b\"}]}]}"
+
+[[case]]
+id = "raw-newline-in-string"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\nb\"}]}]}"
+
+[[case]]
+id = "escaped-raw-newline"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\nb\"}]}]}"
+
+[[case]]
+id = "key-escapes"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"\\u0061\\n\":{\"t\":\"MetaBool\",\"c\":true},\"k\\\"q\":{\"t\":\"MetaString\",\"c\":\"\\u00e9\"}},\"blocks\":[]}"
+
+[[case]]
+id = "key-invalid-escape"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"\\q\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}"
+
+[[case]]
+id = "key-lone-surrogate"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"\\ud800\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}"
+
+[[case]]
+id = "tag-escaped"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"\\u0074\":\"\\u0053tr\",\"c\":\"x\"}]}]}"
+
+[[case]]
+id = "attr-escapes"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"i\\\"d\",[\"c\\\\\"],[[\"k\\n\",\"v\\u0001\"]]],\"\\u001b[0m\"]}]}]}"
+
+[[case]]
+id = "invalid-escape-before-syntax-error"
+input = "[\"\\q\" x"
+
+[[case]]
+id = "invalid-escape-in-ignored-key"
+input = "{\"pandoc-api-version\":[1,22],\"x\":\"\\q\"}"

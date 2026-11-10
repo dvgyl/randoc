@@ -1,0 +1,629 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "attr-escapes#e2e:json": {
+      "key": "0c352bf79c3dbf17",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"i\\\"d\",[\"c\\\\\"],[[\"k\\n\",\"v\\u0001\"]]],\"\\u001b[0m\"]}]}]}\n",
+      "stderr": ""
+    },
+    "attr-escapes#read": {
+      "key": "0c352bf79c3dbf17",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"i\\\"d\",[\"c\\\\\"],[[\"k\\n\",\"v\\u0001\"]]],\"\\u001b[0m\"]}]}]}\n",
+      "stderr": ""
+    },
+    "attr-escapes#write:json": {
+      "key": "19aca1bfd0c57b3c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"i\\\"d\",[\"c\\\\\"],[[\"k\\n\",\"v\\u0001\"]]],\"\\u001b[0m\"]}]}]}\n",
+      "stderr": ""
+    },
+    "escaped-raw-newline#e2e:json": {
+      "key": "b2e69d0568b0c972",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "escaped-raw-newline#read": {
+      "key": "b2e69d0568b0c972",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "invalid-escape-before-syntax-error#e2e:json": {
+      "key": "fe040a10582dd9c8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "invalid-escape-before-syntax-error#read": {
+      "key": "fe040a10582dd9c8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "invalid-escape-in-ignored-key#e2e:json": {
+      "key": "be0cd8dec2a17472",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "invalid-escape-in-ignored-key#read": {
+      "key": "be0cd8dec2a17472",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "key-escapes#e2e:json": {
+      "key": "4c3f6c3ace0becbc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\\n\":{\"t\":\"MetaBool\",\"c\":true},\"k\\\"q\":{\"t\":\"MetaString\",\"c\":\"é\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "key-escapes#read": {
+      "key": "4c3f6c3ace0becbc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\\n\":{\"t\":\"MetaBool\",\"c\":true},\"k\\\"q\":{\"t\":\"MetaString\",\"c\":\"é\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "key-escapes#write:json": {
+      "key": "35dfef4b24608632",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\\n\":{\"t\":\"MetaBool\",\"c\":true},\"k\\\"q\":{\"t\":\"MetaString\",\"c\":\"é\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "key-invalid-escape#e2e:json": {
+      "key": "bc592100a3f43048",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "key-invalid-escape#read": {
+      "key": "bc592100a3f43048",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "key-lone-surrogate#e2e:json": {
+      "key": "b6aedd5c427de61c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "key-lone-surrogate#read": {
+      "key": "b6aedd5c427de61c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "raw-control-in-string#e2e:json": {
+      "key": "3eca0e49f506dbfe",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "raw-control-in-string#read": {
+      "key": "3eca0e49f506dbfe",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "raw-newline-in-string#e2e:json": {
+      "key": "6bd5927e5e56f461",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "raw-newline-in-string#read": {
+      "key": "6bd5927e5e56f461",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "str-backslash-end#e2e:json": {
+      "key": "fe7df7846d21db2d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-backslash-end#read": {
+      "key": "fe7df7846d21db2d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-backslash-end#write:json": {
+      "key": "08e1c995732431ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-bad-hex#e2e:json": {
+      "key": "a0e65a0422695482",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-bad-hex#read": {
+      "key": "a0e65a0422695482",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-basic-escapes#e2e:json": {
+      "key": "fa943b01b737c2ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\u0008\\u000c\\n\\r\\t/\\\\\\\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-basic-escapes#read": {
+      "key": "fa943b01b737c2ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\u0008\\u000c\\n\\r\\t/\\\\\\\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-basic-escapes#write:json": {
+      "key": "aac3e4d78b9603d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\u0008\\u000c\\n\\r\\t/\\\\\\\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-controls#e2e:json": {
+      "key": "ff91ff5aca953b68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0001\\u001f \"}]}]}\n",
+      "stderr": ""
+    },
+    "str-controls#read": {
+      "key": "ff91ff5aca953b68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0001\\u001f \"}]}]}\n",
+      "stderr": ""
+    },
+    "str-controls#write:json": {
+      "key": "0be42bc8b51a6e95",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0001\\u001f \"}]}]}\n",
+      "stderr": ""
+    },
+    "str-empty#e2e:json": {
+      "key": "77eae14214d8bdcf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-empty#read": {
+      "key": "77eae14214d8bdcf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-empty#write:json": {
+      "key": "1f850101e150faa4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-escape-a#e2e:json": {
+      "key": "10613b2231fc97a6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-escape-a#read": {
+      "key": "10613b2231fc97a6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-escape-space#e2e:json": {
+      "key": "fcd30a8b976e43fd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-escape-space#read": {
+      "key": "fcd30a8b976e43fd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-escaped-slash-only#e2e:json": {
+      "key": "d8fe2237fa6c463c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-escaped-slash-only#read": {
+      "key": "d8fe2237fa6c463c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-escaped-slash-only#write:json": {
+      "key": "50c887dbae31f4ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-high-then-escape#e2e:json": {
+      "key": "e9fa5b18c8004223",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-high-then-escape#read": {
+      "key": "e9fa5b18c8004223",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-high-then-n#e2e:json": {
+      "key": "687fd1efd8a1b919",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-high-then-n#read": {
+      "key": "687fd1efd8a1b919",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-high-then-text#e2e:json": {
+      "key": "2e9ec6b8b767a27e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-high-then-text#read": {
+      "key": "2e9ec6b8b767a27e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-html-chars#e2e:json": {
+      "key": "b227a5311f338cee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"<>&'\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-html-chars#read": {
+      "key": "b227a5311f338cee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"<>&'\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-html-chars#write:json": {
+      "key": "b9c1fd69c5bf9ef3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"<>&'\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-invalid-escape-U#e2e:json": {
+      "key": "c75d2fb6ebf6a261",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-U#read": {
+      "key": "c75d2fb6ebf6a261",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-q#e2e:json": {
+      "key": "b96faaf0242e5996",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-q#read": {
+      "key": "b96faaf0242e5996",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-quote#e2e:json": {
+      "key": "8acf4a3f74ed7594",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-quote#read": {
+      "key": "8acf4a3f74ed7594",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-x#e2e:json": {
+      "key": "1ad54be4cd9ac5c4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-invalid-escape-x#read": {
+      "key": "1ad54be4cd9ac5c4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-lone-high#e2e:json": {
+      "key": "e5d63303488fd94d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-lone-high#read": {
+      "key": "e5d63303488fd94d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-lone-low#e2e:json": {
+      "key": "c10e638b0b3373c5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-lone-low#read": {
+      "key": "c10e638b0b3373c5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-long-text#e2e:json": {
+      "key": "4d1ee78abdc9f60d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-long-text#read": {
+      "key": "4d1ee78abdc9f60d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-long-text#write:json": {
+      "key": "88863883e063c696",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-low-then-high#e2e:json": {
+      "key": "eaa7c8c2038ed527",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-low-then-high#read": {
+      "key": "eaa7c8c2038ed527",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-noncharacters#e2e:json": {
+      "key": "89c80610b547ab4e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"￿￾﻿\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-noncharacters#read": {
+      "key": "89c80610b547ab4e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"￿￾﻿\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-noncharacters#write:json": {
+      "key": "30e6936d8f54f0d1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"￿￾﻿\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-nul#e2e:json": {
+      "key": "82c4d9fa8f64560e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0000\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-nul#read": {
+      "key": "82c4d9fa8f64560e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0000\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-nul#write:json": {
+      "key": "4fd6e996018cc303",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\u0000\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-c1#e2e:json": {
+      "key": "6388373f2c4110ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-c1#read": {
+      "key": "6388373f2c4110ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-c1#write:json": {
+      "key": "da4eab4c1e20ab51",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-del#e2e:json": {
+      "key": "77026f05ba11e099",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-del#read": {
+      "key": "77026f05ba11e099",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-del#write:json": {
+      "key": "21fb455cfc5bcede",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-unicode#e2e:json": {
+      "key": "b19fd1fc407edbba",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"é中😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-unicode#read": {
+      "key": "b19fd1fc407edbba",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"é中😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-raw-unicode#write:json": {
+      "key": "a9a206cb2eccba47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"é中😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-separators#e2e:json": {
+      "key": "0ef6f4b70ec6864c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"  \"}]}]}\n",
+      "stderr": ""
+    },
+    "str-separators#read": {
+      "key": "0ef6f4b70ec6864c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"  \"}]}]}\n",
+      "stderr": ""
+    },
+    "str-separators#write:json": {
+      "key": "4643f1840563eafb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"  \"}]}]}\n",
+      "stderr": ""
+    },
+    "str-short-u#e2e:json": {
+      "key": "e6830e32f2790b93",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-short-u#read": {
+      "key": "e6830e32f2790b93",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-slash#e2e:json": {
+      "key": "5025c0d66897ba09",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-slash#read": {
+      "key": "5025c0d66897ba09",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-slash#write:json": {
+      "key": "50c887dbae31f4ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"/\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-surrogate-pair#e2e:json": {
+      "key": "dcbd9207375a2b67",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-surrogate-pair#read": {
+      "key": "dcbd9207375a2b67",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-surrogate-pair#write:json": {
+      "key": "cc2d21e2f88343a7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-surrogate-upper#e2e:json": {
+      "key": "6d778be4b21eafa7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-surrogate-upper#read": {
+      "key": "6d778be4b21eafa7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-surrogate-upper#write:json": {
+      "key": "cc2d21e2f88343a7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"😀\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-two-high#e2e:json": {
+      "key": "d658ad240fa87013",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-two-high#read": {
+      "key": "d658ad240fa87013",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream\n"
+    },
+    "str-unicode-escape#e2e:json": {
+      "key": "ef20494102cb7263",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"éé中\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-unicode-escape#read": {
+      "key": "ef20494102cb7263",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"éé中\"}]}]}\n",
+      "stderr": ""
+    },
+    "str-unicode-escape#write:json": {
+      "key": "8a102fb7aee0a48a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"éé中\"}]}]}\n",
+      "stderr": ""
+    },
+    "tag-escaped#e2e:json": {
+      "key": "61ddc10f3deacbf8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "tag-escaped#read": {
+      "key": "61ddc10f3deacbf8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "tag-escaped#write:json": {
+      "key": "b271f1c948b3a801",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

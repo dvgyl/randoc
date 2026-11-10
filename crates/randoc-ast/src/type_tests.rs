@@ -77,8 +77,9 @@ fn attributes_report_classes_and_the_first_value_of_a_key() {
     assert!(!Attr::new("", vec![], vec![("k".into(), "v".into())]).is_empty());
 }
 
-/// The depth that the crate documentation gives as safe on a 2 MB stack.
-const DOCUMENTED_SAFE_DEPTH: usize = 200;
+/// The depths that the crate documentation gives as safe on a 2 MB stack.
+const SAFE_TABLE_DEPTH: usize = 200;
+const SAFE_CONTAINER_DEPTH: usize = 510;
 
 fn nested_quotes(depth: usize) -> Vec<Block> {
     let mut blocks = vec![Block::Para(vec![Inline::Str("x".into())])];
@@ -129,11 +130,14 @@ fn nested_meta_lists(depth: usize) -> MetaValue {
     value
 }
 
-fn clone_compare_and_drop<T: Clone + PartialEq + Send + 'static>(build: fn(usize) -> T) {
+fn clone_compare_and_drop<T: Clone + PartialEq + Send + 'static>(
+    build: fn(usize) -> T,
+    depth: usize,
+) {
     let outcome = std::thread::Builder::new()
         .stack_size(2 * 1024 * 1024)
         .spawn(move || {
-            let tree = build(DOCUMENTED_SAFE_DEPTH);
+            let tree = build(depth);
             let copy = tree.clone();
             let equal = tree == copy;
             drop(tree);
@@ -147,8 +151,8 @@ fn clone_compare_and_drop<T: Clone + PartialEq + Send + 'static>(build: fn(usize
 
 #[test]
 fn a_tree_at_the_documented_depth_is_safe_on_a_small_stack() {
-    clone_compare_and_drop(nested_quotes);
-    clone_compare_and_drop(nested_table_cells);
-    clone_compare_and_drop(nested_emphasis);
-    clone_compare_and_drop(nested_meta_lists);
+    clone_compare_and_drop(nested_quotes, SAFE_CONTAINER_DEPTH);
+    clone_compare_and_drop(nested_table_cells, SAFE_TABLE_DEPTH);
+    clone_compare_and_drop(nested_emphasis, SAFE_CONTAINER_DEPTH);
+    clone_compare_and_drop(nested_meta_lists, SAFE_CONTAINER_DEPTH);
 }

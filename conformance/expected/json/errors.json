@@ -1,0 +1,1853 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "block-array#e2e:json": {
+      "key": "f1d134eeed241825",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Array.\n"
+    },
+    "block-array#read": {
+      "key": "f1d134eeed241825",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Array.\n"
+    },
+    "block-c-null#e2e:json": {
+      "key": "2e52cf8e08f7d55a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Null\n"
+    },
+    "block-c-null#read": {
+      "key": "2e52cf8e08f7d55a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Null\n"
+    },
+    "block-c-number#e2e:json": {
+      "key": "73a9e0b772e72d9f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "block-c-number#read": {
+      "key": "73a9e0b772e72d9f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "block-c-object#e2e:json": {
+      "key": "5f3c595d81bd48bf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "block-c-object#read": {
+      "key": "5f3c595d81bd48bf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "block-lowercase-tag#e2e:json": {
+      "key": "65be03aea6ea5c9f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected an Object with a tag field where the value is one of [Plain, Para, LineBlock, CodeBlock, RawBlock, BlockQuote, OrderedList, BulletList, DefinitionList, Header, HorizontalRule, Table, Figure, Div], but got para.\n"
+    },
+    "block-lowercase-tag#read": {
+      "key": "65be03aea6ea5c9f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected an Object with a tag field where the value is one of [Plain, Para, LineBlock, CodeBlock, RawBlock, BlockQuote, OrderedList, BulletList, DefinitionList, Header, HorizontalRule, Table, Figure, Div], but got para.\n"
+    },
+    "block-missing-c#e2e:json": {
+      "key": "a99f68dd60ee60b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: key \"c\" not found\n"
+    },
+    "block-missing-c#read": {
+      "key": "a99f68dd60ee60b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: key \"c\" not found\n"
+    },
+    "block-missing-t#e2e:json": {
+      "key": "ed4a1bdc2dffd916",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: key \"t\" not found\n"
+    },
+    "block-missing-t#read": {
+      "key": "ed4a1bdc2dffd916",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: key \"t\" not found\n"
+    },
+    "block-not-object#e2e:json": {
+      "key": "66f5741face979e1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "block-not-object#read": {
+      "key": "66f5741face979e1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "block-null#e2e:json": {
+      "key": "10d02bc1033eefea",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Null.\n"
+    },
+    "block-null#read": {
+      "key": "10d02bc1033eefea",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected Object but got Null.\n"
+    },
+    "block-t-array#e2e:json": {
+      "key": "c9373ee6c85bf295",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0].t: parsing Key failed, expected String, but encountered Array\n"
+    },
+    "block-t-array#read": {
+      "key": "c9373ee6c85bf295",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0].t: parsing Key failed, expected String, but encountered Array\n"
+    },
+    "block-t-null#e2e:json": {
+      "key": "2c67168d67e022a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0].t: parsing Key failed, expected String, but encountered Null\n"
+    },
+    "block-t-null#read": {
+      "key": "2c67168d67e022a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0].t: parsing Key failed, expected String, but encountered Null\n"
+    },
+    "block-t-number#e2e:json": {
+      "key": "c9ad8122198e9829",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0].t: parsing Key failed, expected String, but encountered Number\n"
+    },
+    "block-t-number#read": {
+      "key": "c9ad8122198e9829",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0].t: parsing Key failed, expected String, but encountered Number\n"
+    },
+    "block-unknown-tag#e2e:json": {
+      "key": "938dc1477169471a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected an Object with a tag field where the value is one of [Plain, Para, LineBlock, CodeBlock, RawBlock, BlockQuote, OrderedList, BulletList, DefinitionList, Header, HorizontalRule, Table, Figure, Div], but got Nonsense.\n"
+    },
+    "block-unknown-tag#read": {
+      "key": "938dc1477169471a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing Text.Pandoc.Definition.Block expected an Object with a tag field where the value is one of [Plain, Para, LineBlock, CodeBlock, RawBlock, BlockQuote, OrderedList, BulletList, DefinitionList, Header, HorizontalRule, Table, Figure, Div], but got Nonsense.\n"
+    },
+    "blocks-not-array#e2e:json": {
+      "key": "278533e67147e18b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "blocks-not-array#read": {
+      "key": "278533e67147e18b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "blocks-null#e2e:json": {
+      "key": "8eec33cd85dc2066",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered Null\n"
+    },
+    "blocks-null#read": {
+      "key": "8eec33cd85dc2066",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered Null\n"
+    },
+    "blocks-string#e2e:json": {
+      "key": "d63921f1b0163064",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "blocks-string#read": {
+      "key": "d63921f1b0163064",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "bulletlist-item-number#e2e:json": {
+      "key": "a1a821155fae5f13",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "bulletlist-item-number#read": {
+      "key": "a1a821155fae5f13",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "bulletlist-items-object#e2e:json": {
+      "key": "854a9ce7deaded6f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "bulletlist-items-object#read": {
+      "key": "854a9ce7deaded6f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "cite-citation-array#e2e:json": {
+      "key": "04e7d4adbfcf06b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Citation of type Text.Pandoc.Definition.Citation expected Object but got Array.\n"
+    },
+    "cite-citation-array#read": {
+      "key": "04e7d4adbfcf06b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Citation of type Text.Pandoc.Definition.Citation expected Object but got Array.\n"
+    },
+    "cite-citation-number#e2e:json": {
+      "key": "3bea7d3bc21b2da7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Citation of type Text.Pandoc.Definition.Citation expected Object but got Number.\n"
+    },
+    "cite-citation-number#read": {
+      "key": "3bea7d3bc21b2da7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Citation of type Text.Pandoc.Definition.Citation expected Object but got Number.\n"
+    },
+    "cite-citations-object#e2e:json": {
+      "key": "380ef7fc7aabaf93",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "cite-citations-object#read": {
+      "key": "380ef7fc7aabaf93",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "cite-hash-string#e2e:json": {
+      "key": "facecd399459420f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationHash: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "cite-hash-string#read": {
+      "key": "facecd399459420f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationHash: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "cite-id-number#e2e:json": {
+      "key": "d00dc1e0c533554c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationId: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "cite-id-number#read": {
+      "key": "d00dc1e0c533554c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationId: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "cite-missing-hash#e2e:json": {
+      "key": "ea675f6c8e2709c3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationHash was not present.\n"
+    },
+    "cite-missing-hash#read": {
+      "key": "ea675f6c8e2709c3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationHash was not present.\n"
+    },
+    "cite-missing-id#e2e:json": {
+      "key": "45b2dc7fe224cb9d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationId was not present.\n"
+    },
+    "cite-missing-id#read": {
+      "key": "45b2dc7fe224cb9d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationId was not present.\n"
+    },
+    "cite-missing-mode#e2e:json": {
+      "key": "6ce23175ebc341f5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationMode was not present.\n"
+    },
+    "cite-missing-mode#read": {
+      "key": "6ce23175ebc341f5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationMode was not present.\n"
+    },
+    "cite-missing-prefix#e2e:json": {
+      "key": "d04d208e5406445e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationPrefix was not present.\n"
+    },
+    "cite-missing-prefix#read": {
+      "key": "d04d208e5406445e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the record Citation of type Text.Pandoc.Definition.Citation the key citationPrefix was not present.\n"
+    },
+    "cite-mode-string#e2e:json": {
+      "key": "f3e50b2ce0ce76c9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationMode: When parsing Text.Pandoc.Definition.CitationMode expected Object but got String.\n"
+    },
+    "cite-mode-string#read": {
+      "key": "f3e50b2ce0ce76c9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationMode: When parsing Text.Pandoc.Definition.CitationMode expected Object but got String.\n"
+    },
+    "cite-mode-unknown#e2e:json": {
+      "key": "87a950aca935d3a0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationMode: When parsing Text.Pandoc.Definition.CitationMode expected an Object with a tag field where the value is one of [AuthorInText, SuppressAuthor, NormalCitation], but got X.\n"
+    },
+    "cite-mode-unknown#read": {
+      "key": "87a950aca935d3a0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationMode: When parsing Text.Pandoc.Definition.CitationMode expected an Object with a tag field where the value is one of [AuthorInText, SuppressAuthor, NormalCitation], but got X.\n"
+    },
+    "cite-notenum-fraction#e2e:json": {
+      "key": "e13346e33b6c1f6a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationNoteNum: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "cite-notenum-fraction#read": {
+      "key": "e13346e33b6c1f6a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationNoteNum: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "cite-prefix-bad-inline#e2e:json": {
+      "key": "52d8b278128f98d1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationPrefix[0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "cite-prefix-bad-inline#read": {
+      "key": "52d8b278128f98d1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationPrefix[0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "cite-prefix-null#e2e:json": {
+      "key": "5753b6c9c2f77546",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationPrefix: parsing [] failed, expected Array, but encountered Null\n"
+    },
+    "cite-prefix-null#read": {
+      "key": "5753b6c9c2f77546",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0].citationPrefix: parsing [] failed, expected Array, but encountered Null\n"
+    },
+    "code-attr-null#e2e:json": {
+      "key": "23314cf8bfaf5648",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b, c) failed, expected Array, but encountered Null\n"
+    },
+    "code-attr-null#read": {
+      "key": "23314cf8bfaf5648",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b, c) failed, expected Array, but encountered Null\n"
+    },
+    "codeblock-attr-number#e2e:json": {
+      "key": "04be6789f95ac583",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing (a, b, c) failed, expected Array, but encountered Number\n"
+    },
+    "codeblock-attr-number#read": {
+      "key": "04be6789f95ac583",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing (a, b, c) failed, expected Array, but encountered Number\n"
+    },
+    "codeblock-attr-object#e2e:json": {
+      "key": "7c78ba61aee92cc5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing (a, b, c) failed, expected Array, but encountered Object\n"
+    },
+    "codeblock-attr-object#read": {
+      "key": "7c78ba61aee92cc5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing (a, b, c) failed, expected Array, but encountered Object\n"
+    },
+    "codeblock-attr-pair-long#e2e:json": {
+      "key": "f29789a900d5e77e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2][0]: cannot unpack array of length 3 into a tuple of length 2\n"
+    },
+    "codeblock-attr-pair-long#read": {
+      "key": "f29789a900d5e77e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2][0]: cannot unpack array of length 3 into a tuple of length 2\n"
+    },
+    "codeblock-attr-pair-object#e2e:json": {
+      "key": "7fa90966b6dcc30f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2][0]: parsing (a, b) failed, expected Array, but encountered Object\n"
+    },
+    "codeblock-attr-pair-object#read": {
+      "key": "7fa90966b6dcc30f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2][0]: parsing (a, b) failed, expected Array, but encountered Object\n"
+    },
+    "codeblock-attr-pair-short#e2e:json": {
+      "key": "3f9d7163d49629b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "codeblock-attr-pair-short#read": {
+      "key": "3f9d7163d49629b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "codeblock-attr-short#e2e:json": {
+      "key": "4d8bcd00630ebc76",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: cannot unpack array of length 2 into a tuple of length 3\n"
+    },
+    "codeblock-attr-short#read": {
+      "key": "4d8bcd00630ebc76",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: cannot unpack array of length 2 into a tuple of length 3\n"
+    },
+    "codeblock-class-number#e2e:json": {
+      "key": "ac3ec39072c391df",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "codeblock-class-number#read": {
+      "key": "ac3ec39072c391df",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "codeblock-classes-object#e2e:json": {
+      "key": "0a73982e70f96c79",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "codeblock-classes-object#read": {
+      "key": "0a73982e70f96c79",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "codeblock-id-number#e2e:json": {
+      "key": "72eab650fd6a292f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "codeblock-id-number#read": {
+      "key": "72eab650fd6a292f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "codeblock-text-number#e2e:json": {
+      "key": "d021b9f199712511",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "codeblock-text-number#read": {
+      "key": "d021b9f199712511",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "deflist-def-number#e2e:json": {
+      "key": "63fa8a66a8530ba9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1][0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "deflist-def-number#read": {
+      "key": "63fa8a66a8530ba9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1][0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "deflist-item-object#e2e:json": {
+      "key": "a8fbbf4372578686",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b) failed, expected Array, but encountered Object\n"
+    },
+    "deflist-item-object#read": {
+      "key": "a8fbbf4372578686",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b) failed, expected Array, but encountered Object\n"
+    },
+    "deflist-item-short#e2e:json": {
+      "key": "bbbb99e659bcb16c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "deflist-item-short#read": {
+      "key": "bbbb99e659bcb16c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "div-blocks-number#e2e:json": {
+      "key": "e7a10de0a56e9ede",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "div-blocks-number#read": {
+      "key": "e7a10de0a56e9ede",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "figure-caption-number#e2e:json": {
+      "key": "604b419430e0baf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Caption of type Text.Pandoc.Definition.Caption expected Array but got Number.\n"
+    },
+    "figure-caption-number#read": {
+      "key": "604b419430e0baf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Caption of type Text.Pandoc.Definition.Caption expected Array but got Number.\n"
+    },
+    "figure-caption-short#e2e:json": {
+      "key": "82308187d784ee46",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Caption of type Text.Pandoc.Definition.Caption expected Array of length 2 but got Array of length 1.\n"
+    },
+    "figure-caption-short#read": {
+      "key": "82308187d784ee46",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Caption of type Text.Pandoc.Definition.Caption expected Array of length 2 but got Array of length 1.\n"
+    },
+    "figure-short-number#e2e:json": {
+      "key": "6a23e6ee2e983e02",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "figure-short-number#read": {
+      "key": "6a23e6ee2e983e02",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "figure-short-string#e2e:json": {
+      "key": "c23e43162949fcd1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "figure-short-string#read": {
+      "key": "c23e43162949fcd1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "header-c-null#e2e:json": {
+      "key": "1af55830774f405d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got Null.\n"
+    },
+    "header-c-null#read": {
+      "key": "1af55830774f405d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got Null.\n"
+    },
+    "header-c-number#e2e:json": {
+      "key": "0395382a3981a1e6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got Number.\n"
+    },
+    "header-c-number#read": {
+      "key": "0395382a3981a1e6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got Number.\n"
+    },
+    "header-c-object#e2e:json": {
+      "key": "31c528b70cdc7fc4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got Object.\n"
+    },
+    "header-c-object#read": {
+      "key": "31c528b70cdc7fc4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got Object.\n"
+    },
+    "header-c-string#e2e:json": {
+      "key": "cd905f19e3030b15",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got String.\n"
+    },
+    "header-c-string#read": {
+      "key": "cd905f19e3030b15",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array but got String.\n"
+    },
+    "header-level-fraction#e2e:json": {
+      "key": "99842ec0450d140d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "header-level-fraction#read": {
+      "key": "99842ec0450d140d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "header-level-null#e2e:json": {
+      "key": "00a97ebed673b52f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, expected Number, but encountered Null\n"
+    },
+    "header-level-null#read": {
+      "key": "00a97ebed673b52f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, expected Number, but encountered Null\n"
+    },
+    "header-level-overflow#e2e:json": {
+      "key": "7e3ec1d9ddb79332",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, value is either floating or will cause over or underflow 9.223372036854775808e18\n"
+    },
+    "header-level-overflow#read": {
+      "key": "7e3ec1d9ddb79332",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, value is either floating or will cause over or underflow 9.223372036854775808e18\n"
+    },
+    "header-level-string#e2e:json": {
+      "key": "322634af0bc7b293",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "header-level-string#read": {
+      "key": "322634af0bc7b293",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "header-long#e2e:json": {
+      "key": "bf8fb34c0fb82854",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array of length 3 but got Array of length 4.\n"
+    },
+    "header-long#read": {
+      "key": "bf8fb34c0fb82854",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array of length 3 but got Array of length 4.\n"
+    },
+    "header-missing-c#e2e:json": {
+      "key": "d64e499bdcdd22be",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: key \"c\" not found\n"
+    },
+    "header-missing-c#read": {
+      "key": "d64e499bdcdd22be",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: key \"c\" not found\n"
+    },
+    "header-short#e2e:json": {
+      "key": "9215862413a8e699",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array of length 3 but got Array of length 2.\n"
+    },
+    "header-short#read": {
+      "key": "9215862413a8e699",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Header of type Text.Pandoc.Definition.Block expected Array of length 3 but got Array of length 2.\n"
+    },
+    "image-target-long#e2e:json": {
+      "key": "bec1f268d02716c1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 3 into a tuple of length 2\n"
+    },
+    "image-target-long#read": {
+      "key": "bec1f268d02716c1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 3 into a tuple of length 2\n"
+    },
+    "inline-block-tag#e2e:json": {
+      "key": "29b2250fbd9a9233",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Para.\n"
+    },
+    "inline-block-tag#read": {
+      "key": "29b2250fbd9a9233",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Para.\n"
+    },
+    "inline-deep-error#e2e:json": {
+      "key": "568362d9b2fcfab3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0][1][0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "inline-deep-error#read": {
+      "key": "568362d9b2fcfab3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0][1][0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "inline-nested-unknown#e2e:json": {
+      "key": "f83a93b5ad7d0f00",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Foo.\n"
+    },
+    "inline-nested-unknown#read": {
+      "key": "f83a93b5ad7d0f00",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Foo.\n"
+    },
+    "inline-not-object#e2e:json": {
+      "key": "1522ae291b0ac0d1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "inline-not-object#read": {
+      "key": "1522ae291b0ac0d1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "inline-str-missing-c#e2e:json": {
+      "key": "1db369ca57f03e63",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: key \"c\" not found\n"
+    },
+    "inline-str-missing-c#read": {
+      "key": "1db369ca57f03e63",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: key \"c\" not found\n"
+    },
+    "inline-str-null#e2e:json": {
+      "key": "d5f3579a820a1e3a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Null\n"
+    },
+    "inline-str-null#read": {
+      "key": "d5f3579a820a1e3a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Null\n"
+    },
+    "inline-str-number#e2e:json": {
+      "key": "31d577a10c3a0b4b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "inline-str-number#read": {
+      "key": "31d577a10c3a0b4b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "inline-unknown#e2e:json": {
+      "key": "d2d0e1ba8c1ffec4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Foo.\n"
+    },
+    "inline-unknown#read": {
+      "key": "d2d0e1ba8c1ffec4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Foo.\n"
+    },
+    "lineblock-inline-number#e2e:json": {
+      "key": "7356783aaffa9bad",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "lineblock-inline-number#read": {
+      "key": "7356783aaffa9bad",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "lineblock-line-string#e2e:json": {
+      "key": "62840de43fa025c6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "lineblock-line-string#read": {
+      "key": "62840de43fa025c6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "link-short#e2e:json": {
+      "key": "858f5df6292f81e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor Link of type Text.Pandoc.Definition.Inline expected Array of length 3 but got Array of length 2.\n"
+    },
+    "link-short#read": {
+      "key": "858f5df6292f81e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor Link of type Text.Pandoc.Definition.Inline expected Array of length 3 but got Array of length 2.\n"
+    },
+    "link-target-number#e2e:json": {
+      "key": "99744b4821757e7d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b) failed, expected Array, but encountered Number\n"
+    },
+    "link-target-number#read": {
+      "key": "99744b4821757e7d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b) failed, expected Array, but encountered Number\n"
+    },
+    "link-target-short#e2e:json": {
+      "key": "e1ca4dc4a3dbc057",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "link-target-short#read": {
+      "key": "e1ca4dc4a3dbc057",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "math-text-number#e2e:json": {
+      "key": "93afc76baea42021",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "math-text-number#read": {
+      "key": "93afc76baea42021",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "math-type-unknown#e2e:json": {
+      "key": "4abcca33f01f4ce3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.MathType expected an Object with a tag field where the value is one of [DisplayMath, InlineMath], but got X.\n"
+    },
+    "math-type-unknown#read": {
+      "key": "4abcca33f01f4ce3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.MathType expected an Object with a tag field where the value is one of [DisplayMath, InlineMath], but got X.\n"
+    },
+    "meta-before-blocks#e2e:json": {
+      "key": "9ef8e67eae5ac6c2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-before-blocks#read": {
+      "key": "9ef8e67eae5ac6c2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-bool-number#e2e:json": {
+      "key": "9cf0929642e19601",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: expected Bool, but encountered Number\n"
+    },
+    "meta-bool-number#read": {
+      "key": "9cf0929642e19601",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: expected Bool, but encountered Number\n"
+    },
+    "meta-bool-string#e2e:json": {
+      "key": "bd298dada24bc4cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: expected Bool, but encountered String\n"
+    },
+    "meta-bool-string#read": {
+      "key": "bd298dada24bc4cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: expected Bool, but encountered String\n"
+    },
+    "meta-error-sorted-first#e2e:json": {
+      "key": "73039a979f2f1817",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-error-sorted-first#read": {
+      "key": "73039a979f2f1817",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-inlines-bad#e2e:json": {
+      "key": "02db59e8d83901d2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a[0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Para.\n"
+    },
+    "meta-inlines-bad#read": {
+      "key": "02db59e8d83901d2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a[0]: When parsing Text.Pandoc.Definition.Inline expected an Object with a tag field where the value is one of [Str, Emph, Underline, Strong, Strikeout, Superscript, Subscript, SmallCaps, Quoted, Cite, Code, Space, SoftBreak, LineBreak, Math, RawInline, Link, Image, Note, Span], but got Para.\n"
+    },
+    "meta-list-number#e2e:json": {
+      "key": "1da19752915d2eb3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a[0]: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-list-number#read": {
+      "key": "1da19752915d2eb3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a[0]: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-map-array#e2e:json": {
+      "key": "ab4f5f608ca4014c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: parsing Map ~Text failed, expected Object, but encountered Array\n"
+    },
+    "meta-map-array#read": {
+      "key": "ab4f5f608ca4014c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: parsing Map ~Text failed, expected Object, but encountered Array\n"
+    },
+    "meta-missing-c#e2e:json": {
+      "key": "ede72877accbfef6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: key \"c\" not found\n"
+    },
+    "meta-missing-c#read": {
+      "key": "ede72877accbfef6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: key \"c\" not found\n"
+    },
+    "meta-nested-unknown#e2e:json": {
+      "key": "e27691d9a9dff693",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a.b: When parsing Text.Pandoc.Definition.MetaValue expected an Object with a tag field where the value is one of [MetaMap, MetaList, MetaBool, MetaString, MetaInlines, MetaBlocks], but got X.\n"
+    },
+    "meta-nested-unknown#read": {
+      "key": "e27691d9a9dff693",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a.b: When parsing Text.Pandoc.Definition.MetaValue expected an Object with a tag field where the value is one of [MetaMap, MetaList, MetaBool, MetaString, MetaInlines, MetaBlocks], but got X.\n"
+    },
+    "meta-not-object#e2e:json": {
+      "key": "7cc07386e07c198b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta: parsing Map ~Text failed, expected Object, but encountered Array\n"
+    },
+    "meta-not-object#read": {
+      "key": "7cc07386e07c198b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta: parsing Map ~Text failed, expected Object, but encountered Array\n"
+    },
+    "meta-null#e2e:json": {
+      "key": "238f44988bc49bca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta: parsing Map ~Text failed, expected Object, but encountered Null\n"
+    },
+    "meta-null#read": {
+      "key": "238f44988bc49bca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta: parsing Map ~Text failed, expected Object, but encountered Null\n"
+    },
+    "meta-string-number#e2e:json": {
+      "key": "72c178a85c8df9b6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "meta-string-number#read": {
+      "key": "72c178a85c8df9b6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "meta-value-number#e2e:json": {
+      "key": "591d218a7346f462",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-value-number#read": {
+      "key": "591d218a7346f462",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "meta-value-unknown#e2e:json": {
+      "key": "e62017a4e036cbf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected an Object with a tag field where the value is one of [MetaMap, MetaList, MetaBool, MetaString, MetaInlines, MetaBlocks], but got X.\n"
+    },
+    "meta-value-unknown#read": {
+      "key": "e62017a4e036cbf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a: When parsing Text.Pandoc.Definition.MetaValue expected an Object with a tag field where the value is one of [MetaMap, MetaList, MetaBool, MetaString, MetaInlines, MetaBlocks], but got X.\n"
+    },
+    "missing-blocks#e2e:json": {
+      "key": "2c159cadea092793",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: key \"blocks\" not found\n"
+    },
+    "missing-blocks#read": {
+      "key": "2c159cadea092793",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: key \"blocks\" not found\n"
+    },
+    "missing-meta#e2e:json": {
+      "key": "1ab97e761acba5c8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: key \"meta\" not found\n"
+    },
+    "missing-meta#read": {
+      "key": "1ab97e761acba5c8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: key \"meta\" not found\n"
+    },
+    "missing-meta-bad-blocks#e2e:json": {
+      "key": "4f2b96b33c0f90a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: key \"meta\" not found\n"
+    },
+    "missing-meta-bad-blocks#read": {
+      "key": "4f2b96b33c0f90a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: key \"meta\" not found\n"
+    },
+    "note-blocks-object#e2e:json": {
+      "key": "b2616b61b8a5f755",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "note-blocks-object#read": {
+      "key": "b2616b61b8a5f755",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "orderedlist-attrs-object#e2e:json": {
+      "key": "39d66713c5faf788",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing (a, b, c) failed, expected Array, but encountered Object\n"
+    },
+    "orderedlist-attrs-object#read": {
+      "key": "39d66713c5faf788",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing (a, b, c) failed, expected Array, but encountered Object\n"
+    },
+    "orderedlist-attrs-short#e2e:json": {
+      "key": "7f21e40c907ae079",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: cannot unpack array of length 2 into a tuple of length 3\n"
+    },
+    "orderedlist-attrs-short#read": {
+      "key": "7f21e40c907ae079",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: cannot unpack array of length 2 into a tuple of length 3\n"
+    },
+    "orderedlist-delim-unknown#e2e:json": {
+      "key": "c428533d3f787f16",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2]: When parsing Text.Pandoc.Definition.ListNumberDelim expected an Object with a tag field where the value is one of [DefaultDelim, Period, OneParen, TwoParens], but got Dot.\n"
+    },
+    "orderedlist-delim-unknown#read": {
+      "key": "c428533d3f787f16",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][2]: When parsing Text.Pandoc.Definition.ListNumberDelim expected an Object with a tag field where the value is one of [DefaultDelim, Period, OneParen, TwoParens], but got Dot.\n"
+    },
+    "orderedlist-item-not-list#e2e:json": {
+      "key": "3bfed9b369079621",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "orderedlist-item-not-list#read": {
+      "key": "3bfed9b369079621",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "orderedlist-start-string#e2e:json": {
+      "key": "59722f8a6f41ddef",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "orderedlist-start-string#read": {
+      "key": "59722f8a6f41ddef",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "orderedlist-style-string#e2e:json": {
+      "key": "3b4e01a7c90a1c97",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.ListNumberStyle expected Object but got String.\n"
+    },
+    "orderedlist-style-string#read": {
+      "key": "3b4e01a7c90a1c97",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.ListNumberStyle expected Object but got String.\n"
+    },
+    "orderedlist-style-unknown#e2e:json": {
+      "key": "383a5bda7126be3e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.ListNumberStyle expected an Object with a tag field where the value is one of [DefaultStyle, Example, Decimal, LowerRoman, UpperRoman, LowerAlpha, UpperAlpha], but got Foo.\n"
+    },
+    "orderedlist-style-unknown#read": {
+      "key": "383a5bda7126be3e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.ListNumberStyle expected an Object with a tag field where the value is one of [DefaultStyle, Example, Decimal, LowerRoman, UpperRoman, LowerAlpha, UpperAlpha], but got Foo.\n"
+    },
+    "quoted-type-unknown#e2e:json": {
+      "key": "3009762c149e9a53",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.QuoteType expected an Object with a tag field where the value is one of [SingleQuote, DoubleQuote], but got X.\n"
+    },
+    "quoted-type-unknown#read": {
+      "key": "3009762c149e9a53",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing Text.Pandoc.Definition.QuoteType expected an Object with a tag field where the value is one of [SingleQuote, DoubleQuote], but got X.\n"
+    },
+    "rawblock-format-number#e2e:json": {
+      "key": "811e804848fdf62d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "rawblock-format-number#read": {
+      "key": "811e804848fdf62d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "rawinline-text-object#e2e:json": {
+      "key": "d05a2f9548a5dbb5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Object\n"
+    },
+    "rawinline-text-object#read": {
+      "key": "d05a2f9548a5dbb5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Text failed, expected String, but encountered Object\n"
+    },
+    "table-body-number#e2e:json": {
+      "key": "6ab0c1f0dd7b51eb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor TableBody of type Text.Pandoc.Definition.TableBody expected Array but got Number.\n"
+    },
+    "table-body-number#read": {
+      "key": "6ab0c1f0dd7b51eb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor TableBody of type Text.Pandoc.Definition.TableBody expected Array but got Number.\n"
+    },
+    "table-body-rhc-fraction#e2e:json": {
+      "key": "33be4c718610b9ba",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Int failed, value is either floating or will cause over or underflow 0.5\n"
+    },
+    "table-body-rhc-fraction#read": {
+      "key": "33be4c718610b9ba",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Int failed, value is either floating or will cause over or underflow 0.5\n"
+    },
+    "table-body-rhc-string#e2e:json": {
+      "key": "474d29dd61acedaf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "table-body-rhc-string#read": {
+      "key": "474d29dd61acedaf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "table-body-short#e2e:json": {
+      "key": "e1211c1c73e903ac",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor TableBody of type Text.Pandoc.Definition.TableBody expected Array of length 4 but got Array of length 3.\n"
+    },
+    "table-body-short#read": {
+      "key": "e1211c1c73e903ac",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor TableBody of type Text.Pandoc.Definition.TableBody expected Array of length 4 but got Array of length 3.\n"
+    },
+    "table-c-object#e2e:json": {
+      "key": "24aeadc5c06cb614",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Table of type Text.Pandoc.Definition.Block expected Array but got Object.\n"
+    },
+    "table-c-object#read": {
+      "key": "24aeadc5c06cb614",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Table of type Text.Pandoc.Definition.Block expected Array but got Object.\n"
+    },
+    "table-caption-number#e2e:json": {
+      "key": "308729c12268a8b1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Caption of type Text.Pandoc.Definition.Caption expected Array but got Number.\n"
+    },
+    "table-caption-number#read": {
+      "key": "308729c12268a8b1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Caption of type Text.Pandoc.Definition.Caption expected Array but got Number.\n"
+    },
+    "table-cell-align-unknown#e2e:json": {
+      "key": "299ce207b7e51be7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Alignment expected an Object with a tag field where the value is one of [AlignLeft, AlignRight, AlignCenter, AlignDefault], but got AlignMiddle.\n"
+    },
+    "table-cell-align-unknown#read": {
+      "key": "299ce207b7e51be7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing Text.Pandoc.Definition.Alignment expected an Object with a tag field where the value is one of [AlignLeft, AlignRight, AlignCenter, AlignDefault], but got AlignMiddle.\n"
+    },
+    "table-cell-number#e2e:json": {
+      "key": "503d97526e79a476",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Cell of type Text.Pandoc.Definition.Cell expected Array but got Number.\n"
+    },
+    "table-cell-number#read": {
+      "key": "503d97526e79a476",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Cell of type Text.Pandoc.Definition.Cell expected Array but got Number.\n"
+    },
+    "table-cell-short#e2e:json": {
+      "key": "182ee86794944511",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Cell of type Text.Pandoc.Definition.Cell expected Array of length 5 but got Array of length 4.\n"
+    },
+    "table-cell-short#read": {
+      "key": "182ee86794944511",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: When parsing the constructor Cell of type Text.Pandoc.Definition.Cell expected Array of length 5 but got Array of length 4.\n"
+    },
+    "table-cell-span-fraction#e2e:json": {
+      "key": "c8dbec6ab5564d79",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "table-cell-span-fraction#read": {
+      "key": "c8dbec6ab5564d79",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "table-colspec-long#e2e:json": {
+      "key": "2fb54d6d51861cb9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 3 into a tuple of length 2\n"
+    },
+    "table-colspec-long#read": {
+      "key": "2fb54d6d51861cb9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 3 into a tuple of length 2\n"
+    },
+    "table-colspec-number#e2e:json": {
+      "key": "3e28fa8301cfbf81",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b) failed, expected Array, but encountered Number\n"
+    },
+    "table-colspec-number#read": {
+      "key": "3e28fa8301cfbf81",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: parsing (a, b) failed, expected Array, but encountered Number\n"
+    },
+    "table-colspec-short#e2e:json": {
+      "key": "b8d4e5359e358e47",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "table-colspec-short#read": {
+      "key": "b8d4e5359e358e47",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: cannot unpack array of length 1 into a tuple of length 2\n"
+    },
+    "table-foot-object#e2e:json": {
+      "key": "125329d5c6cc7ce0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor TableFoot of type Text.Pandoc.Definition.TableFoot expected Array but got Object.\n"
+    },
+    "table-foot-object#read": {
+      "key": "125329d5c6cc7ce0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor TableFoot of type Text.Pandoc.Definition.TableFoot expected Array but got Object.\n"
+    },
+    "table-head-number#e2e:json": {
+      "key": "7d7b97d3ea2ba710",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor TableHead of type Text.Pandoc.Definition.TableHead expected Array but got Number.\n"
+    },
+    "table-head-number#read": {
+      "key": "7d7b97d3ea2ba710",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor TableHead of type Text.Pandoc.Definition.TableHead expected Array but got Number.\n"
+    },
+    "table-head-short#e2e:json": {
+      "key": "dabf869215883966",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor TableHead of type Text.Pandoc.Definition.TableHead expected Array of length 2 but got Array of length 1.\n"
+    },
+    "table-head-short#read": {
+      "key": "dabf869215883966",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor TableHead of type Text.Pandoc.Definition.TableHead expected Array of length 2 but got Array of length 1.\n"
+    },
+    "table-row-number#e2e:json": {
+      "key": "7795d32421071929",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor Row of type Text.Pandoc.Definition.Row expected Array but got Number.\n"
+    },
+    "table-row-number#read": {
+      "key": "7795d32421071929",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor Row of type Text.Pandoc.Definition.Row expected Array but got Number.\n"
+    },
+    "table-row-short#e2e:json": {
+      "key": "a4dd2661d926b5e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor Row of type Text.Pandoc.Definition.Row expected Array of length 2 but got Array of length 1.\n"
+    },
+    "table-row-short#read": {
+      "key": "a4dd2661d926b5e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0]: When parsing the constructor Row of type Text.Pandoc.Definition.Row expected Array of length 2 but got Array of length 1.\n"
+    },
+    "table-short#e2e:json": {
+      "key": "c4bcdfb246365880",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Table of type Text.Pandoc.Definition.Block expected Array of length 6 but got Array of length 3.\n"
+    },
+    "table-short#read": {
+      "key": "c4bcdfb246365880",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0]: When parsing the constructor Table of type Text.Pandoc.Definition.Block expected Array of length 6 but got Array of length 3.\n"
+    },
+    "table-width-array#e2e:json": {
+      "key": "ebf7992ea731634a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected Array\n"
+    },
+    "table-width-array#read": {
+      "key": "ebf7992ea731634a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected Array\n"
+    },
+    "table-width-inf-word#e2e:json": {
+      "key": "448fbc439366ff70",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected String\n"
+    },
+    "table-width-inf-word#read": {
+      "key": "448fbc439366ff70",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected String\n"
+    },
+    "table-width-missing-c#e2e:json": {
+      "key": "d3f47817173c9bc6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: key \"c\" not found\n"
+    },
+    "table-width-missing-c#read": {
+      "key": "d3f47817173c9bc6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: key \"c\" not found\n"
+    },
+    "table-width-nan-word#e2e:json": {
+      "key": "857f98fb8bd2861e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected String\n"
+    },
+    "table-width-nan-word#read": {
+      "key": "857f98fb8bd2861e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected String\n"
+    },
+    "table-width-object#e2e:json": {
+      "key": "eb52137eb5964bca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected Object\n"
+    },
+    "table-width-object#read": {
+      "key": "eb52137eb5964bca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected Object\n"
+    },
+    "table-width-string#e2e:json": {
+      "key": "757963b1627fe2e3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected String\n"
+    },
+    "table-width-string#read": {
+      "key": "757963b1627fe2e3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected String\n"
+    },
+    "table-width-true#e2e:json": {
+      "key": "df58cab2bd0dde10",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected Boolean\n"
+    },
+    "table-width-true#read": {
+      "key": "df58cab2bd0dde10",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: parsing Double failed, unexpected Boolean\n"
+    },
+    "table-width-unknown#e2e:json": {
+      "key": "798f07f4b89e0467",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: When parsing Text.Pandoc.Definition.ColWidth expected an Object with a tag field where the value is one of [ColWidth, ColWidthDefault], but got ColWidthAuto.\n"
+    },
+    "table-width-unknown#read": {
+      "key": "798f07f4b89e0467",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][1]: When parsing Text.Pandoc.Definition.ColWidth expected an Object with a tag field where the value is one of [ColWidth, ColWidthDefault], but got ColWidthAuto.\n"
+    },
+    "top-array#e2e:json": {
+      "key": "d58a6e41e164741d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-array#read": {
+      "key": "d58a6e41e164741d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-empty-object#e2e:json": {
+      "key": "d5f74e41e1c10f9d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "top-empty-object#read": {
+      "key": "d5f74e41e1c10f9d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "top-null#e2e:json": {
+      "key": "1eacc4b36874df1e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-null#read": {
+      "key": "1eacc4b36874df1e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-number#e2e:json": {
+      "key": "17e692f6be51ddf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-number#read": {
+      "key": "17e692f6be51ddf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-string#e2e:json": {
+      "key": "f94937faf223e98c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-string#read": {
+      "key": "f94937faf223e98c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-true#e2e:json": {
+      "key": "dade64835c6f8307",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "top-true#read": {
+      "key": "dade64835c6f8307",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: mempty\n"
+    },
+    "version-before-content#e2e:json": {
+      "key": "10ac8ad1e46fb184",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [2,0] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-before-content#read": {
+      "key": "10ac8ad1e46fb184",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [2,0] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-empty#e2e:json": {
+      "key": "4561ea5a189e8850",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-empty#read": {
+      "key": "4561ea5a189e8850",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-first-fraction#e2e:json": {
+      "key": "ef5789438043b90b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "version-first-fraction#read": {
+      "key": "ef5789438043b90b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "version-item-fraction#e2e:json": {
+      "key": "ca24658f16116f7d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][1]: parsing Int failed, value is either floating or will cause over or underflow 23.5\n"
+    },
+    "version-item-fraction#read": {
+      "key": "ca24658f16116f7d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][1]: parsing Int failed, value is either floating or will cause over or underflow 23.5\n"
+    },
+    "version-item-string#e2e:json": {
+      "key": "02451ff0703b63da",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][2]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "version-item-string#read": {
+      "key": "02451ff0703b63da",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][2]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "version-major#e2e:json": {
+      "key": "ee22560f9ce6e1c9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [2,23] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-major#read": {
+      "key": "ee22560f9ce6e1c9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [2,23] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-missing#e2e:json": {
+      "key": "78a5d9600018a72f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "version-missing#read": {
+      "key": "78a5d9600018a72f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "version-negative#e2e:json": {
+      "key": "f626c311bdef9a48",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [-1,23] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-negative#read": {
+      "key": "f626c311bdef9a48",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [-1,23] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-new#e2e:json": {
+      "key": "da6f46f8485b01e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,24,0] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-new#read": {
+      "key": "da6f46f8485b01e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,24,0] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-null#e2e:json": {
+      "key": "672917ef44213be5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "version-null#read": {
+      "key": "672917ef44213be5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: JSON missing pandoc-api-version.\n"
+    },
+    "version-object#e2e:json": {
+      "key": "568e92870c38e1d0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version']: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "version-object#read": {
+      "key": "568e92870c38e1d0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version']: parsing [] failed, expected Array, but encountered Object\n"
+    },
+    "version-old#e2e:json": {
+      "key": "f0dcc9f5758c7d71",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-old#read": {
+      "key": "f0dcc9f5758c7d71",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-old-bad-item#e2e:json": {
+      "key": "084224be4072e709",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][2]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "version-old-bad-item#read": {
+      "key": "084224be4072e709",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version'][2]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "version-one-part#e2e:json": {
+      "key": "fe6b8fb91d032f1a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-one-part#read": {
+      "key": "fe6b8fb91d032f1a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1] but attempted to decode with [1,23,1,2].\n"
+    },
+    "version-string#e2e:json": {
+      "key": "23e04f1a13291304",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version']: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "version-string#read": {
+      "key": "23e04f1a13291304",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $['pandoc-api-version']: parsing [] failed, expected Array, but encountered String\n"
+    }
+  }
+}

@@ -578,12 +578,11 @@ mod tests {
                         checked += 1;
                     }
                     if read_unit["exit"] == 0 {
-                        let Ok(oracle) = json::from_json(tree_text) else {
-                            skipped.push(id.to_owned());
-                            continue;
-                        };
+                        // The JSON text of the oracle is the judge. A second
+                        // read of that text is not: the JSON reader gives 0.0
+                        // for -0.0, as Pandoc does.
                         let doc = result.unwrap_or_else(|e| panic!("{id}: {e}"));
-                        if json::to_json(&doc) != json::to_json(&oracle) {
+                        if json::to_json(&doc) != tree_text.trim_end() {
                             diverged.push(format!("{id}#read"));
                         }
                     } else {
@@ -605,19 +604,10 @@ mod tests {
                 checked += 1;
             }
         }
-        // These trees hold infinite numbers, which the JSON form cannot read yet (I-NATIVE-01).
-        assert_eq!(skipped, ["double-forms", "double-special"]);
-        // The JSON reader of Pandoc reads -0.0 as 0.0 before the writer runs
-        // (I-NATIVE-01). Pandoc expands a literal tab before the reader runs,
-        // and the command-line workstream adds that step (I-NATIVE-04).
-        assert_eq!(
-            diverged,
-            [
-                "double-negative-zero#write",
-                "literal-tab#e2e",
-                "literal-tab#read"
-            ]
-        );
+        assert_eq!(skipped, [] as [String; 0]);
+        // Pandoc expands a literal tab before the reader runs, and the
+        // command-line workstream adds that step (I-NATIVE-04).
+        assert_eq!(diverged, ["literal-tab#e2e", "literal-tab#read"]);
         assert!(checked >= 700, "only {checked} units");
     }
 

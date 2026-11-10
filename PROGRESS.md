@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-10 02:55 UTC.
+Updated: 2026-11-10 04:00 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -16,9 +16,9 @@ Updated: 2026-11-10 02:55 UTC.
 - Two formats work on `main`: `json` and `native` (reader and writer of each).
 - The layout engine (`randoc-layout`, a port of `doclayout`) is on `main`. No
   writer on `main` uses it yet.
-- Harness result on `main`: 1984 units, 949 pass, 995 fail, 40 skipped. Each
+- Harness result on `main`: 3574 units, 2217 pass, 987 fail, 370 skipped. Each
   failing unit needs a part that is not on `main` yet (options, the Markdown
-  reader, the new JSON codec) or is a recorded divergence.
+  reader) or is a recorded divergence.
 - Capability matrix (`spec/capabilities.json`): 2 of 52 input formats and 2 of
   77 output formats are partial. 0 of 90 extensions and 2 of 109 options have
   passing units.
@@ -31,23 +31,23 @@ Updated: 2026-11-10 02:55 UTC.
 
 ## Workstreams
 
-| Workstream | Branch | State at 02:55 UTC |
+| Workstream | Branch | State at 04:00 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
 | corpus | `ws/corpus` | Merged. |
 | layout | `ws/layout` | Merged. |
-| markdown-reader | `ws/markdown-reader` | The worker corrects the findings of review round 1 (1 critical, 6 high). |
-| html-writer | `ws/html-writer` | Review round 2. |
-| cli | `ws/cli` | The worker corrects the findings of review round 2 (medium findings only). |
+| markdown-reader | `ws/markdown-reader` | Review round 2 on a frozen copy. The worker corrects six open medium findings. |
+| html-writer | `ws/html-writer` | The worker corrects the findings of review round 2. |
+| cli | `ws/cli` | The worker corrects the findings of review round 3 (medium findings only). |
 | native | `ws/native` | Merged. |
-| json-codec | `ws/json-codec` | The speed gate passes now. Review round 3 found one stack-use defect in the decoder; the worker corrects it. |
-| commonmark-reader | `ws/commonmark-reader` | The worker corrects the findings of review round 1. The specification examples are out of the repository (decision D5). |
+| json-codec | `ws/json-codec` | Merged. |
+| commonmark-reader | `ws/commonmark-reader` | Review round 2. |
 | research | `ws/research` | Merged. |
-| templates | `ws/templates` | The worker corrects the findings of review round 1 (2 high). |
+| templates | `ws/templates` | Review round 2. |
 | latex-writer | `ws/latex-writer` | The worker corrects the findings of review round 1. |
-| yaml | `ws/yaml` | In work. One YAML crate (`randoc-yaml`) for the Markdown reader, the CommonMark reader and the command line. |
-| shared | `ws/shared` | In work. The module `randoc_core::shared`: text of inlines, identifiers, entities, emoji. |
+| yaml | `ws/yaml` | The worker corrects the findings of review round 1 (medium findings only). |
+| shared | `ws/shared` | The worker corrects the findings of review round 1 (1 high). |
 | highlight | `ws/highlight` | In work. Syntax highlighting: a port of `skylighting-core` with the 63 syntax definitions that have a permissive licence. |
 | markdown-writer | `ws/markdown-writer` | In work. The writer for `markdown`, `gfm`, `commonmark`, `plain` and the other Markdown variants. |
 

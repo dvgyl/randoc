@@ -1,0 +1,424 @@
+# Syntax errors and text after the value: the messages of the aeson token parser.
+from = "json"
+to = ["json"]
+
+
+[[case]]
+id = "syntax-000"
+input = ""
+
+[[case]]
+id = "syntax-001"
+input = " "
+
+[[case]]
+id = "syntax-002"
+input = "\n"
+
+[[case]]
+id = "syntax-003"
+input = "hello"
+
+[[case]]
+id = "syntax-004"
+input = "hel"
+
+[[case]]
+id = "syntax-005"
+input = "hello\n"
+
+[[case]]
+id = "syntax-006"
+input = "hello\n\n"
+
+[[case]]
+id = "syntax-007"
+input = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+
+[[case]]
+id = "syntax-008"
+input = "{"
+
+[[case]]
+id = "syntax-009"
+input = "{\"a\""
+
+[[case]]
+id = "syntax-010"
+input = "{\"a\":"
+
+[[case]]
+id = "syntax-011"
+input = "{\"a\":1"
+
+[[case]]
+id = "syntax-012"
+input = "{\"a\":1,"
+
+[[case]]
+id = "syntax-013"
+input = "{\"a\":1 \"b\""
+
+[[case]]
+id = "syntax-014"
+input = "{\"a\" 1}"
+
+[[case]]
+id = "syntax-015"
+input = "{5:1}"
+
+[[case]]
+id = "syntax-016"
+input = "{\"a\":1,}"
+
+[[case]]
+id = "syntax-017"
+input = "{\"a\":1,5}"
+
+[[case]]
+id = "syntax-018"
+input = "[1,]"
+
+[[case]]
+id = "syntax-019"
+input = "[1 2]"
+
+[[case]]
+id = "syntax-020"
+input = "["
+
+[[case]]
+id = "syntax-021"
+input = "[x"
+
+[[case]]
+id = "syntax-022"
+input = "[1,2"
+
+[[case]]
+id = "syntax-023"
+input = "[true"
+
+[[case]]
+id = "syntax-024"
+input = "{\"a\":tru}"
+
+[[case]]
+id = "syntax-025"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[}}"
+
+[[case]]
+id = "syntax-026"
+input = "\"abc"
+
+[[case]]
+id = "syntax-027"
+input = "tru"
+
+[[case]]
+id = "syntax-028"
+input = "nul"
+
+[[case]]
+id = "syntax-029"
+input = "fals"
+
+[[case]]
+id = "syntax-030"
+input = "true x"
+
+[[case]]
+id = "syntax-031"
+input = "-"
+
+[[case]]
+id = "syntax-032"
+input = "-a"
+
+[[case]]
+id = "syntax-033"
+input = "01"
+
+[[case]]
+id = "syntax-034"
+input = "-01"
+
+[[case]]
+id = "syntax-035"
+input = "1."
+
+[[case]]
+id = "syntax-036"
+input = "1.e5"
+
+[[case]]
+id = "syntax-037"
+input = "1e"
+
+[[case]]
+id = "syntax-038"
+input = "1e+"
+
+[[case]]
+id = "syntax-039"
+input = "1e+a"
+
+[[case]]
+id = "syntax-040"
+input = "1ea"
+
+[[case]]
+id = "syntax-041"
+input = "1e-"
+
+[[case]]
+id = "syntax-042"
+input = "1.a"
+
+[[case]]
+id = "syntax-043"
+input = "1a"
+
+[[case]]
+id = "syntax-044"
+input = "-0"
+
+[[case]]
+id = "syntax-045"
+input = "0x"
+
+[[case]]
+id = "syntax-046"
+input = ".5"
+
+[[case]]
+id = "syntax-047"
+input = "+1"
+
+[[case]]
+id = "syntax-048"
+input = "[-]"
+
+[[case]]
+id = "syntax-049"
+input = "[-x]"
+
+[[case]]
+id = "syntax-050"
+input = "[0.]"
+
+[[case]]
+id = "syntax-051"
+input = "[1.5e+]"
+
+[[case]]
+id = "syntax-052"
+input = "[1.5E-x]"
+
+[[case]]
+id = "syntax-053"
+input = "[1eé]"
+
+[[case]]
+id = "syntax-054"
+input = "[1.é]"
+
+[[case]]
+id = "syntax-055"
+input = "[1e\u007F]"
+
+[[case]]
+id = "syntax-056"
+input = "[1e\\]"
+
+[[case]]
+id = "syntax-057"
+input = "[1e']"
+
+[[case]]
+id = "syntax-058"
+input = "\"é"
+
+[[case]]
+id = "syntax-059"
+input = "{\"é\":é}"
+
+[[case]]
+id = "syntax-060"
+input = "NaN"
+
+[[case]]
+id = "syntax-061"
+input = "Infinity"
+
+[[case]]
+id = "syntax-062"
+input = "-Infinity"
+
+[[case]]
+id = "syntax-063"
+input = "{\"a\":[1,2,3]]"
+
+[[case]]
+id = "syntax-064"
+input = "{\"a\":{\"b\":1}}}"
+
+[[case]]
+id = "syntax-065"
+input = "x\u0001\u007F\u0005é1"
+
+[[case]]
+id = "syntax-066"
+input = "x\u000eH"
+
+[[case]]
+id = "syntax-067"
+input = "x\\\"'"
+
+[[case]]
+id = "syntax-068"
+input = "\u001b[31m"
+
+[[case]]
+id = "syntax-069"
+input = "[1]  \n "
+
+[[case]]
+id = "syntax-070"
+input = "[1] \f"
+
+[[case]]
+id = "syntax-071"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]} x"
+
+[[case]]
+id = "syntax-072"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\f"
+
+[[case]]
+id = "syntax-073"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}]"
+
+[[case]]
+id = "syntax-074"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}}"
+
+[[case]]
+id = "syntax-075"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "syntax-076"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n\n\n"
+
+[[case]]
+id = "syntax-077"
+input = "\f{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "syntax-078"
+input = "  {\"a\" : 1 , }"
+
+[[case]]
+id = "syntax-079"
+input = "[1e5x]"
+
+[[case]]
+id = "syntax-080"
+input = "1E5x"
+
+[[case]]
+id = "syntax-081"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[[[]]}"
+
+[[case]]
+id = "syntax-082"
+input = "/* c */ {\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "syntax-083"
+input = "// c\n{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "syntax-084"
+input = "'a'"
+
+[[case]]
+id = "syntax-085"
+input = "{'a':1}"
+
+[[case]]
+id = "syntax-086"
+input = "{\"a\":1;\"b\":2}"
+
+[[case]]
+id = "syntax-087"
+input = "[1,,2]"
+
+[[case]]
+id = "syntax-088"
+input = "[,1]"
+
+[[case]]
+id = "syntax-089"
+input = "{,}"
+
+[[case]]
+id = "syntax-090"
+input = "{\"a\"::1}"
+
+[[case]]
+id = "syntax-091"
+input = "[TRUE]"
+
+[[case]]
+id = "syntax-092"
+input = "[True]"
+
+[[case]]
+id = "syntax-093"
+input = "[null1]"
+
+[[case]]
+id = "syntax-094"
+input = "[nulll]"
+
+[[case]]
+id = "syntax-095"
+input = "[truex]"
+
+[[case]]
+id = "syntax-096"
+input = "[1 ]x"
+
+[[case]]
+id = "syntax-097"
+input = " []"
+
+[[case]]
+id = "syntax-098"
+input = "　[]"
+
+[[case]]
+id = "syntax-099"
+input = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[[case]]
+id = "syntax-100"
+input = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[[case]]
+id = "syntax-101"
+input = "éééééééééééééééééééé"
+
+[[case]]
+id = "syntax-102"
+input = "\u0000"
+
+[[case]]
+id = "syntax-103"
+input = "[\"\\u0000\"]"
+
+[[case]]
+id = "syntax-104"
+input = "{\"a\":1}\u0000"

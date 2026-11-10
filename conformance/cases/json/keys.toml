@@ -1,0 +1,168 @@
+# Equal keys (the first value wins), key order and the forms of the error path.
+from = "json"
+to = ["json"]
+
+
+[[case]]
+id = "dup-meta-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true},\"a\":{\"t\":\"MetaBool\",\"c\":false}},\"blocks\":[]}"
+
+[[case]]
+id = "dup-blocks"
+input = "{\"pandoc-api-version\":[1,23],\"meta\":{},\"blocks\":[],\"blocks\":[{\"t\":\"HorizontalRule\"}]}"
+
+[[case]]
+id = "dup-blocks-bad-second"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[],\"blocks\":5}"
+
+[[case]]
+id = "dup-blocks-bad-first"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":5,\"blocks\":[]}"
+
+[[case]]
+id = "dup-version"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"pandoc-api-version\":[1,22],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dup-version-old-first"
+input = "{\"pandoc-api-version\":[1,22],\"pandoc-api-version\":[1,23],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dup-meta"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dup-t"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"t\":\"Plain\",\"c\":[]}]}"
+
+[[case]]
+id = "dup-c"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[],\"c\":[{\"t\":\"Space\"}]}]}"
+
+[[case]]
+id = "dup-c-bad-second"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[],\"c\":5}]}"
+
+[[case]]
+id = "dup-t-unknown-second"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"t\":\"Nope\",\"c\":[]}]}"
+
+[[case]]
+id = "dup-citation-id"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationId\":\"j\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0,\"extra\":5}],[]]}]}]}"
+
+[[case]]
+id = "dup-citation-mode"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationMode\":{\"t\":\"X\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}"
+
+[[case]]
+id = "dup-metamap-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaString\",\"c\":\"1\"},\"x\":{\"t\":\"MetaString\",\"c\":\"2\"}}}},\"blocks\":[]}"
+
+[[case]]
+id = "dup-meta-key-bad-second"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true},\"a\":5},\"blocks\":[]}"
+
+[[case]]
+id = "key-order-reversed"
+input = "{\"blocks\":[{\"c\":[{\"c\":\"x\",\"t\":\"Str\"}],\"t\":\"Para\"}],\"meta\":{},\"pandoc-api-version\":[1,23,1,2]}"
+
+[[case]]
+id = "key-order-c-first"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"c\":[[\"\",[],[]],\"code\"],\"t\":\"CodeBlock\"}]}"
+
+[[case]]
+id = "path-dot-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a.b\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-space-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a b\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-quote-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a'b\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-backslash-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\\\\b\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-empty-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-underscore-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"_a1\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-digit-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"1a\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-unicode-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"é\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-alnum-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abc123\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-dash-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a-b\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-cjk-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"中文\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-letter-number-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"Ⅳ\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-letter-then-number-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"aⅣ\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-fraction-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a⅐\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-unicode16-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"aᲉ\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-vowel-sign-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"aअा\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-circled-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"ⓐ\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-arabic-digit-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x١\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-greek-digit-key"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"αβ٣\":{\"t\":\"MetaBool\",\"c\":1}},\"blocks\":[]}"
+
+[[case]]
+id = "path-nested-list"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"b c\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaBool\",\"c\":true},5]}}}]}},\"blocks\":[]}"
+
+[[case]]
+id = "path-deep-blocks"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Div\",\"c\":[[\"\",[],[]],[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Note\",\"c\":[5]}]}]]}]]}]}]}"
+
+[[case]]
+id = "path-table-cell"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[5]]]]]]],[[\"\",[],[]],[]]]}]}"
+
+[[case]]
+id = "path-caption-block"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},5]],[],[[\"\",[],[]],[]],[],[[\"\",[],[]],[]]]}]}"
+
+[[case]]
+id = "path-figure-short"
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[[{\"t\":\"Str\",\"c\":\"x\"},5],[]],[]]}]}"

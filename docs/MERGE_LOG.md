@@ -186,3 +186,38 @@ coordinator:
 - In the merge, the coordinator set the licence-text cell of the native row
   in `THIRD_PARTY.md` to "not applicable", because the writer copies no code
   and no data.
+
+## Workstream json-codec (branch `ws/json-codec`, head c1887dc, one squashed commit)
+
+Content: a new JSON reader and writer for the document tree in `randoc-ast`,
+in place of the `serde` version. It gives the bytes, the accepted and refused
+inputs and the error texts of Pandoc (the Haskell library `aeson`): a text
+parser that writes one flat list of values, typed decoders that keep the error
+path, an encoder with an explicit stack, the digit generation of GHC for
+`Double` values, and tables of two Unicode general categories for error paths.
+The suite `json/` has 551 cases in 8 files. `serde` is no longer a dependency
+of `randoc-ast`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 0 regressions against the baseline of 949 units. |
+| 2. Measured progress | Passing units: 949 before, 2217 after (3574 units in all; 1268 new passes). The JSON suite: 1283 of 1289 units that run pass; the 6 failures are I-JSON-01 (integer fields with an extreme exponent, where Pandoc stops with an internal error or does not end). The merge closes I-001 (JSON error texts), I-NATIVE-01 (special doubles in JSON) and L-006 (one digit of `show_double`). |
+| 3. Tests | 51 unit tests of `randoc-ast` pass. The worker's differential tool compares 3000 generated documents with the oracle: 0 differences. Line coverage 95.37% (measured after round 1). Mutation tests: a first sample of 49 of 685 mutants and a run on each mutant of `types.rs`; then 67 mutants of the round 1 corrections (57 caught, 1 missed and killed by a new test, 9 not viable); then 84 of the 252 mutants of the speed rewrite (31 caught, 3 timeouts, 50 not viable, 0 missed). The 20 mutants of the last stack correction were all not viable, so the mutation tool gives no evidence for that change; its evidence is a depth test that stops with the old code. Open: 20 surviving mutants in helper methods of the document model (`Meta::get`, `Attr::has_class` and others), which this branch does not change; the coordinator owns them. |
+| 4. No panics | Fuzz targets `json_read` (900 s, 7,090,878 runs) and `json_roundtrip` (900 s, 412,368 runs) on the final code: no crash. The encoder handles 100,000 nested levels on a 2 MB stack. The decoder reads each recursive kind at the deepest input that the default limit accepts on a 2 MB stack: the reviewers tested 405 and 242 shapes, with mixes of kinds, and found a smallest margin of 1.64. |
+| 5. Two reviews | Four rounds. Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES, round 2 APPROVE at a8a14f4, round 3 REQUEST CHANGES at f79d25f (1 high: the decoder for metadata maps overflowed a 2 MB stack inside the default limit), round 4 APPROVE at c1887dc with no finding. Opus 5.5: round 1 REQUEST CHANGES, round 2 APPROVE at a8a14f4, round 3 (a new reviewer context, because the code was a speed rewrite) REQUEST CHANGES for the same defect, round 4 APPROVE at c1887dc with one low finding on the depth note of the document model, which this merge corrects. In round 4 the reviewers ran 1,534 and about 4,700 comparisons with the oracle with 0 differences. |
+| 6. No slowdowns | After round 2 the branch was slower than `main` (slower in 26 of 30 pairs on a 17.7 MB document), so the merge was stopped and the worker rewrote the parser. Final measurement by the coordinator with release builds (15 alternating pairs, CPU time, `-f json -t json`, 17.7 MB): the branch needs 0.180 s and `main` at 85d5705 needs 0.321 s; ratio of minimums 0.56, median paired ratio 0.64, the branch is faster in 15 of 15 pairs, equal output bytes. `tools/bench/run.py` with its small inputs gave "inconclusive" under the machine load. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Changes that the coordinator made in the merge:
+
+- The table tool keeps the rows of `main` for a conflict in `docs/ISSUES.md`.
+  The branch had updated the rows I-001 and D-002, so the coordinator took the
+  branch text for these two rows.
+- The depth note of `randoc-ast` (decision D-003) now gives numbers by kind:
+  200 nested tables or 510 nested levels of the other containers are safe on a
+  2 MB stack for clone, compare and drop. The test covers these depths.
+- The replay test of the native crate listed its known differences. Two of
+  them are gone with the new codec, so the list changed. The test also read
+  the JSON text of the oracle a second time before it compared; that read
+  turns -0.0 into 0.0, as Pandoc does. The test now compares with the JSON
+  text of the oracle directly.

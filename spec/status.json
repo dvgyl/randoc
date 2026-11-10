@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T02:55:00Z",
+  "updated": "2026-11-10T04:00:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,11 +14,11 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 1984,
-    "pass": 949,
-    "fail": 995,
-    "skipped": 40,
-    "baseline_units": 949
+    "units": 3574,
+    "pass": 2217,
+    "fail": 987,
+    "skipped": 370,
+    "baseline_units": 2217
   },
   "pandoc_test_suite": {
     "status": "measured",
@@ -40,7 +40,7 @@
     {
       "id": "foundation",
       "state": "merged",
-      "note": "gate 5 open: JSON and command-line findings are in json-codec and cli"
+      "note": "gate 5: the JSON findings are closed by json-codec; the command-line findings are in cli"
     },
     {
       "id": "testsuite",
@@ -76,7 +76,7 @@
     },
     {
       "id": "json-codec",
-      "state": "review"
+      "state": "merged"
     },
     {
       "id": "commonmark-reader",
@@ -96,11 +96,11 @@
     },
     {
       "id": "yaml",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "shared",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "highlight",

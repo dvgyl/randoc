@@ -1,0 +1,587 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "dup-blocks#e2e:json": {
+      "key": "695957adf6cc18b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-blocks#read": {
+      "key": "695957adf6cc18b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-blocks#write:json": {
+      "key": "c2140d2071b44abc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-blocks-bad-first#e2e:json": {
+      "key": "c8e06d1fd331b28f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "dup-blocks-bad-first#read": {
+      "key": "c8e06d1fd331b28f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "dup-blocks-bad-second#e2e:json": {
+      "key": "baf95e382c896693",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-blocks-bad-second#read": {
+      "key": "baf95e382c896693",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-blocks-bad-second#write:json": {
+      "key": "c2140d2071b44abc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-c#e2e:json": {
+      "key": "4512c0696664b15c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-c#read": {
+      "key": "4512c0696664b15c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-c#write:json": {
+      "key": "3516e1c7af90990c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-c-bad-second#e2e:json": {
+      "key": "50ca4a81ff2f14eb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-c-bad-second#read": {
+      "key": "50ca4a81ff2f14eb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-c-bad-second#write:json": {
+      "key": "3516e1c7af90990c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-citation-id#e2e:json": {
+      "key": "119b745a005bd6d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "dup-citation-id#read": {
+      "key": "119b745a005bd6d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "dup-citation-id#write:json": {
+      "key": "b023fc5d32370ab2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "dup-citation-mode#e2e:json": {
+      "key": "1617c8d7cbf08461",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "dup-citation-mode#read": {
+      "key": "1617c8d7cbf08461",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "dup-citation-mode#write:json": {
+      "key": "b023fc5d32370ab2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "dup-meta#e2e:json": {
+      "key": "cd32c54ea1116cc0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta#read": {
+      "key": "cd32c54ea1116cc0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta#write:json": {
+      "key": "0b110fffe57306c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta-key#e2e:json": {
+      "key": "6b6ceaf698b49420",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta-key#read": {
+      "key": "6b6ceaf698b49420",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta-key#write:json": {
+      "key": "0b110fffe57306c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta-key-bad-second#e2e:json": {
+      "key": "d011fc05b89b2805",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta-key-bad-second#read": {
+      "key": "d011fc05b89b2805",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-meta-key-bad-second#write:json": {
+      "key": "0b110fffe57306c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-metamap-key#e2e:json": {
+      "key": "3996def4d5c4be46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaString\",\"c\":\"1\"}}}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-metamap-key#read": {
+      "key": "3996def4d5c4be46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaString\",\"c\":\"1\"}}}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-metamap-key#write:json": {
+      "key": "adc0058f391fd56f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaMap\",\"c\":{\"x\":{\"t\":\"MetaString\",\"c\":\"1\"}}}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-t#e2e:json": {
+      "key": "d4bf8a5ead40ff59",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-t#read": {
+      "key": "d4bf8a5ead40ff59",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-t#write:json": {
+      "key": "3516e1c7af90990c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-t-unknown-second#e2e:json": {
+      "key": "e0d44ce08e56c85e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-t-unknown-second#read": {
+      "key": "e0d44ce08e56c85e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-t-unknown-second#write:json": {
+      "key": "3516e1c7af90990c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "dup-version#e2e:json": {
+      "key": "9a586009c7e150dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-version#read": {
+      "key": "9a586009c7e150dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-version#write:json": {
+      "key": "c2140d2071b44abc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dup-version-old-first#e2e:json": {
+      "key": "1979aa83d63c0474",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "dup-version-old-first#read": {
+      "key": "1979aa83d63c0474",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "key-order-c-first#e2e:json": {
+      "key": "3f3c9ad29dece3ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]}\n",
+      "stderr": ""
+    },
+    "key-order-c-first#read": {
+      "key": "3f3c9ad29dece3ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]}\n",
+      "stderr": ""
+    },
+    "key-order-c-first#write:json": {
+      "key": "c7b54bff864f7f8f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]}\n",
+      "stderr": ""
+    },
+    "key-order-reversed#e2e:json": {
+      "key": "458f3e2342a6a146",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "key-order-reversed#read": {
+      "key": "458f3e2342a6a146",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "key-order-reversed#write:json": {
+      "key": "b271f1c948b3a801",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "path-alnum-key#e2e:json": {
+      "key": "9341744bbf26dd7f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.abc123: expected Bool, but encountered Number\n"
+    },
+    "path-alnum-key#read": {
+      "key": "9341744bbf26dd7f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.abc123: expected Bool, but encountered Number\n"
+    },
+    "path-arabic-digit-key#e2e:json": {
+      "key": "b349ed35221a4e56",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.x١: expected Bool, but encountered Number\n"
+    },
+    "path-arabic-digit-key#read": {
+      "key": "b349ed35221a4e56",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.x١: expected Bool, but encountered Number\n"
+    },
+    "path-backslash-key#e2e:json": {
+      "key": "33166ee14f4bac86",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a\\\\b']: expected Bool, but encountered Number\n"
+    },
+    "path-backslash-key#read": {
+      "key": "33166ee14f4bac86",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a\\\\b']: expected Bool, but encountered Number\n"
+    },
+    "path-caption-block#e2e:json": {
+      "key": "805250d6cab822df",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "path-caption-block#read": {
+      "key": "805250d6cab822df",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "path-circled-key#e2e:json": {
+      "key": "4fbab3152b43eac1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['ⓐ']: expected Bool, but encountered Number\n"
+    },
+    "path-circled-key#read": {
+      "key": "4fbab3152b43eac1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['ⓐ']: expected Bool, but encountered Number\n"
+    },
+    "path-cjk-key#e2e:json": {
+      "key": "61f3f16e5afd7acb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.中文: expected Bool, but encountered Number\n"
+    },
+    "path-cjk-key#read": {
+      "key": "61f3f16e5afd7acb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.中文: expected Bool, but encountered Number\n"
+    },
+    "path-dash-key#e2e:json": {
+      "key": "aac59ee6e487d678",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a-b']: expected Bool, but encountered Number\n"
+    },
+    "path-dash-key#read": {
+      "key": "aac59ee6e487d678",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a-b']: expected Bool, but encountered Number\n"
+    },
+    "path-deep-blocks#e2e:json": {
+      "key": "f4f803aeebee2d4c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0][0][0][0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "path-deep-blocks#read": {
+      "key": "f4f803aeebee2d4c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0][0][0][0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "path-digit-key#e2e:json": {
+      "key": "8eac74791d1bf059",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['1a']: expected Bool, but encountered Number\n"
+    },
+    "path-digit-key#read": {
+      "key": "8eac74791d1bf059",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['1a']: expected Bool, but encountered Number\n"
+    },
+    "path-dot-key#e2e:json": {
+      "key": "d6d2fd0e64afc027",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a.b']: expected Bool, but encountered Number\n"
+    },
+    "path-dot-key#read": {
+      "key": "d6d2fd0e64afc027",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a.b']: expected Bool, but encountered Number\n"
+    },
+    "path-empty-key#e2e:json": {
+      "key": "dbd8577fa7fa32f9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['']: expected Bool, but encountered Number\n"
+    },
+    "path-empty-key#read": {
+      "key": "dbd8577fa7fa32f9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['']: expected Bool, but encountered Number\n"
+    },
+    "path-figure-short#e2e:json": {
+      "key": "e4b9cf066a285cb8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "path-figure-short#read": {
+      "key": "e4b9cf066a285cb8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][1]: When parsing Text.Pandoc.Definition.Inline expected Object but got Number.\n"
+    },
+    "path-fraction-key#e2e:json": {
+      "key": "ae292c9d60d55b6f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a⅐: expected Bool, but encountered Number\n"
+    },
+    "path-fraction-key#read": {
+      "key": "ae292c9d60d55b6f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a⅐: expected Bool, but encountered Number\n"
+    },
+    "path-greek-digit-key#e2e:json": {
+      "key": "6cd5f6454817936e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.αβ٣: expected Bool, but encountered Number\n"
+    },
+    "path-greek-digit-key#read": {
+      "key": "6cd5f6454817936e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.αβ٣: expected Bool, but encountered Number\n"
+    },
+    "path-letter-number-key#e2e:json": {
+      "key": "5211db8b9c608f46",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['Ⅳ']: expected Bool, but encountered Number\n"
+    },
+    "path-letter-number-key#read": {
+      "key": "5211db8b9c608f46",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['Ⅳ']: expected Bool, but encountered Number\n"
+    },
+    "path-letter-then-number-key#e2e:json": {
+      "key": "5384dd29f22fb882",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.aⅣ: expected Bool, but encountered Number\n"
+    },
+    "path-letter-then-number-key#read": {
+      "key": "5384dd29f22fb882",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.aⅣ: expected Bool, but encountered Number\n"
+    },
+    "path-nested-list#e2e:json": {
+      "key": "4d054a47ce925b3d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a[0]['b c'][1]: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "path-nested-list#read": {
+      "key": "4d054a47ce925b3d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.a[0]['b c'][1]: When parsing Text.Pandoc.Definition.MetaValue expected Object but got Number.\n"
+    },
+    "path-quote-key#e2e:json": {
+      "key": "d0dbe46ea52017d6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a\\'b']: expected Bool, but encountered Number\n"
+    },
+    "path-quote-key#read": {
+      "key": "d0dbe46ea52017d6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a\\'b']: expected Bool, but encountered Number\n"
+    },
+    "path-space-key#e2e:json": {
+      "key": "b7826cba868155d5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a b']: expected Bool, but encountered Number\n"
+    },
+    "path-space-key#read": {
+      "key": "b7826cba868155d5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['a b']: expected Bool, but encountered Number\n"
+    },
+    "path-table-cell#e2e:json": {
+      "key": "aa18c69cf0af43ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0][0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "path-table-cell#read": {
+      "key": "aa18c69cf0af43ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.blocks[0][0][0][0][0]: When parsing Text.Pandoc.Definition.Block expected Object but got Number.\n"
+    },
+    "path-underscore-key#e2e:json": {
+      "key": "8fbae53c2312274f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['_a1']: expected Bool, but encountered Number\n"
+    },
+    "path-underscore-key#read": {
+      "key": "8fbae53c2312274f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['_a1']: expected Bool, but encountered Number\n"
+    },
+    "path-unicode-key#e2e:json": {
+      "key": "b38eeeb5f5fcd803",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.é: expected Bool, but encountered Number\n"
+    },
+    "path-unicode-key#read": {
+      "key": "b38eeeb5f5fcd803",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta.é: expected Bool, but encountered Number\n"
+    },
+    "path-unicode16-key#e2e:json": {
+      "key": "97b99963793602a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['aᲉ']: expected Bool, but encountered Number\n"
+    },
+    "path-unicode16-key#read": {
+      "key": "97b99963793602a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['aᲉ']: expected Bool, but encountered Number\n"
+    },
+    "path-vowel-sign-key#e2e:json": {
+      "key": "799fe432e69a45f8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['aअा']: expected Bool, but encountered Number\n"
+    },
+    "path-vowel-sign-key#read": {
+      "key": "799fe432e69a45f8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $.meta['aअा']: expected Bool, but encountered Number\n"
+    }
+  }
+}
