@@ -28,14 +28,19 @@ impl Sources {
         }])
     }
 
-    /// Joins the sources into one string.
+    /// Joins the sources into one string, as Pandoc does.
     ///
-    /// A source that does not end with a newline gets one, as in Pandoc.
+    /// A source that is not empty and does not end with a newline gets one.
+    /// One more newline separates each source from the next one. Thus the
+    /// last paragraph of a file does not continue in the next file.
     pub fn concat(&self) -> Text {
         let mut out = Text::new();
-        for source in &self.0 {
+        for (index, source) in self.0.iter().enumerate() {
+            if index > 0 {
+                out.push('\n');
+            }
             out.push_str(&source.text);
-            if !source.text.ends_with('\n') {
+            if !source.text.is_empty() && !source.text.ends_with('\n') {
                 out.push('\n');
             }
         }
@@ -157,20 +162,36 @@ mod tests {
     use super::*;
     use randoc_ast::{Block, Inline};
 
+    fn sources(texts: &[&str]) -> Sources {
+        Sources(
+            texts
+                .iter()
+                .map(|text| Source {
+                    name: "file".into(),
+                    text: (*text).into(),
+                })
+                .collect(),
+        )
+    }
+
+    /// Each expected text comes from `pandoc -f commonmark -t json FILES`: the
+    /// first file opens a code block and does not close it, so the text of the
+    /// code block shows the joined input.
     #[test]
-    fn concat_ends_each_source_with_one_newline() {
-        let sources = Sources(vec![
-            Source {
-                name: "a".into(),
-                text: "one".into(),
-            },
-            Source {
-                name: "b".into(),
-                text: "two\n".into(),
-            },
-        ]);
-        assert_eq!(sources.concat(), "one\ntwo\n");
+    fn concat_joins_the_sources_as_pandoc_does() {
+        let open = "```\ncode";
+        for (files, joined) in [
+            (vec!["```\ncode\n", "y\n"], "```\ncode\n\ny\n"),
+            (vec![open, "y"], "```\ncode\n\ny\n"),
+            (vec!["```\ncode\n\n\n", "y\n"], "```\ncode\n\n\n\ny\n"),
+            (vec!["```\ncode\n", "", "y\n"], "```\ncode\n\n\ny\n"),
+            (vec!["```\ncode\n", "\n\n", "y\n"], "```\ncode\n\n\n\n\ny\n"),
+            (vec!["```\ncode\n", "y\n", "y"], "```\ncode\n\ny\n\ny\n"),
+        ] {
+            assert_eq!(sources(&files).concat(), joined, "{files:?}");
+        }
         assert_eq!(Sources::from_text("x").concat(), "x\n");
+        assert_eq!(Sources::from_text("x\n").concat(), "x\n");
         assert_eq!(Sources::default().concat(), "");
     }
 
