@@ -258,6 +258,22 @@ package" means the optional package of decision D1.
   and code point pairs in `docbook-entities.txt` are lists of facts. A legal
   review can decide that Randoc can write the same facts from independent
   sources. Until that review, treat them as GPL material.
+- **D4. The 34 syntax definitions without a clear grant.** They include
+  `c.xml`, `python.xml`, `javascript.xml` and `lua.xml`. Upstream KDE has no
+  blanket grant: on 2026-11-10, `REUSE.toml` at
+  <https://invent.kde.org/frameworks/syntax-highlighting> gave HTTP 404, and
+  upstream `data/syntax/python.xml` still has `license=""`.
+  "In no package" means that no Randoc distribution gives byte-identical
+  highlighting for these 34 languages. Options:
+  (a) write new definitions and test them token by token against the oracle;
+  (b) ask the authors or the KDE project for a licence grant;
+  (c) load the files at run time from a Pandoc, skylighting or KDE
+  installation of the user, without distribution by Randoc;
+  (d) accept plain code blocks for these languages.
+  Recommendation: (c) for the first releases, because it gives identical
+  output where the user already has the files and needs no distribution;
+  start (b) at once for the most used languages (C, Python, JavaScript, Lua,
+  SQL); use (a) for each language where (b) fails.
 
 ## Attribution text for `THIRD_PARTY.md`
 

@@ -29,8 +29,9 @@ claim compatibility with it. Each number comes from a command in
    claims 54 readers and 64 writers but no identical output, and it passed
    11 of the 201 probe units that it could run.
 5. **Neither carta nor ferrodoc copies Pandoc's exit codes.** For an unknown
-   format, a JSON parse error or an unknown option, Pandoc exits with 21, 22,
-   64 or 6. Both tools exit with 1 or 2. Both accept a JSON document with
+   format, an extension that the format does not support, a JSON parse error
+   or an unknown option, Pandoc exits with 21, 22, 23, 64 or 6. Both tools
+   exit with 1 or 2. Both accept a JSON document with
    API version 1.22, which Pandoc rejects.
 6. **The licence split of syntax definitions has a visible cost.** carta
    compiles only the permissively licensed KDE definitions. YAML, JSON,
@@ -46,8 +47,9 @@ claim compatibility with it. Each number comes from a command in
    gave different bytes for 9 of 76 writers: `docx`, `pptx`, `odt`, `fodt`
    and `chunkedhtml` (time stamps), `epub`, `epub2`, `epub3` (a random
    `urn:uuid` identifier and a date) and `ipynb` (a random cell `id`). With
-   `SOURCE_DATE_EPOCH` set, only `epub` and `ipynb` still differ. The harness
-   must set `SOURCE_DATE_EPOCH` and normalize the other two. Pandoc changes its
+   `SOURCE_DATE_EPOCH` set, only `epub`, `epub2`, `epub3` and `ipynb` still
+   differ (`commands.md`, section "Oracle stability"). The harness must set
+   `SOURCE_DATE_EPOCH` and normalize the EPUB identifier and the cell `id`. Pandoc changes its
    output often between minor versions (RTF in 3.10.1, the HTML template
    after 3.8.2.1), so each oracle result must name its Pandoc version.
 
@@ -81,8 +83,8 @@ Pass means identical or ast-equal.
 | --- | ---: | ---: | ---: |
 | Pandoc documentation (12 Markdown files, 6 conversions) | 72 | 21 (29%) | 17 (24%) |
 | ferrodoc corpus (7 Markdown and 10 HTML files) | 62 | 26 (42%) | 45 (73%) |
-| carta corpus (8 HTML files) | 22 | 15 (68%) | 16 (73%) |
-| README files of 3 projects | 12 | 5 (42%) | 6 (50%) |
+| carta corpus (8 HTML files, 2 conversions) | 16 | 14 (88%) | 16 (100%) |
+| README files of carta, rescribe and skylighting (6 conversions) | 18 | 6 (33%) | 6 (33%) |
 | Conformance cases of this repository | 62 | 29 (47%) | 18 (29%) |
 
 By conversion (all inputs):
@@ -125,7 +127,9 @@ writer" means that the tool refused the format.
 Two results need an explanation:
 
 - `ipynb`: Pandoc writes a random cell `id` (a UUID) in each run, so no
-  tool can give identical bytes. Randoc's harness needs a rule for this
+  tool can give identical bytes. For 3 inputs Pandoc exits with 99, because
+  an image file is missing; the writer embeds images. carta and ferrodoc exit
+  with 0 there. Randoc's harness needs a rule for this
   format (for example, compare with the `id` values removed).
 - `rtf`: Pandoc 3.10.1 changed the RTF writer: each paragraph has a font
   size (`\fs24`), and lists use a real list table (`changelog.md` lines 1495
@@ -352,9 +356,11 @@ Randoc must write its own code for these parts:
 
 1. **The Pandoc Markdown reader and writer.** No Rust crate parses Pandoc's
    Markdown dialect with its extensions.
-2. **The template engine and the layout engine.** No Rust port of
-   `doctemplates` or `doclayout` exists. Both are BSD-3-Clause and can be
-   ported.
+2. **The template engine and the layout engine.** No crate ports
+   `doctemplates` or `doclayout`. ferrodoc has a subset of the template
+   language in `crates/ferrodoc-html/src/template.rs` (522 lines), for
+   `html5.html` and `styles.html` only. Both Haskell libraries are
+   BSD-3-Clause and can be ported.
 3. **TeX math conversion.** `texmath` is GPL-2. The MIT crates give different
    MathML. A new implementation tested against the oracle is necessary.
 4. **A CSL processor with identical output.** Port `citeproc` (BSD-2-Clause).

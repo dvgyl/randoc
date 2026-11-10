@@ -237,10 +237,48 @@ ferrodoc   markdown>rtf                 n= 22 unsupported=22
 ferrodoc   markdown>typst               n= 22 unsupported=22
 ```
 
-Per-source pass counts (identical or ast-equal) come from a short Python
-script over `results.tsv` that groups the `unit` column by the prefix of
-the file name (`pandoc-`, `ferrodoc-`, `carta-`, the README files, and
-`conformance/`).
+`results.tsv` was made from the output files of the three runs. `probe.py`
+writes 5 columns; the merge step adds the first column `run`:
+
+```sh
+D=docs/research-data
+{ head -1 "$R/probe-cf.tsv" | sed 's/^/run\t/'
+  tail -n +2 "$R/probe-cf.tsv" | sed 's/^/main\t/'
+  tail -n +2 "$R/probe-writers.tsv" | sed 's/^/writers\t/'; } > "$D/results.tsv"
+tail -n +2 "$R/probe-rescribe.tsv" | grep -v '^pandoc	' | sed 's/^/rescribe-run\t/' >> "$D/results.tsv"
+```
+
+The per-source pass counts (identical or ast-equal) of the analysis come
+from this script (`python3 -I groups.py docs/research-data/results.tsv`):
+
+```python
+import csv, collections, sys
+rows = [r for r in csv.DictReader(open(sys.argv[1]), delimiter="\t") if r["run"] == "main" and r["tool"] in ("carta", "ferrodoc")]
+def group(unit):
+    name = unit.split("#")[0]
+    if name.startswith("conformance/"): return "conformance"
+    if "README" in name: return "readme"
+    return name.split("/")[1].split("-")[0]
+count = collections.Counter()
+for r in rows:
+    g = group(r["unit"])
+    count[(g, r["tool"], "units")] += 1
+    if r["status"] in ("identical", "ast-equal"): count[(g, r["tool"], "pass")] += 1
+for g in sorted({k[0] for k in count}):
+    print(g, count[(g, "carta", "units")], "carta", count[(g, "carta", "pass")], "ferrodoc", count[(g, "ferrodoc", "pass")])
+```
+
+Its output:
+
+```text
+carta 16 carta 14 ferrodoc 16
+conformance 62 carta 29 ferrodoc 18
+ferrodoc 62 carta 26 ferrodoc 45
+pandoc 72 carta 21 ferrodoc 17
+readme 18 carta 6 ferrodoc 6
+```
+
+The columns are: group, units for each tool, carta passes, ferrodoc passes.
 
 ## Spot checks
 
@@ -333,3 +371,114 @@ rescribe   markdown>latex               n= 22 differ=22
 Median time for one document unit: 0.022 s (debug build, 146 units).
 Example: `# Hi *there*` gives `<h1>Hi <em>there</em></h1>` without a final
 newline and without the `id="hi-there"` that Pandoc writes.
+
+## Oracle stability
+
+Each writer of `--list-output-formats` except `pdf` (76 writers) ran two
+times on the same input without `SOURCE_DATE_EPOCH`, and two times with
+`SOURCE_DATE_EPOCH=1700000000`. The runs of a pair were 2.1 s apart, because
+ZIP time stamps have a resolution of 2 s.
+
+```sh
+O="$RANDOC_ORACLE_PANDOC"; mkdir -p "$TMPDIR/det" && cd "$TMPDIR/det"
+printf -- '---\ntitle: T\nauthor: A\n---\n\n# H\n\nText[^1] with `code` and $x^2$.\n\n```haskell\nmain = pure ()\n```\n\n[^1]: Note.\n' > in.md
+for f in $($O --list-output-formats); do [ "$f" = pdf ] && continue; r1=same; r2=same
+  $O -s -t $f in.md -o a 2>/dev/null || r1=error; sleep 2.1; $O -s -t $f in.md -o b 2>/dev/null; cmp -s a b || r1=differ
+  SOURCE_DATE_EPOCH=1700000000 $O -s -t $f in.md -o a 2>/dev/null; sleep 2.1
+  SOURCE_DATE_EPOCH=1700000000 $O -s -t $f in.md -o b 2>/dev/null; cmp -s a b || r2=differ
+  echo "$f $r1 $r2"
+done
+```
+
+Output (writer, without, with):
+
+```text
+ansi same same
+asciidoc same same
+asciidoc_legacy same same
+asciidoctor same same
+bbcode same same
+bbcode_fluxbb same same
+bbcode_hubzilla same same
+bbcode_phpbb same same
+bbcode_steam same same
+bbcode_xenforo same same
+beamer same same
+biblatex same same
+bibtex same same
+chunkedhtml error same   (see the note below the block)
+commonmark same same
+commonmark_x same same
+context same same
+csljson same same
+djot same same
+docbook same same
+docbook4 same same
+docbook5 same same
+docx differ same
+dokuwiki same same
+dzslides same same
+epub differ differ
+epub2 differ differ
+epub3 differ differ
+fb2 same same
+fodt differ same
+gfm same same
+haddock same same
+html same same
+html4 same same
+html5 same same
+icml same same
+ipynb differ differ
+jats same same
+jats_archiving same same
+jats_articleauthoring same same
+jats_publishing same same
+jira same same
+json same same
+latex same same
+man same same
+markdown same same
+markdown_github same same
+markdown_mmd same same
+markdown_phpextra same same
+markdown_strict same same
+markua same same
+mediawiki same same
+ms same same
+muse same same
+native same same
+odt differ same
+opendocument same same
+opml same same
+org same same
+plain same same
+pptx differ same
+revealjs same same
+rst same same
+rtf same same
+s5 same same
+slideous same same
+slidy same same
+t2t same same
+tei same same
+texinfo same same
+textile same same
+typst same same
+vimdoc same same
+xml same same
+xwiki same same
+zimwiki same same
+```
+
+`chunkedhtml` failed in the loop, because the file `a` of the previous writer
+was in the way of its output directory. A separate run with `-o a.zip` and
+`-o b.zip` gave `chunkedhtml differ same`.
+
+Result: 9 writers differ without `SOURCE_DATE_EPOCH` (`chunkedhtml`, `docx`,
+`epub`, `epub2`, `epub3`, `fodt`, `ipynb`, `odt`, `pptx`). With it, 4 still
+differ: `epub`, `epub2`, `epub3` and `ipynb`. A diff of the unpacked files
+showed the causes: the date in `docProps/core.xml` (`docx`, `pptx`),
+`meta:creation-date` and `dc:date` (`odt`, `fodt`), the ZIP entry times
+(`chunkedhtml`), a random `urn:uuid` identifier (EPUB) and a random cell `id`
+(`ipynb`).
