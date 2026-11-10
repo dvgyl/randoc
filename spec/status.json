@@ -105,7 +105,7 @@
     {
       "id": "yaml",
       "state": "review",
-      "note": "head f96ec26: five review rounds; gate passed at f96ec26; one medium finding open, in the replay comparison of the tests"
+      "note": "head f96ec26: five review rounds; gate passed at f96ec26; round 5: three medium findings open (two in the reader for flow collections, one in the replay comparison of the tests)"
     },
     {
       "id": "shared",
