@@ -96,7 +96,7 @@ and 64 MB of standard error output for one run.
   Read the statement inside the file (for example `dc:rights` in an EPUB
   package file). Do not take the licence of the repository for such a file.
   Leave out a file whose content comes from a third party without a clear
-  licence.
+  licence, and a file that holds a logo or another mark of a company.
 - One document is 2 MB or less. The corpus is 300 MB or less. `corpuslib.check`
   enforces both limits.
 - The drive is exFAT, and each file uses 2 MB or more there. Each document is
@@ -119,7 +119,7 @@ that they match the manifest.
 | adamgreen/CrashCatcher | Apache-2.0 | creole | 1 |
 | adamgreen/mri | Apache-2.0 | creole | 2 |
 | alexott/muse | GPL-3.0-or-later | muse | 2 |
-| apache/tika | Apache-2.0; LicenseRef-Public-Domain-US AND CC0-1.0 | docx, epub, odt, pptx, rtf, xlsx | 39 |
+| apache/tika | Apache-2.0; LicenseRef-Public-Domain-US AND CC0-1.0 | docx, epub, odt, pptx, rtf, xlsx | 38 |
 | asciidoctor/asciidoctor | MIT | asciidoc | 8 |
 | astral-sh/ruff | MIT | gfm | 1 |
 | BurntSushi/ripgrep | Unlicense OR MIT | gfm | 1 |
@@ -179,7 +179,7 @@ that they match the manifest.
 | csv | 4 | 592251 |
 | djot | 5 | 92461 |
 | docbook | 8 | 214704 |
-| docx | 12 | 199713 |
+| docx | 11 | 168410 |
 | epub | 7 | 3567105 |
 | gfm | 12 | 117005 |
 | html | 11 | 3797438 |
@@ -203,7 +203,7 @@ that they match the manifest.
 | textile | 4 | 29884 |
 | typst | 4 | 18471 |
 | xlsx | 4 | 36560 |
-| all | 233 | 15006138 |
+| all | 232 | 14974835 |
 
 ## Documents that Pandoc rejects
 

@@ -1202,15 +1202,6 @@ sha256 = "8435a0e087a5452b0418ba860136683e95ba17ba3be8e22ec21d678b5db1f1b9"
 size = 12054
 
 [[document]]
-name = "tika-testword-3imgs-docx"
-format = "docx"
-url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_3imgs.docx"
-license = "Apache-2.0"
-source = "apache/tika@a40d54f6a6d9"
-sha256 = "3c7d3114d21dae635e2e3dfb742d3cb5737ef957be5548a3c8a787cf9e4cdd2c"
-size = 31303
-
-[[document]]
 name = "tika-testword-charts-docx"
 format = "docx"
 url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testWORD_charts.docx"

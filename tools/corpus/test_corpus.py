@@ -1,11 +1,13 @@
 """Unit tests for the corpus tools. Run: python3 -m unittest discover -s tools/corpus"""
 
 import contextlib
+import http.client
 import io
 import json
 import os
 import shutil
 import sqlite3
+import sys
 import tempfile
 import time
 import unittest
@@ -306,7 +308,7 @@ class ReviewCorrectionTests(unittest.TestCase):
 
     def test_cor01_entries_use_the_rights_statement_inside_the_file(self):
         docs = {d.name: d for d in corpuslib.load_manifest()}
-        removed = {"tika-testepub-xml-ext-epub", "tika-test-fb2", "tika-testrtfjapanese-rtf",
+        removed = {"tika-testepub-xml-ext-epub", "tika-test-fb2", "tika-testword-3imgs-docx", "tika-testrtfjapanese-rtf",
                    "tika-testrtfword2010czechcharacters-rtf"}
         self.assertFalse(removed & set(docs))
         ebooks = [d for d in docs.values() if d.name.startswith("se-")]
@@ -504,8 +506,102 @@ class SecondReviewTests(unittest.TestCase):
         _, report = self.main(program, program, "--timeout", "1", "--target", "json")
         self.assertEqual(report["results"], {"one:json": "pass", "two:json": "timeout"})
         self.assertEqual(report["timeout_seconds"], 1)
-        with self.assertRaisesRegex(corpuslib.ManifestError, "timeout"):
-            corpuslib.check([document("x", timeout=-1)])
+        for value in ("-1", "0", "true", "1.5", '"9"'):
+            entry = corpuslib.format_manifest([document("x")]) + f"timeout = {value}\n"
+            with self.subTest(value), self.assertRaisesRegex(corpuslib.ManifestError, "greater than 0"):
+                corpuslib.parse_manifest(entry)
+        with self.assertRaisesRegex(corpuslib.ManifestError, "whole number"):
+            corpuslib.check([document("x", timeout=True)])
         timeouts = {d.name: d.timeout for d in corpuslib.load_manifest()}
         self.assertEqual(timeouts["jupyter-running-code"], 300)
         self.assertEqual(sum(1 for t in timeouts.values() if t), 1)
+
+
+ESCAPED_CHILD = (
+    "import subprocess,sys,time;"
+    "subprocess.Popen([sys.executable,'-c','import time;time.sleep(3)'],start_new_session=True);"
+    "time.sleep(30)"
+)
+
+
+class ThirdReviewTests(unittest.TestCase):
+    """Tests for the findings of the Codex round 2 review (COR-R2-01, COR-R2-02)."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="randoc-corpus-review3-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def test_r2_01_a_child_in_a_new_session_cannot_hold_the_time_limit(self):
+        with mock.patch.object(run, "CLEANUP_SECONDS", 0.05):
+            started = time.monotonic()
+            result = run.execute(sys.executable, ["-c", ESCAPED_CHILD], self.dir, run.HOME, 0.1)
+            elapsed = time.monotonic() - started
+        self.assertTrue(result.timed_out)
+        self.assertLess(elapsed, 1)
+
+    def test_r2_01_open_pipes_after_a_normal_end_are_a_tool_error(self):
+        script = ("import subprocess,sys;"
+                  "subprocess.Popen([sys.executable,'-c','import time;time.sleep(3)'],start_new_session=True)")
+        with mock.patch.object(run, "CLEANUP_SECONDS", 0.1):
+            started = time.monotonic()
+            result = run.execute(sys.executable, ["-c", script], self.dir, run.HOME, 10)
+            elapsed = time.monotonic() - started
+        self.assertLess(elapsed, 1)
+        self.assertEqual(result.exit, -1)
+        self.assertIn(b"kept the output open", result.stderr)
+
+    def test_r2_02_matching_overflow_outcomes_are_not_a_pass(self):
+        expected = run.execute("/bin/sh", ["-c", "printf 0123456789A"], self.dir, run.HOME, 2, limit=10)
+        actual = run.execute("/bin/sh", ["-c", "printf 0123456789B"], self.dir, run.HOME, 2, limit=10)
+        for target in run.TARGETS:
+            self.assertEqual(run.status(expected, actual, target), "error program")
+
+    def test_r2_02_start_failures_and_signals_are_errors(self):
+        not_a_program = self.dir / "data"
+        not_a_program.write_text("x")
+        not_a_program.chmod(0o644)
+        failed = run.execute(not_a_program, [], self.dir, run.HOME, 2)
+        killed = run.execute("/bin/sh", ["-c", "kill -9 $$"], self.dir, run.HOME, 2)
+        self.assertEqual(killed.exit, -9)
+        good = outcome(64, b"", b"parse error\n")
+        self.assertEqual(run.status(failed, failed, "html"), "error program")
+        self.assertEqual(run.status(good, killed, "html"), "error program")
+        self.assertEqual(run.status(killed, good, "html"), "error oracle")
+        self.assertEqual(run.status(good, outcome(64, b"", b"parse error\n"), "html"), "pass")
+
+    def test_r2_02_expect_all_pass_fails_when_no_program_can_start(self):
+        corpus = self.dir / "corpus"
+        corpus.mkdir()
+        (corpus / "one.md").write_bytes(b"alpha")
+        manifest = self.dir / "manifest.toml"
+        manifest.write_text(corpuslib.format_manifest([document("one")]))
+        program = self.dir / "data"
+        program.write_text("x")
+        program.chmod(0o644)
+        out = self.dir / "report.json"
+        with contextlib.redirect_stdout(io.StringIO()):
+            code = run.main(["--pandoc", str(program), "--oracle", str(program), "--manifest", str(manifest),
+                             "--corpus", str(corpus), "--out", str(out), "--expect-all-pass"])
+        self.assertEqual(code, 1)
+        self.assertEqual(set(json.loads(out.read_text())["results"].values()), {"error program"})
+
+    def test_fetch_an_incomplete_download_is_a_failure_and_not_a_crash(self):
+        manifest = self.dir / "manifest.toml"
+        manifest.write_text(corpuslib.format_manifest([document("a")]))
+
+        def get(url):
+            raise http.client.IncompleteRead(b"alp", 2)
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            code = fetch.main(["--manifest", str(manifest), "--corpus", str(self.dir)], get, 0)
+        self.assertEqual(code, 1)
+        self.assertIn("a: error: IncompleteRead", out.getvalue())
+        self.assertFalse((self.dir / "a.md").exists())
+
+    def test_fetch_a_download_has_a_total_time_limit(self):
+        source = self.dir / "slow"
+        source.write_bytes(b"x" * 100)
+        with self.assertRaisesRegex(TimeoutError, "no complete download after -1 s"):
+            fetch.download(source.as_uri(), total=-1)
+        self.assertEqual(fetch.download(source.as_uri()), b"x" * 100)

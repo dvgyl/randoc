@@ -11,6 +11,7 @@ unpinned, and the program reports it.
 
 import argparse
 import dataclasses
+import http.client
 import os
 import sys
 import time
@@ -36,14 +37,28 @@ class HttpsOnlyRedirects(urllib.request.HTTPRedirectHandler):
 OPENER = urllib.request.build_opener(HttpsOnlyRedirects)
 
 
-def download(url, timeout=60):
-    """Returns the bytes at `url`. Raises `ValueError` for a document that is too large."""
+DOWNLOAD_SECONDS = 300
+
+
+def download(url, timeout=60, total=DOWNLOAD_SECONDS):
+    """Returns the bytes at `url`.
+
+    `timeout` limits each network operation and `total` limits the whole
+    download, so that a slow server cannot hold the program. Raises
+    `ValueError` for a document that is too large and `TimeoutError` at the
+    total limit.
+    """
+    deadline = time.monotonic() + total
     request = urllib.request.Request(url, headers={"User-Agent": corpuslib.USER_AGENT})
+    data = bytearray()
     with OPENER.open(request, timeout=timeout) as response:
-        data = response.read(corpuslib.MAX_DOCUMENT_BYTES + 1)
-    if len(data) > corpuslib.MAX_DOCUMENT_BYTES:
-        raise ValueError(f"more than {corpuslib.MAX_DOCUMENT_BYTES} bytes")
-    return data
+        while chunk := response.read(65536):
+            data += chunk
+            if len(data) > corpuslib.MAX_DOCUMENT_BYTES:
+                raise ValueError(f"more than {corpuslib.MAX_DOCUMENT_BYTES} bytes")
+            if time.monotonic() > deadline:
+                raise TimeoutError(f"no complete download after {total} s")
+    return bytes(data)
 
 
 def write_atomic(path, data):
@@ -121,7 +136,7 @@ def main(argv=None, get=download, delay=DELAY_SECONDS):
             status, document = fetch_one(document, args.corpus, get, args.pin, budget)
             if unpinned and document.sha256:
                 budget -= document.size
-        except (OSError, ValueError, urllib.error.URLError) as error:
+        except (OSError, ValueError, http.client.HTTPException) as error:
             status = f"error: {error}"
         if status != "present":
             last_request[host] = time.monotonic()

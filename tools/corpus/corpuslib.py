@@ -57,6 +57,7 @@ SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 FIELDS = ("name", "format", "url", "license", "source", "sha256", "size")
 # An optional field: the time limit of one conversion of this document in seconds.
 OPTIONAL_FIELDS = ("timeout",)
+TIMEOUT_RULE = "the timeout must be a whole number of seconds greater than 0"
 
 
 class ManifestError(Exception):
@@ -106,6 +107,8 @@ def parse_manifest(text, require_hashes=True):
         extra = sorted(set(entry) - set(FIELDS) - set(OPTIONAL_FIELDS))
         if extra:
             raise ManifestError(f"{where}: unknown field {', '.join(extra)}")
+        if "timeout" in entry and (type(entry["timeout"]) is not int or entry["timeout"] <= 0):
+            raise ManifestError(f"{where}: {TIMEOUT_RULE}")
         known = [field for field in FIELDS + OPTIONAL_FIELDS if field in entry]
         documents.append(Document(**{field: entry[field] for field in known}))
     check(documents, require_hashes)
@@ -132,8 +135,9 @@ def check(documents, require_hashes=True):
         pinned = bool(SHA256_PATTERN.match(document.sha256)) and document.size > 0
         if not pinned and (require_hashes or document.sha256 or document.size):
             raise ManifestError(f"{where}: sha256 and size must both be set")
-        if not isinstance(document.timeout, int) or document.timeout < 0:
-            raise ManifestError(f"{where}: the timeout must be a positive number of seconds")
+        # A timeout of 0 means that the entry has no timeout field.
+        if type(document.timeout) is not int or document.timeout < 0:
+            raise ManifestError(f"{where}: {TIMEOUT_RULE}")
         if document.size > MAX_DOCUMENT_BYTES:
             raise ManifestError(f"{where}: {document.size} bytes is more than {MAX_DOCUMENT_BYTES}")
         total += document.size

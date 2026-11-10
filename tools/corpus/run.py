@@ -17,11 +17,12 @@ import dataclasses
 import hashlib
 import json
 import os
+import selectors
 import signal
 import sqlite3
 import subprocess
 import sys
-import threading
+import time
 from pathlib import Path
 
 import corpuslib
@@ -58,32 +59,22 @@ def environment(home):
     }
 
 
-class _PipeReader(threading.Thread):
-    """Reads a pipe to its end and keeps at most `limit` bytes."""
-
-    def __init__(self, pipe, limit):
-        super().__init__(daemon=True)
-        self.pipe = pipe
-        self.limit = limit
-        self.data = bytearray()
-        self.overflow = False
-
-    def run(self):
-        try:
-            while chunk := self.pipe.read(65536):
-                room = self.limit - len(self.data)
-                self.data += chunk[:max(room, 0)]
-                self.overflow = self.overflow or len(chunk) > room
-        except (OSError, ValueError):
-            pass
+def _stop_group(process):
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
 
 
 def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
     """Runs `binary` under the name `pandoc` and returns the outcome.
 
     The program runs in its own session. At the time limit, the function
-    stops the whole process group, so that a child process cannot keep the
-    pipes open. Each pipe keeps at most `limit` bytes.
+    stops the whole process group. It reads both pipes without blocking, and
+    it waits at most `CLEANUP_SECONDS` for the pipes to close after the end
+    of the program, so that a process outside the group cannot hold the run.
+    Each pipe keeps at most `limit` bytes. An outcome that the tool could not
+    get completely has a negative exit code.
     """
     try:
         process = subprocess.Popen(
@@ -92,31 +83,58 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
             start_new_session=True)
     except OSError as error:
         return Outcome(-1, b"", f"[corpus] {binary}: {error}\n".encode())
-    readers = [_PipeReader(process.stdout, limit), _PipeReader(process.stderr, limit)]
-    for reader in readers:
-        reader.start()
+    buffers = {process.stdout.fileno(): bytearray(), process.stderr.fileno(): bytearray()}
+    overflow = False
     timed_out = False
+    deadline = time.monotonic() + timeout
+    cleanup_deadline = None
+    with selectors.DefaultSelector() as selector:
+        for fd in buffers:
+            os.set_blocking(fd, False)
+            selector.register(fd, selectors.EVENT_READ)
+        while selector.get_map():
+            now = time.monotonic()
+            if cleanup_deadline is None:
+                if process.poll() is not None:
+                    cleanup_deadline = now + CLEANUP_SECONDS
+                elif now >= deadline:
+                    timed_out = True
+                    _stop_group(process)
+                    cleanup_deadline = now + CLEANUP_SECONDS
+            elif now >= cleanup_deadline:
+                break
+            end = deadline if cleanup_deadline is None else cleanup_deadline
+            for key, _ in selector.select(timeout=max(0.0, min(end - now, 0.05))):
+                try:
+                    chunk = os.read(key.fd, 65536)
+                except BlockingIOError:
+                    continue
+                if not chunk:
+                    selector.unregister(key.fd)
+                    continue
+                data = buffers[key.fd]
+                room = limit - len(data)
+                data += chunk[:max(room, 0)]
+                overflow = overflow or len(chunk) > room
+        pipes_open = bool(selector.get_map())
+    _stop_group(process)
     try:
-        process.wait(timeout=timeout)
+        process.wait(timeout=CLEANUP_SECONDS)
     except subprocess.TimeoutExpired:
-        timed_out = True
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except (ProcessLookupError, PermissionError):
         pass
-    process.wait()
-    for reader in readers:
-        reader.join(CLEANUP_SECONDS)
-    for pipe in (process.stdout, process.stderr):
-        pipe.close()
-    stdout, stderr = (bytes(reader.data) for reader in readers)
+    process.stdout.close()
+    process.stderr.close()
+    stdout, stderr = (bytes(data) for data in buffers.values())
     if timed_out:
         stderr += f"[corpus] no result after {timeout} s\n".encode()
         return Outcome(-1, stdout, stderr, timed_out=True)
-    if any(reader.overflow for reader in readers):
+    if pipes_open:
+        stderr += b"[corpus] a process outside the group kept the output open\n"
+        return Outcome(-1, stdout, stderr)
+    if overflow:
         stderr += f"[corpus] output larger than {limit} bytes\n".encode()
         return Outcome(-1, stdout, stderr)
-    return Outcome(process.returncode, stdout, stderr)
+    return Outcome(process.returncode if process.returncode is not None else -1, stdout, stderr)
 
 
 def arguments(document, target):
@@ -172,6 +190,12 @@ def status(expected, actual, target):
         return "timeout"
     if expected.timed_out:
         return "oracle timeout"
+    # A negative exit code marks a result that the tool could not get: a start
+    # failure, a stop by a signal or an incomplete output. It is never compared.
+    if actual.exit < 0:
+        return "error program"
+    if expected.exit < 0:
+        return "error oracle"
     parts = differences(expected, actual, target)
     return "pass" if not parts else "fail " + ",".join(parts)
 
