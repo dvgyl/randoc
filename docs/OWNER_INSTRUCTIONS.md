@@ -71,6 +71,15 @@ completely. Its main rules:
 10. "now please do not handoff before 10 PM UTC and keep working in this
     thread" (Given in the second session, 2026-11-10. The time is 22:00 UTC
     on 2026-11-10.)
+11. "Please use fable 5.2 extensively for the next few tasks or do the fable
+    specific tasks first" (Given in the second session at about 10:40 UTC.
+    How the coordinator applies it: from this time, a new worker is an
+    agent on the model Fable 5.2, and the work that needs the strongest
+    model starts first: a port from upstream source, an engine design, a
+    new subsystem. The two independent reviewers of gate 5 stay as the task
+    text defines them, GPT-6.1 Sol through the Codex CLI and an Opus 5.5
+    agent with a new context, so that a reviewer is not the model that
+    wrote the code.)
 
 ## 3. Writing style
 
