@@ -10,27 +10,27 @@
   "markdown"
  ],
  "timeout_seconds": 60,
- "documents": 233,
+ "documents": 232,
  "totals": {
-  "units": 699,
+  "units": 696,
   "pass": 0,
-  "fail": 699
+  "fail": 696
  },
  "by_target": {
   "html": {
-   "units": 233,
+   "units": 232,
    "pass": 0,
-   "fail": 233
+   "fail": 232
   },
   "json": {
-   "units": 233,
+   "units": 232,
    "pass": 0,
-   "fail": 233
+   "fail": 232
   },
   "markdown": {
-   "units": 233,
+   "units": 232,
    "pass": 0,
-   "fail": 233
+   "fail": 232
   }
  },
  "by_format": {
@@ -80,9 +80,9 @@
    "fail": 24
   },
   "docx": {
-   "units": 36,
+   "units": 33,
    "pass": 0,
-   "fail": 36
+   "fail": 33
   },
   "epub": {
    "units": 21,
@@ -777,9 +777,6 @@
   "tika-teststyles-odt:html": "fail exit,stderr,output",
   "tika-teststyles-odt:json": "fail exit,stderr,output",
   "tika-teststyles-odt:markdown": "fail exit,stderr,output",
-  "tika-testword-3imgs-docx:html": "fail exit,stderr,output",
-  "tika-testword-3imgs-docx:json": "fail exit,stderr,output",
-  "tika-testword-3imgs-docx:markdown": "fail exit,stderr,output",
   "tika-testword-boldhyperlink-docx:html": "fail exit,stderr,output",
   "tika-testword-boldhyperlink-docx:json": "fail exit,stderr,output",
   "tika-testword-boldhyperlink-docx:markdown": "fail exit,stderr,output",
