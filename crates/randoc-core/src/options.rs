@@ -34,7 +34,8 @@ pub struct ReaderOptions {
     pub tab_stop: i64,
     /// The classes for indented code blocks.
     pub indented_code_classes: Vec<Text>,
-    /// The strings that the reader treats as abbreviations.
+    /// The strings that the reader treats as abbreviations. The default is
+    /// the list of [`crate::shared::default_abbreviations`], as in Pandoc.
     pub abbreviations: BTreeSet<Text>,
     /// The extension for an image path that has no extension.
     pub default_image_extension: Text,
@@ -52,7 +53,10 @@ impl Default for ReaderOptions {
             columns: 80,
             tab_stop: 4,
             indented_code_classes: Vec::new(),
-            abbreviations: BTreeSet::new(),
+            abbreviations: crate::shared::default_abbreviations()
+                .iter()
+                .map(|text| Text::from(*text))
+                .collect(),
             default_image_extension: Text::new(),
             track_changes: TrackChanges::default(),
             strip_comments: false,
@@ -289,6 +293,19 @@ impl Default for WriterOptions {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_default_reader_options_hold_the_abbreviation_list() {
+        // Pandoc 3.13 joins `Mr.` to the next word and does not join `mr.`.
+        let options = ReaderOptions::default();
+        assert!(options.abbreviations.contains("Mr."));
+        assert!(options.abbreviations.contains("e.g."));
+        assert!(!options.abbreviations.contains("mr."));
+        assert_eq!(
+            options.abbreviations.len(),
+            crate::shared::default_abbreviations().len()
+        );
+    }
 
     #[test]
     fn the_default_math_method_is_mathml_as_in_pandoc_3_13() {
