@@ -15,6 +15,8 @@ This file lists each file or design that comes from a different project.
 Add a row when a workstream adds material from a different project. Put the
 full upstream licence file, with its copyright notice and disclaimer, in
 `third_party/licences/` and link it in the last column. A licence name alone
-is not sufficient for ported code. Check the
+is not sufficient for ported code. A crate that holds such material also
+carries the notice in its own folder (`crates/NAME/NOTICE.md`), because a
+source package of one crate does not include `third_party/`. Check the
 licence of each file first. Record a file that the Randoc licence does not
 permit as a gap in `spec/not-applicable.json` or `docs/ISSUES.md`.
