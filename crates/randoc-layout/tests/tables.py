@@ -41,6 +41,8 @@ for s in re.findall(r'"([^"]*)"', base):
     v0, s0 = emoji.get(first, (False, False))
     emoji[first] = (v0 or var, s0 or skin)
 with open(out, 'w') as f:
+    f.write('// Data from `doclayout` 0.6 and `emojis` 0.1.5 (BSD-3-Clause), Copyright\n')
+    f.write('// John MacFarlane. See third_party/licences/doclayout.txt and emojis.txt.\n')
     f.write('//! Character width data, generated from the `unicodeWidth.inc` file of\n')
     f.write('//! `doclayout` 0.6 and the `baseEmojis` list of `emojis` 0.1.5. Do not edit.\n\n')
     f.write('use crate::width::Class::{self, *};\n\n')

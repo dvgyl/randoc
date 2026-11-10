@@ -1,3 +1,5 @@
+// Ported from `doclayout` 0.6 (BSD-3-Clause), Copyright John MacFarlane.
+// See third_party/licences/doclayout.txt.
 //! Text styles and their ANSI escape sequences.
 
 /// One of the eight standard terminal colors.

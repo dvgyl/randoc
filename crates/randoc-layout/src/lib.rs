@@ -1,3 +1,5 @@
+// Ported from `doclayout` 0.6 (BSD-3-Clause), Copyright John MacFarlane.
+// See third_party/licences/doclayout.txt.
 //! Text layout with line wrapping for Randoc writers.
 //!
 //! This crate is a port of the Haskell library `doclayout` 0.6, which
@@ -457,6 +459,9 @@ pub fn flush(doc: Doc) -> Doc {
 
 /// Indents `doc` by `indent` spaces.
 pub fn nest(indent: usize, doc: Doc) -> Doc {
+    if doc.is_empty() {
+        return doc;
+    }
     prefixed(&" ".repeat(indent), doc)
 }
 
@@ -566,18 +571,21 @@ pub fn double_quotes(doc: Doc) -> Doc {
     inside(char('"'), char('"'), doc)
 }
 
+/// Wraps `doc` at `width`, or at width 1 when `width` is 0. The alignment
+/// uses the requested width, as in `doclayout`.
 fn block(width: usize, doc: &Doc, align: fn(isize, Line) -> Line) -> Doc {
-    let width = if width < 1 && !doc.is_empty() {
+    let requested = to_isize(width);
+    let wrap = if width < 1 && !doc.is_empty() {
         1
     } else {
-        to_isize(width)
+        requested
     };
-    let output = render::prerender(doc, Some(width));
-    let lines = render::chop(width, output)
+    let output = render::prerender(doc, Some(wrap));
+    let lines = render::chop(wrap, output)
         .into_iter()
-        .map(|line| align(width, line))
+        .map(|line| align(requested, line))
         .collect();
-    Doc(Node::Block(width, lines))
+    Doc(Node::Block(wrap, lines))
 }
 
 fn pad_left(count: isize, line: Line) -> Line {
@@ -1275,6 +1283,29 @@ mod tests {
         assert_eq!(remove_final_newline(literal("a") + cr()), literal("a"));
         assert_eq!(remove_final_newline(literal("ab")), literal("ab"));
         assert_eq!(remove_final_newline(nest(2, cr())), nest(2, cr()));
+    }
+
+    #[test]
+    fn nesting_empty_does_not_allocate_the_indent() {
+        assert!(nest(isize::MAX.unsigned_abs(), empty()).is_empty());
+        assert!(hang(usize::MAX, empty(), empty()).is_empty());
+    }
+
+    /// Expected values from `pandoc.layout` in Pandoc 3.13.
+    #[test]
+    fn zero_width_blocks_align_at_the_requested_width() {
+        for block in [lblock, cblock, rblock] {
+            let doc = block(0, literal("\na"));
+            assert_eq!(doc.render(None), "a");
+            let queries = (
+                doc.offset(),
+                doc.min_offset(),
+                doc.height(),
+                doc.update_column(0),
+            );
+            assert_eq!(queries, (1, 1, 1, 1));
+            assert_eq!(block(0, literal("a\nbb")).render(None), "a\nb\nb");
+        }
     }
 
     #[test]

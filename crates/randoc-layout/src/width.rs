@@ -1,3 +1,5 @@
+// Ported from `doclayout` 0.6 (BSD-3-Clause), Copyright John MacFarlane.
+// See third_party/licences/doclayout.txt.
 //! Display width of text in a monospace font, as `doclayout` computes it.
 
 use crate::tables::{EMOJI, RANGES};

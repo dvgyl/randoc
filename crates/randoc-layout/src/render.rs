@@ -1,3 +1,5 @@
+// Ported from `doclayout` 0.6 (BSD-3-Clause), Copyright John MacFarlane.
+// See third_party/licences/doclayout.txt.
 //! The layout engine: it flattens a [`Doc`] into a list of items and lays
 //! the items out into lines.
 

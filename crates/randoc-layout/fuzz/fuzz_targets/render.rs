@@ -76,8 +76,9 @@ fuzz_target!(|data: &[u8]| {
             24 => unary(&mut stack, &|d| hang(arg, literal("- "), d)),
             25 => {
                 let n = (arg + 2).min(stack.len());
-                let docs: Vec<Doc> = stack.drain(stack.len() - n..).map(|(d, _)| d).collect();
-                let depth = 0;
+                let joined: Vec<(Doc, usize)> = stack.drain(stack.len() - n..).collect();
+                let depth = joined.iter().map(|(_, d)| *d).max().unwrap_or(0);
+                let docs: Vec<Doc> = joined.into_iter().map(|(d, _)| d).collect();
                 stack.push((
                     match bytes.next().unwrap_or(0) % 4 {
                         0 => hcat(docs),

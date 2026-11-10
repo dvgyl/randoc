@@ -1,3 +1,5 @@
+// Data from `doclayout` 0.6 and `emojis` 0.1.5 (BSD-3-Clause), Copyright
+// John MacFarlane. See third_party/licences/doclayout.txt and emojis.txt.
 //! Character width data, generated from the `unicodeWidth.inc` file of
 //! `doclayout` 0.6 and the `baseEmojis` list of `emojis` 0.1.5. Do not edit.
 
