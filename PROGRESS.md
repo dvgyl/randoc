@@ -248,4 +248,5 @@ Gates that could not apply:
 | --- | --- | --- |
 | Foundation commit | 5 (two reviews) | The reviews of the foundation run after the first push, so that the workstreams can start. Findings are fixed in follow-up commits. |
 | Foundation commit | 6 (benchmarks) | There is no earlier version to compare with. |
+| Research reuse (documents `docs/PRIOR_ART.md`, `docs/ADR.md`; session 2) | 2, 3, 4, 6, 7 | The change has no code and no build input. Gate 5 applied in full: four review rounds, both reviewers approve the final text (`docs/MERGE_LOG.md`). |
 

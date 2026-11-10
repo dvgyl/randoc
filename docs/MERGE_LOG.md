@@ -302,3 +302,41 @@ Open after this merge: the command line must remove each CR and a byte order
 mark from a template file before it calls `Template::compile` (the crate
 documents this caller rule), and the command line branch has its own copy of
 some default templates, which it must replace by `randoc-data`.
+
+## Research reuse (documents only, one commit, no branch)
+
+Content: `docs/PRIOR_ART.md` has a checked version, a licence and the URL of
+the licence file for each reuse candidate. `docs/ADR.md` has three new
+decision records: ADR 9 (ZIP containers: `zip` 9.5.0), ADR 10 (XML reading:
+`quick-xml` 0.42.0) and ADR 11 (Lua: `mlua` 0.12.2 with `mlua-sys` 0.13.0 and
+Lua 5.4.8 built by Randoc from the unchanged lua.org sources). The change
+adds no dependency and no code. Each workstream that uses a crate adds the
+dependency line with its own merge.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The commit changes two Markdown files under `docs/`. No build input and no test input reads them (`grep` for the two file names in `crates/`, `scripts/` and `tools/` gives no result), so the harness result of `main` is unchanged: 2217 baseline units, 0 regressions (measured at the start of the session on 9ffe433). |
+| 2. Measured progress | Does not apply: no behaviour changes. Each candidate row now has its evidence; 4 candidates are recorded as not compatible or partly compatible (`unicode-math`, the data files of `unicode-collation`, the default features of `hayagriva` and of `ureq`). |
+| 3. Tests | Does not apply: no code. The records name the tests that each later workstream must write (lists "To verify in the workstream"). |
+| 4. No panics | Does not apply: no code. |
+| 5. Two reviews | Four rounds. Opus 5.5 with a new context: round 1 REQUEST CHANGES (3 high, 4 medium, 5 low; no licence row permitted material that is not compatible), round 2 REQUEST CHANGES (1 medium, 5 low; all 25 round 1 findings of both reviewers closed), round 3 APPROVE (1 low), round 4 APPROVE of the final text. Codex (GPT-6.1 Sol, fast tier, with network access for the licence files): round 1 REQUEST CHANGES (3 high, 7 medium, 3 low), round 2 REQUEST CHANGES (3 high, 3 medium, 1 low in the corrected text), round 3 REQUEST CHANGES (1 medium: the restricted Lua mode must also restrict host functions; 1 low), round 4 APPROVE of the final text. From round 3, a record states only verified facts, and each implementation rule that is not fully probed is in a list "To verify in the workstream". |
+| 6. No slowdowns | Does not apply: no code. |
+| 7. Clean build | Does not apply: no build input changes. |
+
+Changes that the coordinator made after the round 3 reviews (both reviewers
+checked exactly these three changes in round 4): the host-function rule of
+the restricted Lua mode in ADR 11, the `lua-src` versions in ADR 11, and the
+named-entity table in rules 5 and 6 of ADR 10.
+
+Decisions that the records need from the coordinator, all approved: the copy
+of the 59 unchanged Lua source files is an exception to rule 5 of
+`docs/PRIOR_ART.md`, with a hash test for each file; the one call of
+`Lua::unsafe_new_with` gets a written safety argument and a focused test;
+`randoc_core::Limits` gets size limits for an archive file and an input file
+when the first container workstream starts.
+
+Not checked by any reviewer or by the research agent: release builds; Linux
+and Windows; the WebAssembly targets `wasm32-wasip1` with a C toolchain and
+`wasm32-unknown-emscripten`; the licence files (not only the licence fields)
+of the build dependencies `cc`, `cfg-if`, `pkg-config`, `find-msvc-tools`
+and `shlex`.
