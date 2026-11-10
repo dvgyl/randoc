@@ -1562,6 +1562,35 @@ mod tests {
         );
     }
 
+    /// A before-non-blank item at the end of nested content has no
+    /// follower in `doclayout`, so the offset does not count it. Expected
+    /// values from `pandoc.layout`.
+    #[test]
+    fn offset_ignores_before_non_blank_at_end_of_nested_content() {
+        let inner = || literal("a") + before_non_blank(literal("xx"));
+        let styled = bold(inner()) + literal("b");
+        assert_eq!((styled.offset(), styled.update_column(0)), (2, 2));
+        let prefix = prefixed("> ", inner()) + literal("b");
+        assert_eq!((prefix.offset(), prefix.update_column(0)), (4, 4));
+        let flushed = flush(inner()) + literal("b");
+        assert_eq!((flushed.offset(), flushed.update_column(0)), (2, 2));
+    }
+
+    /// I-LAYOUT-04: Pandoc gives -1 for this column, and the `usize`
+    /// result is 0. The other queries are equal to Pandoc.
+    #[test]
+    fn negative_column_after_overflow_becomes_zero() {
+        let max = isize::MAX.unsigned_abs();
+        let doc = lblock(max, literal("")) + lblock(max, literal("")) + literal("c");
+        let queries = (
+            doc.offset(),
+            doc.min_offset(),
+            doc.height(),
+            doc.update_column(0),
+        );
+        assert_eq!(queries, (0, 0, 1, 0));
+    }
+
     #[test]
     fn offset_looks_into_flushed_concatenations() {
         let joined = before_non_blank(literal("xx")) + flush(literal("a") + literal("b"));
