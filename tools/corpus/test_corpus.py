@@ -6,9 +6,11 @@ import io
 import json
 import os
 import shutil
+import socket
 import sqlite3
 import sys
 import tempfile
+import threading
 import time
 import unittest
 import urllib.error
@@ -605,3 +607,103 @@ class ThirdReviewTests(unittest.TestCase):
         with self.assertRaisesRegex(TimeoutError, "no complete download after -1 s"):
             fetch.download(source.as_uri(), total=-1)
         self.assertEqual(fetch.download(source.as_uri()), b"x" * 100)
+
+
+class ExecuteCaseTests(unittest.TestCase):
+    """One test for each case that `run.execute` must handle (Codex round 3)."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="randoc-corpus-exec-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def python(self, script, timeout, **kwargs):
+        started = time.monotonic()
+        result = run.execute(sys.executable, ["-c", script], self.dir, run.HOME, timeout, **kwargs)
+        return result, time.monotonic() - started
+
+    def test_1_normal_end(self):
+        result, _ = self.python("import sys;sys.stdout.write('out');sys.stderr.write('err')", 10)
+        self.assertEqual(result, run.Outcome(0, b"out", b"err"))
+
+    def test_2_non_zero_exit_code(self):
+        result, _ = self.python("import sys;print('x');sys.exit(64)", 10)
+        self.assertEqual(result, run.Outcome(64, b"x\n", b""))
+
+    def test_3_end_by_a_signal(self):
+        result, _ = self.python("import os,signal;os.kill(os.getpid(),signal.SIGTERM)", 10)
+        self.assertEqual((result.exit, result.timed_out), (-15, False))
+        self.assertEqual(run.status(result, result, "html"), "error program")
+
+    def test_4_start_failure(self):
+        result = run.execute(self.dir / "missing", [], self.dir, run.HOME, 10)
+        self.assertEqual((result.exit, result.timed_out), (-1, False))
+        self.assertIn(b"[corpus]", result.stderr)
+
+    def test_5_time_limit_with_the_program_alone(self):
+        result, elapsed = self.python("import time;time.sleep(30)", 0.3)
+        self.assertTrue(result.timed_out)
+        self.assertLess(elapsed, 2)
+
+    def test_6_time_limit_with_a_child_in_the_same_group(self):
+        script = "import subprocess,sys,time;subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)']);time.sleep(30)"
+        result, elapsed = self.python(script, 0.3)
+        self.assertTrue(result.timed_out)
+        self.assertLess(elapsed, 2)
+
+    def test_7_a_child_in_a_new_session_keeps_the_pipes(self):
+        with mock.patch.object(run, "CLEANUP_SECONDS", 0.05):
+            result, elapsed = self.python(ESCAPED_CHILD, 0.1)
+        self.assertTrue(result.timed_out)
+        self.assertLess(elapsed, 1)
+
+    def test_8_a_program_that_closes_its_outputs_early_and_ends_later(self):
+        result, _ = self.python("import os,time;os.close(1);os.close(2);time.sleep(0.4);os._exit(64)", 2)
+        self.assertEqual(result, run.Outcome(64, b"", b""))
+        result, elapsed = self.python("import os,time;os.close(1);os.close(2);time.sleep(30)", 0.3)
+        self.assertTrue(result.timed_out)
+        self.assertLess(elapsed, 2)
+
+    def test_9_output_above_the_size_limit(self):
+        result, _ = self.python("import sys;sys.stdout.write('x'*100000)", 10, limit=1000)
+        self.assertEqual((result.exit, len(result.stdout)), (-1, 1000))
+        self.assertIn(b"output larger than 1000 bytes", result.stderr)
+
+    def test_10_input_that_the_program_does_not_read(self):
+        # The program gets /dev/null as standard input, so a reader sees the end at once.
+        result, elapsed = self.python("import sys;print(len(sys.stdin.read()))", 10)
+        self.assertEqual(result, run.Outcome(0, b"0\n", b""))
+        self.assertLess(elapsed, 5)
+
+
+class SlowServerTests(unittest.TestCase):
+    def test_a_server_that_sends_single_bytes_cannot_pass_the_total_limit(self):
+        reader, writer = socket.socketpair()
+        reader.settimeout(0.2)
+
+        def serve():
+            try:
+                writer.sendall(b"HTTP/1.1 200 OK\r\nContent-Length: 20\r\n\r\n")
+                for _ in range(20):
+                    time.sleep(0.05)
+                    writer.sendall(b"x")
+            except OSError:
+                pass
+            finally:
+                writer.close()
+        thread = threading.Thread(target=serve)
+        thread.start()
+        response = http.client.HTTPResponse(reader)
+        response.begin()
+        started = time.monotonic()
+        try:
+            with mock.patch.object(fetch.OPENER, "open", return_value=response):
+                with self.assertRaises(TimeoutError):
+                    fetch.download("https://example.org/slow", timeout=0.2, total=0.1)
+        finally:
+            elapsed = time.monotonic() - started
+            response.close()
+            reader.close()
+            thread.join()
+        self.assertLess(elapsed, 0.4)

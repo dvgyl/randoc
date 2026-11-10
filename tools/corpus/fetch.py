@@ -40,19 +40,22 @@ OPENER = urllib.request.build_opener(HttpsOnlyRedirects)
 DOWNLOAD_SECONDS = 300
 
 
-def download(url, timeout=60, total=DOWNLOAD_SECONDS):
+def download(url, timeout=10, total=DOWNLOAD_SECONDS):
     """Returns the bytes at `url`.
 
     `timeout` limits each network operation and `total` limits the whole
-    download, so that a slow server cannot hold the program. Raises
-    `ValueError` for a document that is too large and `TimeoutError` at the
-    total limit.
+    download, so that a slow server cannot hold the program. Each read
+    returns the bytes that are available (`read1`), so the program checks the
+    total limit after each wait of at most `timeout`. Raises `ValueError` for
+    a document that is too large and `TimeoutError` at the total limit.
     """
     deadline = time.monotonic() + total
     request = urllib.request.Request(url, headers={"User-Agent": corpuslib.USER_AGENT})
     data = bytearray()
-    with OPENER.open(request, timeout=timeout) as response:
-        while chunk := response.read(65536):
+    with OPENER.open(request, timeout=max(0.001, min(timeout, total))) as response:
+        if time.monotonic() > deadline:
+            raise TimeoutError(f"no complete download after {total} s")
+        while chunk := response.read1(65536):
             data += chunk
             if len(data) > corpuslib.MAX_DOCUMENT_BYTES:
                 raise ValueError(f"more than {corpuslib.MAX_DOCUMENT_BYTES} bytes")

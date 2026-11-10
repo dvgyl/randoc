@@ -73,6 +73,8 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
     stops the whole process group. It reads both pipes without blocking, and
     it waits at most `CLEANUP_SECONDS` for the pipes to close after the end
     of the program, so that a process outside the group cannot hold the run.
+    A program that closes its outputs early can run until the time limit.
+    The program gets no standard input (`/dev/null`).
     Each pipe keeps at most `limit` bytes. An outcome that the tool could not
     get completely has a negative exit code.
     """
@@ -117,6 +119,13 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
                 data += chunk[:max(room, 0)]
                 overflow = overflow or len(chunk) > room
         pipes_open = bool(selector.get_map())
+    if not timed_out and process.poll() is None:
+        # The program closed its outputs but still runs. Wait for its end
+        # until the time limit of the conversion.
+        try:
+            process.wait(timeout=max(0.0, deadline - time.monotonic()))
+        except subprocess.TimeoutExpired:
+            timed_out = True
     _stop_group(process)
     try:
         process.wait(timeout=CLEANUP_SECONDS)
