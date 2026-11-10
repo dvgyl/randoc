@@ -80,6 +80,10 @@ completely. Its main rules:
     text defines them, GPT-6.1 Sol through the Codex CLI and an Opus 5.5
     agent with a new context, so that a reviewer is not the model that
     wrote the code.)
+12. "Please at the next natural stopping point, prepare the handoff the
+    fable limit is at 96%" (Given in the second session at about 12:20 UTC.
+    It replaces instruction 10. The coordinator told each worker to commit
+    its state and to stop, and wrote the handoff.)
 
 ## 3. Writing style
 

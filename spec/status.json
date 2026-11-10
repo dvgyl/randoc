@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T09:01:00Z",
+  "updated": "2026-11-10T12:28:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -63,17 +63,17 @@
     {
       "id": "markdown-reader",
       "state": "in_work",
-      "note": "head 4c1edf9: two high time findings open (I-MD-27, I-MD-28); last gate pass 2d3fb48"
+      "note": "head 72250dc (wip): two review rounds; gate passed at 3d644ec; both high time findings corrected; three medium rows open; unit 2 stopped"
     },
     {
       "id": "html-writer",
       "state": "review",
-      "note": "head c803b4e: round 3 single items corrected, the section rule matrix is open; last full gate pass 31709f6"
+      "note": "head 5d91b64 (wip): four review rounds; gate passed at eee175e; round 4: 1 high and 14 medium findings; unit 2 stopped"
     },
     {
       "id": "cli",
       "state": "review",
-      "note": "head 9954e7b (wip): round 5 corrections written, not tested; last gate pass 2da6375"
+      "note": "head 78bb0d7: six review rounds; gate passed at 2c28b35; round 6: 1 high and 9 medium findings; unit 2 (cli-s2b) stopped"
     },
     {
       "id": "native",
@@ -86,7 +86,7 @@
     {
       "id": "commonmark-reader",
       "state": "review",
-      "note": "head 723475d (wip): 8 round 4 items corrected, last commit not tested; last gate pass 6e46f9a"
+      "note": "head 9615173: five review rounds; gate passed at 5b7cc50; round 5: 7 medium findings; unit 2 (port from commonmark-hs) stopped"
     },
     {
       "id": "research",
@@ -99,13 +99,13 @@
     },
     {
       "id": "latex-writer",
-      "state": "in_work",
-      "note": "head f85d334: 4 of 500 random latex trees differ; gate not run on the head; last gate pass b0f4099"
+      "state": "review",
+      "note": "head d5a005e: two review rounds; gate passed at d5a005e; round 2: Opus 4 high and 4 medium findings"
     },
     {
       "id": "yaml",
       "state": "review",
-      "note": "head 50d9b28: 5 of 8 round 3 items corrected; last gate pass 800a66a"
+      "note": "head f96ec26: five review rounds; gate passed at f96ec26; one medium finding open, in the replay comparison of the tests"
     },
     {
       "id": "shared",
@@ -113,24 +113,39 @@
     },
     {
       "id": "highlight",
-      "state": "review",
-      "note": "head dfec7d9: gate passes; review round 1 was stopped with the session, no verdict"
+      "state": "in_work",
+      "note": "head a9c1784 (wip): one review round; gate passed at 82d9059; the fixed step limits are gone; unit 2 (step cost, worst lines) stopped"
     },
     {
       "id": "markdown-writer",
       "state": "in_work",
-      "note": "head 235b8a8: tables and markua open; last gate pass ac1b191"
+      "note": "head 235b8a8: not touched in session 2; waits for the HTML writer on main"
     },
     {
       "id": "math",
       "state": "in_work",
-      "note": "head 1af6155 (wip): first version of randoc-math from oracle output; gate not run"
+      "note": "head 6f8fbf9: no review; a session 2 unit (merge of main, reuse study, open constructs) stopped"
+    },
+    {
+      "id": "lua",
+      "state": "in_work",
+      "note": "head 87747d4 (wip): new in session 2; first unit (Lua 5.4.8 build, runtime, document types, filters) stopped"
+    },
+    {
+      "id": "html-reader",
+      "state": "in_work",
+      "note": "head 457f577 (wip): new in session 2; first unit (tagsoup study, tokenizer, blocks) stopped"
+    },
+    {
+      "id": "reuse",
+      "state": "merged",
+      "note": "documents only: docs/PRIOR_ART.md, ADR 9 to 11"
     }
   ],
   "next_tasks": [
-    "Bring the nearest branches to main, in this order: yaml, cli, commonmark-reader, html-writer, highlight. For each: gate on the head commit, the open items of its report, one review round with both reviewers, merge-ws. Then measure CommonMark to HTML with the harness, the Pandoc test suite and the corpus.",
-    "Apply the reuse rule (docs/PRIOR_ART.md, docs/ADR.md ADR 1): check the licence of each candidate; compare the CommonMark reader with commonmark-hs; choose a permissive base for randoc-math; choose pinned crates for ZIP, XML and Lua; decide the inline-parser design of the Markdown reader.",
-    "Start the next wave when the command line is on main: HTML reader, docx, odt and epub containers, rst, org, JSON and Lua filters, citeproc."
+    "Merge yaml (one correction in its replay test, one review round on the diff). Then finish the stopped units of cli, commonmark-reader and html-writer (briefs NAME-s2b.md in env/store/briefs), one review round each, merge-ws. Then measure CommonMark to HTML with the harness, the Pandoc test suite and the corpus.",
+    "Bring highlight, markdown-reader, latex-writer and math to a review: finish the stopped unit of each one. markdown-writer waits for the HTML writer on main.",
+    "Continue the next wave: lua and html-reader have a first unit in work; then docx, odt and epub on zip and quick-xml (ADR 9, ADR 10), rst, org, JSON filters, citeproc."
   ],
   "handoff": "PROGRESS.md, section Handoff"
 }

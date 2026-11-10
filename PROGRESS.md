@@ -5,9 +5,26 @@ of a session, then run `./init.sh`.
 
 ## Handoff
 
-Written: 2026-11-10 09:06 UTC, at the end of the first session. The owner
-stopped the session and starts a new one later. All background work is
-stopped. Each workstream committed its state on its branch.
+Written: 2026-11-10 12:28 UTC, at the end of the second session. The owner
+asked for the handoff because the limit of the model Fable 5.2 was almost
+reached. Each worker committed its state on its branch and stopped.
+
+Key points:
+
+- `main` has no new code since the first session. It converts only between
+  `json` and `native`. It compiles, and its tests and its harness baseline
+  pass (measured at the start of this session).
+- One merge in this session: the reuse research (documents only). It gives
+  a checked licence for each reuse candidate and three decision records:
+  `zip` for ZIP containers, `quick-xml` for XML, `mlua` with Lua 5.4.8
+  built by Randoc for Lua.
+- No code branch merged. Each review round of this session found real
+  defects with the level medium or higher. The branch `yaml` is the
+  nearest: its reader has no open finding, and one finding in its replay
+  test is open.
+- Two new workstreams started: `lua` and `html-reader`.
+- A reviewer agent deleted the briefs folder of the coordinator by mistake.
+  All files are rebuilt. The store is now a local Git repository.
 
 ### How to start the next session
 
@@ -16,42 +33,59 @@ stopped. Each workstream committed its state on its branch.
 1. Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command, then
    `./init.sh` in `/Volumes/Extreme Pro/Randoc/randoc`.
 2. Start `env/bin/randoc-watchdog` in the background and keep the memory
-   limits (section "Local environment").
-3. Read `env/store/standing-orders.md` (the rules for each worker),
-   `env/store/decisions.tsv` (the decision log, one row for each decision),
-   `env/store/agents.tsv` and, for each workstream, the section "State at the
-   stop" at the top of `env/store/reports/NAME.md`.
-4. Read `docs/PRIOR_ART.md` and `docs/ADR.md`: the owner's rule of 2026-11-10
-   says to study and reuse open source before writing new code.
+   limits (section "Local environment"). The watchdog ends after each
+   process that it stops: start it again then.
+3. Read `env/store/standing-orders.md` (the rules for each worker; rule 19a
+   on deleting files is new), `env/store/decisions.tsv` (the decision log,
+   one row for each decision), `env/store/units.tsv` and, for each
+   workstream, the section "State at the stop" at the top of
+   `env/store/reports/NAME.md`.
+4. Read `docs/PRIOR_ART.md` and `docs/ADR.md` (ADR 1 and ADR 9 to 11).
 5. The worktrees are in `/Volumes/Extreme Pro/Randoc/wt/NAME`, one for each
    branch `ws/NAME`. The branches exist only on this drive. They are not
-   pushed on purpose: the early history of some branches holds files that
-   must not be published (examples of the CommonMark specification, text of
-   the Pandoc manual, completion scripts of Pandoc, a local path). Each
-   workstream reaches `main` as one squashed commit (`env/bin/merge-ws`).
+   pushed on purpose (the early history of some branches holds files that
+   must not be published). Each workstream reaches `main` as one squashed
+   commit (`env/bin/merge-ws`).
+6. The briefs of this session are in `env/store/briefs/`: `s2-common.md`
+   (the rules for a worker that continues a workstream), `NAME-s2.md` and
+   `NAME-s2b.md` (the units), `review-NAME-roundN.md` (the review prompts).
+   `env/store` is a local Git repository with no remote: commit it after
+   each group of changes (`git -C "/Volumes/Extreme Pro/Randoc/env/store" add -A`
+   and `commit`). If files of the store are lost, `git checkout` restores
+   them; `env/bin/recover-briefs` can rebuild the briefs from the session
+   transcripts.
+7. Two Codex review runs were possibly still in progress when this text was
+   written: `yaml` round 5 and `latex-writer` round 2. Their reports are
+   `env/store/reviews/yaml-codex-r5.md` and
+   `env/store/reviews/latex-writer-codex-r2.md`. Read them first. If a
+   file is missing, the run did not end: start it again with
+   `env/bin/codex-review-file BRIEF NAME`.
 
 ### What works
 
-- `main` is at the commit that holds this text. It compiles, passes
-  `scripts/gate.sh`, and is pushed to <https://github.com/dvgyl/randoc>.
+- `main` is at the commit that holds this text, pushed to
+  <https://github.com/dvgyl/randoc>. Its code is the code of the first
+  session. `./init.sh` passed on it at 09:17 UTC on 2026-11-10: the build,
+  the tests, and the harness baseline (2217 units, 0 regressions).
 - Formats on `main`: `json` and `native`, reader and writer of each.
 - Libraries on `main` that no program path uses yet: the layout engine
   (`randoc-layout`), the template engine with the default templates
   (`randoc-templates`, `randoc-data`), and the shared utilities
-  (`randoc_core::shared`: plain text of a tree, heading identifiers, HTML
-  entities, emoji, the default abbreviation list, NFC).
-- Conformance harness on `main`: 4546 units, 2217 pass, 1959 fail, 370 skipped, 0 regressions (measured on the merge commit 3dbc884).
-  Each failing unit needs a part that is not on `main` yet (the command-line
-  options, the Markdown reader, the HTML writer) or is a recorded divergence.
-- Capability matrix (`spec/capabilities.json`): 2 of 52 input formats and 2 of 77 output formats are partial (`json`, `native`). 0 of 90 extensions and 2 of 109 options have passing units.
-- Pandoc's own test suite (`tools/pandoc-testsuite`): the tool runs 2231 tests. The oracle passes 2231 (measured by the workstream testsuite). Randoc passes 0 (measured on 3dbc884 at 09:01 UTC). About 1939 more tests need Haskell and cannot run.
-- Corpus of real documents (`tools/corpus`): 230 documents in 33 formats, 690 units. The oracle against itself passes 690 (measured by the workstream corpus). Randoc passes 0 (measured on 3dbc884 at 09:01 UTC), because `main` reads only `json` and `native`.
-- Quarto and R Markdown: not measured. No path that they use (Markdown
-  reader, HTML writer, Lua filters, citations) is on `main`.
-- Nine workstream merges passed the full merge gate: testsuite, bench,
-  research, corpus, layout, native, json-codec, shared, templates
-  (`docs/MERGE_LOG.md` has the evidence of each). The foundation commit has
-  two recorded gate exceptions (section "Merge gate records").
+  (`randoc_core::shared`).
+- Conformance harness on `main`: 4546 units, 2217 pass, 1959 fail, 370
+  skipped, 0 regressions (measured in the first session on 3dbc884; the
+  code did not change since then).
+- Capability matrix (`spec/capabilities.json`): 2 of 52 input formats and 2
+  of 77 output formats are partial (`json`, `native`). 0 of 90 extensions
+  and 2 of 109 options have passing units.
+- Pandoc's own test suite (`tools/pandoc-testsuite`): the tool runs 2231
+  tests. The oracle passes 2231. Randoc passes 0 (measured in the first
+  session on 3dbc884).
+- Corpus of real documents (`tools/corpus`): 230 documents, 690 units.
+  Randoc passes 0 (measured in the first session on 3dbc884).
+- Quarto and R Markdown: not measured. No path that they use is on `main`.
+- Ten merges passed the merge gate: the nine workstreams of the first
+  session and the reuse research of this session (`docs/MERGE_LOG.md`).
 
 ### What does not work
 
@@ -59,75 +93,119 @@ stopped. Each workstream committed its state on its branch.
 extension, almost each option, templates in the program, filters, Lua,
 citations, highlighting, math conversion and the `lua` and `server` modes
 are not on `main`. The branches below hold the work in progress. No branch
-except `templates` had the approval of both reviewers at the stop.
+had the approval of both reviewers at the stop. "Gate" means
+`scripts/gate.sh`. The exact state of each branch is the section "State at
+the stop" at the top of `env/store/reports/NAME.md`; read it before you
+trust a row of this table, because each worker wrote it after this table.
 
-| Workstream | Branch head | State at the stop | Next step |
+| Workstream | Branch head at the stop | State | Next step |
 | --- | --- | --- | --- |
-| cli | `ws/cli` 9954e7b (wip) | Five review rounds. Round 5: both reviewers requested changes (the resource search for include files and templates, the read order, two sandbox defects). The corrections are written and not tested; the oracle matrix with 1010 cases is committed. Last gate pass: 2da6375. | Generate the UTF-8 test data, run the replay test and the gate, then review round 6. |
-| yaml | `ws/yaml` 50d9b28 | Three review rounds. Round 3 items 1, 2, 3, 4 and 6 are corrected with oracle tests. Item 7 (scheme of a verbatim tag) is half-done; items 5 and 8 are not started. Last gate pass: 800a66a. | Finish items 5, 7, 8; gate; 15 minutes of fuzzing; review round 4. Then the Markdown reader, the CommonMark reader and the command line move to `randoc-yaml`. |
-| commonmark-reader | `ws/commonmark-reader` 723475d (wip) | Four review rounds. All 8 round 4 items are corrected with oracle cases, and the reader uses `randoc_core::shared`. The last commit (a counter that overflowed) has no test run. Specification run: 652 of 652 at 6e79ef4. Last gate pass: 6e46f9a. | Tests and gate on 723475d, the specification tool, fuzzing, a mutation sample, then review round 5. |
-| html-writer | `ws/html-writer` c803b4e | Three review rounds. Round 3: R3-01 to R3-04, R3-06, R3-07, O01 to O03, I-HTML-15 and I-HTML-17 are corrected with tests. Open: one decision function for a `Div` that starts with a heading, from the full matrix of `tools/sections.py` (R3-05 and the rest of N09). Last full gate pass: 31709f6. | The section matrix and the single rule, the gate, two differential runs, then review round 4. |
-| templates | `ws/templates` 8d63d0b | Merged. | The command line connects `randoc-templates` and `randoc-data`. |
-| highlight | `ws/highlight` dfec7d9 | No review verdict yet: round 1 started and was stopped with the session. All 1,386 samples and 12,600 mutations are equal to the oracle when all 200 definitions are loaded; 63 definitions are embedded (licence). Speed: 1 MiB in 2.84 s. Two step limits were added (I-HL-03). The gate passes at dfec7d9. | Review round 1 (`env/store/briefs/review-highlight-round1-codex.md`). Then the HTML and LaTeX writers call the crate. |
-| markdown-reader | `ws/markdown-reader` 4c1edf9 | Two review rounds. `MANUAL.txt` gives the same JSON bytes as the oracle. Uses `randoc_core::shared`. Two high time findings are open: I-MD-28 (8 of 156 pairs of openers are still quadratic) and I-MD-27 (nested labels copy the text). Last gate pass: 2d3fb48. | The memo of inline results by (construct, start, context), then one shared text buffer; the gate; review round 3. |
-| latex-writer | `ws/latex-writer` f85d334 | One review round. A signature report found the dominant difference classes; about 17 rules corrected. Random trees that differ: 4 of 500 for `latex`, 13 of 500 for `beamer` (before: 136 of 200). Last gate pass: b0f4099. | Gate on f85d334, fuzzing, a mutation sample, the classes of I-LATEX-09, then review round 2. |
-| markdown-writer | `ws/markdown-writer` 235b8a8 | No review yet. 10,633 of 11,302 units of its suite pass. Small random trees that differ: 4 of 400. Open and high: table forms (I-MDW-02), `markua` (I-MDW-08). Math conversion waits for the workstream math. Last gate pass: ac1b191. | The table rule matrix, `markua`, the medium rows, the gate, then review round 1. |
-| math | `ws/math` 1af6155 (wip) | First version of `randoc-math` (TeX math to MathML and to an inline list), written from oracle output because `texmath` is GPL. Equal to the oracle: MathML for 2,550 of 4,110 formulas, the inline list for 3,425 of 4,110, the warning text for 973 of 2,378. The full gate did not run. | Read `docs/PRIOR_ART.md` ("TeX math") for a permissive base, then the rows I-MATH-01 to I-MATH-04. |
+| yaml | `ws/yaml` `f96ec26` | Five review rounds. Gate passed at `f96ec26`. Round 5: Opus found no defect in the reader in about 4,700 texts; all round 4 findings of level medium or higher are closed. One medium finding is open (R5-01): the replay comparison of the tests removes Markdown characters and, in file mode, compares only letters and digits, so a wrong string of ordinary form can pass. The Codex report of round 5 was not here at the stop. | Read `reviews/yaml-codex-r5.md`. Make the replay comparison exact for each string (find an entrance of the oracle that keeps strings literal; check whether the `metadata` key of a defaults file is one). Review round 6 on the diff. Merge. Then move the Markdown reader, the CommonMark reader and the command line to `randoc-yaml`. |
+| cli | `ws/cli` `78bb0d7` | Six review rounds. Gate passed at `2c28b35`. Round 6: both reviewers request changes (1 high: a repeated `--resource-path` replaces the earlier folders; 9 medium: the template search, a folder as a defaults name, named files that are missing, with and without `--sandbox`). The sandbox probes found no file that Randoc reads and the oracle refuses. Unit 2 (brief `cli-s2b.md`) was stopped at `78bb0d7`: each round 6 finding has code and a matrix case (the resource replay gives 2182 of 2182 cases), and the approved change in `randoc-core` is made. Warning from the worker: the cli suite of the harness gives 3455 passes on `78bb0d7`, and it gave 3457 before, so 2 or more units that passed now fail; the gate did not run on this commit. | Find the units that fail now (`randoc-harness run --baseline spec/baseline.json`) and correct the cause. Run the 40 reproductions (`env/tmp/cli-s2b/repro.py`), the gate, the mutation sample and the fuzz targets. Then review round 7, the merge, and the units "templates in the program" and "defaults files on `randoc-yaml`". |
+| commonmark-reader | `ws/commonmark-reader` `9615173` | Five review rounds. Gate passed at `5b7cc50`; the specification run gave 652 of 652. Round 5: both reviewers request changes (7 medium: the emphasis rule for delimiter runs of different length, reference definitions and metadata links with `rebase_relative_paths`, a definition list after a note definition, a YAML tag that changes a value, an extra list block, a missing notice row). Unit 2 (brief `commonmark-reader-s2b.md`) was stopped at `9615173`: the delimiter algorithm is a port of `commonmark` 0.3.1 (BSD-3-Clause) and a matrix of 3,810 paragraphs shows 0 differences; each round 5 finding with the level medium or higher has a correction and oracle cases; the suite gives 1724 of 1740 passing units (the 16 others are the `sourcepos` gap); the specification run gives 652 of 652; fuzzing 901 s with 0 crashes. The gate on `9615173` was stopped in its test step, so it has no result. The comparison with the upstream source is half-done (the report lists the modules that are not compared). | Run the gate on `9615173` and the other mutation shards. Then review round 6. The decision record on the branch has the title `ADR (commonmark-hs)`: give it the next free number at the merge. |
+| html-writer | `ws/html-writer` `5d91b64` (wip) | Four review rounds. Gate passed at `eee175e`. One decision function for section containers from an oracle matrix of 14,092 cases. Round 4: both reviewers request changes (1 high: a div with the class `columns` or `column`; 14 medium: classes with a special meaning, the place of block notes, heading attributes, time that grows faster than linear with the nesting depth). Unit 2 (brief `html-writer-s2b.md`) was stopped after 12 minutes at a `wip` commit that adds tools and probe data only (`src/classes.jsonl`, 3,856 oracle cases; the Rust code is the code of `aff07e3`). The report lists 7 rules that the data shows and that are not implemented. | Finish `html-writer-s2b.md` from step 1: the class table and its function, the note matrix (`tools/notes.py record`), the section axes, the nesting time. Then review round 5. |
+| highlight | `ws/highlight` `a9c1784` (wip) | One review round. Gate passed at `82d9059`. An ordered search replaced the two fixed step limits; the 15 long inputs of the reviews give the oracle tokens; the replay with all 200 definitions shows 0 differences. Open: one AsciiDoc line of 50,000 non-ASCII letters needed 49.9 s in a release build; the worst-line table has 4 of 63 languages. Unit 2 (brief `highlight-s2b.md`) was stopped at a `wip` commit whose last three edits are not compiled. A probe that proves "no match" for a whole pattern makes repeated look-ahead scans linear; the worst line of 54 of 63 embedded languages is below 1 s in a release build, and 9 are above (Julia 31.6 s, AsciiDoc 22.5 s, Rust and Odin 14.0 s). The approved change `Host::list_dir` in `randoc-core` is written, not compiled and not tested. | Compile and test the head. Finish `highlight-s2b.md` from the next steps of its report (the 9 worst lines, the profile of Log File and AsciiDoc against the oracle time, the checks). Then review round 2. Then the HTML and LaTeX writers call the crate. |
+| markdown-reader | `ws/markdown-reader` `72250dc` (wip) | Two review rounds. Gate passed at `3d644ec`. Both high time findings are corrected: a memo of failed inline attempts makes all 156 pairs of openers linear, and sub-parses read windows of one buffer. `MANUAL.txt` gives the JSON bytes of the oracle. Open: three rows with the level medium (I-MD-28 list form, I-MD-29, I-MD-30); two strikeout forms need 6.7 times the time for 4 times the size; the last fuzz run had only 5,293 runs in 910 s. Unit 2 (brief `markdown-reader-s2b.md`) was stopped at a `wip` commit: the cause of the strikeout time is found and corrected (the path at the depth limit), the list form of I-MD-28 is linear (1,000 lines: 37.4 s before, 0.12 s after), I-MD-30 is corrected; I-MD-29 is half-done and has no test run; `docs/ISSUES.md` is not updated; the fuzz rate is not examined. | Finish `markdown-reader-s2b.md` from the next steps of its report (the tests on the head first). Then review round 3. |
+| latex-writer | `ws/latex-writer` `d5a005e` | Two review rounds. Gate passed at `d5a005e`. Random trees on a new seed: 1 of 500 (`latex`) and 2 of 500 (`beamer`) differ. Round 2: Opus requests changes (4 high: a heading in a `column` div, the class `onlytextwidth`, an empty `#refs` div, an empty last References section with `--natbib`; 4 medium). The Codex report of round 2 was not here at the stop. The mutation sample, coverage and the time table did not run. | Read `reviews/latex-writer-codex-r2.md`. Write the correction brief (one oracle matrix for the Beamer frame structure, one for the bibliography forms). Then review round 3. |
+| math | `ws/math` `6f8fbf9` | No review yet. Gate passed at `bb9ece0` (the merge of `main`), not on the head. A Fable 5.2 worker ran the brief `math-s2.md`. Replay of 14,164 formulas on the head: MathML equal for 14,034, the inline list for 14,086, the warning text for 12,912 of 13,726 (at the start of the session: 2,550 and 3,425 of 4,110 formulas). The 87 document formulas are equal in both outputs. Reuse: the command names of KaTeX 0.16.11 (MIT) are the candidate list for the oracle probes; the parser is own code. Fuzzing: 901 s with 0 crashes, one commit before the head. Coverage and the mutation sample did not run. | Run the gate, coverage, the mutation sample and a fuzz run on the head. Put the two requests of its report on `main` at the merge (a row in `docs/PRIOR_ART.md`, a decision record for the KaTeX names). Then review round 1. Then the HTML writer and the Markdown writer call the crate. |
+| markdown-writer | `ws/markdown-writer` `235b8a8` | Not touched in this session. No review yet. Its own HTML renderer (`src/html.rs`) is a copy of work that the HTML writer does. | After the HTML writer is on `main`: use `randoc-html` and delete the copy; then the table rule matrix and `markua`. No session 2 brief exists. |
+| lua (new) | `ws/lua` `87747d4` (wip) | First unit (brief `lua.md`): the Lua 5.4.8 build of ADR 11, the runtime with two modes, the document types in Lua as a port of `pandoc-lua-marshal`, Lua filters. Stopped at a `wip` commit; no commit passed the gate. The build and the runtime with two modes are done; the document types and the filters are half-done; the last replay run gave 262 of 268 runs equal. The process of 10 GB was a test helper that doubled a tree at each level; it is corrected. A licence question is open (section "Open issues"). | Read its report. Decide the licence question first. Then continue `lua.md` from the next steps of the report. |
+| html-reader (new) | `ws/html-reader` `457f577` (wip) | First unit (brief `html-reader.md`). The tokenizer is a port of `tagsoup` 0.14.8 (BSD-3-Clause). Gate passed at `76b5527`; the head is a later `wip` commit with no test run. Harness suite `html-reader/` before the last change: 1212 units, 1198 pass. The branch calls its decision record "ADR 9"; `main` has ADR 9 to 11, so give it the next free number at the merge. | Read its report. Run the tests and the gate on the head, the fuzz run, the mutation sample. Then review round 1. |
 
-Not started: each other reader and writer (HTML reader, `docx`, `odt`,
-`epub`, `rst`, `org`, `typst`, `djot`, `man`, `docbook`, `jats`, wiki formats
-and the rest of the 52 input and 77 output formats), Lua filters and custom
-readers and writers, JSON filters, `--citeproc`, `--embed-resources`, PDF
-output through an engine, and the `lua` and `server` modes.
+Not started: each other reader and writer (`docx`, `odt`, `epub`, `rst`,
+`org`, `typst`, `djot`, `man`, `docbook`, `jats`, wiki formats and the rest
+of the 52 input and 77 output formats), custom readers and writers, JSON
+filters, `--citeproc`, `--embed-resources`, PDF output through an engine,
+and the `lua` and `server` modes.
 
 ### Open issues
 
-- `docs/ISSUES.md` on `main` has 41 rows. Each branch has its own rows,
-  which reach `main` with its merge.
-- Decisions that wait for the owner: D1 to D5 (section below), and two
-  coordinator decisions that the owner can reverse: the severity levels of
-  gate 5 and the rule that a recorded scope gap is not a review finding
-  (`docs/CONTRIBUTING.md`).
-- The Codex service stopped 5 review runs with a content flag. A prompt
-  that is a plain conformance review (`env/bin/codex-review-file`, the files
-  `env/store/briefs/review-*-codex.md`) completes. Such a round does not
-  cover the `--sandbox` path probes; the merge record must say so.
-- The computer stopped one time (memory), and one oracle process used 22 GB.
-  The limits in "Local environment" prevent both; keep them.
-- The reuse rule is new. `THIRD_PARTY_NOTICES.md` is the new name of
-  `THIRD_PARTY.md` on `main`. Each branch still has the old name; Git follows
-  the rename in a merge, and `env/bin/resolve-tables` knows both names.
-- Gate items that are open for merged work: mutation tests of the
-  document-model helpers were run only in part (58 caught, 2 missed and now
-  tested), H-001 and H-002 in `docs/ISSUES.md`.
-- Housekeeping on the drive: the empty folder
-  `/Volumes/Extreme Pro/Randoc.images` is not needed (an early attempt with
-  a disk image). The worktrees of the merged workstreams (`wt/layout`,
-  `wt/native`, `wt/json-codec`, `wt/shared`, `wt/templates`) can be removed
-  with `git worktree remove`. The internal disk is small (about 14 GB free);
-  the Codex folder and other caches there are not Randoc files.
+- **The review pattern.** In this session, 12 review runs on code gave 12
+  times "request changes", each with real findings. Three methods lowered
+  the number of new findings and must stay: (1) one rule from a full oracle
+  matrix that stays as replay data, not a correction of single cases;
+  (2) a port from the upstream source where its licence permits; (3) a
+  report or a record states only what a test or a probe shows. A worker
+  report said "done" for an item that was half-done one time (yaml, round
+  4): each review brief tells the reviewer to treat each claim as not
+  proven.
+- **Licence question in the workstream `lua` (decide before its merge).**
+  The package `pandoc-lua-marshal` 0.3.2.1 has an MIT `LICENSE` file, but
+  three of its files (`Walk.hs`, `SpliceList.hs`, `Topdown.hs`) have the
+  header "License: GNU GPL, version 2 or above". The worker printed these
+  files before it saw the header. It reports that it did not port them and
+  that `crates/randoc-lua/src/walk.rs` follows `doc/lua-filters.md`,
+  `Shared.hs` (MIT), `pandoc-types` and oracle probes. Working rule of the
+  coordinator until the owner decides: these three files are not
+  permitted material; before the merge, a new worker that did not read
+  them writes the tree walk again from the documented interface and oracle
+  probes, and a reviewer checks the result. Record the three files in
+  `docs/PRIOR_ART.md` as not permitted.
+- **A program binary can be a mutant.** After an in-place mutation run,
+  `target/debug/randoc` of a worktree was a mutated program one time
+  (markdown-reader). Build the program again after each mutation run and
+  before each harness run or review.
+- **Changes to shared contracts that the coordinator approved** and that
+  arrive with a branch: in `randoc-core`, `Error::Utf8Decoding` prints the
+  byte with a space pad (branch `ws/cli`, row I-CLI-25); `Host::list_dir`
+  and `Context::list_dir` (branch `ws/highlight`). Check each one at the
+  merge. The rows I-002 and I-NATIVE-04 of `docs/ISSUES.md` close on `main`
+  with the merge of `cli`.
+- **Decisions of ADR 9 to 11 that are not done yet:** pin `zip` as
+  `=9.5.0` in the root `Cargo.toml` and decide the feature list of the
+  harness; add size limits for an archive file and an input file to
+  `randoc_core::Limits` when the first container workstream starts. The
+  59 Lua source files and the one `unsafe` call are approved (ADR 11).
+- **The incident of 11:31 UTC.** The Opus reviewer of `cli` round 6 ran a
+  cleanup command after a failed `cd` and deleted each file of
+  `env/store/briefs`. All 101 files are rebuilt from the session
+  transcripts (`env/bin/recover-briefs`); the check against the prompts in
+  64 Codex logs covers 55 logs byte for byte, and the other 9 hold an older
+  text of a file that was edited later. Standing order 19a and each launch
+  message now give rules for deleting files. That reviewer left the folder
+  `env/tmp/cli-opus-r6` with files that it could not delete.
+- **The model limit.** The owner asked for workers on Fable 5.2 (instruction
+  11) and then ended the session at 96% of the Fable limit (instruction
+  12). Ask the owner, or read the newest instruction, before you start many
+  Fable 5.2 workers again. The reviewers of gate 5 stayed Codex and Opus.
+- Decisions that wait for the owner: D1 to D5 (section below), the severity
+  levels of gate 5, and the rule that a recorded scope gap is not a review
+  finding (`docs/CONTRIBUTING.md`).
+- Codex: a prompt that is a plain conformance review completes. Such a
+  round does not cover the `--sandbox` path probes; the Opus reviewer
+  covers them, and the merge record must say so.
+- Gate items that are open for work of this session: the mutation samples
+  of `html-writer`, `latex-writer` and `commonmark-reader` (6 of 127
+  mutants tested) are not complete; coverage was not measured for any
+  branch in this session.
+- Gate items that are open for merged work of the first session: the
+  mutation tests of the document-model helpers, H-001 and H-002 in
+  `docs/ISSUES.md`.
+- The drive: 158 GB were free at 12:07 UTC. `env/tmp` holds about 35 GB of
+  old scratch folders of reviewers; some are evidence in `decisions.tsv`
+  (`bench-pair-*.json`, `codex-commonmark-reader-r3b`). The internal disk
+  is small (19 GB free at 12:07 UTC).
 
 ### Next three tasks
 
-1. **Bring the nearest branches to `main`.** Order: `yaml`, `cli`,
-   `commonmark-reader`, `html-writer`, `highlight`. For each: run the gate on
-   the head commit, finish the open items of its report, then one review
-   round with both reviewers, then `merge-ws`. With the command line, one
-   reader and one writer on `main`, measure the first end-to-end slice
-   (CommonMark to HTML) with the harness, the Pandoc test suite and the
-   corpus, and update `spec/`.
-2. **Apply the reuse rule to the open work** (`docs/PRIOR_ART.md`, ADR 1).
-   Check the licence of each candidate first. Compare the CommonMark reader
-   with `commonmark-hs` to close its open rows; choose a permissive base for
-   `randoc-math`; choose pinned crates for ZIP, XML and Lua before the
-   workstreams that need them start; decide for the Markdown reader whether
-   the memo design or another inline-parser design removes the two high
-   time findings.
-3. **Start the next wave** when the command line is on `main`: the HTML
-   reader, the container formats (`docx`, `odt`, `epub`) on the chosen ZIP
-   and XML crates, `rst` and `org`, JSON filters and Lua filters, and
-   `--citeproc` (a port of `citeproc`, BSD-2-Clause, if its licence check
-   passes). Each one is a workstream with a brief in `env/store/briefs/`.
+1. **Merge `yaml`, then the first end-to-end slice.** `yaml` needs one
+   correction in its replay test and one review round on the diff. Then
+   finish the stopped units of `cli`, `commonmark-reader` and `html-writer`
+   (the briefs `NAME-s2b.md`), each with one review round with both
+   reviewers, then `merge-ws`. With the command line, one reader and one
+   writer on `main`, measure the slice CommonMark to HTML with the harness,
+   the Pandoc test suite and the corpus, and update `spec/`.
+2. **Bring the other open branches to a review.** `highlight`,
+   `markdown-reader`, `latex-writer` and `math`: finish the stopped unit of
+   each one, then one review round. `markdown-writer` waits for the HTML
+   writer on `main`.
+3. **Continue the next wave.** `lua` and `html-reader` have a first unit in
+   work. Then the container formats (`docx`, `odt`, `epub`) on `zip` and
+   `quick-xml` (ADR 9, ADR 10), `rst` and `org`, JSON filters, and
+   `--citeproc` as a port of `citeproc` (BSD-2-Clause, checked in
+   `docs/PRIOR_ART.md`). Each one is a workstream with a brief in
+   `env/store/briefs/`; the briefs `lua.md` and `html-reader.md` show the
+   form.
 
 ## Workstreams that are merged
 
@@ -143,6 +221,7 @@ output through an engine, and the `lua` and `server` modes.
 | json-codec | The JSON codec of the document model, with the error texts of the oracle |
 | shared | `randoc_core::shared` |
 | templates | `randoc-templates` and `randoc-data` |
+| reuse | Documents only: a checked licence for each reuse candidate in `docs/PRIOR_ART.md`; ADR 9 (ZIP), ADR 10 (XML) and ADR 11 (Lua) in `docs/ADR.md` |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).
