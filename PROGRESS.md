@@ -89,6 +89,18 @@ command wait for one of 3 slots and for 20% free memory, `CARGO_BUILD_JOBS`
 is 2, and standing order 18a limits each agent to one heavy command at a
 time. A new session must keep these limits.
 
+At 06:36 UTC the watch on free memory reported a second event: the swap space
+had grown to 16 GB and the internal disk had 1 GB free. One process caused it:
+an oracle run (`pandoc -f commonmark_x -t json`) that a reviewer had started
+with a repeated-pattern test input used 22 GB of memory in 3.5 minutes. The
+coordinator stopped that process, and the disk recovered to 14 GB free. This
+kind of run is the probable cause of the stop at 04:40 UTC too. Since then
+`env.sh` sets `GHCRTS=-M3g`, which limits the heap of each oracle process to
+3 GB (a run that reaches the limit ends with exit code 251 and the text
+`Heap exhausted`), and the tool `env/bin/randoc-watchdog` stops each process
+of the Randoc folder that uses more than 5 GB. Standing order 18b tells each
+agent to treat such an oracle result as "did not end".
+
 The exFAT file system has effects that a new session must know:
 
 - Each file uses 2 MB of disk space or more, because the allocation block is
