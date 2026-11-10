@@ -66,8 +66,8 @@ def _stop_group(process):
         pass
 
 
-def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
-    """Runs `binary` under the name `pandoc` and returns the outcome.
+def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES, name="pandoc"):
+    """Runs `binary` under the program name `name` and returns the outcome.
 
     The program runs in its own session. At the time limit, the function
     stops the whole process group. It reads both pipes without blocking, and
@@ -80,7 +80,7 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES):
     """
     try:
         process = subprocess.Popen(
-            ["pandoc", *args], executable=str(binary), cwd=cwd, env=environment(home),
+            [name, *args], executable=str(binary), cwd=cwd, env=environment(home),
             stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True)
     except OSError as error:

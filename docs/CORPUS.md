@@ -103,6 +103,11 @@ and 64 MB of standard error output for one run.
   one file. The tools do not unpack archives.
 - `fetch.py` sends one request at a time, waits 0.5 s between two requests to
   the same host, and sends the user agent `randoc-corpus/1.0`.
+- A child process (`fetch.py --download-one`) downloads each document to a
+  temporary file. The child follows only https redirects and stops after
+  2 MB. The parent stops the process group of the child after 300 s and
+  removes the temporary file. The parent checks the hash and writes the
+  document.
 
 To add documents, add entries with `sha256 = ""` and `size = 0`, then run
 `python3 tools/corpus/fetch.py --pin`. The tool downloads the new documents

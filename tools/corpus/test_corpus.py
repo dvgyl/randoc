@@ -677,33 +677,81 @@ class ExecuteCaseTests(unittest.TestCase):
         self.assertLess(elapsed, 5)
 
 
-class SlowServerTests(unittest.TestCase):
-    def test_a_server_that_sends_single_bytes_cannot_pass_the_total_limit(self):
-        reader, writer = socket.socketpair()
-        reader.settimeout(0.2)
+class SlowServer:
+    """A local HTTP server for one request that sends `head` and then `body` one byte at a time."""
 
-        def serve():
+    def __init__(self, head, body, pause=0.05):
+        self.listener = socket.create_server(("127.0.0.1", 0))
+        self.url = f"http://127.0.0.1:{self.listener.getsockname()[1]}/slow"
+        self.head, self.body, self.pause = head, body, pause
+        self.thread = threading.Thread(target=self.serve)
+        self.thread.start()
+
+    def serve(self):
+        self.listener.settimeout(10)
+        try:
+            connection, _ = self.listener.accept()
+        except OSError:
+            return
+        with connection:
             try:
-                writer.sendall(b"HTTP/1.1 200 OK\r\nContent-Length: 20\r\n\r\n")
-                for _ in range(20):
-                    time.sleep(0.05)
-                    writer.sendall(b"x")
+                connection.recv(65536)
+                connection.sendall(self.head)
+                for byte in self.body:
+                    time.sleep(self.pause)
+                    connection.sendall(bytes([byte]))
             except OSError:
                 pass
-            finally:
-                writer.close()
-        thread = threading.Thread(target=serve)
-        thread.start()
-        response = http.client.HTTPResponse(reader)
-        response.begin()
+
+    def close(self):
+        self.listener.close()
+        self.thread.join()
+
+
+class SlowServerTests(unittest.TestCase):
+    """Each download through a slow server must end near the total time limit (COR-R3-02, COR-R4-01)."""
+
+    TOTAL = 0.5
+
+    def assert_stops_near_the_limit(self, head, body):
+        server = SlowServer(head, body)
         started = time.monotonic()
         try:
-            with mock.patch.object(fetch.OPENER, "open", return_value=response):
-                with self.assertRaises(TimeoutError):
-                    fetch.download("https://example.org/slow", timeout=0.2, total=0.1)
-        finally:
+            with self.assertRaisesRegex(TimeoutError, "no complete download after 0.5 s"):
+                fetch.download(server.url, timeout=0.2, total=self.TOTAL)
             elapsed = time.monotonic() - started
-            response.close()
-            reader.close()
-            thread.join()
-        self.assertLess(elapsed, 0.4)
+        finally:
+            server.close()
+        self.assertLess(elapsed, self.TOTAL + 1.0)
+
+    def test_a_server_that_sends_single_bytes_cannot_pass_the_total_limit(self):
+        self.assert_stops_near_the_limit(b"HTTP/1.1 200 OK\r\nContent-Length: 200\r\n\r\n", b"x" * 200)
+
+    def test_a_slow_chunk_size_line_cannot_pass_the_total_limit(self):
+        self.assert_stops_near_the_limit(b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n",
+                                         b"0" * 200 + b"1\r\nx\r\n0\r\n\r\n")
+
+    def test_slow_response_headers_cannot_pass_the_total_limit(self):
+        self.assert_stops_near_the_limit(b"", b"HTTP/1.1 200 OK\r\n" + b"X-Slow: " + b"y" * 200)
+
+    def test_a_normal_server_gives_the_document_and_leaves_no_temporary_file(self):
+        before = set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*"))
+        server = SlowServer(b"HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nalpha", b"", pause=0)
+        try:
+            self.assertEqual(fetch.download(server.url, total=10), b"alpha")
+        finally:
+            server.close()
+        self.assertEqual(set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*")), before)
+
+    def test_a_timeout_removes_the_temporary_file(self):
+        before = set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*"))
+        self.assert_stops_near_the_limit(b"HTTP/1.1 200 OK\r\nContent-Length: 200\r\n\r\n", b"x" * 200)
+        self.assertEqual(set(Path(tempfile.gettempdir()).glob("randoc-corpus-download-*")), before)
+
+    def test_a_server_error_is_an_os_error(self):
+        server = SlowServer(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n", b"", pause=0)
+        try:
+            with self.assertRaisesRegex(OSError, "HTTP Error 404"):
+                fetch.download(server.url, total=10)
+        finally:
+            server.close()

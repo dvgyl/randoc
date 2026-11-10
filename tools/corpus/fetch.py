@@ -14,6 +14,7 @@ import dataclasses
 import http.client
 import os
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -21,6 +22,7 @@ import urllib.request
 from pathlib import Path
 
 import corpuslib
+import run
 
 DELAY_SECONDS = 0.5
 
@@ -38,30 +40,70 @@ OPENER = urllib.request.build_opener(HttpsOnlyRedirects)
 
 
 DOWNLOAD_SECONDS = 300
+DOWNLOAD_COMMAND = "--download-one"
+SIZE_ERROR_EXIT = 4
+
+
+def transfer(url, output, max_bytes, timeout):
+    """Downloads `url` to the file `output`. The child process of `download` runs this function.
+
+    The function follows only https redirects and stops after `max_bytes`.
+    """
+    request = urllib.request.Request(url, headers={"User-Agent": corpuslib.USER_AGENT})
+    size = 0
+    with OPENER.open(request, timeout=timeout) as response, open(output, "wb") as file:
+        while chunk := response.read1(65536):
+            size += len(chunk)
+            if size > max_bytes:
+                raise ValueError(f"more than {max_bytes} bytes")
+            file.write(chunk)
+
+
+def download_main(argv):
+    """The internal sub-command: `fetch.py --download-one URL OUTPUT MAX_BYTES TIMEOUT`."""
+    url, output, max_bytes, timeout = argv
+    try:
+        transfer(url, output, int(max_bytes), float(timeout))
+    except ValueError as error:
+        print(f"{error}", file=sys.stderr)
+        return SIZE_ERROR_EXIT
+    except (OSError, http.client.HTTPException) as error:
+        print(f"{type(error).__name__}: {error}", file=sys.stderr)
+        return 3
+    return 0
 
 
 def download(url, timeout=10, total=DOWNLOAD_SECONDS):
     """Returns the bytes at `url`.
 
-    `timeout` limits each network operation and `total` limits the whole
-    download, so that a slow server cannot hold the program. Each read
-    returns the bytes that are available (`read1`), so the program checks the
-    total limit after each wait of at most `timeout`. Raises `ValueError` for
-    a document that is too large and `TimeoutError` at the total limit.
+    A child process downloads the document to a temporary file. The parent
+    stops the process group of the child at the `total` time limit, so no
+    call in the child can pass that limit, whatever the server sends.
+    `timeout` limits each network operation in the child. Raises
+    `TimeoutError` at the total limit, `ValueError` for a document that is
+    too large and `OSError` for another failure.
     """
-    deadline = time.monotonic() + total
-    request = urllib.request.Request(url, headers={"User-Agent": corpuslib.USER_AGENT})
-    data = bytearray()
-    with OPENER.open(request, timeout=max(0.001, min(timeout, total))) as response:
-        if time.monotonic() > deadline:
+    handle, name = tempfile.mkstemp(prefix="randoc-corpus-download-")
+    os.close(handle)
+    temporary = Path(name)
+    try:
+        args = [str(Path(__file__).resolve()), DOWNLOAD_COMMAND, url, name,
+                str(corpuslib.MAX_DOCUMENT_BYTES), str(timeout)]
+        result = run.execute(sys.executable, args, temporary.parent, run.HOME, total,
+                             limit=65536, name="python3")
+        if result.timed_out:
             raise TimeoutError(f"no complete download after {total} s")
-        while chunk := response.read1(65536):
-            data += chunk
-            if len(data) > corpuslib.MAX_DOCUMENT_BYTES:
-                raise ValueError(f"more than {corpuslib.MAX_DOCUMENT_BYTES} bytes")
-            if time.monotonic() > deadline:
-                raise TimeoutError(f"no complete download after {total} s")
-    return bytes(data)
+        message = result.stderr.decode("utf-8", "replace").strip()
+        if result.exit == SIZE_ERROR_EXIT:
+            raise ValueError(message)
+        if result.exit != 0:
+            raise OSError(message or f"the download process ended with exit code {result.exit}")
+        data = temporary.read_bytes()
+        if len(data) > corpuslib.MAX_DOCUMENT_BYTES:
+            raise ValueError(f"more than {corpuslib.MAX_DOCUMENT_BYTES} bytes")
+        return data
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def write_atomic(path, data):
@@ -161,4 +203,6 @@ def main(argv=None, get=download, delay=DELAY_SECONDS):
 
 
 if __name__ == "__main__":
+    if sys.argv[1:2] == [DOWNLOAD_COMMAND]:
+        sys.exit(download_main(sys.argv[2:]))
     sys.exit(main())
