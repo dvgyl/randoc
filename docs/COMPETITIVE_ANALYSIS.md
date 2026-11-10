@@ -139,7 +139,7 @@ the failing units (commands in `docs/research-data/commands.md`).
 | Kind | carta | ferrodoc |
 | --- | --- | --- |
 | Standalone page: a different template | Yes. carta writes its own templates. Its `docs/STATUS.md` says: "Each writer's scaffold (CSS, preamble) is authored independently and is not byte-identical across tools." | Yes. ferrodoc uses the Pandoc 3.8.2.1 templates. Pandoc changed the HTML template after 3.8.2.1 (for example `light-dark()` colours and `<meta name="generator" content="pandoc 3.13">`). |
-| Syntax highlighting missing for some languages | Yes: YAML, JSON, Haskell, JavaScript and other languages with non-permissive definitions. They are in `crates/carta-highlight/data/syntax-copyleft/` and are not compiled in by default. | Yes, for each language. The default build writes plain `<pre class="haskell"><code>` without highlighting (test in `commands.md`). |
+| Syntax highlighting missing for some languages | Yes: YAML, JSON, Haskell, JavaScript and other languages with non-permissive definitions. They are in `crates/carta-highlight/data/syntax-copyleft/` and are not compiled in by default. | Yes, for languages outside its list. `COMPATIBILITY.md` (section "Syntax highlighting — C, Python, bash, Ruby, Rust") names five languages and says that other languages get plain `<pre class="LANG"><code>`. Tests (`commands.md`): Haskell and YAML were not highlighted; Python, bash, Ruby and Rust gave output identical to the oracle for one short block each; C differed. |
 | Pandoc Markdown extensions | Small differences (a space before `</a>` in a wrapped link). | Missing title block (`% title` becomes a paragraph) and missing fenced divs (`::: {.class}` stays text). The reader uses `comrak`. |
 | Exit codes and error messages | Exit 1 or 2 instead of 21, 22, 23, 64 or 6. | The same. |
 | Old JSON API versions | Accepted (Pandoc exits with 64). | Accepted. |
@@ -152,8 +152,9 @@ Markdown. carta exited with 0. This is a Pandoc failure, not a carta failure.
 ### Speed
 
 All tools ran on a machine that other agents used at the same time. carta and
-ferrodoc were debug builds; Pandoc is an optimized build. The numbers are
-therefore only an upper limit for the two Rust tools.
+ferrodoc were debug builds; Pandoc is an optimized build. The machine load
+changed during the runs, so these numbers are rough observations, not a
+benchmark.
 
 | Tool | Median time for one document unit | Sum for 168 units |
 | --- | ---: | ---: |
@@ -161,8 +162,10 @@ therefore only an upper limit for the two Rust tools.
 | carta (debug) | 0.073 s | 59.7 s |
 | ferrodoc (debug) | 0.081 s | 130.1 s |
 
-Even unoptimized, both Rust tools are about 10 times faster for each
-document, because Pandoc's start-up time dominates small documents.
+The ratio of the medians is 11.0 for carta (0.803 / 0.073) and 9.9 for
+ferrodoc (0.803 / 0.081). Not every unit was faster: for example, for
+`html/carta-raw-style.html#html>json` Pandoc took 0.081 s and carta
+0.116 s. The measurements do not separate start-up time from conversion time.
 carta's own benchmark (`docs/BENCHMARKS.md`, release build, Linux) claims
 14 to 32 times. ferrodoc's README claims 72 times for an in-process library
 call. These claims were not measured here.
@@ -214,7 +217,7 @@ Pandoc's exit codes, rejection of old JSON API versions.
 | --- | --- | --- |
 | Repository | <https://github.com/alexgaoth/ferrodoc> | |
 | Licence | `MIT OR Apache-2.0`; three BSD-3-Clause files, including the Pandoc templates under their BSD option | `LICENSE-MIT`, `LICENSE-APACHE`, `THIRD-PARTY.md` lines 3 to 21 |
-| Size | 44 420 lines of Rust, 391 files, 307 `#[test]` functions, 0 fuzz targets (a `corpus/bombs` generator and `scripts/hostile.sh` instead) | Commands in `commands.md` |
+| Size | 44 420 lines of Rust, 391 files, 307 `#[test]` functions, 0 `cargo-fuzz` targets. It does mutation fuzzing: the CI job `fuzz` (`.github/workflows/ci.yml`) runs `scripts/verify.sh --fuzz-only`, which applies 500 000 mutations. It also has a `corpus/bombs` generator and `scripts/hostile.sh`. | Commands in `commands.md` |
 | Activity | Created 2026-08-15, last push 2026-10-06, version 1.0.1 (2026-09-02), 12 stars | `gh repo view`, `gh release view` |
 | Target | Pandoc 3.8.2.1 | `COMPATIBILITY.md` line 1, `scripts/dropin.sh` (`PANDOC_PINNED=3.8.2.1`) |
 | Architecture | One crate for each format (`ferrodoc-markdown`, `-html`, `-docx`, `-odt`, `-epub`, `-ipynb`, `-latex`, `-rst`, `-asciidoc`, `-text`), `ferrodoc-ast` (the `pandoc-types` model, API version `[1, 23, 1]`), a harness crate. Readers use `comrak` (Markdown) and `html5ever` (HTML). Bindings for Python, JavaScript (wasm32) and C. | `crates/`, `bindings/`, `Cargo.toml` files |
@@ -239,7 +242,7 @@ What Randoc can learn or reuse:
   advantage over Pandoc for batch work.
 
 What it does not do: Pandoc Markdown in full, most formats, exit codes,
-`native`, fuzzing.
+`native`, `cargo-fuzz` targets (it uses its own mutation fuzzing).
 
 ### rescribe
 

@@ -21,9 +21,10 @@ data files to the repository.
    `data/templates` are dual-licensed as GPL-2.0-or-later or BSD-3-Clause. Randoc
    uses the BSD-3-Clause option and keeps the notice. These 62 files (105 556
    bytes) give byte-identical standalone output for the text formats.
-3. **Randoc can include the dzslides template** (WTFPL, `COPYRIGHT`) and 65 of
-   the 195 syntax definitions (MIT, BSD, WTFPL or LLVM licence in the `license=`
-   attribute of each file).
+3. **Randoc can include the dzslides template** (WTFPL, `COPYRIGHT`) and 63 of
+   the 195 syntax definitions (MIT, BSD-3-Clause, WTFPL or the NCSA licence of
+   LLVM). For each of these 63 files, Randoc must ship the full licence text and
+   the copyright notice, because most files have only a licence identifier.
 4. **Randoc can use, with attribution, the BSD libraries that hold data**:
    the emoji table (`emojis`, BSD-3-Clause, data from `gemoji`, MIT), the
    highlight styles (`skylighting-core`, BSD-3-Clause) and the HTML entity
@@ -31,20 +32,27 @@ data files to the repository.
 5. **Randoc cannot include these files under its licence**: the reference
    documents (`data/docx`, `data/odt`, `data/pptx`), the translations, `epub.css`,
    `creole.lua`, `init.lua`, `abbreviations`, `docbook-entities.txt`, the
-   biblatex localization strings, the bash completion script and 130 syntax
-   definitions (LGPL, GPL, FDL or no licence). `default.csl` is CC BY-SA 3.0.
-6. **To generate a file from the oracle does not change its licence.** The
+   biblatex localization strings, the bash completion script and 98 syntax
+   definitions with a copyleft licence (LGPL, GPL, FDL). `default.csl` is CC
+   BY-SA 3.0.
+6. **Nobody can distribute 34 syntax definitions until a licence grant is
+   found**: 33 files have no licence, and `tcl.xml` names "BSD" without a
+   variant or a text. This includes `c.xml`, `javascript.xml`, `python.xml`
+   and `lua.xml`. A separate package does not solve this. The list is in the
+   section "Files with no licence grant".
+7. **To generate a file from the oracle does not change its licence.** The
    output of `pandoc --print-default-data-file reference.docx` contains the
    same GPL material as the source file. "Generate at build time" is legal only
    when the build runs on the machine of the user and the result is not
    distributed under the Randoc licence.
-7. **The recommended way to close the gaps** is one optional data package with
-   its own licence (GPL-2.0-or-later, with LGPL and CC BY-SA files kept under
-   their own licences), separate from the `MIT OR Apache-2.0` crates. Randoc
+8. **The recommended way to close the copyleft gaps** is one optional data
+   package with its own licences (GPL-2.0-or-later, with LGPL, FDL and CC BY-SA
+   files kept under their own licences), separate from the `MIT OR Apache-2.0`
+   crates. The package holds only files with a known licence grant. Randoc
    loads the package at run time from a data directory, in the same way as
    Pandoc's `--data-dir`. Without the package, Randoc uses new files that the
    project writes, and records each output difference in `docs/ISSUES.md`.
-8. **TeX math has a licence gap that is not in `data/`.** Pandoc converts TeX
+9. **TeX math has a licence gap that is not in `data/`.** Pandoc converts TeX
    math with `texmath`, which is GPL-2 (`texmath.cabal`: `License: GPL-2`).
    Randoc must write its own conversion and test it against the oracle as a
    black box.
@@ -106,7 +114,7 @@ its source code.
 
 | Data | Where Pandoc has it | Licence | Proof | Randoc can include? | Attribution |
 | --- | --- | --- | --- | --- | --- |
-| Syntax definitions (KDE XML), 194 languages in `pandoc --list-highlight-languages` | `skylighting-core` 0.15 (`pandoc.cabal` line 577), directory `xml/` | Code: BSD-3-Clause. Each XML file: its own `license=` attribute | `skylighting-core/LICENSE`, `skylighting-core.cabal` (`license: BSD3`), the `license=` attribute in each XML file | **65 of 195 files: yes. 130: no** (table below) | Keep the comment header and the `license=` attribute of each file. List the authors in `THIRD_PARTY.md`. |
+| Syntax definitions (KDE XML), 194 languages in `pandoc --list-highlight-languages` | `skylighting-core` 0.15 (`pandoc.cabal` line 577), directory `xml/` | Code: BSD-3-Clause. Each XML file: its own `license=` attribute | `skylighting-core/LICENSE`, `skylighting-core.cabal` (`license: BSD3`), the `license=` attribute in each XML file | **63 of 195 files: yes. 98: copyleft. 34: no licence grant** (tables below) | The full licence text and the copyright notices of each file (section "Licence texts for the 63 syntax definitions") |
 | Highlight styles (`pygments`, `tango`, `espresso`, `zenburn`, `kate`, `monochrome`, `breezedark`, `haddock`) | `skylighting-core` source code | BSD-3-Clause | `skylighting-core/LICENSE` | **Yes** | Copyright John MacFarlane, BSD-3-Clause text |
 | Emoji names (`emoji` extension) | Haskell package `emojis` 0.1.x (`pandoc.cabal` line 558) | BSD-3-Clause; the data comes from `gemoji` (MIT) and Unicode emoji files (Unicode licence) | `emojis/LICENSE`, `emojis.cabal` (`license: BSD3`), `emojis/README.md`; `github/gemoji/LICENSE` (MIT) | **Yes** | BSD-3-Clause notice of `emojis`, MIT notice of `gemoji`, Unicode licence notice |
 | HTML named entities | `commonmark` 0.3 (`pandoc.cabal` line 548) and `tagsoup` | BSD-3-Clause (`commonmark/LICENSE`, `commonmark.cabal`: `license: BSD-3-Clause`) | The licence files named | **Yes**. The WHATWG `entities.json` list is an alternative source. | BSD-3-Clause notice |
@@ -129,18 +137,76 @@ command was:
 for f in xml/*.xml; do grep -o -m1 'license="[^"]*"' "$f" || echo 'license=(none)'; done | sort | uniq -c
 ```
 
-| `license=` value | Files | Randoc can include? |
-| --- | ---: | --- |
-| `MIT` | 59 | Yes |
-| `BSD`, `BSD3`, `New BSD License` | 3 | Yes |
-| `WTFPL` | 1 | Yes |
-| `LLVM Release License` | 1 | Yes |
-| `GPL,BSD` (dual) | 1 | Yes, under BSD |
-| `LGPL`, `LGPLv2`, `LGPLv2+`, `LGPLv2.1+`, KDE e.V. LGPL text | 77 | No (LGPL) |
-| `GPL`, `GPLv2`, `GPLv2+`, `GPLv3+` | 18 | No |
-| `FDL` | 2 | No |
-| no attribute or an empty attribute | 33 | No (no licence means no permission) |
-| **Total** | **195** | **65 yes, 130 no** |
+| `license=` value | Files | Group | Randoc can include? |
+| --- | ---: | --- | --- |
+| `MIT` | 59 | Permissive | Yes, with the MIT text and the copyright notice |
+| `New BSD License` (`m4.xml`, the full BSD-3-Clause text is in the file) | 1 | Permissive | Yes |
+| `BSD3` (`purescript.xml`, identifier only) | 1 | Permissive | Yes, with the BSD-3-Clause text |
+| `WTFPL` (`nim.xml`) | 1 | Permissive | Yes |
+| `LLVM Release License` (`llvm.xml`) | 1 | Permissive | Yes, with the NCSA text (see below) |
+| `GPL,BSD` (`markdown.xml`: "Dual-Licensed under both GPL and BSD licenses", no BSD variant, MIT for the 2019 changes) | 1 | Copyleft (use the GPL option) | No. The BSD option cannot be used, because the variant and its text are unknown. |
+| `LGPL`, `LGPLv2`, `LGPLv2+`, `LGPLv2.1+`, KDE e.V. LGPL text | 77 | Copyleft | No (LGPL) |
+| `GPL`, `GPLv2`, `GPLv2+`, `GPLv3+` | 18 | Copyleft | No |
+| `FDL` | 2 | Copyleft | No |
+| `BSD` (`tcl.xml`: "Copyright: BSD copyright & Irsid - Arcelor Innovation R&D", no variant, no text) | 1 | No clear grant | No, in no package |
+| no attribute or an empty attribute | 33 | No grant | No, in no package |
+| **Total** | **195** | | **63 permissive, 98 copyleft, 34 without a clear grant** |
+
+### Files with no licence grant
+
+These 34 files are in `skylighting-core/xml/` at commit
+`9a414fca3ac94dee81fb76e0ef4f88c9e6037618`
+(<https://github.com/jgm/skylighting/tree/9a414fca3ac94dee81fb76e0ef4f88c9e6037618/skylighting-core/xml>).
+Their original source is the KDE `syntax-highlighting` repository
+(<https://invent.kde.org/frameworks/syntax-highlighting>, directory
+`data/syntax/`). The missing grant is the same for each file: a licence
+statement from the copyright holders (the `author=` attribute or the KDE
+project) that permits redistribution.
+
+Files with no `license=` attribute or an empty one:
+`ada.xml`, `c.xml`, `coldfusion.xml`, `cs.xml`, `debiancontrol.xml`,
+`desktop.xml`, `diff.xml`, `dot.xml`, `eiffel.xml`, `gd-script.xml`,
+`idl.xml`, `javascript.xml`, `lua.xml`, `makefile.xml`, `matlab.xml`,
+`noweb.xml`, `objectivec.xml`, `objectivecpp.xml`, `opencl.xml`,
+`pascal.xml`, `php.xml`, `pike.xml`, `postscript.xml`, `pure.xml`,
+`python.xml`, `rest.xml`, `sci.xml`, `sgml.xml`, `sql-mysql.xml`,
+`sql-postgresql.xml`, `tlaplus.xml`, `verilog.xml`, `vhdl.xml`.
+
+File with an unclear grant: `tcl.xml` (licence "BSD", no variant and no
+text).
+
+Ways to close this gap:
+
+1. Check the KDE upstream file. carta's record
+   (`carta/vendor/syntax-highlighting/ATTRIBUTION.md`, checked 2026-07) says
+   that upstream `tlaplus.xml` is now MIT. A newer upstream file with a
+   licence can replace the skylighting copy, but its rules can differ, so the
+   output must be tested against the oracle.
+2. Ask the authors or the KDE project for a licence statement.
+3. Write a new definition for the language. The highlighting must then be
+   tested against the oracle, token by token.
+4. Load the files at run time from a KDE or skylighting installation that the
+   user has. Randoc does not distribute them in that case.
+
+### Licence texts for the 63 syntax definitions
+
+A header with only a licence identifier does not meet the conditions of MIT
+or BSD. These licences require the copyright notice and the permission text
+in each copy, in source form and in binary form. Randoc must ship a notice
+file (for example `LICENSES/syntax-definitions.txt`) in the source package
+and with each binary. The file contains:
+
+| Files | Licence | Text to ship | Copyright notice to ship |
+| --- | --- | --- | --- |
+| 59 MIT files | MIT | The MIT licence text (the text of <https://opensource.org/license/mit>) | The `Copyright` lines of the file (16 files have them) or the `author=` attribute (the other files). `julia.xml` and `stan.xml` have neither: name "the authors of the KDE syntax-highlighting project" and the source URL. |
+| `m4.xml` | BSD-3-Clause | The BSD-3-Clause text in the file header | "Copyright (c) 2011, Cybernetica AS" |
+| `purescript.xml` | BSD-3-Clause | The BSD-3-Clause text | "Copyright Gleb Popov" (from `author=`) |
+| `llvm.xml` | "LLVM Release License": the University of Illinois/NCSA Open Source License that LLVM used before 2019. It is not Apache-2.0 with the LLVM exception. | The NCSA licence text | "Copyright (c) LLVM Team" (from `author=`) |
+| `nim.xml` | WTFPL | The WTFPL text (no condition, but ship it for clarity) | `author="github.com/juancarlospaco"` |
+
+A script must make the notice file from the headers of the files, so that the
+notices stay correct when the files change. Keep the comment header and the
+`license=` attribute in each file also.
 
 The carta project made the same split for `skylighting-core` 0.14.7 (164
 files: 48 permissive, 116 other). Its record is
@@ -166,14 +232,19 @@ package" means the optional package of decision D1.
 | `default.csl` | Citations without `--csl` use a different style. Output with `--citeproc` is different. | (a) Include the file as a separately licensed CC BY-SA 3.0 file (decision D2). (b) Download the same version from the Zotero style repository at build time. (c) Load at run time. |
 | `biblatex-localization/*.lbx.strings` | The BibLaTeX reader gives different localized terms. | (a) Data package. (b) The strings use biblatex macro syntax (for example `ed\adddot`), so they derive from the biblatex `.lbx` files (LPPL-1.3c). A build step can extract the same strings from the biblatex distribution that the user has; distribute the result under the LPPL, not under the Randoc licence. |
 | Bash completion script | `pandoc --completion=bash` output is different. | Write a new completion script. The list of options and formats in it comes from Randoc's own tables. Accept a byte difference and record it in `docs/ISSUES.md`. |
-| 130 syntax definitions | Code blocks in these 130 languages have no highlighting, or different highlighting. | (a) Data package with the LGPL, GPL and FDL files under their own licences (LGPL permits use from a program with a different licence when the files stay replaceable). (b) Load at run time from a KDE syntax-highlighting installation (`/usr/share/org.kde.syntax-highlighting/syntax/`) or from a skylighting checkout; the KDE versions can differ from the skylighting copies. (c) Ask the KDE authors to relicense to MIT. KDE asks for MIT for new files (carta's record says the same). |
+| 98 copyleft syntax definitions | Code blocks in these languages have no highlighting, or different highlighting. | (a) Data package with the LGPL, GPL and FDL files under their own licences (LGPL permits use from a program with a different licence when the files stay replaceable). (b) Load at run time from a KDE syntax-highlighting installation (`/usr/share/org.kde.syntax-highlighting/syntax/`) or from a skylighting checkout; the KDE versions can differ from the skylighting copies. (c) Ask the KDE authors to relicense to MIT. KDE asks for MIT for new files (carta's record says the same). |
+| 34 syntax definitions without a clear grant | The same as the row above, for C, JavaScript, Python, Lua, PHP, SQL and 28 other languages. | No package. See the section "Files with no licence grant". |
 | TeX math (`texmath`) | MathML, OMML and other math output need a new implementation. | Write a new converter from the manual and from black-box tests against the oracle. MIT crates (`math-core`, `pulldown-latex`) can give a parser, but their MathML is not the same as texmath output. |
 
 ## Decisions for the owner
 
 - **D1. One optional data package.** Recommendation: make a separate package
-  (for example `randoc-data-pandoc`) that holds the files of the "No" rows
-  under their own licences, outside the `MIT OR Apache-2.0` crates. Randoc
+  (for example `randoc-data-pandoc`) outside the `MIT OR Apache-2.0` crates.
+  It holds only the "No" files that have a known licence grant: the GPL files of
+  `data/` and of `biblatex-localization`, and the 98 copyleft syntax
+  definitions, each under its own licence (GPL-2.0-or-later, LGPL, FDL, CC
+  BY-SA 3.0). It must not hold the 34 syntax definitions without a clear grant;
+  a separate package does not give permission to distribute them. Randoc
   finds it at run time (a data directory, as Pandoc's `--data-dir` and
   `~/.local/share/pandoc`). This keeps the crates permissive and gives
   byte-identical output to users who install the package. A binary that
@@ -197,7 +268,10 @@ When a workstream adds one of the "Yes" files, it adds a row to
 | --- | --- | --- | --- |
 | Default templates | Pandoc 3.13 `data/templates` | BSD-3-Clause (option of the dual licence in `COPYRIGHT`) | "Copyright (c) 2014--2024, John MacFarlane" and the BSD-3-Clause text |
 | dzslides template | Pandoc 3.13 `data/dzslides/template.html`, from Paul Rouget's dzslides | WTFPL | Credit to Paul Rouget |
-| 65 syntax definitions | `skylighting-core` 0.15 `xml/` | MIT, BSD, WTFPL, LLVM (per file) | The header comment and the `license=` attribute of each file |
+| 63 syntax definitions | `skylighting-core` 0.15 `xml/` | MIT, BSD-3-Clause, WTFPL, NCSA (per file) | The full licence texts and the copyright notices in a notice file (section "Licence texts for the 63 syntax definitions"), and the header of each file |
 | Highlight styles | `skylighting-core` 0.15 | BSD-3-Clause | "Copyright (c) 2016-2018, John MacFarlane" and the BSD-3-Clause text |
-| Emoji table | `emojis` 0.1.5, `gemoji` | BSD-3-Clause, MIT, Unicode-3.0 | The three notices |
-| HTML entity table | `commonmark` 0.3 or WHATWG | BSD-3-Clause | The notice |
+| Emoji table | `emojis` 0.1.5, `gemoji` | BSD-3-Clause, MIT, Unicode-3.0 | The three licence texts with their copyright notices |
+| HTML entity table | `commonmark` 0.3 or WHATWG | BSD-3-Clause | The BSD-3-Clause text with its copyright notice |
+
+Each BSD and MIT row needs the full licence text and the copyright notice in
+the source package and with each binary, not only an identifier.
