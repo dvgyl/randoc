@@ -10,27 +10,27 @@
   "markdown"
  ],
  "timeout_seconds": 60,
- "documents": 232,
+ "documents": 230,
  "totals": {
-  "units": 696,
+  "units": 690,
   "pass": 0,
-  "fail": 696
+  "fail": 690
  },
  "by_target": {
   "html": {
-   "units": 232,
+   "units": 230,
    "pass": 0,
-   "fail": 232
+   "fail": 230
   },
   "json": {
-   "units": 232,
+   "units": 230,
    "pass": 0,
-   "fail": 232
+   "fail": 230
   },
   "markdown": {
-   "units": 232,
+   "units": 230,
    "pass": 0,
-   "fail": 232
+   "fail": 230
   }
  },
  "by_format": {
@@ -95,9 +95,9 @@
    "fail": 36
   },
   "html": {
-   "units": 33,
+   "units": 27,
    "pass": 0,
-   "fail": 33
+   "fail": 27
   },
   "ipynb": {
    "units": 24,
@@ -459,6 +459,24 @@
   "mdn-hr:html": "fail exit,stderr,output",
   "mdn-hr:json": "fail exit,stderr,output",
   "mdn-hr:markdown": "fail exit,stderr,output",
+  "mdn-learning-accessibility-assessment-finished:html": "fail exit,stderr,output",
+  "mdn-learning-accessibility-assessment-finished:json": "fail exit,stderr,output",
+  "mdn-learning-accessibility-assessment-finished:markdown": "fail exit,stderr,output",
+  "mdn-learning-accessibility-assessment-start:html": "fail exit,stderr,output",
+  "mdn-learning-accessibility-assessment-start:json": "fail exit,stderr,output",
+  "mdn-learning-accessibility-assessment-start:markdown": "fail exit,stderr,output",
+  "mdn-learning-css-css-layout-practical-positioning-examples-fixed-info-box:html": "fail exit,stderr,output",
+  "mdn-learning-css-css-layout-practical-positioning-examples-fixed-info-box:json": "fail exit,stderr,output",
+  "mdn-learning-css-css-layout-practical-positioning-examples-fixed-info-box:markdown": "fail exit,stderr,output",
+  "mdn-learning-html-introduction-to-html-document-and-website-structure:html": "fail exit,stderr,output",
+  "mdn-learning-html-introduction-to-html-document-and-website-structure:json": "fail exit,stderr,output",
+  "mdn-learning-html-introduction-to-html-document-and-website-structure:markdown": "fail exit,stderr,output",
+  "mdn-learning-html-tables-advanced-items-sold-headers:html": "fail exit,stderr,output",
+  "mdn-learning-html-tables-advanced-items-sold-headers:json": "fail exit,stderr,output",
+  "mdn-learning-html-tables-advanced-items-sold-headers:markdown": "fail exit,stderr,output",
+  "mdn-learning-html-tables-planets-data:html": "fail exit,stderr,output",
+  "mdn-learning-html-tables-planets-data:json": "fail exit,stderr,output",
+  "mdn-learning-html-tables-planets-data:markdown": "fail exit,stderr,output",
   "mdn-map:html": "fail exit,stderr,output",
   "mdn-map:json": "fail exit,stderr,output",
   "mdn-map:markdown": "fail exit,stderr,output",
@@ -840,30 +858,6 @@
   "wp-haskell:html": "fail exit,stderr",
   "wp-haskell:json": "fail exit,stderr",
   "wp-haskell:markdown": "fail exit,stderr",
-  "wp-html-ada-lovelace:html": "fail exit,stderr,output",
-  "wp-html-ada-lovelace:json": "fail exit,stderr,output",
-  "wp-html-ada-lovelace:markdown": "fail exit,stderr,output",
-  "wp-html-donald-knuth:html": "fail exit,stderr,output",
-  "wp-html-donald-knuth:json": "fail exit,stderr,output",
-  "wp-html-donald-knuth:markdown": "fail exit,stderr,output",
-  "wp-html-haskell:html": "fail exit,stderr,output",
-  "wp-html-haskell:json": "fail exit,stderr,output",
-  "wp-html-haskell:markdown": "fail exit,stderr,output",
-  "wp-html-markdown:html": "fail exit,stderr,output",
-  "wp-html-markdown:json": "fail exit,stderr,output",
-  "wp-html-markdown:markdown": "fail exit,stderr,output",
-  "wp-html-pandoc:html": "fail exit,stderr,output",
-  "wp-html-pandoc:json": "fail exit,stderr,output",
-  "wp-html-pandoc:markdown": "fail exit,stderr,output",
-  "wp-html-photosynthesis:html": "fail exit,stderr,output",
-  "wp-html-photosynthesis:json": "fail exit,stderr,output",
-  "wp-html-photosynthesis:markdown": "fail exit,stderr,output",
-  "wp-html-printing-press:html": "fail exit,stderr,output",
-  "wp-html-printing-press:json": "fail exit,stderr,output",
-  "wp-html-printing-press:markdown": "fail exit,stderr,output",
-  "wp-html-typesetting:html": "fail exit,stderr,output",
-  "wp-html-typesetting:json": "fail exit,stderr,output",
-  "wp-html-typesetting:markdown": "fail exit,stderr,output",
   "wp-latex:html": "fail exit,stderr,output",
   "wp-latex:json": "fail exit,stderr,output",
   "wp-latex:markdown": "fail exit,stderr,output",
