@@ -186,6 +186,48 @@ impl Doc {
     pub fn height(&self) -> usize {
         self.render(None).matches('\n').count() + 1
     }
+
+    /// Applies `f` to the text of each text, fill and block line, as the
+    /// `Functor` instance of `doclayout` does. Each stored width stays the
+    /// same, so the layout uses the widths of the old text. Prefixes,
+    /// after-break text and link targets do not change. `f` must map the
+    /// empty string to the empty string.
+    ///
+    /// ```
+    /// use randoc_layout::{literal, space};
+    ///
+    /// let doc = literal("ab") + space() + literal("cd");
+    /// assert_eq!(doc.map_text(&|s| s.to_uppercase()).render(None), "AB CD");
+    /// ```
+    #[must_use]
+    pub fn map_text(&self, f: &dyn Fn(&str) -> String) -> Doc {
+        let inner = |doc: &Doc| Box::new(doc.map_text(f));
+        Doc(match &self.0 {
+            Node::Text(width, text) => Node::Text(*width, f(text)),
+            Node::VFill(width, text) => Node::VFill(*width, f(text)),
+            Node::Block(width, lines) => Node::Block(
+                *width,
+                lines
+                    .iter()
+                    .map(|line| {
+                        line.iter()
+                            .map(|attr| render::Attr {
+                                text: f(&attr.text),
+                                ..attr.clone()
+                            })
+                            .collect()
+                    })
+                    .collect(),
+            ),
+            Node::Prefixed(prefix, doc) => Node::Prefixed(prefix.clone(), inner(doc)),
+            Node::BeforeNonBlank(doc) => Node::BeforeNonBlank(inner(doc)),
+            Node::Flush(doc) => Node::Flush(inner(doc)),
+            Node::Styled(style, doc) => Node::Styled(*style, inner(doc)),
+            Node::Linked(target, doc) => Node::Linked(target.clone(), inner(doc)),
+            Node::Concat(docs) => Node::Concat(docs.iter().map(|d| d.map_text(f)).collect()),
+            other => other.clone(),
+        })
+    }
 }
 
 impl From<&str> for Doc {
@@ -620,6 +662,30 @@ pub fn bg(color: Color, doc: Doc) -> Doc {
 /// inside a link has no effect.
 pub fn link(target: &str, doc: Doc) -> Doc {
     Doc(Node::Linked(target.to_owned(), Box::new(doc)))
+}
+
+/// Removes a final newline or carriage return from `doc`, as `removeFinalNl`
+/// of `doctemplates` does. Only the last item of a concatenation is checked.
+///
+/// ```
+/// use randoc_layout::{literal, remove_final_newline};
+///
+/// assert_eq!(remove_final_newline(literal("ab\n")).render(None), "ab");
+/// ```
+pub fn remove_final_newline(doc: Doc) -> Doc {
+    match doc.0 {
+        Node::NewLine | Node::CarriageReturn => empty(),
+        Node::Concat(mut items) => {
+            if items
+                .last()
+                .is_some_and(|d| matches!(d.0, Node::NewLine | Node::CarriageReturn))
+            {
+                items.pop();
+            }
+            hcat(items)
+        }
+        other => Doc(other),
+    }
 }
 
 #[cfg(test)]
@@ -1154,6 +1220,61 @@ mod tests {
         assert_eq!(char_width('\u{1F3FB}'), 2);
         assert_eq!(char_width('\u{200D}'), 0);
         assert_eq!(char_width('\u{FE0F}'), 0);
+    }
+
+    /// Expected values from `pandoc.template` with the `uppercase` and
+    /// `lowercase` pipes in Pandoc 3.13.
+    #[test]
+    fn map_text_keeps_stored_widths() {
+        let upper = |d: &Doc| d.map_text(&|s| s.to_uppercase());
+        let lower = |d: &Doc| d.map_text(&|s| s.to_lowercase());
+        let sharp = literal("ßßßß")
+            .spaced(literal("ßßßß"))
+            .spaced(literal("ab"));
+        assert_eq!(upper(&sharp).render(Some(9)), "SSSSSSSS SSSSSSSS\nAB");
+        assert_eq!(upper(&sharp).render(None), "SSSSSSSS SSSSSSSS AB");
+        let blocks = literal("[")
+            + literal("ß")
+            + lblock(3, literal("aß") + cr() + literal("Bc"))
+            + vfill("ß|")
+            + literal("]");
+        assert_eq!(upper(&blocks).render(None), "[SSASSSS|\n  BC SS|]");
+        let kept = prefixed("P> ", literal("AB").spaced(literal("CD")))
+            + cr()
+            + after_break("X")
+            + literal("EF");
+        assert_eq!(lower(&kept).render(Some(4)), "P> ab\nP> cd\nXef");
+        let nested = bold(literal("ÀÉ"))
+            + flush(literal("ÖÜ"))
+            + before_non_blank(literal("QQ"))
+            + literal("Z");
+        assert_eq!(lower(&nested).render(None), "àéöüqqz");
+        let block_prefix = lblock(6, prefixed("p> ", literal("ab") + cr() + literal("cd")));
+        assert_eq!(upper(&block_prefix).render(None), "P> AB\nP> CD");
+        let linked = link("http://x.y/Z", literal("a"));
+        assert_eq!(
+            upper(&linked).render_ansi(None),
+            "\u{1b}]8;;http://x.y/Z\u{1b}\\A\u{1b}[0m\u{1b}]8;;\u{1b}\\"
+        );
+        assert_eq!(
+            upper(&(literal("a") + space() + blankline())).render(None),
+            "A\n"
+        );
+    }
+
+    /// Expected values from `pandoc.template` (`$x$|`) in Pandoc 3.13.
+    #[test]
+    fn remove_final_newline_drops_one_break() {
+        let apply = |d: Doc| (remove_final_newline(d) + literal("|")).render(None);
+        assert_eq!(apply(literal("ab") + cr()), "ab|");
+        assert_eq!(apply(literal("ab\n")), "ab|");
+        assert_eq!(apply(literal("ab") + blankline()), "ab\n\n|");
+        assert_eq!(apply(cr()), "|");
+        assert_eq!(apply(literal("\n")), "|");
+        assert_eq!(apply(literal("a") + cr() + cr()), "a\n|");
+        assert_eq!(remove_final_newline(literal("a") + cr()), literal("a"));
+        assert_eq!(remove_final_newline(literal("ab")), literal("ab"));
+        assert_eq!(remove_final_newline(nest(2, cr())), nest(2, cr()));
     }
 
     #[test]
