@@ -5,7 +5,7 @@ of a session, then run `./init.sh`.
 
 ## Current state
 
-Updated: 2026-11-10 01:00 UTC.
+Updated: 2026-11-10 01:35 UTC.
 
 - The shared contracts exist: the document tree with Pandoc-compatible JSON
   (`randoc-ast`), the reader and writer traits, options, extensions, errors,
@@ -14,6 +14,8 @@ Updated: 2026-11-10 01:00 UTC.
   compares Randoc with them, keeps a baseline and writes the capability matrix.
   The suite also runs as a test of the program (`crates/randoc-cli/tests/conformance.rs`).
 - One format works on `main`: `json` (reader and writer).
+- The layout engine (`randoc-layout`, a port of `doclayout`) is on `main`. No
+  writer on `main` uses it yet.
 - Harness result on `main`: 36 units, 28 pass, 8 fail. All 28 passing units are
   byte-identical. The 8 failing units are JSON error messages (issue I-001).
 - Capability matrix (`spec/capabilities.json`): 1 of 52 input formats and 1 of
@@ -28,21 +30,23 @@ Updated: 2026-11-10 01:00 UTC.
 
 ## Workstreams
 
-| Workstream | Branch | State at 01:00 UTC |
+| Workstream | Branch | State at 01:35 UTC |
 | --- | --- | --- |
 | testsuite | `ws/testsuite` | Merged. |
 | bench | `ws/bench` | Merged (as one squashed commit; do not push the branch, its old commits hold a local path). |
 | corpus | `ws/corpus` | Merged. |
-| layout | `ws/layout` | Review round 3. One reviewer approves; the second review runs. |
-| markdown-reader | `ws/markdown-reader` | In work. |
-| html-writer | `ws/html-writer` | Review round 1. |
+| layout | `ws/layout` | Merged. |
+| markdown-reader | `ws/markdown-reader` | Review round 1. |
+| html-writer | `ws/html-writer` | The worker corrects the findings of review round 1. |
 | cli | `ws/cli` | The worker corrects the findings of review round 1. |
-| native | `ws/native` | Review round 2. |
-| json-codec | `ws/json-codec` | Review round 2. |
+| native | `ws/native` | The worker corrects one finding of review round 2. |
+| json-codec | `ws/json-codec` | Both reviewers approve. Gate 6 is open: the branch is slower than `main`. The worker optimizes. |
 | commonmark-reader | `ws/commonmark-reader` | In work. |
 | research | `ws/research` | Merged. |
 | templates | `ws/templates` | In work. It builds on `ws/layout`. |
 | latex-writer | `ws/latex-writer` | In work. It builds on `ws/layout`. |
+| yaml | `ws/yaml` | In work. One YAML crate (`randoc-yaml`) for the Markdown reader, the CommonMark reader and the command line. |
+| shared | `ws/shared` | In work. The module `randoc_core::shared`: text of inlines, identifiers, entities, emoji. |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

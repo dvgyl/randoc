@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T01:00:00Z",
+  "updated": "2026-11-10T01:35:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -57,11 +57,11 @@
     },
     {
       "id": "layout",
-      "state": "review"
+      "state": "merged"
     },
     {
       "id": "markdown-reader",
-      "state": "in_work"
+      "state": "review"
     },
     {
       "id": "html-writer",
@@ -93,6 +93,14 @@
     },
     {
       "id": "latex-writer",
+      "state": "in_work"
+    },
+    {
+      "id": "yaml",
+      "state": "in_work"
+    },
+    {
+      "id": "shared",
       "state": "in_work"
     }
   ],

@@ -9,6 +9,8 @@ This file lists each file or design that comes from a different project.
 | Material | Source | Licence | Where | Licence text |
 | --- | --- | --- | --- | --- |
 | Document model (type names and JSON form) | `pandoc-types` 1.23.1.2 | BSD-3-Clause | `crates/randoc-ast` | [`third_party/licences/pandoc-types.txt`](third_party/licences/pandoc-types.txt) |
+| Layout engine, width rules and character width table | `doclayout` 0.6 (https://github.com/jgm/doclayout) | BSD-3-Clause | `crates/randoc-layout/src` | [`third_party/licences/doclayout.txt`](third_party/licences/doclayout.txt) |
+| First code points of the base emoji (from the Unicode emoji data) | `emojis` 0.1.5, `baseEmojis` (https://github.com/jgm/emojis) | BSD-3-Clause | `crates/randoc-layout/src/tables.rs` | [`third_party/licences/emojis.txt`](third_party/licences/emojis.txt) |
 
 Add a row when a workstream adds material from a different project. Put the
 full upstream licence file, with its copyright notice and disclaimer, in

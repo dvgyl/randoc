@@ -126,3 +126,30 @@ Changes after the last reviewed commit (206f10a), checked by the coordinator:
   identifiers I-CORPUS-01 and I-CORPUS-02, added L-005, and replaced a local
   path in the run instructions of `docs/CORPUS.md` with the names of the two
   environment variables.
+
+## Workstream layout (branch `ws/layout`, head de17bda)
+
+Content: the crate `randoc-layout`, a port of the Haskell library `doclayout`
+0.6 (BSD-3-Clause): the `Doc` type with breakable spaces, nesting, prefixes,
+blocks, styles and links, the render function with line wrapping, and the
+character width rules with their table. Each writer of a text format builds
+on it.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness after the merge: 28 units pass, 0 regressions. |
+| 2. Measured progress | No harness unit changes, because no writer on `main` uses the crate yet. The crate test `docs_match_oracle` compares 396 `Doc` expressions at 8 widths (3,168 plain renders and 3,168 ANSI renders, plus the queries) with results of the oracle (`pandoc lua tests/vectors.lua`). Known differences: I-LAYOUT-01 to I-LAYOUT-05 in `docs/ISSUES.md`. |
+| 3. Tests | 19 unit tests and 5 documentation tests pass on the merged tree. Line coverage 97.67% (1717 lines, 40 missed). Mutation tests: the first sample had 44 of 440 mutants; after the engine changed in review round 2, a second sample tested 80 of the 160 mutants of that change (55 caught, 6 timeouts that count as caught, 14 missed, 5 not viable). Each missed mutant has a new test or is an equivalent mutant, with the reason in the report. The other 80 mutants of the change did not run. |
+| 4. No panics | Fuzz target `render`: 900 s, 291,479 runs, no crash. Clone, compare, render and drop use explicit stacks: both reviewers ran 100,000 nested levels on a 2 MB stack with no overflow. |
+| 5. Two reviews | Codex (GPT-6.1 Sol, fast tier): round 1 REQUEST CHANGES, round 2 no approval because its sandbox could not build Rust code, round 3 (with a writable scratch folder) APPROVE at 08cac8f after 35,796 comparisons with the oracle and 0 differences. Opus 5.5 with a new context: round 1 REQUEST CHANGES, round 2 APPROVE at f462b56 after 76,653 comparisons with 0 differences, with 4 low findings. The low findings are the rows I-LAYOUT-04 and I-LAYOUT-05 and two documentation notes, which commit de17bda adds. |
+| 6. No slowdowns | Not applicable: no conversion path on `main` uses the crate, so no benchmark changes. The reviewers recorded one cost that is equal in the oracle: 10,000 nested levels with a non-empty indent need quadratic time. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree. |
+
+Changes after the reviewed commits, checked by the coordinator: each changed
+line of `crates/randoc-layout/src` between f462b56 and de17bda is a test or a
+comment (a script listed the changed lines that are not comments; all 41 are
+in the test module).
+
+Process note: an in-place mutation run changed the worktree during review
+round 2. Both reviewers saw it and tested a clean copy of the commit. The
+standing orders now forbid an in-place mutation run during a review.
