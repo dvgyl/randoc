@@ -8,6 +8,7 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | --- | --- | --- |
 | D-001 | `--version` prints a second line that names Randoc and its version. | Required by the project goal. The first line is equal to the Pandoc line, so tools that check the version keep working. |
 | D-002 | Randoc stops at a nesting limit (`Limits::max_nesting_depth`). Pandoc has no limit. | Input is not trusted. The limit of the program is 16384 levels. The JSON reader counts JSON levels: it accepts 32768 nested arrays and objects, so the document depth that it accepts depends on the node type (for example about 16000 nested block quotes or 10900 nested divs). |
+| D-003 | The types of the document model use the derived `Clone`, `PartialEq` and `Drop`, which recurse. In a debug build on a 2 MB stack, `clone` of nested table cells overflows the stack between 200 and 400 levels, and `clone` of nested block quotes between 800 and 1600 levels. | A manual `Drop` for a node type forbids moving a field out of a node, which readers and writers do. The crate documentation of `randoc-ast` states the precondition: 200 levels are safe on a 2 MB stack (test `a_tree_at_the_documented_depth_is_safe_on_a_small_stack`). Readers stop at `Limits::max_nesting_depth` (128 by default), and the program uses a 1 GiB stack for its limit of 16384. Found by both reviews of json-codec, round 2 (Opus R2-01, Codex JC2-01). |
 
 ## Open divergences
 

@@ -1,7 +1,9 @@
 //! Tests for the behaviour of the document model types.
 
 use crate::walk::{Visitor, query};
-use crate::{Attr, Block, Format, Inline, Pandoc};
+use crate::{
+    Alignment, Attr, Block, Cell, Format, Inline, MetaValue, Pandoc, Row, Table, TableBody,
+};
 
 #[test]
 fn format_names_are_equal_without_regard_to_letter_case() {
@@ -73,4 +75,80 @@ fn attributes_report_classes_and_the_first_value_of_a_key() {
     assert!(!Attr::new("x", vec![], vec![]).is_empty());
     assert!(!Attr::new("", vec!["c".into()], vec![]).is_empty());
     assert!(!Attr::new("", vec![], vec![("k".into(), "v".into())]).is_empty());
+}
+
+/// The depth that the crate documentation gives as safe on a 2 MB stack.
+const DOCUMENTED_SAFE_DEPTH: usize = 200;
+
+fn nested_quotes(depth: usize) -> Vec<Block> {
+    let mut blocks = vec![Block::Para(vec![Inline::Str("x".into())])];
+    for _ in 0..depth {
+        blocks = vec![Block::BlockQuote(blocks)];
+    }
+    blocks
+}
+
+fn nested_table_cells(depth: usize) -> Vec<Block> {
+    let mut blocks = Vec::new();
+    for _ in 0..depth {
+        let cell = Cell {
+            attr: Attr::default(),
+            align: Alignment::AlignDefault,
+            row_span: 1,
+            col_span: 1,
+            content: blocks,
+        };
+        let body = TableBody {
+            body: vec![Row {
+                attr: Attr::default(),
+                cells: vec![cell],
+            }],
+            ..TableBody::default()
+        };
+        blocks = vec![Block::Table(Box::new(Table {
+            bodies: vec![body],
+            ..Table::default()
+        }))];
+    }
+    blocks
+}
+
+fn nested_emphasis(depth: usize) -> Vec<Inline> {
+    let mut inlines = vec![Inline::Str("x".into())];
+    for _ in 0..depth {
+        inlines = vec![Inline::Emph(inlines)];
+    }
+    inlines
+}
+
+fn nested_meta_lists(depth: usize) -> MetaValue {
+    let mut value = MetaValue::MetaBool(true);
+    for _ in 0..depth {
+        value = MetaValue::MetaList(vec![value]);
+    }
+    value
+}
+
+fn clone_compare_and_drop<T: Clone + PartialEq + Send + 'static>(build: fn(usize) -> T) {
+    let outcome = std::thread::Builder::new()
+        .stack_size(2 * 1024 * 1024)
+        .spawn(move || {
+            let tree = build(DOCUMENTED_SAFE_DEPTH);
+            let copy = tree.clone();
+            let equal = tree == copy;
+            drop(tree);
+            drop(copy);
+            equal
+        })
+        .unwrap()
+        .join();
+    assert!(matches!(outcome, Ok(true)));
+}
+
+#[test]
+fn a_tree_at_the_documented_depth_is_safe_on_a_small_stack() {
+    clone_compare_and_drop(nested_quotes);
+    clone_compare_and_drop(nested_table_cells);
+    clone_compare_and_drop(nested_emphasis);
+    clone_compare_and_drop(nested_meta_lists);
 }
