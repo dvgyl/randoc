@@ -12,8 +12,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// form is the text that Pandoc prints to standard error.
 ///
 /// The messages of `UnknownReader`, `UnknownWriter`, `UnsupportedExtension`,
-/// `Parse`, `CouldNotFindDataFile` and `CouldNotFindMetadataFile` are verified
-/// against Pandoc 3.13. Verify each other message
+/// `Parse`, `CouldNotFindDataFile`, `CouldNotFindMetadataFile` and `Filter` are
+/// verified against Pandoc 3.13. Verify each other message
 /// against the oracle when a workstream first produces it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Error {
@@ -200,7 +200,7 @@ impl fmt::Display for Error {
                  Please report this to pandoc's developers: {message}"
             ),
             Error::Filter { filter, message } => {
-                write!(f, "Error running filter {filter}:\n{message}")
+                write!(f, "Error running filter '{filter}':\n{message}")
             }
             Error::Lua(message) => write!(f, "Error running Lua:\n{message}"),
             Error::NoScriptingEngine => {
@@ -259,6 +259,14 @@ mod tests {
         assert_eq!(
             Error::CouldNotFindMetadataFile("nosuch.yaml".into()).to_string(),
             "Could not find metadata file 'nosuch.yaml'"
+        );
+        assert_eq!(
+            Error::Filter {
+                filter: "nosuch.lua".into(),
+                message: "cannot open nosuch.lua: No such file or directory".into()
+            }
+            .to_string(),
+            "Error running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory"
         );
         assert_eq!(
             Error::UnsupportedExtension {
