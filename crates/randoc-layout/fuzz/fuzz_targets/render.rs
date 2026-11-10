@@ -5,9 +5,9 @@
 use libfuzzer_sys::fuzz_target;
 use randoc_layout::*;
 
-/// The harness thread has a small stack. Writers limit the nesting of a
-/// document with the nesting limit of the input.
-const MAX_DEPTH: usize = 48;
+/// Keeps each input fast. The engine has no recursion that grows with the
+/// depth, so the limit is not a stack limit.
+const MAX_DEPTH: usize = 256;
 /// A block re-wraps its content at its own width, so a narrow block around
 /// wide content multiplies the number of lines. `doclayout` has the same
 /// cost, and writers nest blocks only for tables in tables.
