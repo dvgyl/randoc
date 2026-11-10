@@ -92,8 +92,9 @@ The exFAT file system has effects that a new session must know:
 ## Decisions that wait for the owner
 
 The licence research (`docs/DATA_FILES_LICENCES.md`, "Decisions for the owner")
-found four decisions. The coordinator uses a working rule for each one until
-the owner decides.
+found four decisions (D1 to D4). D5 came up in the review of the CommonMark
+reader. The coordinator uses a working rule for each one until the owner
+decides.
 
 | Decision | Working rule now |
 | --- | --- |
@@ -101,6 +102,7 @@ the owner decides.
 | D2. `default.csl` (CC BY-SA 3.0) | Not in this repository. Same data package as D1. |
 | D3. The abbreviation list and the DocBook entity list | Randoc does not copy the Pandoc files. The Markdown reader gets a list from black-box tests of the oracle with candidates that the worker wrote. The list can be incomplete. |
 | D4. 34 syntax definitions with no licence grant (C, Python, JavaScript, Lua, SQL and others) | In no package. Load them at run time from a Pandoc, skylighting or KDE installation of the user. Byte-identical highlighting for these languages is a gap until a grant exists or new definitions are written. |
+| D5. Test inputs from documents with a copyleft licence: the examples of the CommonMark specification (CC-BY-SA-4.0) and example text of the Pandoc manual (GPL) | Not in this repository. Workers write their own inputs. A tool under `tools/` downloads a public test suite at a pinned version, runs it outside the repository and stores only numbers in `spec/`. Each workstream merges as one squashed commit, so that an early commit with such a file does not reach `main`. Many CommonMark projects with a permissive licence keep the specification file in their repository as test data; the owner can decide to do the same. |
 
 ## Merge gate records
 
