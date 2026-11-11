@@ -1,0 +1,56 @@
+# The writer: references metadata of each form.
+from = "native"
+to = ["csljson"]
+
+
+[[case]]
+id = "no-references"
+input = "Pandoc (Meta {unMeta = fromList []}) []\n"
+
+[[case]]
+id = "references-not-list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaString \"x\")]}) []\n"
+
+[[case]]
+id = "references-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaMap (fromList [(\"id\",MetaString \"a\")]))]}) []\n"
+
+[[case]]
+id = "list-with-non-maps"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaString \"x\",MetaMap (fromList [(\"id\",MetaString \"a\")]),MetaBool True])]}) []\n"
+
+[[case]]
+id = "value-forms"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaInlines [Str \"a\"]),(\"type\",MetaInlines [Emph [Str \"book\"]]),(\"DOI\",MetaString \"a'b <i>x</i>\"),(\"title\",MetaInlines [Str \"x\",Space,Emph [Str \"e\"],Space,Strong [Str \"s\"],SoftBreak,SmallCaps [Str \"c\"],LineBreak,Quoted SingleQuote [Str \"q\",Space,Quoted DoubleQuote [Str \"i\"]]]),(\"publisher\",MetaBool True),(\"abstract\",MetaList [MetaString \"x\"]),(\"keyword\",MetaMap (fromList [(\"k\",MetaString \"v\")])),(\"volume\",MetaString \"3\"),(\"page\",MetaInlines [Str \"12\\8211\\&15\"]),(\"container-title\",MetaString \"\")])])]}) []\n"
+
+[[case]]
+id = "inline-forms"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"x\",Note [Para [Str \"n\"]],Space,Cite [Citation {citationId = \"k\", citationPrefix = [], citationSuffix = [], citationMode = NormalCitation, citationNoteNum = 0, citationHash = 0}] [Str \"[@k]\"],Space,Math DisplayMath \"y\",Space,Math InlineMath \"z\",Code (\"\",[],[]) \"c\",RawInline (Format \"html\") \"<b>r</b>\",Span (\"\",[\"csl-quoted\"],[]) [Str \"cq\"],Span (\"\",[\"nodecoration\"],[]) [Str \"nd\"],Span (\"\",[\"nocase\"],[]) [Str \"NC\"],Strikeout [Str \"s\"],Underline [Str \"u\"],Superscript [Str \"p\"],Subscript [Str \"b\"],Link (\"\",[],[]) [Str \"L\"] (\"u\",\"\"),Image (\"\",[],[]) [Str \"I\"] (\"p\",\"\"),Str \"\\178\"])])])]}) []\n"
+
+[[case]]
+id = "block-forms"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"abstract\",MetaBlocks [Para [Str \"p1\"],Plain [Str \"p2\"],BulletList [[Plain [Str \"i1\"]],[Para [Str \"i2\"],Para [Str \"i2b\"]]],CodeBlock (\"\",[],[]) \"cb\",BlockQuote [Para [Str \"bq\"]],HorizontalRule,Header 1 (\"\",[],[]) [Str \"h\"],Div (\"\",[],[]) [Para [Str \"d1\"],Para [Str \"d2\"]],RawBlock (Format \"html\") \"<p>raw</p>\",LineBlock [[Str \"l1\"],[Str \"l2\"]]]),(\"note\",MetaBlocks [Para [Str \"only\"]])])])]}) []\n"
+
+[[case]]
+id = "names"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaInlines [Emph [Str \"F\"],Space,Str \"G\"]),(\"given\",MetaString \"a'b\"),(\"comma-suffix\",MetaString \"yes\"),(\"static-ordering\",MetaBool True),(\"literal\",MetaList [MetaString \"l\"]),(\"zzz\",MetaString \"q\")]),MetaBool True,MetaBlocks [Para [Str \"bb\"]],MetaString \"Doe, J.\"]),(\"editor\",MetaString \"Solo\"),(\"translator\",MetaMap (fromList [(\"family\",MetaString \"T\")])),(\"illustrator\",MetaList [])])])]}) []\n"
+
+[[case]]
+id = "dates"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaInlines [Str \"2001-02-03/2004\"]),(\"submitted\",MetaString \"May 2001\"),(\"original-date\",MetaString \"199u\"),(\"accessed\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaInlines [Str \"2001\"],MetaString \"02\",MetaString \"x\"]]),(\"season\",MetaInlines [Str \"x\"]),(\"circa\",MetaBool True),(\"literal\",MetaInlines [Emph [Str \"lit\"]])])),(\"event-date\",MetaMap (fromList [(\"year\",MetaString \"2001\"),(\"month\",MetaString \"x\")])),(\"available-date\",MetaMap (fromList [(\"raw\",MetaString \"2001-02\"),(\"literal\",MetaString \"z\")])),(\"container\",MetaMap (fromList [(\"date-parts\",MetaList [MetaString \"2001\"])]))])])]}) []\n"
+
+[[case]]
+id = "dates-more"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]]),(\"season\",MetaString \"2\"),(\"circa\",MetaString \"true\")])),(\"submitted\",MetaList [MetaString \"2001\"]),(\"accessed\",MetaBool True),(\"original-date\",MetaString \"\"),(\"event-date\",MetaString \"~\"),(\"available-date\",MetaString \"-0049/y12345\")])])]}) []\n"
+
+[[case]]
+id = "key-forms"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"Title\",MetaString \"T1\"),(\"title\",MetaString \"T2\"),(\"Doi\",MetaString \"d\"),(\"pmcid\",MetaString \"p\"),(\"ZZZ\",MetaString \"z\"),(\"Volume\",MetaString \"3\")])])]}) []\n"
+
+[[case]]
+id = "variable-kinds"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaString \"2001\"),(\"chair\",MetaString \"2001\"),(\"collection-editor\",MetaString \"2001\"),(\"composer\",MetaString \"2001\"),(\"compiler\",MetaString \"2001\"),(\"container-author\",MetaString \"2001\"),(\"contributor\",MetaString \"2001\"),(\"curator\",MetaString \"2001\"),(\"director\",MetaString \"2001\"),(\"editor\",MetaString \"2001\"),(\"editor-translator\",MetaString \"2001\"),(\"editorial-director\",MetaString \"2001\"),(\"executive-producer\",MetaString \"2001\"),(\"guest\",MetaString \"2001\"),(\"host\",MetaString \"2001\"),(\"illustrator\",MetaString \"2001\"),(\"interviewer\",MetaString \"2001\"),(\"narrator\",MetaString \"2001\"),(\"original-author\",MetaString \"2001\"),(\"organizer\",MetaString \"2001\"),(\"performer\",MetaString \"2001\"),(\"producer\",MetaString \"2001\"),(\"recipient\",MetaString \"2001\"),(\"reviewed-author\",MetaString \"2001\"),(\"script-writer\",MetaString \"2001\"),(\"series-creator\",MetaString \"2001\"),(\"translator\",MetaString \"2001\"),(\"accessed\",MetaString \"2001\"),(\"available-date\",MetaString \"2001\"),(\"container\",MetaString \"2001\"),(\"event-date\",MetaString \"2001\"),(\"issued\",MetaString \"2001\"),(\"original-date\",MetaString \"2001\"),(\"submitted\",MetaString \"2001\")])])]}) []\n"
+
+[[case]]
+id = "escapes"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\\\"b\\\\c\"),(\"title\",MetaString \"t\\u0001\\u001f\\t\\n\\r/<>& \")])])]}) []\n"

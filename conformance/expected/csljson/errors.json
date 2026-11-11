@@ -1,0 +1,485 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "date-literal-number#e2e:csljson": {
+      "key": "66d182d4aee85683",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0].literal: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "date-literal-number#read": {
+      "key": "6304529bddaff42a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0].literal: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "date-number#e2e:csljson": {
+      "key": "e0b154ab0a20b849",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Date failed, expected Object, but encountered Number\n"
+    },
+    "date-number#read": {
+      "key": "b7d5d3f85c143ff2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Date failed, expected Object, but encountered Number\n"
+    },
+    "date-part-bool#e2e:csljson": {
+      "key": "a08413bcc17f22b6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: expected Number, but encountered Boolean\n"
+    },
+    "date-part-bool#read": {
+      "key": "d537ae9582326ba3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: expected Number, but encountered Boolean\n"
+    },
+    "date-part-float#e2e:csljson": {
+      "key": "75db4086375896ec",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: parsing Int failed, value is either floating or will cause over or underflow 2001.5\n"
+    },
+    "date-part-float#read": {
+      "key": "260cb84d9b49da61",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: parsing Int failed, value is either floating or will cause over or underflow 2001.5\n"
+    },
+    "date-part-text#e2e:csljson": {
+      "key": "90d614de432e7625",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: not a number\n"
+    },
+    "date-part-text#read": {
+      "key": "3cbe808b3c8e8126",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: not a number\n"
+    },
+    "date-parts-inner-number#e2e:csljson": {
+      "key": "14778d7ae694410c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "date-parts-inner-number#read": {
+      "key": "c55969e11e3f6c67",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts'][0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "date-parts-number#e2e:csljson": {
+      "key": "c9f3901b6ced3d5e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts']: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "date-parts-number#read": {
+      "key": "a5c51526be69db05",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]['date-parts']: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "date-raw-number#e2e:csljson": {
+      "key": "ea1d156ed33f5552",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "date-raw-number#read": {
+      "key": "97f980c57ed635b7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2001\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "date-raw-number#write:csljson": {
+      "key": "685f9059a30ed3b4",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "empty-input#e2e:csljson": {
+      "key": "9ab2afde03838fab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Unexpected end-of-input, expecting JSON value\n"
+    },
+    "empty-input#read": {
+      "key": "e02decc2f9b320a0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Unexpected end-of-input, expecting JSON value\n"
+    },
+    "empty-list#e2e:csljson": {
+      "key": "8085b9ac508d1191",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "empty-list#read": {
+      "key": "6b7019111b076c32",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "empty-list#write:csljson": {
+      "key": "590be33a2ad6ddaa",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "first-error-in-key-order#e2e:csljson": {
+      "key": "cd4e5faa40bab21f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "first-error-in-key-order#read": {
+      "key": "7f197756e106a540",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "id-float#e2e:csljson": {
+      "key": "fe7c269bf1e216f3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "id-float#read": {
+      "key": "db22ecd892ab5b5a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "id-huge#e2e:csljson": {
+      "key": "7d9aadcd73de93d4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 1.0e30\n"
+    },
+    "id-huge#read": {
+      "key": "f0dfc7c425c7aff1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 1.0e30\n"
+    },
+    "item-in-items-not-object#e2e:csljson": {
+      "key": "0eb1d0c2ac6ae823",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $.items[0]: parsing Map failed, expected Object, but encountered Number\n"
+    },
+    "item-in-items-not-object#read": {
+      "key": "5de262ecabbc8742",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $.items[0]: parsing Map failed, expected Object, but encountered Number\n"
+    },
+    "item-not-object#e2e:csljson": {
+      "key": "d2840dd4c9ba7f8f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Map failed, expected Object, but encountered Number\n"
+    },
+    "item-not-object#read": {
+      "key": "0cd1c50b7a78ca32",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Map failed, expected Object, but encountered Number\n"
+    },
+    "items-form#e2e:csljson": {
+      "key": "5906975c7d526657",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"x\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "items-form#read": {
+      "key": "b4b4ae7842d423fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"x\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "items-form#write:csljson": {
+      "key": "dd3f1a5e699f386f",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"x\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "items-not-array#e2e:csljson": {
+      "key": "de45fc1ed06ecdf5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $.items: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "items-not-array#read": {
+      "key": "7185cd1a7b8a7a84",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $.items: parsing [] failed, expected Array, but encountered Number\n"
+    },
+    "name-flag-array#e2e:csljson": {
+      "key": "fdb7e15b3cd63377",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0][0]: expected Bool, but encountered Array\n"
+    },
+    "name-flag-array#read": {
+      "key": "edcab38914d50ff6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0][0]: expected Bool, but encountered Array\n"
+    },
+    "name-not-object#e2e:csljson": {
+      "key": "2bef44070632940c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0][1]: parsing Name failed, expected Object, but encountered Number\n"
+    },
+    "name-not-object#read": {
+      "key": "3c46170aebafa1c1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0][1]: parsing Name failed, expected Object, but encountered Number\n"
+    },
+    "name-part-number#e2e:csljson": {
+      "key": "e717afeedac2b91b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0][0].family: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "name-part-number#read": {
+      "key": "191d7ad5fba2c0c4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0][0].family: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "names-not-array#e2e:csljson": {
+      "key": "6a5269cfd0ca8303",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "names-not-array#read": {
+      "key": "b1bc9d2c11a2db48",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing [] failed, expected Array, but encountered String\n"
+    },
+    "not-json#e2e:csljson": {
+      "key": "fd47cc429c7be14b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Unexpected \"nope\\n\\n\", expecting JSON value\n"
+    },
+    "not-json#read": {
+      "key": "d561e99910810184",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Unexpected \"nope\\n\\n\", expecting JSON value\n"
+    },
+    "note-number#e2e:csljson": {
+      "key": "962d26fb73b2192a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "note-number#read": {
+      "key": "e18c11cc562eddb9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "number-float#e2e:csljson": {
+      "key": "eaac239b3f2b7dff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "number-float#read": {
+      "key": "ab36bf40eb7ab2c8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "object-without-items#e2e:csljson": {
+      "key": "ed983e1c4f466cea",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $: key \"items\" not found\n"
+    },
+    "object-without-items#read": {
+      "key": "ccb45561629a6561",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $: key \"items\" not found\n"
+    },
+    "root-number#e2e:csljson": {
+      "key": "cdc660e263f2838d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "expecting Object or Array\n"
+    },
+    "root-number#read": {
+      "key": "349477abdffbbc9c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "expecting Object or Array\n"
+    },
+    "root-string#e2e:csljson": {
+      "key": "c47221d674dac450",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "expecting Object or Array\n"
+    },
+    "root-string#read": {
+      "key": "30ed590a6d1278e9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "expecting Object or Array\n"
+    },
+    "standard-array#e2e:csljson": {
+      "key": "c5a15d16ec3c27d0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: expected String or Number, but encountered Array\n"
+    },
+    "standard-array#read": {
+      "key": "91561b70b6aeb82d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: expected String or Number, but encountered Array\n"
+    },
+    "standard-bool#e2e:csljson": {
+      "key": "7b0440ba60b8d62f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: expected String or Number, but encountered Boolean\n"
+    },
+    "standard-bool#read": {
+      "key": "3e856e3f9bc6156c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: expected String or Number, but encountered Boolean\n"
+    },
+    "standard-float#e2e:csljson": {
+      "key": "8e62018462b92f2a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "standard-float#read": {
+      "key": "f57dd3747dd1830f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "standard-null#e2e:csljson": {
+      "key": "803dbf8d0cfe07d2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: expected String or Number, but encountered Null\n"
+    },
+    "standard-null#read": {
+      "key": "74a16ec9b9aadfb5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: expected String or Number, but encountered Null\n"
+    },
+    "trailing-garbage#e2e:csljson": {
+      "key": "9642f5a653ee10bd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Trailing garbage\n"
+    },
+    "trailing-garbage#read": {
+      "key": "155764be4f73a2d6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Trailing garbage\n"
+    },
+    "trailing-space#e2e:csljson": {
+      "key": "ac39f68c03458246",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "trailing-space#read": {
+      "key": "0b5a8a6bc7b6c06b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"a\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "trailing-space#write:csljson": {
+      "key": "c3aa48f4ee5c134c",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "type-number#e2e:csljson": {
+      "key": "a598e0ff2ae26440",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"type\": \"5\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "type-number#read": {
+      "key": "805758867bfa407b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"a\"},\"type\":{\"t\":\"MetaString\",\"c\":\"5\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "type-number#write:csljson": {
+      "key": "32fa792e01b8b804",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"type\": \"5\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "unclosed-array#e2e:csljson": {
+      "key": "cc8d20361a87c40d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Unexpected end-of-input, expecting JSON value\n"
+    },
+    "unclosed-array#read": {
+      "key": "1ab052f385f41f9c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Unexpected end-of-input, expecting JSON value\n"
+    },
+    "unknown-float#e2e:csljson": {
+      "key": "610eb75a1dc875a7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 5.5\n"
+    },
+    "unknown-float#read": {
+      "key": "29131bf483c14f92",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error in $[0]: parsing Int failed, value is either floating or will cause over or underflow 5.5\n"
+    },
+    "unknown-key-quote#e2e:csljson": {
+      "key": "d880af8a00d0f853",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "unknown-key-quote#read": {
+      "key": "f9cd3b9ab3b4b04c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unknown-key-quote#write:csljson": {
+      "key": "5529f54ee6e32ca2",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    }
+  }
+}

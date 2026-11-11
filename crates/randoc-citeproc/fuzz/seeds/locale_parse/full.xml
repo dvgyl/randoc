@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<locale xmlns="http://purl.org/net/xbiblio/csl" version="1.0" xml:lang="sr-Latn-RS"><style-options punctuation-in-quote="true" limit-day-ordinals-to-day-1="false"/><date form="text"><date-part name="day" form="ordinal" suffix=" "/><date-part name="month"/></date><terms><term name="page" form="short"><single>p.</single><multiple>pp.</multiple></term><term name="ordinal-01" gender-form="feminine" match="whole-number">st</term><term name="and" form="symbol">&amp;</term></terms></locale>

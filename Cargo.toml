@@ -12,11 +12,13 @@ members = [
     "crates/randoc-harness",
     "crates/randoc-yaml",
     "crates/randoc-native",
+    "crates/randoc-citeproc",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
 # Cargo has no glob for this list. A path that does not exist yet does no harm.
 exclude = [
     "crates/randoc-ast/fuzz",
+    "crates/randoc-citeproc/fuzz",
     "crates/randoc-cli/fuzz",
     "crates/randoc-commonmark/fuzz",
     "crates/randoc-html/fuzz",
@@ -47,6 +49,8 @@ randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
 randoc-yaml = { path = "crates/randoc-yaml", version = "0.1.0" }
 randoc-native = { path = "crates/randoc-native", version = "0.1.0" }
+randoc-citeproc = { path = "crates/randoc-citeproc", version = "0.1.0" }
+quick-xml = { version = "=0.42.0", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 toml = "1"

@@ -1,0 +1,725 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "dates-circa-season#e2e:csljson": {
+      "key": "9496de189cb9c17f",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          1999,\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          1999\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-circa-season#e2e:native": {
+      "key": "6c391b4d62d18d83",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-circa-season#read": {
+      "key": "562183ea0f612662",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"1999-05~\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2001~\"},\"submitted\":{\"t\":\"MetaString\",\"c\":\"1999~\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-circa-season#write:csljson": {
+      "key": "dbeb362d1a80b7ba",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          1999,\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          1999\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-circa-season#write:native": {
+      "key": "61c118fded0dbf40",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-literal#e2e:csljson": {
+      "key": "b9b49e2eeb247ff5",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": []\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": []\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-literal#e2e:native": {
+      "key": "237e901c89284251",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-literal#read": {
+      "key": "dba2534de2d1de58",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"L~\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"Spring of 2001\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-literal#write:csljson": {
+      "key": "ba20368ff75ab447",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": []\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": []\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-literal#write:native": {
+      "key": "5f2e8ca60523989d",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-odd-parts#e2e:csljson": {
+      "key": "7e03f6abae174eff",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          2001\n        ],\n        [\n          0\n        ]\n      ]\n    },\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          0\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          0\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          2001,\n          13,\n          40\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-odd-parts#e2e:native": {
+      "key": "2e1a5d658bd8ead3",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-odd-parts#read": {
+      "key": "98c1a6af1fc2853e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"2001/\"},\"event-date\":{\"t\":\"MetaString\",\"c\":\"\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"\"},\"submitted\":{\"t\":\"MetaString\",\"c\":\"2001-13-40\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-odd-parts#write:csljson": {
+      "key": "24f09ab8c8e53208",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          2001\n        ],\n        [\n          0\n        ]\n      ]\n    },\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          0\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          0\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          2001,\n          13,\n          40\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-odd-parts#write:native": {
+      "key": "19ad8d39b244f702",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-parts#e2e:csljson": {
+      "key": "02f26cea55e4c629",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          2001\n        ],\n        [\n          2002,\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001,\n          2,\n          3\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          2001,\n          2\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-parts#e2e:native": {
+      "key": "346625fd734a4d05",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-parts#read": {
+      "key": "a5fc00022b012b8c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"2001/2002-05\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2001-02-03\"},\"submitted\":{\"t\":\"MetaString\",\"c\":\"2001-02\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-parts#write:csljson": {
+      "key": "b53ad90b7bd0f836",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          2001\n        ],\n        [\n          2002,\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001,\n          2,\n          3\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          2001,\n          2\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-parts#write:native": {
+      "key": "bf20943fb4fc0474",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-raw#e2e:csljson": {
+      "key": "50c3fc3cecd5992e",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          1990\n        ],\n        [\n          1999\n        ]\n      ]\n    },\n    \"available-date\": \"a while ago\",\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          2001,\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001,\n          2,\n          3\n        ],\n        [\n          2004,\n          5\n        ]\n      ]\n    },\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          1999,\n          13\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          2001\n        ],\n        [\n          0\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-raw#e2e:native": {
+      "key": "8615674d4adba0c2",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-raw#read": {
+      "key": "89575b33ad567de9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"1990/1999\"},\"available-date\":{\"t\":\"MetaString\",\"c\":\"a while ago\"},\"event-date\":{\"t\":\"MetaString\",\"c\":\"2001-05\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2001-02-03/2004-05\"},\"original-date\":{\"t\":\"MetaString\",\"c\":\"1999-13\"},\"submitted\":{\"t\":\"MetaString\",\"c\":\"2001/\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-raw#write:csljson": {
+      "key": "b5a64e29e47e129c",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          1990\n        ],\n        [\n          1999\n        ]\n      ]\n    },\n    \"available-date\": \"a while ago\",\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          2001,\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001,\n          2,\n          3\n        ],\n        [\n          2004,\n          5\n        ]\n      ]\n    },\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          1999,\n          13\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          2001\n        ],\n        [\n          0\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-raw#write:native": {
+      "key": "77fedd62a5b6241e",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-raw-edtf#e2e:csljson": {
+      "key": "13454026cdbd39af",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": []\n    },\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          12345\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          -45\n        ]\n      ]\n    },\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          2001,\n          2,\n          3\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-raw-edtf#e2e:native": {
+      "key": "0d7012e24f3e1e43",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-raw-edtf#read": {
+      "key": "b154f1958e075b56",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"-001\"},\"event-date\":{\"t\":\"MetaString\",\"c\":\"y12345\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"-0044\"},\"original-date\":{\"t\":\"MetaString\",\"c\":\"2001-02-03\"},\"submitted\":{\"t\":\"MetaString\",\"c\":\"2001~\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-raw-edtf#write:csljson": {
+      "key": "70b5f6ee619416ed",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": []\n    },\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          12345\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          -45\n        ]\n      ]\n    },\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          2001,\n          2,\n          3\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"circa\": true,\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-raw-edtf#write:native": {
+      "key": "a8223338cbcb2157",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-years#e2e:csljson": {
+      "key": "e03fa8aef6c111ab",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          -50\n        ]\n      ]\n    },\n    \"available-date\": \"y-10000\",\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": []\n    },\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          -1,\n          5\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          12345\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-years#e2e:native": {
+      "key": "56daa668f407e957",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "dates-years#read": {
+      "key": "3bab0de35f3fd020",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"accessed\":{\"t\":\"MetaString\",\"c\":\"-0049\"},\"available-date\":{\"t\":\"MetaString\",\"c\":\"y-10000\"},\"event-date\":{\"t\":\"MetaString\",\"c\":\"0005\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"-001\"},\"original-date\":{\"t\":\"MetaString\",\"c\":\"0000-05\"},\"submitted\":{\"t\":\"MetaString\",\"c\":\"y12345\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "dates-years#write:csljson": {
+      "key": "e8d17b437da5301a",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"accessed\": {\n      \"date-parts\": [\n        [\n          -50\n        ]\n      ]\n    },\n    \"available-date\": \"y-10000\",\n    \"event-date\": {\n      \"date-parts\": [\n        [\n          5\n        ]\n      ]\n    },\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": []\n    },\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          -1,\n          5\n        ]\n      ]\n    },\n    \"submitted\": {\n      \"date-parts\": [\n        [\n          12345\n        ]\n      ]\n    },\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "dates-years#write:native": {
+      "key": "83eeeb725aaa8e18",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "duplicate-ids#e2e:csljson": {
+      "key": "ee3eebda9ed0e4be",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"x\",\n    \"title\": \"A\",\n    \"type\": \"\"\n  },\n  {\n    \"id\": \"x\",\n    \"title\": \"B\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "duplicate-ids#e2e:native": {
+      "key": "114df770e3c7350a",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "duplicate-ids#read": {
+      "key": "16f8903b9c78c1c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"x\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}},{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"x\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"B\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "duplicate-ids#write:csljson": {
+      "key": "68b72adcb04eb51d",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"x\",\n    \"title\": \"A\",\n    \"type\": \"\"\n  },\n  {\n    \"id\": \"x\",\n    \"title\": \"B\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "duplicate-ids#write:native": {
+      "key": "8528aaf5be8b8537",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "duplicate-keys#e2e:csljson": {
+      "key": "681a5e232123e9c6",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"x\",\n    \"title\": \"b\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "duplicate-keys#e2e:native": {
+      "key": "ec15acf084ad6d22",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "duplicate-keys#read": {
+      "key": "cee13fa3f18f139f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"Title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"x\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "duplicate-keys#write:csljson": {
+      "key": "0f78cf5579b334af",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"x\",\n    \"title\": \"b\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "duplicate-keys#write:native": {
+      "key": "ac0fba64fb8d910d",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "key-case#e2e:csljson": {
+      "key": "2db369d978fc465f",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"PMCID\": \"p\",\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"title\": \"Upper\",\n    \"type\": \"\",\n    \"zzz\": \"z\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "key-case#e2e:native": {
+      "key": "879dbb4570a9a3fb",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "key-case#read": {
+      "key": "d0da9891c9c169fa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"Issued\":{\"t\":\"MetaString\",\"c\":\"2001\"},\"Title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Upper\"}]},\"ZZZ\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"z\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"pmcid\":{\"t\":\"MetaString\",\"c\":\"p\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "key-case#write:csljson": {
+      "key": "6bfade9f60be6740",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"PMCID\": \"p\",\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"title\": \"Upper\",\n    \"type\": \"\",\n    \"zzz\": \"z\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "key-case#write:native": {
+      "key": "9bd00370a1f89376",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "key-case-collision#e2e:csljson": {
+      "key": "c28cdce4f280458b",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"title\": \"first\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "key-case-collision#e2e:native": {
+      "key": "47563567bc471057",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "key-case-collision#read": {
+      "key": "2b51fc8b205e125c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"Title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "key-case-collision#write:csljson": {
+      "key": "ff6837be5162a8ba",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"title\": \"first\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "key-case-collision#write:native": {
+      "key": "19ad79be8567f6a4",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "legacy-keys#e2e:csljson": {
+      "key": "8c1287470f4d035a",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"container-title-short\": \"J. A.\",\n    \"id\": \"k\",\n    \"type\": \"\"\n  },\n  {\n    \"container-title-short\": \"Short\",\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "legacy-keys#e2e:native": {
+      "key": "9fbb97301dd5234e",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "legacy-keys#read": {
+      "key": "7a37bbcfea7d53d7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title-short\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"J.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"A.\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}},{\"t\":\"MetaMap\",\"c\":{\"container-title-short\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Short\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "legacy-keys#write:csljson": {
+      "key": "d9c79b8de2011ea7",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"container-title-short\": \"J. A.\",\n    \"id\": \"k\",\n    \"type\": \"\"\n  },\n  {\n    \"container-title-short\": \"Short\",\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "legacy-keys#write:native": {
+      "key": "3a870f1d6b960a85",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-cheater#e2e:csljson": {
+      "key": "b98bfab05a7c2442",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"editor\": [\n      {\n        \"family\": \"Doe\",\n        \"given\": \"John\"\n      },\n      {\n        \"family\": \"Fontaine\",\n        \"given\": \"Jean\",\n        \"non-dropping-particle\": \"de la\"\n      },\n      {\n        \"family\": \"Berg\",\n        \"given\": \"Anna\",\n        \"non-dropping-particle\": \"van\",\n        \"suffix\": \"Jr.\"\n      },\n      {\n        \"family\": \"Solo\"\n      },\n      {\n        \"comma-suffix\": true,\n        \"family\": \"Arc\",\n        \"given\": \"Jeanne\",\n        \"non-dropping-particle\": \"d'\",\n        \"suffix\": \"III\"\n      },\n      {\n        \"family\": \"ⓐx Y\",\n        \"given\": \"g\"\n      },\n      {\n        \"family\": \"ªx\",\n        \"given\": \"g\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-cheater#e2e:native": {
+      "key": "e35a45eb4e989e5e",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-cheater#read": {
+      "key": "b6bdf8bee399573f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Doe\"},\"given\":{\"t\":\"MetaString\",\"c\":\"John\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Fontaine\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Jean\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"de la\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Berg\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Anna\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"van\"},\"suffix\":{\"t\":\"MetaString\",\"c\":\"Jr.\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Solo\"}}},{\"t\":\"MetaMap\",\"c\":{\"comma-suffix\":{\"t\":\"MetaBool\",\"c\":true},\"family\":{\"t\":\"MetaString\",\"c\":\"Arc\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Jeanne\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"d'\"},\"suffix\":{\"t\":\"MetaString\",\"c\":\"III\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"ⓐx Y\"},\"given\":{\"t\":\"MetaString\",\"c\":\"g\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"ªx\"},\"given\":{\"t\":\"MetaString\",\"c\":\"g\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "names-cheater#write:csljson": {
+      "key": "504450bcc08391bf",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"editor\": [\n      {\n        \"family\": \"Doe\",\n        \"given\": \"John\"\n      },\n      {\n        \"family\": \"Fontaine\",\n        \"given\": \"Jean\",\n        \"non-dropping-particle\": \"de la\"\n      },\n      {\n        \"family\": \"Berg\",\n        \"given\": \"Anna\",\n        \"non-dropping-particle\": \"van\",\n        \"suffix\": \"Jr.\"\n      },\n      {\n        \"family\": \"Solo\"\n      },\n      {\n        \"comma-suffix\": true,\n        \"family\": \"Arc\",\n        \"given\": \"Jeanne\",\n        \"non-dropping-particle\": \"d'\",\n        \"suffix\": \"III\"\n      },\n      {\n        \"family\": \"ⓐx Y\",\n        \"given\": \"g\"\n      },\n      {\n        \"family\": \"ªx\",\n        \"given\": \"g\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-cheater#write:native": {
+      "key": "6e81cb853ecf2a45",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-flags#e2e:csljson": {
+      "key": "7d53b2b28193ae37",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"comma-suffix\": true,\n        \"family\": \"F\"\n      },\n      {\n        \"family\": \"G\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-flags#e2e:native": {
+      "key": "315a3af40af1934b",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-flags#read": {
+      "key": "8704e7cb682d06f4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"comma-suffix\":{\"t\":\"MetaBool\",\"c\":true},\"family\":{\"t\":\"MetaString\",\"c\":\"F\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"G\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "names-flags#write:csljson": {
+      "key": "8bb85b01fefae70b",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"comma-suffix\": true,\n        \"family\": \"F\"\n      },\n      {\n        \"family\": \"G\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-flags#write:native": {
+      "key": "4501bfece37770a9",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-object#e2e:csljson": {
+      "key": "e747940e59b5373a",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"comma-suffix\": true,\n        \"dropping-particle\": \"van\",\n        \"family\": \"Ampel\",\n        \"given\": \"Anna\",\n        \"non-dropping-particle\": \"de\",\n        \"static-ordering\": true,\n        \"suffix\": \"Jr.\"\n      },\n      {\n        \"literal\": \"ACME Group\"\n      },\n      {}\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-object#e2e:native": {
+      "key": "33be557bcf55c69e",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-object#read": {
+      "key": "c8c85aeb555b8a37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"comma-suffix\":{\"t\":\"MetaBool\",\"c\":true},\"dropping-particle\":{\"t\":\"MetaString\",\"c\":\"van\"},\"family\":{\"t\":\"MetaString\",\"c\":\"Ampel\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Anna\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"de\"},\"static-ordering\":{\"t\":\"MetaBool\",\"c\":true},\"suffix\":{\"t\":\"MetaString\",\"c\":\"Jr.\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"ACME Group\"}}},{\"t\":\"MetaMap\",\"c\":{}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "names-object#write:csljson": {
+      "key": "607a983c5f07ad63",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"comma-suffix\": true,\n        \"dropping-particle\": \"van\",\n        \"family\": \"Ampel\",\n        \"given\": \"Anna\",\n        \"non-dropping-particle\": \"de\",\n        \"static-ordering\": true,\n        \"suffix\": \"Jr.\"\n      },\n      {\n        \"literal\": \"ACME Group\"\n      },\n      {}\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-object#write:native": {
+      "key": "609901aa859a9101",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-particles#e2e:csljson": {
+      "key": "153a70cc191b64fc",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"family\": \"van der Berg\",\n        \"given\": \"Anna Maria de\"\n      }\n    ],\n    \"editor\": [\n      {\n        \"family\": \"Smith\",\n        \"given\": \"x\",\n        \"non-dropping-particle\": \"-\"\n      },\n      {\n        \"family\": \"van der\",\n        \"given\": \"y\"\n      },\n      {\n        \"family\": \"Arc\",\n        \"given\": \"z\",\n        \"non-dropping-particle\": \"d’\"\n      },\n      {\n        \"family\": \"\",\n        \"given\": \"\"\n      },\n      {\n        \"family\": \"a\",\n        \"given\": \"b\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-particles#e2e:native": {
+      "key": "a9d3ae2fb81c1e90",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-particles#read": {
+      "key": "89cd9fc50bfd1931",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"van der Berg\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Anna Maria de\"}}}]},\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Smith\"},\"given\":{\"t\":\"MetaString\",\"c\":\"x\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"-\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"van der\"},\"given\":{\"t\":\"MetaString\",\"c\":\"y\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Arc\"},\"given\":{\"t\":\"MetaString\",\"c\":\"z\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"d’\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"\"},\"given\":{\"t\":\"MetaString\",\"c\":\"\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"a\"},\"given\":{\"t\":\"MetaString\",\"c\":\"b\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "names-particles#write:csljson": {
+      "key": "69e192f932fde907",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"family\": \"van der Berg\",\n        \"given\": \"Anna Maria de\"\n      }\n    ],\n    \"editor\": [\n      {\n        \"family\": \"Smith\",\n        \"given\": \"x\",\n        \"non-dropping-particle\": \"-\"\n      },\n      {\n        \"family\": \"van der\",\n        \"given\": \"y\"\n      },\n      {\n        \"family\": \"Arc\",\n        \"given\": \"z\",\n        \"non-dropping-particle\": \"d’\"\n      },\n      {\n        \"family\": \"\",\n        \"given\": \"\"\n      },\n      {\n        \"family\": \"a\",\n        \"given\": \"b\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-particles#write:native": {
+      "key": "b777c18b72ac1c05",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-quotes#e2e:csljson": {
+      "key": "f22d733a19b5fe70",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"family\": \"O’Brien\",\n        \"given\": \"Pat, Jr.\"\n      },\n      {\n        \"family\": \"Quoted Name\",\n        \"suffix\": \"d’x\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-quotes#e2e:native": {
+      "key": "91dc15bbcc14d9a4",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "names-quotes#read": {
+      "key": "8f9313307fd6c5dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"O’Brien\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Pat, Jr.\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Quoted Name\"},\"suffix\":{\"t\":\"MetaString\",\"c\":\"d’x\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "names-quotes#write:csljson": {
+      "key": "09259ac7a54306d3",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"family\": \"O’Brien\",\n        \"given\": \"Pat, Jr.\"\n      },\n      {\n        \"family\": \"Quoted Name\",\n        \"suffix\": \"d’x\"\n      }\n    ],\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "names-quotes#write:native": {
+      "key": "69c0bce43f966ded",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "note-fields#e2e:csljson": {
+      "key": "0ff468fac71d2a18",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"family\": \"Doe\",\n        \"given\": \"J.\"\n      },\n      {\n        \"family\": \"Roe\"\n      }\n    ],\n    \"id\": \"k\",\n    \"note\": \"rest of note\",\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          1990\n        ]\n      ]\n    },\n    \"type\": \"\"\n  },\n  {\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"note\": \" more\",\n    \"type\": \"\",\n    \"volume\": \"7\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "note-fields#e2e:native": {
+      "key": "99983122703824bc",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "note-fields#read": {
+      "key": "14b1acb658e89461",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Doe\"},\"given\":{\"t\":\"MetaString\",\"c\":\"J.\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Roe\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"note\":{\"t\":\"MetaString\",\"c\":\"rest of note\"},\"original-date\":{\"t\":\"MetaString\",\"c\":\"1990\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}},{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2001\"},\"note\":{\"t\":\"MetaString\",\"c\":\" more\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"},\"volume\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"7\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "note-fields#write:csljson": {
+      "key": "10df41feaf813c8b",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"author\": [\n      {\n        \"family\": \"Doe\",\n        \"given\": \"J.\"\n      },\n      {\n        \"family\": \"Roe\"\n      }\n    ],\n    \"id\": \"k\",\n    \"note\": \"rest of note\",\n    \"original-date\": {\n      \"date-parts\": [\n        [\n          1990\n        ]\n      ]\n    },\n    \"type\": \"\"\n  },\n  {\n    \"id\": \"k\",\n    \"issued\": {\n      \"date-parts\": [\n        [\n          2001\n        ]\n      ]\n    },\n    \"note\": \" more\",\n    \"type\": \"\",\n    \"volume\": \"7\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "note-fields#write:native": {
+      "key": "1983a05f379e53a5",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "number-forms#e2e:csljson": {
+      "key": "3352c089090c63b6",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"edition\": \"2nd\",\n    \"id\": \"k\",\n    \"issue\": \"4\",\n    \"number\": \"-2\",\n    \"page\": \"12-15\",\n    \"section\": \"1000\",\n    \"type\": \"\",\n    \"volume\": \"3\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "number-forms#e2e:native": {
+      "key": "82014930399de9ba",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "number-forms#read": {
+      "key": "429963eff5bdc87d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"edition\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2nd\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"issue\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]},\"number\":{\"t\":\"MetaString\",\"c\":\"-2\"},\"page\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"12-15\"}]},\"section\":{\"t\":\"MetaString\",\"c\":\"1000\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"},\"volume\":{\"t\":\"MetaString\",\"c\":\"3\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "number-forms#write:csljson": {
+      "key": "badb637b44da0db5",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"edition\": \"2nd\",\n    \"id\": \"k\",\n    \"issue\": \"4\",\n    \"number\": \"-2\",\n    \"page\": \"12-15\",\n    \"section\": \"1000\",\n    \"type\": \"\",\n    \"volume\": \"3\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "number-forms#write:native": {
+      "key": "edc13fe02cc3ddef",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "standard-number#e2e:csljson": {
+      "key": "6eae0129852222df",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"publisher\": \"-3\",\n    \"title\": \"12\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "standard-number#e2e:native": {
+      "key": "8dd91c71a84908b3",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "standard-number#read": {
+      "key": "18df65656abc1bd6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"publisher\":{\"t\":\"MetaString\",\"c\":\"-3\"},\"title\":{\"t\":\"MetaString\",\"c\":\"12\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "standard-number#write:csljson": {
+      "key": "f679124b468f5cdf",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"publisher\": \"-3\",\n    \"title\": \"12\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "standard-number#write:native": {
+      "key": "0fe91bea96d59ac1",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "standard-text#e2e:csljson": {
+      "key": "c31026e5f9ab76ae",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"abstract\": \"A\",\n    \"id\": \"k\",\n    \"publisher\": \"P\",\n    \"title\": \"Plain title\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "standard-text#e2e:native": {
+      "key": "1b820a144fcd71aa",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "standard-text#read": {
+      "key": "7169993eb77e4395",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"abstract\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"publisher\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"P\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Plain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"title\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "standard-text#write:csljson": {
+      "key": "a6339fec68488f6f",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"abstract\": \"A\",\n    \"id\": \"k\",\n    \"publisher\": \"P\",\n    \"title\": \"Plain title\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "standard-text#write:native": {
+      "key": "6511b73541b88101",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "string-variables#e2e:csljson": {
+      "key": "cdf9ba13fabcaf70",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"DOI\": \"10.1/x'y\",\n    \"ISBN\": \"12\",\n    \"PMID\": \"5\",\n    \"URL\": \"http://e.org/?a=1&b\",\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "string-variables#e2e:native": {
+      "key": "b510f0a1db4c7314",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "string-variables#read": {
+      "key": "520963d63f60a941",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaString\",\"c\":\"10.1/x'y\"},\"ISBN\":{\"t\":\"MetaString\",\"c\":\"12\"},\"PMID\":{\"t\":\"MetaString\",\"c\":\"5\"},\"URL\":{\"t\":\"MetaString\",\"c\":\"http://e.org/?a=1&b\"},\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "string-variables#write:csljson": {
+      "key": "0d5f1c33ffc4e043",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"DOI\": \"10.1/x'y\",\n    \"ISBN\": \"12\",\n    \"PMID\": \"5\",\n    \"URL\": \"http://e.org/?a=1&b\",\n    \"id\": \"k\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "string-variables#write:native": {
+      "key": "64d20dde4ba2a6c5",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "type-and-id#e2e:csljson": {
+      "key": "a4dbd27981b6021c",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"type\": \"book\"\n  },\n  {\n    \"id\": \"7\",\n    \"type\": \"\"\n  },\n  {\n    \"id\": \"\",\n    \"title\": \"no id\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "type-and-id#e2e:native": {
+      "key": "82661a9b6d3de060",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "type-and-id#read": {
+      "key": "84e24ce14a157d9b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"a\"},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}},{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"7\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}},{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"no\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"id\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "type-and-id#write:csljson": {
+      "key": "f88baa42ba3057c8",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"type\": \"book\"\n  },\n  {\n    \"id\": \"7\",\n    \"type\": \"\"\n  },\n  {\n    \"id\": \"\",\n    \"title\": \"no id\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "type-and-id#write:native": {
+      "key": "048bcafd979a5cf2",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "unknown-variables#e2e:csljson": {
+      "key": "8cfcad403cc50334",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"type\": \"\",\n    \"zzy\": \"12\",\n    \"zzz\": \"q\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "unknown-variables#e2e:native": {
+      "key": "9bd908a95d1fc5c8",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "unknown-variables#read": {
+      "key": "be4161ed87a9da55",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"k\"},\"type\":{\"t\":\"MetaString\",\"c\":\"\"},\"zzy\":{\"t\":\"MetaString\",\"c\":\"12\"},\"zzz\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unknown-variables#write:csljson": {
+      "key": "59513d3b64ca94a2",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"k\",\n    \"type\": \"\",\n    \"zzy\": \"12\",\n    \"zzz\": \"q\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "unknown-variables#write:native": {
+      "key": "3d3be78db5a1b3f4",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,100 @@
+# The reader: each value form of each variable type.
+from = "csljson"
+to = ["csljson", "native"]
+
+
+[[case]]
+id = "type-and-id"
+input = "[{\"id\": \"a\", \"type\": \"book\"}, {\"id\": 7}, {\"title\": \"no id\"}]"
+
+[[case]]
+id = "standard-text"
+input = "[{\"id\": \"k\", \"title\": \"Plain title\", \"publisher\": \"P\", \"abstract\": \"A\"}]"
+
+[[case]]
+id = "standard-number"
+input = "[{\"id\": \"k\", \"title\": 12, \"publisher\": -3}]"
+
+[[case]]
+id = "string-variables"
+input = "[{\"id\": \"k\", \"DOI\": \"10.1/x'y\", \"ISBN\": \"12\", \"URL\": \"http://e.org/?a=1&b\", \"PMID\": 5}]"
+
+[[case]]
+id = "number-forms"
+input = "[{\"id\": \"k\", \"volume\": 3, \"issue\": \"4\", \"page\": \"12-15\", \"edition\": \"2nd\", \"number\": -2, \"section\": 1000.0}]"
+
+[[case]]
+id = "unknown-variables"
+input = "[{\"id\": \"k\", \"zzz\": \"q\", \"zzy\": 12, \"zzb\": true, \"zza\": [1], \"custom\": {\"a\": 1}}]"
+
+[[case]]
+id = "key-case"
+input = "[{\"id\": \"k\", \"Title\": \"Upper\", \"ZZZ\": \"z\", \"pmcid\": \"p\", \"Issued\": \"2001\"}]"
+
+[[case]]
+id = "key-case-collision"
+input = "[{\"id\": \"k\", \"Title\": \"first\", \"title\": \"second\"}]"
+
+[[case]]
+id = "legacy-keys"
+input = "[{\"id\": \"k\", \"journalAbbreviation\": \"J. A.\"}, {\"id\": \"k\", \"shortTitle\": \"Short\"}]"
+
+[[case]]
+id = "names-object"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"Ampel\", \"given\": \"Anna\", \"dropping-particle\": \"van\", \"non-dropping-particle\": \"de\", \"suffix\": \"Jr.\", \"comma-suffix\": true, \"static-ordering\": \"true\"}, {\"literal\": \"ACME Group\"}, {}]}]"
+
+[[case]]
+id = "names-quotes"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"O'Brien\", \"given\": \"\\\"Pat, Jr.\\\"\"}, {\"family\": \"\\\"Quoted Name\\\"\", \"suffix\": \"d'x\"}]}]"
+
+[[case]]
+id = "names-cheater"
+input = "[{\"id\": \"k\", \"editor\": [\"Doe || John\", \"de la Fontaine || Jean\", \"van Berg || Anna, Jr.\", \"Solo\", \"d'Arc || Jeanne,! III\", \"ⓐx Y || g\", \"ªx || g\"]}]"
+
+[[case]]
+id = "names-flags"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"comma-suffix\": 1, \"static-ordering\": \"yes\"}, {\"family\": \"G\", \"comma-suffix\": null}]}]"
+
+[[case]]
+id = "dates-parts"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [[2001, 2, 3]]}, \"accessed\": {\"date-parts\": [[2001], [2002, 5]]}, \"submitted\": {\"date-parts\": [[\"2001\", \"02\", \"\"]]}}]"
+
+[[case]]
+id = "dates-circa-season"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [[2001]], \"circa\": true, \"season\": 2}, \"accessed\": {\"date-parts\": [[1999, 5]], \"circa\": \"true\"}, \"submitted\": {\"date-parts\": [[1999]], \"circa\": 1, \"season\": \"x\"}}]"
+
+[[case]]
+id = "dates-literal"
+input = "[{\"id\": \"k\", \"issued\": {\"literal\": \"Spring of 2001\"}, \"accessed\": {\"literal\": \"L\", \"date-parts\": [[2001]], \"circa\": true}}]"
+
+[[case]]
+id = "dates-raw"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \"2001-02-03/2004-05\"}, \"accessed\": {\"raw\": \"199u\"}, \"submitted\": {\"raw\": \"2001/open\"}, \"event-date\": {\"raw\": \"May 2001\"}, \"original-date\": {\"raw\": \"spring 1999\"}, \"available-date\": {\"raw\": \"a while ago\"}}]"
+
+[[case]]
+id = "dates-raw-edtf"
+input = "[{\"id\": \"k\", \"issued\": \"-0044\", \"accessed\": \"0000\", \"submitted\": \"2001~\", \"event-date\": \"y12345\", \"original-date\": \"2001-02-03T10:00\"}]"
+
+[[case]]
+id = "dates-years"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [[-1]]}, \"accessed\": {\"date-parts\": [[-50]]}, \"submitted\": {\"date-parts\": [[12345]]}, \"event-date\": {\"date-parts\": [[5]]}, \"original-date\": {\"date-parts\": [[0, 5]]}, \"available-date\": {\"date-parts\": [[-10001]]}}]"
+
+[[case]]
+id = "dates-odd-parts"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": []}, \"accessed\": {\"date-parts\": [[2001], []]}, \"submitted\": {\"date-parts\": [[2001, 13, 40, 4]]}, \"event-date\": {}}]"
+
+[[case]]
+id = "note-fields"
+input = "[{\"id\": \"k\", \"note\": \"original-date: 1990\\nauthor: Doe || J.\\nauthor: Roe\\nrest of note\"}, {\"id\": \"k\", \"note\": \"{:issued: 2001}{:volume: 7} more\"}]"
+
+[[case]]
+id = "duplicate-ids"
+input = "[{\"id\": \"x\", \"title\": \"A\"}, {\"id\": \"x\", \"title\": \"B\"}]"
+
+[[case]]
+id = "duplicate-keys"
+input = "[{\"id\":\"x\",\"id\":\"y\",\"title\":\"a\",\"Title\":\"b\"}]"
+
+[[case]]
+id = "names-particles"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"van der Berg\", \"given\": \"Anna Maria de\"}], \"editor\": [\"-Smith || x\", \"van der || y\", \"d’Arc || z\", \" || \", \"a||b||c\"]}]"

@@ -449,3 +449,28 @@ I-YAML-17 (Codex yaml-R8-02). The low findings of round 8 (Opus yaml-R8-L01,
 yaml-R8-L02; error texts only) are open. Open checks: fuzzing, the mutation
 sample, coverage and the time table at 50,000 repetitions of the last unit.
 Requests of the worker to the coordinator: none.
+
+## Workstream citeproc (branch `ws/citeproc`, head 9459e58, one squashed commit, batch 1 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-citeproc` (a port of `citeproc` 0.14.1.1, ADR 17). Unit 1: the
+CSL style and locale parser with its XML reader (`quick-xml` `=0.42.0`,
+ADR 10). Unit 2: the reference model, the CSL JSON form with its string
+markup, and the reader and writer `csljson`, registered in
+`crates/randoc/src/formats.rs`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 9459e58 at 18:30 UTC (worker report): harness 4867 units, 2506 pass; baseline 2217 units, 0 regressions, 289 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `csljson/`: 321 units, 289 pass, 0 fail, 32 skipped (write units of inputs that the reader refuses). Parse replay of styles and locales: 145 of 145 equal. Open divergences: I-CITE-04, I-CITE-05, I-CITE-08, I-CITE-09, I-CITE-11, I-CITE-12 (low), I-CITE-10 (deliberate). |
+| 3. Tests | Line coverage 94.1 % of the crate (at 59faa89; `csljson.rs` 71.8 %, because the harness suite runs its writer paths). Mutation sample: 9 of 660 mutants of the diff (shard 1/80): 2 caught, 6 unviable, 1 missed, which the test `the_depth_limit_counts_levels_exactly` now catches. |
+| 4. No panics | Fuzzing, 0 crashes: `markup_parse` 901 s, `csljson_read` 901 s, `style_parse` 901 s, `locale_parse` 901 s (the last two after the XML corrections). Depth tests on a 2 MB stack at 10,000 and 100,000 levels give the depth error. |
+| 5. Reviews | Round 1 on 60b097d (unit 1 only): Codex REQUEST CHANGES (1 high, 7 medium, 5 low), Opus REQUEST CHANGES (1 medium, 4 low). The worker reports each finding with the level medium or higher as closed in 9459e58. Opus citeproc-R1-04 (low) is open (I-CITE-13). Unit 2 has no review. The review of units 1 and 2 is due as the review of this major block. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a conversion path that existed on `main` before; it adds the formats `csljson` to the format table. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Licence scan: only licence texts in the notice files. Open checks: the
+mutation sample (9 of 660 mutants ran); the time table at 50,000
+repetitions on the final code. Requests of the worker to the coordinator:
+one shared Haskell `show` of a string in `randoc_core::shared` (Opus
+citeproc-R1-04); a public JSON value parser in `randoc-ast` (I-CITE-09).

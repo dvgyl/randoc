@@ -399,3 +399,30 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   - A build on Linux and Windows, and the WebAssembly targets.
   - Tests: the library set of full mode against the oracle; the removals
     of restricted mode; a binary chunk; a loop inside `pcall`.
+
+## ADR 17: The CSL processor is a port of `citeproc` 0.14.1.1 (2026-11-11)
+
+- **Context.** `--citeproc` must give the bytes of Pandoc 3.13, which uses
+  the Haskell library `citeproc` 0.14.1.1. The CSL test suite has no
+  licence grant. The 61 CSL locales and `default.csl` are CC BY-SA 3.0.
+- **Decision.** The crate `randoc-citeproc` is a port of `citeproc`
+  0.14.1.1 (BSD-2-Clause), module by module. The BCP 47 tag type is a port
+  of `Text/Collate/Lang.hs` of `unicode-collation` 0.1.3.7 (BSD-2-Clause).
+  XML comes from `quick-xml` 0.42.0 under the rules of ADR 10; the crate
+  builds its own element tree with the nesting limit and maps each XML
+  error to the text of `xml-conduit`, from an oracle matrix. Styles and
+  locales are read at run time through `Context` from the data directory:
+  `DATADIR/csl/locales/locales-TAG.xml` and `DATADIR/default.csl`. No
+  locale and no style is in the repository (decisions D1 and D2).
+- **Why.** The output of `citeproc` depends on many small rules (term
+  order, locale merge order, defaults of each attribute). A port keeps
+  them. `hayagriva` and `citationberg` (MIT OR Apache-2.0) implement CSL,
+  but their output is not the output of `citeproc`.
+- **Licence.** BSD-2-Clause for both packages; `third_party/licences/citeproc.txt`,
+  `third_party/licences/unicode-collation.txt`, and
+  `crates/randoc-citeproc/NOTICE.md`. The data files `tailorings` and
+  `cjk` of `unicode-collation` are not used.
+- **Consequences.** Without the data package, Randoc has no en-US locale
+  and returns an error where the oracle gives output (`docs/ISSUES.md`).
+  The tests of the gate use small styles and locales written for Randoc.
+  Tests with the real locales read the folder of `RANDOC_CSL_DATA`.

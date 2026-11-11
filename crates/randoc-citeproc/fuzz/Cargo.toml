@@ -1,0 +1,44 @@
+[package]
+name = "randoc-citeproc-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+randoc-core = { path = "../../randoc-core" }
+randoc-citeproc = { path = ".." }
+
+[[bin]]
+name = "style_parse"
+path = "fuzz_targets/style_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "locale_parse"
+path = "fuzz_targets/locale_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "csljson_read"
+path = "fuzz_targets/csljson_read.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "markup_parse"
+path = "fuzz_targets/markup_parse.rs"
+test = false
+doc = false
+bench = false
+
+# The fuzz crate is not a member of the main workspace.
+[workspace]

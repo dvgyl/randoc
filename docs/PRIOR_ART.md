@@ -95,6 +95,9 @@ replaces it.
 | 63 KDE syntax definitions with a permissive licence | `skylighting-core` 0.15 `xml/` (from KDE syntax-highlighting) | MIT, BSD, Apache-2.0 and others; one row for each file on the branch | Data | `ws/highlight` |
 | YAML event parser | `saphyr-parser` (version in the branch `Cargo.lock`) | MIT OR Apache-2.0 | Dependency, until the reader moves to `randoc-yaml` | `ws/markdown-reader` |
 | CommonMark specification examples | `commonmark-spec` 0.31.2 | CC-BY-SA-4.0 | Not in the repository: `tools/commonmark-spec/run.py` downloads the file and stores only numbers | `ws/commonmark-reader` |
+| CSL processor: types, style parser, locale parser, locale merge (later units: evaluation, output) | `citeproc` 0.14.1.1 (Hackage, SHA-256 `e5a353f975c32169979b4c9e158d3edb9e57a5f653fab8ff0505a2067e2b1b4b`) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
+| BCP 47 language tag (`Lang`, `parseLang`, `renderLang`) | `unicode-collation` 0.1.3.7 `src/Text/Collate/Lang.hs` (code only; no data file) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
+| XML events for CSL styles and locales | `quick-xml` 0.42.0 (`=0.42.0`, `default-features = false`), with `memchr` 2 | MIT; Unlicense OR MIT | Dependency (ADR 10) | `ws/citeproc` |
 
 ## Candidates to study
 
@@ -112,7 +115,6 @@ snapshot `lts-24.51`, inside the bounds of `pandoc.cabal`:
 | Need | Candidate and checked release | Licence (licence file) | Compatible | Note |
 | --- | --- | --- | --- | --- |
 | CommonMark and GFM reader | `commonmark` 0.3.1, `commonmark-extensions` 0.2.7.3, `commonmark-pandoc` 0.3.0.2 (`commonmark-hs`) | BSD-3-Clause (https://hackage.haskell.org/package/commonmark-0.3.1/src/LICENSE, https://hackage.haskell.org/package/commonmark-extensions-0.2.7.3/src/LICENSE, https://hackage.haskell.org/package/commonmark-pandoc-0.3.0.2/src/LICENSE) | Yes | The parser that the oracle uses for `commonmark`, `gfm` and `commonmark_x`. `ws/commonmark-reader` was written from black-box tests; a comparison with this source can close its open rows. The copyright line of the licence file is the template text "Author name here"; the `.cabal` file gives "2018-2021 John MacFarlane". Keep both in the notice. |
-| Citations (`--citeproc`) | `citeproc` 0.14.1.1 | BSD-2-Clause (https://hackage.haskell.org/package/citeproc-0.14.1.1/src/LICENSE) | Yes | Needs CSL styles and locales; their licences are in `docs/DATA_FILES_LICENCES.md` (D2). |
 | Sort order for citations | `unicode-collation` 0.1.3.7 | Code BSD-2-Clause; data files under other terms (https://hackage.haskell.org/package/unicode-collation-0.1.3.7/src/LICENSE) | Code yes; part of the data no | `data/tailorings/*.txt` and `data/cjk/*.txt` come from the Perl module `Unicode::Collate` "under the same terms as Perl" (Artistic-1.0-Perl OR GPL-1.0-or-later). Do not copy them. `data/allkeys.txt` (UCA 13.0.0) and `UnicodeData.txt` (13.0.0) are Unicode data: take them from unicode.org. |
 | Djot reader and writer | `djot` 0.1.4.3 (`djoths`) | MIT (https://hackage.haskell.org/package/djot-0.1.4.3/src/LICENSE) | Yes | |
 | Typst reader | `typst` 0.12 (`typst-hs`) | BSD-3-Clause (https://hackage.haskell.org/package/typst-0.12/src/LICENSE) | Yes | |

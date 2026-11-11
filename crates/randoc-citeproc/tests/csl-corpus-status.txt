@@ -1,0 +1,5 @@
+# Counts of tools/csl-corpus.sh (citeproc 0.14.1.1 test suite and locales). No case text.
+locales 60 parse 60
+styles 926 oracle-accepted 926 oracle-rejected 0
+accepted-and-parsed 926
+rejected-with-equal-text 0

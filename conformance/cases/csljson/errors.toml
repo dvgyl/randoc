@@ -1,0 +1,152 @@
+# The forms of the input and the error texts of bad input.
+from = "csljson"
+to = ["csljson"]
+
+
+[[case]]
+id = "empty-input"
+input = ""
+
+[[case]]
+id = "not-json"
+input = "nope"
+
+[[case]]
+id = "object-without-items"
+input = "{\"id\":\"x\"}"
+
+[[case]]
+id = "items-not-array"
+input = "{\"items\":5}"
+
+[[case]]
+id = "items-form"
+input = "{\"items\":[{\"id\":\"x\"}],\"other\":1}"
+
+[[case]]
+id = "item-in-items-not-object"
+input = "{\"items\":[5]}"
+
+[[case]]
+id = "root-string"
+input = "\"x\""
+
+[[case]]
+id = "root-number"
+input = "5"
+
+[[case]]
+id = "item-not-object"
+input = "[1]"
+
+[[case]]
+id = "trailing-garbage"
+input = "[{\"id\":\"a\"}] x"
+
+[[case]]
+id = "trailing-space"
+input = "[{\"id\":\"a\"}]  \n"
+
+[[case]]
+id = "empty-list"
+input = "[]"
+
+[[case]]
+id = "unclosed-array"
+input = "[{\"id\":"
+
+[[case]]
+id = "names-not-array"
+input = "[{\"id\": \"k\", \"author\": \"Smith\"}]"
+
+[[case]]
+id = "name-not-object"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"x\"}, 5]}]"
+
+[[case]]
+id = "name-part-number"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": 5}]}]"
+
+[[case]]
+id = "name-flag-array"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"x\", \"comma-suffix\": [1]}]}]"
+
+[[case]]
+id = "date-number"
+input = "[{\"id\": \"k\", \"issued\": 5}]"
+
+[[case]]
+id = "date-parts-number"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": 5}}]"
+
+[[case]]
+id = "date-parts-inner-number"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [5]}}]"
+
+[[case]]
+id = "date-part-text"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [[\"x\"]]}, \"volume\": true}]"
+
+[[case]]
+id = "date-part-float"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [[2001.5]]}}]"
+
+[[case]]
+id = "date-part-bool"
+input = "[{\"id\": \"k\", \"issued\": {\"date-parts\": [[true]]}}]"
+
+[[case]]
+id = "date-literal-number"
+input = "[{\"id\": \"k\", \"issued\": {\"literal\": 5}}]"
+
+[[case]]
+id = "date-raw-number"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": 5, \"date-parts\": [[2001]]}}]"
+
+[[case]]
+id = "first-error-in-key-order"
+input = "[{\"id\": \"k\", \"volume\": true, \"author\": 5}]"
+
+[[case]]
+id = "standard-bool"
+input = "[{\"id\": \"k\", \"title\": true}]"
+
+[[case]]
+id = "standard-null"
+input = "[{\"id\": \"k\", \"title\": null}]"
+
+[[case]]
+id = "standard-array"
+input = "[{\"id\": \"k\", \"title\": [\"x\"]}]"
+
+[[case]]
+id = "standard-float"
+input = "[{\"id\": \"k\", \"title\": 1.5}]"
+
+[[case]]
+id = "number-float"
+input = "[{\"id\": \"k\", \"volume\": 3.5}]"
+
+[[case]]
+id = "id-float"
+input = "[{\"id\": 1.5}]"
+
+[[case]]
+id = "id-huge"
+input = "[{\"id\":1e30}]"
+
+[[case]]
+id = "type-number"
+input = "[{\"id\": \"a\", \"type\": 5}]"
+
+[[case]]
+id = "note-number"
+input = "[{\"id\": \"k\", \"note\": 5}]"
+
+[[case]]
+id = "unknown-float"
+input = "[{\"id\": \"k\", \"a b\": 5.5}]"
+
+[[case]]
+id = "unknown-key-quote"
+input = "[{\"id\": \"k\", \"x'y\": true}]"

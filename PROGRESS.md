@@ -220,6 +220,7 @@ and the `lua` and `server` modes.
 | harness-flaky | Tests of `randoc-harness` that do not depend on the speed of the machine (test code only) |
 | layout-perf | `randoc-layout`: the concatenation of documents is constant work |
 | yaml | `randoc-yaml`: the YAML reader for metadata (no program path calls it yet) |
+| citeproc | `randoc-citeproc`: the CSL style and locale parser, the reference model and the `csljson` reader and writer |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

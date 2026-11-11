@@ -17,6 +17,7 @@ type WriterLookup = fn(&str) -> Option<Writer>;
 const READERS: &[ReaderLookup] = &[
     json_format::reader,
     randoc_native::reader,
+    randoc_citeproc::csljson::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.
@@ -24,6 +25,7 @@ const READERS: &[ReaderLookup] = &[
 const WRITERS: &[WriterLookup] = &[
     json_format::writer,
     randoc_native::writer,
+    randoc_citeproc::csljson::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.

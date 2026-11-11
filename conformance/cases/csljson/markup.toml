@@ -1,0 +1,72 @@
+# The markup inside CSL JSON strings: tags, quotes, escapes and text that is not markup.
+from = "csljson"
+to = ["csljson"]
+
+
+[[case]]
+id = "markup-00"
+input = "[{\"id\": \"k\", \"title\": \"<i>it</i> <b>bo</b> <u>un</u> <sup>up</sup> <sub>dn</sub>\"}]"
+
+[[case]]
+id = "markup-01"
+input = "[{\"id\": \"k\", \"title\": \"<sc>a</sc> <span style=\\\"font-variant:small-caps;\\\">b</span> <span style=\\\"font-variant: small-caps; \\\" >c</span>\"}]"
+
+[[case]]
+id = "markup-02"
+input = "[{\"id\": \"k\", \"title\": \"<span class=\\\"nocase\\\">NASA</span> <span  class=\\\"nocase\\\" >x</span> <span class=\\\"nodecor\\\">d</span> <span class=\\\"baseline\\\">e</span>\"}]"
+
+[[case]]
+id = "markup-03"
+input = "[{\"id\": \"k\", \"title\": \"\\\"double 'single' double\\\" “curly” ‘c’\"}]"
+
+[[case]]
+id = "markup-04"
+input = "[{\"id\": \"k\", \"title\": \"don't it's l'été 'quoted' x\\\"y\\\"z\"}]"
+
+[[case]]
+id = "markup-05"
+input = "[{\"id\": \"k\", \"title\": \"\\\" open space\\\" \\\"\\\" ''\"}]"
+
+[[case]]
+id = "markup-06"
+input = "[{\"id\": \"k\", \"title\": \"<i>open <b>never closed\"}]"
+
+[[case]]
+id = "markup-07"
+input = "[{\"id\": \"k\", \"title\": \"a < b > c & d &amp; e\"}]"
+
+[[case]]
+id = "markup-08"
+input = "[{\"id\": \"k\", \"title\": \"x ; y ? z ! « w »\"}]"
+
+[[case]]
+id = "markup-09"
+input = "[{\"id\": \"k\", \"title\": \"² ™ a² ª\"}]"
+
+[[case]]
+id = "markup-10"
+input = "[{\"id\": \"k\", \"title\": \"  lead  trail  \"}]"
+
+[[case]]
+id = "markup-11"
+input = "[{\"id\": \"k\", \"title\": \"line\\nbreak\\ttab nbsp\"}]"
+
+[[case]]
+id = "markup-12"
+input = "[{\"id\": \"k\", \"title\": \"<i><i>nested</i></i> <b><b>x</b></b> <sc><sc>y</sc></sc>\"}]"
+
+[[case]]
+id = "markup-13"
+input = "[{\"id\": \"k\", \"title\": \"<i>a</i><i>b</i> <sc>c</sc><sc>d</sc> <b>e</b><b>f</b>\"}]"
+
+[[case]]
+id = "markup-14"
+input = "[{\"id\": \"k\", \"title\": \"<i></i><b> </b>\"}]"
+
+[[case]]
+id = "markup-15"
+input = "[{\"id\": \"k\", \"title\": \"<a href=\\\"x\\\">l</a> <span class=\\\"other\\\">o</span>\"}]"
+
+[[case]]
+id = "markup-16"
+input = "[{\"id\": \"k\", \"title\": \"xि'y ि'y ́'z aͅ'b Ⓐ'c\"}]"
