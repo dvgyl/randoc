@@ -541,3 +541,27 @@ state). Open checks: the mutation sample; coverage of `show.rs`. Requests of
 the worker to the coordinator: host methods for `pandoc.system` and
 `path.exists` that `randoc_core::Host` does not have; a decision on the
 locale of the Lua state (I-LUA-13).
+
+## Batch 1 of 2026-11-11
+
+Branches, in merge order, each one squashed commit on `main`:
+`layout-perf` d8fa6c0 (fabec83), `yaml` 7170169 (dda9676), `citeproc`
+9459e58 (5c71e99), `math` 63cd0e6 (9bce369), `lua` dab508e (18cf178). No
+branch was left out or undone.
+
+`merge-ws check` on the final tree (18cf178) passed on its first run
+(19:07 to 19:14 UTC): `record` 0 new units, 0 oracle errors;
+`verify-oracle` 4465 units, 0 stored results are not current;
+`scripts/gate.sh` passed (format, lints, documentation, tests, harness).
+
+- Harness before the batch: 4546 units, 2217 pass, 1959 fail, 0 no result,
+  0 not recorded, 370 skipped.
+- Harness after the batch: 4867 units, 2506 pass, 1959 fail, 0 no result,
+  0 not recorded, 402 skipped; baseline 2217 units, 0 regressions, 289 new
+  passes (the suite `csljson/` of `citeproc`). `spec/baseline.json` now has
+  2506 units.
+- Capability summary: `{"extensions": {"not_started": 90}, "input_formats":
+  {"failing": 1, "not_started": 48, "partial": 2, "passing": 1}, "options":
+  {"failing": 4, "not_started": 103, "passing": 2}, "output_formats":
+  {"not_started": 74, "partial": 2, "passing": 1}, "units": {"passing":
+  2506, "total": 4465}}`.

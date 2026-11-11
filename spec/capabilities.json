@@ -295,7 +295,15 @@
       "status": "not_started"
     },
     "csljson": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 102,
+        "total": 102
+      },
+      "read": {
+        "passing": 78,
+        "total": 78
+      },
+      "status": "passing"
     },
     "csv": {
       "status": "not_started"
@@ -393,12 +401,12 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 118,
-        "total": 120
+        "passing": 131,
+        "total": 133
       },
       "read": {
-        "passing": 118,
-        "total": 120
+        "passing": 131,
+        "total": 133
       },
       "status": "partial"
     },
@@ -861,7 +869,15 @@
       "status": "not_started"
     },
     "csljson": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 91,
+        "total": 91
+      },
+      "status": "passing",
+      "write": {
+        "passing": 59,
+        "total": 59
+      }
     },
     "djot": {
       "status": "not_started"
@@ -981,13 +997,13 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 277,
-        "total": 648
+        "passing": 301,
+        "total": 672
       },
       "status": "partial",
       "write": {
-        "passing": 373,
-        "total": 612
+        "passing": 397,
+        "total": 636
       }
     },
     "odt": {
@@ -1070,8 +1086,9 @@
     },
     "input_formats": {
       "failing": 1,
-      "not_started": 49,
-      "partial": 2
+      "not_started": 48,
+      "partial": 2,
+      "passing": 1
     },
     "options": {
       "failing": 4,
@@ -1079,12 +1096,13 @@
       "passing": 2
     },
     "output_formats": {
-      "not_started": 75,
-      "partial": 2
+      "not_started": 74,
+      "partial": 2,
+      "passing": 1
     },
     "units": {
-      "passing": 2217,
-      "total": 4176
+      "passing": 2506,
+      "total": 4465
     }
   }
 }
