@@ -565,3 +565,36 @@ branch was left out or undone.
   {"failing": 4, "not_started": 103, "passing": 2}, "output_formats":
   {"not_started": 74, "partial": 2, "passing": 1}, "units": {"passing":
   2506, "total": 4465}}`.
+
+## Workstream html-writer (branch `ws/html-writer`, head fb6c151, one squashed commit, batch 2 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-html` with the writers `html` and `html4` (sections, notes, tables,
+lists, `--incremental` list classes, wrapper divs), registered in
+`crates/randoc/src/formats.rs`, and its oracle matrices (`src/joint.jsonl`:
+28,965 cases).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head fb6c151 (run ended 18:43 UTC; worker report): harness 6966 units, 3486 pass; baseline 2217 units, 0 regressions, 1269 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | 1269 new passing units on the branch. Oracle matrices: joint 28,965 cases, `sections` 20,636, `classes` 4,912, `notes` 8,316, each with 0 differences (test `the_oracle_matrices_replay_with_no_difference`). Scope gaps: math conversion and syntax highlighting. |
+| 3. Tests | `cargo test -p randoc-html`: 290 + 1 pass (on 74c37f6). Mutation sample and coverage: not run. |
+| 4. No panics | No parser changes, so no fuzz run is due. 10,000 nested notes give the depth error (no stack overflow). |
+| 5. Reviews | 5 rounds. Round 5 on eb29e00: Codex and Opus REQUEST CHANGES (1 critical, 2 high and 12 medium in all). The worker reports each one as closed in the branch, with the joint oracle matrix (0 differences). No review of the head exists. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before; it adds the writers to the format table. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Licence scan: generic table fragments and filler text only (4 inputs that
+copied the manual were replaced in fb6c151). Open findings: I-HTML-28
+(medium: time that grows faster than linear with the nesting depth; its
+cause was the concatenation in `randoc-layout`, which batch 1 corrected;
+the writer was not measured again after that correction) and I-HTML-29
+(low). Open checks: the mutation sample, coverage. Requests of the worker
+to the coordinator: none new.
+
+Conflict in the merge: the root `Cargo.toml` (member and dependency line
+of `randoc-yaml` and `randoc-html`: both kept).
+
+The same commit adds the rows I-YAML-18 and I-YAML-19 (the low findings
+Opus yaml-R8-L01 and yaml-R8-L02 of the `yaml` round 8 review, at the
+request of the coordinator).

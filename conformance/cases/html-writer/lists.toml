@@ -1,0 +1,343 @@
+# Bullet lists, ordered lists, task lists and definition lists.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "bullet-tight"
+input = '''
+- a
+- b
+- c
+'''
+
+[[case]]
+id = "bullet-loose"
+input = '''
+- a
+
+- b
+'''
+
+[[case]]
+id = "bullet-nested"
+input = '''
+- a
+    - b
+        - c
+- d
+'''
+
+[[case]]
+id = "bullet-multi-para"
+input = '''
+- a
+
+    b
+- c
+'''
+
+[[case]]
+id = "bullet-with-code"
+input = '''
+- a
+
+        code
+'''
+
+[[case]]
+id = "bullet-star-plus"
+input = '''
+* a
+* b
+
++ c
++ d
+'''
+
+[[case]]
+id = "ordered-tight"
+input = '''
+1. a
+2. b
+'''
+
+[[case]]
+id = "ordered-start"
+input = '''
+3. a
+4. b
+'''
+
+[[case]]
+id = "ordered-start-zero"
+input = '''
+0. a
+1. b
+'''
+
+[[case]]
+id = "ordered-lower-alpha"
+input = '''
+a. x
+b. y
+'''
+
+[[case]]
+id = "ordered-upper-alpha"
+input = '''
+A. x
+B. y
+'''
+
+[[case]]
+id = "ordered-lower-roman"
+input = '''
+i. x
+ii. y
+'''
+
+[[case]]
+id = "ordered-upper-roman"
+input = '''
+I. x
+II. y
+'''
+
+[[case]]
+id = "ordered-paren"
+input = '''
+1) a
+2) b
+'''
+
+[[case]]
+id = "ordered-two-parens"
+input = '''
+(1) a
+(2) b
+'''
+
+[[case]]
+id = "ordered-alpha-paren-start"
+input = '''
+c) x
+d) y
+'''
+
+[[case]]
+id = "ordered-roman-start"
+input = '''
+(iv) x
+(v) y
+'''
+
+[[case]]
+id = "ordered-hash"
+input = '''
+#. a
+#. b
+'''
+
+[[case]]
+id = "example-list"
+input = '''
+(@) first
+(@) second
+
+Text
+
+(@) third
+'''
+
+[[case]]
+id = "example-list-labels"
+input = '''
+(@a) first
+
+See (@a).
+'''
+
+[[case]]
+id = "ordered-loose"
+input = '''
+1. a
+
+2. b
+'''
+
+[[case]]
+id = "ordered-nested-bullet"
+input = '''
+1. a
+    - b
+2. c
+'''
+
+[[case]]
+id = "ordered-large-start"
+input = '''
+999. a
+1000. b
+'''
+
+[[case]]
+id = "task-list"
+input = '''
+- [ ] todo
+- [x] done
+'''
+
+[[case]]
+id = "task-list-loose"
+input = '''
+- [ ] todo
+
+- [x] done
+'''
+
+[[case]]
+id = "task-list-mixed"
+input = '''
+- [ ] todo
+- normal
+'''
+
+[[case]]
+id = "task-list-ordered"
+input = '''
+1. [ ] a
+2. [x] b
+'''
+
+[[case]]
+id = "task-list-nested"
+input = '''
+- [ ] a
+    - [x] b
+'''
+
+[[case]]
+id = "task-list-markup"
+input = '''
+- [x] *done* item
+'''
+
+[[case]]
+id = "deflist-tight"
+input = '''
+Term
+:   def
+'''
+
+[[case]]
+id = "deflist-loose"
+input = '''
+Term
+
+:   def
+'''
+
+[[case]]
+id = "deflist-multi-defs"
+input = '''
+Term
+:   d1
+:   d2
+'''
+
+[[case]]
+id = "deflist-multi-terms"
+input = '''
+A
+:   a
+
+B
+:   b
+'''
+
+[[case]]
+id = "deflist-multi-para"
+input = '''
+Term
+
+:   p1
+
+    p2
+'''
+
+[[case]]
+id = "deflist-markup-term"
+input = '''
+*Term* `x`
+:   def
+'''
+
+[[case]]
+id = "deflist-code"
+input = '''
+Term
+
+:       code
+'''
+
+[[case]]
+id = "deflist-tilde"
+input = '''
+Term
+~   def
+'''
+
+[[case]]
+id = "list-after-para-no-blank"
+input = '''
+Para
+- a
+- b
+'''
+
+[[case]]
+id = "list-items-with-headings"
+input = '''
+- # H
+- b
+'''
+
+[[case]]
+id = "list-item-empty"
+input = '''
+- 
+- b
+'''
+
+[[case]]
+id = "bullet-in-ordered-in-bullet"
+input = '''
+- a
+    1. b
+        - c
+'''
+
+[[case]]
+id = "list-with-blockquote"
+input = '''
+- > q
+'''
+
+[[case]]
+id = "list-with-hr"
+input = '''
+- a
+
+    ---
+'''
+
+[[case]]
+id = "list-separated-by-comment"
+input = '''
+- a
+- b
+
+<!-- -->
+
+- c
+'''

@@ -1,0 +1,249 @@
+# Links, images and image dimensions.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "link-inline"
+input = '''
+[text](http://example.com)
+'''
+
+[[case]]
+id = "link-title"
+input = '''
+[text](http://example.com "Title")
+'''
+
+[[case]]
+id = "link-empty-text"
+input = '''
+[](http://example.com)
+'''
+
+[[case]]
+id = "link-empty-url"
+input = '''
+[text]()
+'''
+
+[[case]]
+id = "link-reference"
+input = '''
+[text][ref]
+
+[ref]: http://example.com "T"
+'''
+
+[[case]]
+id = "link-implicit-ref"
+input = '''
+[ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "link-attrs"
+input = '''
+[text](u){#lid .lc k=v}
+'''
+
+[[case]]
+id = "link-attrs-title"
+input = '''
+[text](u "t"){#lid .lc}
+'''
+
+[[case]]
+id = "link-relative"
+input = '''
+[a](../dir/file.html#frag)
+'''
+
+[[case]]
+id = "link-fragment"
+input = '''
+[a](#section)
+'''
+
+[[case]]
+id = "link-space-url"
+input = '''
+[a](<my file.html>)
+'''
+
+[[case]]
+id = "link-unicode-url"
+input = '''
+[a](http://例え.jp/ü)
+'''
+
+[[case]]
+id = "link-mailto"
+input = '''
+[mail](mailto:a@b.c)
+'''
+
+[[case]]
+id = "link-with-code"
+input = '''
+[`code`](u)
+'''
+
+[[case]]
+id = "link-with-image"
+input = '''
+[![alt](i.png)](u)
+'''
+
+[[case]]
+id = "link-nested-emph"
+input = '''
+[*a* **b**](u)
+'''
+
+[[case]]
+id = "link-long-wrap"
+input = '''
+Some words before [a link with a fairly long text](http://example.com/a/very/long/path/to/somewhere "and a title") and after.
+'''
+
+[[case]]
+id = "autolink-https"
+input = '''
+<https://example.com/path?q=1>
+'''
+
+[[case]]
+id = "autolink-email-plus"
+input = '''
+<first.last+tag@example.co.uk>
+'''
+
+[[case]]
+id = "bare-url-not-link"
+input = '''
+http://example.com
+'''
+
+[[case]]
+id = "image-inline"
+input = '''
+an ![alt](i.png) image
+'''
+
+[[case]]
+id = "image-title"
+input = '''
+an ![alt](i.png "T") image
+'''
+
+[[case]]
+id = "image-empty-alt"
+input = '''
+x ![](i.png) y
+'''
+
+[[case]]
+id = "image-alt-markup"
+input = '''
+x ![a *b* `c`](i.png) y
+'''
+
+[[case]]
+id = "image-alt-quotes"
+input = '''
+x !["q" 'r'](i.png) y
+'''
+
+[[case]]
+id = "image-width-px"
+input = '''
+x ![a](i.png){width=300} y
+'''
+
+[[case]]
+id = "image-width-pxunit"
+input = '''
+x ![a](i.png){width=300px} y
+'''
+
+[[case]]
+id = "image-width-percent"
+input = '''
+x ![a](i.png){width=50%} y
+'''
+
+[[case]]
+id = "image-width-inch"
+input = '''
+x ![a](i.png){width=2in} y
+'''
+
+[[case]]
+id = "image-width-cm"
+input = '''
+x ![a](i.png){width=2.5cm} y
+'''
+
+[[case]]
+id = "image-height-mm"
+input = '''
+x ![a](i.png){height=10mm} y
+'''
+
+[[case]]
+id = "image-width-em"
+input = '''
+x ![a](i.png){width=3em} y
+'''
+
+[[case]]
+id = "image-width-height-mixed"
+input = '''
+x ![a](i.png){width=50% height=100} y
+'''
+
+[[case]]
+id = "image-width-bad"
+input = '''
+x ![a](i.png){width=wide} y
+'''
+
+[[case]]
+id = "image-attrs"
+input = '''
+x ![a](i.png){#iid .ic k=v} y
+'''
+
+[[case]]
+id = "image-all"
+input = '''
+x ![a](i.png "t"){#iid .ic k=v width=10 height=20} y
+'''
+
+[[case]]
+id = "image-alone-figure"
+input = '''
+![Caption text](i.png)
+'''
+
+[[case]]
+id = "image-alone-figure-attrs"
+input = '''
+![Caption](i.png){#fig1 .wide width=40%}
+'''
+
+[[case]]
+id = "image-alone-title"
+input = '''
+![Cap](i.png "Title")
+'''
+
+[[case]]
+id = "image-reference"
+input = '''
+![alt][r]
+
+[r]: i.png "T"
+'''

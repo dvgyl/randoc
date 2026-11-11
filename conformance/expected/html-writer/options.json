@@ -1,0 +1,833 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "empty-paragraphs-ext#e2e:html+empty_paragraphs": {
+      "key": "9dd70d1f2d5a2408",
+      "exit": 0,
+      "stdout": "<p></p>\n<p>x</p>\n",
+      "stderr": ""
+    },
+    "empty-paragraphs-ext#read": {
+      "key": "848cb14e9bddf630",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "empty-paragraphs-ext#write:html+empty_paragraphs": {
+      "key": "d51f045c1127f4f6",
+      "exit": 0,
+      "stdout": "<p></p>\n<p>x</p>\n",
+      "stderr": ""
+    },
+    "empty-paragraphs-ext-html4#e2e:html4+empty_paragraphs": {
+      "key": "701264f19079c3c2",
+      "exit": 0,
+      "stdout": "<p></p>\n",
+      "stderr": ""
+    },
+    "empty-paragraphs-ext-html4#read": {
+      "key": "fd24e3c6443bc6cb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[]}]}\n",
+      "stderr": ""
+    },
+    "empty-paragraphs-ext-html4#write:html4+empty_paragraphs": {
+      "key": "c6d9306babf9501f",
+      "exit": 0,
+      "stdout": "<p></p>\n",
+      "stderr": ""
+    },
+    "html5-name#e2e:html5": {
+      "key": "6203e63b3fd42629",
+      "exit": 0,
+      "stdout": "<p>x<span data-k=\"v\">y</span></p>\n",
+      "stderr": ""
+    },
+    "html5-name#read": {
+      "key": "3dd245bb069e0146",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Span\",\"c\":[[\"\",[],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"y\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "html5-name#write:html5": {
+      "key": "98a6b66555814096",
+      "exit": 0,
+      "stdout": "<p>x<span data-k=\"v\">y</span></p>\n",
+      "stderr": ""
+    },
+    "no-native-divs#e2e:html-native_divs": {
+      "key": "86d3cfe0b01abdb3",
+      "exit": 0,
+      "stdout": "<div id=\"d\" class=\"c\">\n<p>x</p>\n</div>\n",
+      "stderr": ""
+    },
+    "no-native-divs#read": {
+      "key": "f6d9fb8969652cf9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"d\",[\"c\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "no-native-divs#write:html-native_divs": {
+      "key": "83c0052d3819c649",
+      "exit": 0,
+      "stdout": "<div id=\"d\" class=\"c\">\n<p>x</p>\n</div>\n",
+      "stderr": ""
+    },
+    "no-native-spans#e2e:html-native_spans": {
+      "key": "f3d2f57930fbf550",
+      "exit": 0,
+      "stdout": "<p><span id=\"s\" class=\"c\">x</span></p>\n",
+      "stderr": ""
+    },
+    "no-native-spans#read": {
+      "key": "d7edcf50b71e6382",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"s\",[\"c\"],[]],[{\"t\":\"Str\",\"c\":\"x\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "no-native-spans#write:html-native_spans": {
+      "key": "c2fcf524cd660506",
+      "exit": 0,
+      "stdout": "<p><span id=\"s\" class=\"c\">x</span></p>\n",
+      "stderr": ""
+    },
+    "opt-ascii#e2e:html": {
+      "key": "90e2424c19b5842f",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> &#x201C;quote&#x201D; <a\nhref=\"mailto:me@example.com\">me@example.com</a> &#xE9;</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">&#x21A9;&#xFE0E;</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-ascii#read": {
+      "key": "9222d3d7e71ca964",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-ascii#write:html": {
+      "key": "32ffc794fe166f17",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> &#x201C;quote&#x201D; <a\nhref=\"mailto:me@example.com\">me@example.com</a> &#xE9;</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">&#x21A9;&#xFE0E;</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-columns-20#e2e:html": {
+      "key": "32385cf86dceefe1",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\"\ndata-k=\"v\"\nid=\"intro\">Intro</h1>\n<p>Some text with a\n<a href=\"#fn1\"\nclass=\"footnote-ref\"\nid=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a>\n“quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a>\né</p>\n<h2\nid=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor\nsit amet,\nconsectetur\nadipiscing elit, sed\ndo eiusmod tempor\nincididunt ut labore\net dolore magna\naliqua. Ut enim ad\nminim veniam, quis\nnostrud exercitation\nullamco laboris nisi\nut aliquip ex ea\ncommodo\nconsequat.</p>\n<h1\nid=\"second\">Second</h1>\n<p>End.</p>\n<section\nid=\"footnotes\"\nclass=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li\nid=\"fn1\"><p>note<a\nhref=\"#fnref1\"\nclass=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-columns-20#read": {
+      "key": "4d6767c78208a850",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-columns-20#write:html": {
+      "key": "29e5c02899923b35",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\"\ndata-k=\"v\"\nid=\"intro\">Intro</h1>\n<p>Some text with a\n<a href=\"#fn1\"\nclass=\"footnote-ref\"\nid=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a>\n“quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a>\né</p>\n<h2\nid=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor\nsit amet,\nconsectetur\nadipiscing elit, sed\ndo eiusmod tempor\nincididunt ut labore\net dolore magna\naliqua. Ut enim ad\nminim veniam, quis\nnostrud exercitation\nullamco laboris nisi\nut aliquip ex ea\ncommodo\nconsequat.</p>\n<h1\nid=\"second\">Second</h1>\n<p>End.</p>\n<section\nid=\"footnotes\"\nclass=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li\nid=\"fn1\"><p>note<a\nhref=\"#fnref1\"\nclass=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-columns-20-html4#e2e:html4": {
+      "key": "6285bd9789283484",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\"\nid=\"intro\">Intro</h1>\n<p>Some text with a\n<a href=\"#fn1\"\nclass=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a>\n“quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a>\né</p>\n<h2\nid=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor\nsit amet,\nconsectetur\nadipiscing elit, sed\ndo eiusmod tempor\nincididunt ut labore\net dolore magna\naliqua. Ut enim ad\nminim veniam, quis\nnostrud exercitation\nullamco laboris nisi\nut aliquip ex ea\ncommodo\nconsequat.</p>\n<h1\nid=\"second\">Second</h1>\n<p>End.</p>\n<div\nclass=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li\nid=\"fn1\"><p>note<a\nhref=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-columns-20-html4#read": {
+      "key": "4d6767c78208a850",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-columns-20-html4#write:html4": {
+      "key": "3fab1255ebe2a47a",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\"\nid=\"intro\">Intro</h1>\n<p>Some text with a\n<a href=\"#fn1\"\nclass=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a>\n“quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a>\né</p>\n<h2\nid=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor\nsit amet,\nconsectetur\nadipiscing elit, sed\ndo eiusmod tempor\nincididunt ut labore\net dolore magna\naliqua. Ut enim ad\nminim veniam, quis\nnostrud exercitation\nullamco laboris nisi\nut aliquip ex ea\ncommodo\nconsequat.</p>\n<h1\nid=\"second\">Second</h1>\n<p>End.</p>\n<div\nclass=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li\nid=\"fn1\"><p>note<a\nhref=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-columns-200#e2e:html": {
+      "key": "fecdf0ae160d2b20",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-columns-200#read": {
+      "key": "d874cbb0d394f9bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-columns-200#write:html": {
+      "key": "dc236c84a4b80c46",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-columns-200-html4#e2e:html4": {
+      "key": "c244168a743ede6b",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-columns-200-html4#read": {
+      "key": "d874cbb0d394f9bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-columns-200-html4#write:html4": {
+      "key": "fdfe2b378d433713",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-email-javascript#e2e:html": {
+      "key": "494fd2bea746459d",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <script\ntype=\"text/javascript\">\n<!--\nh='&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#x6d;&#x65;';e=n+a+h;\ndocument.write('<a h'+'ref'+'=\"ma'+'ilto'+':'+e+'\" clas'+'s=\"em' + 'ail\">'+e+'<\\/'+'a'+'>');\n// -->\n</script><noscript>&#x6d;&#x65;&#32;&#x61;&#116;&#32;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-email-javascript#read": {
+      "key": "721f07376ce2b64c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-email-javascript#write:html": {
+      "key": "4e509fb63fffb091",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <script\ntype=\"text/javascript\">\n<!--\nh='&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#x6d;&#x65;';e=n+a+h;\ndocument.write('<a h'+'ref'+'=\"ma'+'ilto'+':'+e+'\" clas'+'s=\"em' + 'ail\">'+e+'<\\/'+'a'+'>');\n// -->\n</script><noscript>&#x6d;&#x65;&#32;&#x61;&#116;&#32;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-email-javascript-html4#e2e:html4": {
+      "key": "71f3d3eb96944f38",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <script\ntype=\"text/javascript\">\n<!--\nh='&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#x6d;&#x65;';e=n+a+h;\ndocument.write('<a h'+'ref'+'=\"ma'+'ilto'+':'+e+'\" clas'+'s=\"em' + 'ail\">'+e+'<\\/'+'a'+'>');\n// -->\n</script><noscript>&#x6d;&#x65;&#32;&#x61;&#116;&#32;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-email-javascript-html4#read": {
+      "key": "721f07376ce2b64c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-email-javascript-html4#write:html4": {
+      "key": "2749b0f73ee7af0e",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <script\ntype=\"text/javascript\">\n<!--\nh='&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#x6d;&#x65;';e=n+a+h;\ndocument.write('<a h'+'ref'+'=\"ma'+'ilto'+':'+e+'\" clas'+'s=\"em' + 'ail\">'+e+'<\\/'+'a'+'>');\n// -->\n</script><noscript>&#x6d;&#x65;&#32;&#x61;&#116;&#32;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-email-none#e2e:html": {
+      "key": "dfff194336c160c0",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-email-none#read": {
+      "key": "6b899bdd100df2c9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-email-none#write:html": {
+      "key": "f8b256f4f2a22ca6",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-email-references#e2e:html": {
+      "key": "645b6eb829c0bc4e",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;\"\nclass=\"email\">&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;</a>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-email-references#read": {
+      "key": "81f1ebfce890fb5f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-email-references#write:html": {
+      "key": "459af82d34ccdc90",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;\"\nclass=\"email\">&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;</a>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-email-references-html4#e2e:html4": {
+      "key": "eedf9c7c46fe7abb",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;\"\nclass=\"email\">&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;</a>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-email-references-html4#read": {
+      "key": "81f1ebfce890fb5f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-email-references-html4#write:html4": {
+      "key": "30916972b0456de3",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;\"\nclass=\"email\">&#x6d;&#x65;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;</a>\né</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-gladtex#e2e:html": {
+      "key": "b29cad86ed0192c5",
+      "exit": 0,
+      "stdout": "<p>Inline <eq env=\"math\">a^2 + b &lt; c</eq> and <eq\nenv=\"displaymath\">\\frac{1}{2}</eq></p>\n",
+      "stderr": "[WARNING] Deprecated: --gladtex. Use --math-method=gladtex[:URL] instead.\n"
+    },
+    "opt-gladtex#read": {
+      "key": "092310422ef23d92",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^2 + b < c\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\frac{1}{2}\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --gladtex. Use --math-method=gladtex[:URL] instead.\n"
+    },
+    "opt-gladtex#write:html": {
+      "key": "b798c91f3fef6937",
+      "exit": 0,
+      "stdout": "<p>Inline <eq env=\"math\">a^2 + b &lt; c</eq> and <eq\nenv=\"displaymath\">\\frac{1}{2}</eq></p>\n",
+      "stderr": "[WARNING] Deprecated: --gladtex. Use --math-method=gladtex[:URL] instead.\n"
+    },
+    "opt-html-q-tags#e2e:html": {
+      "key": "d5f5490a33ad0151",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> <q>quote</q> <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-html-q-tags#read": {
+      "key": "e7895e6b34164b1a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-html-q-tags#write:html": {
+      "key": "b21e0b8a5a8c9ca5",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> <q>quote</q> <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-html-q-tags-html4#e2e:html4": {
+      "key": "748cba81e408783e",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> <q>quote</q> <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-html-q-tags-html4#read": {
+      "key": "e7895e6b34164b1a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-html-q-tags-html4#write:html4": {
+      "key": "b48dc138a3a1cd80",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> <q>quote</q> <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-id-prefix#e2e:html": {
+      "key": "4cb01504f1d90ddb",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"p-intro\">Intro</h1>\n<p>Some text with a <a href=\"#p-fn1\" class=\"footnote-ref\" id=\"p-fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"p-sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"p-second\">Second</h1>\n<p>End.</p>\n<section id=\"p-footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"p-fn1\"><p>note<a href=\"#p-fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-id-prefix#read": {
+      "key": "4ae477895e27de46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-id-prefix#write:html": {
+      "key": "475506a144f5d043",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"p-intro\">Intro</h1>\n<p>Some text with a <a href=\"#p-fn1\" class=\"footnote-ref\" id=\"p-fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"p-sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"p-second\">Second</h1>\n<p>End.</p>\n<section id=\"p-footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"p-fn1\"><p>note<a href=\"#p-fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-id-prefix-html4#e2e:html4": {
+      "key": "f0cec750c054529a",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"p-intro\">Intro</h1>\n<p>Some text with a <a href=\"#p-fn1\" class=\"footnote-ref\"\nid=\"p-fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"p-sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"p-second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"p-fn1\"><p>note<a href=\"#p-fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-id-prefix-html4#read": {
+      "key": "4ae477895e27de46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-id-prefix-html4#write:html4": {
+      "key": "7d93ecec910c291c",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"p-intro\">Intro</h1>\n<p>Some text with a <a href=\"#p-fn1\" class=\"footnote-ref\"\nid=\"p-fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"p-sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"p-second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"p-fn1\"><p>note<a href=\"#p-fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-incremental#e2e:html": {
+      "key": "5ce9c3a2f8029b4c",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-incremental#read": {
+      "key": "aef4142d228fcba7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-incremental#write:html": {
+      "key": "e5173aef5b29be72",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-katex#e2e:html": {
+      "key": "7ed927eddf2b0625",
+      "exit": 0,
+      "stdout": "<p>Inline <span class=\"math inline\">a^2 + b &lt; c</span> and <span\nclass=\"math display\">\\frac{1}{2}</span></p>\n",
+      "stderr": "[WARNING] Deprecated: --katex. Use --math-method=katex[:URL] instead.\n"
+    },
+    "opt-katex#read": {
+      "key": "42adb8ab7798e71a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^2 + b < c\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\frac{1}{2}\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --katex. Use --math-method=katex[:URL] instead.\n"
+    },
+    "opt-katex#write:html": {
+      "key": "e795afd882fa8c57",
+      "exit": 0,
+      "stdout": "<p>Inline <span class=\"math inline\">a^2 + b &lt; c</span> and <span\nclass=\"math display\">\\frac{1}{2}</span></p>\n",
+      "stderr": "[WARNING] Deprecated: --katex. Use --math-method=katex[:URL] instead.\n"
+    },
+    "opt-math-method-plain#e2e:html": {
+      "key": "77b5aabf59f4670d",
+      "exit": 0,
+      "stdout": "<p>Inline <span\nclass=\"math inline\"><em>a</em><sup>2</sup> + <em>b</em> &lt; <em>c</em></span>\nand <span class=\"math display\">$$\\frac{1}{2}$$</span></p>\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{1}{2}, rendering as TeX\n"
+    },
+    "opt-math-method-plain#read": {
+      "key": "0dc5e42141a55bc6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^2 + b < c\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\frac{1}{2}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "opt-math-method-plain#write:html": {
+      "key": "30cd45b4bb838e6f",
+      "exit": 0,
+      "stdout": "<p>Inline <span\nclass=\"math inline\"><em>a</em><sup>2</sup> + <em>b</em> &lt; <em>c</em></span>\nand <span class=\"math display\">$$\\frac{1}{2}$$</span></p>\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{1}{2}, rendering as TeX\n"
+    },
+    "opt-mathjax#e2e:html": {
+      "key": "0dca5116f3019327",
+      "exit": 0,
+      "stdout": "<p>Inline <span class=\"math inline\">\\(a^2 + b &lt; c\\)</span> and <span\nclass=\"math display\">\\[\\frac{1}{2}\\]</span></p>\n",
+      "stderr": "[WARNING] Deprecated: --mathjax. Use --math-method=mathjax[:URL] instead.\n"
+    },
+    "opt-mathjax#read": {
+      "key": "ac9ad5c3aa64bc38",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^2 + b < c\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\frac{1}{2}\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --mathjax. Use --math-method=mathjax[:URL] instead.\n"
+    },
+    "opt-mathjax#write:html": {
+      "key": "ef8b99424e759de1",
+      "exit": 0,
+      "stdout": "<p>Inline <span class=\"math inline\">\\(a^2 + b &lt; c\\)</span> and <span\nclass=\"math display\">\\[\\frac{1}{2}\\]</span></p>\n",
+      "stderr": "[WARNING] Deprecated: --mathjax. Use --math-method=mathjax[:URL] instead.\n"
+    },
+    "opt-mathml#e2e:html": {
+      "key": "4afed4f6953daf20",
+      "exit": 0,
+      "stdout": "<p>Inline\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><mo>&lt;</mo><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">a^2 + b &lt; c</annotation></semantics></math>\nand\n<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mfrac><mn>1</mn><mn>2</mn></mfrac><annotation encoding=\"application/x-tex\">\\frac{1}{2}</annotation></semantics></math></p>\n",
+      "stderr": "[WARNING] Deprecated: --mathml. Use --math-method=mathml instead.\n"
+    },
+    "opt-mathml#read": {
+      "key": "f2efcc408a87e3a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^2 + b < c\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\frac{1}{2}\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --mathml. Use --math-method=mathml instead.\n"
+    },
+    "opt-mathml#write:html": {
+      "key": "989b42c5cef6d722",
+      "exit": 0,
+      "stdout": "<p>Inline\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><mo>&lt;</mo><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">a^2 + b &lt; c</annotation></semantics></math>\nand\n<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mfrac><mn>1</mn><mn>2</mn></mfrac><annotation encoding=\"application/x-tex\">\\frac{1}{2}</annotation></semantics></math></p>\n",
+      "stderr": "[WARNING] Deprecated: --mathml. Use --math-method=mathml instead.\n"
+    },
+    "opt-no-highlight#e2e:html": {
+      "key": "ee6b306beabad736",
+      "exit": 0,
+      "stdout": "<pre class=\"haskell\"><code>main = print 1</code></pre>\n<pre class=\"nolang\"><code>x</code></pre>\n",
+      "stderr": "[WARNING] Deprecated: --no-highlight. Use --syntax-highlighting=none instead.\n"
+    },
+    "opt-no-highlight#read": {
+      "key": "cf49a59c6e231f0d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"haskell\"],[]],\"main = print 1\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"nolang\"],[]],\"x\"]}]}\n",
+      "stderr": "[WARNING] Deprecated: --no-highlight. Use --syntax-highlighting=none instead.\n"
+    },
+    "opt-no-highlight#write:html": {
+      "key": "e442bc1d282a28c3",
+      "exit": 0,
+      "stdout": "<pre class=\"haskell\"><code>main = print 1</code></pre>\n<pre class=\"nolang\"><code>x</code></pre>\n",
+      "stderr": "[WARNING] Deprecated: --no-highlight. Use --syntax-highlighting=none instead.\n"
+    },
+    "opt-number-sections#e2e:html": {
+      "key": "6391eac9f9c9e648",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-number=\"1\" data-k=\"v\" id=\"intro\"><span\nclass=\"header-section-number\">1</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 data-number=\"1.1\" id=\"sub\"><span\nclass=\"header-section-number\">1.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 data-number=\"2\" id=\"second\"><span\nclass=\"header-section-number\">2</span> Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-number-sections#read": {
+      "key": "d84c62f9406f3f03",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-number-sections#write:html": {
+      "key": "81381760876bdb9e",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-number=\"1\" data-k=\"v\" id=\"intro\"><span\nclass=\"header-section-number\">1</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 data-number=\"1.1\" id=\"sub\"><span\nclass=\"header-section-number\">1.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 data-number=\"2\" id=\"second\"><span\nclass=\"header-section-number\">2</span> Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-html4#e2e:html4": {
+      "key": "134e312fb145293f",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\"><span class=\"header-section-number\">1</span>\nIntro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\"><span class=\"header-section-number\">1.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\"><span class=\"header-section-number\">2</span> Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-html4#read": {
+      "key": "d84c62f9406f3f03",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-number-sections-html4#write:html4": {
+      "key": "f3c18e19e2081fe7",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\"><span class=\"header-section-number\">1</span>\nIntro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\"><span class=\"header-section-number\">1.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\"><span class=\"header-section-number\">2</span> Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-offset#e2e:html": {
+      "key": "e196638626134cc8",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-number=\"4\" data-k=\"v\" id=\"intro\"><span\nclass=\"header-section-number\">4</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 data-number=\"4.1\" id=\"sub\"><span\nclass=\"header-section-number\">4.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 data-number=\"5\" id=\"second\"><span\nclass=\"header-section-number\">5</span> Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-offset#read": {
+      "key": "87d90753a01f5fbd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-number-sections-offset#write:html": {
+      "key": "608a8e800e2f901e",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-number=\"4\" data-k=\"v\" id=\"intro\"><span\nclass=\"header-section-number\">4</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 data-number=\"4.1\" id=\"sub\"><span\nclass=\"header-section-number\">4.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 data-number=\"5\" id=\"second\"><span\nclass=\"header-section-number\">5</span> Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-offset-html4#e2e:html4": {
+      "key": "23659f3c8f8abf81",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\"><span class=\"header-section-number\">4</span>\nIntro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\"><span class=\"header-section-number\">4.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\"><span class=\"header-section-number\">5</span> Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-offset-html4#read": {
+      "key": "87d90753a01f5fbd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-number-sections-offset-html4#write:html4": {
+      "key": "4cf29751ddbb8e95",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\"><span class=\"header-section-number\">4</span>\nIntro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\"><span class=\"header-section-number\">4.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\"><span class=\"header-section-number\">5</span> Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-section-divs#e2e:html": {
+      "key": "3578cfea544708b2",
+      "exit": 0,
+      "stdout": "<section id=\"intro\" class=\"level1 c\" data-number=\"1\" data-k=\"v\">\n<h1 class=\"c\" data-number=\"1\" data-k=\"v\"><span\nclass=\"header-section-number\">1</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<section id=\"sub\" class=\"level2\" data-number=\"1.1\">\n<h2 data-number=\"1.1\"><span class=\"header-section-number\">1.1</span>\nSub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</section>\n</section>\n<section id=\"second\" class=\"level1\" data-number=\"2\">\n<h1 data-number=\"2\"><span class=\"header-section-number\">2</span>\nSecond</h1>\n<p>End.</p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-section-divs#read": {
+      "key": "c41e28958c1271c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-number-sections-section-divs#write:html": {
+      "key": "78d7b97742f72884",
+      "exit": 0,
+      "stdout": "<section id=\"intro\" class=\"level1 c\" data-number=\"1\" data-k=\"v\">\n<h1 class=\"c\" data-number=\"1\" data-k=\"v\"><span\nclass=\"header-section-number\">1</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<section id=\"sub\" class=\"level2\" data-number=\"1.1\">\n<h2 data-number=\"1.1\"><span class=\"header-section-number\">1.1</span>\nSub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</section>\n</section>\n<section id=\"second\" class=\"level1\" data-number=\"2\">\n<h1 data-number=\"2\"><span class=\"header-section-number\">2</span>\nSecond</h1>\n<p>End.</p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-section-divs-html4#e2e:html4": {
+      "key": "452ecba4eddfbc71",
+      "exit": 0,
+      "stdout": "<div id=\"intro\" class=\"section level1 c\" number=\"1\" k=\"v\">\n<h1 class=\"c\"><span class=\"header-section-number\">1</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<div id=\"sub\" class=\"section level2\" number=\"1.1\">\n<h2><span class=\"header-section-number\">1.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</div>\n</div>\n<div id=\"second\" class=\"section level1\" number=\"2\">\n<h1><span class=\"header-section-number\">2</span> Second</h1>\n<p>End.</p>\n</div>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-number-sections-section-divs-html4#read": {
+      "key": "c41e28958c1271c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-number-sections-section-divs-html4#write:html4": {
+      "key": "3526ce8aaee8fd05",
+      "exit": 0,
+      "stdout": "<div id=\"intro\" class=\"section level1 c\" number=\"1\" k=\"v\">\n<h1 class=\"c\"><span class=\"header-section-number\">1</span> Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<div id=\"sub\" class=\"section level2\" number=\"1.1\">\n<h2><span class=\"header-section-number\">1.1</span> Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</div>\n</div>\n<div id=\"second\" class=\"section level1\" number=\"2\">\n<h1><span class=\"header-section-number\">2</span> Second</h1>\n<p>End.</p>\n</div>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-reference-location-block#e2e:html": {
+      "key": "e3d29c9aac23f7a6",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<aside id=\"footnotes\" class=\"footnotes footnotes-end-of-block\"\nrole=\"doc-footnote\">\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</aside>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n",
+      "stderr": ""
+    },
+    "opt-reference-location-block#read": {
+      "key": "60eca500f47f4e5b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-reference-location-block#write:html": {
+      "key": "8ed97a2ed4b83838",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<aside id=\"footnotes\" class=\"footnotes footnotes-end-of-block\"\nrole=\"doc-footnote\">\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</aside>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n",
+      "stderr": ""
+    },
+    "opt-reference-location-section#e2e:html": {
+      "key": "9ca356f6383dc89a",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<aside id=\"footnotes\" class=\"footnotes footnotes-end-of-section\"\nrole=\"doc-footnote\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</aside>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n",
+      "stderr": ""
+    },
+    "opt-reference-location-section#read": {
+      "key": "fcb20dafb5ca4d0f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-reference-location-section#write:html": {
+      "key": "77f282dd48f37b1c",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<aside id=\"footnotes\" class=\"footnotes footnotes-end-of-section\"\nrole=\"doc-footnote\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</aside>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n",
+      "stderr": ""
+    },
+    "opt-section-divs#e2e:html": {
+      "key": "59aad53dfc7c2a3d",
+      "exit": 0,
+      "stdout": "<section id=\"intro\" class=\"level1 c\" data-k=\"v\">\n<h1 class=\"c\" data-k=\"v\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<section id=\"sub\" class=\"level2\">\n<h2>Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</section>\n</section>\n<section id=\"second\" class=\"level1\">\n<h1>Second</h1>\n<p>End.</p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-section-divs#read": {
+      "key": "b0104fbea36810c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-section-divs#write:html": {
+      "key": "22d98b8130dbd9f1",
+      "exit": 0,
+      "stdout": "<section id=\"intro\" class=\"level1 c\" data-k=\"v\">\n<h1 class=\"c\" data-k=\"v\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<section id=\"sub\" class=\"level2\">\n<h2>Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</section>\n</section>\n<section id=\"second\" class=\"level1\">\n<h1>Second</h1>\n<p>End.</p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-section-divs-html4#e2e:html4": {
+      "key": "c7683ce54911a1e0",
+      "exit": 0,
+      "stdout": "<div id=\"intro\" class=\"section level1 c\" k=\"v\">\n<h1 class=\"c\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<div id=\"sub\" class=\"section level2\">\n<h2>Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</div>\n</div>\n<div id=\"second\" class=\"section level1\">\n<h1>Second</h1>\n<p>End.</p>\n</div>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-section-divs-html4#read": {
+      "key": "b0104fbea36810c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-section-divs-html4#write:html4": {
+      "key": "79807a253436c806",
+      "exit": 0,
+      "stdout": "<div id=\"intro\" class=\"section level1 c\" k=\"v\">\n<h1 class=\"c\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<div id=\"sub\" class=\"section level2\">\n<h2>Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n</div>\n</div>\n<div id=\"second\" class=\"section level1\">\n<h1>Second</h1>\n<p>End.</p>\n</div>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-slide-level#e2e:html": {
+      "key": "d83de74b0885f6d1",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-slide-level#read": {
+      "key": "aae41b9aa035a0de",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-slide-level#write:html": {
+      "key": "6032f8a25b287a25",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-toc-fragment#e2e:html": {
+      "key": "3e8869b2ab473d96",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-toc-fragment#read": {
+      "key": "2e0195a8eb0496bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-toc-fragment#write:html": {
+      "key": "7892e00a23c68468",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> “quote” <a\nhref=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\neiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip\nex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-webtex#e2e:html": {
+      "key": "429c92b25a602adc",
+      "exit": 0,
+      "stdout": "<p>Inline <img style=\"vertical-align:middle\"\nsrc=\"https://latex.codecogs.com/png.latex?%5Ctextstyle%20a%5E2%20%2B%20b%20%3C%20c\"\nalt=\"a^2 + b &lt; c\" title=\"a^2 + b &lt; c\" class=\"math inline\" /> and\n<img style=\"vertical-align:middle\"\nsrc=\"https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cfrac%7B1%7D%7B2%7D\"\nalt=\"\\frac{1}{2}\" title=\"\\frac{1}{2}\" class=\"math display\" /></p>\n",
+      "stderr": "[WARNING] Deprecated: --webtex. Use --math-method=webtex[:URL] instead.\n"
+    },
+    "opt-webtex#read": {
+      "key": "cd573388cd531229",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^2 + b < c\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\frac{1}{2}\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --webtex. Use --math-method=webtex[:URL] instead.\n"
+    },
+    "opt-webtex#write:html": {
+      "key": "6c414d64696e01b6",
+      "exit": 0,
+      "stdout": "<p>Inline <img style=\"vertical-align:middle\"\nsrc=\"https://latex.codecogs.com/png.latex?%5Ctextstyle%20a%5E2%20%2B%20b%20%3C%20c\"\nalt=\"a^2 + b &lt; c\" title=\"a^2 + b &lt; c\" class=\"math inline\" /> and\n<img style=\"vertical-align:middle\"\nsrc=\"https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cfrac%7B1%7D%7B2%7D\"\nalt=\"\\frac{1}{2}\" title=\"\\frac{1}{2}\" class=\"math display\" /></p>\n",
+      "stderr": "[WARNING] Deprecated: --webtex. Use --math-method=webtex[:URL] instead.\n"
+    },
+    "opt-wrap-none#e2e:html": {
+      "key": "f4e7807be1353305",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-wrap-none#read": {
+      "key": "12ed9493f9cf89ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-wrap-none#write:html": {
+      "key": "8adab03b66b13409",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-wrap-none-html4#e2e:html4": {
+      "key": "693acf5263e49262",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-wrap-none-html4#read": {
+      "key": "12ed9493f9cf89ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-wrap-none-html4#write:html4": {
+      "key": "22dc4be681867934",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve#e2e:html": {
+      "key": "15e8c79bcdea0227",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve#read": {
+      "key": "cc4934e79b815f70",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve#write:html": {
+      "key": "c0908d111f5bff7f",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" data-k=\"v\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve-html4#e2e:html4": {
+      "key": "3c2b613d8669406c",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve-html4#read": {
+      "key": "cc4934e79b815f70",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[\"c\"],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Some\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"quote\"}]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"me@example.com\"}],[\"mailto:me@example.com\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"et\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"magna\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliqua.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ad\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"minim\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"veniam,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quis\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nostrud\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"exercitation\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ullamco\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"laboris\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nisi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliquip\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ex\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ea\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"commodo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consequat.\"}]},{\"t\":\"Header\",\"c\":[1,[\"second\",[],[]],[{\"t\":\"Str\",\"c\":\"Second\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve-html4#write:html4": {
+      "key": "0c0a0aa9aef78052",
+      "exit": 0,
+      "stdout": "<h1 class=\"c\" id=\"intro\">Intro</h1>\n<p>Some text with a <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> “quote” <a href=\"mailto:me@example.com\">me@example.com</a> é</p>\n<h2 id=\"sub\">Sub</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n<h1 id=\"second\">Second</h1>\n<p>End.</p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "raw-html-off#e2e:html-raw_html": {
+      "key": "605c3fced3150f68",
+      "exit": 0,
+      "stdout": "<p><b>x</p>\n<div>\n",
+      "stderr": ""
+    },
+    "raw-html-off#read": {
+      "key": "8bec85d62c2c29d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"html\",\"<b>\"]},{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"<div>\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-html-off#write:html-raw_html": {
+      "key": "d368b3fbc54306c8",
+      "exit": 0,
+      "stdout": "<p><b>x</p>\n<div>\n",
+      "stderr": ""
+    },
+    "smart-ext#e2e:html+smart": {
+      "key": "a3d9c8e00f0e5cf1",
+      "exit": 0,
+      "stdout": "<p>“q”x...y--z</p>\n",
+      "stderr": ""
+    },
+    "smart-ext#read": {
+      "key": "11f38e41d1cff810",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"q\"}]]},{\"t\":\"Str\",\"c\":\"x...y--z\"}]}]}\n",
+      "stderr": ""
+    },
+    "smart-ext#write:html+smart": {
+      "key": "d2f9626de7d5fbec",
+      "exit": 0,
+      "stdout": "<p>“q”x...y--z</p>\n",
+      "stderr": ""
+    },
+    "task-lists-off#e2e:html-task_lists": {
+      "key": "ca457e4ef9b3b974",
+      "exit": 0,
+      "stdout": "<ul class=\"task-list\">\n<li><label><input type=\"checkbox\" />a</label></li>\n</ul>\n",
+      "stderr": ""
+    },
+    "task-lists-off#read": {
+      "key": "7b02fbd34c61f612",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"☐\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "task-lists-off#write:html-task_lists": {
+      "key": "5f5bd83752db13b9",
+      "exit": 0,
+      "stdout": "<ul class=\"task-list\">\n<li><label><input type=\"checkbox\" />a</label></li>\n</ul>\n",
+      "stderr": ""
+    }
+  }
+}

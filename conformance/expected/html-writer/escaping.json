@@ -1,0 +1,905 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "apostrophe-in-title#e2e:html": {
+      "key": "ddd12ce73487af7c",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"it&#39;s\">x</a></p>\n",
+      "stderr": ""
+    },
+    "apostrophe-in-title#e2e:html4": {
+      "key": "de014ba4cbfbc8a5",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"it&#39;s\">x</a></p>\n",
+      "stderr": ""
+    },
+    "apostrophe-in-title#read": {
+      "key": "ebc916ecf6daa073",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"}],[\"u\",\"it's\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "apostrophe-in-title#write:html": {
+      "key": "cfbb4d629c171c68",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"it&#39;s\">x</a></p>\n",
+      "stderr": ""
+    },
+    "apostrophe-in-title#write:html4": {
+      "key": "e2bb1d1959d40841",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"it&#39;s\">x</a></p>\n",
+      "stderr": ""
+    },
+    "asterisk-alone#e2e:html": {
+      "key": "7201aab5e4d30dda",
+      "exit": 0,
+      "stdout": "<p>a * b</p>\n",
+      "stderr": ""
+    },
+    "asterisk-alone#e2e:html4": {
+      "key": "66dc3aefadca4dd3",
+      "exit": 0,
+      "stdout": "<p>a * b</p>\n",
+      "stderr": ""
+    },
+    "asterisk-alone#read": {
+      "key": "2d02f6b3b802f4fd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"*\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "asterisk-alone#write:html": {
+      "key": "2413af70eca57fd3",
+      "exit": 0,
+      "stdout": "<p>a * b</p>\n",
+      "stderr": ""
+    },
+    "asterisk-alone#write:html4": {
+      "key": "c8f174e7953d0cd0",
+      "exit": 0,
+      "stdout": "<p>a * b</p>\n",
+      "stderr": ""
+    },
+    "backslash#e2e:html": {
+      "key": "53ed7bb5fe66cdbf",
+      "exit": 0,
+      "stdout": "<p>a \\ b</p>\n",
+      "stderr": ""
+    },
+    "backslash#e2e:html4": {
+      "key": "e348e9d53f7b4b8c",
+      "exit": 0,
+      "stdout": "<p>a \\ b</p>\n",
+      "stderr": ""
+    },
+    "backslash#read": {
+      "key": "878c1a69c2bbe9c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"\\\\\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash#write:html": {
+      "key": "31ee7b8173a0c496",
+      "exit": 0,
+      "stdout": "<p>a \\ b</p>\n",
+      "stderr": ""
+    },
+    "backslash#write:html4": {
+      "key": "d9bab2b993ca6c8f",
+      "exit": 0,
+      "stdout": "<p>a \\ b</p>\n",
+      "stderr": ""
+    },
+    "brackets-literal#e2e:html": {
+      "key": "72ae03ed1eb60647",
+      "exit": 0,
+      "stdout": "<p>[not a link] (paren)</p>\n",
+      "stderr": ""
+    },
+    "brackets-literal#e2e:html4": {
+      "key": "058dadba844fed4c",
+      "exit": 0,
+      "stdout": "<p>[not a link] (paren)</p>\n",
+      "stderr": ""
+    },
+    "brackets-literal#read": {
+      "key": "bbc5a649d6a420f2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[not\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"link]\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"(paren)\"}]}]}\n",
+      "stderr": ""
+    },
+    "brackets-literal#write:html": {
+      "key": "db4911732be716b0",
+      "exit": 0,
+      "stdout": "<p>[not a link] (paren)</p>\n",
+      "stderr": ""
+    },
+    "brackets-literal#write:html4": {
+      "key": "5ae6b0663ccb918d",
+      "exit": 0,
+      "stdout": "<p>[not a link] (paren)</p>\n",
+      "stderr": ""
+    },
+    "cjk-wrap#e2e:html": {
+      "key": "0bebbeda37092149",
+      "exit": 0,
+      "stdout": "<p>日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト</p>\n",
+      "stderr": ""
+    },
+    "cjk-wrap#e2e:html4": {
+      "key": "db8ee711aade809e",
+      "exit": 0,
+      "stdout": "<p>日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト</p>\n",
+      "stderr": ""
+    },
+    "cjk-wrap#read": {
+      "key": "a4b6d9660652cc30",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"日本語のテキスト\"}]}]}\n",
+      "stderr": ""
+    },
+    "cjk-wrap#write:html": {
+      "key": "258248d7fc5a6cfc",
+      "exit": 0,
+      "stdout": "<p>日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト</p>\n",
+      "stderr": ""
+    },
+    "cjk-wrap#write:html4": {
+      "key": "44e600a2218c9e0f",
+      "exit": 0,
+      "stdout": "<p>日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト\n日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト</p>\n",
+      "stderr": ""
+    },
+    "combining#e2e:html": {
+      "key": "3f82998606aef2f0",
+      "exit": 0,
+      "stdout": "<p>é ä</p>\n",
+      "stderr": ""
+    },
+    "combining#e2e:html4": {
+      "key": "084a7265097b08c9",
+      "exit": 0,
+      "stdout": "<p>é ä</p>\n",
+      "stderr": ""
+    },
+    "combining#read": {
+      "key": "d3db5bc13eec57b7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"é\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ä\"}]}]}\n",
+      "stderr": ""
+    },
+    "combining#write:html": {
+      "key": "88753ea8b6a32e5b",
+      "exit": 0,
+      "stdout": "<p>é ä</p>\n",
+      "stderr": ""
+    },
+    "combining#write:html4": {
+      "key": "9e3b58d051dd939c",
+      "exit": 0,
+      "stdout": "<p>é ä</p>\n",
+      "stderr": ""
+    },
+    "control-like#e2e:html": {
+      "key": "4f67201a26d62a8c",
+      "exit": 0,
+      "stdout": "<p>a­b soft hyphen</p>\n",
+      "stderr": ""
+    },
+    "control-like#e2e:html4": {
+      "key": "2e91afab63a0b577",
+      "exit": 0,
+      "stdout": "<p>a­b soft hyphen</p>\n",
+      "stderr": ""
+    },
+    "control-like#read": {
+      "key": "bd987f2cd7dd7a29",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a­b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"soft\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hyphen\"}]}]}\n",
+      "stderr": ""
+    },
+    "control-like#write:html": {
+      "key": "41560c7dff294c01",
+      "exit": 0,
+      "stdout": "<p>a­b soft hyphen</p>\n",
+      "stderr": ""
+    },
+    "control-like#write:html4": {
+      "key": "a971c3d2a6941e2c",
+      "exit": 0,
+      "stdout": "<p>a­b soft hyphen</p>\n",
+      "stderr": ""
+    },
+    "curly-literal#e2e:html": {
+      "key": "01200ebd121c5ca7",
+      "exit": 0,
+      "stdout": "<p>{curly} braces</p>\n",
+      "stderr": ""
+    },
+    "curly-literal#e2e:html4": {
+      "key": "81ab1d48a50d2434",
+      "exit": 0,
+      "stdout": "<p>{curly} braces</p>\n",
+      "stderr": ""
+    },
+    "curly-literal#read": {
+      "key": "b1e86737017fff5e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"{curly}\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"braces\"}]}]}\n",
+      "stderr": ""
+    },
+    "curly-literal#write:html": {
+      "key": "16eb843e5b6e35fc",
+      "exit": 0,
+      "stdout": "<p>{curly} braces</p>\n",
+      "stderr": ""
+    },
+    "curly-literal#write:html4": {
+      "key": "23aa7c4d43d9e3c5",
+      "exit": 0,
+      "stdout": "<p>{curly} braces</p>\n",
+      "stderr": ""
+    },
+    "dollar-sign#e2e:html": {
+      "key": "0d73d2afcf89a873",
+      "exit": 0,
+      "stdout": "<p>costs $5 and $6</p>\n",
+      "stderr": ""
+    },
+    "dollar-sign#e2e:html4": {
+      "key": "756d90b32bdea9ca",
+      "exit": 0,
+      "stdout": "<p>costs $5 and $6</p>\n",
+      "stderr": ""
+    },
+    "dollar-sign#read": {
+      "key": "411feabb4940e5b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"costs\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"$5\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"$6\"}]}]}\n",
+      "stderr": ""
+    },
+    "dollar-sign#write:html": {
+      "key": "29287c49179dfa3c",
+      "exit": 0,
+      "stdout": "<p>costs $5 and $6</p>\n",
+      "stderr": ""
+    },
+    "dollar-sign#write:html4": {
+      "key": "f80878ccbfcacf77",
+      "exit": 0,
+      "stdout": "<p>costs $5 and $6</p>\n",
+      "stderr": ""
+    },
+    "en-em-dash#e2e:html": {
+      "key": "90199390a231d872",
+      "exit": 0,
+      "stdout": "<p>– —</p>\n",
+      "stderr": ""
+    },
+    "en-em-dash#e2e:html4": {
+      "key": "a62e6510fcdd19c3",
+      "exit": 0,
+      "stdout": "<p>– —</p>\n",
+      "stderr": ""
+    },
+    "en-em-dash#read": {
+      "key": "11604d9b7d46877d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"–\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"—\"}]}]}\n",
+      "stderr": ""
+    },
+    "en-em-dash#write:html": {
+      "key": "d7b6d9c88bfcb4b1",
+      "exit": 0,
+      "stdout": "<p>– —</p>\n",
+      "stderr": ""
+    },
+    "en-em-dash#write:html4": {
+      "key": "4715bb07ba1b457e",
+      "exit": 0,
+      "stdout": "<p>– —</p>\n",
+      "stderr": ""
+    },
+    "entities-named#e2e:html": {
+      "key": "cb2063d38ed6ea01",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; &amp; \"   —</p>\n",
+      "stderr": ""
+    },
+    "entities-named#e2e:html4": {
+      "key": "dafd95f7b107a8a4",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; &amp; \"   —</p>\n",
+      "stderr": ""
+    },
+    "entities-named#read": {
+      "key": "08995c3d3663f3b6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\">\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"\\\"\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\" \"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"—\"}]}]}\n",
+      "stderr": ""
+    },
+    "entities-named#write:html": {
+      "key": "19ab525bd251f47f",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; &amp; \"   —</p>\n",
+      "stderr": ""
+    },
+    "entities-named#write:html4": {
+      "key": "1c113967b04163c8",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; &amp; \"   —</p>\n",
+      "stderr": ""
+    },
+    "entities-numeric#e2e:html": {
+      "key": "6b2a0d5e1d68fc2d",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; —</p>\n",
+      "stderr": ""
+    },
+    "entities-numeric#e2e:html4": {
+      "key": "cc97326f7fdc0406",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; —</p>\n",
+      "stderr": ""
+    },
+    "entities-numeric#read": {
+      "key": "64eb3be0babd028c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\">\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"—\"}]}]}\n",
+      "stderr": ""
+    },
+    "entities-numeric#write:html": {
+      "key": "aedb2bb47bb950c8",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; —</p>\n",
+      "stderr": ""
+    },
+    "entities-numeric#write:html4": {
+      "key": "874bb113da951e33",
+      "exit": 0,
+      "stdout": "<p>&lt; &gt; —</p>\n",
+      "stderr": ""
+    },
+    "html-special-in-link-text#e2e:html": {
+      "key": "73a53a996141c0ad",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\">a &lt; b</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-link-text#e2e:html4": {
+      "key": "f88942e15493aa7a",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\">a &lt; b</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-link-text#read": {
+      "key": "c7d27c70c1cd7e68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}],[\"u\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "html-special-in-link-text#write:html": {
+      "key": "daf133659e903792",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\">a &lt; b</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-link-text#write:html4": {
+      "key": "a35647a9cc8b8207",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\">a &lt; b</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-title#e2e:html": {
+      "key": "9248e0f7d1a87394",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &amp; b &lt; c\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-title#e2e:html4": {
+      "key": "e8f91d98aab53a9b",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &amp; b &lt; c\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-title#read": {
+      "key": "8503d47f4d121101",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"}],[\"u\",\"a & b < c\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "html-special-in-title#write:html": {
+      "key": "8b2f96d79017bc38",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &amp; b &lt; c\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-title#write:html4": {
+      "key": "591686c5a3f1221f",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &amp; b &lt; c\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-url#e2e:html": {
+      "key": "2642befed76ec6a9",
+      "exit": 0,
+      "stdout": "<p><a href=\"http://e.com/?a=1&amp;b=%3C2%3E\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-url#e2e:html4": {
+      "key": "4593338e9f210c46",
+      "exit": 0,
+      "stdout": "<p><a href=\"http://e.com/?a=1&amp;b=%3C2%3E\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-url#read": {
+      "key": "d7e635b1540c8c5c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"}],[\"http://e.com/?a=1&b=%3C2%3E\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "html-special-in-url#write:html": {
+      "key": "dbfe6ceac88501de",
+      "exit": 0,
+      "stdout": "<p><a href=\"http://e.com/?a=1&amp;b=%3C2%3E\">x</a></p>\n",
+      "stderr": ""
+    },
+    "html-special-in-url#write:html4": {
+      "key": "d22d12b3818dcadb",
+      "exit": 0,
+      "stdout": "<p><a href=\"http://e.com/?a=1&amp;b=%3C2%3E\">x</a></p>\n",
+      "stderr": ""
+    },
+    "left-arrow-hook#e2e:html": {
+      "key": "62c1d392bc92d491",
+      "exit": 0,
+      "stdout": "<p>↩︎ and ↩︎ and ↩︎️</p>\n",
+      "stderr": ""
+    },
+    "left-arrow-hook#e2e:html4": {
+      "key": "bd6b8a8f27003d04",
+      "exit": 0,
+      "stdout": "<p>↩︎ and ↩︎ and ↩︎️</p>\n",
+      "stderr": ""
+    },
+    "left-arrow-hook#read": {
+      "key": "11d7f0c7416bec6e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"↩\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"↩︎\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"↩️\"}]}]}\n",
+      "stderr": ""
+    },
+    "left-arrow-hook#write:html": {
+      "key": "8fddd96844e4aac8",
+      "exit": 0,
+      "stdout": "<p>↩︎ and ↩︎ and ↩︎️</p>\n",
+      "stderr": ""
+    },
+    "left-arrow-hook#write:html4": {
+      "key": "c20a7228dd027a1b",
+      "exit": 0,
+      "stdout": "<p>↩︎ and ↩︎ and ↩︎️</p>\n",
+      "stderr": ""
+    },
+    "lt-gt-amp#e2e:html": {
+      "key": "0acff19db1ea4857",
+      "exit": 0,
+      "stdout": "<p>a &lt; b &gt; c &amp; d</p>\n",
+      "stderr": ""
+    },
+    "lt-gt-amp#e2e:html4": {
+      "key": "35f95ecd4dcf04c6",
+      "exit": 0,
+      "stdout": "<p>a &lt; b &gt; c &amp; d</p>\n",
+      "stderr": ""
+    },
+    "lt-gt-amp#read": {
+      "key": "42aa89ffdd401718",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\">\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"c\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"d\"}]}]}\n",
+      "stderr": ""
+    },
+    "lt-gt-amp#write:html": {
+      "key": "ab6d3d96c5eb9f05",
+      "exit": 0,
+      "stdout": "<p>a &lt; b &gt; c &amp; d</p>\n",
+      "stderr": ""
+    },
+    "lt-gt-amp#write:html4": {
+      "key": "b1a6b40ac8b0e076",
+      "exit": 0,
+      "stdout": "<p>a &lt; b &gt; c &amp; d</p>\n",
+      "stderr": ""
+    },
+    "nbsp-char#e2e:html": {
+      "key": "101ca94712154d91",
+      "exit": 0,
+      "stdout": "<p>a b c</p>\n",
+      "stderr": ""
+    },
+    "nbsp-char#e2e:html4": {
+      "key": "37cdd7cc0a9062a8",
+      "exit": 0,
+      "stdout": "<p>a b c</p>\n",
+      "stderr": ""
+    },
+    "nbsp-char#read": {
+      "key": "44edb280205fa756",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a b c\"}]}]}\n",
+      "stderr": ""
+    },
+    "nbsp-char#write:html": {
+      "key": "14c155cb5e9c14ac",
+      "exit": 0,
+      "stdout": "<p>a b c</p>\n",
+      "stderr": ""
+    },
+    "nbsp-char#write:html4": {
+      "key": "03fe80bdbfccc42f",
+      "exit": 0,
+      "stdout": "<p>a b c</p>\n",
+      "stderr": ""
+    },
+    "non-bmp#e2e:html": {
+      "key": "263dba16efd65d7c",
+      "exit": 0,
+      "stdout": "<p>𝔸 𝕏 🎉</p>\n",
+      "stderr": ""
+    },
+    "non-bmp#e2e:html4": {
+      "key": "81c75196f89e37b7",
+      "exit": 0,
+      "stdout": "<p>𝔸 𝕏 🎉</p>\n",
+      "stderr": ""
+    },
+    "non-bmp#read": {
+      "key": "f584a637012c4521",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"𝔸\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"𝕏\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"🎉\"}]}]}\n",
+      "stderr": ""
+    },
+    "non-bmp#write:html": {
+      "key": "6322ddc6665d9f81",
+      "exit": 0,
+      "stdout": "<p>𝔸 𝕏 🎉</p>\n",
+      "stderr": ""
+    },
+    "non-bmp#write:html4": {
+      "key": "46123bcc8469ab0c",
+      "exit": 0,
+      "stdout": "<p>𝔸 𝕏 🎉</p>\n",
+      "stderr": ""
+    },
+    "percent-hash#e2e:html": {
+      "key": "6ad8ffddd4144cb9",
+      "exit": 0,
+      "stdout": "<p>100% #1 <span class=\"citation\" data-cites=\"me\">@me</span></p>\n",
+      "stderr": ""
+    },
+    "percent-hash#e2e:html4": {
+      "key": "36713f7f060b59b0",
+      "exit": 0,
+      "stdout": "<p>100% #1 <span class=\"citation\">@me</span></p>\n",
+      "stderr": ""
+    },
+    "percent-hash#read": {
+      "key": "94b8eea21ddc9292",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"100%\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"#1\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"me\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@me\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "percent-hash#write:html": {
+      "key": "f6a12b91e89b7d9e",
+      "exit": 0,
+      "stdout": "<p>100% #1 <span class=\"citation\" data-cites=\"me\">@me</span></p>\n",
+      "stderr": ""
+    },
+    "percent-hash#write:html4": {
+      "key": "0b2e9cd783e5104d",
+      "exit": 0,
+      "stdout": "<p>100% #1 <span class=\"citation\">@me</span></p>\n",
+      "stderr": ""
+    },
+    "pipe-literal#e2e:html": {
+      "key": "adf8691ece3c9bac",
+      "exit": 0,
+      "stdout": "<p>a | b</p>\n",
+      "stderr": ""
+    },
+    "pipe-literal#e2e:html4": {
+      "key": "d1352c66a2048355",
+      "exit": 0,
+      "stdout": "<p>a | b</p>\n",
+      "stderr": ""
+    },
+    "pipe-literal#read": {
+      "key": "c0c80431fae6ce9b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "pipe-literal#write:html": {
+      "key": "66a4d1312e9bbf29",
+      "exit": 0,
+      "stdout": "<p>a | b</p>\n",
+      "stderr": ""
+    },
+    "pipe-literal#write:html4": {
+      "key": "164d229c3e7ee2fa",
+      "exit": 0,
+      "stdout": "<p>a | b</p>\n",
+      "stderr": ""
+    },
+    "quote-in-title#e2e:html": {
+      "key": "edf87083d0bee159",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &quot;b&quot;\">x</a></p>\n",
+      "stderr": ""
+    },
+    "quote-in-title#e2e:html4": {
+      "key": "9be531ab9d63840a",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &quot;b&quot;\">x</a></p>\n",
+      "stderr": ""
+    },
+    "quote-in-title#read": {
+      "key": "9343ee17a50d8a80",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"}],[\"u\",\"a \\\"b\\\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "quote-in-title#write:html": {
+      "key": "ac6b407108c26d2b",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &quot;b&quot;\">x</a></p>\n",
+      "stderr": ""
+    },
+    "quote-in-title#write:html4": {
+      "key": "79543ef019d57560",
+      "exit": 0,
+      "stdout": "<p><a href=\"u\" title=\"a &quot;b&quot;\">x</a></p>\n",
+      "stderr": ""
+    },
+    "quotes-chars#e2e:html": {
+      "key": "b5500d9f11de981e",
+      "exit": 0,
+      "stdout": "<p>say “hi” it’s</p>\n",
+      "stderr": ""
+    },
+    "quotes-chars#e2e:html4": {
+      "key": "3282af3aabc8300b",
+      "exit": 0,
+      "stdout": "<p>say “hi” it’s</p>\n",
+      "stderr": ""
+    },
+    "quotes-chars#read": {
+      "key": "b6603669de6b58a1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"say\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"hi\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it’s\"}]}]}\n",
+      "stderr": ""
+    },
+    "quotes-chars#write:html": {
+      "key": "4ebbc2a786044310",
+      "exit": 0,
+      "stdout": "<p>say “hi” it’s</p>\n",
+      "stderr": ""
+    },
+    "quotes-chars#write:html4": {
+      "key": "919a2101fcff5945",
+      "exit": 0,
+      "stdout": "<p>say “hi” it’s</p>\n",
+      "stderr": ""
+    },
+    "rtl#e2e:html": {
+      "key": "5a42f8377f0149ea",
+      "exit": 0,
+      "stdout": "<p>שלום עולם مرحبا</p>\n",
+      "stderr": ""
+    },
+    "rtl#e2e:html4": {
+      "key": "8c10141247605b89",
+      "exit": 0,
+      "stdout": "<p>שלום עולם مرحبا</p>\n",
+      "stderr": ""
+    },
+    "rtl#read": {
+      "key": "2dd1ceac8b7c7cfb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"שלום\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"עולם\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"مرحبا\"}]}]}\n",
+      "stderr": ""
+    },
+    "rtl#write:html": {
+      "key": "176637fabb291ceb",
+      "exit": 0,
+      "stdout": "<p>שלום עולם مرحبا</p>\n",
+      "stderr": ""
+    },
+    "rtl#write:html4": {
+      "key": "a3ccda8a956f634a",
+      "exit": 0,
+      "stdout": "<p>שלום עולם مرحبا</p>\n",
+      "stderr": ""
+    },
+    "special-in-alt#e2e:html": {
+      "key": "9c2ab089c3d85d63",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"i.png\" alt=\"a &lt; b &amp; “c”\" />\n<figcaption aria-hidden=\"true\">a &lt; b &amp; “c”</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "special-in-alt#e2e:html4": {
+      "key": "0782f57df85a1f4a",
+      "exit": 0,
+      "stdout": "<div class=\"float\">\n<img src=\"i.png\" alt=\"a &lt; b &amp; “c”\" />\n<div class=\"figcaption\">a &lt; b &amp; “c”</div>\n</div>\n",
+      "stderr": ""
+    },
+    "special-in-alt#read": {
+      "key": "bfc68a4be2367a20",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]}],[\"i.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "special-in-alt#write:html": {
+      "key": "fea1d66c0238e45f",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"i.png\" alt=\"a &lt; b &amp; “c”\" />\n<figcaption aria-hidden=\"true\">a &lt; b &amp; “c”</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "special-in-alt#write:html4": {
+      "key": "1ce128bf48275034",
+      "exit": 0,
+      "stdout": "<div class=\"float\">\n<img src=\"i.png\" alt=\"a &lt; b &amp; “c”\" />\n<div class=\"figcaption\">a &lt; b &amp; “c”</div>\n</div>\n",
+      "stderr": ""
+    },
+    "special-in-attr#e2e:html": {
+      "key": "ae071e5ee6b51e28",
+      "exit": 0,
+      "stdout": "<p><span title=\"a&lt;b&gt;&amp;&#39;\">x</span></p>\n",
+      "stderr": ""
+    },
+    "special-in-attr#e2e:html4": {
+      "key": "13f65a4ecea65c49",
+      "exit": 0,
+      "stdout": "<p><span title=\"a&lt;b&gt;&amp;&#39;\">x</span></p>\n",
+      "stderr": ""
+    },
+    "special-in-attr#read": {
+      "key": "d48e0ad18f7d3c27",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"title\",\"a<b>&'\"]]],[{\"t\":\"Str\",\"c\":\"x\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "special-in-attr#write:html": {
+      "key": "07f3b7f8dce76129",
+      "exit": 0,
+      "stdout": "<p><span title=\"a&lt;b&gt;&amp;&#39;\">x</span></p>\n",
+      "stderr": ""
+    },
+    "special-in-attr#write:html4": {
+      "key": "2fc3e3c65112129e",
+      "exit": 0,
+      "stdout": "<p><span title=\"a&lt;b&gt;&amp;&#39;\">x</span></p>\n",
+      "stderr": ""
+    },
+    "special-in-code-block#e2e:html": {
+      "key": "73638b1dda833c78",
+      "exit": 0,
+      "stdout": "<pre><code>&lt;script&gt;alert(&quot;x&quot; &amp; &#39;y&#39;)&lt;/script&gt;</code></pre>\n",
+      "stderr": ""
+    },
+    "special-in-code-block#e2e:html4": {
+      "key": "315e7073ed59c411",
+      "exit": 0,
+      "stdout": "<pre><code>&lt;script&gt;alert(&quot;x&quot; &amp; &#39;y&#39;)&lt;/script&gt;</code></pre>\n",
+      "stderr": ""
+    },
+    "special-in-code-block#read": {
+      "key": "4a294e9b25856b97",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"<script>alert(\\\"x\\\" & 'y')</script>\"]}]}\n",
+      "stderr": ""
+    },
+    "special-in-code-block#write:html": {
+      "key": "7a766186e958080d",
+      "exit": 0,
+      "stdout": "<pre><code>&lt;script&gt;alert(&quot;x&quot; &amp; &#39;y&#39;)&lt;/script&gt;</code></pre>\n",
+      "stderr": ""
+    },
+    "special-in-code-block#write:html4": {
+      "key": "a26acd721e2f1ffe",
+      "exit": 0,
+      "stdout": "<pre><code>&lt;script&gt;alert(&quot;x&quot; &amp; &#39;y&#39;)&lt;/script&gt;</code></pre>\n",
+      "stderr": ""
+    },
+    "special-in-heading#e2e:html": {
+      "key": "b1070907f39f0478",
+      "exit": 0,
+      "stdout": "<h1 id=\"a-b-c\">A &amp; B &lt; C</h1>\n",
+      "stderr": ""
+    },
+    "special-in-heading#e2e:html4": {
+      "key": "3468d72276167121",
+      "exit": 0,
+      "stdout": "<h1 id=\"a-b-c\">A &amp; B &lt; C</h1>\n",
+      "stderr": ""
+    },
+    "special-in-heading#read": {
+      "key": "acc65b55a42b806f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a-b-c\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"B\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"C\"}]]}]}\n",
+      "stderr": ""
+    },
+    "special-in-heading#write:html": {
+      "key": "ef5dff74dabb8b2a",
+      "exit": 0,
+      "stdout": "<h1 id=\"a-b-c\">A &amp; B &lt; C</h1>\n",
+      "stderr": ""
+    },
+    "special-in-heading#write:html4": {
+      "key": "3375743ab8f2bf8d",
+      "exit": 0,
+      "stdout": "<h1 id=\"a-b-c\">A &amp; B &lt; C</h1>\n",
+      "stderr": ""
+    },
+    "underscore-alone#e2e:html": {
+      "key": "8fbce64299b450cb",
+      "exit": 0,
+      "stdout": "<p>a _ b</p>\n",
+      "stderr": ""
+    },
+    "underscore-alone#e2e:html4": {
+      "key": "4920ff62f8e90ae2",
+      "exit": 0,
+      "stdout": "<p>a _ b</p>\n",
+      "stderr": ""
+    },
+    "underscore-alone#read": {
+      "key": "df618923be4fd23c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"_\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "underscore-alone#write:html": {
+      "key": "1290c6cddee3f2ce",
+      "exit": 0,
+      "stdout": "<p>a _ b</p>\n",
+      "stderr": ""
+    },
+    "underscore-alone#write:html4": {
+      "key": "c4636a865d0a7f55",
+      "exit": 0,
+      "stdout": "<p>a _ b</p>\n",
+      "stderr": ""
+    },
+    "zero-width#e2e:html": {
+      "key": "57c37848bcee4695",
+      "exit": 0,
+      "stdout": "<p>a​b‍c</p>\n",
+      "stderr": ""
+    },
+    "zero-width#e2e:html4": {
+      "key": "763ad423a06f7b90",
+      "exit": 0,
+      "stdout": "<p>a​b‍c</p>\n",
+      "stderr": ""
+    },
+    "zero-width#read": {
+      "key": "e2ebae385364b10e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a​b‍c\"}]}]}\n",
+      "stderr": ""
+    },
+    "zero-width#write:html": {
+      "key": "f2ef7734266187d8",
+      "exit": 0,
+      "stdout": "<p>a​b‍c</p>\n",
+      "stderr": ""
+    },
+    "zero-width#write:html4": {
+      "key": "f70392e532375827",
+      "exit": 0,
+      "stdout": "<p>a​b‍c</p>\n",
+      "stderr": ""
+    }
+  }
+}

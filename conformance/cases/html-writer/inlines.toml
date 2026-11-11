@@ -1,0 +1,309 @@
+# Inline elements in HTML output.
+from = "markdown"
+to = ["html"]
+
+[[case]]
+id = "emph"
+input = '''
+*a* _b_ **c** __d__ ***e***
+'''
+
+[[case]]
+id = "emph-nested"
+input = '''
+*a **b** c*
+'''
+
+[[case]]
+id = "strong-in-emph-in-link"
+input = '''
+[*a **b***](u)
+'''
+
+[[case]]
+id = "strikeout"
+input = '''
+~~gone~~ text
+'''
+
+[[case]]
+id = "superscript"
+input = '''
+x^2^ and e^i\ pi^
+'''
+
+[[case]]
+id = "subscript"
+input = '''
+H~2~O
+'''
+
+[[case]]
+id = "smallcaps-span"
+input = '''
+[Small]{.smallcaps}
+'''
+
+[[case]]
+id = "underline-span"
+input = '''
+[under]{.underline}
+'''
+
+[[case]]
+id = "underline-ul"
+input = '''
+[under]{.ul}
+'''
+
+[[case]]
+id = "mark-span"
+input = '''
+[marked]{.mark}
+'''
+
+[[case]]
+id = "code-inline"
+input = '''
+`code`
+'''
+
+[[case]]
+id = "code-inline-attrs"
+input = '''
+`code`{#c .haskell k=v}
+'''
+
+[[case]]
+id = "code-inline-specials"
+input = '''
+`a < b && c > "d" 'e'`
+'''
+
+[[case]]
+id = "code-inline-backticks"
+input = '''
+`` a`b ``
+'''
+
+[[case]]
+id = "code-long-nowrap"
+input = '''
+text word word word word word word word word word word `a long code span with many spaces inside it that cannot wrap`
+'''
+
+[[case]]
+id = "quotes-double"
+input = '''
+"double quoted"
+'''
+
+[[case]]
+id = "quotes-single"
+input = '''
+'single quoted'
+'''
+
+[[case]]
+id = "quotes-nested"
+input = '''
+"outer 'inner' outer"
+'''
+
+[[case]]
+id = "apostrophe"
+input = '''
+don't stop
+'''
+
+[[case]]
+id = "ellipsis-dashes"
+input = '''
+a... b -- c --- d
+'''
+
+[[case]]
+id = "linebreak-backslash"
+input = '''
+a\
+b
+'''
+
+[[case]]
+id = "linebreak-spaces"
+input = '''
+a  
+b
+'''
+
+[[case]]
+id = "softbreak"
+input = '''
+a
+b
+c
+'''
+
+[[case]]
+id = "nbsp-escaped"
+input = '''
+a\ b
+'''
+
+[[case]]
+id = "raw-inline-html"
+input = '''
+a <b>bold</b> c
+'''
+
+[[case]]
+id = "raw-inline-attr-html"
+input = '''
+`<i>x</i>`{=html}
+'''
+
+[[case]]
+id = "raw-inline-attr-latex"
+input = '''
+`\LaTeX`{=latex} x
+'''
+
+[[case]]
+id = "raw-inline-html4"
+input = '''
+`<x4>`{=html4}
+'''
+
+[[case]]
+id = "raw-inline-html5"
+input = '''
+`<x5>`{=html5}
+'''
+
+[[case]]
+id = "raw-inline-html-comment"
+input = '''
+a <!-- c --> b
+'''
+
+[[case]]
+id = "span-empty-attrs"
+input = '''
+[text]{}
+'''
+
+[[case]]
+id = "span-id"
+input = '''
+[text]{#sid}
+'''
+
+[[case]]
+id = "span-classes"
+input = '''
+[text]{.a .b}
+'''
+
+[[case]]
+id = "span-kv"
+input = '''
+[text]{k=v}
+'''
+
+[[case]]
+id = "span-all"
+input = '''
+[text]{#i .c k=v k2="v 2"}
+'''
+
+[[case]]
+id = "span-nested"
+input = '''
+[a [b]{.y}]{.x}
+'''
+
+[[case]]
+id = "bracketed-span-in-emph"
+input = '''
+*[a]{.x}*
+'''
+
+[[case]]
+id = "emoji-text"
+input = '''
+smile 😀 and ↩ arrow
+'''
+
+[[case]]
+id = "unicode-text"
+input = '''
+naïve café 日本語 Ελληνικά
+'''
+
+[[case]]
+id = "autolink-uri"
+input = '''
+<http://example.com/a?b=c&d=e>
+'''
+
+[[case]]
+id = "autolink-email"
+input = '''
+<me@example.com>
+'''
+
+[[case]]
+id = "escaped-chars"
+input = '''
+\*not emph\* \[x\] \<y\>
+'''
+
+[[case]]
+id = "ampersand"
+input = '''
+AT&T and &amp; and &copy; and &#169;
+'''
+
+[[case]]
+id = "hard-break-in-emph"
+input = '''
+*a\
+b*
+'''
+
+[[case]]
+id = "emph-punct"
+input = '''
+*a*, *b*. (*c*)
+'''
+
+[[case]]
+id = "intraword-emph"
+input = '''
+un*frigging*believable
+'''
+
+[[case]]
+id = "strong-underscore-intraword"
+input = '''
+snake_case_name
+'''
+
+[[case]]
+id = "tab-in-text"
+input = '''
+a	b
+'''
+
+[[case]]
+id = "many-spaces-in-text"
+input = '''
+a     b
+'''
+
+[[case]]
+id = "trailing-space-para"
+input = '''
+a 
+b
+'''

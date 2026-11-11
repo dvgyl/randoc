@@ -1,0 +1,181 @@
+# Line wrapping at 72 columns.
+from = "markdown"
+to = ["html"]
+
+[[case]]
+id = "long-para"
+input = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+'''
+
+[[case]]
+id = "long-para-softbreaks"
+input = '''
+Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+'''
+
+[[case]]
+id = "long-emph"
+input = '''
+*Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.*
+'''
+
+[[case]]
+id = "long-strong-link"
+input = '''
+**Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i** [ncididunt ut labore et dolore magna aliqua. Ut enim ad minim](http://example.com/path)
+'''
+
+[[case]]
+id = "long-word"
+input = '''
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx y
+'''
+
+[[case]]
+id = "long-word-after-text"
+input = '''
+short xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+'''
+
+[[case]]
+id = "exactly-72"
+input = '''
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bbbbb
+'''
+
+[[case]]
+id = "exactly-73"
+input = '''
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bbbbbb
+'''
+
+[[case]]
+id = "boundary-71"
+input = '''
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bbb
+'''
+
+[[case]]
+id = "boundary-tag-at-edge"
+input = '''
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa *emphasized words here*
+'''
+
+[[case]]
+id = "long-code-inline"
+input = '''
+word word word word word word word word word word word word `code code code code code code code code `
+'''
+
+[[case]]
+id = "long-list-item"
+input = '''
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+'''
+
+[[case]]
+id = "long-blockquote"
+input = '''
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+'''
+
+[[case]]
+id = "long-heading"
+input = '''
+## Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliq
+'''
+
+[[case]]
+id = "long-table-cell"
+input = '''
+| a |
+|---|
+| Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. |
+'''
+
+[[case]]
+id = "long-deflist"
+input = '''
+Term
+:   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+'''
+
+[[case]]
+id = "long-link-url"
+input = '''
+See [here](http://example.com/segment/segment/segment/segment/segment/segment/segment/segment/segment/segment/segment/segment/) now.
+'''
+
+[[case]]
+id = "long-image"
+input = '''
+Text ![alt text for image](http://example.com/p/p/p/p/p/p/p/p/p/p/p/p/p/p/p/p/p/p/p/p/i.png) end
+'''
+
+[[case]]
+id = "long-span-attrs"
+input = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed [x]{.alpha .beta .gamma .delta}
+'''
+
+[[case]]
+id = "long-note-ref"
+input = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eius^[n]
+'''
+
+[[case]]
+id = "long-math"
+input = '''
+Text Text Text Text Text Text Text Text Text Text $a + b + c + d + e + f + g + h$
+'''
+
+[[case]]
+id = "long-quoted"
+input = '''
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore "
+'''
+
+[[case]]
+id = "long-line-block"
+input = '''
+| Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+'''
+
+[[case]]
+id = "long-cjk"
+input = '''
+日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語日本語
+'''
+
+[[case]]
+id = "long-mixed-width"
+input = '''
+Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé Ünïcödé 
+'''
+
+[[case]]
+id = "wrap-after-linebreak"
+input = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing\
+ elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, q
+'''
+
+[[case]]
+id = "softbreak-at-edge"
+input = '''
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+b
+'''
+
+[[case]]
+id = "long-para-two"
+input = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+.tauqesnoc odommoc ae xe piuqila tu isin sirobal ocmallu noitaticrexe durtson siuq ,mainev minim da mine tU .auqila angam erolod te erobal tu tnudidicni ropmet domsuie od des ,tile gnicsipida rutetcesnoc ,tema tis rolod muspi meroL
+'''

@@ -1,0 +1,185 @@
+# Character escaping in text, attributes and URLs.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "lt-gt-amp"
+input = '''
+a < b > c & d
+'''
+
+[[case]]
+id = "quotes-chars"
+input = '''
+say "hi" it's
+'''
+
+[[case]]
+id = "entities-named"
+input = '''
+&lt; &gt; &amp; &quot; &nbsp; &mdash;
+'''
+
+[[case]]
+id = "entities-numeric"
+input = '''
+&#60; &#x3E; &#8212;
+'''
+
+[[case]]
+id = "html-special-in-link-text"
+input = '''
+[a < b](u)
+'''
+
+[[case]]
+id = "html-special-in-url"
+input = '''
+[x](http://e.com/?a=1&b=<2>)
+'''
+
+[[case]]
+id = "html-special-in-title"
+input = '''
+[x](u "a & b < c")
+'''
+
+[[case]]
+id = "quote-in-title"
+input = '''
+[x](u 'a "b"')
+'''
+
+[[case]]
+id = "apostrophe-in-title"
+input = '''
+[x](u "it's")
+'''
+
+[[case]]
+id = "special-in-alt"
+input = '''
+![a < b & "c"](i.png)
+'''
+
+[[case]]
+id = "special-in-attr"
+input = '''
+[x]{title="a<b>&'"}
+'''
+
+[[case]]
+id = "special-in-code-block"
+input = '''
+```
+<script>alert("x" & 'y')</script>
+```
+'''
+
+[[case]]
+id = "special-in-heading"
+input = '''
+# A & B < C
+'''
+
+[[case]]
+id = "left-arrow-hook"
+input = '''
+↩ and ↩︎ and ↩️
+'''
+
+[[case]]
+id = "non-bmp"
+input = '''
+𝔸 𝕏 🎉
+'''
+
+[[case]]
+id = "combining"
+input = '''
+é ä
+'''
+
+[[case]]
+id = "zero-width"
+input = '''
+a​b‍c
+'''
+
+[[case]]
+id = "cjk-wrap"
+input = '''
+日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 日本語のテキスト 
+'''
+
+[[case]]
+id = "rtl"
+input = '''
+שלום עולם مرحبا
+'''
+
+[[case]]
+id = "control-like"
+input = '''
+a­b soft hyphen
+'''
+
+[[case]]
+id = "nbsp-char"
+input = '''
+a b c
+'''
+
+[[case]]
+id = "en-em-dash"
+input = '''
+– —
+'''
+
+[[case]]
+id = "backslash"
+input = '''
+a \\ b
+'''
+
+[[case]]
+id = "dollar-sign"
+input = '''
+costs $5 and $6
+'''
+
+[[case]]
+id = "percent-hash"
+input = '''
+100% #1 @me
+'''
+
+[[case]]
+id = "brackets-literal"
+input = '''
+[not a link] (paren)
+'''
+
+[[case]]
+id = "curly-literal"
+input = '''
+{curly} braces
+'''
+
+[[case]]
+id = "pipe-literal"
+input = '''
+a | b
+'''
+
+[[case]]
+id = "asterisk-alone"
+input = '''
+a * b
+'''
+
+[[case]]
+id = "underscore-alone"
+input = '''
+a _ b
+'''

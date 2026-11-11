@@ -1,0 +1,267 @@
+# Attributes on divs, spans and other elements: order and data- prefixes.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "div-id"
+input = '''
+::: {#d}
+x
+:::
+'''
+
+[[case]]
+id = "div-classes"
+input = '''
+::: {.a .b}
+x
+:::
+'''
+
+[[case]]
+id = "div-kv"
+input = '''
+::: {k=v}
+x
+:::
+'''
+
+[[case]]
+id = "div-all"
+input = '''
+::: {#d .c k=v}
+x
+:::
+'''
+
+[[case]]
+id = "div-data-prefix"
+input = '''
+::: {data-x=1}
+x
+:::
+'''
+
+[[case]]
+id = "div-aria"
+input = '''
+::: {aria-hidden=true}
+x
+:::
+'''
+
+[[case]]
+id = "div-role"
+input = '''
+::: {role=note}
+x
+:::
+'''
+
+[[case]]
+id = "div-style"
+input = '''
+::: {style="color: red"}
+x
+:::
+'''
+
+[[case]]
+id = "div-lang"
+input = '''
+::: {lang=fr dir=ltr}
+x
+:::
+'''
+
+[[case]]
+id = "div-title"
+input = '''
+::: {title="t"}
+x
+:::
+'''
+
+[[case]]
+id = "div-onclick"
+input = '''
+::: {onclick="f()"}
+x
+:::
+'''
+
+[[case]]
+id = "div-unknown-on"
+input = '''
+::: {onfoo=x}
+x
+:::
+'''
+
+[[case]]
+id = "div-epub-type"
+input = '''
+::: {epub:type=chapter}
+x
+:::
+'''
+
+[[case]]
+id = "div-xml-lang"
+input = '''
+::: {xml:lang=de}
+x
+:::
+'''
+
+[[case]]
+id = "div-rdfa"
+input = '''
+::: {typeof=Person property=name resource=r vocab=v about=a}
+x
+:::
+'''
+
+[[case]]
+id = "div-width-height"
+input = '''
+::: {width=10 height=20}
+x
+:::
+'''
+
+[[case]]
+id = "div-itemprop"
+input = '''
+::: {itemscope="" itemtype=t itemprop=p}
+x
+:::
+'''
+
+[[case]]
+id = "div-hidden"
+input = '''
+::: {hidden=""}
+x
+:::
+'''
+
+[[case]]
+id = "div-tabindex"
+input = '''
+::: {tabindex=0 contenteditable=true}
+x
+:::
+'''
+
+[[case]]
+id = "div-kv-order"
+input = '''
+::: {z=1 a=2 m=3}
+x
+:::
+'''
+
+[[case]]
+id = "div-kv-quotes"
+input = '''
+::: {k="a 'b' &c"}
+x
+:::
+'''
+
+[[case]]
+id = "div-kv-empty-value"
+input = '''
+::: {k=""}
+x
+:::
+'''
+
+[[case]]
+id = "div-class-uppercase-key"
+input = '''
+::: {Key=Val}
+x
+:::
+'''
+
+[[case]]
+id = "span-data-prefix"
+input = '''
+[x]{data-y=1 foo=bar}
+'''
+
+[[case]]
+id = "span-lang"
+input = '''
+[x]{lang=en}
+'''
+
+[[case]]
+id = "span-style"
+input = '''
+[x]{style="font-weight: bold"}
+'''
+
+[[case]]
+id = "span-title"
+input = '''
+[x]{title="hover"}
+'''
+
+[[case]]
+id = "span-many-attrs-wrap"
+input = '''
+Some text [span text]{#sid .c1 .c2 .c3 k1=v1 k2=v2 k3=v3 k4=v4 k5=v5 k6=v6} end.
+'''
+
+[[case]]
+id = "div-long-attrs-wrap"
+input = '''
+::: {#did .c1 .c2 .c3 k1=value1 k2=value2 k3=value3 k4=value4 k5=value5}
+x
+:::
+'''
+
+[[case]]
+id = "code-attrs-data"
+input = '''
+`x`{data-a=1 b=2}
+'''
+
+[[case]]
+id = "link-attrs-data"
+input = '''
+[x](u){target=_blank rel=noopener foo=bar}
+'''
+
+[[case]]
+id = "image-attrs-data"
+input = '''
+x ![a](i.png){loading=lazy foo=bar} y
+'''
+
+[[case]]
+id = "heading-attrs-data"
+input = '''
+# H {foo=bar title=t}
+'''
+
+[[case]]
+id = "code-block-attrs-data"
+input = '''
+``` {foo=bar title=t}
+x
+```
+'''
+
+[[case]]
+id = "div-in-div-attrs"
+input = '''
+::: {.outer k=1}
+::: {.inner k=2}
+x
+:::
+:::
+'''

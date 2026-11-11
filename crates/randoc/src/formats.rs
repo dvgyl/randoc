@@ -24,6 +24,7 @@ const READERS: &[ReaderLookup] = &[
 #[rustfmt::skip]
 const WRITERS: &[WriterLookup] = &[
     json_format::writer,
+    randoc_html::writer,
     randoc_native::writer,
     randoc_citeproc::csljson::writer,
 ];

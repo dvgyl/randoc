@@ -1,0 +1,22 @@
+[package]
+name = "randoc-html"
+description = "The HTML writer of Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+# The oracle matrices are test data: the replay test reads them from the source tree.
+exclude = ["src/*.jsonl"]
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-layout = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

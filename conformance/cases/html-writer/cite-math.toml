@@ -1,0 +1,81 @@
+# Citations, and math with the default method.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "cite-normal"
+input = '''
+[@doe]
+'''
+
+[[case]]
+id = "cite-locator"
+input = '''
+[@doe, p. 33]
+'''
+
+[[case]]
+id = "cite-prefix"
+input = '''
+[see @doe]
+'''
+
+[[case]]
+id = "cite-multiple"
+input = '''
+[@doe; @roe]
+'''
+
+[[case]]
+id = "cite-author-in-text"
+input = '''
+@doe says
+'''
+
+[[case]]
+id = "cite-suppress-author"
+input = '''
+[-@doe]
+'''
+
+[[case]]
+id = "cite-in-note"
+input = '''
+A^[@doe]
+'''
+
+[[case]]
+id = "cite-markup"
+input = '''
+[*see* @doe, chap. **2**]
+'''
+
+[[case]]
+id = "cite-key-special"
+input = '''
+[@doe:2020_x.y]
+'''
+
+[[case]]
+id = "math-inline"
+input = '''
+$x^2$
+'''
+
+[[case]]
+id = "math-display"
+input = '''
+$$\sum_{i=1}^n i$$
+'''
+
+[[case]]
+id = "math-in-text"
+input = '''
+Let $a < b$ and $c > d$.
+'''
+
+[[case]]
+id = "math-special-chars"
+input = '''
+$a & b$
+'''

@@ -1,0 +1,395 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "cite-author-in-text#e2e:html": {
+      "key": "f4e4a45b4f0cc02f",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">@doe</span> says</p>\n",
+      "stderr": ""
+    },
+    "cite-author-in-text#e2e:html4": {
+      "key": "c8063960362b3e36",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">@doe</span> says</p>\n",
+      "stderr": ""
+    },
+    "cite-author-in-text#read": {
+      "key": "8fb1fff3b2e640a4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"says\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-author-in-text#write:html": {
+      "key": "7af56d8303598fb3",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">@doe</span> says</p>\n",
+      "stderr": ""
+    },
+    "cite-author-in-text#write:html4": {
+      "key": "ad92f8664ea6c9ba",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">@doe</span> says</p>\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:html": {
+      "key": "b6b8c73046fd2dbd",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><span class=\"citation\" data-cites=\"doe\">@doe</span><a\nhref=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:html4": {
+      "key": "8062a0ca14cc760e",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><span class=\"citation\">@doe</span><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "cite-in-note#read": {
+      "key": "b72d31a9fd52406c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe\"}]]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:html": {
+      "key": "f0b37f78fb2520a7",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><span class=\"citation\" data-cites=\"doe\">@doe</span><a\nhref=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:html4": {
+      "key": "0b08dafd3618834c",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><span class=\"citation\">@doe</span><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:html": {
+      "key": "c96521fef159c437",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\"\ndata-cites=\"doe:2020_x.y\">[@doe:2020_x.y]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:html4": {
+      "key": "771fadc2a885b07e",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe:2020_x.y]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-key-special#read": {
+      "key": "1103b5e38e79e368",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe:2020_x.y\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe:2020_x.y]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:html": {
+      "key": "8c680209782f742f",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\"\ndata-cites=\"doe:2020_x.y\">[@doe:2020_x.y]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:html4": {
+      "key": "2b31b91054434974",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe:2020_x.y]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-locator#e2e:html": {
+      "key": "4f262d0ba2338f4d",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[@doe, p. 33]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-locator#e2e:html4": {
+      "key": "944b93e455bcc264",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe, p. 33]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-locator#read": {
+      "key": "4cee32cd42db18f2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p. 33\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"33]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-locator#write:html": {
+      "key": "38f5691c235079aa",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[@doe, p. 33]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-locator#write:html4": {
+      "key": "79787fdc8a4ae41f",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe, p. 33]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-markup#e2e:html": {
+      "key": "32e87f7625bfded6",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[*see* @doe, chap.\n**2**]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-markup#e2e:html4": {
+      "key": "bb44fd92d47e66b7",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[*see* @doe, chap. **2**]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-markup#read": {
+      "key": "a24bee06176b9669",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"see\"}]}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"chap. \"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[*see*\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@doe,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"chap.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"**2**]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-markup#write:html": {
+      "key": "59d7d22074054f16",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[*see* @doe, chap.\n**2**]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-markup#write:html4": {
+      "key": "28e1ba7a7511229b",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[*see* @doe, chap. **2**]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:html": {
+      "key": "a261b03352d97c1d",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe roe\">[@doe; @roe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:html4": {
+      "key": "8ee27cc3984c87aa",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe; @roe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-multiple#read": {
+      "key": "f214f6e753c314d0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"roe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@roe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:html": {
+      "key": "831dd33cbef0e458",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe roe\">[@doe; @roe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:html4": {
+      "key": "67a7ce3349a0aaf7",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe; @roe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:html": {
+      "key": "906c8f3e4431f056",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:html4": {
+      "key": "adfb34f2700d5fc9",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-normal#read": {
+      "key": "d0201eafb09378df",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-normal#write:html": {
+      "key": "e0db7e66dd8cb2fb",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-normal#write:html4": {
+      "key": "1f1038bbb7ae8aac",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-prefix#e2e:html": {
+      "key": "f73f60c0800df4b7",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[see @doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-prefix#e2e:html4": {
+      "key": "8d8f0c18fae5e298",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[see @doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-prefix#read": {
+      "key": "a3bd84ca2796358a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@doe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-prefix#write:html": {
+      "key": "aff4e450507e5a84",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[see @doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-prefix#write:html4": {
+      "key": "f35df821056b88f9",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[see @doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-suppress-author#e2e:html": {
+      "key": "2f63bcf690272050",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[-@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-suppress-author#e2e:html4": {
+      "key": "45409f79d5aea171",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[-@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-suppress-author#read": {
+      "key": "c6aff0ae2c187c37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[-@doe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-suppress-author#write:html": {
+      "key": "899251543bab4eff",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\" data-cites=\"doe\">[-@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "cite-suppress-author#write:html4": {
+      "key": "866c35e82aef6de2",
+      "exit": 0,
+      "stdout": "<p><span class=\"citation\">[-@doe]</span></p>\n",
+      "stderr": ""
+    },
+    "math-display#e2e:html": {
+      "key": "744f9cdf26ac3a20",
+      "exit": 0,
+      "stdout": "<p><math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">\\sum_{i=1}^n i</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-display#e2e:html4": {
+      "key": "1e6eaaa155b23d83",
+      "exit": 0,
+      "stdout": "<p><math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">\\sum_{i=1}^n i</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-display#read": {
+      "key": "9ebdb8287c5d432d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\sum_{i=1}^n i\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-display#write:html": {
+      "key": "ce2a9bd71b62a6f8",
+      "exit": 0,
+      "stdout": "<p><math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">\\sum_{i=1}^n i</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-display#write:html4": {
+      "key": "8ffcc2b6ca2e1d45",
+      "exit": 0,
+      "stdout": "<p><math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">\\sum_{i=1}^n i</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-in-text#e2e:html": {
+      "key": "40c0c5394b064684",
+      "exit": 0,
+      "stdout": "<p>Let\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo>&lt;</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">a &lt; b</annotation></semantics></math>\nand\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo>&gt;</mo><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">c &gt; d</annotation></semantics></math>.</p>\n",
+      "stderr": ""
+    },
+    "math-in-text#e2e:html4": {
+      "key": "5c0a87fd8308666b",
+      "exit": 0,
+      "stdout": "<p>Let\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo>&lt;</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">a &lt; b</annotation></semantics></math>\nand\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo>&gt;</mo><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">c &gt; d</annotation></semantics></math>.</p>\n",
+      "stderr": ""
+    },
+    "math-in-text#read": {
+      "key": "c8c46507c762e8b9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Let\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a < b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"c > d\"]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "math-in-text#write:html": {
+      "key": "1e29bb06b6cb0fcd",
+      "exit": 0,
+      "stdout": "<p>Let\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo>&lt;</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">a &lt; b</annotation></semantics></math>\nand\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo>&gt;</mo><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">c &gt; d</annotation></semantics></math>.</p>\n",
+      "stderr": ""
+    },
+    "math-in-text#write:html4": {
+      "key": "1bd479ee25209a02",
+      "exit": 0,
+      "stdout": "<p>Let\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo>&lt;</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">a &lt; b</annotation></semantics></math>\nand\n<math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo>&gt;</mo><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">c &gt; d</annotation></semantics></math>.</p>\n",
+      "stderr": ""
+    },
+    "math-inline#e2e:html": {
+      "key": "842d01dc0a628d83",
+      "exit": 0,
+      "stdout": "<p><math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><msup><mi>x</mi><mn>2</mn></msup><annotation encoding=\"application/x-tex\">x^2</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-inline#e2e:html4": {
+      "key": "295bd65739eea5d6",
+      "exit": 0,
+      "stdout": "<p><math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><msup><mi>x</mi><mn>2</mn></msup><annotation encoding=\"application/x-tex\">x^2</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-inline#read": {
+      "key": "4d285ab39f24ed18",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-inline#write:html": {
+      "key": "ad856ce1d48e46d4",
+      "exit": 0,
+      "stdout": "<p><math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><msup><mi>x</mi><mn>2</mn></msup><annotation encoding=\"application/x-tex\">x^2</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-inline#write:html4": {
+      "key": "c39246f596446c17",
+      "exit": 0,
+      "stdout": "<p><math display=\"inline\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><msup><mi>x</mi><mn>2</mn></msup><annotation encoding=\"application/x-tex\">x^2</annotation></semantics></math></p>\n",
+      "stderr": ""
+    },
+    "math-special-chars#e2e:html": {
+      "key": "241c4addffa869fa",
+      "exit": 0,
+      "stdout": "<p><span class=\"math inline\">$a &amp; b$</span></p>\n",
+      "stderr": "[WARNING] Could not convert TeX math a & b, rendering as TeX:\n  a & b\n    ^\n  unexpected '&'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "math-special-chars#e2e:html4": {
+      "key": "9a605f4728e78f5f",
+      "exit": 0,
+      "stdout": "<p><span class=\"math inline\">$a &amp; b$</span></p>\n",
+      "stderr": "[WARNING] Could not convert TeX math a & b, rendering as TeX:\n  a & b\n    ^\n  unexpected '&'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "math-special-chars#read": {
+      "key": "0a9cc6b22ed591a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a & b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-special-chars#write:html": {
+      "key": "f7f28569badf31f1",
+      "exit": 0,
+      "stdout": "<p><span class=\"math inline\">$a &amp; b$</span></p>\n",
+      "stderr": "[WARNING] Could not convert TeX math a & b, rendering as TeX:\n  a & b\n    ^\n  unexpected '&'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "math-special-chars#write:html4": {
+      "key": "e10bdc64cc2a5f26",
+      "exit": 0,
+      "stdout": "<p><span class=\"math inline\">$a &amp; b$</span></p>\n",
+      "stderr": "[WARNING] Could not convert TeX math a & b, rendering as TeX:\n  a & b\n    ^\n  unexpected '&'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    }
+  }
+}

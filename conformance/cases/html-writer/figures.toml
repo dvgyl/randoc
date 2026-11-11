@@ -1,0 +1,53 @@
+# Figures and their captions.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "figure-implicit"
+input = '''
+![Caption](img.png)
+'''
+
+[[case]]
+id = "figure-implicit-alt-differs"
+input = '''
+![Caption](img.png){alt="Other"}
+'''
+
+[[case]]
+id = "figure-explicit-attrs"
+input = '''
+![Cap](img.png){#f .c k=v}
+'''
+
+[[case]]
+id = "figure-caption-markup"
+input = '''
+![*Em* cap](img.png)
+'''
+
+[[case]]
+id = "figure-in-list"
+input = '''
+- ![Cap](img.png)
+'''
+
+[[case]]
+id = "figure-image-with-link-is-not"
+input = '''
+[![Cap](img.png)](u)
+'''
+
+[[case]]
+id = "figure-two-images-para"
+input = '''
+![a](a.png) ![b](b.png)
+'''
+
+[[case]]
+id = "figure-div"
+input = '''
+::: {#fig .figure}
+content
+:::
+'''

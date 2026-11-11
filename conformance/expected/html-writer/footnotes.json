@@ -1,0 +1,545 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "note-code-last#e2e:html": {
+      "key": "cfca89cdd9e3fa37",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Text.</p>\n<pre><code>code</code></pre>\n<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-code-last#e2e:html4": {
+      "key": "7ce5a8eb08b14d14",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Text.</p>\n<pre><code>code</code></pre>\n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-code-last#read": {
+      "key": "fb3fcfd0d9053a66",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-code-last#write:html": {
+      "key": "9b6b1610e628f326",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Text.</p>\n<pre><code>code</code></pre>\n<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-code-last#write:html4": {
+      "key": "76ac3ff7cde32c55",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Text.</p>\n<pre><code>code</code></pre>\n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-heading-in-note#e2e:html": {
+      "key": "d7e8a32a8129f066",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p># Heading in note</p>\n<p>text<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-heading-in-note#e2e:html4": {
+      "key": "03c2341a4b9967c5",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p># Heading in note</p>\n<p>text<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-heading-in-note#read": {
+      "key": "1e6d18c404fabbdb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"#\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-heading-in-note#write:html": {
+      "key": "480cecb7b31c75aa",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p># Heading in note</p>\n<p>text<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-heading-in-note#write:html4": {
+      "key": "223888cd799e676d",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p># Heading in note</p>\n<p>text<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-blockquote#e2e:html": {
+      "key": "e733e237b1c052b0",
+      "exit": 0,
+      "stdout": "<blockquote>\n<p>a<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n</blockquote>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-blockquote#e2e:html4": {
+      "key": "be9e9c4baaf6e089",
+      "exit": 0,
+      "stdout": "<blockquote>\n<p>a<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n</blockquote>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-blockquote#read": {
+      "key": "a0ab8c12791f231f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-in-blockquote#write:html": {
+      "key": "cbe6974a0ceba172",
+      "exit": 0,
+      "stdout": "<blockquote>\n<p>a<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n</blockquote>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-blockquote#write:html4": {
+      "key": "10d1cad9187d40a3",
+      "exit": 0,
+      "stdout": "<blockquote>\n<p>a<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n</blockquote>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:html": {
+      "key": "ba7a9d9745fe448c",
+      "exit": 0,
+      "stdout": "<h1 id=\"h\">H<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></h1>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:html4": {
+      "key": "8796eb51c46f107d",
+      "exit": 0,
+      "stdout": "<h1 id=\"h\">H<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></h1>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-heading#read": {
+      "key": "6d1e6830366b545b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"h\",[],[]],[{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:html": {
+      "key": "c1d2aecce1f86940",
+      "exit": 0,
+      "stdout": "<h1 id=\"h\">H<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></h1>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:html4": {
+      "key": "c1c6624c4f761147",
+      "exit": 0,
+      "stdout": "<h1 id=\"h\">H<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></h1>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:html": {
+      "key": "656e10500a2a962f",
+      "exit": 0,
+      "stdout": "<ul>\n<li>a<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></li>\n<li>b<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"\nrole=\"doc-noteref\"><sup>2</sup></a></li>\n</ul>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:html4": {
+      "key": "e39f92c4ce25832e",
+      "exit": 0,
+      "stdout": "<ul>\n<li>a<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></li>\n<li>b<a href=\"#fn2\" class=\"footnote-ref\"\nid=\"fnref2\"><sup>2</sup></a></li>\n</ul>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-list#read": {
+      "key": "8b7578c0ad6e42ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n1\"}]}]}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n2\"}]}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-in-list#write:html": {
+      "key": "54218e82fada6c3f",
+      "exit": 0,
+      "stdout": "<ul>\n<li>a<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></li>\n<li>b<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"\nrole=\"doc-noteref\"><sup>2</sup></a></li>\n</ul>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-list#write:html4": {
+      "key": "7d402d950e950e80",
+      "exit": 0,
+      "stdout": "<ul>\n<li>a<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></li>\n<li>b<a href=\"#fn2\" class=\"footnote-ref\"\nid=\"fnref2\"><sup>2</sup></a></li>\n</ul>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:html": {
+      "key": "5cfa4b7aa169d60a",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>outer <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a><a href=\"#fnref1\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:html4": {
+      "key": "eb8c0d95a2656a35",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>outer <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-note#read": {
+      "key": "d99ee496f0fb22ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"outer\"},{\"t\":\"Space\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"inner\"}]}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-in-note#write:html": {
+      "key": "8060204eb66f3d7e",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>outer <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a><a href=\"#fnref1\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-note#write:html4": {
+      "key": "a47b7da8469b6e15",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>outer <a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-table#e2e:html": {
+      "key": "d5359e8f600094f3",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>b<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></td>\n</tr>\n</tbody>\n</table>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-table#e2e:html4": {
+      "key": "d38cdd7aac959e3a",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>b<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></td>\n</tr>\n</tbody>\n</table>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-in-table#read": {
+      "key": "c985f4a893ccc7a4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "note-in-table#write:html": {
+      "key": "674fd321786662d6",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>b<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></td>\n</tr>\n</tbody>\n</table>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-in-table#write:html4": {
+      "key": "7ae8f41156751115",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>b<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></td>\n</tr>\n</tbody>\n</table>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-inline#e2e:html": {
+      "key": "099da98a85682eba",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Inline note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-inline#e2e:html4": {
+      "key": "fa83b1538f51d611",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Inline note.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-inline#read": {
+      "key": "871ccb125dc5b753",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Inline\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-inline#write:html": {
+      "key": "b1f3ff686f7665f3",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Inline note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-inline#write:html4": {
+      "key": "3c20182f7e07f9a2",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Inline note.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-list-last#e2e:html": {
+      "key": "0dacacf1cc725ad0",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><ul>\n<li>item</li>\n</ul>\n<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-list-last#e2e:html4": {
+      "key": "c0b47cf74ea39d7d",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><ul>\n<li>item</li>\n</ul>\n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-list-last#read": {
+      "key": "67cb91d8ab1fb7a7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"item\"}]}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-list-last#write:html": {
+      "key": "fb0ba61d70acc8ee",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><ul>\n<li>item</li>\n</ul>\n<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-list-last#write:html4": {
+      "key": "d7cfe2cf210fbecf",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><ul>\n<li>item</li>\n</ul>\n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-long-wrap#e2e:html": {
+      "key": "6fb81abcfca20e8b",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>word word word word word word word word word word word\nword word word word word word word word word word word word word word\nword word word word word <a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-long-wrap#e2e:html4": {
+      "key": "b971ff89020ff330",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>word word word word word word word word word word word\nword word word word word word word word word word word word word word\nword word word word word <a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-long-wrap#read": {
+      "key": "47bc0931902acd1e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-long-wrap#write:html": {
+      "key": "497ea8fba334cb33",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>word word word word word word word word word word word\nword word word word word word word word word word word word word word\nword word word word word <a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-long-wrap#write:html4": {
+      "key": "6604005109dc7718",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>word word word word word word word word word word word\nword word word word word word word word word word word word word word\nword word word word word <a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-markup#e2e:html": {
+      "key": "09197eeb66ce9ce2",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><em>em</em> <strong>strong</strong> <code>code</code> <a\nhref=\"u\">l</a><a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-markup#e2e:html4": {
+      "key": "1d06a413ee056037",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><em>em</em> <strong>strong</strong> <code>code</code> <a\nhref=\"u\">l</a><a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-markup#read": {
+      "key": "23abe11329689b91",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"em\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"strong\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"code\"]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"l\"}],[\"u\",\"\"]]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-markup#write:html": {
+      "key": "fbe23890fc38fb45",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><em>em</em> <strong>strong</strong> <code>code</code> <a\nhref=\"u\">l</a><a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-markup#write:html4": {
+      "key": "71bdad3e4aa5b3ae",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p><em>em</em> <strong>strong</strong> <code>code</code> <a\nhref=\"u\">l</a><a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:html": {
+      "key": "0514dc912193f39a",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Para one.</p>\n<p>Para two.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:html4": {
+      "key": "cf61dad3a04fe96b",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Para one.</p>\n<p>Para two.<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-multi-para#read": {
+      "key": "9362eee052f5af31",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:html": {
+      "key": "33fdc01ce39f6152",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Para one.</p>\n<p>Para two.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:html4": {
+      "key": "66596007ec0d3b93",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Para one.</p>\n<p>Para two.<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-repeated-ref#e2e:html": {
+      "key": "abf085ad3e64853e",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> B<a href=\"#fn2\" class=\"footnote-ref\"\nid=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Note.<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-repeated-ref#e2e:html4": {
+      "key": "7e066b8c6e1dfba1",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> B<a\nhref=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Note.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Note.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-repeated-ref#read": {
+      "key": "f8adf3990e868b4f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Note.\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"B\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-repeated-ref#write:html": {
+      "key": "1b81ffc39aef8d7d",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> B<a href=\"#fn2\" class=\"footnote-ref\"\nid=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Note.<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-repeated-ref#write:html4": {
+      "key": "5ae3df4fa811ff72",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> B<a\nhref=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Note.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Note.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-simple#e2e:html": {
+      "key": "1ef791ab2a0eec64",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>The note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-simple#e2e:html4": {
+      "key": "71f797f958605b73",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>The note.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-simple#read": {
+      "key": "06980c8fdade7f9d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-simple#write:html": {
+      "key": "36dd0a1d938f595c",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>The note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-simple#write:html4": {
+      "key": "97eb3df239fe1c93",
+      "exit": 0,
+      "stdout": "<p>Text.<a href=\"#fn1\" class=\"footnote-ref\"\nid=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>The note.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-ten#e2e:html": {
+      "key": "fd449cd43a1e8b87",
+      "exit": 0,
+      "stdout": "<p>n0<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> n1<a href=\"#fn2\"\nclass=\"footnote-ref\" id=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a>\nn2<a href=\"#fn3\" class=\"footnote-ref\" id=\"fnref3\"\nrole=\"doc-noteref\"><sup>3</sup></a> n3<a href=\"#fn4\"\nclass=\"footnote-ref\" id=\"fnref4\" role=\"doc-noteref\"><sup>4</sup></a>\nn4<a href=\"#fn5\" class=\"footnote-ref\" id=\"fnref5\"\nrole=\"doc-noteref\"><sup>5</sup></a> n5<a href=\"#fn6\"\nclass=\"footnote-ref\" id=\"fnref6\" role=\"doc-noteref\"><sup>6</sup></a>\nn6<a href=\"#fn7\" class=\"footnote-ref\" id=\"fnref7\"\nrole=\"doc-noteref\"><sup>7</sup></a> n7<a href=\"#fn8\"\nclass=\"footnote-ref\" id=\"fnref8\" role=\"doc-noteref\"><sup>8</sup></a>\nn8<a href=\"#fn9\" class=\"footnote-ref\" id=\"fnref9\"\nrole=\"doc-noteref\"><sup>9</sup></a> n9<a href=\"#fn10\"\nclass=\"footnote-ref\" id=\"fnref10\" role=\"doc-noteref\"><sup>10</sup></a>\nn10<a href=\"#fn11\" class=\"footnote-ref\" id=\"fnref11\"\nrole=\"doc-noteref\"><sup>11</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note 0<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>note 1<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn3\"><p>note 2<a href=\"#fnref3\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn4\"><p>note 3<a href=\"#fnref4\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn5\"><p>note 4<a href=\"#fnref5\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn6\"><p>note 5<a href=\"#fnref6\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn7\"><p>note 6<a href=\"#fnref7\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn8\"><p>note 7<a href=\"#fnref8\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn9\"><p>note 8<a href=\"#fnref9\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn10\"><p>note 9<a href=\"#fnref10\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn11\"><p>note 10<a href=\"#fnref11\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-ten#e2e:html4": {
+      "key": "b2a5cafaa17b1182",
+      "exit": 0,
+      "stdout": "<p>n0<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nn1<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a> n2<a\nhref=\"#fn3\" class=\"footnote-ref\" id=\"fnref3\"><sup>3</sup></a> n3<a\nhref=\"#fn4\" class=\"footnote-ref\" id=\"fnref4\"><sup>4</sup></a> n4<a\nhref=\"#fn5\" class=\"footnote-ref\" id=\"fnref5\"><sup>5</sup></a> n5<a\nhref=\"#fn6\" class=\"footnote-ref\" id=\"fnref6\"><sup>6</sup></a> n6<a\nhref=\"#fn7\" class=\"footnote-ref\" id=\"fnref7\"><sup>7</sup></a> n7<a\nhref=\"#fn8\" class=\"footnote-ref\" id=\"fnref8\"><sup>8</sup></a> n8<a\nhref=\"#fn9\" class=\"footnote-ref\" id=\"fnref9\"><sup>9</sup></a> n9<a\nhref=\"#fn10\" class=\"footnote-ref\" id=\"fnref10\"><sup>10</sup></a> n10<a\nhref=\"#fn11\" class=\"footnote-ref\" id=\"fnref11\"><sup>11</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note 0<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>note 1<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn3\"><p>note 2<a href=\"#fnref3\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn4\"><p>note 3<a href=\"#fnref4\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn5\"><p>note 4<a href=\"#fnref5\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn6\"><p>note 5<a href=\"#fnref6\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn7\"><p>note 6<a href=\"#fnref7\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn8\"><p>note 7<a href=\"#fnref8\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn9\"><p>note 8<a href=\"#fnref9\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn10\"><p>note 9<a href=\"#fnref10\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn11\"><p>note 10<a href=\"#fnref11\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-ten#read": {
+      "key": "b569595d4f87dcb0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n0\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"0\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n1\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"1\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n2\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n3\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n4\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n5\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"5\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n6\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"6\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n7\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"7\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n8\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"8\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n9\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"9\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"n10\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"10\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-ten#write:html": {
+      "key": "a49748d52fbd9b7d",
+      "exit": 0,
+      "stdout": "<p>n0<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> n1<a href=\"#fn2\"\nclass=\"footnote-ref\" id=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a>\nn2<a href=\"#fn3\" class=\"footnote-ref\" id=\"fnref3\"\nrole=\"doc-noteref\"><sup>3</sup></a> n3<a href=\"#fn4\"\nclass=\"footnote-ref\" id=\"fnref4\" role=\"doc-noteref\"><sup>4</sup></a>\nn4<a href=\"#fn5\" class=\"footnote-ref\" id=\"fnref5\"\nrole=\"doc-noteref\"><sup>5</sup></a> n5<a href=\"#fn6\"\nclass=\"footnote-ref\" id=\"fnref6\" role=\"doc-noteref\"><sup>6</sup></a>\nn6<a href=\"#fn7\" class=\"footnote-ref\" id=\"fnref7\"\nrole=\"doc-noteref\"><sup>7</sup></a> n7<a href=\"#fn8\"\nclass=\"footnote-ref\" id=\"fnref8\" role=\"doc-noteref\"><sup>8</sup></a>\nn8<a href=\"#fn9\" class=\"footnote-ref\" id=\"fnref9\"\nrole=\"doc-noteref\"><sup>9</sup></a> n9<a href=\"#fn10\"\nclass=\"footnote-ref\" id=\"fnref10\" role=\"doc-noteref\"><sup>10</sup></a>\nn10<a href=\"#fn11\" class=\"footnote-ref\" id=\"fnref11\"\nrole=\"doc-noteref\"><sup>11</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note 0<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>note 1<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn3\"><p>note 2<a href=\"#fnref3\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn4\"><p>note 3<a href=\"#fnref4\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn5\"><p>note 4<a href=\"#fnref5\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn6\"><p>note 5<a href=\"#fnref6\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn7\"><p>note 6<a href=\"#fnref7\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn8\"><p>note 7<a href=\"#fnref8\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn9\"><p>note 8<a href=\"#fnref9\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn10\"><p>note 9<a href=\"#fnref10\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn11\"><p>note 10<a href=\"#fnref11\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-ten#write:html4": {
+      "key": "930db3f4341d9d02",
+      "exit": 0,
+      "stdout": "<p>n0<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nn1<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a> n2<a\nhref=\"#fn3\" class=\"footnote-ref\" id=\"fnref3\"><sup>3</sup></a> n3<a\nhref=\"#fn4\" class=\"footnote-ref\" id=\"fnref4\"><sup>4</sup></a> n4<a\nhref=\"#fn5\" class=\"footnote-ref\" id=\"fnref5\"><sup>5</sup></a> n5<a\nhref=\"#fn6\" class=\"footnote-ref\" id=\"fnref6\"><sup>6</sup></a> n6<a\nhref=\"#fn7\" class=\"footnote-ref\" id=\"fnref7\"><sup>7</sup></a> n7<a\nhref=\"#fn8\" class=\"footnote-ref\" id=\"fnref8\"><sup>8</sup></a> n8<a\nhref=\"#fn9\" class=\"footnote-ref\" id=\"fnref9\"><sup>9</sup></a> n9<a\nhref=\"#fn10\" class=\"footnote-ref\" id=\"fnref10\"><sup>10</sup></a> n10<a\nhref=\"#fn11\" class=\"footnote-ref\" id=\"fnref11\"><sup>11</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>note 0<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>note 1<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn3\"><p>note 2<a href=\"#fnref3\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn4\"><p>note 3<a href=\"#fnref4\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn5\"><p>note 4<a href=\"#fnref5\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn6\"><p>note 5<a href=\"#fnref6\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn7\"><p>note 6<a href=\"#fnref7\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn8\"><p>note 7<a href=\"#fnref8\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn9\"><p>note 8<a href=\"#fnref9\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn10\"><p>note 9<a href=\"#fnref10\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn11\"><p>note 10<a href=\"#fnref11\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-two#e2e:html": {
+      "key": "0411540ab1eb8576",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> B<a href=\"#fn2\" class=\"footnote-ref\"\nid=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>First.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Second.<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-two#e2e:html4": {
+      "key": "8b64fabd9a79450b",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> B<a\nhref=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>First.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Second.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-two#read": {
+      "key": "006f7d17a35f9145",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"First.\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"B\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Second.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-two#write:html": {
+      "key": "b9d47d6dc466b642",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> B<a href=\"#fn2\" class=\"footnote-ref\"\nid=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>First.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Second.<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-two#write:html4": {
+      "key": "4434e1122299b373",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a> B<a\nhref=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>First.<a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Second.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-with-blockquote#e2e:html": {
+      "key": "81ef904976930152",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><blockquote>\n<p>quoted</p>\n</blockquote>\n<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-with-blockquote#e2e:html4": {
+      "key": "64606c3ca88ba86f",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><blockquote>\n<p>quoted</p>\n</blockquote>\n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-with-blockquote#read": {
+      "key": "5a9d3d55dadfcdcd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"quoted\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-with-blockquote#write:html": {
+      "key": "363ef6a3a7e50e6b",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><blockquote>\n<p>quoted</p>\n</blockquote>\n<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-with-blockquote#write:html4": {
+      "key": "143a9958aff66e20",
+      "exit": 0,
+      "stdout": "<p>A<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><blockquote>\n<p>quoted</p>\n</blockquote>\n<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-with-sections#e2e:html": {
+      "key": "6b7c495ac68732cf",
+      "exit": 0,
+      "stdout": "<h1 id=\"a\">A</h1>\n<p>x<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<h1 id=\"b\">B</h1>\n<p>y<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"\nrole=\"doc-noteref\"><sup>2</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-with-sections#e2e:html4": {
+      "key": "b333acf775120178",
+      "exit": 0,
+      "stdout": "<h1 id=\"a\">A</h1>\n<p>x<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<h1 id=\"b\">B</h1>\n<p>y<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "note-with-sections#read": {
+      "key": "ee61c534f3f807ea",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n1\"}]}]}]},{\"t\":\"Header\",\"c\":[1,[\"b\",[],[]],[{\"t\":\"Str\",\"c\":\"B\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n2\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-with-sections#write:html": {
+      "key": "bbbd25da6ea848eb",
+      "exit": 0,
+      "stdout": "<h1 id=\"a\">A</h1>\n<p>x<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a></p>\n<h1 id=\"b\">B</h1>\n<p>y<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"\nrole=\"doc-noteref\"><sup>2</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "note-with-sections#write:html4": {
+      "key": "e6d6877f62feacbe",
+      "exit": 0,
+      "stdout": "<h1 id=\"a\">A</h1>\n<p>x<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a></p>\n<h1 id=\"b\">B</h1>\n<p>y<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n<div class=\"footnotes footnotes-end-of-document\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>n1<a href=\"#fnref1\" class=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>n2<a href=\"#fnref2\" class=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    }
+  }
+}

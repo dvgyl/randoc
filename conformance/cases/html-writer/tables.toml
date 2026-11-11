@@ -1,0 +1,238 @@
+# Tables: alignments, widths, captions, spans, heads and feet.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "pipe-simple"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "pipe-aligns"
+input = '''
+| l | c | r | d |
+|:--|:-:|--:|---|
+| 1 | 2 | 3 | 4 |
+'''
+
+[[case]]
+id = "pipe-caption"
+input = '''
+| a |
+|---|
+| 1 |
+
+: The caption
+'''
+
+[[case]]
+id = "pipe-caption-markup"
+input = '''
+| a |
+|---|
+| 1 |
+
+: *Em* caption
+'''
+
+[[case]]
+id = "pipe-caption-attrs"
+input = '''
+| a |
+|---|
+| 1 |
+
+: Cap {#tbl .x}
+'''
+
+[[case]]
+id = "pipe-no-body"
+input = '''
+| a | b |
+|---|---|
+'''
+
+[[case]]
+id = "pipe-wide-relative"
+input = '''
+| a | b |
+|------|--|
+| long long long long long long long long long long long long long long long long long long long long  | x |
+'''
+
+[[case]]
+id = "pipe-inline-markup"
+input = '''
+| *a* | `b` |
+|---|---|
+| [l](u) | **s** |
+'''
+
+[[case]]
+id = "pipe-empty-cells"
+input = '''
+| a | |
+|---|---|
+| | 2 |
+'''
+
+[[case]]
+id = "simple-table"
+input = '''
+   Qty   Name      Kind     Note
+------   -------  --------  ----
+     7   pear       ripe    ok
+    45   plum      green    no
+'''
+
+[[case]]
+id = "simple-table-noheader"
+input = '''
+------   -------  --------  ----
+     7   pear       ripe    ok
+    45   plum      green    no
+------   -------  --------  ----
+'''
+
+[[case]]
+id = "multiline-table"
+input = '''
+---------------------------------------------------------
+   Mid    Basic         Count Words
+   Col    Value           Col Col
+--------- ----- ------------- ------------------------
+  north   gate            3.5 The wall runs along the
+                              river for a long way.
+
+  south   door             40 A short path leads to
+                              the old mill and the
+                              bridge.
+---------------------------------------------------------
+
+Table: Two places on the map.
+'''
+
+[[case]]
+id = "grid-table"
+input = '''
++---------------+---------------+
+| Tool          | Weight        |
++===============+===============+
+| Hammer        | 0.8 kg        |
++---------------+---------------+
+| Saw           | 1.1 kg        |
++---------------+---------------+
+'''
+
+[[case]]
+id = "grid-table-blocks"
+input = '''
++-----------+-----------+
+| A         | B         |
++===========+===========+
+| - x       | para 1    |
+| - y       |           |
+|           | para 2    |
++-----------+-----------+
+'''
+
+[[case]]
+id = "grid-table-colspan"
+input = '''
++-----+-----+
+| a   | b   |
++=====+=====+
+| wide cell |
++-----+-----+
+| c   | d   |
++-----+-----+
+'''
+
+[[case]]
+id = "grid-table-rowspan"
+input = '''
++-----+-----+
+| a   | b   |
++=====+=====+
+| tall| c   |
+|     +-----+
+|     | d   |
++-----+-----+
+'''
+
+[[case]]
+id = "grid-table-foot"
+input = '''
++-----+-----+
+| a   | b   |
++=====+=====+
+| 1   | 2   |
++=====+=====+
+| f1  | f2  |
++=====+=====+
+'''
+
+[[case]]
+id = "grid-table-aligns"
+input = '''
++-----+-----+-----+
+| l   | c   | r   |
++:====+:===:+====:+
+| 1   | 2   | 3   |
++-----+-----+-----+
+'''
+
+[[case]]
+id = "grid-table-headless"
+input = '''
++-----+-----+
+| 1   | 2   |
++-----+-----+
+'''
+
+[[case]]
+id = "table-in-list"
+input = '''
+- | a |
+  |---|
+  | 1 |
+'''
+
+[[case]]
+id = "table-in-blockquote"
+input = '''
+> | a |
+> |---|
+> | 1 |
+'''
+
+[[case]]
+id = "two-tables"
+input = '''
+| a |
+|---|
+| 1 |
+
+| b |
+|---|
+| 2 |
+'''
+
+[[case]]
+id = "pipe-escaped-pipe"
+input = '''
+| a \| b |
+|---|
+| c |
+'''
+
+[[case]]
+id = "pipe-many-cols"
+input = '''
+| c0 | c1 | c2 | c3 | c4 | c5 | c6 | c7 | c8 |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+'''

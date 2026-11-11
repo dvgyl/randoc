@@ -1,0 +1,352 @@
+# Headings and sections, with and without section divs.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "h1-h6"
+input = '''
+# 1
+
+## 2
+
+### 3
+
+#### 4
+
+##### 5
+
+###### 6
+'''
+
+[[case]]
+id = "h7"
+input = '''
+####### seven
+'''
+
+[[case]]
+id = "setext"
+input = '''
+Title
+=====
+
+Sub
+---
+'''
+
+[[case]]
+id = "heading-id"
+input = '''
+# Head {#custom}
+'''
+
+[[case]]
+id = "heading-class"
+input = '''
+# Head {.cls}
+'''
+
+[[case]]
+id = "heading-kv"
+input = '''
+# Head {k=v}
+'''
+
+[[case]]
+id = "heading-all-attrs"
+input = '''
+# Head {#hid .c1 .c2 k=v lang=en}
+'''
+
+[[case]]
+id = "heading-unnumbered"
+input = '''
+# Head {-}
+'''
+
+[[case]]
+id = "heading-markup"
+input = '''
+# *Em* and `code` & [link](u)
+'''
+
+[[case]]
+id = "heading-empty"
+input = '''
+#
+'''
+
+[[case]]
+id = "heading-auto-id-dup"
+input = '''
+# Same
+
+# Same
+'''
+
+[[case]]
+id = "heading-hierarchy"
+input = '''
+# A
+
+text a
+
+## B
+
+text b
+
+### C
+
+## D
+
+# E
+'''
+
+[[case]]
+id = "heading-skip-level"
+input = '''
+# A
+
+### C
+
+## B
+'''
+
+[[case]]
+id = "heading-starts-at-2"
+input = '''
+## Two
+
+# One
+'''
+
+[[case]]
+id = "heading-in-blockquote"
+input = '''
+> # Quoted
+>
+> text
+'''
+
+[[case]]
+id = "heading-in-list"
+input = '''
+- # In list
+'''
+
+[[case]]
+id = "heading-in-div"
+input = '''
+::: d
+# In div
+
+text
+:::
+'''
+
+[[case]]
+id = "heading-in-div-with-id"
+input = '''
+::: {#did .d k=v}
+## Inner {#hid .hc hk=hv}
+
+x
+
+### Sub
+
+y
+:::
+'''
+
+[[case]]
+id = "div-heading-not-first"
+input = '''
+::: d2
+z
+
+# Mid
+:::
+
+# Last
+'''
+
+[[case]]
+id = "heading-in-div-nested"
+input = '''
+::: a
+::: b
+# H
+:::
+:::
+'''
+
+[[case]]
+id = "div-two-headings-same-level"
+input = '''
+::: d
+# A
+
+a
+
+# B
+
+b
+:::
+'''
+
+[[case]]
+id = "div-heading-then-higher"
+input = '''
+::: d
+## A
+
+a
+
+# B
+:::
+'''
+
+[[case]]
+id = "div-heading-then-lower"
+input = '''
+::: d
+# A
+
+## B
+
+b
+:::
+'''
+
+[[case]]
+id = "heading-level7-section"
+input = '''
+# A
+
+####### seven
+
+text
+'''
+
+[[case]]
+id = "heading-with-note"
+input = '''
+# Head^[note]
+
+text
+'''
+
+[[case]]
+id = "heading-with-linebreak"
+input = '''
+# A\
+B
+'''
+
+[[case]]
+id = "heading-long-wrap"
+input = '''
+# word word word word word word word word word word word word word word word word word word word word 
+'''
+
+[[case]]
+id = "heading-kv-data"
+input = '''
+# H {data-x=1 aria-label=l style=s}
+'''
+
+[[case]]
+id = "heading-class-then-heading"
+input = '''
+# A {.x}
+
+## B {.y}
+
+# C
+'''
+
+[[case]]
+id = "heading-trailing-hashes"
+input = '''
+## Title ##
+'''
+
+[[case]]
+id = "heading-only-symbols"
+input = '''
+# !!!
+'''
+
+[[case]]
+id = "heading-unicode"
+input = '''
+# Über Ñandú
+'''
+
+[[case]]
+id = "heading-section-class"
+input = '''
+# A {.section}
+'''
+
+[[case]]
+id = "heading-unlisted"
+input = '''
+# A {.unlisted .unnumbered}
+'''
+
+[[case]]
+id = "div-with-section-heading-after"
+input = '''
+# A
+
+::: x
+inside
+:::
+
+after
+'''
+
+[[case]]
+id = "heading-in-table-cell-like"
+input = '''
+- a
+
+# B
+'''
+
+[[case]]
+id = "headings-many"
+input = '''
+# H0
+
+p0
+
+## H1
+
+p1
+
+### H2
+
+p2
+
+# H3
+
+p3
+
+## H4
+
+p4
+
+### H5
+
+p5
+
+# H6
+
+p6
+
+## H7
+
+p7
+'''

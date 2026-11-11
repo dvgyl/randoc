@@ -1,0 +1,249 @@
+# Tables from document trees: normalization of spans, widths and sections.
+from = "json"
+to = ["html", "html4"]
+
+[[case]]
+id = "tree-empty-table"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [], [["", [], []], []], [], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-no-colspecs-cells-dropped"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-widths"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignLeft"}, {"t": "ColWidth", "c": 0.25}], [{"t": "AlignRight"}, {"t": "ColWidth", "c": 0.75}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-widths-partial"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.5}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-widths-tiny"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.001}], [{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.999}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-widths-zero"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.0}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-widths-third"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.3333333333333333}], [{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.3333333333333333}], [{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.3333333333333333}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "3"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-row-head-columns"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 1, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "d"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "e"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-row-head-columns-2"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 2, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-row-head-too-many"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 5, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-row-head-negative"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], -1, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-intermediate-head"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "ih"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "ih2"}]}]]]]], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-intermediate-head-only"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "ih"}]}]]]]], []]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-two-bodies"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]]]]]], [["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-empty-body"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], []]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-foot"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f"}]}]]]]]]]}]}
+'''
+
+[[case]]
+id = "tree-foot-no-body"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]]]]]], [], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f"}]}]]]]]]]}]}
+'''
+
+[[case]]
+id = "tree-foot-only"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f"}]}]]]]]]]}]}
+'''
+
+[[case]]
+id = "tree-colspan"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 2, [{"t": "Plain", "c": [{"t": "Str", "c": "wide"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "n"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "2"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "3"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-colspan-too-wide"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 9, [{"t": "Plain", "c": [{"t": "Str", "c": "wide"}]}]]]]]], [], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-rowspan"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 2, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "tall"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-rowspan-too-long"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 7, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "tall"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-rowspan-colspan"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 2, 2, [{"t": "Plain", "c": [{"t": "Str", "c": "big"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "d"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "e"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-rowspan-in-head"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 2, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]], [], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-missing-cells"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignCenter"}, {"t": "ColWidthDefault"}], [{"t": "AlignCenter"}, {"t": "ColWidthDefault"}], [{"t": "AlignCenter"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], []]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-extra-cells"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]]]], [], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-zero-spans"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 0, 0, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, -3, -1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]], [], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-cell-align-override"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignLeft"}, {"t": "ColWidthDefault"}], [{"t": "AlignLeft"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignRight"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-cell-attrs"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["cid", ["cc"], [["k", "v"]]], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-row-attrs"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["rid", ["rc"], [["k", "v"]]], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]]]]]], [[["", [], []], 0, [], [[["", ["odd"], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-section-attrs"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["hid", ["hc"], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]]]]]], [[["bid", ["bc"], [["k", "v"]]], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["fid", [], [["k", "v"]]], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f"}]}]]]]]]]}]}
+'''
+
+[[case]]
+id = "tree-table-attrs"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["tid", ["tc"], [["k", "v"], ["summary", "s"]]], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-caption-plain"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "cap"}]}]], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-caption-para"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, [{"t": "Para", "c": [{"t": "Str", "c": "cap"}]}]], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-caption-two-blocks"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, [{"t": "Para", "c": [{"t": "Str", "c": "one"}]}, {"t": "Para", "c": [{"t": "Str", "c": "two"}]}]], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-caption-short"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [[{"t": "Str", "c": "short"}], [{"t": "Plain", "c": [{"t": "Str", "c": "long"}]}]], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-cell-empty-blocks"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, []]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-cell-multi-blocks"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Para", "c": [{"t": "Str", "c": "a"}]}, {"t": "Para", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-cell-list"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "BulletList", "c": [[{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-cell-plain-then-para"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}, {"t": "Para", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "tree-nested-table"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "in"}]}]]]]]]], [["", [], []], []]]}]]]]]]], [["", [], []], []]]}]}
+'''

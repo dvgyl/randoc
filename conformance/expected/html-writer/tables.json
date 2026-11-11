@@ -1,0 +1,725 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "grid-table#e2e:html": {
+      "key": "e63a7282cc78eca8",
+      "exit": 0,
+      "stdout": "<table style=\"width:44%;\">\n<colgroup>\n<col style=\"width: 22%\" />\n<col style=\"width: 22%\" />\n</colgroup>\n<thead>\n<tr>\n<th>Tool</th>\n<th>Weight</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Hammer</td>\n<td>0.8 kg</td>\n</tr>\n<tr>\n<td>Saw</td>\n<td>1.1 kg</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table#e2e:html4": {
+      "key": "aa979f5f678891bd",
+      "exit": 0,
+      "stdout": "<table style=\"width:44%;\">\n<colgroup>\n<col width=\"22%\" />\n<col width=\"22%\" />\n</colgroup>\n<thead>\n<tr>\n<th>Tool</th>\n<th>Weight</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Hammer</td>\n<td>0.8 kg</td>\n</tr>\n<tr>\n<td>Saw</td>\n<td>1.1 kg</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table#read": {
+      "key": "3ce512e770c78b8b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.2222222222222222}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.2222222222222222}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tool\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Weight\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Hammer\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"0.8\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"kg\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Saw\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1.1\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"kg\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table#write:html": {
+      "key": "3b9f3bddfd0614dc",
+      "exit": 0,
+      "stdout": "<table style=\"width:44%;\">\n<colgroup>\n<col style=\"width: 22%\" />\n<col style=\"width: 22%\" />\n</colgroup>\n<thead>\n<tr>\n<th>Tool</th>\n<th>Weight</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Hammer</td>\n<td>0.8 kg</td>\n</tr>\n<tr>\n<td>Saw</td>\n<td>1.1 kg</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table#write:html4": {
+      "key": "d95fb8b1ba660ca5",
+      "exit": 0,
+      "stdout": "<table style=\"width:44%;\">\n<colgroup>\n<col width=\"22%\" />\n<col width=\"22%\" />\n</colgroup>\n<thead>\n<tr>\n<th>Tool</th>\n<th>Weight</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Hammer</td>\n<td>0.8 kg</td>\n</tr>\n<tr>\n<td>Saw</td>\n<td>1.1 kg</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-aligns#e2e:html": {
+      "key": "bf1686622afa6747",
+      "exit": 0,
+      "stdout": "<table style=\"width:25%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th style=\"text-align: left;\">l</th>\n<th style=\"text-align: center;\">c</th>\n<th style=\"text-align: right;\">r</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">1</td>\n<td style=\"text-align: center;\">2</td>\n<td style=\"text-align: right;\">3</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-aligns#e2e:html4": {
+      "key": "108b0bfe2224ea52",
+      "exit": 0,
+      "stdout": "<table style=\"width:25%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th align=\"left\">l</th>\n<th align=\"center\">c</th>\n<th align=\"right\">r</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">1</td>\n<td align=\"center\">2</td>\n<td align=\"right\">3</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-aligns#read": {
+      "key": "d7ea651208e60a78",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"l\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"r\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table-aligns#write:html": {
+      "key": "97cb8590b2083522",
+      "exit": 0,
+      "stdout": "<table style=\"width:25%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th style=\"text-align: left;\">l</th>\n<th style=\"text-align: center;\">c</th>\n<th style=\"text-align: right;\">r</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">1</td>\n<td style=\"text-align: center;\">2</td>\n<td style=\"text-align: right;\">3</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-aligns#write:html4": {
+      "key": "82feb0962efe634d",
+      "exit": 0,
+      "stdout": "<table style=\"width:25%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th align=\"left\">l</th>\n<th align=\"center\">c</th>\n<th align=\"right\">r</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">1</td>\n<td align=\"center\">2</td>\n<td align=\"right\">3</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-blocks#e2e:html": {
+      "key": "02a3a1586acd9f07",
+      "exit": 0,
+      "stdout": "<table style=\"width:33%;\">\n<colgroup>\n<col style=\"width: 16%\" />\n<col style=\"width: 16%\" />\n</colgroup>\n<thead>\n<tr>\n<th><p>A</p></th>\n<th><p>B</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><ul>\n<li>x</li>\n<li>y</li>\n</ul></td>\n<td><p>para 1</p>\n<p>para 2</p></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-blocks#e2e:html4": {
+      "key": "ecb925e65ab03ace",
+      "exit": 0,
+      "stdout": "<table style=\"width:33%;\">\n<colgroup>\n<col width=\"16%\" />\n<col width=\"16%\" />\n</colgroup>\n<thead>\n<tr>\n<th><p>A</p></th>\n<th><p>B</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><ul>\n<li>x</li>\n<li>y</li>\n</ul></td>\n<td><p>para 1</p>\n<p>para 2</p></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-blocks#read": {
+      "key": "d907285e63c959f4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.16666666666666666}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.16666666666666666}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"B\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"1\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table-blocks#write:html": {
+      "key": "bff94aca4c850c76",
+      "exit": 0,
+      "stdout": "<table style=\"width:33%;\">\n<colgroup>\n<col style=\"width: 16%\" />\n<col style=\"width: 16%\" />\n</colgroup>\n<thead>\n<tr>\n<th><p>A</p></th>\n<th><p>B</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><ul>\n<li>x</li>\n<li>y</li>\n</ul></td>\n<td><p>para 1</p>\n<p>para 2</p></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-blocks#write:html4": {
+      "key": "ab5feba1fcdcb109",
+      "exit": 0,
+      "stdout": "<table style=\"width:33%;\">\n<colgroup>\n<col width=\"16%\" />\n<col width=\"16%\" />\n</colgroup>\n<thead>\n<tr>\n<th><p>A</p></th>\n<th><p>B</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><ul>\n<li>x</li>\n<li>y</li>\n</ul></td>\n<td><p>para 1</p>\n<p>para 2</p></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-colspan#e2e:html": {
+      "key": "67dbbfa40bfa91a0",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td colspan=\"2\">wide cell</td>\n</tr>\n<tr>\n<td>c</td>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-colspan#e2e:html4": {
+      "key": "d88b14676433e7c9",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td colspan=\"2\">wide cell</td>\n</tr>\n<tr>\n<td>c</td>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-colspan#read": {
+      "key": "31308182c219f723",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,2,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"wide\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table-colspan#write:html": {
+      "key": "58e539b00126ec1c",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td colspan=\"2\">wide cell</td>\n</tr>\n<tr>\n<td>c</td>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-colspan#write:html4": {
+      "key": "4cac7d07a301f137",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td colspan=\"2\">wide cell</td>\n</tr>\n<tr>\n<td>c</td>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-foot#e2e:html": {
+      "key": "b337fe07b6e45fb2",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody><tfoot>\n<tr>\n<td>f1</td>\n<td>f2</td>\n</tr>\n</tfoot>\n\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-foot#e2e:html4": {
+      "key": "49b084e524fb894b",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody><tfoot>\n<tr>\n<td>f1</td>\n<td>f2</td>\n</tr>\n</tfoot>\n\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-foot#read": {
+      "key": "11ca22ce9532bdd9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"f1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"f2\"}]}]]]]]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table-foot#write:html": {
+      "key": "9eeff5ef6304faf0",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody><tfoot>\n<tr>\n<td>f1</td>\n<td>f2</td>\n</tr>\n</tfoot>\n\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-foot#write:html4": {
+      "key": "c1513bc486542659",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody><tfoot>\n<tr>\n<td>f1</td>\n<td>f2</td>\n</tr>\n</tfoot>\n\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-headless#e2e:html": {
+      "key": "f9213735aa053b94",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-headless#e2e:html4": {
+      "key": "8e8135365f7f9a9d",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-headless#read": {
+      "key": "5177ca4cb6ed7883",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table-headless#write:html": {
+      "key": "15283fab73d20c7a",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-headless#write:html4": {
+      "key": "e80561c85f4fe8ef",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-rowspan#e2e:html": {
+      "key": "56680b7bd4919ed4",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td rowspan=\"2\">tall</td>\n<td>c</td>\n</tr>\n<tr>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-rowspan#e2e:html4": {
+      "key": "f7330b746dcb9835",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td rowspan=\"2\">tall</td>\n<td>c</td>\n</tr>\n<tr>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-rowspan#read": {
+      "key": "4906d2bc4bb23993",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},2,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"tall\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "grid-table-rowspan#write:html": {
+      "key": "52dce160c45a5c5d",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col style=\"width: 8%\" />\n<col style=\"width: 8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td rowspan=\"2\">tall</td>\n<td>c</td>\n</tr>\n<tr>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "grid-table-rowspan#write:html4": {
+      "key": "3f792811f0a58bac",
+      "exit": 0,
+      "stdout": "<table style=\"width:16%;\">\n<colgroup>\n<col width=\"8%\" />\n<col width=\"8%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td rowspan=\"2\">tall</td>\n<td>c</td>\n</tr>\n<tr>\n<td>d</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "multiline-table#e2e:html": {
+      "key": "e0907f509dda3777",
+      "exit": 0,
+      "stdout": "<table style=\"width:76%;\">\n<caption>Two places on the map.</caption>\n<colgroup>\n<col style=\"width: 13%\" />\n<col style=\"width: 8%\" />\n<col style=\"width: 19%\" />\n<col style=\"width: 34%\" />\n</colgroup>\n<thead>\n<tr>\n<th style=\"text-align: center;\">Mid Col</th>\n<th>Basic Value</th>\n<th style=\"text-align: right;\">Count Col</th>\n<th style=\"text-align: left;\">Words Col</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: center;\">north</td>\n<td>gate</td>\n<td style=\"text-align: right;\">3.5</td>\n<td style=\"text-align: left;\">The wall runs along the river for a long\nway.</td>\n</tr>\n<tr>\n<td style=\"text-align: center;\">south</td>\n<td>door</td>\n<td style=\"text-align: right;\">40</td>\n<td style=\"text-align: left;\">A short path leads to the old mill and the\nbridge.</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "multiline-table#e2e:html4": {
+      "key": "b2a9929e8c90c7f2",
+      "exit": 0,
+      "stdout": "<table style=\"width:76%;\">\n<caption>Two places on the map.</caption>\n<colgroup>\n<col width=\"13%\" />\n<col width=\"8%\" />\n<col width=\"19%\" />\n<col width=\"34%\" />\n</colgroup>\n<thead>\n<tr>\n<th align=\"center\">Mid Col</th>\n<th>Basic Value</th>\n<th align=\"right\">Count Col</th>\n<th align=\"left\">Words Col</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">north</td>\n<td>gate</td>\n<td align=\"right\">3.5</td>\n<td align=\"left\">The wall runs along the river for a long way.</td>\n</tr>\n<tr>\n<td align=\"center\">south</td>\n<td>door</td>\n<td align=\"right\">40</td>\n<td align=\"left\">A short path leads to the old mill and the bridge.</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "multiline-table#read": {
+      "key": "b1681f6af5440894",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"places\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"on\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"map.\"}]}]],[[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidth\",\"c\":0.1388888888888889}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidth\",\"c\":0.19444444444444445}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidth\",\"c\":0.3472222222222222}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Mid\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Col\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Basic\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Value\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Count\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Col\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Words\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Col\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"north\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"gate\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3.5\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wall\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"runs\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"along\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"way.\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"south\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"door\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"40\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"short\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"path\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"leads\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"old\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mill\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"bridge.\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "multiline-table#write:html": {
+      "key": "f46ebfa6657a974a",
+      "exit": 0,
+      "stdout": "<table style=\"width:76%;\">\n<caption>Two places on the map.</caption>\n<colgroup>\n<col style=\"width: 13%\" />\n<col style=\"width: 8%\" />\n<col style=\"width: 19%\" />\n<col style=\"width: 34%\" />\n</colgroup>\n<thead>\n<tr>\n<th style=\"text-align: center;\">Mid Col</th>\n<th>Basic Value</th>\n<th style=\"text-align: right;\">Count Col</th>\n<th style=\"text-align: left;\">Words Col</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: center;\">north</td>\n<td>gate</td>\n<td style=\"text-align: right;\">3.5</td>\n<td style=\"text-align: left;\">The wall runs along the river for a long\nway.</td>\n</tr>\n<tr>\n<td style=\"text-align: center;\">south</td>\n<td>door</td>\n<td style=\"text-align: right;\">40</td>\n<td style=\"text-align: left;\">A short path leads to the old mill and the\nbridge.</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "multiline-table#write:html4": {
+      "key": "3dc8bbfaf4de118b",
+      "exit": 0,
+      "stdout": "<table style=\"width:76%;\">\n<caption>Two places on the map.</caption>\n<colgroup>\n<col width=\"13%\" />\n<col width=\"8%\" />\n<col width=\"19%\" />\n<col width=\"34%\" />\n</colgroup>\n<thead>\n<tr>\n<th align=\"center\">Mid Col</th>\n<th>Basic Value</th>\n<th align=\"right\">Count Col</th>\n<th align=\"left\">Words Col</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">north</td>\n<td>gate</td>\n<td align=\"right\">3.5</td>\n<td align=\"left\">The wall runs along the river for a long way.</td>\n</tr>\n<tr>\n<td align=\"center\">south</td>\n<td>door</td>\n<td align=\"right\">40</td>\n<td align=\"left\">A short path leads to the old mill and the bridge.</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-aligns#e2e:html": {
+      "key": "eb984a91ca632432",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\">l</th>\n<th style=\"text-align: center;\">c</th>\n<th style=\"text-align: right;\">r</th>\n<th>d</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">1</td>\n<td style=\"text-align: center;\">2</td>\n<td style=\"text-align: right;\">3</td>\n<td>4</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-aligns#e2e:html4": {
+      "key": "90733fa3051594e3",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th align=\"left\">l</th>\n<th align=\"center\">c</th>\n<th align=\"right\">r</th>\n<th>d</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">1</td>\n<td align=\"center\">2</td>\n<td align=\"right\">3</td>\n<td>4</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-aligns#read": {
+      "key": "9c022dca57bce4ad",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"l\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"r\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-aligns#write:html": {
+      "key": "d9e2a1476a6875e1",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\">l</th>\n<th style=\"text-align: center;\">c</th>\n<th style=\"text-align: right;\">r</th>\n<th>d</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">1</td>\n<td style=\"text-align: center;\">2</td>\n<td style=\"text-align: right;\">3</td>\n<td>4</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-aligns#write:html4": {
+      "key": "e33b7172a711ac4c",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th align=\"left\">l</th>\n<th align=\"center\">c</th>\n<th align=\"right\">r</th>\n<th>d</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">1</td>\n<td align=\"center\">2</td>\n<td align=\"right\">3</td>\n<td>4</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption#e2e:html": {
+      "key": "bc1c2c2589be131e",
+      "exit": 0,
+      "stdout": "<table>\n<caption>The caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption#e2e:html4": {
+      "key": "bdccf469084bf141",
+      "exit": 0,
+      "stdout": "<table>\n<caption>The caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption#read": {
+      "key": "141bf3077623167b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"caption\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-caption#write:html": {
+      "key": "a6db01b350f54cb6",
+      "exit": 0,
+      "stdout": "<table>\n<caption>The caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption#write:html4": {
+      "key": "78336d5390a52457",
+      "exit": 0,
+      "stdout": "<table>\n<caption>The caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-attrs#e2e:html": {
+      "key": "74f95d79dbd19f88",
+      "exit": 0,
+      "stdout": "<table id=\"tbl\" class=\"x\">\n<caption>Cap</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-attrs#e2e:html4": {
+      "key": "834904ac99d8530f",
+      "exit": 0,
+      "stdout": "<table id=\"tbl\" class=\"x\">\n<caption>Cap</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-attrs#read": {
+      "key": "7126d6416dc5cb4d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"tbl\",[\"x\"],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-caption-attrs#write:html": {
+      "key": "6b0b6fea9e8f02e9",
+      "exit": 0,
+      "stdout": "<table id=\"tbl\" class=\"x\">\n<caption>Cap</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-attrs#write:html4": {
+      "key": "2ecc79d6cda47d84",
+      "exit": 0,
+      "stdout": "<table id=\"tbl\" class=\"x\">\n<caption>Cap</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-markup#e2e:html": {
+      "key": "d2aa8e5b83c7815c",
+      "exit": 0,
+      "stdout": "<table>\n<caption><em>Em</em> caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-markup#e2e:html4": {
+      "key": "16a753440b989989",
+      "exit": 0,
+      "stdout": "<table>\n<caption><em>Em</em> caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-markup#read": {
+      "key": "61c0d0258fe10be3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Em\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"caption\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-caption-markup#write:html": {
+      "key": "398c9e602c767e04",
+      "exit": 0,
+      "stdout": "<table>\n<caption><em>Em</em> caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-caption-markup#write:html4": {
+      "key": "5c720b447f48ea1d",
+      "exit": 0,
+      "stdout": "<table>\n<caption><em>Em</em> caption</caption>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-empty-cells#e2e:html": {
+      "key": "d9200ac67c524530",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td></td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-empty-cells#e2e:html4": {
+      "key": "855968554c671929",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td></td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-empty-cells#read": {
+      "key": "483d127fb52640c7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-empty-cells#write:html": {
+      "key": "48265f3d0721954f",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td></td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-empty-cells#write:html4": {
+      "key": "94b74a5e3faf71ee",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td></td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-escaped-pipe#e2e:html": {
+      "key": "5155e97ee74e4f89",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a | b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>c</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-escaped-pipe#e2e:html4": {
+      "key": "5e8aa16c36f017f2",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a | b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>c</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-escaped-pipe#read": {
+      "key": "5e3d07d9168e9b68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-escaped-pipe#write:html": {
+      "key": "54c5d1b1da153e03",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a | b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>c</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-escaped-pipe#write:html4": {
+      "key": "89381f474e1c1900",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a | b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>c</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-inline-markup#e2e:html": {
+      "key": "9bdc79c7b4516eea",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th><em>a</em></th>\n<th><code>b</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><a href=\"u\">l</a></td>\n<td><strong>s</strong></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-inline-markup#e2e:html4": {
+      "key": "ee021d46c11dd4e5",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th><em>a</em></th>\n<th><code>b</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><a href=\"u\">l</a></td>\n<td><strong>s</strong></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-inline-markup#read": {
+      "key": "98f1c9a80e9d1047",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"b\"]}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"l\"}],[\"u\",\"\"]]}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"s\"}]}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-inline-markup#write:html": {
+      "key": "3ca7e7d53f6cf420",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th><em>a</em></th>\n<th><code>b</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><a href=\"u\">l</a></td>\n<td><strong>s</strong></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-inline-markup#write:html4": {
+      "key": "d28363d198c70657",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th><em>a</em></th>\n<th><code>b</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><a href=\"u\">l</a></td>\n<td><strong>s</strong></td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-many-cols#e2e:html": {
+      "key": "9f4e8021301808fa",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>c0</th>\n<th>c1</th>\n<th>c2</th>\n<th>c3</th>\n<th>c4</th>\n<th>c5</th>\n<th>c6</th>\n<th>c7</th>\n<th>c8</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>0</td>\n<td>1</td>\n<td>2</td>\n<td>3</td>\n<td>4</td>\n<td>5</td>\n<td>6</td>\n<td>7</td>\n<td>8</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-many-cols#e2e:html4": {
+      "key": "44610d81162057b5",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>c0</th>\n<th>c1</th>\n<th>c2</th>\n<th>c3</th>\n<th>c4</th>\n<th>c5</th>\n<th>c6</th>\n<th>c7</th>\n<th>c8</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>0</td>\n<td>1</td>\n<td>2</td>\n<td>3</td>\n<td>4</td>\n<td>5</td>\n<td>6</td>\n<td>7</td>\n<td>8</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-many-cols#read": {
+      "key": "121e0f53fc33b187",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c0\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c2\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c3\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c4\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c5\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c6\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c7\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c8\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"0\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"5\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"6\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"7\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"8\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-many-cols#write:html": {
+      "key": "5bb2fcc70fa3c40c",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>c0</th>\n<th>c1</th>\n<th>c2</th>\n<th>c3</th>\n<th>c4</th>\n<th>c5</th>\n<th>c6</th>\n<th>c7</th>\n<th>c8</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>0</td>\n<td>1</td>\n<td>2</td>\n<td>3</td>\n<td>4</td>\n<td>5</td>\n<td>6</td>\n<td>7</td>\n<td>8</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-many-cols#write:html4": {
+      "key": "60d947db00080e05",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>c0</th>\n<th>c1</th>\n<th>c2</th>\n<th>c3</th>\n<th>c4</th>\n<th>c5</th>\n<th>c6</th>\n<th>c7</th>\n<th>c8</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>0</td>\n<td>1</td>\n<td>2</td>\n<td>3</td>\n<td>4</td>\n<td>5</td>\n<td>6</td>\n<td>7</td>\n<td>8</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-no-body#e2e:html": {
+      "key": "d7016c37430da24c",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-no-body#e2e:html4": {
+      "key": "b676d876421cb4e1",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-no-body#read": {
+      "key": "706677aba4e311ef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-no-body#write:html": {
+      "key": "38e0b386d0a0ade4",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-no-body#write:html4": {
+      "key": "8786d9da7c06752d",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-simple#e2e:html": {
+      "key": "c688b422709b39eb",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-simple#e2e:html4": {
+      "key": "7e6b5fab22753e6a",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-simple#read": {
+      "key": "10a4a9f4a7c2f514",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-simple#write:html": {
+      "key": "fce866f7082d2b0a",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-simple#write:html4": {
+      "key": "92e4e1bc138037eb",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-wide-relative#e2e:html": {
+      "key": "a8172448a4159f03",
+      "exit": 0,
+      "stdout": "<table>\n<colgroup>\n<col style=\"width: 75%\" />\n<col style=\"width: 25%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>long long long long long long long long long long long long long\nlong long long long long long long</td>\n<td>x</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-wide-relative#e2e:html4": {
+      "key": "d2dcd475707a322c",
+      "exit": 0,
+      "stdout": "<table>\n<colgroup>\n<col width=\"75%\" />\n<col width=\"25%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>long long long long long long long long long long long long long\nlong long long long long long long</td>\n<td>x</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-wide-relative#read": {
+      "key": "d519c57cb139c6c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.75}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.25}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "pipe-wide-relative#write:html": {
+      "key": "ab92319ec6775e9b",
+      "exit": 0,
+      "stdout": "<table>\n<colgroup>\n<col style=\"width: 75%\" />\n<col style=\"width: 25%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>long long long long long long long long long long long long long\nlong long long long long long long</td>\n<td>x</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "pipe-wide-relative#write:html4": {
+      "key": "d1701ccbaa1af256",
+      "exit": 0,
+      "stdout": "<table>\n<colgroup>\n<col width=\"75%\" />\n<col width=\"25%\" />\n</colgroup>\n<thead>\n<tr>\n<th>a</th>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>long long long long long long long long long long long long long\nlong long long long long long long</td>\n<td>x</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table#e2e:html": {
+      "key": "3ab91b0eb799d1bf",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th style=\"text-align: right;\">Qty</th>\n<th style=\"text-align: left;\">Name</th>\n<th style=\"text-align: center;\">Kind</th>\n<th>Note</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: right;\">7</td>\n<td style=\"text-align: left;\">pear</td>\n<td style=\"text-align: center;\">ripe</td>\n<td>ok</td>\n</tr>\n<tr>\n<td style=\"text-align: right;\">45</td>\n<td style=\"text-align: left;\">plum</td>\n<td style=\"text-align: center;\">green</td>\n<td>no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table#e2e:html4": {
+      "key": "83a91eb22842f4f6",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th align=\"right\">Qty</th>\n<th align=\"left\">Name</th>\n<th align=\"center\">Kind</th>\n<th>Note</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"right\">7</td>\n<td align=\"left\">pear</td>\n<td align=\"center\">ripe</td>\n<td>ok</td>\n</tr>\n<tr>\n<td align=\"right\">45</td>\n<td align=\"left\">plum</td>\n<td align=\"center\">green</td>\n<td>no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table#read": {
+      "key": "28ab3618d97f2c54",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Qty\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Name\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Kind\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Note\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"7\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"pear\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ripe\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ok\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"45\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"plum\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"green\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"no\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "simple-table#write:html": {
+      "key": "5cf4d3f39d1dcea5",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th style=\"text-align: right;\">Qty</th>\n<th style=\"text-align: left;\">Name</th>\n<th style=\"text-align: center;\">Kind</th>\n<th>Note</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: right;\">7</td>\n<td style=\"text-align: left;\">pear</td>\n<td style=\"text-align: center;\">ripe</td>\n<td>ok</td>\n</tr>\n<tr>\n<td style=\"text-align: right;\">45</td>\n<td style=\"text-align: left;\">plum</td>\n<td style=\"text-align: center;\">green</td>\n<td>no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table#write:html4": {
+      "key": "4da5a3accd7d071c",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th align=\"right\">Qty</th>\n<th align=\"left\">Name</th>\n<th align=\"center\">Kind</th>\n<th>Note</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"right\">7</td>\n<td align=\"left\">pear</td>\n<td align=\"center\">ripe</td>\n<td>ok</td>\n</tr>\n<tr>\n<td align=\"right\">45</td>\n<td align=\"left\">plum</td>\n<td align=\"center\">green</td>\n<td>no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table-noheader#e2e:html": {
+      "key": "f991511836726313",
+      "exit": 0,
+      "stdout": "<table>\n<tbody>\n<tr>\n<td style=\"text-align: right;\">7</td>\n<td style=\"text-align: left;\">pear</td>\n<td style=\"text-align: center;\">ripe</td>\n<td style=\"text-align: left;\">ok</td>\n</tr>\n<tr>\n<td style=\"text-align: right;\">45</td>\n<td style=\"text-align: left;\">plum</td>\n<td style=\"text-align: center;\">green</td>\n<td style=\"text-align: left;\">no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table-noheader#e2e:html4": {
+      "key": "ed571d00be75c5ae",
+      "exit": 0,
+      "stdout": "<table>\n<tbody>\n<tr>\n<td align=\"right\">7</td>\n<td align=\"left\">pear</td>\n<td align=\"center\">ripe</td>\n<td align=\"left\">ok</td>\n</tr>\n<tr>\n<td align=\"right\">45</td>\n<td align=\"left\">plum</td>\n<td align=\"center\">green</td>\n<td align=\"left\">no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table-noheader#read": {
+      "key": "f3c368362fc15698",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"7\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"pear\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ripe\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ok\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"45\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"plum\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"green\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"no\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "simple-table-noheader#write:html": {
+      "key": "0768b67419fb7cfc",
+      "exit": 0,
+      "stdout": "<table>\n<tbody>\n<tr>\n<td style=\"text-align: right;\">7</td>\n<td style=\"text-align: left;\">pear</td>\n<td style=\"text-align: center;\">ripe</td>\n<td style=\"text-align: left;\">ok</td>\n</tr>\n<tr>\n<td style=\"text-align: right;\">45</td>\n<td style=\"text-align: left;\">plum</td>\n<td style=\"text-align: center;\">green</td>\n<td style=\"text-align: left;\">no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "simple-table-noheader#write:html4": {
+      "key": "1da8bfbfd67593a1",
+      "exit": 0,
+      "stdout": "<table>\n<tbody>\n<tr>\n<td align=\"right\">7</td>\n<td align=\"left\">pear</td>\n<td align=\"center\">ripe</td>\n<td align=\"left\">ok</td>\n</tr>\n<tr>\n<td align=\"right\">45</td>\n<td align=\"left\">plum</td>\n<td align=\"center\">green</td>\n<td align=\"left\">no</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "table-in-blockquote#e2e:html": {
+      "key": "3aecab2976771a0e",
+      "exit": 0,
+      "stdout": "<blockquote>\n<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n</blockquote>\n",
+      "stderr": ""
+    },
+    "table-in-blockquote#e2e:html4": {
+      "key": "644fed941fc969a7",
+      "exit": 0,
+      "stdout": "<blockquote>\n<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n</blockquote>\n",
+      "stderr": ""
+    },
+    "table-in-blockquote#read": {
+      "key": "c68c70e2e5825d81",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}]}\n",
+      "stderr": ""
+    },
+    "table-in-blockquote#write:html": {
+      "key": "10ab7938fe65f69c",
+      "exit": 0,
+      "stdout": "<blockquote>\n<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n</blockquote>\n",
+      "stderr": ""
+    },
+    "table-in-blockquote#write:html4": {
+      "key": "05bab0c006624f6d",
+      "exit": 0,
+      "stdout": "<blockquote>\n<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n</blockquote>\n",
+      "stderr": ""
+    },
+    "table-in-list#e2e:html": {
+      "key": "3ecac2ed38e3bb61",
+      "exit": 0,
+      "stdout": "<ul>\n<li><table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table></li>\n</ul>\n",
+      "stderr": ""
+    },
+    "table-in-list#e2e:html4": {
+      "key": "7070e29225619568",
+      "exit": 0,
+      "stdout": "<ul>\n<li><table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table></li>\n</ul>\n",
+      "stderr": ""
+    },
+    "table-in-list#read": {
+      "key": "27c6f649a1fdf5ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]}]]}]}\n",
+      "stderr": ""
+    },
+    "table-in-list#write:html": {
+      "key": "0689617eb79a3adb",
+      "exit": 0,
+      "stdout": "<ul>\n<li><table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table></li>\n</ul>\n",
+      "stderr": ""
+    },
+    "table-in-list#write:html4": {
+      "key": "03f8e89486177d6a",
+      "exit": 0,
+      "stdout": "<ul>\n<li><table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table></li>\n</ul>\n",
+      "stderr": ""
+    },
+    "two-tables#e2e:html": {
+      "key": "e5dfd03e7526522a",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n<table>\n<thead>\n<tr>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "two-tables#e2e:html4": {
+      "key": "df8a40cb46a0cd01",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n<table>\n<thead>\n<tr>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "two-tables#read": {
+      "key": "82c733b1d5e325e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "two-tables#write:html": {
+      "key": "79dc6cdb1827a416",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n<table>\n<thead>\n<tr>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "two-tables#write:html4": {
+      "key": "1613aafed3560217",
+      "exit": 0,
+      "stdout": "<table>\n<thead>\n<tr>\n<th>a</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n</tr>\n</tbody>\n</table>\n<table>\n<thead>\n<tr>\n<th>b</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    }
+  }
+}

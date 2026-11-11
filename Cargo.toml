@@ -11,6 +11,7 @@ members = [
     "crates/randoc-cli",
     "crates/randoc-harness",
     "crates/randoc-yaml",
+    "crates/randoc-html",
     "crates/randoc-native",
     "crates/randoc-citeproc",
     "crates/randoc-math",
@@ -52,6 +53,7 @@ randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
 randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
 randoc-yaml = { path = "crates/randoc-yaml", version = "0.1.0" }
+randoc-html = { path = "crates/randoc-html", version = "0.1.0" }
 randoc-native = { path = "crates/randoc-native", version = "0.1.0" }
 randoc-citeproc = { path = "crates/randoc-citeproc", version = "0.1.0" }
 quick-xml = { version = "=0.42.0", default-features = false }

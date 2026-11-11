@@ -1,0 +1,329 @@
+# Block elements: paragraphs, quotes, code, raw content, line blocks and divs.
+from = "markdown"
+to = ["html", "html4"]
+
+[[case]]
+id = "para-simple"
+input = '''
+Hello world.
+'''
+
+[[case]]
+id = "paras-two"
+input = '''
+One.
+
+Two.
+'''
+
+[[case]]
+id = "hr"
+input = '''
+a
+
+---
+
+b
+'''
+
+[[case]]
+id = "hr-stars"
+input = '''
+***
+'''
+
+[[case]]
+id = "blockquote"
+input = '''
+> quoted
+'''
+
+[[case]]
+id = "blockquote-paras"
+input = '''
+> a
+>
+> b
+'''
+
+[[case]]
+id = "blockquote-nested"
+input = '''
+> a
+>
+> > b
+'''
+
+[[case]]
+id = "blockquote-list"
+input = '''
+> - a
+> - b
+'''
+
+[[case]]
+id = "blockquote-code"
+input = '''
+>     code
+'''
+
+[[case]]
+id = "code-indented"
+input = '''
+    code
+    more
+'''
+
+[[case]]
+id = "code-fenced"
+input = '''
+```
+line1
+
+line3
+```
+'''
+
+[[case]]
+id = "code-fenced-unknown-lang"
+input = '''
+``` foo
+x = 1
+```
+'''
+
+[[case]]
+id = "code-fenced-attrs-unknown"
+input = '''
+``` {#cid .foo .bar k=v}
+x
+```
+'''
+
+[[case]]
+id = "code-fenced-id-only"
+input = '''
+``` {#only}
+x
+```
+'''
+
+[[case]]
+id = "code-fenced-kv-only"
+input = '''
+``` {k=v}
+x
+```
+'''
+
+[[case]]
+id = "code-trailing-spaces"
+input = '''
+```
+a   
+  b
+```
+'''
+
+[[case]]
+id = "code-tabs"
+input = '''
+```
+	x
+```
+'''
+
+[[case]]
+id = "code-empty"
+input = '''
+```
+```
+'''
+
+[[case]]
+id = "code-long-line"
+input = '''
+```
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx y
+```
+'''
+
+[[case]]
+id = "raw-block-html"
+input = '''
+<div class="x">
+
+*md*
+
+</div>
+'''
+
+[[case]]
+id = "raw-block-html-comment"
+input = '''
+<!-- comment -->
+
+para
+'''
+
+[[case]]
+id = "raw-block-fenced-html"
+input = '''
+```{=html}
+<video src="v.mp4"></video>
+```
+'''
+
+[[case]]
+id = "raw-block-fenced-latex"
+input = '''
+```{=latex}
+\begin{x}
+```
+
+para
+'''
+
+[[case]]
+id = "raw-block-fenced-html4"
+input = '''
+```{=html4}
+<center>x</center>
+```
+'''
+
+[[case]]
+id = "raw-block-fenced-html5"
+input = '''
+```{=html5}
+<main>x</main>
+```
+'''
+
+[[case]]
+id = "raw-block-script"
+input = '''
+<script>
+var x = 1 < 2;
+</script>
+'''
+
+[[case]]
+id = "line-block"
+input = '''
+| line one
+| line two
+'''
+
+[[case]]
+id = "line-block-indent"
+input = '''
+| a
+|    indented
+|        more
+'''
+
+[[case]]
+id = "line-block-markup"
+input = '''
+| *em* and **strong**
+| [link](u)
+'''
+
+[[case]]
+id = "line-block-empty-line"
+input = '''
+| a
+|
+| b
+'''
+
+[[case]]
+id = "line-block-continuation"
+input = '''
+| a long line
+  continued here
+| next
+'''
+
+[[case]]
+id = "div-plain"
+input = '''
+::: x
+content
+:::
+'''
+
+[[case]]
+id = "div-nested"
+input = '''
+::: outer
+::: inner
+c
+:::
+:::
+'''
+
+[[case]]
+id = "div-empty-content"
+input = '''
+::: e
+:::
+'''
+
+[[case]]
+id = "mixed-sequence"
+input = '''
+Para
+
+> quote
+
+- item
+
+    code
+
+---
+
+End
+'''
+
+[[case]]
+id = "para-then-list"
+input = '''
+Para
+
+- a
+- b
+
+Para 2
+'''
+
+[[case]]
+id = "heading-then-para"
+input = '''
+# Title
+
+Text
+'''
+
+[[case]]
+id = "empty-document"
+input = '''
+
+'''
+
+[[case]]
+id = "only-whitespace"
+input = '''
+   
+
+  
+'''
+
+[[case]]
+id = "div-section-class"
+input = '''
+::: section
+x
+:::
+'''
