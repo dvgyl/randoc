@@ -103,6 +103,22 @@ completely. Its main rules:
     does small record tasks, and the coordinator on Fable 5.2 writes briefs
     and decides.)
 
+15. "Sorry the Claude desktop app crashed Please continue" (Given in the
+    third session at 18:14 UTC on 2026-11-11. The computer had stopped
+    responding at about 13:48 UTC and was started again with a forced reset
+    at 18:11 UTC. The coordinator resumed each stopped worker and each
+    review.)
+
+16. "1) you can handoff at the next natural stopping point, lift the 21;00
+    UTC rule 2) please keep committing to github more frequently" (Given in
+    the third session at about 18:20 UTC. It replaces the time of
+    instruction 13. How the coordinator applies point 2: `main` still gets
+    only work that passes the full merge gate; in addition, each workstream
+    branch goes to GitHub as a work-in-progress branch `wip/NAME` after a
+    licence scan of its files, as one snapshot commit for each unit that
+    passes `scripts/gate.sh`, and the records in `docs/` are pushed after
+    each change.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,
