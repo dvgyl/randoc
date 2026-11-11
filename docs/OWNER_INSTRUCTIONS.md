@@ -98,7 +98,7 @@ completely. Its main rules:
     if you feel like it: Fable 5.2 - Main thinking and abstraction,
     delegation, main decisions, main architecture etc. Opus 5.5 - Main
     worker Sonnet 5.5 - Very menial or minute tasks GPT 6.1 sol - Deep code
-    review" (Given in the third session at about 09:15 UTC. It replaces
+    review" (Given in the third session at about 08:51 UTC. It replaces
     instruction 11: a worker is an Opus 5.5 agent again, a Sonnet 5.5 agent
     does small record tasks, and the coordinator on Fable 5.2 writes briefs
     and decides.)
