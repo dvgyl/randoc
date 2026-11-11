@@ -1,0 +1,1436 @@
+# One case for each example of the section "Pandoc's Markdown" in MANUAL.txt.
+# Each case tests the construct of its example with original text, not the text of the manual.
+from = "markdown"
+to = []
+
+[[case]]
+id = "hard-line-break-spaces"
+input = '''
+Roses grow by the gate  
+tulips grow by the wall.
+'''
+
+[[case]]
+id = "escaped-line-break"
+input = '''
+Turn left here\
+then stop.
+'''
+
+[[case]]
+id = "setext-headings"
+input = '''
+Garden plan
+===========
+
+Soil and water
+--------------
+'''
+
+[[case]]
+id = "atx-headings"
+input = '''
+## Spring tasks
+
+### Prune the old apple trees ###
+'''
+
+[[case]]
+id = "atx-heading-inline-markup"
+input = '''
+# Seeds from the [local shop](/shop) are *cheap*
+'''
+
+[[case]]
+id = "blank-before-header"
+input = '''
+Two bus routes stop near the old mill:
+#14 runs each hour, and #9 runs at night.
+'''
+
+[[case]]
+id = "header-attributes-syntax"
+input = '''
+{#start .note .wide lang=fr width=3}
+'''
+
+[[case]]
+id = "header-attributes-forms"
+input = '''
+# Harbour map {#port}
+
+## Harbour map ##    {#port}
+
+Ships at anchor   {#port}
+---------------
+'''
+
+[[case]]
+id = "header-unnumbered-dash"
+input = '''
+# Preface {-}
+'''
+
+[[case]]
+id = "header-unnumbered-class"
+input = '''
+# About the authors {.unnumbered}
+'''
+
+[[case]]
+id = "implicit-ref-heading"
+input = '''
+# Notes on clay soil and drainage
+'''
+
+[[case]]
+id = "implicit-ref-shortcut"
+input = '''
+# Notes on clay soil and drainage
+
+[Notes on clay soil and drainage]
+'''
+
+[[case]]
+id = "implicit-ref-empty-brackets"
+input = '''
+# Notes on clay soil and drainage
+
+[Notes on clay soil and drainage][]
+'''
+
+[[case]]
+id = "implicit-ref-full"
+input = '''
+# Notes on clay soil and drainage
+
+[read about wet ground][notes on clay soil
+and drainage]
+'''
+
+[[case]]
+id = "implicit-ref-explicit-link"
+input = '''
+# Notes on clay soil and drainage
+
+[Notes on clay soil and drainage](#notes-on-clay-soil-and-drainage)
+'''
+
+[[case]]
+id = "implicit-ref-explicit-wins"
+input = '''
+# Tools
+
+[tools]: /shop
+
+Visit [tools]
+'''
+
+[[case]]
+id = "auto-id-table-example"
+input = '''
+# Notes on clay soil and drainage
+
+# Crème brûlée à côté
+
+# *Cats*?--on *the* roof?
+
+# [PDF], [EPUB], or [DOCX]?
+
+# 7. Results
+
+# 42
+'''
+
+[[case]]
+id = "auto-id-link-to-section"
+input = '''
+Go back to the part about
+[wet ground](#notes-on-clay-soil-and-drainage-in-spring).
+'''
+
+[[case]]
+id = "blockquote-basic"
+input = '''
+> Rain fell on the hills all week. The
+> rivers rose by noon.
+>
+> 1. Close the north gate.
+> 2. Move the sheep.
+'''
+
+[[case]]
+id = "blockquote-lazy"
+input = '''
+> Rain fell on the hills all week. The
+rivers rose by noon.
+
+> 1. Close the north gate.
+2. Move the sheep.
+'''
+
+[[case]]
+id = "blockquote-nested"
+input = '''
+> The captain spoke first.
+>
+> > The mate answered from the deck below.
+'''
+
+[[case]]
+id = "blockquote-code"
+input = '''
+>     let x = 1;
+'''
+
+[[case]]
+id = "blank-before-blockquote"
+input = '''
+> Outer remark.
+>> No new level here, since `blank_before_blockquote` applies
+'''
+
+[[case]]
+id = "indented-code"
+input = '''
+    while (n > 0) {
+      total = total + n--;
+    }
+'''
+
+[[case]]
+id = "fenced-tilde"
+input = '''
+~~~~~~~
+while (n > 0) {
+  total = total + n--;
+}
+~~~~~~~
+'''
+
+[[case]]
+id = "fenced-longer-fence"
+input = '''
+~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+a block that shows a shorter fence
+~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+'''
+
+[[case]]
+id = "fenced-code-attributes"
+input = '''
+~~~~ {#sumcode .python .numberLines startFrom="40"}
+def total(items):
+    return sum(item.price for item in items
+               if item.price > 0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''
+
+[[case]]
+id = "fenced-language-word"
+input = '''
+```python
+print(1)
+```
+'''
+
+[[case]]
+id = "fenced-language-class"
+input = '''
+``` {.python}
+print(1)
+```
+'''
+
+[[case]]
+id = "fenced-language-word-and-class"
+input = '''
+```python {.numberLines}
+print(1)
+```
+'''
+
+[[case]]
+id = "fenced-two-classes"
+input = '''
+``` {.python .numberLines}
+print(1)
+```
+'''
+
+[[case]]
+id = "line-block-limerick"
+input = '''
+| A cat sat all day on the mat
+| And dreamed of a very fat rat.
+|    It woke with a yawn
+|    And the rat was long gone
+| So it went back to sleep after that.
+
+| 14 Harbour Road
+| Leeds, LS2 9JT
+'''
+
+[[case]]
+id = "line-block-continuation"
+input = '''
+| The Honourable and Very Learned Professor Ada M.
+  Lovelace, Sr.
+| 14 Harbour Road
+| Leeds, LS2 9JT
+'''
+
+[[case]]
+id = "bullet-tight"
+input = '''
+* red
+* green
+* blue
+'''
+
+[[case]]
+id = "bullet-loose"
+input = '''
+* red
+
+* green
+
+* blue
+'''
+
+[[case]]
+id = "bullet-continuation-indented"
+input = '''
+* the oak tree is
+  older than the house.
+* the elm is new.
+'''
+
+[[case]]
+id = "bullet-continuation-lazy"
+input = '''
+* the oak tree is
+older than the house.
+* the elm is new.
+'''
+
+[[case]]
+id = "list-item-blocks"
+input = '''
+  * Pack the tent.
+
+    Check the poles.
+
+  * Pack the stove. The fuel note below is code, so it has
+    eight spaces:
+
+        { fuel: 2 }
+'''
+
+[[case]]
+id = "list-item-starts-with-code"
+input = '''
+*     make all
+
+  then run the tests
+'''
+
+[[case]]
+id = "nested-lists"
+input = '''
+* tools
+  + saws
+    - hand saw
+    - coping saw
+  + drills
+  + files
+* paints
+  + oil
+  + acrylic
+'''
+
+[[case]]
+id = "lazy-list"
+input = '''
++ A short, short, list
+entry.
+
++ The next entry; the indent is
+missing here too.
+
+    A second block for the second
+entry.
+'''
+
+[[case]]
+id = "ordered-basic"
+input = '''
+1.  wash
+2.  dry
+3.  fold
+'''
+
+[[case]]
+id = "ordered-any-numbers"
+input = '''
+4.  wash
+9.  dry
+2.  fold
+'''
+
+[[case]]
+id = "fancy-initials-paragraph"
+input = '''
+T. Edison held more than a thousand patents (and lost some cases).
+'''
+
+[[case]]
+id = "fancy-copyright-list"
+input = '''
+(C) 2019 Ana Ruiz
+'''
+
+[[case]]
+id = "fancy-copyright-escaped"
+input = '''
+(C\) 2019 Ana Ruiz
+'''
+
+[[case]]
+id = "fancy-hash-marker"
+input = '''
+#. wash
+#. dry
+'''
+
+[[case]]
+id = "startnum-parens-roman"
+input = '''
+ 8)  Eighth
+ 9)  Ninth
+10)  Tenth
+       i. part a
+      ii. part b
+     iii. part c
+'''
+
+[[case]]
+id = "startnum-style-change"
+input = '''
+(3) Red
+(8) Green
+1.  Blue
+*   Grey
+'''
+
+[[case]]
+id = "startnum-hash-three"
+input = '''
+#.  wash
+#.  dry
+#.  fold
+'''
+
+[[case]]
+id = "task-list"
+input = '''
+- [ ] water the plants
+- [x] feed the cat
+'''
+
+[[case]]
+id = "definition-list-basic"
+input = '''
+Anvil
+
+:   A heavy iron block
+
+Hammer with a *steel head*
+
+:   A tool for blows
+
+        { weight: 2 kg }
+
+    A last note on the hammer.
+'''
+
+[[case]]
+id = "definition-list-lazy"
+input = '''
+Anvil
+
+: A heavy block
+that the smith uses.
+
+  More text about the anvil.
+'''
+
+[[case]]
+id = "definition-list-compact"
+input = '''
+Anvil
+  ~ Iron block
+
+Hammer
+  ~ Claw type
+  ~ Ball type
+'''
+
+[[case]]
+id = "example-list-numbering"
+input = '''
+(@)  The cat sleeps.
+(@)  The dog barks.
+
+Both lines use the present tense.
+
+(@)  The bird sings.
+'''
+
+[[case]]
+id = "example-list-label"
+input = '''
+(@past)  The cat slept.
+
+Line (@past) uses the past tense.
+'''
+
+[[case]]
+id = "example-list-repeated-label"
+input = '''
+(@bark) The dog barks.
+
+Other text.
+
+Here is that line once more:
+
+(@bark) The dog barks.
+'''
+
+[[case]]
+id = "example-list-start-number"
+input = '''
+(1@cat) The first entry gets number 1, and the entries
+    after it get the next numbers.
+'''
+
+[[case]]
+id = "ending-list-code-absorbed"
+input = '''
+-   wash
+-   dry
+
+    { step: 3 }
+'''
+
+[[case]]
+id = "ending-list-comment"
+input = '''
+-   wash
+-   dry
+
+<!-- stop -->
+
+    { step: 3 }
+'''
+
+[[case]]
+id = "ending-list-two-lists"
+input = '''
+1.  red
+2.  green
+3.  blue
+
+<!-- -->
+
+1.  rouge
+2.  vert
+3.  bleu
+'''
+
+[[case]]
+id = "horizontal-rules"
+input = '''
+*  *  *  *
+
+---------------
+'''
+
+[[case]]
+id = "simple-table"
+input = '''
+   Size   Animal     Habitat    Diet
+-------   --------  ----------  ----
+      3   owl        forest     mice
+     40   heron      wetland    fish
+    700   moose       taiga     bark
+
+Table:  Animals and where they live.
+'''
+
+[[case]]
+id = "simple-table-headerless"
+input = '''
+-------   --------  ----------  ------
+      3   owl        forest       mice
+     40   heron      wetland      fish
+    700   moose       taiga       bark
+-------   --------  ----------  ------
+'''
+
+[[case]]
+id = "multiline-table"
+input = '''
+--------------------------------------------------------------
+  Planet   Natural      Mean Size Remarks
+   Name    Moon(s)           (km) Seen from Earth
+---------- ------- -------------- ----------------------------
+   Mars    2                6,779 Red in colour and easy
+                                  to see at dusk.
+
+  Saturn   146            116,460 Has bright rings. A small
+                                  telescope shows them
+                                  well.
+--------------------------------------------------------------
+
+Table: Two planets of the solar system. The text of this
+caption has two lines.
+'''
+
+[[case]]
+id = "multiline-table-headerless"
+input = '''
+---------- ------- -------------- ----------------------------
+   Mars    2                6,779 Red in colour and easy
+                                  to see at dusk.
+
+  Saturn   146            116,460 Has bright rings. A small
+                                  telescope shows them
+                                  well.
+---------- ------- -------------- ----------------------------
+
+: Planets in a table that has no header row.
+'''
+
+[[case]]
+id = "grid-table"
+input = '''
+: Tools in the shed.
+
++--------------+-------------+----------------------+
+| Tool         | Weight      | Uses                 |
++==============+=============+======================+
+| Spade        | 2.1 kg      | - digs beds          |
+|              |             | - moves soil         |
++--------------+-------------+----------------------+
+| Rake         | 0.9 kg      | - levels earth       |
+|              |             | - gathers leaves     |
++--------------+-------------+----------------------+
+'''
+
+[[case]]
+id = "grid-table-row-spans"
+input = '''
++--------------------+-----------+
+| Reading            | Station A |
++============+=======+===========+
+|            | low   | 3.5 m     |
+| Tide       +-------+-----------+
+| March      | avg   | 5.0 m     |
+|            +-------+-----------+
+|            | high  | 7.25 m    |
++------------+-------+-----------+
+'''
+
+[[case]]
+id = "grid-table-header-spans"
+input = '''
++--------------------+------------------------+
+| Station            | Wind speed in March    |
+|                    | in metres per second   |
+|                    +--------+-------+-------+
+|                    | low    | avg   | high  |
++====================+========+=======+=======+
+| Hilltop            | 2.0    | 8.5   | 31.0  |
++--------------------+--------+-------+-------+
+| Harbour            | 1.5    | n/a   | 24.5  |
++--------------------+--------+-------+-------+
+'''
+
+[[case]]
+id = "grid-table-alignment"
+input = '''
++--------------+-------------+----------------------+
+| Tool         | Weight      | Uses                 |
++=============:+:============+:====================:+
+| Spade        | 2.1 kg      | digs beds            |
++--------------+-------------+----------------------+
+'''
+
+[[case]]
+id = "grid-table-headerless-alignment"
+input = '''
++-------------:+:------------+:--------------------:+
+| Tool         | Weight      | Uses                 |
++--------------+-------------+----------------------+
+'''
+
+[[case]]
+id = "grid-table-footer"
+input = '''
+ +--------------+--------------+
+ | Item         | Cost         |
+ +==============+==============+
+ | Rope         | €4.50        |
+ +--------------+--------------+
+ | Lamp         | €12.00       |
+ +==============+==============+
+ | Total        | €16.50       |
+ +==============+==============+
+'''
+
+[[case]]
+id = "pipe-table"
+input = '''
+| Size | Name | Kind | Mid |
+|-----:|:-----|------|:---:|
+|   7  |  ox  |  b   |  q  |
+|  70  |  elk |  bb  |  qq |
+|   0  |  ant |  bbb | qqq |
+
+  : Columns with each of the four alignments.
+'''
+
+[[case]]
+id = "pipe-table-no-outer-pipes"
+input = '''
+city| rain
+----|-----:
+Oslo|763
+Rome|798
+Cairo|18
+'''
+
+[[case]]
+id = "pipe-table-org-style"
+input = '''
+| Left | Right |
+|------+-------|
+| sun  | moon  |
+| day  | night |
+'''
+
+[[case]]
+id = "table-attributes-caption"
+input = '''
+| x | y |
+|---|---|
+| 5 | 6 |
+
+  : Points on a line. {#pts .data unit="cm"}
+'''
+
+[[case]]
+id = "table-latex-placement"
+input = '''
+| x | y |
+|---|---|
+| 5 | 6 |
+
+: Points with a float position. {#pts .float latex-placement="tb"}
+'''
+
+[[case]]
+id = "title-block-template"
+input = '''
+% Field notes
+% Lee Park
+% 3 March 2024
+'''
+
+[[case]]
+id = "title-block-author-only"
+input = '''
+%
+% Lee Park
+'''
+
+[[case]]
+id = "title-block-no-author"
+input = '''
+% Field notes
+%
+% 3 March 2024
+'''
+
+[[case]]
+id = "title-block-multiline-title"
+input = '''
+% Field notes
+  from the north coast
+'''
+
+[[case]]
+id = "title-block-authors-lines"
+input = '''
+% Notes
+% Lee Park
+  Sam Ortiz
+'''
+
+[[case]]
+id = "title-block-authors-semicolon"
+input = '''
+% Notes
+% Lee Park; Sam Ortiz
+'''
+
+[[case]]
+id = "title-block-authors-semicolon-line"
+input = '''
+% Notes
+% Lee Park;
+  Sam Ortiz
+'''
+
+[[case]]
+id = "title-block-man-page"
+input = '''
+% WIDGET(7)
+'''
+
+[[case]]
+id = "title-block-man-section"
+input = '''
+% WIDGET(7) Widget Reference Pages
+'''
+
+[[case]]
+id = "title-block-man-version"
+input = '''
+% WIDGET(7) Widget Reference Pages | Release 2.3
+'''
+
+[[case]]
+id = "yaml-metadata-example"
+input = '''
+---
+title:  'Tide tables: a short guide'
+author:
+- Lee Park
+- Sam Ortiz
+keywords: [tides, harbours]
+abstract: |
+  Tides rise twice each day.
+
+  The guide gives times for three ports.
+...
+'''
+
+[[case]]
+id = "yaml-metadata-author-maps"
+input = '''
+---
+title: Tide tables
+author:
+- name: Lee Park
+  affiliation: Coastal Survey Office
+- name: Sam Ortiz
+  affiliation: Harbour Board
+...
+'''
+
+[[case]]
+id = "yaml-metadata-raw-latex"
+input = '''
+---
+header-includes:
+- |
+  ```{=latex}
+  \let\oldpara\paragraph
+  \renewcommand{\paragraph}[1]{\bigskip\oldpara{#1}}
+  ```
+---
+'''
+
+[[case]]
+id = "escape-emphasis"
+input = '''
+*\*stars\**
+'''
+
+[[case]]
+id = "escape-symbols"
+input = '''
+\`*_{}[]()>#+-.!
+'''
+
+[[case]]
+id = "emphasis-underscore-asterisk"
+input = '''
+Rain is _marked with low lines_, and snow
+is *marked with stars*.
+'''
+
+[[case]]
+id = "strong-emphasis"
+input = '''
+Mud is **very heavy** and so is __wet sand__.
+'''
+
+[[case]]
+id = "emphasis-spaces-not-emphasis"
+input = '''
+Rain * stays plain * here, and \*so does snow\*.
+'''
+
+[[case]]
+id = "intraword-emphasis"
+input = '''
+un*break*able, not re*use*d.
+'''
+
+[[case]]
+id = "strikeout"
+input = '''
+Rain ~~was never forecast.~~
+'''
+
+[[case]]
+id = "super-subscript"
+input = '''
+CO~2~ levels rose.  3^4^ equals 81.
+'''
+
+[[case]]
+id = "code-span"
+input = '''
+Do `<=` and `=<` give the same result?
+'''
+
+[[case]]
+id = "code-span-backtick"
+input = '''
+Type one backtick `` ` `` to start code.
+'''
+
+[[case]]
+id = "code-span-backslash"
+input = '''
+Inside code, a backslash stays: `\_`.
+'''
+
+[[case]]
+id = "inline-code-attributes"
+input = '''
+`map f`{.haskell}
+'''
+
+[[case]]
+id = "underline-span"
+input = '''
+[ruled text]{.underline}
+'''
+
+[[case]]
+id = "underline-html"
+input = '''
+<span class="underline">ruled text</span>
+'''
+
+[[case]]
+id = "smallcaps-span"
+input = '''
+[Low capitals]{.smallcaps}
+'''
+
+[[case]]
+id = "smallcaps-html-class"
+input = '''
+<span class="smallcaps">Low capitals</span>
+'''
+
+[[case]]
+id = "smallcaps-html-style"
+input = '''
+<span style="font-variant:small-caps;">Low capitals</span>
+'''
+
+[[case]]
+id = "mark-span"
+input = '''
+[Bright]{.mark}
+'''
+
+[[case]]
+id = "mark-html"
+input = '''
+<span class="mark">Bright</span>
+'''
+
+[[case]]
+id = "math-dollars-not-math"
+input = '''
+$15,500 or $9,000
+'''
+
+[[case]]
+id = "math-inline-and-display"
+input = '''
+Area $\pi r^2$ and a sum $$\sum_{k=1}^n k$$ here.
+'''
+
+[[case]]
+id = "markdown-in-html-table"
+input = '''
+<table>
+<tr>
+<td>*left*</td>
+<td>[the map](https://example.org/map)</td>
+</tr>
+</table>
+'''
+
+[[case]]
+id = "html-table-plain"
+input = '''
+<table>
+<tr>
+<td><em>left</em></td>
+<td><a href="https://example.org/map">the map</a></td>
+</tr>
+</table>
+'''
+
+[[case]]
+id = "raw-tex-inline"
+input = '''
+The bound appears first in \cite{lee.2011}.
+'''
+
+[[case]]
+id = "raw-tex-block"
+input = '''
+\begin{tabular}{|c|r|}\hline
+Port & Depth \\ \hline
+Leith  & 9 \\
+Hull   & 12 \\
+Dover  & 15 \\ \hline
+\end{tabular}
+'''
+
+[[case]]
+id = "raw-attribute-ms"
+input = '''
+```{=ms}
+.XYZ
+two words
+```
+'''
+
+[[case]]
+id = "raw-attribute-inline"
+input = '''
+A word in `<b>bold</b>`{=html}
+'''
+
+[[case]]
+id = "raw-attribute-openxml"
+input = '''
+```{=openxml}
+<w:p>
+  <w:r>
+    <w:t>Raw run</w:t>
+  </w:r>
+</w:p>
+```
+'''
+
+[[case]]
+id = "latex-macros"
+input = '''
+\newcommand{\pair}[1]{\lbrack #1 \rbrack}
+
+$\pair{x, y}$
+'''
+
+[[case]]
+id = "autolinks"
+input = '''
+<https://example.org>
+<ana@example.org>
+'''
+
+[[case]]
+id = "inline-links"
+input = '''
+Read the [tide guide](/tides), or [the guide
+with a title](https://example.org "opens the port page").
+'''
+
+[[case]]
+id = "mailto-link"
+input = '''
+[Send a note](mailto:ana@example.org)
+'''
+
+[[case]]
+id = "reference-links"
+input = '''
+Look at [the map *we* drew][our map].
+
+Look at [our map][] and [the tide page][7] and
+the [office of the harbour][hb].
+
+[our map]: http://example.org/map
+[7]: /tides/today.html  "Times for today"
+[hb]: https://example.org/hb (Harbour Board)
+[unused page]: /old#top  'A title with single quotes'
+'''
+
+[[case]]
+id = "reference-angle-url"
+input = '''
+[map 2]
+
+[map 2]: <http://example.org/map2>
+'''
+
+[[case]]
+id = "reference-title-next-line"
+input = '''
+[map 4]
+
+[map 4]: https://example.org/map4
+  "The fourth map of the coast"
+'''
+
+[[case]]
+id = "reference-case-insensitive"
+input = '''
+Go to [the dock][PIER]
+
+[Pier]: /dock/north
+'''
+
+[[case]]
+id = "reference-in-blockquote"
+input = '''
+> A note about the [dock].
+>
+> [dock]: /pier
+'''
+
+[[case]]
+id = "shortcut-reference"
+input = '''
+Look at [our map].
+
+[our map]: http://example.org/map
+'''
+
+[[case]]
+id = "internal-link"
+input = '''
+Read the [Overview](#overview).
+'''
+
+[[case]]
+id = "internal-reference-link"
+input = '''
+Read the [Overview].
+
+[Overview]: #overview
+'''
+
+[[case]]
+id = "images"
+input = '''
+![the harbour](harbour.png "Boats at dawn")
+
+![tide chart]
+
+[tide chart]: chart.svg
+'''
+
+[[case]]
+id = "implicit-figure"
+input = '''
+![Boats in the harbour at dawn.](harbour.png)
+'''
+
+[[case]]
+id = "implicit-figure-suppressed"
+input = '''
+![A picture that stays inline](harbour.png)\
+'''
+
+[[case]]
+id = "implicit-figure-alt"
+input = '''
+![Dawn.](harbour.png){alt="boats on calm water"}
+'''
+
+[[case]]
+id = "implicit-figure-latex-placement"
+input = '''
+![Dawn.](harbour.png){latex-placement="tb"}
+'''
+
+[[case]]
+id = "link-attributes"
+input = '''
+One inline ![chart](tide.png){#tc .wide width=40 height=25px}
+and one by reference ![chart][tc] with attributes.
+
+[tc]: tide.png "the chart" {#tc .wide k=v k2="v 2"}
+'''
+
+[[case]]
+id = "image-width-percent"
+input = '''
+![](chart.png){ width=75% }
+'''
+
+[[case]]
+id = "fenced-div"
+input = '''
+::::: {#box .aside}
+First block of the box.
+
+Second block.
+:::::
+'''
+
+[[case]]
+id = "fenced-div-nested"
+input = '''
+::: Caution ::::::
+Mind the step.
+
+::: Hazard
+Wet floor near the step too.
+:::
+::::::::::::::::::
+'''
+
+[[case]]
+id = "bracketed-span"
+input = '''
+[Low *tide* now]{.alert level="2"}
+'''
+
+[[case]]
+id = "footnotes"
+input = '''
+The ship left at dawn,[^a] and came back late.[^trip]
+
+[^a]: It was a Tuesday.
+
+[^trip]: The trip had three parts.
+
+    Each next block has an indent, so it stays in
+the same note.
+
+        { knots: 12 }
+
+    You can indent all lines, or only the first
+    line.  So a note with many blocks acts like
+    a list item with many blocks.
+
+This block is not in the note, because it
+has no indent.
+'''
+
+[[case]]
+id = "inline-note"
+input = '''
+The ship left at dawn.^[Inline notes need no label, so you
+write the text at the point of use and do not go to the
+end.]
+'''
+
+[[case]]
+id = "citations-group"
+input = '''
+Tides follow the moon [@park12; @ortiz2015; @ortiz2019].
+'''
+
+[[case]]
+id = "citations-rendered-text"
+input = '''
+Tides follow the moon (Park 2012, Ortiz 2015, 2019).
+'''
+
+[[case]]
+id = "citations-footnote"
+input = '''
+Tides follow the moon.[^1]
+
+[^1]:  Lee Park, "Waves," *Coastal Review* 17 (2012);
+Sam Ortiz, "Currents," *Sea Studies* (2015);
+Sam Ortiz, "Ebbs," *Sea Studies* (2019).
+'''
+
+[[case]]
+id = "citations-prefix-locator"
+input = '''
+Tides follow the moon [compare @park12, pp. 4-9 and *elsewhere*; @ortiz15, sec. 2].
+'''
+
+[[case]]
+id = "citations-braced-locators"
+input = '''
+[@park{iv, B, F-K}, then a suffix]
+[@park, {pp. ii, x-xii, (iv)-(vi)} then more words]
+[@park{}, 12 days on]
+'''
+
+[[case]]
+id = "citations-suppress-author"
+input = '''
+Park finds the same [-@park12].
+'''
+
+[[case]]
+id = "citations-in-text"
+input = '''
+@park12 finds the same.
+'''
+
+[[case]]
+id = "citations-in-text-locator"
+input = '''
+@park12 [p. 8] finds the same.
+'''
+
+[[case]]
+id = "citations-reset-positions"
+input = '''
+# Part Two {.reset-citation-positions}
+'''
+
+[[case]]
+id = "mark-extension"
+from = "markdown+mark"
+input = '''
+Rain ==is the main risk.==
+'''
+
+[[case]]
+id = "attributes-generic"
+input = '''
+# Tides
+
+The *sea*{.big} rose and {#y} `log`.
+'''
+
+[[case]]
+id = "spaced-reference-links"
+from = "markdown+spaced_reference_links"
+input = '''
+[dock] [pier].
+
+[pier]: /north
+'''
+
+[[case]]
+id = "tex-math-gfm-block"
+input = '''
+````
+``` math
+a^2+b^2=c^2
+```
+````
+'''
+
+[[case]]
+id = "tex-math-gfm-inline"
+input = '''
+Some math: $`a^2+b^2`$.
+'''
+
+[[case]]
+id = "mmd-title-block"
+from = "markdown+mmd_title_block"
+input = '''
+Title:   Tide notes
+Author:  Lee Park
+Date:    12 May 2021
+Comment: A short header block with
+         one value on two lines.
+
+Text.
+'''
+
+[[case]]
+id = "abbreviations"
+from = "markdown+abbreviations"
+input = '''
+*[GPS]: Global Positioning System
+
+GPS gives the position.
+'''
+
+[[case]]
+id = "alerts"
+from = "markdown+alerts"
+input = '''
+> [!TIP]
+> Fill the tank before the long road.
+'''
+
+[[case]]
+id = "mmd-link-attributes"
+from = "markdown+mmd_link_attributes"
+input = '''
+A chart by reference ![chart][c] with key and value pairs.
+
+[c]: https://example.org/c.png "Chart title" width=40px height=25px
+       id=chartId class="wide dark"
+'''
+
+[[case]]
+id = "short-superscript"
+from = "markdown+short_subsuperscripts"
+input = '''
+y^3 = 27
+'''
+
+[[case]]
+id = "short-subscript"
+from = "markdown+short_subsuperscripts"
+input = '''
+Nitrogen is N~2.
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe"
+from = "markdown+wikilinks_title_after_pipe"
+input = '''
+[[Harbour]]
+[[Page|label]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe"
+from = "markdown+wikilinks_title_before_pipe"
+input = '''
+[[Harbour]]
+[[label|Page]]
+'''
+
+[[case]]
+id = "mmd-header-identifiers"
+from = "markdown+mmd_header_identifiers"
+input = '''
+# Tide times [tides] #
+'''
+
+[[case]]
+id = "smart-typography"
+input = '''
+"Double" and 'single' marks --- long dash -- short dash... Dr. Park.
+'''

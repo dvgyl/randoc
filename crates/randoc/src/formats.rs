@@ -16,6 +16,7 @@ type WriterLookup = fn(&str) -> Option<Writer>;
 #[rustfmt::skip]
 const READERS: &[ReaderLookup] = &[
     json_format::reader,
+    randoc_markdown::reader,
     randoc_native::reader,
     randoc_citeproc::csljson::reader,
     randoc_html_reader::reader,

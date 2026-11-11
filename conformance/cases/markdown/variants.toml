@@ -1,0 +1,561 @@
+# The Markdown variants: markdown_strict, markdown_phpextra, markdown_mmd, markdown_github.
+from = "markdown"
+to = []
+
+[[case]]
+id = "strict-paragraph"
+from = "markdown_strict"
+input = '''
+Text with *emph* and **strong**.
+'''
+
+[[case]]
+id = "strict-heading-no-id"
+from = "markdown_strict"
+input = '''
+# Heading
+'''
+
+[[case]]
+id = "strict-no-smart"
+from = "markdown_strict"
+input = '''
+"quotes" -- dash...
+'''
+
+[[case]]
+id = "strict-no-fenced-code"
+from = "markdown_strict"
+input = '''
+```
+code
+```
+'''
+
+[[case]]
+id = "strict-no-tables"
+from = "markdown_strict"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "strict-no-footnotes"
+from = "markdown_strict"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "strict-html-block-no-markdown"
+from = "markdown_strict"
+input = '''
+<div>
+*not emph*
+</div>
+'''
+
+[[case]]
+id = "strict-intraword-underscore"
+from = "markdown_strict"
+input = '''
+snake_case_word
+'''
+
+[[case]]
+id = "strict-no-strikeout"
+from = "markdown_strict"
+input = '''
+~~no~~ H~2~O 2^10^
+'''
+
+[[case]]
+id = "strict-list-after-paragraph"
+from = "markdown_strict"
+input = '''
+Para
+- a
+'''
+
+[[case]]
+id = "strict-ordered-fancy"
+from = "markdown_strict"
+input = '''
+a. one
+b. two
+'''
+
+[[case]]
+id = "strict-ordered-start"
+from = "markdown_strict"
+input = '''
+3. three
+4. four
+'''
+
+[[case]]
+id = "strict-no-yaml"
+from = "markdown_strict"
+input = '''
+---
+title: x
+---
+'''
+
+[[case]]
+id = "strict-no-math"
+from = "markdown_strict"
+input = '''
+$x$
+'''
+
+[[case]]
+id = "strict-escape-limited"
+from = "markdown_strict"
+input = '''
+\a \* \|
+'''
+
+[[case]]
+id = "strict-image-no-figure"
+from = "markdown_strict"
+input = '''
+![cap](i.png)
+'''
+
+[[case]]
+id = "strict-spaced-reference"
+from = "markdown_strict"
+input = '''
+[text] [ref]
+
+[ref]: /u
+'''
+
+[[case]]
+id = "strict-no-definition-list"
+from = "markdown_strict"
+input = '''
+Term
+: def
+'''
+
+[[case]]
+id = "strict-blockquote-no-blank"
+from = "markdown_strict"
+input = '''
+Para
+> quote
+'''
+
+[[case]]
+id = "strict-raw-html-inline"
+from = "markdown_strict"
+input = '''
+a <b>b</b>
+'''
+
+[[case]]
+id = "strict-no-title-block"
+from = "markdown_strict"
+input = '''
+% Title
+'''
+
+[[case]]
+id = "strict-autolink"
+from = "markdown_strict"
+input = '''
+<http://x.org>
+'''
+
+[[case]]
+id = "phpextra-header-attributes"
+from = "markdown_phpextra"
+input = '''
+# Heading {#id .c}
+'''
+
+[[case]]
+id = "phpextra-footnote"
+from = "markdown_phpextra"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "phpextra-definition-list"
+from = "markdown_phpextra"
+input = '''
+Term
+: Definition
+'''
+
+[[case]]
+id = "phpextra-abbreviation"
+from = "markdown_phpextra"
+input = '''
+*[CSS]: Cascading Style Sheets
+
+CSS rules.
+'''
+
+[[case]]
+id = "phpextra-pipe-table"
+from = "markdown_phpextra"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "phpextra-fenced-tilde"
+from = "markdown_phpextra"
+input = '''
+~~~
+code
+~~~
+'''
+
+[[case]]
+id = "phpextra-fenced-backtick"
+from = "markdown_phpextra"
+input = '''
+```
+code
+```
+'''
+
+[[case]]
+id = "phpextra-markdown-attribute"
+from = "markdown_phpextra"
+input = '''
+<div markdown="1">
+*emph*
+</div>
+
+<div>
+*raw*
+</div>
+'''
+
+[[case]]
+id = "phpextra-link-attributes"
+from = "markdown_phpextra"
+input = '''
+[l](/u){.c}
+'''
+
+[[case]]
+id = "phpextra-no-smart"
+from = "markdown_phpextra"
+input = '''
+"q" -- x
+'''
+
+[[case]]
+id = "phpextra-no-auto-id"
+from = "markdown_phpextra"
+input = '''
+# Heading
+'''
+
+[[case]]
+id = "phpextra-no-strikeout"
+from = "markdown_phpextra"
+input = '''
+~~x~~
+'''
+
+[[case]]
+id = "phpextra-intraword"
+from = "markdown_phpextra"
+input = '''
+snake_case_word
+'''
+
+[[case]]
+id = "mmd-title-block"
+from = "markdown_mmd"
+input = '''
+Title: Doc
+Author: Me
+Date: 2024
+
+Body.
+'''
+
+[[case]]
+id = "mmd-header-identifier"
+from = "markdown_mmd"
+input = '''
+# Heading [hid]
+'''
+
+[[case]]
+id = "mmd-link-attributes"
+from = "markdown_mmd"
+input = '''
+![i][r]
+
+[r]: /i.png width=20px height=30px
+'''
+
+[[case]]
+id = "mmd-short-subsuperscripts"
+from = "markdown_mmd"
+input = '''
+x^2 and H~2
+'''
+
+[[case]]
+id = "mmd-math-double-backslash"
+from = "markdown_mmd"
+input = '''
+\\(x\\) and $y$
+'''
+
+[[case]]
+id = "mmd-footnote"
+from = "markdown_mmd"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "mmd-definition-list"
+from = "markdown_mmd"
+input = '''
+Term
+: Def
+'''
+
+[[case]]
+id = "mmd-pipe-table"
+from = "markdown_mmd"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "mmd-backtick-code"
+from = "markdown_mmd"
+input = '''
+```python
+x = 1
+```
+'''
+
+[[case]]
+id = "mmd-figure"
+from = "markdown_mmd"
+input = '''
+![Caption](i.png)
+'''
+
+[[case]]
+id = "mmd-auto-identifier"
+from = "markdown_mmd"
+input = '''
+# Some Heading
+'''
+
+[[case]]
+id = "mmd-no-smart"
+from = "markdown_mmd"
+input = '''
+"q" -- x
+'''
+
+[[case]]
+id = "mmd-raw-attribute"
+from = "markdown_mmd"
+input = '''
+`<b>`{=html}
+'''
+
+[[case]]
+id = "mmd-no-yaml"
+from = "markdown_mmd"
+input = '''
+---
+title: x
+---
+'''
+
+[[case]]
+id = "github-heading-gfm-id"
+from = "markdown_github"
+input = '''
+# Hello, World!
+'''
+
+[[case]]
+id = "github-fenced-code"
+from = "markdown_github"
+input = '''
+```js
+let x = 1;
+```
+'''
+
+[[case]]
+id = "github-strikeout"
+from = "markdown_github"
+input = '''
+~~gone~~
+'''
+
+[[case]]
+id = "github-task-list"
+from = "markdown_github"
+input = '''
+- [ ] a
+- [x] b
+'''
+
+[[case]]
+id = "github-pipe-table"
+from = "markdown_github"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "github-bare-url"
+from = "markdown_github"
+input = '''
+Visit https://github.com now.
+'''
+
+[[case]]
+id = "github-emoji"
+from = "markdown_github"
+input = '''
+:tada: done
+'''
+
+[[case]]
+id = "github-list-no-blank"
+from = "markdown_github"
+input = '''
+Para
+- a
+- b
+'''
+
+[[case]]
+id = "github-alert"
+from = "markdown_github"
+input = '''
+> [!IMPORTANT]
+> Key point.
+'''
+
+[[case]]
+id = "github-no-space-heading"
+from = "markdown_github"
+input = '''
+#NoSpace
+'''
+
+[[case]]
+id = "github-intraword"
+from = "markdown_github"
+input = '''
+snake_case_word
+'''
+
+[[case]]
+id = "github-no-smart"
+from = "markdown_github"
+input = '''
+"q" -- x...
+'''
+
+[[case]]
+id = "github-footnote"
+from = "markdown_github"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "github-no-subscript"
+from = "markdown_github"
+input = '''
+H~2~O
+'''
+
+[[case]]
+id = "github-no-definition-list"
+from = "markdown_github"
+input = '''
+Term
+: Def
+'''
+
+[[case]]
+id = "github-raw-html"
+from = "markdown_github"
+input = '''
+<details><summary>S</summary>
+
+Body
+
+</details>
+'''
+
+[[case]]
+id = "github-no-yaml"
+from = "markdown_github"
+input = '''
+---
+title: x
+---
+'''
+
+[[case]]
+id = "strict-plus-footnotes"
+from = "markdown_strict+footnotes"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "github-minus-emoji"
+from = "markdown_github-emoji"
+input = '''
+:tada:
+'''
+
+[[case]]
+id = "markdown-minus-many"
+from = "markdown-smart-auto_identifiers-implicit_figures"
+input = '''
+# "Q"
+
+![c](i.png)
+'''
+
+[[case]]
+id = "s2b-html-div-without-native-divs"
+from = "markdown-native_divs"
+input = "<div>\n  <p>\n    x\n  </p>\n</div>\n"

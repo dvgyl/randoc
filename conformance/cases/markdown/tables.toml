@@ -1,0 +1,362 @@
+# Tables: simple, multiline, grid and pipe tables, captions and attributes.
+from = "markdown"
+to = []
+
+[[case]]
+id = "simple-basic"
+input = '''
+a   b
+--- ---
+1   2
+'''
+
+[[case]]
+id = "simple-alignment-from-header"
+input = '''
+Right  Left   Center
+-----  ----  --------
+    1  1        1
+'''
+
+[[case]]
+id = "simple-one-column"
+input = '''
+Head
+----
+x
+y
+'''
+
+[[case]]
+id = "simple-caption-before"
+input = '''
+Table: Caption first.
+
+a   b
+--- ---
+1   2
+'''
+
+[[case]]
+id = "simple-caption-colon"
+input = '''
+a   b
+--- ---
+1   2
+
+: Colon caption.
+'''
+
+[[case]]
+id = "simple-inline-markup"
+input = '''
+*a*   `b`
+----- -----
+**1** [l](u)
+'''
+
+[[case]]
+id = "simple-empty-cell"
+input = '''
+a   b
+--- ---
+1
+    2
+'''
+
+[[case]]
+id = "simple-ends-at-blank"
+input = '''
+a   b
+--- ---
+1   2
+
+Paragraph.
+'''
+
+[[case]]
+id = "simple-headerless-one-row"
+input = '''
+--- ---
+1   2
+--- ---
+'''
+
+[[case]]
+id = "simple-text-wider-than-column"
+input = '''
+a   b
+--- ---
+long text 2
+'''
+
+[[case]]
+id = "multiline-basic"
+input = '''
+----------- -----------
+Head 1      Head 2
+----------- -----------
+cell one    cell two
+continued
+
+second row  x
+----------- -----------
+'''
+
+[[case]]
+id = "multiline-relative-widths"
+input = '''
+---------------------------- ----
+Wide column                  N
+---------------------------- ----
+text                         1
+---------------------------- ----
+'''
+
+[[case]]
+id = "multiline-caption-attributes"
+input = '''
+----- -----
+a     b
+----- -----
+1     2
+----- -----
+
+Table: Cap. {#tbl:x}
+'''
+
+[[case]]
+id = "multiline-escaped-line-break"
+input = '''
+----- ---------
+a     b
+----- ---------
+1     one\
+      two
+----- ---------
+'''
+
+[[case]]
+id = "grid-basic"
+input = '''
++---+---+
+| a | b |
++===+===+
+| 1 | 2 |
++---+---+
+'''
+
+[[case]]
+id = "grid-headerless"
+input = '''
++---+---+
+| 1 | 2 |
++---+---+
+| 3 | 4 |
++---+---+
+'''
+
+[[case]]
+id = "grid-col-span"
+input = '''
++---+---+
+| a | b |
++===+===+
+| spans |
++---+---+
+'''
+
+[[case]]
+id = "grid-block-content"
+input = '''
++---------------+
+| Head          |
++===============+
+| Para one.     |
+|               |
+| Para two.     |
++---------------+
+'''
+
+[[case]]
+id = "grid-code-in-cell"
+input = '''
++--------------+
+| ```          |
+| code         |
+| ```          |
++--------------+
+'''
+
+[[case]]
+id = "grid-unicode-width"
+input = '''
++------+------+
+| 日本 | ab   |
++======+======+
+| é    | 😀   |
++------+------+
+'''
+
+[[case]]
+id = "grid-caption-after"
+input = '''
++---+
+| a |
++---+
+
+Table: After.
+'''
+
+[[case]]
+id = "grid-broken"
+input = '''
++---+---+
+| a | b
++---+---+
+'''
+
+[[case]]
+id = "grid-empty-cells"
+input = '''
++---+---+
+|   |   |
++===+===+
+|   | x |
++---+---+
+'''
+
+[[case]]
+id = "pipe-basic"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "pipe-alignments"
+input = '''
+| l | c | r | d |
+|:--|:-:|--:|---|
+| 1 | 2 | 3 | 4 |
+'''
+
+[[case]]
+id = "pipe-header-only"
+input = '''
+| a | b |
+|---|---|
+'''
+
+[[case]]
+id = "pipe-escaped-pipe"
+input = '''
+| a | b |
+|---|---|
+| x \| y | z |
+'''
+
+[[case]]
+id = "pipe-pipe-in-code"
+input = '''
+| a |
+|---|
+| `x|y` |
+'''
+
+[[case]]
+id = "pipe-uneven-cells"
+input = '''
+| a | b | c |
+|---|---|---|
+| 1 |
+| 1 | 2 | 3 | 4 |
+'''
+
+[[case]]
+id = "pipe-long-row-relative-widths"
+input = '''
+| a | b |
+|---|---------------------------------------------------------------------------|
+| short | this is a much longer cell that should make the table use relative widths when long |
+'''
+
+[[case]]
+id = "pipe-no-leading-pipe"
+input = '''
+a | b
+--|--
+1 | 2
+'''
+
+[[case]]
+id = "pipe-one-column"
+input = '''
+| a |
+|---|
+| 1 |
+'''
+
+[[case]]
+id = "pipe-inline-markup"
+input = '''
+| *e* | **s** |
+|-----|-------|
+| [l](/u) | $x$ |
+'''
+
+[[case]]
+id = "pipe-caption-attributes"
+input = '''
+| a |
+|---|
+| 1 |
+
+: Caption {#tbl .wide}
+'''
+
+[[case]]
+id = "pipe-empty-cells"
+input = '''
+| a |  |
+|---|--|
+|   | 1 |
+'''
+
+[[case]]
+id = "pipe-no-separator"
+input = '''
+| a | b |
+| 1 | 2 |
+'''
+
+[[case]]
+id = "pipe-in-list"
+input = '''
+- | a | b |
+  |---|---|
+  | 1 | 2 |
+'''
+
+[[case]]
+id = "table-captions-off"
+from = "markdown-table_captions"
+input = '''
+| a |
+|---|
+| 1 |
+
+: Not a caption.
+'''
+
+[[case]]
+id = "table-attributes-off"
+from = "markdown-table_attributes"
+input = '''
+| a |
+|---|
+| 1 |
+
+: Caption {#tbl}
+'''

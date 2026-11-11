@@ -1,0 +1,21 @@
+[package]
+name = "randoc-markdown"
+description = "The Pandoc Markdown reader for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+saphyr-parser = "0.3.3"
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+serde_json = { workspace = true }
+toml = { workspace = true }

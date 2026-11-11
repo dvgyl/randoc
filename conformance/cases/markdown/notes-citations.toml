@@ -1,0 +1,325 @@
+# Footnotes and citations.
+from = "markdown"
+to = []
+
+[[case]]
+id = "note-basic"
+input = '''
+Text.[^1]
+
+[^1]: The note.
+'''
+
+[[case]]
+id = "note-named-label"
+input = '''
+Text.[^label]
+
+[^label]: Named.
+'''
+
+[[case]]
+id = "note-definition-first"
+input = '''
+[^a]: Note first.
+
+Text.[^a]
+'''
+
+[[case]]
+id = "note-missing"
+input = '''
+Text.[^nope]
+'''
+
+[[case]]
+id = "note-unused-definition"
+input = '''
+Text.
+
+[^unused]: Never used.
+'''
+
+[[case]]
+id = "note-duplicate-definition"
+input = '''
+Text.[^d]
+
+[^d]: One.
+
+[^d]: Two.
+'''
+
+[[case]]
+id = "note-referenced-twice"
+input = '''
+A[^r] and B[^r].
+
+[^r]: Twice.
+'''
+
+[[case]]
+id = "note-multi-paragraph"
+input = '''
+Text.[^m]
+
+[^m]: Para one.
+
+    Para two.
+'''
+
+[[case]]
+id = "note-code-block"
+input = '''
+Text.[^c]
+
+[^c]: Note:
+
+        code
+'''
+
+[[case]]
+id = "note-list-inside"
+input = '''
+Text.[^l]
+
+[^l]:
+    - a
+    - b
+'''
+
+[[case]]
+id = "note-lazy-continuation"
+input = '''
+Text.[^z]
+
+[^z]: First line
+lazy line.
+'''
+
+[[case]]
+id = "note-inside-note"
+input = '''
+A[^o]
+
+[^o]: Outer[^i].
+
+[^i]: Inner.
+'''
+
+[[case]]
+id = "note-in-heading"
+input = '''
+# Heading[^h]
+
+[^h]: Heading note.
+'''
+
+[[case]]
+id = "note-in-table"
+input = '''
+| a |
+|---|
+| x[^t] |
+
+[^t]: Table note.
+'''
+
+[[case]]
+id = "note-label-with-spaces"
+input = '''
+Text.[^a b]
+
+[^a b]: Spaced.
+'''
+
+[[case]]
+id = "note-empty-definition"
+input = '''
+Text.[^e]
+
+[^e]:
+'''
+
+[[case]]
+id = "inline-note-nested-brackets"
+input = '''
+Text.^[A [bracketed] note.]
+'''
+
+[[case]]
+id = "inline-note-with-markup"
+input = '''
+Text.^[*emph* and `code`]
+'''
+
+[[case]]
+id = "inline-note-unclosed"
+input = '''
+Text.^[unclosed
+'''
+
+[[case]]
+id = "inline-notes-off"
+from = "markdown-inline_notes"
+input = '''
+Text.^[not a note]
+'''
+
+[[case]]
+id = "footnotes-off"
+from = "markdown-footnotes"
+input = '''
+Text.[^1]
+
+[^1]: Not a note.
+'''
+
+[[case]]
+id = "cite-single-bracket"
+input = '''
+[@key]
+'''
+
+[[case]]
+id = "cite-in-text"
+input = '''
+@key says.
+'''
+
+[[case]]
+id = "cite-in-text-with-locator"
+input = '''
+@key [p. 12] says.
+'''
+
+[[case]]
+id = "cite-suppress-author-bare"
+input = '''
+-@key
+'''
+
+[[case]]
+id = "cite-prefix-suffix"
+input = '''
+[see @key, p. 1]
+'''
+
+[[case]]
+id = "cite-multiple"
+input = '''
+[@a; @b; @c]
+'''
+
+[[case]]
+id = "cite-mixed-suppress"
+input = '''
+[@a; -@b]
+'''
+
+[[case]]
+id = "cite-key-punctuation"
+input = '''
+[@doe:2020.v2_x-y]
+'''
+
+[[case]]
+id = "cite-key-trailing-punct"
+input = '''
+See @doe. And @doe, too.
+'''
+
+[[case]]
+id = "cite-key-braced"
+input = '''
+@{Doe 2020/x}
+'''
+
+[[case]]
+id = "cite-email-not-cite"
+input = '''
+Mail foo@bar.com today.
+'''
+
+[[case]]
+id = "cite-in-note"
+input = '''
+Text.[^n]
+
+[^n]: See @key.
+'''
+
+[[case]]
+id = "cite-numbers-note-num"
+input = '''
+A [@a]. B.[^1] C [@b].
+
+[^1]: Note [@c].
+'''
+
+[[case]]
+id = "cite-with-emphasis"
+input = '''
+[*see* @key, **p. 4**]
+'''
+
+[[case]]
+id = "cite-suffix-only-locator"
+input = '''
+[@key 33]
+'''
+
+[[case]]
+id = "cite-bracket-no-at"
+input = '''
+[key]
+'''
+
+[[case]]
+id = "cite-unicode-key"
+input = '''
+[@müller2020]
+'''
+
+[[case]]
+id = "cite-key-starts-digit"
+input = '''
+[@2020x]
+'''
+
+[[case]]
+id = "cite-at-end-of-sentence"
+input = '''
+As noted by @key.
+'''
+
+[[case]]
+id = "cite-prefix-markup-semicolon"
+input = '''
+[*cf.* @a; see also @b, ch. 2]
+'''
+
+[[case]]
+id = "cite-unclosed"
+input = '''
+[@key
+'''
+
+[[case]]
+id = "citations-off"
+from = "markdown-citations"
+input = '''
+[@key] and @key.
+'''
+
+[[case]]
+id = "cite-in-link-text"
+input = '''
+[see @key](/url)
+'''
+
+[[case]]
+id = "cite-hash-counting"
+input = '''
+[@a] [@a] [@b]
+'''

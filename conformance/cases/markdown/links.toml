@@ -1,0 +1,451 @@
+# Links, images, autolinks and reference definitions.
+from = "markdown"
+to = []
+
+[[case]]
+id = "inline-basic"
+input = '''
+[text](/url)
+'''
+
+[[case]]
+id = "inline-title-double"
+input = '''
+[text](/url "title")
+'''
+
+[[case]]
+id = "inline-title-single"
+input = '''
+[text](/url 'title')
+'''
+
+[[case]]
+id = "inline-title-parens"
+input = '''
+[text](/url (title))
+'''
+
+[[case]]
+id = "inline-empty-url"
+input = '''
+[text]()
+'''
+
+[[case]]
+id = "inline-empty-text"
+input = '''
+[](/url)
+'''
+
+[[case]]
+id = "inline-angle-url"
+input = '''
+[text](<url with spaces>)
+'''
+
+[[case]]
+id = "inline-url-with-spaces"
+input = '''
+[text](url with spaces)
+'''
+
+[[case]]
+id = "inline-url-parens-balanced"
+input = '''
+[text](/a(b)c)
+'''
+
+[[case]]
+id = "inline-url-unicode"
+input = '''
+[text](/ünï/路径)
+'''
+
+[[case]]
+id = "inline-url-query-fragment"
+input = '''
+[text](https://x.org/p?a=1&b=2#frag)
+'''
+
+[[case]]
+id = "inline-nested-brackets"
+input = '''
+[a [b] c](/url)
+'''
+
+[[case]]
+id = "inline-link-in-link"
+input = '''
+[a [inner](/i) b](/o)
+'''
+
+[[case]]
+id = "inline-emph-text"
+input = '''
+[*emph* and `code`](/url)
+'''
+
+[[case]]
+id = "inline-space-before-paren"
+input = '''
+[text] (/url)
+'''
+
+[[case]]
+id = "inline-newline-in-text"
+input = '''
+[multi
+line](/url)
+'''
+
+[[case]]
+id = "inline-title-entity"
+input = '''
+[t](/u "a &amp; b")
+'''
+
+[[case]]
+id = "inline-attributes"
+input = '''
+[text](/url){#id .cls target="_blank"}
+'''
+
+[[case]]
+id = "reference-full"
+input = '''
+[text][ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "reference-collapsed"
+input = '''
+[ref][]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "reference-shortcut"
+input = '''
+[ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "reference-missing"
+input = '''
+[text][nothere]
+'''
+
+[[case]]
+id = "reference-missing-shortcut"
+input = '''
+[nothere]
+'''
+
+[[case]]
+id = "reference-definition-only"
+input = '''
+[ref]: /url
+'''
+
+[[case]]
+id = "reference-before-use"
+input = '''
+[ref]: /url "Title"
+
+Use [ref].
+'''
+
+[[case]]
+id = "reference-title-parens"
+input = '''
+[ref]
+
+[ref]: /url (Paren Title)
+'''
+
+[[case]]
+id = "reference-whitespace-normalized"
+input = '''
+[a   b]
+
+[A B]: /url
+'''
+
+[[case]]
+id = "reference-unicode-label"
+input = '''
+[Ünïcode]
+
+[ünïcode]: /u
+'''
+
+[[case]]
+id = "reference-emphasis-label"
+input = '''
+[*x*]
+
+[*x*]: /u
+'''
+
+[[case]]
+id = "reference-duplicate"
+input = '''
+[a]
+
+[a]: /one
+[a]: /two
+'''
+
+[[case]]
+id = "reference-duplicate-case"
+input = '''
+[a]
+
+[a]: /one
+[A]: /two
+'''
+
+[[case]]
+id = "reference-indented-three"
+input = '''
+[a]
+
+   [a]: /url
+'''
+
+[[case]]
+id = "reference-indented-four"
+input = '''
+[a]
+
+    [a]: /url
+'''
+
+[[case]]
+id = "reference-with-attributes"
+input = '''
+[a]
+
+[a]: /url {#id .c}
+'''
+
+[[case]]
+id = "reference-in-list"
+input = '''
+- [a]
+
+  [a]: /url
+'''
+
+[[case]]
+id = "reference-empty-label"
+input = '''
+[]
+
+[]: /url
+'''
+
+[[case]]
+id = "reference-bracket-in-label"
+input = '''
+[a\]b]
+
+[a\]b]: /url
+'''
+
+[[case]]
+id = "image-inline"
+input = '''
+![alt](/img.png)
+'''
+
+[[case]]
+id = "image-title"
+input = '''
+![alt](/img.png "Title")
+'''
+
+[[case]]
+id = "image-in-paragraph"
+input = '''
+Text ![alt](/img.png) text.
+'''
+
+[[case]]
+id = "image-reference"
+input = '''
+![alt][img]
+
+[img]: /img.png
+'''
+
+[[case]]
+id = "image-empty-alt-figure"
+input = '''
+![](/img.png)
+'''
+
+[[case]]
+id = "image-attributes-in-figure"
+input = '''
+![Cap](/img.png){#fig:a width=50%}
+'''
+
+[[case]]
+id = "image-alt-markup-figure"
+input = '''
+![*Emph* caption](/img.png)
+'''
+
+[[case]]
+id = "image-two-in-paragraph"
+input = '''
+![a](/a.png) ![b](/b.png)
+'''
+
+[[case]]
+id = "image-nested-in-link"
+input = '''
+[![alt](/img.png)](/target)
+'''
+
+[[case]]
+id = "image-figure-with-title"
+input = '''
+![Caption](/i.png "Title")
+'''
+
+[[case]]
+id = "autolink-http"
+input = '''
+<http://example.com>
+'''
+
+[[case]]
+id = "autolink-email"
+input = '''
+<user@example.com>
+'''
+
+[[case]]
+id = "autolink-mailto"
+input = '''
+<mailto:user@example.com>
+'''
+
+[[case]]
+id = "autolink-custom-scheme"
+input = '''
+<irc://irc.example.net/chan>
+'''
+
+[[case]]
+id = "autolink-with-space"
+input = '''
+<http://exa mple.com>
+'''
+
+[[case]]
+id = "autolink-entity-in-url"
+input = '''
+<http://x.org/?a=1&amp;b=2>
+'''
+
+[[case]]
+id = "autolink-attributes"
+input = '''
+<http://x.org>{.c}
+'''
+
+[[case]]
+id = "bare-url-not-linked"
+input = '''
+Visit https://example.com today.
+'''
+
+[[case]]
+id = "link-unclosed-paren"
+input = '''
+[text](/url
+'''
+
+[[case]]
+id = "link-unclosed-bracket"
+input = '''
+[text
+'''
+
+[[case]]
+id = "link-unclosed-title"
+input = '''
+[text](/url "title)
+'''
+
+[[case]]
+id = "link-footnote-label-collision"
+input = '''
+[^x]
+
+[^x]: note.
+'''
+
+[[case]]
+id = "link-reference-not-in-code"
+input = '''
+`[a]`
+
+[a]: /url
+'''
+
+[[case]]
+id = "link-to-heading-implicit-case"
+input = '''
+# My Section
+
+See [my section].
+'''
+
+[[case]]
+id = "link-implicit-header-overridden"
+input = '''
+# Intro
+
+[Intro]
+
+[intro]: /explicit
+'''
+
+[[case]]
+id = "duplicate-reference-same-target"
+input = '''
+[a]: /u
+[a]: /u
+
+[a]
+'''
+
+[[case]]
+id = "brackets-keep-inner-emphasis"
+input = '''
+*Use `x`[`:`*URL*] instead.*
+'''
+
+[[case]]
+id = "header-reference-raw-text-only"
+input = '''
+# Options
+
+See [*options*] and [Options].
+'''
+
+[[case]]
+id = "brackets-with-spaces-not-link"
+input = '''
+[ a ] and [b *c*]
+'''

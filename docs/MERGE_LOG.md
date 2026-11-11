@@ -636,3 +636,33 @@ the low rows. Open checks: mutation, coverage and the time table on the
 head. Requests of the worker to the coordinator: a field
 `max_generated_cells` (200,000) in `randoc_core::Limits` for the table
 budget.
+
+## Workstream markdown-reader (branch `ws/markdown-reader`, head 0b983bf, one squashed commit, batch 2 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-markdown` with the reader `markdown` and its variants (block and
+inline rules, tables, notes, citations, extensions), registered in
+`crates/randoc/src/formats.rs`. The crate uses the dependency
+`saphyr-parser` for YAML metadata until it moves to `randoc-yaml`; the
+dependency line stays.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 0b983bf (18:46 to 18:53 UTC; worker report): baseline 2217 units, 0 regressions, 1583 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `markdown/`: 1360 units, 1321 pass, 39 fail. Random differential runs (2,000 documents for each seed): 55 to 114 differ; the target of 1 % is not met. |
+| 3. Tests | `cargo test -p randoc-markdown`: 40 pass, 2 ignored; step-count test `time_grows_about_linearly` passes. Mutation sample (413 mutants of the diff from 764eee8), coverage and the time table: not run. |
+| 4. No panics | Fuzz target `markdown_read` on 0b983bf: 901 s, 1,953,581 runs, 0 crashes, peak memory 1176 MB (`checks-fuzz-b.md`, check 1). An old timeout file of 10 November runs in 0.02 s on the head. |
+| 5. Reviews | 2 rounds, both in session 2: Codex and Opus REQUEST CHANGES in each round. The three units of session 3 have no review. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before; it adds the reader to the format table. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Conflicts in the merge: the root `Cargo.toml` and `crates/randoc/Cargo.toml`
+(member and dependency lines: both sides kept), `Cargo.lock` (the version of
+`main`; the build wrote it again).
+
+Licence scan: 2 copied tables were replaced in 0b983bf; minimal table runs
+remain. Open findings: the row I-MD-41 has 8 examined groups and some small
+groups with no proven level; the worker says that they count as medium
+until they are examined. Rows I-MD-37 and I-MD-38 (low). Scope gaps
+I-MD-01 to I-MD-05 and I-MD-08. Open checks: mutation, coverage, the time
+table. Requests of the worker to the coordinator: none.

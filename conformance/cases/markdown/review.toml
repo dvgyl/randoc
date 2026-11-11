@@ -1,0 +1,1571 @@
+# Cases for the findings of the round 1 reviews. The inputs are written for Randoc.
+from = "markdown"
+to = []
+
+[[case]]
+id = "c1-unclosed-single-quotes"
+input = "'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a "
+
+[[case]]
+id = "h1-heading-in-note"
+input = "a[^1]\n\n[^1]: x\n\n    # H\n"
+
+[[case]]
+id = "h1-heading-in-grid-cell"
+input = "+-----+\n| # H |\n+-----+\n"
+
+[[case]]
+id = "h1-heading-in-yaml-then-body"
+input = "---\na: |\n  # A\n---\n\n# A\n"
+
+[[case]]
+id = "h2-non-ascii-cite-key"
+input = "@müller2020 says that\n"
+
+[[case]]
+id = "h2-non-ascii-cite-key-alone"
+input = "@é\n"
+
+[[case]]
+id = "h2-non-ascii-cite-key-space"
+input = "@éa x\n"
+
+[[case]]
+id = "m1-div-after-pipe-table"
+input = "| a |\n|---|\n| 1 |\n\n::: d\nx\n:::\n"
+
+[[case]]
+id = "m5-lone-double-quote"
+input = "\"\n"
+
+[[case]]
+id = "m5-inches"
+input = "5'10\"\n"
+
+[[case]]
+id = "m5-spaced-double-quote"
+input = "a \" b\n"
+
+[[case]]
+id = "m5-empty-double-quotes"
+input = "\"\"\n"
+
+[[case]]
+id = "m5-single-quoted-comma"
+input = "','\n"
+
+[[case]]
+id = "m7-initial-roman"
+input = "I. x\n\nI. y\n"
+
+[[case]]
+id = "m7-deep-indent-continuation"
+input = "- a\n       - b\n"
+
+[[case]]
+id = "m9-note-before-note"
+input = "a[^1] b[^2]\n\n[^2]: two\n[^1]: one\n"
+
+[[case]]
+id = "md03-indented-marker-is-text"
+input = "- a\n      - b\n"
+
+[[case]]
+id = "md03-example-item-nested-list"
+input = "(@x) a\n    - b\n"
+
+[[case]]
+id = "md05-link-in-image"
+input = "![[x](u)](v)\n"
+
+[[case]]
+id = "md05-link-in-inline-image"
+input = "see ![[x](u)](v) here\n"
+
+[[case]]
+id = "md10-marker-as-term"
+input = ": a\n: b\n"
+
+[[case]]
+id = "md11-autolink-backslash"
+input = "<https://x/a\\)b>\n"
+
+[[case]]
+id = "md12-reference-url-with-space"
+input = "[x]: a b\n\n[x]\n"
+
+[[case]]
+id = "md12-reference-url-space-title"
+input = "[x]: a b \"t\"\n\n[x]\n"
+
+[[case]]
+id = "md14-cite-suffix-newline"
+input = "a @x [a\nb]\n"
+
+[[case]]
+id = "md16-task-marker-alone-then-text"
+input = "1. [x]\n    a\n"
+
+[[case]]
+id = "md16-bullet-task-marker-then-text"
+input = "- [x]\n  a\n"
+
+[[case]]
+id = "md20-math-space-before-closer"
+input = "$a $b$\n"
+
+[[case]]
+id = "md20-math-digit-after-closer"
+input = "$a$2 $b$\n"
+
+[[case]]
+id = "md22-ten-digit-start"
+input = "1000000000. a\n"
+
+[[case]]
+id = "md22-max-int-start"
+input = "9223372036854775807. a\n"
+
+[[case]]
+id = "md22-overflow-start"
+input = "99999999999999999999. a\n"
+
+[[case]]
+id = "l11-nested-unclosed-divs"
+input = "::: a\n::: b\nx\n"
+
+[[case]]
+id = "html-unclosed-nested-divs-one-line"
+input = "<div><div>x\n"
+
+[[case]]
+id = "html-unclosed-div-lines"
+input = "<div>\n<div>\ntext\n"
+
+[[case]]
+id = "code-unmatched-long-run"
+input = "````` a `` b\n"
+
+[[case]]
+id = "code-shorter-closer-later"
+input = "``a ` b`\n"
+
+[[case]]
+id = "brackets-nested-not-links"
+input = "[[a] [b]] [c\n"
+
+[[case]]
+id = "comment-unclosed-inline"
+input = "a <!-- b\n"
+
+[[case]]
+id = "tag-with-quoted-lt"
+input = "a <b title=\"x<y\">c</b>\n"
+
+[[case]]
+id = "headings-equal-many"
+input = "# a\n\n# a\n\n# a\n\n# a-1\n\n# a\n"
+
+[[case]]
+id = "nested-quote-markers-one-line"
+input = "> > > x\n"
+
+[[case]]
+id = "nested-list-markers-one-line"
+input = "- - - a\n"
+
+[[case]]
+id = "nested-ordered-list-must-start-at-one"
+input = "- 2. * a\n"
+
+[[case]]
+id = "nested-ordered-after-blank-must-start-at-one"
+input = "- a\n\n  2. b\n"
+
+[[case]]
+id = "ordered-marker-ends-item-paragraph"
+input = "- a\n- b\n  2. c\n"
+
+[[case]]
+id = "ordered-in-blockquote-keeps-start"
+input = "> 2. b\n"
+
+[[case]]
+id = "md04-unmatched-star-in-superscript"
+input = "^a*b^\n"
+
+[[case]]
+id = "md04-unmatched-star-in-subscript"
+input = "~a*b~\n"
+
+[[case]]
+id = "md04-emphasis-in-superscript"
+input = "^x*y*z^ and ^q*^\n"
+
+[[case]]
+id = "md13-entity-in-citation-suffix"
+input = "[@x, &amp;]\n"
+
+[[case]]
+id = "md13-entity-between-citations"
+input = "[@a &#59; b; @c]\n"
+
+[[case]]
+id = "l1-link-destination-newline"
+input = "[a](u\nv)\n"
+
+[[case]]
+id = "md02-alias-limit-doubling"
+input = "---\na0: &a0 [x,x]\na1: &a1 [*a0, *a0]\na2: &a2 [*a1, *a1]\na3: &a3 [*a2, *a2]\na4: &a4 [*a3, *a3]\na5: &a5 [*a4, *a4]\na6: &a6 [*a5, *a5]\na7: &a7 [*a6, *a6]\na8: &a8 [*a7, *a7]\na9: &a9 [*a8, *a8]\na10: &a10 [*a9, *a9]\na11: &a11 [*a10, *a10]\na12: &a12 [*a11, *a11]\na13: &a13 [*a12, *a12]\na14: &a14 [*a13, *a13]\na15: &a15 [*a14, *a14]\n---\n"
+
+[[case]]
+id = "m6-block-tag-legend"
+input = "<legend>x</legend>\n"
+
+[[case]]
+id = "m6-block-tag-option"
+input = "<option>x</option>\n"
+
+[[case]]
+id = "m6-block-tag-button"
+input = "<button>x</button>\n"
+
+[[case]]
+id = "m6-block-tag-svg"
+input = "<svg>x</svg>\n"
+
+[[case]]
+id = "m6-block-tag-template"
+input = "<template>x</template>\n"
+
+[[case]]
+id = "m6-block-tag-search"
+input = "<search>x</search>\n"
+
+[[case]]
+id = "m6-block-tag-area"
+input = "<area shape=\"x\">\n"
+
+[[case]]
+id = "nested-list-markers-then-lazy-line"
+input = "- - a\nb\n"
+
+[[case]]
+id = "nested-list-markers-with-task"
+input = "- - [ ] a\n"
+
+[[case]]
+id = "nested-list-markers-then-rule"
+input = "- - * * *\n"
+
+[[case]]
+id = "nested-list-markers-then-code-indent"
+input = "- -     a\n"
+
+[[case]]
+id = "nested-list-markers-three-kinds"
+input = "* + - 1. a\n"
+
+[[case]]
+id = "m7-hash-marker-github"
+from = "markdown_github"
+input = "#. one\n#. two\n"
+
+[[case]]
+id = "m7-heading-after-item-strict"
+from = "markdown_strict"
+input = "- one\n#. two\n"
+
+[[case]]
+id = "md15-colon-line-is-cell-text"
+input = "+---+---+\n| a | b |\n+---:---+\n| c | d |\n+---+---+\n"
+
+[[case]]
+id = "md15-partial-border-open-column"
+input = "+---+---+\n| a | b |\n+---+   +\n| c | d |\n+---+---+\n"
+
+[[case]]
+id = "md15-partial-border-letter"
+input = "+---+---+\n| a | b |\n+---+-x-+\n| c | d |\n+---+---+\n"
+
+[[case]]
+id = "md15-plus-inside-cell-adds-row"
+input = "+---+---+\n| a | b |\n|   +   |\n| c | d |\n+---+---+\n"
+
+[[case]]
+id = "md15-colon-line-before-head-separator"
+input = "+---+---+\n| a | b |\n+---:---+\n| c | d |\n+===+===+\n| e | f |\n+---+---+\n"
+
+[[case]]
+id = "md15-mixed-rule-is-cell-text"
+input = "+---+---+\n| a | b |\n+===+---+\n| c | d |\n+---+---+\n"
+
+[[case]]
+id = "md15-missing-cell-is-empty"
+input = "+---+---+---+\n| a | b | c |\n+---+---+---+\n| d | e |\n+---+---+---+\n"
+
+[[case]]
+id = "md04-quote-around-unmatched-star"
+input = "\"a*b\"\n"
+
+[[case]]
+id = "i20-nested-quotes-many-lines"
+input = "> > > > a\nb\nc\n> > > > d\n"
+
+[[case]]
+id = "i20-nested-lists-many-lines"
+input = "- a\n  - b\n    - c\n      d\n      e\n\n      f\n"
+
+[[case]]
+id = "md19-unmatched-star-in-citation-suffix"
+input = "[@x, a*b]\n"
+
+[[case]]
+id = "md19-trailing-star-in-citation-suffix"
+input = "[see *a* @x, p*]\n"
+
+[[case]]
+id = "md19-emphasis-in-citation-suffix"
+input = "[@x, *a*]\n"
+
+[[case]]
+id = "m6-namespaced-tag"
+input = "<w:p>x</w:p>\n"
+
+[[case]]
+id = "m6-custom-element"
+input = "<x-custom>y</x-custom>\n"
+
+[[case]]
+id = "m6-partial-tag-keeps-paragraph"
+input = "a\n<p\nb\n"
+
+[[case]]
+id = "m6-comment-then-text"
+input = "<!-- c -->x\n"
+
+# Round 2 review findings.
+[[case]]
+id = "r2c1-quotes-closer-at-end"
+input = "'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'a 'b'\n"
+
+[[case]]
+id = "r2h1-attribute-blocks-closer-at-end"
+input = "[a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c [a]{.c }\n"
+
+[[case]]
+id = "r2h1-code-attributes-closer-at-end"
+input = "`a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" `a`{x=\"y\" }\n"
+
+[[case]]
+id = "r2h2-spans-closer-at-end"
+input = "<span><span><span><span><span><span><span><span><span><span><span><span></span>\n"
+
+[[case]]
+id = "r2h3-nested-divs-with-closers"
+input = "::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\n::: d\nx\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n:::\n"
+
+[[case]]
+id = "r2h3-nested-html-divs-with-closers"
+input = "<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\n<div>\na\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n"
+
+[[case]]
+id = "r2h4-long-citation-key"
+input = "@kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk x\n"
+
+[[case]]
+id = "r2h4-long-citation-key-non-ascii"
+input = "@kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkéb x\n"
+
+[[case]]
+id = "r2m1-quote-after-letter"
+input = "a\"* and word\"x\n"
+
+[[case]]
+id = "r2m1-empty-quotes-then-dot"
+input = "\"\".\n"
+
+[[case]]
+id = "r2m1-single-quoted-colon"
+input = "':' and '![i](p)'\n"
+
+[[case]]
+id = "r2m4-reference-label-on-two-lines"
+input = "[a\nb][]\n\n[a\nb]: u\n"
+
+[[case]]
+id = "r2m5-unclosed-div-end-line"
+input = "::: a\nx\n::: b\n\n"
+
+[[case]]
+id = "r2m5-unclosed-divs-blank-lines"
+input = "::: a\nx\n\n::: b\ny\n\n"
+
+[[case]]
+id = "r2-05-example-item-eight-spaces"
+input = "(@x) a\n        - b\n"
+
+[[case]]
+id = "r2-06-display-math-escaped-dollars"
+input = "$$a\\$$b$$\n"
+
+[[case]]
+id = "r2-06-inline-math-double-backslash"
+input = "$a\\\\$\n"
+
+[[case]]
+id = "r2-07-autolink-percent"
+input = "<https://x/%5C>\n"
+
+[[case]]
+id = "r2-07-destination-backslash"
+input = "[x](\\v)\n"
+
+[[case]]
+id = "r2-08-span-mixed-case-closer"
+input = "<span>x</Span> <span>y</SpAn>\n"
+
+[[case]]
+id = "r2-09-escaped-quote-in-attribute"
+input = "[x]{a=\"x\\\"}y\"}\n"
+
+[[case]]
+id = "r2-09-escaped-quote-in-code-attribute"
+input = "`x`{a=\"x\\\"}y\"}\n"
+
+[[case]]
+id = "r2-11-unknown-entity-in-citation"
+input = "[@a &foo; @b]\n"
+
+[[case]]
+id = "r2-14-button-after-text"
+input = "a\n<button>x</button>\n"
+
+[[case]]
+id = "r2-17-superscript-label-link"
+input = "[^x^](u)\n"
+
+[[case]]
+id = "r2-19-span-with-unmatched-star"
+input = "<span>*x</span>\n"
+
+[[case]]
+id = "r2-20-emphasis-before-line-break"
+input = "p *\na* q\n"
+
+[[case]]
+id = "r2-20-strong-before-line-break"
+input = "p **\na** q\n"
+
+[[case]]
+id = "r2-02-bare-uri-punctuation"
+input = "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!x\n"
+
+[[case]]
+id = "r2-02-failed-destinations"
+input = "[x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a([x](a(x) } ' \" >\n"
+
+[[case]]
+id = "r2-02-reference-title-candidates"
+input = "[x]: u (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x \n\n[x]\n"
+
+[[case]]
+id = "r2-12-lowercase-table-caption"
+input = "table: c\n\n| a |\n|---|\n| b |\n"
+
+[[case]]
+id = "abbr-page-reference-not-a-list"
+input = "p. 3\n"
+
+[[case]]
+id = "abbr-page-reference-two-spaces-is-a-list"
+input = "p.  3\n"
+
+[[case]]
+id = "abbr-other-abbreviation-letter-is-a-list"
+input = "n. 3\n"
+
+[[case]]
+id = "abbr-page-letter-before-word-is-a-list"
+input = "p. a\n"
+
+# Identifier and emoji cases after the migration to randoc_core::shared.
+[[case]]
+id = "shared-migration-01"
+from = "markdown+ascii_identifiers"
+input = "# Č\n"
+
+[[case]]
+id = "shared-migration-02"
+from = "markdown"
+input = "# कि\n"
+
+[[case]]
+id = "shared-migration-03"
+from = "markdown+gfm_auto_identifiers"
+input = "# 😀\n"
+
+[[case]]
+id = "shared-migration-04"
+from = "markdown+ascii_identifiers"
+input = "# ø\n\n# ø\n"
+
+[[case]]
+id = "shared-migration-05"
+from = "markdown"
+input = "# हिन्दी\n"
+
+[[case]]
+id = "shared-migration-06"
+from = "markdown+gfm_auto_identifiers"
+input = "# हिन्दी\n"
+
+[[case]]
+id = "shared-migration-07"
+from = "markdown"
+input = "# Ⅳ roman\n"
+
+[[case]]
+id = "shared-migration-08"
+from = "markdown"
+input = "# Ⓐ circled\n"
+
+[[case]]
+id = "shared-migration-09"
+from = "markdown+gfm_auto_identifiers"
+input = "# emoji 😀 here\n"
+
+[[case]]
+id = "shared-migration-10"
+from = "markdown+ascii_identifiers"
+input = "# ı dotless\n"
+
+[[case]]
+id = "shared-migration-11"
+from = "markdown+ascii_identifiers"
+input = "# Ă Ș Ț\n"
+
+[[case]]
+id = "shared-migration-12"
+from = "markdown+emoji"
+input = "# :smile: x\n"
+
+[[case]]
+id = "shared-migration-13"
+from = "markdown+emoji"
+input = ":sunglasses: :tada: :flag_us:\n"
+
+[[case]]
+id = "shared-migration-14"
+from = "markdown+ascii_identifiers"
+input = "# 🇺🇸 flag\n"
+
+# Session 2: the memo of failed attempts (I-MD-28).
+[[case]]
+id = "s2-note-number-after-failed-strikeout"
+input = "~~[@a] _x ~~ y_ [@d]\n"
+
+[[case]]
+id = "s2-note-number-after-failed-quote"
+input = "\"[@a] _x \" y_ [@d]\n"
+
+[[case]]
+id = "s2-strong-and-strikeout-alternating"
+input = "__a ~~b __a ~~b __a ~~b __a ~~b __a ~~b __a ~~b __a ~~b __a ~~b __a ~~b __a ~~b x\n"
+
+[[case]]
+id = "s2-emphasis-and-double-quote-alternating"
+input = "_a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b _a \"b x\n"
+
+[[case]]
+id = "s2-double-quote-and-strong-alternating"
+input = "\"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b \"a __b x\n"
+
+[[case]]
+id = "s2-strikeout-and-emphasis-alternating-closed"
+input = "~~a _b ~~a _b ~~a _b ~~a _b ~~a _b ~~a _b ~~a _b ~~a _b c~~ d_\n"
+
+[[case]]
+id = "s2-citation-inside-alternating-emphasis"
+input = "_a ~~[@b] _a ~~[@b] _a ~~[@b] _a ~~[@b] _a ~~[@b] _a ~~[@b] [@c]\n"
+
+
+# Session 2: brackets inside a link (I-MD-27).
+[[case]]
+id = "s2-nested-links"
+input = "[a [a [a [a [a [a x](u)](u)](u)](u)](u)](u)\n"
+
+[[case]]
+id = "s2-brackets-inside-a-link"
+input = "[a [b] [^1] [@c] [[w]] ![i](j) x](u)\n\n[^1]: n\n"
+
+[[case]]
+id = "s2-citation-after-brackets-inside-a-link"
+input = "[a [b] [c] [@d] e](u) [@f]\n"
+
+[[case]]
+id = "s2-note-inside-inline-link-text"
+input = "[a ^[n] e](u) [@f]\n"
+
+[[case]]
+id = "s2-citation-inside-image-text"
+input = "![a [@d] e](u) [@f]\n"
+
+[[case]]
+id = "s2-citation-inside-reference-link-text"
+input = "[a [@d] e][r] [@f]\n\n[r]: u\n"
+
+[[case]]
+id = "s2-citations-after-a-link-with-a-citation"
+input = "[a [@d]](u) [@f] [@g]\n"
+
+
+# Session 2: sub-parses read windows of one buffer (I-MD-27).
+[[case]]
+id = "s2-nested-images"
+input = "![a ![a ![a ![a ![a x](u)](u)](u)](u)](u)\n"
+
+[[case]]
+id = "s2-nested-bracketed-spans"
+input = "[a [a [a [a [a x]{.c}]{.c}]{.c}]{.c}]{.c}\n"
+
+[[case]]
+id = "s2-nested-native-spans"
+input = "<span>a <span>a <span>a <span>a <span>a x</span></span></span></span></span>\n"
+
+[[case]]
+id = "s2-nested-inline-notes"
+input = "^[a ^[a ^[a ^[a x]]]]\n"
+
+[[case]]
+id = "s2-native-span-with-a-bracket-that-closes-outside"
+input = "[a <span>b] c</span> d\n"
+
+[[case]]
+id = "s2-native-span-with-a-bracket-that-opens-inside"
+input = "<span>[b</span> c] d\n"
+
+[[case]]
+id = "s2-native-span-with-code-that-closes-outside"
+input = "<span>`b</span>` c\n"
+
+[[case]]
+id = "s2-link-text-with-a-quote-and-math"
+input = "[\"a\" $b$ 'c' x](u) \"d\"\n"
+
+[[case]]
+id = "s2-native-span-with-a-quote-that-closes-outside"
+input = "<span>\"a</span> b\" c\n"
+
+[[case]]
+id = "s2-link-text-with-a-tex-environment"
+input = "[\\begin{x}a\\end{x}](u) \\end{x}\n"
+
+
+[[case]]
+id = "s2b-html-indented-text"
+input = "<p>\n    x\n</p>\n"
+
+[[case]]
+id = "s2b-html-indented-inline-tags"
+input = "<td>\n    <b>x</b>\n</td>\n"
+
+[[case]]
+id = "s2b-html-eight-spaces"
+input = "<section>\n        x\n</section>\n"
+
+[[case]]
+id = "s2b-html-later-block-with-more-spaces"
+input = "<p>\n  x\n\n      z\n</p>\n"
+
+[[case]]
+id = "s2b-html-two-indented-paragraphs"
+input = "<p>\n    x\n\n    y\n</p>\n"
+
+[[case]]
+id = "s2b-html-indented-list"
+input = "<form>\n    - a\n      b\n    - c\n</form>\n"
+
+[[case]]
+id = "s2b-html-indented-fence-lines"
+input = "<p>\n    ```\n    x\n    ```\n</p>\n"
+
+[[case]]
+id = "s2b-html-indented-line-block"
+input = "a\n\n<p>\n    | x\n    | y\n</p>\n"
+
+[[case]]
+id = "s2b-html-indented-reference"
+input = "<p>\n    [r]: /u\n\n    [r]\n</p>\n"
+
+[[case]]
+id = "s2b-html-nested-indented-table"
+input = "<table>\n  <tr>\n    <td>\n      x\n    </td>\n  </tr>\n</table>\n"
+
+[[case]]
+id = "s2b-html-indented-content-with-no-closer"
+input = "<td>\n    x\n\n    y\n\nz\n\n    w\n"
+
+[[case]]
+id = "s2b-html-void-tag-then-indented-text"
+input = "<hr>\n    x\n\n    code\n"
+
+[[case]]
+id = "s2b-html-self-closing-tag-then-indented-text"
+input = "<p />\n    x\n\n    code\n"
+
+[[case]]
+id = "s2b-html-blank-line-then-indented-text"
+input = "<p>\n\n    x\n</p>\n"
+
+[[case]]
+id = "s2b-html-text-after-the-tag"
+input = "<p>  x\n    y\n\n    z\n</p>\n"
+
+[[case]]
+id = "s2b-html-native-div-keeps-code"
+input = "<div>\n    x\n</div>\n"
+
+[[case]]
+id = "s2b-html-div-inside-indented-content"
+input = "<p>\n    x\n<div>\n    y\n</div>\n    z\n</p>\n"
+
+[[case]]
+id = "s2b-html-indented-text-after-the-closer"
+input = "<p>\n    x\n</p>\n    y\n"
+
+[[case]]
+id = "s2b-html-indented-closer"
+input = "<p>\n    x\n    </p>\n"
+
+[[case]]
+id = "s2b-html-element-in-list-item"
+input = "- <p>\n      x\n  </p>\n"
+
+[[case]]
+id = "s2b-html-indented-elements-on-one-line"
+input = "<section>\n  <p>x</p>\n  <p>y</p>\n</section>\n"
+
+[[case]]
+id = "s2b-html-section-with-code-after-paragraph"
+input = "<section>\n  <p>\n    x\n\n    y\n  </p>\n\n  z\n\n      w\n</section>\n"
+
+# Session 3: lists, definitions, task boxes and indented block tags (I-MD-29).
+
+[[case]]
+id = "s3-task-box-before-list-marker"
+input = "- [ ] - a\n"
+
+[[case]]
+id = "s3-task-box-before-list-marker-github"
+from = "markdown_github"
+input = "- [ ] - a\n"
+
+[[case]]
+id = "s3-task-box-before-quote-marker"
+input = "- [x] > a\n"
+
+[[case]]
+id = "s3-task-box-before-heading-marker"
+input = "- [ ] # a\n"
+
+[[case]]
+id = "s3-task-box-before-ordered-marker"
+input = "1. [ ] 1. a\n"
+
+[[case]]
+id = "s3-task-box-alone-before-nested-list"
+input = "- [ ]\n  - a\n"
+
+[[case]]
+id = "s3-task-box-alone-before-blank-line"
+input = "- [x]\n\n  a\n"
+
+[[case]]
+id = "s3-task-box-alone-before-text"
+input = "- [ ]\n  a\n"
+
+[[case]]
+id = "s3-task-box-in-setext-heading"
+input = "- [ ] a\n---\n"
+
+[[case]]
+id = "s3-definition-letter-marker"
+input = "Term\n: g. x\n"
+
+[[case]]
+id = "s3-definition-number-marker-not-one"
+input = "Term\n: 2. x\n"
+
+[[case]]
+id = "s3-definition-paren-letter-marker"
+input = "Term\n: b) x\n"
+
+[[case]]
+id = "s3-definition-bullet-ends-paragraph"
+input = "Term\n: x\n  - y\n"
+
+[[case]]
+id = "s3-definition-number-ends-paragraph"
+input = "Term\n: x\n  2. y\n"
+
+[[case]]
+id = "s3-definition-number-after-blank"
+input = "Term\n: x\n\n  2. y\n"
+
+[[case]]
+id = "s3-github-indented-bullet-in-item"
+from = "markdown_github"
+input = "- a\n      - b\n"
+
+[[case]]
+id = "s3-github-indented-bullet-after-paragraph"
+from = "markdown_github"
+input = "a\n    - b\n"
+
+[[case]]
+id = "s3-github-indented-number-in-item"
+from = "markdown_github"
+input = "- a\n      1. b\n"
+
+[[case]]
+id = "s3-lazy-dashes-in-item"
+input = "- a\n ---\n"
+
+[[case]]
+id = "s3-lazy-equals-in-item"
+input = "- a\n ===\n"
+
+[[case]]
+id = "s3-lazy-dashes-in-ordered-item"
+input = "1.  a\n   ---\n"
+
+[[case]]
+id = "s3-unindented-dashes-after-item"
+input = "- a\n---\n"
+
+[[case]]
+id = "s3-div-fence-after-item"
+input = "- a\n::: n\nx\n:::\n"
+
+[[case]]
+id = "s3-div-closer-after-item"
+input = "- a\n:::\n"
+
+[[case]]
+id = "s3-div-around-item"
+input = "::: m\n- a\n:::\n"
+
+[[case]]
+id = "s3-html-div-indented-in-item"
+input = "- a\n      <div>x</div>\n"
+
+[[case]]
+id = "s3-html-p-indented-in-item"
+input = "- a\n      <p>x</p>\n"
+
+[[case]]
+id = "s3-html-div-indented-after-paragraph"
+input = "a\n    <div>x</div>\n"
+
+[[case]]
+id = "s3-html-p-indented-after-paragraph"
+input = "a\n    <p>x</p>\n"
+
+[[case]]
+id = "s3-html-div-indented-in-ordered-item"
+input = "1.  a\n        <div>x</div>\n"
+
+[[case]]
+id = "s3-html-div-indented-on-lines"
+input = "a\n    <div>\nx\n</div>\n"
+
+[[case]]
+id = "s3-html-div-indented-alone"
+input = "    <div>x</div>\n"
+
+[[case]]
+id = "s3-fence-lazy-in-item"
+input = "- a\n ```\n x\n ```\n"
+
+[[case]]
+id = "s3-tilde-fence-after-item"
+input = "- a\n~~~\nx\n~~~\n"
+
+[[case]]
+id = "s3-fence-at-item-content"
+input = "- a\n  ```\n  x\n  ```\n"
+
+[[case]]
+id = "s3-fence-ends-paragraph"
+input = "para\n```\nx\n```\n"
+
+[[case]]
+id = "s3-indented-fence-in-paragraph"
+input = "para\n ```\nx\n```\n"
+
+[[case]]
+id = "s3-tilde-fence-in-paragraph"
+input = "para\n~~~\nx\n~~~\n"
+
+[[case]]
+id = "s3-definition-after-term-in-item"
+input = "* Term\n  : def\n"
+
+[[case]]
+id = "s3-definition-after-blank-in-item"
+input = "* x\n\n  Term\n  : def\n"
+
+[[case]]
+id = "s3-definition-marker-lazy-after-item"
+input = "- term\n: def\n"
+
+[[case]]
+id = "s3-definition-marker-in-item-paragraph"
+input = "- a\n  b\n  : c\n"
+
+# Session 3: heading identifiers from the first pass (I-MD-09, I-SHARED-05) and the suppress-author text (I-MD-16).
+
+[[case]]
+id = "s3-id-full-reference-link"
+input = "# A [text][ref] b\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-collapsed-reference-link"
+input = "# A [ref][] b\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-reference-link-with-markup"
+input = "# A [*Te x*][My  Ref] b\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-reference-image"
+input = "# A ![alt][ref] b\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-setext-reference-link"
+input = "A [text][ref] b\n=====\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-note-reference"
+input = "# Heading[^h]\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-note-and-link"
+input = "# H [^h] and [text][ref]\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-gfm-reference-link"
+from = "markdown+gfm_auto_identifiers"
+input = "# A [text][ref] b\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-id-unknown-reference"
+input = "# A [text][nope] b\n\n[ref]: /u\n[my ref]: /v\n\n[^h]: n\n"
+
+[[case]]
+id = "s3-cite-suppress-author-text"
+input = "-@key says x.\n"
+
+[[case]]
+id = "s3-cite-suppress-author-with-locator"
+input = "-@key [p. 3] x\n"
+
+[[case]]
+id = "s3-cite-suppress-author-after-text"
+input = "a -@key\n"
+
+# Session 3: fence openers with no closer (a memo of failed closer searches).
+
+[[case]]
+id = "s3-unclosed-fences-in-paragraph"
+input = "x\n```a\n```a\n````\n"
+
+[[case]]
+id = "s3-unclosed-fences-as-lazy-lines"
+input = "- x\n```a\n```a\n~~~b\n"
+
+[[case]]
+id = "s3-longer-fence-after-unclosed-fence"
+input = "x\n````a\n```b\n```\n"
+
+[[case]]
+id = "s3b-pi-block"
+input = "<?php x ?>\n"
+
+[[case]]
+id = "s3b-pi-block-then-text"
+input = "<?x a?> y\n"
+
+[[case]]
+id = "s3b-pi-inline"
+input = "a <?x a ?> b\n"
+
+[[case]]
+id = "s3b-pi-ends-at-first-gt"
+input = "a <?a > b ?> c\n"
+
+[[case]]
+id = "s3b-pi-two-lines"
+input = "<?x\ny ?>\n\nq <?x\ny ?> r\n"
+
+[[case]]
+id = "s3b-pi-indented-is-inline"
+input = " <?x?>\n"
+
+[[case]]
+id = "s3b-pi-in-item"
+input = "- <?x?>\n- a <?y?>\n"
+
+[[case]]
+id = "s3b-pi-not-letter"
+input = "a <?1x?> <??> <? a ?> <?-x?>\n"
+
+[[case]]
+id = "s3b-pi-unclosed"
+input = "a <?x b\n"
+
+[[case]]
+id = "s3b-pi-raw-html-off"
+from = "markdown-raw_html"
+input = "<?x?>\n\na <?x?>\n"
+
+[[case]]
+id = "s3b-pi-strict"
+from = "markdown_strict"
+input = "<?x?>\n\na <?x?>\n"
+
+[[case]]
+id = "s3b-comment-indented-is-inline"
+input = " <!-- c -->\n"
+
+[[case]]
+id = "s3b-comment-short-forms-are-text"
+input = "<!-->\n\n<!--->\n\na <!--> b -->\n"
+
+[[case]]
+id = "s3b-comment-empty"
+input = "<!---->\n\na <!----> b\n"
+
+[[case]]
+id = "s3b-comment-in-quote"
+input = "> <!-->\n> <!-- c -->\n"
+
+[[case]]
+id = "s3b-math-env-equation"
+input = "\\begin{equation}\nx = 1\n\\end{equation}\n"
+
+[[case]]
+id = "s3b-math-env-align-star"
+input = "\\begin{align*}\na &= b\n\\end{align*}\n"
+
+[[case]]
+id = "s3b-math-env-in-item"
+input = "- \\begin{gather}\n  y\n  \\end{gather}\n"
+
+[[case]]
+id = "s3b-math-env-blank-line"
+input = "\\begin{multline}\nq\n\n\\end{multline}\n"
+
+[[case]]
+id = "s3b-tex-env-cases-is-block"
+input = "\\begin{cases}\nq\n\\end{cases}\n\n\\begin{split}\nq\n\\end{split}\n"
+
+[[case]]
+id = "s3b-heading-code-attr"
+input = "# Title `code`{.c}\n"
+
+[[case]]
+id = "s3b-heading-link-attr"
+input = "# Go [there](u){.c}\n\n## Pic ![i](u){#p}\n"
+
+[[case]]
+id = "s3b-heading-span-attr"
+input = "Some [words]{.c}\n=====\n"
+
+[[case]]
+id = "s3b-heading-attr-after-space"
+input = "# Some [words] {.c}\n\n# Paren (b){.d}\n"
+
+[[case]]
+id = "s3b-heading-span-attr-off"
+from = "markdown-bracketed_spans"
+input = "# Some [words]{.c}\n"
+
+[[case]]
+id = "s3b-setext-after-comment"
+input = "<!-- c -->\n---\n\n<!-- c --> Title\n=====\n\n<?x?> a\n---\n"
+
+[[case]]
+id = "s3b-undefined-note-counts"
+input = "[^x] [^y] [@z]\n"
+
+[[case]]
+id = "s3b-undefined-note-forms"
+input = "[^x](u) [^x y] [^] [^*a*] [@z]\n"
+
+[[case]]
+id = "s3b-undefined-note-mmd"
+from = "markdown_mmd"
+input = "[^1] a^b c\n"
+
+[[case]]
+id = "s3b-undefined-note-in-note"
+input = "[^x]\n\n[^x]: [^y] [@z]\n"
+
+[[case]]
+id = "s3b-block-tag-mid-line"
+input = "x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-end-of-line"
+input = "a\nx <hr>\nz\n"
+
+[[case]]
+id = "s3b-block-tag-div-mid-line"
+input = "x <div>y</div> z\n"
+
+[[case]]
+id = "s3b-block-tag-close-only"
+input = "x </p> z\n"
+
+[[case]]
+id = "s3b-block-tag-two"
+input = "x <p>y</p> z <p>w</p> v\n"
+
+[[case]]
+id = "s3b-block-tag-in-code"
+input = "`x <p>y</p>` z\n"
+
+[[case]]
+id = "s3b-block-tag-in-emphasis"
+input = "*x <p>y</p>* z\n"
+
+[[case]]
+id = "s3b-block-tag-in-brackets"
+input = "[x <p>y</p>]{.c} z\n"
+
+[[case]]
+id = "s3b-block-tag-in-math"
+input = "$x <p>y</p>$ z\n"
+
+[[case]]
+id = "s3b-block-tag-in-comment"
+input = "x <!-- <p> --> z\n"
+
+[[case]]
+id = "s3b-block-tag-in-span-tag"
+input = "<span>x <p>y</p></span>\n"
+
+[[case]]
+id = "s3b-block-tag-escaped"
+input = "x \\<p>y</p>\n"
+
+[[case]]
+id = "s3b-block-tag-in-heading"
+input = "# x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-in-quote"
+input = "> x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-in-item"
+input = "- x <pre>y</pre> z\n"
+
+[[case]]
+id = "s3b-block-tag-inline-names"
+input = "x <span>y</span> <del>d</del> <video>v</video> z\n"
+
+[[case]]
+id = "s3b-block-tag-mihb-off"
+from = "markdown-markdown_in_html_blocks"
+input = "x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-raw-html-off"
+from = "markdown-raw_html"
+input = "x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-phpextra"
+from = "markdown_phpextra"
+input = "x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-strict"
+from = "markdown_strict"
+input = "x <p>y</p> z\n"
+
+[[case]]
+id = "s3b-block-tag-unclosed-attr"
+input = "x <div class=x\n"
+
+[[case]]
+id = "s3b-figure-in-tight-item"
+input = "- ![pic](a.png)\n- b\n"
+
+[[case]]
+id = "s3b-figure-in-definition"
+input = "Term\n:   ![pic](a.png)\n"
+
+[[case]]
+id = "s3b-figure-in-quote"
+input = "> ![pic](a.png)\n"
+
+[[case]]
+id = "s3b-figure-not-in-pipe-cell"
+input = "| a |\n|---|\n| ![pic](a.png) |\n"
+
+[[case]]
+id = "s3b-figure-in-grid-cell"
+input = "+---------------+\n| ![pic](a.png) |\n+---------------+\n"
+
+[[case]]
+id = "s3b-figure-not-in-simple-cell"
+input = "a      b\n------ ------\n![p](q.png) c\n\n"
+
+[[case]]
+id = "s3b-figure-item-with-text"
+input = "- ![pic](a.png)\n  b\n"
+
+[[case]]
+id = "s3b-undefined-ref-attr-phpextra"
+from = "markdown_phpextra"
+input = "[a]{.c} b [*e* f]{#i} g\n"
+
+[[case]]
+id = "s3b-undefined-ref-attr-heading"
+from = "markdown_phpextra"
+input = "## a [b]{.c} {#x}\n"
+
+[[case]]
+id = "s3b-unclosed-pre-after-text"
+input = "x <pre>\n\n<pre> z\nw\n"
+
+[[case]]
+id = "s3b-unclosed-script-mid-line"
+input = "x <script> z\n"
+
+[[case]]
+id = "s3b-raw-mode-inline-element"
+from = "markdown-markdown_in_html_blocks"
+input = "<del>y</del> z\n\n<video>v</video> w\n"
+
+[[case]]
+id = "s3b-raw-mode-rest-of-line"
+from = "markdown-markdown_in_html_blocks"
+input = "<p>y</p> z\n\n<p> a\nb\n"
+
+[[case]]
+id = "s3c-block-tag-in-link-text"
+input = "[x <p>y</p>](u) z\n"
+
+[[case]]
+id = "s3c-block-tag-first-in-link-text"
+input = "[<p>y</p>](u)\n"
+
+[[case]]
+id = "s3c-block-tag-in-image-text"
+input = "![x <hr/> y](u) z\n"
+
+[[case]]
+id = "s3c-block-tag-in-note-text"
+input = "a ^[x <div>y</div>] z\n"
+
+[[case]]
+id = "s3c-block-tag-in-reference-text"
+input = "[x <p>y</p>][r]\n\n[r]: v\n"
+
+[[case]]
+id = "s3c-block-tag-in-plain-brackets"
+input = "[x <p> z] w\n"
+
+[[case]]
+id = "s3c-block-tag-in-emphasis-in-link"
+input = "[x *a <div>y</div> b*](u) z\n"
+
+[[case]]
+id = "s3c-block-tag-in-inner-bracket"
+input = "[x [b <p>y</p>] c](u)\n"
+
+[[case]]
+id = "s3c-block-tag-in-inner-link"
+input = "[a [b <p> c](v) d](u)\n"
+
+[[case]]
+id = "s3c-block-tag-in-inner-span"
+input = "[a [b <p> c]{.d} e]{.f}\n"
+
+[[case]]
+id = "s3c-block-tag-in-native-span-in-link"
+input = "[x <span>a <p>y</p> b</span>](u)\n"
+
+[[case]]
+id = "s3c-block-tag-in-code-in-link"
+input = "[x `<p>` y](u)\n"
+
+[[case]]
+id = "s3c-block-tag-in-math-in-link"
+input = "[a $x <p> y$ b](u)\n"
+
+[[case]]
+id = "s3c-block-tag-in-link-raw-mode"
+from = "markdown-markdown_in_html_blocks"
+input = "[x <p>y</p>](u) z\n"
+
+[[case]]
+id = "s3c-block-tag-in-link-attribute-mode"
+from = "markdown-markdown_in_html_blocks+markdown_attribute"
+input = "[x <p>y</p>](u) z\n"
+
+[[case]]
+id = "s3c-block-tag-in-link-strict"
+from = "markdown_strict"
+input = "[x <p>y</p>](u) z\n"
+
+[[case]]
+id = "s3c-inline-tag-in-link-text"
+input = "[x <video>y</video>](u) z\n"
+
+[[case]]
+id = "s3c-span-spaces-at-ends"
+input = "[ x ]{.c} z\n"
+
+[[case]]
+id = "s3c-note-spaces-at-ends"
+input = "a ^[ x ] b\n"
+
+[[case]]
+id = "s3c-native-span-spaces-at-ends"
+input = "a<span> b </span>c\n"
+
+[[case]]
+id = "s3c-native-span-line-breaks-at-ends"
+input = "<span>\nx\n</span>\n"
+
+[[case]]
+id = "s3c-native-span-hard-break-at-end"
+input = "<span>x  \n</span> <span>y\\\n</span>\n"
+
+[[case]]
+id = "s3c-span-soft-breaks-at-ends"
+input = "[\nx\n]{.c} z\n"
+
+[[case]]
+id = "s3c-span-hard-break-at-end"
+input = "[x  \n]{.c} ^[y\\\n]\n"
+
+[[case]]
+id = "s3c-link-hard-break-at-end"
+input = "[x\\\n](u) [y  \n](v)\n"
+
+[[case]]
+id = "s3c-brackets-soft-break-at-end"
+input = "[x\n] z\n"
+
+[[case]]
+id = "s3c-list-marker-after-definition"
+input = "q\n:   a\n- bar\n"
+
+[[case]]
+id = "s3c-ordered-marker-after-definition-paragraph"
+input = "q\n\n:   a\n\n    foo\n#. bar\n"
+
+[[case]]
+id = "s3c-list-marker-after-definition-lazy-line"
+input = "q\n\n:   a\n    foo\n1. bar\n"
+
+[[case]]
+id = "s3c-indented-list-marker-after-definition"
+input = "q\n:   a\n  - bar\n"
+
+[[case]]
+id = "s3c-hrule-after-definition"
+input = "q\n:   a\n- - -\n"
+
+[[case]]
+id = "s3c-fence-after-definition"
+input = "q\n:   a\n```\nx\n```\n"
+
+[[case]]
+id = "s3c-fence-after-definition-second-paragraph"
+input = "q\n\n:   a\n\n    b\n```\nx\n```\n"
+
+[[case]]
+id = "s3c-fence-after-item-second-paragraph"
+input = "- a\n\n  b\n```\nx\n```\n"
+
+[[case]]
+id = "s3c-list-marker-after-definition-phpextra"
+from = "markdown_phpextra"
+input = "q\n:   a\nA. b\n"
+
+[[case]]
+id = "s3c-comment-over-blank-lines-in-paragraph"
+input = "x <!--a\n\nb--> y\n"
+
+[[case]]
+id = "s3c-comment-over-blocks-in-paragraph"
+input = "x <!--a\n\n# b\n\n- c--> y\n\nz\n"
+
+[[case]]
+id = "s3c-pi-over-blank-lines-in-paragraph"
+input = "x <?p a\n\nb ?> y\n"
+
+[[case]]
+id = "s3c-two-comments-over-blank-lines"
+input = "x <!--a\n\nb--> y <!-- c\n\nd --> e\n\nf\n"
+
+[[case]]
+id = "s3c-comment-in-code-span-at-blank-line"
+input = "x `<!--` y\n\nz -->\n"
+
+[[case]]
+id = "s3c-comment-with-no-end-at-blank-line"
+input = "x <!--a\n\nb\n"
+
+[[case]]
+id = "s3c-comment-over-blank-lines-in-item"
+input = "- x <!--a\n\nb--> y\n"
+
+[[case]]
+id = "s3c-comment-over-blank-lines-raw-html-off"
+from = "markdown-raw_html"
+input = "x <!--a\n\nb--> y\n"
+
+[[case]]
+id = "s3c-citation-numbers-paragraph-then-heading"
+input = "@d\n\n# @t\n"
+
+[[case]]
+id = "s3c-citation-numbers-list-then-setext-heading"
+input = "a) @l\n\n@a\n-\n"
+
+[[case]]
+id = "s3c-citation-numbers-undefined-note-then-heading"
+input = "[^2]\n\n# @q\n"
+
+[[case]]
+id = "s3c-citation-numbers-heading-with-notes"
+input = "# a ^[n] @x\n\n@y\n"
+
+[[case]]
+id = "s3c-heading-reference-before-heading"
+input = "see [H] @z\n\n# H\n"
+
+[[case]]
+id = "s3c-note-reference-after-citation"
+input = "# a[^1] @x\n\n@y [^1]\n\n[^1]: n\n"
+
+[[case]]
+id = "s3c-note-brackets-after-citation"
+input = "@b[^] and @c [^x y]\n"
+
+[[case]]
+id = "s3c-note-brackets-after-citation-no-footnotes"
+from = "markdown-footnotes"
+input = "@b [^x]\n"
+
+[[case]]
+id = "s3c-definition-marker-ends-paragraph-github"
+from = "markdown_github"
+input = "Gamma\n:   d\n\na\n~ d\nb\n"
+
+[[case]]
+id = "s3c-definition-marker-ends-paragraph-lists-without-blank"
+from = "markdown-definition_lists+lists_without_preceding_blankline"
+input = "a\n:   d\n"
+
+[[case]]
+id = "s3c-definition-marker-ends-item-no-definition-lists"
+from = "markdown-definition_lists"
+input = "- a\n: d\n"
+
+[[case]]
+id = "s3c-definition-marker-ends-item-strict"
+from = "markdown_strict"
+input = "- a\n: d\n"
+
+[[case]]
+id = "s3c-undefined-reference-then-link"
+input = "[a][b](u) z\n"
+
+[[case]]
+id = "s3c-undefined-reference-label-markup"
+input = "[*a*][b *c*] z\n"
+
+[[case]]
+id = "s3c-undefined-reference-attributes"
+input = "[a][b]{.c} z\n"
+
+[[case]]
+id = "s3c-undefined-spaced-reference-then-link"
+from = "markdown_strict"
+input = "[a] [b](u)\n\n[a]: v\n"
+
+[[case]]
+id = "s3c-undefined-spaced-reference-newline"
+from = "markdown_phpextra"
+input = "[a]\n[b](u)\n"
+
+[[case]]
+id = "s3c-undefined-spaced-references-then-link"
+from = "markdown_mmd"
+input = "[a] [b] [c](u)\n"
+
+[[case]]
+id = "s3c-loose-list-paragraph-before-sublist"
+input = "- a\n\n- o\n  - s\n- b\n"
+
+[[case]]
+id = "s3c-loose-list-paragraph-before-ordered-sublist"
+input = "- a\n\n- o\n  1. s\n"
+
+[[case]]
+id = "s3c-blank-after-sublist-keeps-list-tight"
+input = "- o\n  - s\n\n- b\n"
+
+[[case]]
+id = "s3c-blank-inside-sublist-keeps-list-tight"
+input = "- o\n  - s\n\n  - t\n\n- b\n"
+
+[[case]]
+id = "s3c-blank-after-sublist-then-loose-item"
+input = "- o\n  - s\n\n- b\n\n- c\n"
+
+[[case]]
+id = "s3c-empty-item-then-lazy-line"
+input = "1.\nb\n2.\n"
+
+[[case]]
+id = "s3c-loose-list-paragraph-before-sublist-github"
+from = "markdown_github"
+input = "1. a\n\n2. o\n   - s\n"
+
+[[case]]
+id = "s3c-roman-marker-ends-paragraph-github"
+from = "markdown_github"
+input = "a\nii. b\n\nI. x\nII. y\n"
+
+[[case]]
+id = "s3c-letter-marker-ends-paragraph-github"
+from = "markdown_github"
+input = "a\nb) c\n\nd\n(1) e\n"
+
+[[case]]
+id = "s3c-upper-letter-one-space-github"
+from = "markdown_github"
+input = "a\nA. b\n"
+
+[[case]]
+id = "s3c-hash-marker-then-decimal-marker"
+input = "#. a\n1. b\n"
+
+[[case]]
+id = "s3c-decimal-marker-then-hash-marker"
+input = "3. a\n#. b\n7. c\n"
+
+[[case]]
+id = "s3c-hash-marker-then-paren-marker"
+input = "#. a\n1) b\n"

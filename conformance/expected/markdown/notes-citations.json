@@ -1,0 +1,275 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "citations-off#read": {
+      "key": "2345db4669d43fbb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[@key]\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@key.\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-at-end-of-sentence#read": {
+      "key": "36c7c759e37b975a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"As\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"noted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"by\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"}]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-bracket-no-at#read": {
+      "key": "2d8e452077909531",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[key]\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-email-not-cite#read": {
+      "key": "d70e19f2c3df1124",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Mail\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"foo@bar.com\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"today.\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-hash-counting#read": {
+      "key": "378550c65c4056ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a]\"}]]},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":2,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a]\"}]]},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":3,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@b]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-link-text#read": {
+      "key": "9d95721dd23048d0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"see\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"}]]}],[\"/url\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-note#read": {
+      "key": "8fd409e4263a942a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"}]]},{\"t\":\"Str\",\"c\":\".\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-text#read": {
+      "key": "6a2ce99e1abf5200",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"says.\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-text-with-locator#read": {
+      "key": "be17780c2cb69b1f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"p. 12\"}],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"12]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"says.\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-braced#read": {
+      "key": "5702c5756d114acb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"@{Doe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2020/x}\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-punctuation#read": {
+      "key": "477a0ed7a1119e0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe:2020.v2_x-y\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe:2020.v2_x-y]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-starts-digit#read": {
+      "key": "fa0729c425f773a1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"2020x\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@2020x]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-trailing-punct#read": {
+      "key": "5d0a23f595c75e39",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe\"}]]},{\"t\":\"Str\",\"c\":\".\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"And\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":2,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-mixed-suppress#read": {
+      "key": "8d16f59cc366dff3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-@b]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-multiple#read": {
+      "key": "5c0fc06cc8515879",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"c\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@b;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@c]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-numbers-note-num#read": {
+      "key": "84c6a80559baccdf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a]\"}]]},{\"t\":\"Str\",\"c\":\".\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"B.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Note\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"c\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":2,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@c]\"}]]},{\"t\":\"Str\",\"c\":\".\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"C\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":3,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@b]\"}]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-prefix-markup-semicolon#read": {
+      "key": "96b430aff42548eb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"cf.\"}]}],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"also\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch. 2\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[*cf.*\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@a;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"also\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@b,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#read": {
+      "key": "c9b8a9aa45b817aa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p. 1\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@key,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"1]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-single-bracket#read": {
+      "key": "dd59cd9e93c06130",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@key]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-suffix-only-locator#read": {
+      "key": "b748c16395ea4841",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"33\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@key\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"33]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-suppress-author-bare#read": {
+      "key": "fd3b8f42c9626688",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-unclosed#read": {
+      "key": "fdc1310e6a1ddc2a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@key\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-unicode-key#read": {
+      "key": "52e4fff624e50198",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"müller2020\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@müller2020]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-with-emphasis#read": {
+      "key": "b7d73cd0cbc6d4b9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key\",\"citationPrefix\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"see\"}]}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"p. 4\"}]}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[*see*\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@key,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"**p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4**]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "footnotes-off#read": {
+      "key": "4cf66825f47a77ca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"^1\"}],[\"Not%20a%20note.\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-note-nested-brackets#read": {
+      "key": "01b7f95e5fbe9a0f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[bracketed]\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-note-unclosed#read": {
+      "key": "4d29e3522a1f9e53",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.^[unclosed\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-note-with-markup#read": {
+      "key": "382d97ed22c8022f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"code\"]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-notes-off#read": {
+      "key": "857c95bc78c89427",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.^[not\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note]\"}]}]}\n",
+      "stderr": ""
+    },
+    "note-basic#read": {
+      "key": "06980c8fdade7f9d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-code-block#read": {
+      "key": "336071b45c5a89a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Note:\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-definition-first#read": {
+      "key": "fbde5fe211d4ff16",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"first.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-duplicate-definition#read": {
+      "key": "53cff21b7e603775",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Two.\"}]}]}]}]}\n",
+      "stderr": "[WARNING] Duplicate note reference 'd' at line 5 column 1\n"
+    },
+    "note-empty-definition#read": {
+      "key": "40aee91dd07a9474",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[]}]}]}\n",
+      "stderr": ""
+    },
+    "note-in-heading#read": {
+      "key": "6e11ef99d8e1fc82",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"headingh\",[],[]],[{\"t\":\"Str\",\"c\":\"Heading\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-in-table#read": {
+      "key": "799b0e0c8a922515",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Table\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note.\"}]}]}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "note-inside-note#read": {
+      "key": "10882bf2d35fc01c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Outer[^i].\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-label-with-spaces#read": {
+      "key": "20b362cac2a9faf8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"^a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}],[\"Spaced.\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "note-lazy-continuation#read": {
+      "key": "d9582f601b9d1ed2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"First\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"line\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"lazy\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"line.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-list-inside#read": {
+      "key": "cef142a735a4d697",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-missing#read": {
+      "key": "31532a797a10b982",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.[^nope]\"}]}]}\n",
+      "stderr": ""
+    },
+    "note-multi-paragraph#read": {
+      "key": "8bc5e4c71a15b959",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-named-label#read": {
+      "key": "65e605a831e04292",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Named.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-referenced-twice#read": {
+      "key": "50a5af406d5ebd05",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Twice.\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"B\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Twice.\"}]}]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "note-unused-definition#read": {
+      "key": "84f2b71896b2f6ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text.\"}]}]}\n",
+      "stderr": "[WARNING] Note with key 'unused' defined at line 3 column 1 but not used.\n"
+    }
+  }
+}

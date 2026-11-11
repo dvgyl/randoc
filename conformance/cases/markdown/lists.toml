@@ -1,0 +1,520 @@
+# Lists: bullet, ordered, definition, example and task lists.
+from = "markdown"
+to = []
+
+[[case]]
+id = "bullet-dash"
+input = '''
+- a
+- b
+'''
+
+[[case]]
+id = "bullet-plus"
+input = '''
++ a
++ b
+'''
+
+[[case]]
+id = "bullet-mixed-markers"
+input = '''
+- a
++ b
+* c
+'''
+
+[[case]]
+id = "bullet-single-item"
+input = '''
+- only
+'''
+
+[[case]]
+id = "bullet-empty-item"
+input = '''
+-
+- b
+'''
+
+[[case]]
+id = "bullet-marker-no-space"
+input = '''
+-a
+-b
+'''
+
+[[case]]
+id = "bullet-indented-marker"
+input = '''
+   - three spaces
+'''
+
+[[case]]
+id = "bullet-wide-spacing"
+input = '''
+-    four spaces after marker
+'''
+
+[[case]]
+id = "bullet-loose-one-gap"
+input = '''
+- a
+- b
+
+- c
+'''
+
+[[case]]
+id = "bullet-item-two-paragraphs"
+input = '''
+- First
+
+  Second paragraph.
+- Next
+'''
+
+[[case]]
+id = "bullet-item-code-block"
+input = '''
+- Item
+
+        code in item
+'''
+
+[[case]]
+id = "bullet-item-fenced-code"
+input = '''
+- Item
+
+  ```
+  code
+  ```
+'''
+
+[[case]]
+id = "bullet-item-blockquote"
+input = '''
+- > quoted in item
+'''
+
+[[case]]
+id = "bullet-item-heading"
+input = '''
+- # Heading in item
+'''
+
+[[case]]
+id = "bullet-nested-two-space"
+input = '''
+- a
+  - b
+    - c
+'''
+
+[[case]]
+id = "bullet-nested-four-space"
+input = '''
+- a
+    - b
+'''
+
+[[case]]
+id = "bullet-nested-one-space"
+input = '''
+- a
+ - b
+'''
+
+[[case]]
+id = "bullet-end-by-paragraph"
+input = '''
+- a
+- b
+
+Paragraph.
+'''
+
+[[case]]
+id = "bullet-after-paragraph-no-blank"
+input = '''
+Paragraph
+- not a list
+'''
+
+[[case]]
+id = "bullet-hr-inside"
+input = '''
+- a
+- * * *
+'''
+
+[[case]]
+id = "ordered-paren"
+input = '''
+1) one
+2) two
+'''
+
+[[case]]
+id = "ordered-two-parens"
+input = '''
+(1) one
+(2) two
+'''
+
+[[case]]
+id = "ordered-start-zero"
+input = '''
+0. zero
+1. one
+'''
+
+[[case]]
+id = "ordered-start-large"
+input = '''
+123. one
+124. two
+'''
+
+[[case]]
+id = "ordered-lower-alpha"
+input = '''
+a. one
+b. two
+'''
+
+[[case]]
+id = "ordered-upper-alpha-two-spaces"
+input = '''
+A.  one
+B.  two
+'''
+
+[[case]]
+id = "ordered-upper-alpha-one-space"
+input = '''
+A. one
+B. two
+'''
+
+[[case]]
+id = "ordered-lower-roman"
+input = '''
+i. one
+ii. two
+iii. three
+'''
+
+[[case]]
+id = "ordered-upper-roman"
+input = '''
+I.  one
+II.  two
+'''
+
+[[case]]
+id = "ordered-roman-start"
+input = '''
+iv. four
+v. five
+'''
+
+[[case]]
+id = "ordered-alpha-paren"
+input = '''
+(a) one
+(b) two
+'''
+
+[[case]]
+id = "ordered-hash-paren"
+input = '''
+#) one
+#) two
+'''
+
+[[case]]
+id = "ordered-change-delimiter"
+input = '''
+1. one
+2) two
+'''
+
+[[case]]
+id = "ordered-number-no-space"
+input = '''
+1.one
+'''
+
+[[case]]
+id = "ordered-nested-in-bullet"
+input = '''
+- a
+  1. one
+  2. two
+'''
+
+[[case]]
+id = "ordered-loose"
+input = '''
+1. one
+
+2. two
+'''
+
+[[case]]
+id = "ordered-item-continuation"
+input = '''
+1.  one
+    continued
+
+    second paragraph
+'''
+
+[[case]]
+id = "ordered-after-paragraph"
+input = '''
+Paragraph
+1. not a list
+'''
+
+[[case]]
+id = "ordered-ambiguous-i"
+input = '''
+i. one
+j. two
+'''
+
+[[case]]
+id = "ordered-letter-start-c"
+input = '''
+c. three
+d. four
+'''
+
+[[case]]
+id = "definition-tilde"
+input = '''
+Term
+~ Definition
+'''
+
+[[case]]
+id = "definition-colon-tight"
+input = '''
+Term
+: Definition
+'''
+
+[[case]]
+id = "definition-multiple-terms"
+input = '''
+Term A
+: Def A
+
+Term B
+: Def B
+'''
+
+[[case]]
+id = "definition-two-defs"
+input = '''
+Term
+: Def one
+: Def two
+'''
+
+[[case]]
+id = "definition-loose"
+input = '''
+Term
+
+: Def one
+
+: Def two
+'''
+
+[[case]]
+id = "definition-term-markup"
+input = '''
+`code` term
+: def
+'''
+
+[[case]]
+id = "definition-nested-list"
+input = '''
+Term
+: - a
+  - b
+'''
+
+[[case]]
+id = "definition-no-term"
+input = '''
+: lonely colon
+'''
+
+[[case]]
+id = "definition-term-two-lines"
+input = '''
+Line one
+Line two
+: def
+'''
+
+[[case]]
+id = "definition-deep-indent"
+input = '''
+Term
+
+:     indented code?
+'''
+
+[[case]]
+id = "example-list-mixed-refs"
+input = '''
+(@a) First.
+(@b) Second.
+
+See (@b) and (@a) and (@missing).
+'''
+
+[[case]]
+id = "example-list-at-marker"
+input = '''
+@. one
+@. two
+'''
+
+[[case]]
+id = "example-list-continues-numbering"
+input = '''
+(@) one
+
+Text.
+
+(@) two
+'''
+
+[[case]]
+id = "task-list-uppercase-x"
+input = '''
+- [X] upper x
+'''
+
+[[case]]
+id = "task-list-not-task"
+input = '''
+- [y] not a task
+'''
+
+[[case]]
+id = "task-list-ordered"
+input = '''
+1. [ ] todo
+2. [x] done
+'''
+
+[[case]]
+id = "task-list-no-text"
+input = '''
+- [ ]
+'''
+
+[[case]]
+id = "task-list-loose"
+input = '''
+- [ ] a
+
+- [x] b
+'''
+
+[[case]]
+id = "list-tab-after-marker"
+input = '''
+-	item
+'''
+
+[[case]]
+id = "list-tab-continuation"
+input = '''
+- item
+
+	continued with tab
+'''
+
+[[case]]
+id = "list-tab-code-in-item"
+input = '''
+- item
+
+		code
+'''
+
+[[case]]
+id = "list-nested-tab"
+input = '''
+- a
+	- b
+'''
+
+[[case]]
+id = "list-ordered-then-bullet-no-blank"
+input = '''
+1. one
+- two
+'''
+
+[[case]]
+id = "list-lazy-nested"
+input = '''
+- a
+  - b
+lazy
+'''
+
+[[case]]
+id = "list-lazy-blockquote-in-item"
+input = '''
+- > quote
+continuation
+'''
+
+[[case]]
+id = "list-three-levels-mixed"
+input = '''
+1. one
+   - a
+     i. x
+     ii. y
+'''
+
+[[case]]
+id = "list-comment-separator"
+input = '''
+- a
+
+<!-- -->
+
+- b
+'''
+
+[[case]]
+id = "list-item-only-spaces"
+input = '''
+- a
+-   
+- c
+'''
+
+[[case]]
+id = "list-nested-code-depth"
+input = '''
+- a
+
+  - b
+
+            code
+'''

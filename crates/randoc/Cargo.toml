@@ -12,6 +12,7 @@ authors.workspace = true
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
 randoc-html = { workspace = true }
+randoc-markdown = { workspace = true }
 randoc-native = { workspace = true }
 randoc-citeproc = { workspace = true }
 randoc-html-reader = { workspace = true }

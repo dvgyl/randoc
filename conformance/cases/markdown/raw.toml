@@ -1,0 +1,512 @@
+# Raw HTML, raw TeX, raw attributes, divs and spans.
+from = "markdown"
+to = []
+
+[[case]]
+id = "html-block-div"
+input = '''
+<div>
+*markdown inside*
+</div>
+'''
+
+[[case]]
+id = "html-block-div-class-native"
+input = '''
+<div class="note">
+Inside.
+</div>
+'''
+
+[[case]]
+id = "html-block-nested-divs"
+input = '''
+<div id="a">
+<div class="b">
+text
+</div>
+</div>
+'''
+
+[[case]]
+id = "html-block-comment"
+input = '''
+<!-- a comment
+over lines -->
+'''
+
+[[case]]
+id = "html-block-comment-unclosed"
+input = '''
+<!-- never closed
+
+Text.
+'''
+
+[[case]]
+id = "html-block-pre"
+input = '''
+<pre>
+*not emph*
+</pre>
+'''
+
+[[case]]
+id = "html-block-script"
+input = '''
+<script>
+var x = "*a*";
+</script>
+'''
+
+[[case]]
+id = "html-block-style"
+input = '''
+<style>
+p { color: red; }
+</style>
+'''
+
+[[case]]
+id = "html-block-textarea"
+input = '''
+<textarea>
+*raw*
+</textarea>
+'''
+
+[[case]]
+id = "html-block-p"
+input = '''
+<p>A *para*.</p>
+'''
+
+[[case]]
+id = "html-block-blank-line-inside"
+input = '''
+<div>
+
+Para in div.
+
+</div>
+'''
+
+[[case]]
+id = "html-block-unclosed-div"
+input = '''
+<div>
+text
+'''
+
+[[case]]
+id = "html-block-closing-only"
+input = '''
+</div>
+'''
+
+[[case]]
+id = "html-block-indented"
+input = '''
+  <div>indented</div>
+'''
+
+[[case]]
+id = "html-block-section"
+input = '''
+<section>
+Text
+</section>
+'''
+
+[[case]]
+id = "html-block-table-attrs"
+input = '''
+<table class="t"><tr><td>x</td></tr></table>
+'''
+
+[[case]]
+id = "html-inline-at-start"
+input = '''
+<em>a</em> b
+'''
+
+[[case]]
+id = "html-processing-instruction"
+input = '''
+<?php echo 1; ?>
+'''
+
+[[case]]
+id = "html-cdata"
+input = '''
+<![CDATA[ x < y ]]>
+'''
+
+[[case]]
+id = "html-doctype"
+input = '''
+<!DOCTYPE html>
+'''
+
+[[case]]
+id = "html-attribute-quotes"
+input = '''
+<a href='x' title="y z">l</a>
+'''
+
+[[case]]
+id = "html-bad-tag"
+input = '''
+<notatag x>text</notatag>
+'''
+
+[[case]]
+id = "html-lt-not-tag"
+input = '''
+1 < 2 and 3 > 2
+'''
+
+[[case]]
+id = "html-span-markdown"
+input = '''
+<span>*emph*</span>
+'''
+
+[[case]]
+id = "html-div-markdown-attribute"
+input = '''
+<div markdown="0">
+*literal?*
+</div>
+'''
+
+[[case]]
+id = "html-raw-off"
+from = "markdown-raw_html"
+input = '''
+<b>bold</b>
+
+<div>block</div>
+'''
+
+[[case]]
+id = "native-divs-off"
+from = "markdown-native_divs"
+input = '''
+<div class="x">
+text
+</div>
+'''
+
+[[case]]
+id = "native-spans-off"
+from = "markdown-native_spans"
+input = '''
+<span class="x">text</span>
+'''
+
+[[case]]
+id = "markdown-in-html-off"
+from = "markdown-markdown_in_html_blocks"
+input = '''
+<div>
+*not parsed*
+</div>
+'''
+
+[[case]]
+id = "tex-command-inline"
+input = '''
+A \emph{tex} command.
+'''
+
+[[case]]
+id = "tex-environment"
+input = '''
+\begin{center}
+Centered
+\end{center}
+'''
+
+[[case]]
+id = "tex-unknown-command"
+input = '''
+\foo{bar}
+'''
+
+[[case]]
+id = "tex-command-in-word"
+input = '''
+a\b c
+'''
+
+[[case]]
+id = "tex-dollar-in-command"
+input = '''
+\textbf{$x$}
+'''
+
+[[case]]
+id = "tex-unclosed-environment"
+input = '''
+\begin{itemize}
+\item one
+'''
+
+[[case]]
+id = "tex-unclosed-brace"
+input = '''
+\emph{open
+'''
+
+[[case]]
+id = "tex-raw-off"
+from = "markdown-raw_tex"
+input = '''
+\emph{x}
+
+\begin{center}
+y
+\end{center}
+'''
+
+[[case]]
+id = "tex-macro-definition-only"
+input = '''
+\newcommand{\R}{\mathbb{R}}
+'''
+
+[[case]]
+id = "tex-macro-used-in-math"
+input = '''
+\newcommand{\R}{\mathbb{R}}
+
+$x \in \R$
+'''
+
+[[case]]
+id = "tex-macros-off"
+from = "markdown-latex_macros"
+input = '''
+\newcommand{\R}{\mathbb{R}}
+
+$x \in \R$
+'''
+
+[[case]]
+id = "tex-def-macro"
+input = '''
+\def\x{y}
+
+$\x$
+'''
+
+[[case]]
+id = "raw-attribute-latex-block"
+input = '''
+```{=latex}
+\clearpage
+```
+'''
+
+[[case]]
+id = "raw-attribute-html-block"
+input = '''
+```{=html}
+<hr class="x">
+```
+'''
+
+[[case]]
+id = "raw-attribute-inline-latex"
+input = '''
+`\LaTeX`{=latex}
+'''
+
+[[case]]
+id = "raw-attribute-with-classes"
+input = '''
+```{=html .c}
+x
+```
+'''
+
+[[case]]
+id = "raw-attribute-off"
+from = "markdown-raw_attribute"
+input = '''
+`<b>`{=html}
+'''
+
+[[case]]
+id = "raw-attribute-tilde-fence"
+input = '''
+~~~{=rtf}
+{\b x}
+~~~
+'''
+
+[[case]]
+id = "div-basic"
+input = '''
+::: note
+Text.
+:::
+'''
+
+[[case]]
+id = "div-braces"
+input = '''
+::: {.a .b #id k=v}
+Text.
+:::
+'''
+
+[[case]]
+id = "div-trailing-colons"
+input = '''
+::: note :::
+Text.
+:::
+'''
+
+[[case]]
+id = "div-unclosed"
+input = '''
+::: note
+Never closed.
+'''
+
+[[case]]
+id = "div-close-without-open"
+input = '''
+Text.
+
+:::
+'''
+
+[[case]]
+id = "div-empty"
+input = '''
+::: e
+:::
+'''
+
+[[case]]
+id = "div-no-attributes"
+input = '''
+:::
+Text
+:::
+'''
+
+[[case]]
+id = "div-two-colons"
+input = '''
+:: note
+Text
+::
+'''
+
+[[case]]
+id = "div-nested-same-length"
+input = '''
+::: outer
+::: inner
+Text
+:::
+:::
+'''
+
+[[case]]
+id = "div-containing-code-fence"
+input = '''
+::: d
+```
+:::
+```
+:::
+'''
+
+[[case]]
+id = "div-in-list"
+input = '''
+- ::: d
+  Text
+  :::
+'''
+
+[[case]]
+id = "div-after-paragraph"
+input = '''
+Para
+::: d
+Text
+:::
+'''
+
+[[case]]
+id = "div-fenced-off"
+from = "markdown-fenced_divs"
+input = '''
+::: note
+Text.
+:::
+'''
+
+[[case]]
+id = "span-bracketed-off"
+from = "markdown-bracketed_spans"
+input = '''
+[text]{.c}
+'''
+
+[[case]]
+id = "span-with-link-inside"
+input = '''
+[see [l](/u)]{.c}
+'''
+
+[[case]]
+id = "span-empty-attributes"
+input = '''
+[x]{}
+'''
+
+[[case]]
+id = "div-section-heading"
+input = '''
+::: sec
+# Heading
+:::
+'''
+
+[[case]]
+id = "html-tag-digit-name"
+input = '''
+a <1x> b
+'''
+
+[[case]]
+id = "html-tag-quoted-gt"
+input = '''
+a <b title="x>y">c</b> d
+'''
+
+[[case]]
+id = "html-tag-single-quoted-gt"
+input = '''
+a <b title='x>y'>c</b> d
+'''
+
+[[case]]
+id = "html-tag-nested-lt"
+input = '''
+a <b <i>c</i> d
+'''
+
+[[case]]
+id = "html-empty-tag"
+input = '''
+a <> b
+'''

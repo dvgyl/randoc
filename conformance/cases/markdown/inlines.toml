@@ -1,0 +1,555 @@
+# Inline formatting: emphasis, code, escapes, math, smart punctuation, entities.
+from = "markdown"
+to = []
+
+[[case]]
+id = "emph-star"
+input = '''
+*emph*
+'''
+
+[[case]]
+id = "emph-underscore"
+input = '''
+_emph_
+'''
+
+[[case]]
+id = "strong-star"
+input = '''
+**strong**
+'''
+
+[[case]]
+id = "strong-underscore"
+input = '''
+__strong__
+'''
+
+[[case]]
+id = "strong-emph-triple-star"
+input = '''
+***both***
+'''
+
+[[case]]
+id = "strong-emph-triple-underscore"
+input = '''
+___both___
+'''
+
+[[case]]
+id = "emph-in-strong"
+input = '''
+**strong *emph* strong**
+'''
+
+[[case]]
+id = "strong-in-emph"
+input = '''
+*emph **strong** emph*
+'''
+
+[[case]]
+id = "emph-multiline"
+input = '''
+*emph across
+two lines*
+'''
+
+[[case]]
+id = "emph-intraword-star"
+input = '''
+un*frigging*believable
+'''
+
+[[case]]
+id = "emph-intraword-underscore"
+input = '''
+snake_case_name
+'''
+
+[[case]]
+id = "emph-underscore-punctuation"
+input = '''
+_emph_.
+'''
+
+[[case]]
+id = "emph-mismatched"
+input = '''
+*emph_
+'''
+
+[[case]]
+id = "emph-four-stars"
+input = '''
+****x****
+'''
+
+[[case]]
+id = "emph-star-space-before-close"
+input = '''
+*a *
+'''
+
+[[case]]
+id = "emph-adjacent"
+input = '''
+*a**b*
+'''
+
+[[case]]
+id = "emph-nested-same"
+input = '''
+*a *b* c*
+'''
+
+[[case]]
+id = "strong-unclosed-inside-emph"
+input = '''
+*a **b*
+'''
+
+[[case]]
+id = "emph-around-link"
+input = '''
+*[link](/u)*
+'''
+
+[[case]]
+id = "emph-around-code"
+input = '''
+*`code`*
+'''
+
+[[case]]
+id = "strikeout-inline"
+input = '''
+~~gone~~
+'''
+
+[[case]]
+id = "strikeout-single-tilde"
+input = '''
+~not strikeout~ but subscript?
+'''
+
+[[case]]
+id = "strikeout-nested-emph"
+input = '''
+~~*both*~~
+'''
+
+[[case]]
+id = "superscript-basic"
+input = '''
+2^nd^
+'''
+
+[[case]]
+id = "superscript-escaped-space"
+input = '''
+a^b\ c^
+'''
+
+[[case]]
+id = "superscript-with-space"
+input = '''
+a^b c^
+'''
+
+[[case]]
+id = "subscript-basic"
+input = '''
+H~2~O
+'''
+
+[[case]]
+id = "subscript-escaped-space"
+input = '''
+x~a\ b~
+'''
+
+[[case]]
+id = "superscript-empty"
+input = '''
+a^^b
+'''
+
+[[case]]
+id = "code-double-backticks"
+input = '''
+``code with ` inside``
+'''
+
+[[case]]
+id = "code-strip-one-space"
+input = '''
+`` `x` ``
+'''
+
+[[case]]
+id = "code-multiline"
+input = '''
+`code across
+lines`
+'''
+
+[[case]]
+id = "code-unmatched-lengths"
+input = '''
+``code`
+'''
+
+[[case]]
+id = "code-attributes-id"
+input = '''
+`x`{#id .lang key=val}
+'''
+
+[[case]]
+id = "code-entities-literal"
+input = '''
+`&amp; <b>`
+'''
+
+[[case]]
+id = "code-trailing-backslash"
+input = '''
+`a\`b
+'''
+
+[[case]]
+id = "escape-backslash-space"
+input = '''
+a\ b
+'''
+
+[[case]]
+id = "escape-backslash-newline"
+input = '''
+a\
+b
+'''
+
+[[case]]
+id = "escape-nonpunct"
+input = '''
+\a \1
+'''
+
+[[case]]
+id = "escape-backslash-backslash"
+input = '''
+\\*not emph*\\
+'''
+
+[[case]]
+id = "escape-angle-brackets"
+input = '''
+\<not html\>
+'''
+
+[[case]]
+id = "escape-pipe-tilde-caret"
+input = '''
+\| \~ \^ \$ \"
+'''
+
+[[case]]
+id = "escape-in-url"
+input = '''
+[link](/a\)b)
+'''
+
+[[case]]
+id = "entity-named"
+input = '''
+&copy; &amp; &nbsp;x &frac12;
+'''
+
+[[case]]
+id = "entity-numeric"
+input = '''
+&#169; &#x41; &#X42;
+'''
+
+[[case]]
+id = "entity-unknown"
+input = '''
+&nosuchentity; & alone
+'''
+
+[[case]]
+id = "entity-in-code-span"
+input = '''
+`&copy;`
+'''
+
+[[case]]
+id = "smart-double-quotes"
+input = '''
+"double"
+'''
+
+[[case]]
+id = "smart-single-quotes"
+input = '''
+'single'
+'''
+
+[[case]]
+id = "smart-apostrophe"
+input = '''
+It's John's book from the '90s.
+'''
+
+[[case]]
+id = "smart-nested-quotes"
+input = '''
+"outer 'inner' outer"
+'''
+
+[[case]]
+id = "smart-em-dash"
+input = '''
+a---b
+'''
+
+[[case]]
+id = "smart-en-dash"
+input = '''
+1--2
+'''
+
+[[case]]
+id = "smart-ellipsis"
+input = '''
+wait...
+'''
+
+[[case]]
+id = "smart-spaced-ellipsis"
+input = '''
+wait. . .
+'''
+
+[[case]]
+id = "smart-abbreviations"
+input = '''
+Mr. Smith and Dr. Jones met Mrs. Lee, Ms. Kay, and Prof. X.
+'''
+
+[[case]]
+id = "smart-quote-after-paren"
+input = '''
+("quoted")
+'''
+
+[[case]]
+id = "smart-quotes-unclosed"
+input = '''
+"open only
+'''
+
+[[case]]
+id = "smart-off"
+from = "markdown-smart"
+input = '''
+"double" 'single' a---b 1--2 wait...
+'''
+
+[[case]]
+id = "math-inline"
+input = '''
+$x+y$
+'''
+
+[[case]]
+id = "math-display"
+input = '''
+$$x+y$$
+'''
+
+[[case]]
+id = "math-display-own-lines"
+input = '''
+$$
+x+y
+$$
+'''
+
+[[case]]
+id = "math-space-after-open"
+input = '''
+$ x$
+'''
+
+[[case]]
+id = "math-space-before-close"
+input = '''
+$x $
+'''
+
+[[case]]
+id = "math-followed-by-digit"
+input = '''
+$x$1
+'''
+
+[[case]]
+id = "math-escaped-dollar"
+input = '''
+\$x\$
+'''
+
+[[case]]
+id = "math-display-blank-line"
+input = '''
+$$
+x
+
+y
+$$
+'''
+
+[[case]]
+id = "math-with-backslash-dollar"
+input = '''
+$a\$b$
+'''
+
+[[case]]
+id = "math-unclosed"
+input = '''
+$x
+'''
+
+[[case]]
+id = "math-inside-emph"
+input = '''
+*$x$*
+'''
+
+[[case]]
+id = "nbsp-literal"
+input = '''
+a b and thin space a b
+'''
+
+[[case]]
+id = "unicode-text"
+input = '''
+Grüße, 日本語, Ελληνικά, עברית, emoji 😀.
+'''
+
+[[case]]
+id = "unicode-combining"
+input = '''
+e&#x301; é
+'''
+
+[[case]]
+id = "html-inline-tags"
+input = '''
+<b>bold</b> and <i>it</i>
+'''
+
+[[case]]
+id = "html-inline-comment"
+input = '''
+before <!-- comment --> after
+'''
+
+[[case]]
+id = "html-span-native"
+input = '''
+<span class="x">native span</span>
+'''
+
+[[case]]
+id = "html-unclosed-tag"
+input = '''
+<b>unclosed
+'''
+
+[[case]]
+id = "html-self-closing"
+input = '''
+a<br/>b
+'''
+
+[[case]]
+id = "inline-attributes-span-empty"
+input = '''
+[]{#anchor}
+'''
+
+[[case]]
+id = "span-nested"
+input = '''
+[outer [inner]{.i}]{.o}
+'''
+
+[[case]]
+id = "span-key-value-unquoted"
+input = '''
+[x]{k=v}
+'''
+
+[[case]]
+id = "span-unbalanced-brace"
+input = '''
+[x]{.a
+'''
+
+[[case]]
+id = "underscore-in-word-emph-off"
+input = '''
+foo_bar_baz
+'''
+
+[[case]]
+id = "hard-break-in-emph"
+input = '''
+*a  
+b*
+'''
+
+[[case]]
+id = "asterisk-alone"
+input = '''
+a * b ** c
+'''
+
+[[case]]
+id = "abbreviation-title"
+input = '''
+Mr. Smith and Prof. Jones met Dr. Who.
+'''
+
+[[case]]
+id = "abbreviation-latin"
+input = '''
+Fruit, e.g. apples, i.e. red ones, cf. pears, vs. plums.
+'''
+
+[[case]]
+id = "abbreviation-month-and-page"
+input = '''
+On Jan. 5 see p. 3 and pp. 4-5 of vol. 2.
+'''
+
+[[case]]
+id = "abbreviation-not-in-list"
+input = '''
+Col. Mustard and Mx. Lee, approx. ten.
+'''
+
+[[case]]
+id = "abbreviation-smart-off"
+from = "markdown-smart"
+input = '''
+Mr. Smith arrived.
+'''

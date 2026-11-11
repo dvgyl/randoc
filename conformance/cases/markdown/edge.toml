@@ -1,0 +1,581 @@
+# Edge cases: empty input, whitespace, tabs, unclosed constructs, deep nesting, Unicode.
+from = "markdown"
+to = []
+
+[[case]]
+id = "empty-input"
+input = ""
+
+[[case]]
+id = "only-newline"
+input = '''
+
+'''
+
+[[case]]
+id = "only-blank-lines"
+input = '''
+
+
+
+'''
+
+[[case]]
+id = "only-spaces-and-tabs"
+input = '''
+   	
+ 
+'''
+
+[[case]]
+id = "no-final-newline"
+input = "Text without newline"
+
+[[case]]
+id = "crlf-line-endings"
+input = "Line one\r\nLine two\r\n\r\nPara two\r\n"
+
+[[case]]
+id = "bom-at-start"
+input = '''
+﻿# Heading after BOM
+'''
+
+[[case]]
+id = "tab-in-paragraph"
+input = '''
+a	b
+'''
+
+[[case]]
+id = "tab-indented-code"
+input = '''
+	code with tab
+'''
+
+[[case]]
+id = "tab-inside-code-line"
+input = '''
+	a	b
+'''
+
+[[case]]
+id = "tab-in-fenced-code"
+input = '''
+```
+	x	y
+```
+'''
+
+[[case]]
+id = "tab-after-blockquote-marker"
+input = '''
+>	quoted
+'''
+
+[[case]]
+id = "tab-in-heading"
+input = '''
+#	Heading
+'''
+
+[[case]]
+id = "tab-in-code-span"
+input = '''
+`a	b`
+'''
+
+[[case]]
+id = "tab-ordered-list-marker"
+input = '''
+1.	one
+2.	two
+'''
+
+[[case]]
+id = "tab-list-item-code-block"
+input = '''
+-	item
+
+		code
+'''
+
+[[case]]
+id = "tab-in-table-cell"
+input = '''
+a	b
+---	---
+1	2
+'''
+
+[[case]]
+id = "unclosed-emphasis"
+input = '''
+*never closed
+'''
+
+[[case]]
+id = "unclosed-strong"
+input = '''
+**never closed
+'''
+
+[[case]]
+id = "unclosed-emph-across-paragraphs"
+input = '''
+*start
+
+end*
+'''
+
+[[case]]
+id = "unclosed-underscore"
+input = '''
+_open
+'''
+
+[[case]]
+id = "unclosed-code-span"
+input = '''
+`open code
+'''
+
+[[case]]
+id = "unclosed-double-backtick"
+input = '''
+``open ` code
+'''
+
+[[case]]
+id = "unclosed-backtick-fence"
+input = '''
+```
+code never closed
+'''
+
+[[case]]
+id = "unclosed-tilde-fence"
+input = '''
+~~~
+code never closed
+'''
+
+[[case]]
+id = "unclosed-fence-in-list"
+input = '''
+- ```
+  code
+
+Para.
+'''
+
+[[case]]
+id = "unclosed-fence-in-blockquote"
+input = '''
+> ```
+> code
+
+Para.
+'''
+
+[[case]]
+id = "unclosed-div"
+input = '''
+::: outer
+text
+'''
+
+[[case]]
+id = "unclosed-nested-div"
+input = '''
+::: a
+::: b
+text
+:::
+'''
+
+[[case]]
+id = "unclosed-bracket"
+input = '''
+[unclosed bracket
+'''
+
+[[case]]
+id = "unclosed-image"
+input = '''
+![alt
+'''
+
+[[case]]
+id = "unclosed-link-destination"
+input = '''
+[t](
+'''
+
+[[case]]
+id = "unclosed-span-attributes"
+input = '''
+[t]{.c
+'''
+
+[[case]]
+id = "unclosed-strikeout"
+input = '''
+~~open
+'''
+
+[[case]]
+id = "unclosed-superscript"
+input = '''
+2^open
+'''
+
+[[case]]
+id = "unclosed-math-display"
+input = '''
+$$x
+'''
+
+[[case]]
+id = "unclosed-html-comment-inline"
+input = '''
+a <!-- b
+'''
+
+[[case]]
+id = "unclosed-quote"
+input = '''
+"open quote
+'''
+
+[[case]]
+id = "unclosed-note-bracket"
+input = '''
+Text[^1
+'''
+
+[[case]]
+id = "unclosed-citation-bracket"
+input = '''
+[see @key
+'''
+
+[[case]]
+id = "unclosed-attribute-heading"
+input = '''
+# H {#id
+'''
+
+[[case]]
+id = "unclosed-yaml-at-eof"
+input = '''
+---
+a: 1
+'''
+
+[[case]]
+id = "unclosed-raw-attribute-fence"
+input = '''
+```{=html}
+<b>
+'''
+
+[[case]]
+id = "nested-blockquote-list-code"
+input = '''
+> - item
+>
+>         code
+'''
+
+[[case]]
+id = "nested-list-in-quote-in-list"
+input = '''
+- > - inner
+'''
+
+[[case]]
+id = "nested-deep-quotes"
+input = '''
+> > > > > > > > > > deep
+'''
+
+[[case]]
+id = "nested-deep-lists"
+input = '''
+- 1
+  - 2
+    - 3
+      - 4
+        - 5
+          - 6
+            - 7
+              - 8
+'''
+
+[[case]]
+id = "nested-deep-emphasis"
+input = '''
+*a **b *c **d** c* b** a*
+'''
+
+[[case]]
+id = "nested-brackets-deep"
+input = '''
+[[[[x]]]]
+'''
+
+[[case]]
+id = "nested-div-in-quote"
+input = '''
+> ::: d
+> text
+> :::
+'''
+
+[[case]]
+id = "nested-table-in-list"
+input = '''
+- a   b
+  --- ---
+  1   2
+'''
+
+[[case]]
+id = "lazy-quote-continuation"
+input = '''
+> a
+b
+> c
+'''
+
+[[case]]
+id = "lazy-quote-not-heading"
+input = '''
+> a
+# heading
+'''
+
+[[case]]
+id = "lazy-list-in-quote"
+input = '''
+> - a
+b
+'''
+
+[[case]]
+id = "lazy-definition-continuation"
+input = '''
+Term
+: def
+lazy
+'''
+
+[[case]]
+id = "lazy-note-ends-at-blank"
+input = '''
+Text[^n]
+
+[^n]: one
+two
+
+three
+'''
+
+[[case]]
+id = "unicode-heading-ids"
+input = '''
+# Ελληνικά
+
+# 中文标题
+
+# Ünïcödé
+
+# emoji 😀 heading
+'''
+
+[[case]]
+id = "unicode-reference-label"
+input = '''
+[Ünïcödé]
+
+[ÜNÏCÖDÉ]: /u
+'''
+
+[[case]]
+id = "unicode-emphasis"
+input = '''
+*日本語*と**強調**
+'''
+
+[[case]]
+id = "unicode-rtl"
+input = '''
+שלום *עולם*
+'''
+
+[[case]]
+id = "unicode-astral-code"
+input = '''
+`😀`
+'''
+
+[[case]]
+id = "unicode-wide-simple-table"
+input = '''
+名前   値
+------ ----
+あ     1
+'''
+
+[[case]]
+id = "unicode-escaped-symbol"
+input = '''
+\é \→
+'''
+
+[[case]]
+id = "duplicate-ids-explicit"
+input = '''
+# A {#x}
+
+# B {#x}
+'''
+
+[[case]]
+id = "duplicate-ids-mixed"
+input = '''
+# Section
+
+# Section {#section}
+
+# Section
+'''
+
+[[case]]
+id = "duplicate-auto-and-div"
+input = '''
+::: {#intro}
+x
+:::
+
+# Intro
+'''
+
+[[case]]
+id = "duplicate-link-references"
+input = '''
+[a] [b]
+
+[a]: /1
+[b]: /2
+[a]: /3
+[B]: /4
+'''
+
+[[case]]
+id = "duplicate-note-and-link"
+input = '''
+[^x]
+
+[^x]: n1
+
+[^x]: n2
+'''
+
+[[case]]
+id = "duplicate-example-labels"
+input = '''
+(@a) one
+(@a) two
+'''
+
+[[case]]
+id = "entity-in-heading-id"
+input = '''
+# A &amp; B
+'''
+
+[[case]]
+id = "backslash-at-eof"
+input = "text\\"
+
+[[case]]
+id = "only-hr"
+input = '''
+* * *
+'''
+
+[[case]]
+id = "only-yaml"
+input = '''
+---
+a: 1
+---
+'''
+
+[[case]]
+id = "only-reference-definition"
+input = '''
+[a]: /u
+'''
+
+[[case]]
+id = "only-comment"
+input = '''
+<!-- c -->
+'''
+
+[[case]]
+id = "very-long-line"
+input = '''
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa *b*
+'''
+
+[[case]]
+id = "many-backticks"
+input = '''
+````````
+'''
+
+[[case]]
+id = "setext-vs-hr"
+input = '''
+Text
+***
+'''
+
+[[case]]
+id = "list-marker-then-heading"
+input = '''
+- # x
+-
+'''
+
+[[case]]
+id = "fence-inside-indented-code"
+input = '''
+    ```
+    x
+'''
+
+[[case]]
+id = "html-then-markdown"
+input = '''
+<div>a</div>
+*b*
+'''
+
+[[case]]
+id = "hash-in-middle"
+input = '''
+a # b
+'''
+
+[[case]]
+id = "trailing-whitespace-lines"
+input = '''
+text   
+    
+ 
+'''

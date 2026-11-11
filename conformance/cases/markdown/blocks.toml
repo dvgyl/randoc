@@ -1,0 +1,568 @@
+# Block structure: paragraphs, headings, block quotes, code blocks, rules, line blocks.
+from = "markdown"
+to = []
+
+[[case]]
+id = "para-single"
+input = '''
+One paragraph.
+'''
+
+[[case]]
+id = "para-two"
+input = '''
+First paragraph.
+
+Second paragraph.
+'''
+
+[[case]]
+id = "para-soft-break"
+input = '''
+Line one
+line two
+'''
+
+[[case]]
+id = "para-leading-spaces"
+input = '''
+   Three leading spaces.
+'''
+
+[[case]]
+id = "para-trailing-one-space"
+input = '''
+One trailing space 
+next line.
+'''
+
+[[case]]
+id = "para-hard-break-three-spaces"
+input = '''
+Three trailing spaces   
+next line.
+'''
+
+[[case]]
+id = "para-hard-break-at-end"
+input = '''
+Last line with spaces  
+'''
+
+[[case]]
+id = "para-backslash-at-end"
+input = '''
+Last line with a backslash\
+'''
+
+[[case]]
+id = "para-many-blank-lines"
+input = '''
+First.
+
+
+
+Second.
+'''
+
+[[case]]
+id = "heading-levels"
+input = '''
+# One
+## Two
+### Three
+#### Four
+##### Five
+###### Six
+'''
+
+[[case]]
+id = "heading-seven-hashes"
+input = '''
+####### Seven
+'''
+
+[[case]]
+id = "heading-no-space"
+input = '''
+#NoSpace
+'''
+
+[[case]]
+id = "heading-empty-atx"
+input = '''
+#
+'''
+
+[[case]]
+id = "heading-closing-hashes-uneven"
+input = '''
+# Title ######
+'''
+
+[[case]]
+id = "heading-closing-hash-no-space"
+input = '''
+# Title#
+'''
+
+[[case]]
+id = "heading-escaped-closing-hash"
+input = '''
+# Title \#
+'''
+
+[[case]]
+id = "heading-indented-three"
+input = '''
+   # Indented
+'''
+
+[[case]]
+id = "heading-indented-four"
+input = '''
+    # Code
+'''
+
+[[case]]
+id = "heading-setext-short-underline"
+input = '''
+Title
+-
+'''
+
+[[case]]
+id = "heading-setext-multiline-text"
+input = '''
+First line
+second line
+===========
+'''
+
+[[case]]
+id = "heading-after-paragraph-no-blank"
+input = '''
+Paragraph
+# Not a heading
+'''
+
+[[case]]
+id = "heading-after-paragraph-blank"
+input = '''
+Paragraph
+
+# A heading
+'''
+
+[[case]]
+id = "heading-attributes-key-value"
+input = '''
+# Heading {#id .c1 .c2 data-x="y z"}
+'''
+
+[[case]]
+id = "heading-attributes-setext"
+input = '''
+Heading {.cls}
+==============
+'''
+
+[[case]]
+id = "heading-duplicate-ids"
+input = '''
+# Same
+
+# Same
+
+# Same
+'''
+
+[[case]]
+id = "heading-explicit-id-collides"
+input = '''
+# Foo
+
+# Bar {#foo}
+'''
+
+[[case]]
+id = "heading-id-unicode"
+input = '''
+# Ünïcödé Héading
+'''
+
+[[case]]
+id = "heading-id-numeric-start"
+input = '''
+# 2024 Plans
+'''
+
+[[case]]
+id = "heading-id-punctuation-only"
+input = '''
+# ?!
+'''
+
+[[case]]
+id = "heading-id-with-code-and-note"
+input = '''
+# Use `fn main`^[A note.]
+'''
+
+[[case]]
+id = "heading-id-underscore-period"
+input = '''
+# snake_case and v1.2
+'''
+
+[[case]]
+id = "heading-hashes-in-text"
+input = '''
+# C# and F#
+'''
+
+[[case]]
+id = "heading-emphasis"
+input = '''
+## *Emph* and **strong**
+'''
+
+[[case]]
+id = "blockquote-single"
+input = '''
+> Quote.
+'''
+
+[[case]]
+id = "blockquote-no-space"
+input = '''
+>No space after marker.
+'''
+
+[[case]]
+id = "blockquote-heading"
+input = '''
+> # Heading in quote
+'''
+
+[[case]]
+id = "blockquote-triple-nested"
+input = '''
+> > > Deep.
+'''
+
+[[case]]
+id = "blockquote-after-paragraph"
+input = '''
+Paragraph
+> not a quote
+'''
+
+[[case]]
+id = "blockquote-empty"
+input = '''
+>
+'''
+
+[[case]]
+id = "blockquote-two-separated"
+input = '''
+> One
+
+> Two
+'''
+
+[[case]]
+id = "blockquote-fenced-code"
+input = '''
+> ```
+> code
+> ```
+'''
+
+[[case]]
+id = "blockquote-indented-marker"
+input = '''
+   > Three spaces before marker.
+'''
+
+[[case]]
+id = "code-indented-blank-lines"
+input = '''
+    line one
+
+    line three
+'''
+
+[[case]]
+id = "code-indented-trailing-blank"
+input = '''
+    code
+
+
+Text.
+'''
+
+[[case]]
+id = "code-indented-extra-indent"
+input = '''
+        eight spaces
+'''
+
+[[case]]
+id = "code-indented-after-paragraph"
+input = '''
+Paragraph
+    not code
+'''
+
+[[case]]
+id = "fenced-backtick-basic"
+input = '''
+```
+code
+```
+'''
+
+[[case]]
+id = "fenced-backtick-longer-close"
+input = '''
+```
+code
+`````
+'''
+
+[[case]]
+id = "fenced-shorter-close"
+input = '''
+````
+code
+```
+still code
+````
+'''
+
+[[case]]
+id = "fenced-mixed-close"
+input = '''
+~~~
+code
+```
+~~~
+'''
+
+[[case]]
+id = "fenced-empty"
+input = '''
+```
+```
+'''
+
+[[case]]
+id = "fenced-blank-lines-inside"
+input = '''
+```
+
+code
+
+```
+'''
+
+[[case]]
+id = "fenced-indented-opening"
+input = '''
+  ```
+  code
+    more
+  ```
+'''
+
+[[case]]
+id = "fenced-attributes-key-value"
+input = '''
+```{.python #ex startFrom=5 data-a="b c"}
+print(1)
+```
+'''
+
+[[case]]
+id = "fenced-after-paragraph"
+input = '''
+Paragraph
+```
+code
+```
+'''
+
+[[case]]
+id = "fenced-info-two-words"
+input = '''
+``` ruby extra
+puts 1
+```
+'''
+
+[[case]]
+id = "fenced-backticks-in-info"
+input = '''
+``` a`b
+code
+```
+'''
+
+[[case]]
+id = "fenced-html-entities-literal"
+input = '''
+```
+<b>&amp;</b>
+```
+'''
+
+[[case]]
+id = "hr-dashes"
+input = '''
+---
+'''
+
+[[case]]
+id = "hr-asterisks"
+input = '''
+***
+'''
+
+[[case]]
+id = "hr-underscores"
+input = '''
+___
+'''
+
+[[case]]
+id = "hr-spaced"
+input = '''
+- - -
+'''
+
+[[case]]
+id = "hr-two-dashes"
+input = '''
+--
+'''
+
+[[case]]
+id = "hr-after-paragraph-setext"
+input = '''
+Text
+---
+'''
+
+[[case]]
+id = "hr-between-paragraphs"
+input = '''
+Text
+
+---
+
+More
+'''
+
+[[case]]
+id = "line-block-single"
+input = '''
+| A single line
+'''
+
+[[case]]
+id = "line-block-empty-line"
+input = '''
+| One
+|
+| Three
+'''
+
+[[case]]
+id = "line-block-inline-markup"
+input = '''
+| *Emph* and `code`
+|   indented **strong**
+'''
+
+[[case]]
+id = "line-block-no-space-after-bar"
+input = '''
+|no space
+'''
+
+[[case]]
+id = "line-block-pipe-table-like"
+input = '''
+| a | b |
+'''
+
+[[case]]
+id = "fence-indented-three"
+input = '''
+   ```
+x
+   ```
+'''
+
+[[case]]
+id = "fence-indented-four-is-code"
+input = '''
+    ```
+    x
+    ```
+'''
+
+[[case]]
+id = "div-fence-indented-three"
+input = '''
+   ::: a
+x
+   :::
+'''
+
+[[case]]
+id = "div-fence-indented-four-is-code"
+input = '''
+    ::: a
+    x
+    :::
+'''
+
+[[case]]
+id = "definition-tight-several-blocks"
+input = '''
+Term
+:   one
+
+    two
+
+        code
+'''
+
+[[case]]
+id = "fenced-class-lowercase"
+input = '''
+``` Haskell
+x
+```
+'''
+
+[[case]]
+id = "header-reference-smart-quote"
+input = '''
+# Pandoc's Markdown
+
+See [Pandoc's Markdown] and [code `x`].
+
+# code `x`
+'''
+
+[[case]]
+id = "div-fence-indented-one"
+input = '''
+ ::: a
+x
+:::
+'''

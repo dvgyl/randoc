@@ -1,0 +1,1318 @@
+# Each extension of the markdown reader, once on and once off with the same input.
+from = "markdown"
+to = []
+
+[[case]]
+id = "abbreviations-on"
+from = "markdown+abbreviations"
+input = '''
+*[HTML]: Hyper Text
+
+Some HTML here.
+'''
+
+[[case]]
+id = "abbreviations-off"
+from = "markdown-abbreviations"
+input = '''
+*[HTML]: Hyper Text
+
+Some HTML here.
+'''
+
+[[case]]
+id = "alerts-on"
+from = "markdown+alerts"
+input = '''
+> [!NOTE]
+> Read this.
+'''
+
+[[case]]
+id = "alerts-off"
+from = "markdown-alerts"
+input = '''
+> [!NOTE]
+> Read this.
+'''
+
+[[case]]
+id = "alerts-warning"
+from = "markdown+alerts"
+input = '''
+> [!WARNING]
+> Careful.
+>
+> Second paragraph.
+'''
+
+[[case]]
+id = "alerts-unknown-type"
+from = "markdown+alerts"
+input = '''
+> [!BOGUS]
+> Text.
+'''
+
+[[case]]
+id = "all-symbols-escapable-on"
+from = "markdown+all_symbols_escapable"
+input = '''
+\a\ b \* \:
+'''
+
+[[case]]
+id = "all-symbols-escapable-off"
+from = "markdown-all_symbols_escapable"
+input = '''
+\a\ b \* \:
+'''
+
+[[case]]
+id = "angle-brackets-escapable-on"
+from = "markdown-all_symbols_escapable+angle_brackets_escapable"
+input = '''
+\<b\> \*
+'''
+
+[[case]]
+id = "angle-brackets-escapable-off"
+from = "markdown-all_symbols_escapable-angle_brackets_escapable"
+input = '''
+\<b\> \*
+'''
+
+[[case]]
+id = "ascii-identifiers-on"
+from = "markdown+ascii_identifiers"
+input = '''
+# Maître d'hôtel Ελληνικά
+'''
+
+[[case]]
+id = "ascii-identifiers-off"
+from = "markdown-ascii_identifiers"
+input = '''
+# Maître d'hôtel Ελληνικά
+'''
+
+[[case]]
+id = "auto-identifiers-on"
+from = "markdown+auto_identifiers"
+input = '''
+# A Heading
+'''
+
+[[case]]
+id = "auto-identifiers-off"
+from = "markdown-auto_identifiers"
+input = '''
+# A Heading
+'''
+
+[[case]]
+id = "autolink-bare-uris-on"
+from = "markdown+autolink_bare_uris"
+input = '''
+See https://example.com/path?q=1. and www.example.org and user@example.com.
+'''
+
+[[case]]
+id = "autolink-bare-uris-off"
+from = "markdown-autolink_bare_uris"
+input = '''
+See https://example.com/path?q=1. and www.example.org and user@example.com.
+'''
+
+[[case]]
+id = "autolink-bare-uris-trailing-paren"
+from = "markdown+autolink_bare_uris"
+input = '''
+(https://example.com/a_(b))
+'''
+
+[[case]]
+id = "backtick-code-blocks-on"
+from = "markdown+backtick_code_blocks"
+input = '''
+```
+code
+```
+'''
+
+[[case]]
+id = "backtick-code-blocks-off"
+from = "markdown-backtick_code_blocks"
+input = '''
+```
+code
+```
+'''
+
+[[case]]
+id = "blank-before-blockquote-on"
+from = "markdown+blank_before_blockquote"
+input = '''
+Para
+> quote
+'''
+
+[[case]]
+id = "blank-before-blockquote-off"
+from = "markdown-blank_before_blockquote"
+input = '''
+Para
+> quote
+'''
+
+[[case]]
+id = "blank-before-header-on"
+from = "markdown+blank_before_header"
+input = '''
+Para
+# Heading
+'''
+
+[[case]]
+id = "blank-before-header-off"
+from = "markdown-blank_before_header"
+input = '''
+Para
+# Heading
+'''
+
+[[case]]
+id = "bracketed-spans-on"
+from = "markdown+bracketed_spans"
+input = '''
+[text]{.cls}
+'''
+
+[[case]]
+id = "bracketed-spans-off"
+from = "markdown-bracketed_spans"
+input = '''
+[text]{.cls}
+'''
+
+[[case]]
+id = "citations-on"
+from = "markdown+citations"
+input = '''
+See [@doe, p. 1] and @smith.
+'''
+
+[[case]]
+id = "citations-off"
+from = "markdown-citations"
+input = '''
+See [@doe, p. 1] and @smith.
+'''
+
+[[case]]
+id = "definition-lists-on"
+from = "markdown+definition_lists"
+input = '''
+Term
+: Definition
+'''
+
+[[case]]
+id = "definition-lists-off"
+from = "markdown-definition_lists"
+input = '''
+Term
+: Definition
+'''
+
+[[case]]
+id = "east-asian-line-breaks-on"
+from = "markdown+east_asian_line_breaks"
+input = '''
+日本語の
+文章です。
+English
+words.
+'''
+
+[[case]]
+id = "east-asian-line-breaks-off"
+from = "markdown-east_asian_line_breaks"
+input = '''
+日本語の
+文章です。
+English
+words.
+'''
+
+[[case]]
+id = "emoji-on"
+from = "markdown+emoji"
+input = '''
+I :heart: this :smile: :notanemoji:
+'''
+
+[[case]]
+id = "emoji-off"
+from = "markdown-emoji"
+input = '''
+I :heart: this :smile: :notanemoji:
+'''
+
+[[case]]
+id = "emoji-adjacent-text"
+from = "markdown+emoji"
+input = '''
+a:smile:b :+1: :thumbsup:
+'''
+
+[[case]]
+id = "escaped-line-breaks-on"
+from = "markdown+escaped_line_breaks"
+input = '''
+one\
+two
+'''
+
+[[case]]
+id = "escaped-line-breaks-off"
+from = "markdown-escaped_line_breaks"
+input = '''
+one\
+two
+'''
+
+[[case]]
+id = "example-lists-on"
+from = "markdown+example_lists"
+input = '''
+(@) First.
+(@x) Second, see (@x).
+'''
+
+[[case]]
+id = "example-lists-off"
+from = "markdown-example_lists"
+input = '''
+(@) First.
+(@x) Second, see (@x).
+'''
+
+[[case]]
+id = "fancy-lists-on"
+from = "markdown+fancy_lists"
+input = '''
+a. one
+b. two
+
+ii) two
+iii) three
+'''
+
+[[case]]
+id = "fancy-lists-off"
+from = "markdown-fancy_lists"
+input = '''
+a. one
+b. two
+
+ii) two
+iii) three
+'''
+
+[[case]]
+id = "fenced-code-attributes-on"
+from = "markdown+fenced_code_attributes"
+input = '''
+~~~ {.python #c}
+x = 1
+~~~
+'''
+
+[[case]]
+id = "fenced-code-attributes-off"
+from = "markdown-fenced_code_attributes"
+input = '''
+~~~ {.python #c}
+x = 1
+~~~
+'''
+
+[[case]]
+id = "fenced-code-blocks-on"
+from = "markdown+fenced_code_blocks"
+input = '''
+~~~
+code
+~~~
+'''
+
+[[case]]
+id = "fenced-code-blocks-off"
+from = "markdown-fenced_code_blocks"
+input = '''
+~~~
+code
+~~~
+'''
+
+[[case]]
+id = "fenced-divs-on"
+from = "markdown+fenced_divs"
+input = '''
+::: note
+Text.
+:::
+'''
+
+[[case]]
+id = "fenced-divs-off"
+from = "markdown-fenced_divs"
+input = '''
+::: note
+Text.
+:::
+'''
+
+[[case]]
+id = "footnotes-on"
+from = "markdown+footnotes"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "footnotes-off"
+from = "markdown-footnotes"
+input = '''
+Text[^1].
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "four-space-rule-on"
+from = "markdown+four_space_rule"
+input = '''
+-  item
+
+   continued paragraph
+'''
+
+[[case]]
+id = "four-space-rule-off"
+from = "markdown-four_space_rule"
+input = '''
+-  item
+
+   continued paragraph
+'''
+
+[[case]]
+id = "gfm-auto-identifiers-on"
+from = "markdown+gfm_auto_identifiers"
+input = '''
+# Hello, World! (v2.0) `code`
+'''
+
+[[case]]
+id = "gfm-auto-identifiers-off"
+from = "markdown-gfm_auto_identifiers"
+input = '''
+# Hello, World! (v2.0) `code`
+'''
+
+[[case]]
+id = "gfm-auto-identifiers-emoji"
+from = "markdown+gfm_auto_identifiers+emoji"
+input = '''
+# I :heart: it
+'''
+
+[[case]]
+id = "grid-tables-on"
+from = "markdown+grid_tables"
+input = '''
++---+---+
+| a | b |
++===+===+
+| 1 | 2 |
++---+---+
+'''
+
+[[case]]
+id = "grid-tables-off"
+from = "markdown-grid_tables"
+input = '''
++---+---+
+| a | b |
++===+===+
+| 1 | 2 |
++---+---+
+'''
+
+[[case]]
+id = "gutenberg-no-effect-on-reader"
+from = "markdown+gutenberg"
+input = '''
+*Emph* and **strong**.
+'''
+
+[[case]]
+id = "hard-line-breaks-on"
+from = "markdown+hard_line_breaks"
+input = '''
+one
+two
+'''
+
+[[case]]
+id = "hard-line-breaks-off"
+from = "markdown-hard_line_breaks"
+input = '''
+one
+two
+'''
+
+[[case]]
+id = "header-attributes-on"
+from = "markdown+header_attributes"
+input = '''
+# Heading {#id .c}
+'''
+
+[[case]]
+id = "header-attributes-off"
+from = "markdown-header_attributes"
+input = '''
+# Heading {#id .c}
+'''
+
+[[case]]
+id = "ignore-line-breaks-on"
+from = "markdown+ignore_line_breaks"
+input = '''
+one
+two
+'''
+
+[[case]]
+id = "ignore-line-breaks-off"
+from = "markdown-ignore_line_breaks"
+input = '''
+one
+two
+'''
+
+[[case]]
+id = "implicit-figures-on"
+from = "markdown+implicit_figures"
+input = '''
+![Caption](img.png)
+'''
+
+[[case]]
+id = "implicit-figures-off"
+from = "markdown-implicit_figures"
+input = '''
+![Caption](img.png)
+'''
+
+[[case]]
+id = "implicit-header-references-on"
+from = "markdown+implicit_header_references"
+input = '''
+# My Heading
+
+See [My Heading].
+'''
+
+[[case]]
+id = "implicit-header-references-off"
+from = "markdown-implicit_header_references"
+input = '''
+# My Heading
+
+See [My Heading].
+'''
+
+[[case]]
+id = "inline-code-attributes-on"
+from = "markdown+inline_code_attributes"
+input = '''
+`x`{.lang}
+'''
+
+[[case]]
+id = "inline-code-attributes-off"
+from = "markdown-inline_code_attributes"
+input = '''
+`x`{.lang}
+'''
+
+[[case]]
+id = "inline-notes-on"
+from = "markdown+inline_notes"
+input = '''
+Text^[inline note].
+'''
+
+[[case]]
+id = "inline-notes-off"
+from = "markdown-inline_notes"
+input = '''
+Text^[inline note].
+'''
+
+[[case]]
+id = "intraword-underscores-on"
+from = "markdown+intraword_underscores"
+input = '''
+snake_case_word and a_b_
+'''
+
+[[case]]
+id = "intraword-underscores-off"
+from = "markdown-intraword_underscores"
+input = '''
+snake_case_word and a_b_
+'''
+
+[[case]]
+id = "latex-macros-on"
+from = "markdown+latex_macros"
+input = '''
+\newcommand{\vect}[1]{\mathbf{#1}}
+
+$\vect{x}$
+'''
+
+[[case]]
+id = "latex-macros-off"
+from = "markdown-latex_macros"
+input = '''
+\newcommand{\vect}[1]{\mathbf{#1}}
+
+$\vect{x}$
+'''
+
+[[case]]
+id = "line-blocks-on"
+from = "markdown+line_blocks"
+input = '''
+| line one
+| line two
+'''
+
+[[case]]
+id = "line-blocks-off"
+from = "markdown-line_blocks"
+input = '''
+| line one
+| line two
+'''
+
+[[case]]
+id = "link-attributes-on"
+from = "markdown+link_attributes"
+input = '''
+[l](/u){.c} ![i](/i.png){width=10}
+'''
+
+[[case]]
+id = "link-attributes-off"
+from = "markdown-link_attributes"
+input = '''
+[l](/u){.c} ![i](/i.png){width=10}
+'''
+
+[[case]]
+id = "lists-without-preceding-blankline-on"
+from = "markdown+lists_without_preceding_blankline"
+input = '''
+Para
+- a
+- b
+'''
+
+[[case]]
+id = "lists-without-preceding-blankline-off"
+from = "markdown-lists_without_preceding_blankline"
+input = '''
+Para
+- a
+- b
+'''
+
+[[case]]
+id = "literate-haskell-on"
+from = "markdown+literate_haskell"
+input = '''
+> main = putStrLn "hi"
+
+Text.
+'''
+
+[[case]]
+id = "literate-haskell-off"
+from = "markdown-literate_haskell"
+input = '''
+> main = putStrLn "hi"
+
+Text.
+'''
+
+[[case]]
+id = "literate-haskell-latex-code"
+from = "markdown+literate_haskell"
+input = '''
+\begin{code}
+main = print 1
+\end{code}
+'''
+
+[[case]]
+id = "mark-on"
+from = "markdown+mark"
+input = '''
+==highlight==
+'''
+
+[[case]]
+id = "mark-off"
+from = "markdown-mark"
+input = '''
+==highlight==
+'''
+
+[[case]]
+id = "markdown-attribute-on"
+from = "markdown+markdown_attribute"
+input = '''
+<table><tr><td>
+*one*
+</td></tr></table>
+
+<section markdown="1">
+*two*
+</section>
+'''
+
+[[case]]
+id = "markdown-attribute-off"
+from = "markdown-markdown_attribute"
+input = '''
+<table><tr><td>
+*one*
+</td></tr></table>
+
+<section markdown="1">
+*two*
+</section>
+'''
+
+[[case]]
+id = "markdown-in-html-blocks-on"
+from = "markdown+markdown_in_html_blocks"
+input = '''
+<table>
+<tr>
+<td>*one*</td>
+</tr>
+</table>
+'''
+
+[[case]]
+id = "markdown-in-html-blocks-off"
+from = "markdown-markdown_in_html_blocks"
+input = '''
+<table>
+<tr>
+<td>*one*</td>
+</tr>
+</table>
+'''
+
+[[case]]
+id = "mmd-header-identifiers-on"
+from = "markdown+mmd_header_identifiers"
+input = '''
+## Heading [myid]
+'''
+
+[[case]]
+id = "mmd-header-identifiers-off"
+from = "markdown-mmd_header_identifiers"
+input = '''
+## Heading [myid]
+'''
+
+[[case]]
+id = "mmd-link-attributes-on"
+from = "markdown+mmd_link_attributes"
+input = '''
+[l][r]
+
+[r]: /url width=20 class=big
+'''
+
+[[case]]
+id = "mmd-link-attributes-off"
+from = "markdown-mmd_link_attributes"
+input = '''
+[l][r]
+
+[r]: /url width=20 class=big
+'''
+
+[[case]]
+id = "mmd-title-block-on"
+from = "markdown+mmd_title_block"
+input = '''
+Title: My Doc
+Author: Me
+
+Body.
+'''
+
+[[case]]
+id = "mmd-title-block-off"
+from = "markdown-mmd_title_block"
+input = '''
+Title: My Doc
+Author: Me
+
+Body.
+'''
+
+[[case]]
+id = "multiline-tables-on"
+from = "markdown+multiline_tables"
+input = '''
+-----------
+a     b
+----- -----
+1     2
+-----------
+'''
+
+[[case]]
+id = "multiline-tables-off"
+from = "markdown-multiline_tables"
+input = '''
+-----------
+a     b
+----- -----
+1     2
+-----------
+'''
+
+[[case]]
+id = "native-divs-on"
+from = "markdown+native_divs"
+input = '''
+<div class="x">
+text
+</div>
+'''
+
+[[case]]
+id = "native-divs-off"
+from = "markdown-native_divs"
+input = '''
+<div class="x">
+text
+</div>
+'''
+
+[[case]]
+id = "native-spans-on"
+from = "markdown+native_spans"
+input = '''
+<span class="x">text</span>
+'''
+
+[[case]]
+id = "native-spans-off"
+from = "markdown-native_spans"
+input = '''
+<span class="x">text</span>
+'''
+
+[[case]]
+id = "old-dashes-on"
+from = "markdown+old_dashes"
+input = '''
+a - 1 and a--b and a---b
+'''
+
+[[case]]
+id = "old-dashes-off"
+from = "markdown-old_dashes"
+input = '''
+a - 1 and a--b and a---b
+'''
+
+[[case]]
+id = "pandoc-title-block-on"
+from = "markdown+pandoc_title_block"
+input = '''
+% Title
+% Author
+'''
+
+[[case]]
+id = "pandoc-title-block-off"
+from = "markdown-pandoc_title_block"
+input = '''
+% Title
+% Author
+'''
+
+[[case]]
+id = "pipe-tables-on"
+from = "markdown+pipe_tables"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "pipe-tables-off"
+from = "markdown-pipe_tables"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "raw-attribute-on"
+from = "markdown+raw_attribute"
+input = '''
+`x`{=html}
+
+```{=latex}
+\x
+```
+'''
+
+[[case]]
+id = "raw-attribute-off"
+from = "markdown-raw_attribute"
+input = '''
+`x`{=html}
+
+```{=latex}
+\x
+```
+'''
+
+[[case]]
+id = "raw-html-on"
+from = "markdown+raw_html"
+input = '''
+<b>x</b>
+'''
+
+[[case]]
+id = "raw-html-off"
+from = "markdown-raw_html"
+input = '''
+<b>x</b>
+'''
+
+[[case]]
+id = "raw-tex-on"
+from = "markdown+raw_tex"
+input = '''
+\emph{x}
+'''
+
+[[case]]
+id = "raw-tex-off"
+from = "markdown-raw_tex"
+input = '''
+\emph{x}
+'''
+
+[[case]]
+id = "rebase-relative-paths-stdin"
+from = "markdown+rebase_relative_paths"
+input = '''
+![i](img/a.png) [l](doc.md)
+'''
+
+[[case]]
+id = "short-subsuperscripts-on"
+from = "markdown+short_subsuperscripts"
+input = '''
+x^2 and H~2 and y^abc^
+'''
+
+[[case]]
+id = "short-subsuperscripts-off"
+from = "markdown-short_subsuperscripts"
+input = '''
+x^2 and H~2 and y^abc^
+'''
+
+[[case]]
+id = "shortcut-reference-links-on"
+from = "markdown+shortcut_reference_links"
+input = '''
+[ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "shortcut-reference-links-off"
+from = "markdown-shortcut_reference_links"
+input = '''
+[ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "simple-tables-on"
+from = "markdown+simple_tables"
+input = '''
+a   b
+--- ---
+1   2
+'''
+
+[[case]]
+id = "simple-tables-off"
+from = "markdown-simple_tables"
+input = '''
+a   b
+--- ---
+1   2
+'''
+
+[[case]]
+id = "smart-on"
+from = "markdown+smart"
+input = '''
+"quotes" -- dash... it's
+'''
+
+[[case]]
+id = "smart-off"
+from = "markdown-smart"
+input = '''
+"quotes" -- dash... it's
+'''
+
+[[case]]
+id = "space-in-atx-header-on"
+from = "markdown+space_in_atx_header"
+input = '''
+#NoSpace
+'''
+
+[[case]]
+id = "space-in-atx-header-off"
+from = "markdown-space_in_atx_header"
+input = '''
+#NoSpace
+'''
+
+[[case]]
+id = "spaced-reference-links-on"
+from = "markdown+spaced_reference_links"
+input = '''
+[text] [ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "spaced-reference-links-off"
+from = "markdown-spaced_reference_links"
+input = '''
+[text] [ref]
+
+[ref]: /url
+'''
+
+[[case]]
+id = "startnum-on"
+from = "markdown+startnum"
+input = '''
+3. three
+4. four
+'''
+
+[[case]]
+id = "startnum-off"
+from = "markdown-startnum"
+input = '''
+3. three
+4. four
+'''
+
+[[case]]
+id = "strikeout-on"
+from = "markdown+strikeout"
+input = '''
+~~struck~~
+'''
+
+[[case]]
+id = "strikeout-off"
+from = "markdown-strikeout"
+input = '''
+~~struck~~
+'''
+
+[[case]]
+id = "subscript-on"
+from = "markdown+subscript"
+input = '''
+H~2~O
+'''
+
+[[case]]
+id = "subscript-off"
+from = "markdown-subscript"
+input = '''
+H~2~O
+'''
+
+[[case]]
+id = "superscript-on"
+from = "markdown+superscript"
+input = '''
+2^10^
+'''
+
+[[case]]
+id = "superscript-off"
+from = "markdown-superscript"
+input = '''
+2^10^
+'''
+
+[[case]]
+id = "table-attributes-on"
+from = "markdown+table_attributes"
+input = '''
+| a |
+|---|
+| 1 |
+
+: Cap {#t .c}
+'''
+
+[[case]]
+id = "table-attributes-off"
+from = "markdown-table_attributes"
+input = '''
+| a |
+|---|
+| 1 |
+
+: Cap {#t .c}
+'''
+
+[[case]]
+id = "table-captions-on"
+from = "markdown+table_captions"
+input = '''
+| a |
+|---|
+| 1 |
+
+Table: Cap
+'''
+
+[[case]]
+id = "table-captions-off"
+from = "markdown-table_captions"
+input = '''
+| a |
+|---|
+| 1 |
+
+Table: Cap
+'''
+
+[[case]]
+id = "task-lists-on"
+from = "markdown+task_lists"
+input = '''
+- [ ] todo
+- [x] done
+'''
+
+[[case]]
+id = "task-lists-off"
+from = "markdown-task_lists"
+input = '''
+- [ ] todo
+- [x] done
+'''
+
+[[case]]
+id = "tex-math-dollars-on"
+from = "markdown+tex_math_dollars"
+input = '''
+$x$ and $$y$$
+'''
+
+[[case]]
+id = "tex-math-dollars-off"
+from = "markdown-tex_math_dollars"
+input = '''
+$x$ and $$y$$
+'''
+
+[[case]]
+id = "tex-math-double-backslash-on"
+from = "markdown+tex_math_double_backslash"
+input = '''
+\\(x\\) and \\[y\\]
+'''
+
+[[case]]
+id = "tex-math-double-backslash-off"
+from = "markdown-tex_math_double_backslash"
+input = '''
+\\(x\\) and \\[y\\]
+'''
+
+[[case]]
+id = "tex-math-single-backslash-on"
+from = "markdown+tex_math_single_backslash"
+input = '''
+\(x\) and \[y\]
+'''
+
+[[case]]
+id = "tex-math-single-backslash-off"
+from = "markdown-tex_math_single_backslash"
+input = '''
+\(x\) and \[y\]
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-on"
+from = "markdown+wikilinks_title_after_pipe"
+input = '''
+[[Page|Title]] [[Plain]]
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-off"
+from = "markdown-wikilinks_title_after_pipe"
+input = '''
+[[Page|Title]] [[Plain]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-on"
+from = "markdown+wikilinks_title_before_pipe"
+input = '''
+[[Title|Page]] [[Plain]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-off"
+from = "markdown-wikilinks_title_before_pipe"
+input = '''
+[[Title|Page]] [[Plain]]
+'''
+
+[[case]]
+id = "yaml-metadata-block-on"
+from = "markdown+yaml_metadata_block"
+input = '''
+---
+title: T
+---
+'''
+
+[[case]]
+id = "yaml-metadata-block-off"
+from = "markdown-yaml_metadata_block"
+input = '''
+---
+title: T
+---
+'''
+
+[[case]]
+id = "ignore-and-east-asian"
+from = "markdown+ignore_line_breaks+east_asian_line_breaks"
+input = '''
+中文
+text
+'''
+
+[[case]]
+id = "hard-line-breaks-in-list"
+from = "markdown+hard_line_breaks"
+input = '''
+- one
+  two
+'''
+
+[[case]]
+id = "smart-off-old-dashes"
+from = "markdown-smart+old_dashes"
+input = '''
+a--b
+'''
+
+[[case]]
+id = "ascii-identifiers-gfm"
+from = "markdown+gfm_auto_identifiers+ascii_identifiers"
+input = '''
+# Café Ünïcode
+'''
+
+[[case]]
+id = "mark-unclosed"
+from = "markdown+mark"
+input = '''
+==not closed
+'''
+
+[[case]]
+id = "abbreviations-multiword"
+from = "markdown+abbreviations"
+input = '''
+*[W3C]: World Wide Web Consortium
+*[two words]: Two
+
+W3C and two words.
+'''
+
+[[case]]
+id = "wikilinks-both"
+from = "markdown+wikilinks_title_after_pipe+wikilinks_title_before_pipe"
+input = '''
+[[A|B]]
+'''
+
+[[case]]
+id = "tex-math-single-backslash-escaped"
+from = "markdown+tex_math_single_backslash"
+input = '''
+\\(not math\\)
+'''
+
+[[case]]
+id = "four-space-rule-nested"
+from = "markdown+four_space_rule"
+input = '''
+- a
+  - b
+'''
