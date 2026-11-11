@@ -340,3 +340,63 @@ and Windows; the WebAssembly targets `wasm32-wasip1` with a C toolchain and
 `wasm32-unknown-emscripten`; the licence files (not only the licence fields)
 of the build dependencies `cc`, `cfg-if`, `pkg-config`, `find-msvc-tools`
 and `shlex`.
+
+## Workstream harness-flaky (branch `ws/harness-flaky`, head 5781931, one squashed commit)
+
+Content: test code only, in the `mod tests` blocks of
+`crates/randoc-harness/src/exec.rs` and `crates/randoc-harness/src/lib.rs`
+(2 files, 97 insertions, 25 deletions). Three tests failed under a high load
+because of short wall-clock limits. The cause in the no-result test: its
+1 s limit also applied to the `--version` call of `record`. The changes:
+
+- The no-result test is now two tests with one helper. In
+  `a_program_that_a_signal_stops_is_never_recorded_and_never_passes`, the
+  converter stops itself with `kill -9 $$`. In
+  `a_program_that_never_ends_is_never_recorded_and_never_passes`, the
+  converter runs `kill -STOP $$`, so the limits of `record` (10 s) and `run`
+  (1 s) are always reached.
+- The slow-program test has a limit of 3 s. Each script holds a named pipe
+  (FIFO) open and writes `started` first. The test reads the FIFO to its end
+  and expects exactly `started\n`, so a process that survives the stop makes
+  the test fail. The FIFO is in a private folder from `mktemp -d` (mode 0700,
+  FIFO mode 0600) with a `Drop` guard.
+- The slow-program test and the pipes test assert an elapsed time below 20 s.
+
+No line of the harness program changes.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Harness before and after the merge: 4546 units, 2217 pass, 1959 fail, 0 no result, 0 not recorded, 370 skipped; baseline 2217 units, 0 regressions, 0 new passes. `verify-oracle`: 4176 units, 0 stored results are not current. |
+| 2. Measured progress | Does not apply in the usual sense: no behaviour of the converter changes. In its place: the three tests that failed under load (now four tests) passed in 80 of 80 runs (20 runs of the four tests together, one-minute load average 12.3 to 20.7, worker report). |
+| 3. Tests | `cargo test -p randoc-harness --lib`: 37 passed. Each of 10 mutations of the harness program fails a changed test (worker report, unit b: M1 to M4 of the worker, M5 to M8 of Opus round 1, `timeout_pass` and `timeout_record_count` of Codex round 1). The Codex reviewer of round 2 ran the mutations of the stop time, the pipe grace, the `started` write, the kill of the main process only and the two timeout mutations itself: each one fails a test. |
+| 4. No panics | Does not apply: no parser and no archive reader changes. |
+| 5. Two reviews | Two rounds. Round 1, full rounds at dec22ed: Codex (GPT-6.1 Sol) REQUEST CHANGES (1 medium: R1-01, the signal test removed the coverage of the timeout handling of `record` and `run`; 2 low: R1-02 cleanup of the FIFO after a failure, R1-03 predictable FIFO name and mode); Opus 5.5 with a new context APPROVE (4 low: R1-01 leftovers after a failure or a stop, R1-02 predictable name, R1-03 two lost detections of the stop time, R1-04 no proof that the script started). Round 2, verification rounds of the same reviewers (resumed) on the diff dec22ed..5781931: Opus APPROVE (0 new findings; all 7 findings of round 1 closed in its view); Codex APPROVE (report `harness-flaky-codex-r2b.md`; 0 new findings; Codex R1-01, R1-03 and Opus R1-02 to R1-04 closed; Codex R1-02 and Opus R1-01 low and partly open, one cleanup cause). The first Codex run of round 2 lost its final message when the computer stopped at 13:48 UTC; the same session was resumed for `r2b`. |
+| 6. No slowdowns | Does not apply: the change is test code only, so no code of the program changes. No release build and no `bench-pair` run. |
+| 7. Clean build | `scripts/gate.sh` passes on the merged tree (`merge-ws check`, second run). |
+
+The first run of `merge-ws` on the merged tree (18:31 to 18:47 UTC) failed
+in the test step: `a_program_that_a_signal_stops_is_never_recorded_and_never_passes`
+panicked at `lib.rs:1171`, because `record` with the `cat` fixture as the
+oracle gave "the output pipes stayed open after the program ended" for
+`s/f/a#e2e:html`. That message comes from the 2 s limit `PIPE_GRACE` in
+`exec.rs`, a wall-clock limit. The second run (18:47 to 18:58 UTC) passed
+each step. Recorded as H-005.
+
+The gate script passed on 5781931 at 18:19 UTC in the worktree (log
+`env/tmp/coord/gate-harness-flaky-5781931-c.log`: baseline 2217 units,
+0 regressions, 0 new passes). Two earlier gate runs did not end: the wrapper
+edit of the coordinator at 13:30 UTC, and the stop of the computer at
+13:48 UTC.
+
+Limits of the gates: no `cargo mutants`, no coverage and no fuzzing (test
+code only; 10 hand mutations in their place). The worker did not reach a
+load of 40 in unit b. The Opus reviewer of round 2 did not run its own
+mutations (its build waited more than 13 minutes for a build slot); it closed
+two findings by reading. The Codex reviewer of round 2 did not repeat the
+80-run experiment. No reviewer ran the tests on Linux or as a second user.
+
+Open after this merge: H-003 (Codex R1-02, the work folder stays after an
+assertion failure) and H-004 (Opus R1-01, folders and child processes stay
+after a stop by a signal), both low, and H-005 (a wall-clock limit that
+stays in a test of the shared helper). Requests of the worker to the
+coordinator: none.

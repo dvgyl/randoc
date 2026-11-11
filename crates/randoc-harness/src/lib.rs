@@ -1144,19 +1144,25 @@ mod tests {
         assert_eq!(statuses["s/f/a#read"], "pass");
     }
 
-    #[cfg(unix)]
-    #[test]
-    fn a_program_with_no_result_is_never_recorded_and_never_passes() {
-        let fixture = Fixture::new("noresult");
+    /// `conversion` is the shell code of a converter that gives no result. Its `--version` works.
+    fn assert_no_result_is_never_recorded_and_never_passes(
+        name: &str,
+        conversion: &str,
+        record_limit: &str,
+        run_limit: &str,
+    ) {
+        let fixture = Fixture::new(name);
         let oracle = fixture.echo("oracle");
-        let hang = fixture.program(
-            "hang",
-            "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\nsleep 60",
+        let broken = fixture.program(
+            "broken",
+            &format!("if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\n{conversion}"),
         );
+        let one_unit = ["--filter", "s/f/a#read", "--timeout"];
 
         // The oracle gives no result: record reports the error and stores nothing.
-        let quick = ["--timeout", "1"];
-        assert!(!record(fixture.session("record", &quick, &hang, &hang)).unwrap());
+        let mut extra = one_unit.to_vec();
+        extra.push(record_limit);
+        assert!(!record(fixture.session("record", &extra, &broken, &broken)).unwrap());
         let stored =
             cases::load_expected(&fixture.root.join("conformance/expected"), "s/f").unwrap();
         assert!(stored.units.is_empty());
@@ -1170,16 +1176,26 @@ mod tests {
             "--update-baseline",
         ];
         assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
-        let check = [
-            "--baseline",
-            baseline.to_str().unwrap(),
-            "--timeout",
-            "1",
-            "--filter",
-            "s/f/a#read",
-        ];
-        assert!(!run(fixture.session("run", &check, &oracle, &hang)).unwrap());
+        let mut check = vec!["--baseline", baseline.to_str().unwrap()];
+        check.extend(one_unit);
+        check.push(run_limit);
+        assert!(!run(fixture.session("run", &check, &oracle, &broken)).unwrap());
         assert_eq!(fixture.report_statuses()["s/f/a#read"], "no_result");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_program_that_a_signal_stops_is_never_recorded_and_never_passes() {
+        assert_no_result_is_never_recorded_and_never_passes("signal", "kill -9 $$", "20", "20");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_program_that_never_ends_is_never_recorded_and_never_passes() {
+        // A stopped process never ends, so each limit is reached on any machine. The limit of
+        // `record` also applies to its `--version` call, which took at most 0.15 s in 200 runs
+        // at a load average of 24. `run` makes no `--version` call.
+        assert_no_result_is_never_recorded_and_never_passes("timeout", "kill -STOP $$", "10", "1");
     }
 
     #[cfg(unix)]

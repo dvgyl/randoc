@@ -231,16 +231,71 @@ mod tests {
         fs::remove_dir_all(&dir).unwrap();
     }
 
+    /// A folder with mode 0700 and a name that `mktemp` chooses. `Drop` removes it.
+    struct PrivateDir(std::path::PathBuf);
+
+    impl PrivateDir {
+        fn new() -> std::io::Result<PrivateDir> {
+            // Not `temp_dir()`: it can be on an exFAT volume, which has no named pipes.
+            let output = Command::new("/usr/bin/mktemp")
+                .args(["-d", "/tmp/randoc-harness.XXXXXX"])
+                .output()?;
+            assert!(output.status.success());
+            let path = String::from_utf8_lossy(&output.stdout);
+            Ok(PrivateDir(path.trim_end().into()))
+        }
+    }
+
+    impl Drop for PrivateDir {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.0);
+        }
+    }
+
+    /// Far below the 20 s bound and the 30 s sleep, and far above the start time of a shell.
+    const SLOW_LIMIT_MS: u64 = 3_000;
+    /// A wide bound that a harness that stops the program late or waits too long still exceeds.
+    const ELAPSED_BOUND: Duration = Duration::from_secs(20);
+
     #[test]
     fn a_slow_program_is_stopped_with_the_processes_that_it_started() {
         let dir = work_dir("slow");
-        for script in ["sleep 30", "(sleep 30) & wait", "sleep 30 & sleep 30"] {
-            let started = Instant::now();
-            let error = shell(300)
-                .run(&sh(script), b"", &BTreeMap::new(), &dir)
+        let private = PrivateDir::new().unwrap();
+        let fifo = private.0.join("fifo");
+        assert!(
+            Command::new("/usr/bin/mkfifo")
+                .args(["-m", "600"])
+                .arg(&fifo)
+                .status()
+                .unwrap()
+                .success()
+        );
+        let fifo_name = fifo.to_str().unwrap();
+        for script in [
+            "sleep 30; echo alive >&3",
+            "(sleep 30; echo alive >&3) & wait",
+            "sleep 30 & sleep 30; echo alive >&3",
+        ] {
+            // Each process of the script inherits descriptor 3, so the read below gets the end of
+            // the file only when each process is dead. A process that survives writes `alive`.
+            let both_ends = fs::OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(&fifo)
+                .unwrap();
+            let mut reader = fs::File::open(&fifo).unwrap();
+            drop(both_ends);
+            let script = format!("exec 3>'{fifo_name}'; echo started >&3; {script}");
+            let start = Instant::now();
+            let error = shell(SLOW_LIMIT_MS)
+                .run(&sh(&script), b"", &BTreeMap::new(), &dir)
                 .unwrap_err();
+            let elapsed = start.elapsed();
             assert!(error.contains("no result after"), "{script}: {error}");
-            assert!(started.elapsed() < Duration::from_secs(10), "{script}");
+            assert!(elapsed < ELAPSED_BOUND, "{script}: {elapsed:?}");
+            let mut lines = String::new();
+            reader.read_to_string(&mut lines).unwrap();
+            assert_eq!(lines, "started\n", "{script}");
         }
         fs::remove_dir_all(&dir).unwrap();
     }
@@ -248,12 +303,13 @@ mod tests {
     #[test]
     fn a_background_process_that_holds_the_pipes_is_an_error() {
         let dir = work_dir("pipes");
-        let started = Instant::now();
+        let start = Instant::now();
         let error = shell(20_000)
             .run(&sh("sleep 30 & exit 0"), b"", &BTreeMap::new(), &dir)
             .unwrap_err();
+        let elapsed = start.elapsed();
         assert!(error.contains("pipes stayed open"), "{error}");
-        assert!(started.elapsed() < Duration::from_secs(15));
+        assert!(elapsed < ELAPSED_BOUND, "{elapsed:?}");
         fs::remove_dir_all(&dir).unwrap();
     }
 
