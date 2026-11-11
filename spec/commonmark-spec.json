@@ -1,0 +1,22 @@
+{
+ "suite": "CommonMark specification 0.31.2",
+ "spec_url": "https://raw.githubusercontent.com/commonmark/commonmark-spec/9103e341a973013013bb1a80e13567007c5cef6f/spec.txt",
+ "spec_sha256": "257c41ad946f7a1414a499aca402a1aa8fdac3678532266611348c1cf54f4b80",
+ "command": [
+  "-f",
+  "commonmark",
+  "-t",
+  "json"
+ ],
+ "program_sha256": "e0b457c97143198d6ae83eb45e79f27ffb2414f181103384726f4ff3ac72639f",
+ "oracle_sha256": "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44",
+ "timeout_seconds": 60.0,
+ "examples": 652,
+ "pass": 652,
+ "fail": 0,
+ "timeouts": 0,
+ "oracle_problems": 0,
+ "failing_examples": [],
+ "timeout_examples": [],
+ "oracle_problem_examples": []
+}

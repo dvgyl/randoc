@@ -1,0 +1,4429 @@
+# CommonMark and GFM rule cases. The inputs are written for Randoc.
+# tools/commonmark-cases/own_cases.py writes this file.
+from = "commonmark"
+to = []
+
+[[case]]
+id = "tab-code-after-tab"
+input = "\tlet x = 1;\n\tlet y\t= 2;\n"
+
+[[case]]
+id = "tab-in-list-item"
+input = "-\tfirst item\n\n\tsecond paragraph\n"
+
+[[case]]
+id = "tab-quote-code"
+input = ">\t\tquoted code\n"
+
+[[case]]
+id = "tab-between-words"
+input = "word\tword\t\tword\n"
+
+[[case]]
+id = "tab-heading"
+input = "#\tTitle with tab\n"
+
+[[case]]
+id = "tab-rule"
+input = "*\t*\t*\n"
+
+[[case]]
+id = "tab-nested-list"
+input = " - outer\n\t- inner\n\t\tinner text\n"
+
+[[case]]
+id = "tab-partial"
+input = "  \tcode with two spaces and a tab\n"
+
+[[case]]
+id = "esc-all-punct"
+input = "\\~\\}\\|\\{\\`\\_\\^\\]\\\\\\[\\@\\?\\>\\=\\<\\;\\:\\/\\.\\-\\,\\+\\*\\)\\(\\'\\&\\%\\$\\#\\\"\\!\n"
+
+[[case]]
+id = "esc-not-punct"
+input = "\\a \\1 \\é \\ end\n"
+
+[[case]]
+id = "esc-hard-break"
+input = "first\\\nsecond\n"
+
+[[case]]
+id = "esc-in-code"
+input = "`a\\*b` and ``\\` ``\n"
+
+[[case]]
+id = "esc-in-url"
+input = "[x](/path\\(1\\) \"t\\\"q\")\n"
+
+[[case]]
+id = "esc-in-info"
+input = "``` lang\\_name\nbody\n```\n"
+
+[[case]]
+id = "ent-named"
+input = "&copy; &AElig; &frac34; &HilbertSpace; &nbsp;x\n"
+
+[[case]]
+id = "ent-numeric"
+input = "&#65;&#x263A;&#X1F600; &#1234567; &#98765432;\n"
+
+[[case]]
+id = "ent-invalid"
+input = "&nosuchname; &#; &#x; &amp &copy\n"
+
+[[case]]
+id = "ent-zero"
+input = "a&#0;b\n"
+
+[[case]]
+id = "ent-in-link"
+input = "[t](/u?a=1&amp;b=2 \"&quot;q&quot;\")\n"
+
+[[case]]
+id = "ent-in-code"
+input = "`&amp;` &amp;\n"
+
+[[case]]
+id = "ent-not-markup"
+input = "&#42;not emphasis&#42; &#91;x&#93;(y)\n"
+
+[[case]]
+id = "ent-space"
+input = "a&#32;b&#9;c&#10;d\n"
+
+[[case]]
+id = "hr-variants"
+input = "***\n- - -\n_  _  _  _\n"
+
+[[case]]
+id = "hr-too-few"
+input = "**\n--\n"
+
+[[case]]
+id = "hr-indented"
+input = "   ***\n    ***\n"
+
+[[case]]
+id = "hr-mixed"
+input = "*-*\n"
+
+[[case]]
+id = "hr-in-paragraph"
+input = "text\n***\nmore\n"
+
+[[case]]
+id = "hr-vs-list"
+input = "* a\n* * *\n* b\n"
+
+[[case]]
+id = "hr-setext-precedence"
+input = "Heading\n---\n"
+
+[[case]]
+id = "atx-levels"
+input = "# one\n## two\n### three\n#### four\n##### five\n###### six\n####### seven\n"
+
+[[case]]
+id = "atx-no-space"
+input = "#hash\n#\tx\n"
+
+[[case]]
+id = "atx-closing"
+input = "## title ##\n# title #####   \n### title # not closing\n# title#\n"
+
+[[case]]
+id = "atx-empty"
+input = "#\n##  ##\n### ###\n"
+
+[[case]]
+id = "atx-escaped-hash"
+input = "## t \\#\n"
+
+[[case]]
+id = "atx-indent"
+input = "   # ok\n    # code\n"
+
+[[case]]
+id = "atx-interrupt"
+input = "para\n# head\npara\n"
+
+[[case]]
+id = "atx-inline"
+input = "# *em* and `code` [l](/u)\n"
+
+[[case]]
+id = "setext-two-lines"
+input = "first line\nsecond line\n=====\n"
+
+[[case]]
+id = "setext-indented"
+input = "   text\n   ===\n"
+
+[[case]]
+id = "setext-underline-indent"
+input = "text\n    ---\n"
+
+[[case]]
+id = "setext-trailing-space"
+input = "text\n---   \n"
+
+[[case]]
+id = "setext-broken"
+input = "text\n= =\n"
+
+[[case]]
+id = "setext-lazy-quote"
+input = "> quoted\n---\n"
+
+[[case]]
+id = "setext-list-item"
+input = "- item\n---\n"
+
+[[case]]
+id = "setext-after-blank"
+input = "\n===\n"
+
+[[case]]
+id = "setext-with-refdef"
+input = "[r]: /u\n===\n"
+
+[[case]]
+id = "icode-blank-lines"
+input = "    one\n\n\n    two\n    \n"
+
+[[case]]
+id = "icode-no-interrupt"
+input = "para\n    still para\n"
+
+[[case]]
+id = "icode-after-heading"
+input = "# h\n    code\n"
+
+[[case]]
+id = "icode-leading-blank"
+input = "\n    \n    x\n"
+
+[[case]]
+id = "icode-extra-indent"
+input = "        deep\n    shallow\n"
+
+[[case]]
+id = "fence-tilde"
+input = "~~~\nx\n~~~\n"
+
+[[case]]
+id = "fence-longer-close"
+input = "````\n```\n`````\n"
+
+[[case]]
+id = "fence-short-close"
+input = "~~~~\nbody\n~~~\nstill\n"
+
+[[case]]
+id = "fence-unclosed"
+input = "```\nnever closed\n"
+
+[[case]]
+id = "fence-in-quote"
+input = "> ```\n> q\nafter\n"
+
+[[case]]
+id = "fence-indented"
+input = "  ```\n  a\n    b\n c\n  ```\n"
+
+[[case]]
+id = "fence-close-indent"
+input = "```\nx\n    ```\n```\n"
+
+[[case]]
+id = "fence-backtick-info"
+input = "``` a`b\nx\n```\n"
+
+[[case]]
+id = "fence-tilde-info"
+input = "~~~ a`b ~~\nx\n~~~\n"
+
+[[case]]
+id = "fence-info-words"
+input = "```python   extra words\nprint()\n```\n"
+
+[[case]]
+id = "fence-info-entity"
+input = "``` c&#43;&#43;\nx\n```\n"
+
+[[case]]
+id = "fence-empty"
+input = "~~~~\n~~~~~\n"
+
+[[case]]
+id = "fence-interrupt"
+input = "para\n```\ncode\n```\n"
+
+[[case]]
+id = "fence-close-trailing"
+input = "```\nx\n```  y\n```\n"
+
+[[case]]
+id = "html-pre"
+input = "<pre>\n*not md*\n\n*still*\n</pre>\n*md*\n"
+
+[[case]]
+id = "html-script-same-line"
+input = "<script>x</script> tail\n*md*\n"
+
+[[case]]
+id = "html-style-case"
+input = "<STYLE>\np {}\n</style>\nnext\n"
+
+[[case]]
+id = "html-comment"
+input = "<!-- one\n\ntwo -->\n*md*\n"
+
+[[case]]
+id = "html-pi"
+input = "<?php\n\necho 1;\n?>\nafter\n"
+
+[[case]]
+id = "html-decl"
+input = "<!DOCTYPE note>\nafter\n"
+
+[[case]]
+id = "html-cdata"
+input = "<![CDATA[\nraw\n\n]]>\nafter\n"
+
+[[case]]
+id = "html-type6"
+input = "<table><tr><td>\ncell\n</td></tr></table>\n\n*md*\n"
+
+[[case]]
+id = "html-type6-close"
+input = "</div>\n*md*\n"
+
+[[case]]
+id = "html-type6-interrupt"
+input = "para\n<div>\nblock\n</div>\n"
+
+[[case]]
+id = "html-type7"
+input = "<custom-tag attr=\"1\">\n*md*\n\nnext\n"
+
+[[case]]
+id = "html-type7-no-interrupt"
+input = "para\n<span>\n"
+
+[[case]]
+id = "html-type7-not-alone"
+input = "<span> text\n"
+
+[[case]]
+id = "html-in-list"
+input = "- <div>\n  x\n  </div>\n"
+
+[[case]]
+id = "html-indented"
+input = "    <div>\n"
+
+[[case]]
+id = "ref-basic"
+input = "[Label]: /url \"Title\"\n\n[label]\n"
+
+[[case]]
+id = "ref-basic-gfm"
+from = "gfm"
+input = "[Label]: /url \"Title\"\n\n[label]\n"
+
+[[case]]
+id = "ref-angle"
+input = "[a]: <my url> 'single'\n\n[a]\n"
+
+[[case]]
+id = "ref-angle-gfm"
+from = "gfm"
+input = "[a]: <my url> 'single'\n\n[a]\n"
+
+[[case]]
+id = "ref-multiline"
+input = "[a]:\n  /url\n  (paren title)\n\n[a]\n"
+
+[[case]]
+id = "ref-multiline-gfm"
+from = "gfm"
+input = "[a]:\n  /url\n  (paren title)\n\n[a]\n"
+
+[[case]]
+id = "ref-title-next-line"
+input = "[a]: /url\n\"title\"\n\n[a]\n"
+
+[[case]]
+id = "ref-title-next-line-gfm"
+from = "gfm"
+input = "[a]: /url\n\"title\"\n\n[a]\n"
+
+[[case]]
+id = "ref-bad-title"
+input = "[a]: /url \"title\" junk\n\n[a]\n"
+
+[[case]]
+id = "ref-bad-title-gfm"
+from = "gfm"
+input = "[a]: /url \"title\" junk\n\n[a]\n"
+
+[[case]]
+id = "ref-bad-title-line"
+input = "[a]: /url\n\"title\" junk\n\n[a]\n"
+
+[[case]]
+id = "ref-bad-title-line-gfm"
+from = "gfm"
+input = "[a]: /url\n\"title\" junk\n\n[a]\n"
+
+[[case]]
+id = "ref-first-wins"
+input = "[k]: /one\n[K]: /two\n\n[k]\n"
+
+[[case]]
+id = "ref-first-wins-gfm"
+from = "gfm"
+input = "[k]: /one\n[K]: /two\n\n[k]\n"
+
+[[case]]
+id = "ref-case-fold"
+input = "[ÜBER]: /u\n\n[über]\n"
+
+[[case]]
+id = "ref-case-fold-gfm"
+from = "gfm"
+input = "[ÜBER]: /u\n\n[über]\n"
+
+[[case]]
+id = "ref-spaces-in-label"
+input = "[a   b\nc]: /u\n\n[a b c]\n"
+
+[[case]]
+id = "ref-spaces-in-label-gfm"
+from = "gfm"
+input = "[a   b\nc]: /u\n\n[a b c]\n"
+
+[[case]]
+id = "ref-not-in-paragraph"
+input = "text\n[a]: /u\n\n[a]\n"
+
+[[case]]
+id = "ref-not-in-paragraph-gfm"
+from = "gfm"
+input = "text\n[a]: /u\n\n[a]\n"
+
+[[case]]
+id = "ref-in-quote"
+input = "> [q]: /quoted\n\n[q]\n"
+
+[[case]]
+id = "ref-in-quote-gfm"
+from = "gfm"
+input = "> [q]: /quoted\n\n[q]\n"
+
+[[case]]
+id = "ref-empty-dest"
+input = "[a]: <>\n\n[a]\n"
+
+[[case]]
+id = "ref-empty-dest-gfm"
+from = "gfm"
+input = "[a]: <>\n\n[a]\n"
+
+[[case]]
+id = "ref-no-dest"
+input = "[a]:\n\n[a]\n"
+
+[[case]]
+id = "ref-no-dest-gfm"
+from = "gfm"
+input = "[a]:\n\n[a]\n"
+
+[[case]]
+id = "ref-escaped-label"
+input = "[a\\]b]: /u\n\n[a\\]b]\n"
+
+[[case]]
+id = "ref-escaped-label-gfm"
+from = "gfm"
+input = "[a\\]b]: /u\n\n[a\\]b]\n"
+
+[[case]]
+id = "ref-blank-label"
+input = "[ ]: /u\n\n[ ]\n"
+
+[[case]]
+id = "ref-blank-label-gfm"
+from = "gfm"
+input = "[ ]: /u\n\n[ ]\n"
+
+[[case]]
+id = "ref-then-heading"
+input = "[a]: /u\n# h\n[a]\n"
+
+[[case]]
+id = "ref-then-heading-gfm"
+from = "gfm"
+input = "[a]: /u\n# h\n[a]\n"
+
+[[case]]
+id = "para-leading-spaces"
+input = "   one\n  two\n         three\n"
+
+[[case]]
+id = "para-trailing-spaces"
+input = "one   \ntwo\n"
+
+[[case]]
+id = "para-blank-lines"
+input = "\n\none\n\n\n\ntwo\n\n"
+
+[[case]]
+id = "quote-no-space"
+input = ">a\n>b\n"
+
+[[case]]
+id = "quote-lazy"
+input = "> a\nb\n> c\n"
+
+[[case]]
+id = "quote-lazy-list"
+input = "> - a\n- b\n"
+
+[[case]]
+id = "quote-blank-split"
+input = "> a\n\n> b\n"
+
+[[case]]
+id = "quote-blank-inside"
+input = "> a\n>\n> b\n"
+
+[[case]]
+id = "quote-empty"
+input = "> \n>\n"
+
+[[case]]
+id = "quote-nested"
+input = "> > > deep\n> back\n"
+
+[[case]]
+id = "quote-code"
+input = ">     code\n>  not\n"
+
+[[case]]
+id = "quote-fence-lazy"
+input = "> ```\nlazy?\n"
+
+[[case]]
+id = "quote-indent"
+input = "   > ok\n    > code\n"
+
+[[case]]
+id = "li-wide-marker"
+input = "-    four spaces\n\n     second\n"
+
+[[case]]
+id = "li-wide-marker-gfm"
+from = "gfm"
+input = "-    four spaces\n\n     second\n"
+
+[[case]]
+id = "li-code-first"
+input = "-     code inside\n"
+
+[[case]]
+id = "li-code-first-gfm"
+from = "gfm"
+input = "-     code inside\n"
+
+[[case]]
+id = "li-start-number"
+input = "7. seven\n8. eight\n"
+
+[[case]]
+id = "li-start-number-gfm"
+from = "gfm"
+input = "7. seven\n8. eight\n"
+
+[[case]]
+id = "li-start-zero"
+input = "0. zero\n"
+
+[[case]]
+id = "li-start-zero-gfm"
+from = "gfm"
+input = "0. zero\n"
+
+[[case]]
+id = "li-long-number"
+input = "123456789. ok\n1234567890. not\n"
+
+[[case]]
+id = "li-long-number-gfm"
+from = "gfm"
+input = "123456789. ok\n1234567890. not\n"
+
+[[case]]
+id = "li-paren"
+input = "1) a\n2) b\n3. c\n"
+
+[[case]]
+id = "li-paren-gfm"
+from = "gfm"
+input = "1) a\n2) b\n3. c\n"
+
+[[case]]
+id = "li-bullet-change"
+input = "- a\n+ b\n* c\n"
+
+[[case]]
+id = "li-bullet-change-gfm"
+from = "gfm"
+input = "- a\n+ b\n* c\n"
+
+[[case]]
+id = "li-interrupt-ordered"
+input = "text\n2. no\n1. yes\n"
+
+[[case]]
+id = "li-interrupt-ordered-gfm"
+from = "gfm"
+input = "text\n2. no\n1. yes\n"
+
+[[case]]
+id = "li-interrupt-empty"
+input = "text\n-\n"
+
+[[case]]
+id = "li-interrupt-empty-gfm"
+from = "gfm"
+input = "text\n-\n"
+
+[[case]]
+id = "li-empty-items"
+input = "-\n- x\n-\n"
+
+[[case]]
+id = "li-empty-items-gfm"
+from = "gfm"
+input = "-\n- x\n-\n"
+
+[[case]]
+id = "li-blank-start"
+input = "-\n  next line content\n"
+
+[[case]]
+id = "li-blank-start-gfm"
+from = "gfm"
+input = "-\n  next line content\n"
+
+[[case]]
+id = "li-blank-twice"
+input = "-\n\n  too far\n"
+
+[[case]]
+id = "li-blank-twice-gfm"
+from = "gfm"
+input = "-\n\n  too far\n"
+
+[[case]]
+id = "li-indent-continue"
+input = "1.  a\n\n    b\n\n   c\n"
+
+[[case]]
+id = "li-indent-continue-gfm"
+from = "gfm"
+input = "1.  a\n\n    b\n\n   c\n"
+
+[[case]]
+id = "li-nested-levels"
+input = "- 1\n  - 2\n    - 3\n      - 4\n"
+
+[[case]]
+id = "li-nested-levels-gfm"
+from = "gfm"
+input = "- 1\n  - 2\n    - 3\n      - 4\n"
+
+[[case]]
+id = "li-not-nested"
+input = "- a\n - b\n  - c\n   - d\n"
+
+[[case]]
+id = "li-not-nested-gfm"
+from = "gfm"
+input = "- a\n - b\n  - c\n   - d\n"
+
+[[case]]
+id = "li-loose-between"
+input = "- a\n\n- b\n"
+
+[[case]]
+id = "li-loose-between-gfm"
+from = "gfm"
+input = "- a\n\n- b\n"
+
+[[case]]
+id = "li-loose-inside"
+input = "- a\n\n  b\n- c\n"
+
+[[case]]
+id = "li-loose-inside-gfm"
+from = "gfm"
+input = "- a\n\n  b\n- c\n"
+
+[[case]]
+id = "li-tight-nested-blank"
+input = "- top\n  - inner\n\n    more inner\n- next top\n"
+
+[[case]]
+id = "li-tight-nested-blank-gfm"
+from = "gfm"
+input = "- top\n  - inner\n\n    more inner\n- next top\n"
+
+[[case]]
+id = "li-tight-code-blank"
+input = "- ```\n  x\n\n  y\n  ```\n- z\n"
+
+[[case]]
+id = "li-tight-code-blank-gfm"
+from = "gfm"
+input = "- ```\n  x\n\n  y\n  ```\n- z\n"
+
+[[case]]
+id = "li-loose-trailing"
+input = "- a\n- b\n\n"
+
+[[case]]
+id = "li-loose-trailing-gfm"
+from = "gfm"
+input = "- a\n- b\n\n"
+
+[[case]]
+id = "li-lazy"
+input = "- a\nb\n- c\n"
+
+[[case]]
+id = "li-lazy-gfm"
+from = "gfm"
+input = "- a\nb\n- c\n"
+
+[[case]]
+id = "li-heading"
+input = "- # h\n- ---\n"
+
+[[case]]
+id = "li-heading-gfm"
+from = "gfm"
+input = "- # h\n- ---\n"
+
+[[case]]
+id = "li-quote"
+input = "- > q\n  > r\n"
+
+[[case]]
+id = "li-quote-gfm"
+from = "gfm"
+input = "- > q\n  > r\n"
+
+[[case]]
+id = "li-ordered-in-bullet"
+input = "- 1. one\n  2. two\n"
+
+[[case]]
+id = "li-ordered-in-bullet-gfm"
+from = "gfm"
+input = "- 1. one\n  2. two\n"
+
+[[case]]
+id = "li-two-blank-end"
+input = "- a\n\n\n- b\n"
+
+[[case]]
+id = "li-two-blank-end-gfm"
+from = "gfm"
+input = "- a\n\n\n- b\n"
+
+[[case]]
+id = "code-strip-one"
+input = "`` `x` `` ` a ` `  `\n"
+
+[[case]]
+id = "code-newline"
+input = "`one\ntwo`\n"
+
+[[case]]
+id = "code-unmatched"
+input = "```a`` b ``\n"
+
+[[case]]
+id = "code-precedence"
+input = "*a `*` b* [x `]` y](z)\n"
+
+[[case]]
+id = "code-backslash"
+input = "`\\`x`\n"
+
+[[case]]
+id = "code-runs"
+input = "`a``b` ``c`d``\n"
+
+[[case]]
+id = "em-basic"
+input = "*a* _b_ **c** __d__\n"
+
+[[case]]
+id = "em-basic-gfm"
+from = "gfm"
+input = "*a* _b_ **c** __d__\n"
+
+[[case]]
+id = "em-intraword"
+input = "in*ner*word in_ner_word\n"
+
+[[case]]
+id = "em-intraword-gfm"
+from = "gfm"
+input = "in*ner*word in_ner_word\n"
+
+[[case]]
+id = "em-space-after"
+input = "* not* _ not_\n"
+
+[[case]]
+id = "em-space-after-gfm"
+from = "gfm"
+input = "* not* _ not_\n"
+
+[[case]]
+id = "em-punct"
+input = "a**\"b\"**c a__\"b\"__c\n"
+
+[[case]]
+id = "em-punct-gfm"
+from = "gfm"
+input = "a**\"b\"**c a__\"b\"__c\n"
+
+[[case]]
+id = "em-nested"
+input = "***both*** **a *b* c** *a **b** c*\n"
+
+[[case]]
+id = "em-nested-gfm"
+from = "gfm"
+input = "***both*** **a *b* c** *a **b** c*\n"
+
+[[case]]
+id = "em-rule-of-three"
+input = "*a**b* **a*b**\n"
+
+[[case]]
+id = "em-rule-of-three-gfm"
+from = "gfm"
+input = "*a**b* **a*b**\n"
+
+[[case]]
+id = "em-unbalanced"
+input = "**a* *a** __a_\n"
+
+[[case]]
+id = "em-unbalanced-gfm"
+from = "gfm"
+input = "**a* *a** __a_\n"
+
+[[case]]
+id = "em-many"
+input = "****a****  _____b_____\n"
+
+[[case]]
+id = "em-many-gfm"
+from = "gfm"
+input = "****a****  _____b_____\n"
+
+[[case]]
+id = "em-across-link"
+input = "*[a*](b) [*c](d)*\n"
+
+[[case]]
+id = "em-across-link-gfm"
+from = "gfm"
+input = "*[a*](b) [*c](d)*\n"
+
+[[case]]
+id = "em-with-code"
+input = "*`code*`*\n"
+
+[[case]]
+id = "em-with-code-gfm"
+from = "gfm"
+input = "*`code*`*\n"
+
+[[case]]
+id = "em-unicode-punct"
+input = "*¿qué?* _«x»_\n"
+
+[[case]]
+id = "em-unicode-punct-gfm"
+from = "gfm"
+input = "*¿qué?* _«x»_\n"
+
+[[case]]
+id = "em-underscore-number"
+input = "_1_2_ snake_case_word\n"
+
+[[case]]
+id = "em-underscore-number-gfm"
+from = "gfm"
+input = "_1_2_ snake_case_word\n"
+
+[[case]]
+id = "link-inline"
+input = "[text](/u) [t2](/u \"T\") [t3](/u 'T') [t4](/u (T))\n"
+
+[[case]]
+id = "link-inline-gfm"
+from = "gfm"
+input = "[text](/u) [t2](/u \"T\") [t3](/u 'T') [t4](/u (T))\n"
+
+[[case]]
+id = "link-angle"
+input = "[a](<b c>) [d](<e)f>)\n"
+
+[[case]]
+id = "link-angle-gfm"
+from = "gfm"
+input = "[a](<b c>) [d](<e)f>)\n"
+
+[[case]]
+id = "link-parens"
+input = "[a](x(y)z) [b](x(y) [c](x\\(y)\n"
+
+[[case]]
+id = "link-parens-gfm"
+from = "gfm"
+input = "[a](x(y)z) [b](x(y) [c](x\\(y)\n"
+
+[[case]]
+id = "link-space-dest"
+input = "[a](b c)\n"
+
+[[case]]
+id = "link-space-dest-gfm"
+from = "gfm"
+input = "[a](b c)\n"
+
+[[case]]
+id = "link-empty"
+input = "[a]() [](/u)\n"
+
+[[case]]
+id = "link-empty-gfm"
+from = "gfm"
+input = "[a]() [](/u)\n"
+
+[[case]]
+id = "link-newline-title"
+input = "[a](/u\n\"t\")\n"
+
+[[case]]
+id = "link-newline-title-gfm"
+from = "gfm"
+input = "[a](/u\n\"t\")\n"
+
+[[case]]
+id = "link-nested-brackets"
+input = "[a [b] c](/u) [a ]b](/u)\n"
+
+[[case]]
+id = "link-nested-brackets-gfm"
+from = "gfm"
+input = "[a [b] c](/u) [a ]b](/u)\n"
+
+[[case]]
+id = "link-in-link"
+input = "[a [b](/inner) c](/outer)\n"
+
+[[case]]
+id = "link-in-link-gfm"
+from = "gfm"
+input = "[a [b](/inner) c](/outer)\n"
+
+[[case]]
+id = "link-image-in-link"
+input = "[![i](/img)](/u)\n"
+
+[[case]]
+id = "link-image-in-link-gfm"
+from = "gfm"
+input = "[![i](/img)](/u)\n"
+
+[[case]]
+id = "link-ref-full"
+input = "[x][Ref] [y][]\n\n[ref]: /r\n[y]: /y\n"
+
+[[case]]
+id = "link-ref-full-gfm"
+from = "gfm"
+input = "[x][Ref] [y][]\n\n[ref]: /r\n[y]: /y\n"
+
+[[case]]
+id = "link-ref-shortcut-space"
+input = "[r] [x]\n\n[r]: /r\n"
+
+[[case]]
+id = "link-ref-shortcut-space-gfm"
+from = "gfm"
+input = "[r] [x]\n\n[r]: /r\n"
+
+[[case]]
+id = "link-ref-missing"
+input = "[a][nope] [nope]\n"
+
+[[case]]
+id = "link-ref-missing-gfm"
+from = "gfm"
+input = "[a][nope] [nope]\n"
+
+[[case]]
+id = "link-ref-inner-bracket"
+input = "[a][b]c]\n\n[b]: /b\n"
+
+[[case]]
+id = "link-ref-inner-bracket-gfm"
+from = "gfm"
+input = "[a][b]c]\n\n[b]: /b\n"
+
+[[case]]
+id = "link-ref-precedence"
+input = "[a](/inline)[b]\n\n[b]: /b\n"
+
+[[case]]
+id = "link-ref-precedence-gfm"
+from = "gfm"
+input = "[a](/inline)[b]\n\n[b]: /b\n"
+
+[[case]]
+id = "link-html-precedence"
+input = "[a <b href=\"]\">c](/u)\n"
+
+[[case]]
+id = "link-html-precedence-gfm"
+from = "gfm"
+input = "[a <b href=\"]\">c](/u)\n"
+
+[[case]]
+id = "link-autolink-precedence"
+input = "[a <http://x/]> b](/u)\n"
+
+[[case]]
+id = "link-autolink-precedence-gfm"
+from = "gfm"
+input = "[a <http://x/]> b](/u)\n"
+
+[[case]]
+id = "link-title-escapes"
+input = "[a](/u \"q\\\"uote\" )\n"
+
+[[case]]
+id = "link-title-escapes-gfm"
+from = "gfm"
+input = "[a](/u \"q\\\"uote\" )\n"
+
+[[case]]
+id = "link-dest-unicode"
+input = "[a](/föö \"é\")\n"
+
+[[case]]
+id = "link-dest-unicode-gfm"
+from = "gfm"
+input = "[a](/föö \"é\")\n"
+
+[[case]]
+id = "img-basic"
+input = "![alt *em*](/i.png \"t\") ![](/e.png)\n"
+
+[[case]]
+id = "img-ref"
+input = "![a][r] ![r]\n\n[r]: /r.png \"rt\"\n"
+
+[[case]]
+id = "img-nested"
+input = "![a ![b](/b)](/a)\n"
+
+[[case]]
+id = "img-not"
+input = "!\\[x](/u) \\![y](/v)\n"
+
+[[case]]
+id = "auto-uri"
+input = "<https://a.b/c?d=e> <ftp://x> <made-up:scheme>\n"
+
+[[case]]
+id = "auto-email"
+input = "<user.name+tag@sub.example.org>\n"
+
+[[case]]
+id = "auto-not"
+input = "<http://a b> <a> <@x.y> <x@-y.z>\n"
+
+[[case]]
+id = "auto-escape"
+input = "<http://a/\\b>\n"
+
+[[case]]
+id = "raw-tags"
+input = "a <b class=\"x\" data-k='v' hidden> c </b> <br/>\n"
+
+[[case]]
+id = "raw-bad"
+input = "<a b=> <1x> <a\"> </a b>\n"
+
+[[case]]
+id = "raw-comment"
+input = "x <!-- c --> y <!--> z <!---> w\n"
+
+[[case]]
+id = "raw-other"
+input = "<?pi x?> <!DECL y> <![CDATA[ z ]]>\n"
+
+[[case]]
+id = "raw-multiline"
+input = "<a\nhref=\"u\">t</a>\n"
+
+[[case]]
+id = "break-spaces"
+input = "a  \nb    \nc \nd\n"
+
+[[case]]
+id = "break-end"
+input = "a  \n\nb\\\n"
+
+[[case]]
+id = "break-in-code"
+input = "`a  \nb`\n"
+
+[[case]]
+id = "break-heading"
+input = "# a  \n"
+
+[[case]]
+id = "break-tab"
+input = "a\t\nb\n"
+
+[[case]]
+id = "text-plain"
+input = "Hello,   world!    non-breaking\n"
+
+[[case]]
+id = "text-unicode"
+input = "日本語 مرحبا 😀\n"
+
+[[case]]
+id = "text-nul"
+input = "a\u0000b\n"
+
+[[case]]
+id = "own-table-basic"
+from = "gfm"
+input = "| A | B |\n|---|:-:|\n| 1 | 2 |\n| 3 | 4 |\n"
+
+[[case]]
+id = "own-table-basic-x"
+from = "commonmark_x"
+input = "| A | B |\n|---|:-:|\n| 1 | 2 |\n| 3 | 4 |\n"
+
+[[case]]
+id = "own-table-no-outer"
+from = "gfm"
+input = "A | B\n--|--\n1 | 2\n"
+
+[[case]]
+id = "own-table-no-outer-x"
+from = "commonmark_x"
+input = "A | B\n--|--\n1 | 2\n"
+
+[[case]]
+id = "own-table-align"
+from = "gfm"
+input = "|l|c|r|d|\n|:--|:-:|--:|---|\n|1|2|3|4|\n"
+
+[[case]]
+id = "own-table-align-x"
+from = "commonmark_x"
+input = "|l|c|r|d|\n|:--|:-:|--:|---|\n|1|2|3|4|\n"
+
+[[case]]
+id = "own-table-short-row"
+from = "gfm"
+input = "| a | b | c |\n|---|---|---|\n| 1 |\n| 1 | 2 | 3 | 4 |\n"
+
+[[case]]
+id = "own-table-short-row-x"
+from = "commonmark_x"
+input = "| a | b | c |\n|---|---|---|\n| 1 |\n| 1 | 2 | 3 | 4 |\n"
+
+[[case]]
+id = "own-table-mismatch"
+from = "gfm"
+input = "| a | b |\n|---|\n| 1 | 2 |\n"
+
+[[case]]
+id = "own-table-mismatch-x"
+from = "commonmark_x"
+input = "| a | b |\n|---|\n| 1 | 2 |\n"
+
+[[case]]
+id = "own-table-inline"
+from = "gfm"
+input = "| *em* | `a|b` | \\| |\n|---|---|---|\n| [l](/u) | **s** | x |\n"
+
+[[case]]
+id = "own-table-inline-x"
+from = "commonmark_x"
+input = "| *em* | `a|b` | \\| |\n|---|---|---|\n| [l](/u) | **s** | x |\n"
+
+[[case]]
+id = "own-table-ends"
+from = "gfm"
+input = "| a |\n|---|\n| 1 |\n\nafter\n"
+
+[[case]]
+id = "own-table-ends-x"
+from = "commonmark_x"
+input = "| a |\n|---|\n| 1 |\n\nafter\n"
+
+[[case]]
+id = "own-table-ends-quote"
+from = "gfm"
+input = "| a |\n|---|\n| 1 |\n> quote\n"
+
+[[case]]
+id = "own-table-ends-quote-x"
+from = "commonmark_x"
+input = "| a |\n|---|\n| 1 |\n> quote\n"
+
+[[case]]
+id = "own-table-in-list"
+from = "gfm"
+input = "- | a |\n  |---|\n  | 1 |\n"
+
+[[case]]
+id = "own-table-in-list-x"
+from = "commonmark_x"
+input = "- | a |\n  |---|\n  | 1 |\n"
+
+[[case]]
+id = "own-table-header-only"
+from = "gfm"
+input = "| x | y |\n| --- | --- |\n"
+
+[[case]]
+id = "own-table-header-only-x"
+from = "commonmark_x"
+input = "| x | y |\n| --- | --- |\n"
+
+[[case]]
+id = "own-table-after-para"
+from = "gfm"
+input = "text\n| a |\n|---|\n"
+
+[[case]]
+id = "own-table-after-para-x"
+from = "commonmark_x"
+input = "text\n| a |\n|---|\n"
+
+[[case]]
+id = "own-table-no-pipe-row"
+from = "gfm"
+input = "| a |\n|---|\nplain\n"
+
+[[case]]
+id = "own-table-no-pipe-row-x"
+from = "commonmark_x"
+input = "| a |\n|---|\nplain\n"
+
+[[case]]
+id = "own-auto-www"
+from = "gfm"
+input = "visit www.example.org/page now\n"
+
+[[case]]
+id = "own-auto-www-x"
+from = "commonmark_x"
+input = "visit www.example.org/page now\n"
+
+[[case]]
+id = "own-auto-http"
+from = "gfm"
+input = "see https://example.net/a_b?c=d#e.\n"
+
+[[case]]
+id = "own-auto-http-x"
+from = "commonmark_x"
+input = "see https://example.net/a_b?c=d#e.\n"
+
+[[case]]
+id = "own-auto-trailing"
+from = "gfm"
+input = "(www.example.com/x) www.example.com/y)) www.example.com/z!?\n"
+
+[[case]]
+id = "own-auto-trailing-x"
+from = "commonmark_x"
+input = "(www.example.com/x) www.example.com/y)) www.example.com/z!?\n"
+
+[[case]]
+id = "own-auto-email"
+from = "gfm"
+input = "write to some.one@mail.example.com, please\n"
+
+[[case]]
+id = "own-auto-email-x"
+from = "commonmark_x"
+input = "write to some.one@mail.example.com, please\n"
+
+[[case]]
+id = "own-auto-no-domain"
+from = "gfm"
+input = "www.x and http://y and a@b\n"
+
+[[case]]
+id = "own-auto-no-domain-x"
+from = "commonmark_x"
+input = "www.x and http://y and a@b\n"
+
+[[case]]
+id = "own-auto-entity-end"
+from = "gfm"
+input = "www.example.com/a&amp; www.example.com/b&copy;x\n"
+
+[[case]]
+id = "own-auto-entity-end-x"
+from = "commonmark_x"
+input = "www.example.com/a&amp; www.example.com/b&copy;x\n"
+
+[[case]]
+id = "own-auto-in-text"
+from = "gfm"
+input = "abchttps://example.com and *www.example.com*\n"
+
+[[case]]
+id = "own-auto-in-text-x"
+from = "commonmark_x"
+input = "abchttps://example.com and *www.example.com*\n"
+
+[[case]]
+id = "own-auto-underscore-domain"
+from = "gfm"
+input = "www.ex_ample.com www.example.c_om\n"
+
+[[case]]
+id = "own-auto-underscore-domain-x"
+from = "commonmark_x"
+input = "www.ex_ample.com www.example.c_om\n"
+
+[[case]]
+id = "own-note-basic"
+from = "gfm"
+input = "Claim.[^a]\n\n[^a]: Source of the claim.\n"
+
+[[case]]
+id = "own-note-basic-x"
+from = "commonmark_x"
+input = "Claim.[^a]\n\n[^a]: Source of the claim.\n"
+
+[[case]]
+id = "own-note-paragraphs"
+from = "gfm"
+input = "Text[^b]\n\n[^b]: First part.\n\n    Second part.\n\n    > quoted\n"
+
+[[case]]
+id = "own-note-paragraphs-x"
+from = "commonmark_x"
+input = "Text[^b]\n\n[^b]: First part.\n\n    Second part.\n\n    > quoted\n"
+
+[[case]]
+id = "own-note-undefined"
+from = "gfm"
+input = "Text[^none] here\n"
+
+[[case]]
+id = "own-note-undefined-x"
+from = "commonmark_x"
+input = "Text[^none] here\n"
+
+[[case]]
+id = "own-note-unused"
+from = "gfm"
+input = "Plain\n\n[^u]: Never used.\n"
+
+[[case]]
+id = "own-note-unused-x"
+from = "commonmark_x"
+input = "Plain\n\n[^u]: Never used.\n"
+
+[[case]]
+id = "own-note-twice"
+from = "gfm"
+input = "A[^x] B[^x]\n\n[^x]: Shared.\n"
+
+[[case]]
+id = "own-note-twice-x"
+from = "commonmark_x"
+input = "A[^x] B[^x]\n\n[^x]: Shared.\n"
+
+[[case]]
+id = "own-note-label-case"
+from = "gfm"
+input = "A[^Key]\n\n[^key]: Folded.\n"
+
+[[case]]
+id = "own-note-label-case-x"
+from = "commonmark_x"
+input = "A[^Key]\n\n[^key]: Folded.\n"
+
+[[case]]
+id = "own-note-in-list"
+from = "gfm"
+input = "- item[^l]\n\n[^l]: In a list.\n"
+
+[[case]]
+id = "own-note-in-list-x"
+from = "commonmark_x"
+input = "- item[^l]\n\n[^l]: In a list.\n"
+
+[[case]]
+id = "own-note-duplicate-def"
+from = "gfm"
+input = "A[^d]\n\n[^d]: First.\n[^d]: Second.\n"
+
+[[case]]
+id = "own-note-duplicate-def-x"
+from = "commonmark_x"
+input = "A[^d]\n\n[^d]: First.\n[^d]: Second.\n"
+
+[[case]]
+id = "own-note-space-label"
+from = "gfm"
+input = "A[^a b]\n\n[^a b]: no.\n"
+
+[[case]]
+id = "own-note-space-label-x"
+from = "commonmark_x"
+input = "A[^a b]\n\n[^a b]: no.\n"
+
+[[case]]
+id = "own-alert-note"
+from = "gfm"
+input = "> [!NOTE]\n> Remember this.\n"
+
+[[case]]
+id = "own-alert-note-x"
+from = "commonmark_x"
+input = "> [!NOTE]\n> Remember this.\n"
+
+[[case]]
+id = "own-alert-tip"
+from = "gfm"
+input = "> [!TIP]\n> A useful idea.\n"
+
+[[case]]
+id = "own-alert-tip-x"
+from = "commonmark_x"
+input = "> [!TIP]\n> A useful idea.\n"
+
+[[case]]
+id = "own-alert-important"
+from = "gfm"
+input = "> [!IMPORTANT]\n> Do not skip.\n"
+
+[[case]]
+id = "own-alert-important-x"
+from = "commonmark_x"
+input = "> [!IMPORTANT]\n> Do not skip.\n"
+
+[[case]]
+id = "own-alert-warning"
+from = "gfm"
+input = "> [!WARNING]\n> Be careful.\n"
+
+[[case]]
+id = "own-alert-warning-x"
+from = "commonmark_x"
+input = "> [!WARNING]\n> Be careful.\n"
+
+[[case]]
+id = "own-alert-caution"
+from = "gfm"
+input = "> [!CAUTION]\n> Risk ahead.\n"
+
+[[case]]
+id = "own-alert-caution-x"
+from = "commonmark_x"
+input = "> [!CAUTION]\n> Risk ahead.\n"
+
+[[case]]
+id = "own-alert-lower"
+from = "gfm"
+input = "> [!note]\n> lower case\n"
+
+[[case]]
+id = "own-alert-lower-x"
+from = "commonmark_x"
+input = "> [!note]\n> lower case\n"
+
+[[case]]
+id = "own-alert-unknown"
+from = "gfm"
+input = "> [!OTHER]\n> not an alert\n"
+
+[[case]]
+id = "own-alert-unknown-x"
+from = "commonmark_x"
+input = "> [!OTHER]\n> not an alert\n"
+
+[[case]]
+id = "own-alert-only-marker"
+from = "gfm"
+input = "> [!TIP]\n"
+
+[[case]]
+id = "own-alert-only-marker-x"
+from = "commonmark_x"
+input = "> [!TIP]\n"
+
+[[case]]
+id = "own-alert-more-blocks"
+from = "gfm"
+input = "> [!NOTE]\n> para one\n>\n> - list\n"
+
+[[case]]
+id = "own-alert-more-blocks-x"
+from = "commonmark_x"
+input = "> [!NOTE]\n> para one\n>\n> - list\n"
+
+[[case]]
+id = "own-alert-same-line"
+from = "gfm"
+input = "> [!NOTE] text on the line\n"
+
+[[case]]
+id = "own-alert-same-line-x"
+from = "commonmark_x"
+input = "> [!NOTE] text on the line\n"
+
+[[case]]
+id = "rv-note-in-list"
+from = "gfm"
+input = "a[^1]\n\n- [^1]: in list\n"
+
+[[case]]
+id = "rv-note-in-quote"
+from = "gfm"
+input = "> a[^1]\n>\n> [^1]: q\n"
+
+[[case]]
+id = "rv-note-in-item"
+from = "commonmark+footnotes"
+input = "- a[^1]\n\n  [^1]: in list\n"
+
+[[case]]
+id = "rv-note-deep-quote"
+from = "commonmark_x"
+input = "a[^1]\n\n> > [^1]: deep\n"
+
+[[case]]
+id = "rv-note-in-ordered"
+from = "gfm"
+input = "a[^x]\n\n1. [^x]: ol\n"
+
+[[case]]
+id = "rv-note-before-ref"
+from = "commonmark+footnotes"
+input = "> [^a]: b\n\n[^a]"
+
+[[case]]
+id = "rv-note-to-later"
+from = "gfm"
+input = "a[^1]\n\n[^1]: n [^2]\n\n[^2]: m\n"
+
+[[case]]
+id = "rv-note-to-earlier"
+from = "gfm"
+input = "a[^2]\n\n[^1]: m\n\n[^2]: n [^1]\n"
+
+[[case]]
+id = "rv-note-self"
+from = "gfm"
+input = "a[^1]\n\n[^1]: self [^1]\n"
+
+[[case]]
+id = "rv-note-undefined-inside"
+from = "gfm"
+input = "a[^1]\n\n[^1]: n [^zz]\n"
+
+[[case]]
+id = "rv-note-mutual"
+from = "gfm"
+input = "a[^1] b[^2]\n\n[^1]: one [^2]\n\n[^2]: two [^1]\n"
+
+[[case]]
+id = "rv-note-chain"
+from = "commonmark+footnotes"
+input = "[^a]\n\n[^a]: [^b]\n\n[^b]: c"
+
+[[case]]
+id = "rv-note-first-wins"
+from = "gfm"
+input = "a[^1]\n\n[^1]: first\n[^1]: second\n"
+
+[[case]]
+id = "rv-note-space"
+from = "gfm"
+input = "a[^a b]\n\n[^a b]: n\n"
+
+[[case]]
+id = "rv-note-trailing-space"
+from = "commonmark_x"
+input = "a[^1 ]\n\n[^1 ]: n\n"
+
+[[case]]
+id = "rv-dest-space"
+from = "commonmark"
+input = "[a](b )\n"
+
+[[case]]
+id = "rv-dest-spaces"
+from = "commonmark"
+input = "[a]( b ) [c](  d ) [e](<f> ) [g](<> ) ![h](i )\n"
+
+[[case]]
+id = "rv-dest-space-ok"
+from = "commonmark"
+input = "[a]( b) [c](\nd) [e](f \"t\" ) [g](h\n\"t\")\n"
+
+[[case]]
+id = "rv-dest-newline"
+from = "commonmark"
+input = "[a](    /uri\n)\n"
+
+[[case]]
+id = "rv-attr-word"
+from = "commonmark_x"
+input = "word{.c}\n"
+
+[[case]]
+id = "rv-attr-words"
+from = "commonmark_x"
+input = "a b{#i} *a*b{.c} a{.b} c 1{.x} **a**{.b}c{.d} a.{.x} #{.x}\n"
+
+[[case]]
+id = "rv-attr-plain-ext"
+from = "commonmark+attributes"
+input = "a{.c}\n"
+
+[[case]]
+id = "rv-attr-math"
+from = "commonmark+attributes+tex_math_dollars"
+input = "$x${.m}\n"
+
+[[case]]
+id = "rv-attr-ticks"
+from = "commonmark_x"
+input = "``{.c}\n"
+
+[[case]]
+id = "rv-span-link-inside"
+from = "commonmark_x"
+input = "[x [a](u)]{.c}\n"
+
+[[case]]
+id = "rv-span-link-first"
+from = "commonmark_x"
+input = "[[a](u) b]{.c}\n"
+
+[[case]]
+id = "rv-span-over-reference"
+from = "commonmark_x"
+input = "[a]{.x}\n\n[a]: /u\n"
+
+[[case]]
+id = "rv-html-lazy-quote"
+from = "commonmark"
+input = "> a\n<x>"
+
+[[case]]
+id = "rv-html-lazy-list"
+from = "gfm"
+input = "- a\n<x>"
+
+[[case]]
+id = "rv-code-tight"
+from = "commonmark"
+input = "-     x\n\n  y"
+
+[[case]]
+id = "rv-code-tight-two"
+from = "commonmark"
+input = "-     x\n\n  y\n- z\n"
+
+[[case]]
+id = "rv-code-end-item"
+from = "commonmark"
+input = "-     x\n\n- y\n"
+
+[[case]]
+id = "rv-escaped-break"
+from = "commonmark"
+input = "a\n\\\nb"
+
+[[case]]
+id = "rv-heading-ref-alone"
+from = "commonmark+implicit_header_references"
+input = "# a\n\n[a]"
+
+[[case]]
+id = "rv-heading-ref-explicit"
+from = "commonmark+implicit_header_references+attributes"
+input = "# a {#x}\n\n[a]"
+
+[[case]]
+id = "rv-comment-short"
+from = "commonmark"
+input = "<!--> a\n\nb\n"
+
+[[case]]
+id = "rv-comment-short-dash"
+from = "commonmark"
+input = "<!--->\nx\n"
+
+[[case]]
+id = "rv-table-pipe-line"
+from = "gfm"
+input = "| a |\n|---|\n|\n"
+
+[[case]]
+id = "rv-task-two-spaces"
+from = "gfm"
+input = "- [  ] a\n"
+
+[[case]]
+id = "rv-task-space-x"
+from = "gfm"
+input = "- [ x] d\n"
+
+[[case]]
+id = "rv-auto-paren"
+from = "gfm"
+input = "https://a.b/c)d)\n"
+
+[[case]]
+id = "rv-auto-paren-www"
+from = "gfm"
+input = "www.a.b/x)y https://a.b/(c)d)e www.google.com/search?q=(business))+ok\n"
+
+[[case]]
+id = "rv-empty-heading-attr"
+from = "commonmark_x"
+input = "# {.x}\n\n# {#i}\n"
+
+[[case]]
+id = "rv-div-braces"
+from = "commonmark_x"
+input = "::: {}\na\n:::\n\n::: {#}\nb\n:::\n"
+
+[[case]]
+id = "rv-fancy-letters"
+from = "commonmark_x"
+input = "i. a\nj. b\n"
+
+[[case]]
+id = "rv-raw-empty"
+from = "commonmark_x"
+input = "```{=html}\n```\n"
+
+[[case]]
+id = "rv-wiki-bang"
+from = "commonmark+wikilinks_title_after_pipe"
+input = "![[a]]\n"
+
+[[case]]
+id = "rv-alert-lazy"
+from = "gfm"
+input = "> [!NOTE]\na\n"
+
+[[case]]
+id = "rv-alert-lazy-tip"
+from = "gfm"
+input = "> [!TIP]\nlazy\n"
+
+[[case]]
+id = "rv-alert-indented"
+from = "gfm"
+input = ">  [!NOTE]\n> x\n"
+
+[[case]]
+id = "rv-rebase-quote"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = "> [a](u)\n\n- [b](v)\n\n> > [c](w)\n"
+
+[[case]]
+id = "rv-div-in-item-fence"
+from = "commonmark_x"
+input = "::: a\n- ::: b\n  x\n:::\n"
+
+[[case]]
+id = "rv-div-in-quote-fence"
+from = "commonmark_x"
+input = "::: a\n> ::: b\n> x\n:::\n"
+
+[[case]]
+id = "rv-comment-next-line"
+from = "commonmark"
+input = "<!--\n-->\n*x*\n"
+
+[[case]]
+id = "rv-declaration-short"
+from = "commonmark"
+input = "<!a>\n*x*\n"
+
+[[case]]
+id = "r2-fancy-interrupt"
+from = "commonmark_x"
+input = "text\na. item\n\ntext\n(a) item\n\ntext\ni) item\n\nSteps:\na. one\nb. two\n"
+
+[[case]]
+id = "r2-fancy-interrupt-upper"
+from = "commonmark+fancy_lists"
+input = "text\nA. item\n\ntext\nI. item\n\ntext\n1) item\n\ntext\n(1) item\n\ntext\n2. item\n\ntext\n#. item\n"
+
+[[case]]
+id = "r2-span-after-bang"
+from = "commonmark_x"
+input = "![a]{.c}\n"
+
+[[case]]
+id = "r2-span-link-after-bang"
+from = "commonmark_x"
+input = "![x [a](u)]{.c}\n"
+
+[[case]]
+id = "r2-attr-after-bang"
+from = "commonmark_x"
+input = "![{.c}\n\n![{#i}\n"
+
+[[case]]
+id = "r2-span-empty-after-bang"
+from = "commonmark_x"
+input = "-\n![]{.k}\n"
+
+[[case]]
+id = "r2-comment-indented"
+from = "commonmark"
+input = "  <!-->\nx"
+
+[[case]]
+id = "r2-comment-indented-three"
+from = "commonmark"
+input = "   <!--->\nx\n"
+
+[[case]]
+id = "r2-heading-attr-word"
+from = "commonmark_x"
+input = "# Title{#id}\n\n## a b{.c}\n\n# _{#i}\n\n# Title {#id2}\n"
+
+[[case]]
+id = "r2-entity-token"
+from = "commonmark_x"
+input = "&#65;x{.y} &amp;b{.c}\n"
+
+[[case]]
+id = "r2-note-long-label"
+from = "gfm"
+input = "t[^aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]\n\n[^aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]: n\n"
+
+[[case]]
+id = "r2-div-in-quote-close"
+from = "commonmark_x"
+input = "::: a\n> ::: b\n> :::\n"
+
+[[case]]
+id = "r2-div-in-quote-close-long"
+from = "commonmark_x"
+input = "::: a\n> ::: b\n> x\n> :::\n:::\n"
+
+[[case]]
+id = "r3-bang-attrs-link"
+from = "commonmark_x"
+input = "x ![{.c}](u) y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-ref"
+from = "commonmark_x"
+input = "x ![{.c}][r] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-bracket"
+from = "commonmark_x"
+input = "x ![{.c}] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-span"
+from = "commonmark_x"
+input = "x ![{.c}]{.k} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-open"
+from = "commonmark_x"
+input = "x ![{.c} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-text-link"
+from = "commonmark_x"
+input = "x ![alt](u) y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-text-ref"
+from = "commonmark_x"
+input = "x ![alt][r] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-text-bracket"
+from = "commonmark_x"
+input = "x ![alt] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-text-span"
+from = "commonmark_x"
+input = "x ![alt]{.k} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-text-open"
+from = "commonmark_x"
+input = "x ![alt y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-span-link"
+from = "commonmark_x"
+input = "x ![[s]{.k}](u) y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-span-ref"
+from = "commonmark_x"
+input = "x ![[s]{.k}][r] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-span-bracket"
+from = "commonmark_x"
+input = "x ![[s]{.k}] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-span-span"
+from = "commonmark_x"
+input = "x ![[s]{.k}]{.k} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-span-open"
+from = "commonmark_x"
+input = "x ![[s]{.k} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-text-link"
+from = "commonmark_x"
+input = "x ![{.c} alt](u) y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-text-ref"
+from = "commonmark_x"
+input = "x ![{.c} alt][r] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-text-bracket"
+from = "commonmark_x"
+input = "x ![{.c} alt] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-text-span"
+from = "commonmark_x"
+input = "x ![{.c} alt]{.k} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-attrs-text-open"
+from = "commonmark_x"
+input = "x ![{.c} alt y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-none-link"
+from = "commonmark_x"
+input = "x ![](u) y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-none-ref"
+from = "commonmark_x"
+input = "x ![][r] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-none-bracket"
+from = "commonmark_x"
+input = "x ![] y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-none-span"
+from = "commonmark_x"
+input = "x ![]{.k} y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-none-open"
+from = "commonmark_x"
+input = "x ![ y\n\n[r]: /r\n"
+
+[[case]]
+id = "r3-bang-width"
+from = "commonmark_x"
+input = "![{width=50%}](a.png)\n"
+
+[[case]]
+id = "r3-task-tabs"
+from = "gfm"
+input = "- [\t\t\t] text\n- [        ] eight\n"
+
+[[case]]
+id = "r3-task-tabs-off"
+from = "gfm-task_lists"
+input = "- [\t\t\t] text\n"
+
+[[case]]
+id = "r3-email-underscore"
+from = "gfm"
+input = "_a@example.org and _@b.c and x _name@example.org\n"
+
+[[case]]
+id = "r3-roman-after-task"
+from = "commonmark_x"
+input = "- [ ] a\n\ni. b\n\n- [x] a\n\ni. b\nii. c\n"
+
+[[case]]
+id = "r3-roman-after-bullet"
+from = "commonmark_x"
+input = "- a\n\ni. b\n"
+
+[[case]]
+id = "r3-attr-classes"
+from = "commonmark_x"
+input = "a{.b .c .d .b}{.e .c} x{k=1 j=2 k=3}{j=4 l=5}\n"
+
+[[case]]
+id = "r3-task-open-x"
+from = "gfm"
+input = "- [x\n- [xy] a\n- [ x] b\n- [x]c\n"
+
+[[case]]
+id = "r4-list-j"
+from = "commonmark_x"
+input = "i. a\nj. b\n"
+
+[[case]]
+id = "r4-list-a-j"
+from = "commonmark_x"
+input = "i. a\na. b\nj. c\n"
+
+[[case]]
+id = "r4-list-j-k"
+from = "commonmark_x"
+input = "i. a\nj. b\nk. c\n"
+
+[[case]]
+id = "r4-list-a-b"
+from = "commonmark_x"
+input = "i. a\na. b\nb. c\n"
+
+[[case]]
+id = "r4-list-paren"
+from = "commonmark_x"
+input = "i) a\na) b\n\n(i) a\n(a) b\n"
+
+[[case]]
+id = "r4-list-delim"
+from = "commonmark_x"
+input = "i. a\na) b\n"
+
+[[case]]
+id = "r4-list-blank"
+from = "commonmark_x"
+input = "i. a\n\na. b\n\ni. a\n\n    x\n\nj. b\n"
+
+[[case]]
+id = "r4-list-upper"
+from = "commonmark_x"
+input = "I. a\nJ. b\nE. c\n"
+
+[[case]]
+id = "r4-list-matrix"
+from = "commonmark_x"
+input = "i. a\ni. b\n\n<!-- -->\n\ni. a\nii. b\n\n<!-- -->\n\ni. a\niv. b\n\n<!-- -->\n\ni. a\nv. b\n\n<!-- -->\n\ni. a\nx. b\n\n<!-- -->\n\ni. a\nc. b\n\n<!-- -->\n\ni. a\nI. b\n\n<!-- -->\n\ni. a\na. b\n\n<!-- -->\n\ni. a\nh. b\n\n<!-- -->\n\ni. a\nj. b\n\n<!-- -->\n\ni. a\nb. b\n\n<!-- -->\n\ni. a\nl. b\n\n<!-- -->\n\nii. a\ni. b\n\n<!-- -->\n\nii. a\nii. b\n\n<!-- -->\n\nii. a\niv. b\n\n<!-- -->\n\nii. a\nv. b\n\n<!-- -->\n\nii. a\nx. b\n\n<!-- -->\n\nii. a\nc. b\n\n<!-- -->\n\nii. a\nI. b\n\n<!-- -->\n\nii. a\na. b\n\n<!-- -->\n\nii. a\nh. b\n\n<!-- -->\n\nii. a\nj. b\n\n<!-- -->\n\nii. a\nb. b\n\n<!-- -->\n\nii. a\nl. b\n\n<!-- -->\n\niv. a\ni. b\n\n<!-- -->\n\niv. a\nii. b\n\n<!-- -->\n\niv. a\niv. b\n\n<!-- -->\n\niv. a\nv. b\n\n<!-- -->\n\niv. a\nx. b\n\n<!-- -->\n\niv. a\nc. b\n\n<!-- -->\n\niv. a\nI. b\n\n<!-- -->\n\niv. a\na. b\n\n<!-- -->\n\niv. a\nh. b\n\n<!-- -->\n\niv. a\nj. b\n\n<!-- -->\n\niv. a\nb. b\n\n<!-- -->\n\niv. a\nl. b\n\n<!-- -->\n\nv. a\ni. b\n\n<!-- -->\n\nv. a\nii. b\n\n<!-- -->\n\nv. a\niv. b\n\n<!-- -->\n\nv. a\nv. b\n\n<!-- -->\n\nv. a\nx. b\n\n<!-- -->\n\nv. a\nc. b\n\n<!-- -->\n\nv. a\nI. b\n\n<!-- -->\n\nv. a\na. b\n\n<!-- -->\n\nv. a\nh. b\n\n<!-- -->\n\nv. a\nj. b\n\n<!-- -->\n\nv. a\nb. b\n\n<!-- -->\n\nv. a\nl. b\n\n<!-- -->\n\nx. a\ni. b\n\n<!-- -->\n\nx. a\nii. b\n\n<!-- -->\n\nx. a\niv. b\n\n<!-- -->\n\nx. a\nv. b\n\n<!-- -->\n\nx. a\nx. b\n\n<!-- -->\n\nx. a\nc. b\n\n<!-- -->\n\nx. a\nI. b\n\n<!-- -->\n\nx. a\na. b\n\n<!-- -->\n\nx. a\nh. b\n\n<!-- -->\n\nx. a\nj. b\n\n<!-- -->\n\nx. a\nb. b\n\n<!-- -->\n\nx. a\nl. b\n\n<!-- -->\n\nc. a\ni. b\n\n<!-- -->\n\nc. a\nii. b\n\n<!-- -->\n\nc. a\niv. b\n\n<!-- -->\n\nc. a\nv. b\n\n<!-- -->\n\nc. a\nx. b\n\n<!-- -->\n\nc. a\nc. b\n\n<!-- -->\n\nc. a\nI. b\n\n<!-- -->\n\nc. a\na. b\n\n<!-- -->\n\nc. a\nh. b\n\n<!-- -->\n\nc. a\nj. b\n\n<!-- -->\n\nc. a\nb. b\n\n<!-- -->\n\nc. a\nl. b\n\n<!-- -->\n\nI. a\ni. b\n\n<!-- -->\n\nI. a\nii. b\n\n<!-- -->\n\nI. a\niv. b\n\n<!-- -->\n\nI. a\nv. b\n\n<!-- -->\n\nI. a\nx. b\n\n<!-- -->\n\nI. a\nc. b\n\n<!-- -->\n\nI. a\nI. b\n\n<!-- -->\n\nI. a\na. b\n\n<!-- -->\n\nI. a\nh. b\n\n<!-- -->\n\nI. a\nj. b\n\n<!-- -->\n\nI. a\nb. b\n\n<!-- -->\n\nI. a\nl. b\n\n<!-- -->\n\na. a\ni. b\n\n<!-- -->\n\na. a\nii. b\n\n<!-- -->\n\na. a\niv. b\n\n<!-- -->\n\na. a\nv. b\n\n<!-- -->\n\na. a\nx. b\n\n<!-- -->\n\na. a\nc. b\n\n<!-- -->\n\na. a\nI. b\n\n<!-- -->\n\na. a\na. b\n\n<!-- -->\n\na. a\nh. b\n\n<!-- -->\n\na. a\nj. b\n\n<!-- -->\n\na. a\nb. b\n\n<!-- -->\n\na. a\nl. b\n\n<!-- -->\n\nh. a\ni. b\n\n<!-- -->\n\nh. a\nii. b\n\n<!-- -->\n\nh. a\niv. b\n\n<!-- -->\n\nh. a\nv. b\n\n<!-- -->\n\nh. a\nx. b\n\n<!-- -->\n\nh. a\nc. b\n\n<!-- -->\n\nh. a\nI. b\n\n<!-- -->\n\nh. a\na. b\n\n<!-- -->\n\nh. a\nh. b\n\n<!-- -->\n\nh. a\nj. b\n\n<!-- -->\n\nh. a\nb. b\n\n<!-- -->\n\nh. a\nl. b\n\n<!-- -->\n\nj. a\ni. b\n\n<!-- -->\n\nj. a\nii. b\n\n<!-- -->\n\nj. a\niv. b\n\n<!-- -->\n\nj. a\nv. b\n\n<!-- -->\n\nj. a\nx. b\n\n<!-- -->\n\nj. a\nc. b\n\n<!-- -->\n\nj. a\nI. b\n\n<!-- -->\n\nj. a\na. b\n\n<!-- -->\n\nj. a\nh. b\n\n<!-- -->\n\nj. a\nj. b\n\n<!-- -->\n\nj. a\nb. b\n\n<!-- -->\n\nj. a\nl. b\n\n<!-- -->\n\nb. a\ni. b\n\n<!-- -->\n\nb. a\nii. b\n\n<!-- -->\n\nb. a\niv. b\n\n<!-- -->\n\nb. a\nv. b\n\n<!-- -->\n\nb. a\nx. b\n\n<!-- -->\n\nb. a\nc. b\n\n<!-- -->\n\nb. a\nI. b\n\n<!-- -->\n\nb. a\na. b\n\n<!-- -->\n\nb. a\nh. b\n\n<!-- -->\n\nb. a\nj. b\n\n<!-- -->\n\nb. a\nb. b\n\n<!-- -->\n\nb. a\nl. b\n\n<!-- -->\n\nl. a\ni. b\n\n<!-- -->\n\nl. a\nii. b\n\n<!-- -->\n\nl. a\niv. b\n\n<!-- -->\n\nl. a\nv. b\n\n<!-- -->\n\nl. a\nx. b\n\n<!-- -->\n\nl. a\nc. b\n\n<!-- -->\n\nl. a\nI. b\n\n<!-- -->\n\nl. a\na. b\n\n<!-- -->\n\nl. a\nh. b\n\n<!-- -->\n\nl. a\nj. b\n\n<!-- -->\n\nl. a\nb. b\n\n<!-- -->\n\nl. a\nl. b\n"
+
+[[case]]
+id = "r4-nfc-label"
+from = "commonmark"
+input = "[é]\n\n[é]: /url\n\n[é]\n\n[é]: /v\n"
+
+[[case]]
+id = "r4-nfc-heading"
+from = "gfm"
+input = "# Café\n\n[x](#café)\n"
+
+[[case]]
+id = "r4-collapsed-unknown"
+from = "gfm"
+input = "[[]][]()\n\n[a][]()\n\n[a][](u)\n\n![a][](u)\n\n[a][b](u)\n\n[a] [](u)\n\n[]][]()\n"
+
+[[case]]
+id = "r4-collapsed-known"
+from = "commonmark"
+input = "[a][](u)\n\n[a]: /x\n"
+
+[[case]]
+id = "r4-attr-lines-00"
+from = "commonmark_x"
+input = "{.a\n}\nx\n"
+
+[[case]]
+id = "r4-attr-lines-01"
+from = "commonmark_x"
+input = "{.a\n.b key=value}\nMap\n"
+
+[[case]]
+id = "r4-attr-lines-02"
+from = "commonmark_x"
+input = "{.a\n\n}\nx\n"
+
+[[case]]
+id = "r4-attr-lines-03"
+from = "commonmark_x"
+input = "{.a\nx\n"
+
+[[case]]
+id = "r4-attr-lines-04"
+from = "commonmark_x"
+input = "> {.a\n> }\n> x\n"
+
+[[case]]
+id = "r4-attr-lines-05"
+from = "commonmark_x"
+input = "- {.a\n  }\n  x\n"
+
+[[case]]
+id = "r4-attr-lines-06"
+from = "commonmark_x"
+input = "{.a\n}\n"
+
+[[case]]
+id = "r4-attr-lines-07"
+from = "commonmark_x"
+input = ":::{.a\n}\nx\n:::\n"
+
+[[case]]
+id = "r4-attr-lines-08"
+from = "commonmark_x"
+input = "::: {.a\n.b}\nx\n:::\n"
+
+[[case]]
+id = "r4-attr-lines-09"
+from = "commonmark_x"
+input = "::: {.a\n\n}\nx\n:::\n"
+
+[[case]]
+id = "r4-attr-lines-10"
+from = "commonmark_x"
+input = "::: {.a\nx\n:::\n"
+
+[[case]]
+id = "r4-attr-lines-11"
+from = "commonmark_x"
+input = "> ::: {.a\n> }\n> x\n> :::\n"
+
+[[case]]
+id = "r4-attr-lines-12"
+from = "commonmark_x"
+input = "{.a}\n{.b\n}\nx\n"
+
+[[case]]
+id = "r4-attr-lines-13"
+from = "commonmark_x"
+input = "p\n{.a\n}\nx\n"
+
+[[case]]
+id = "r4-attr-lines-14"
+from = "commonmark_x"
+input = "- {.a\n}\nx\n"
+
+[[case]]
+id = "r4-attr-lines-15"
+from = "commonmark_x"
+input = "{#i\n.c\n\n\nk=v\n}\n# H\n"
+
+[[case]]
+id = "r4-attr-lines-16"
+from = "commonmark_x"
+input = "- ::: {.a\n  }\n  x\n  :::\n"
+
+[[case]]
+id = "r4-attr-lines-17"
+from = "commonmark_x"
+input = "{.a\n}x\n"
+
+[[case]]
+id = "r4-attr-lines-18"
+from = "commonmark_x"
+input = "::: {.a\n} b\nx\n:::\n"
+
+[[case]]
+id = "r4-attr-tamil"
+from = "commonmark_x"
+input = "[map]{.தமிழ்} [x]{#தமிழ்}\n"
+
+[[case]]
+id = "r4-attr-categories"
+from = "commonmark_x"
+input = "[a]{.x⃝y} [b]{.x́y} [c]{.x்y} [d]{.x²y} [e]{.xⅠy} [f]{.x§y} [g]{.x‐y}\n"
+
+[[case]]
+id = "r4-runs-caret"
+from = "commonmark_x"
+input = "a^b^c\n\na^^b^^c\n\na^^^b^^^c\n\na^^^^b^^^^c\n\na^^^^^b^^^^^c\n\na^^^^^^b^^^^^^c\n\na^^^^^^^b^^^^^^^c\n\na^^^^^^^^b^^^^^^^^c\n\na^^^^^^^^^b^^^^^^^^^c\n"
+
+[[case]]
+id = "r4-runs-star"
+from = "commonmark"
+input = "a*b*c\n\na**b**c\n\na***b***c\n\na****b****c\n\na*****b*****c\n\na******b******c\n\na*******b*******c\n\na********b********c\n\na*********b*********c\n"
+
+[[case]]
+id = "r4-runs-tilde"
+from = "commonmark_x"
+input = "a~b~c\n\na~~b~~c\n\na~~~b~~~c\n\na~~~~b~~~~c\n\na~~~~~b~~~~~c\n\na~~~~~~b~~~~~~c\n\na~~~~~~~b~~~~~~~c\n\na~~~~~~~~b~~~~~~~~c\n\na~~~~~~~~~b~~~~~~~~~c\n"
+
+[[case]]
+id = "r4-runs-under"
+from = "commonmark"
+input = "a_b_c\n\na__b__c\n\na___b___c\n\na____b____c\n\na_____b_____c\n\na______b______c\n\na_______b_______c\n\na________b________c\n\na_________b_________c\n"
+
+[[case]]
+id = "r4-runs-edges"
+from = "commonmark"
+input = "****a**** x\n\na****b x\n\nx a****b****\n\n****b****c\n\n_____a_____b\n"
+
+[[case]]
+id = "r4-runs-mixed"
+from = "commonmark"
+input = "*****a*****b*****\n\n******a******\n\n_____a_____\n"
+
+[[case]]
+id = "r5-runs-both-long"
+from = "commonmark"
+input = "a**************************************************************************************************************************************************************************************************************************************************************b**************************************************************************************************************************************************************************************************************************************************************c\n\na***************************************************************************************************************************************************************************************************************************************************************b***************************************************************************************************************************************************************************************************************************************************************c\n\na****************************************************************************************************************************************************************************************************************************************************************b****************************************************************************************************************************************************************************************************************************************************************c\n\na*****************************************************************************************************************************************************************************************************************************************************************b*****************************************************************************************************************************************************************************************************************************************************************c\n\na****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************b****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************c\n\na______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________b______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________c\n\na_______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________b_______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________c\n\na________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________b________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________c\n\na_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________b_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________c\n\na________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________b________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________c\n"
+
+[[case]]
+id = "r5-runs-open-close-long"
+from = "commonmark"
+input = "***************************************************************************************************************************************************************************************************************************************************************a***************************************************************************************************************************************************************************************************************************************************************\n\n****************************************************************************************************************************************************************************************************************************************************************a****************************************************************************************************************************************************************************************************************************************************************\n\n*****************************************************************************************************************************************************************************************************************************************************************a*****************************************************************************************************************************************************************************************************************************************************************\n\n_______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________a_______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n\n________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________a________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n\n_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________a_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n"
+
+[[case]]
+id = "r5-note-def-00"
+from = "commonmark_x"
+input = "p\n[^t]: n\n:   d\n"
+
+[[case]]
+id = "r5-note-def-01"
+from = "commonmark_x"
+input = "p[^t]\n[^t]: n\n:   d\n"
+
+[[case]]
+id = "r5-note-def-02"
+from = "commonmark_x"
+input = "p[^t]\n\n[^t]: n\n:   d\n"
+
+[[case]]
+id = "r5-note-def-03"
+from = "commonmark_x"
+input = "t\n: d\n\n[^a]: x\n\nu\n: e\n\nv[^a]\n"
+
+[[case]]
+id = "r5-note-def-04"
+from = "commonmark_x"
+input = "t\n: d\n\n[^a]: x\n\nu\n\n: e\n\nv[^a]\n"
+
+[[case]]
+id = "r5-note-def-05"
+from = "commonmark_x"
+input = "- a\n\n  [^n]: x\n- b[^n]\n"
+
+[[case]]
+id = "r5-note-def-06"
+from = "commonmark_x"
+input = "- a\n  [^n]: x\n\n- b[^n]\n"
+
+[[case]]
+id = "r5-note-def-07"
+from = "commonmark_x"
+input = "[^a]: x\n: d\n\ny[^a]\n"
+
+[[case]]
+id = "r5-note-def-08"
+from = "commonmark_x"
+input = "p\n[^t]: > q\n:   d\n\n[^t]\n"
+
+[[case]]
+id = "r5-note-def-09"
+from = "commonmark_x"
+input = "[^a]: x\n    [^a]: y\n\nz[^a]\n"
+
+[[case]]
+id = "r5-note-def-10"
+from = "commonmark_x"
+input = "> p\n> [^t]: n\n> :   d\n\n[^t]\n"
+
+[[case]]
+id = "r5-note-def-11"
+from = "commonmark_x"
+input = "- a\n  [^n]: x\n\n  c\n- b[^n]\n"
+
+[[case]]
+id = "r5-note-def-12"
+from = "commonmark_x"
+input = "- a\n\n  [^n]: x\n\n- b[^n]\n"
+
+[[case]]
+id = "r5-note-def-13"
+from = "commonmark_x"
+input = "1. a\n   [^n]: x\n\n   - c\n2. b[^n]\n"
+
+[[case]]
+id = "r5-note-def-14"
+from = "commonmark_x"
+input = "p\n[^t]: n\n\n: d\n\n[^t]\n"
+
+[[case]]
+id = "r5-note-def-15"
+from = "commonmark_x"
+input = "t\n: d\n[^a]: x\n: e\n\nv[^a]\n"
+
+[[case]]
+id = "r5-note-def-16"
+from = "commonmark_x"
+input = "t\n\n: d\n\n  [^a]: x\n\n: e\n\nv[^a]\n"
+
+[[case]]
+id = "r5-note-def-17"
+from = "commonmark_x"
+input = "> [^a]: x\n\ny[^a]\n\n[^a]: z\n"
+
+[[case]]
+id = "r5-note-def-18"
+from = "commonmark_x"
+input = "[^a]: x\n\n    [^b]: y\n\nz[^a] [^b]\n"
+
+[[case]]
+id = "r5-note-def-19"
+from = "commonmark_x"
+input = "- a[^1]\n\n  [^1]: in list\n"
+
+[[case]]
+id = "r5-note-def-20"
+from = "commonmark_x"
+input = "- a[^1]\n\n  [^1]: in list\n\n  [^2]: more\n- b\n"
+
+[[case]]
+id = "r5-note-def-21"
+from = "commonmark_x"
+input = "- a[^1]\n  [^1]: in list\n\n  [^2]: more[^2]\n"
+
+[[case]]
+id = "r5-note-def-22"
+from = "commonmark_x"
+input = "- a\n  - b[^1]\n\n    [^1]: x\n"
+
+[[case]]
+id = "r5-note-def-23"
+from = "commonmark_x"
+input = "- a\n\n  [^1]: x\n  - b[^1]\n"
+
+[[case]]
+id = "r5-note-def-24"
+from = "commonmark_x"
+input = "1. a\n\n   [^1]: x\n\n   c[^1]\n"
+
+[[case]]
+id = "r5-note-def-25"
+from = "commonmark_x"
+input = "- a\n\n      [^1]: x\n\n  c[^1]\n"
+
+[[case]]
+id = "r5-note-def-26"
+from = "commonmark_x"
+input = "-\n\n  [^1]: x\n- b[^1]\n"
+
+[[case]]
+id = "r5-note-def-27"
+from = "commonmark_x"
+input = "- [^1]: x\n\n  [^2]: y\n- b[^1][^2]\n"
+
+[[case]]
+id = "r5-attr-block-00"
+from = "commonmark_x"
+input = "> - {.a\n>   }\n>   #\n"
+
+[[case]]
+id = "r5-attr-block-01"
+from = "commonmark_x"
+input = "> - {.a\n>   }\n>   # x\n"
+
+[[case]]
+id = "r5-attr-block-02"
+from = "commonmark_x"
+input = "> - {.a\n>   }\n>   ```\n>   c\n>   ```\n"
+
+[[case]]
+id = "r5-attr-block-03"
+from = "commonmark_x"
+input = "> - {.a\n>   }\n>   ::: d\n>   x\n>   :::\n"
+
+[[case]]
+id = "r5-attr-block-04"
+from = "commonmark_x"
+input = "- {.a\n  }\n  # x\n"
+
+[[case]]
+id = "r5-attr-block-05"
+from = "commonmark_x"
+input = "> {.a\n> }\n> # x\n"
+
+[[case]]
+id = "r5-attr-block-06"
+from = "commonmark_x"
+input = "> - {.a}\n>   # x\n"
+
+[[case]]
+id = "r5-attr-block-07"
+from = "commonmark_x"
+input = "> - {.a\n>   }\n>   x\n"
+
+[[case]]
+id = "r5-attr-block-08"
+from = "commonmark_x"
+input = "> - {.a\n>   .b}\n>\n>   # x\n"
+
+[[case]]
+id = "r5-attr-block-09"
+from = "commonmark_x"
+input = "> 1. {.a\n>    }\n>    # x\n> 2. y\n"
+
+[[case]]
+id = "r5-attr-block-10"
+from = "commonmark_x"
+input = "> - {.a\n>   }\n"
+
+[[case]]
+id = "r5-attr-block-11"
+from = "commonmark_x"
+input = "> - a\n>   {.a\n>   }\n>   # x\n"
+
+[[case]]
+id = "r5-attr-block-12"
+from = "commonmark_x"
+input = "- {.a\n  }\n\n  x\n- y\n"
+
+[[case]]
+id = "r5-attr-block-13"
+from = "commonmark_x"
+input = "- a\n- {.b}\n- c\n"
+
+[[case]]
+id = "r5-attr-block-14"
+from = "commonmark_x"
+input = "- {.b}\n- c\n"
+
+[[case]]
+id = "r5-attr-block-15"
+from = "commonmark_x"
+input = "1. {.b}\n\n   {.c}\n2. d\n"
+
+[[case]]
+id = "r5-attr-block-16"
+from = "commonmark_x"
+input = "t\n: {.a\n  }\n: e\n"
+
+[[case]]
+id = "r5-attr-block-17"
+from = "commonmark_x"
+input = "- [ ] {.a\n  }\n- b\n"
+
+[[case]]
+id = "r5-attr-block-18"
+from = "commonmark_x"
+input = "- {.a}\n  {.b\n  }\n  x\n"
+
+[[case]]
+id = "r5-attr-block-19"
+from = "commonmark_x"
+input = "{.a\n}\nx\n: {.b\n  }\n"
+
+[[case]]
+id = "r5-attr-block-20"
+from = "commonmark_x"
+input = "- {.x} {.y}\n- z\n"
+
+[[case]]
+id = "r5-attr-block-21"
+from = "commonmark_x"
+input = "- {.a}\n\n  x\n- y\n"
+
+[[case]]
+id = "r5-attr-block-22"
+from = "commonmark_x"
+input = "- {.a}\n\n  x\n"
+
+[[case]]
+id = "r5-attr-block-23"
+from = "commonmark_x"
+input = "1. {.a}\n\n   # h\n"
+
+[[case]]
+id = "r5-attr-block-24"
+from = "commonmark_x"
+input = "{.a}\n{.b}\nx\n"
+
+[[case]]
+id = "r5-attr-block-25"
+from = "commonmark_x"
+input = "{.a}\n\n{.b}\nx\n"
+
+[[case]]
+id = "r5-attr-block-26"
+from = "commonmark_x"
+input = "{.a}\n\n{.b}\n{.c}\n\nx\n"
+
+[[case]]
+id = "r5-attr-block-27"
+from = "commonmark_x"
+input = "- {.a}\n  {.b}\n\n  x\n"
+
+[[case]]
+id = "r5-attr-block-28"
+from = "commonmark_x"
+input = "- {.a}\n\n  {.b}\n\n  x\n"
+
+[[case]]
+id = "r5-attr-block-29"
+from = "commonmark_x"
+input = "> {.a}\n> {.b}\n> x\n"
+
+[[case]]
+id = "r5-attr-block-30"
+from = "commonmark_x"
+input = "> {.a}\n\n> {.b}\n> x\n"
+
+[[case]]
+id = "r5-attr-block-31"
+from = "commonmark_x"
+input = "- {.a}\n\n- x\n"
+
+[[case]]
+id = "r5-attr-block-32"
+from = "commonmark_x"
+input = "- {.a}\n\n\n  x\n"
+
+[[case]]
+id = "r5-attr-block-33"
+from = "commonmark_x"
+input = "-\n\n  x\n"
+
+[[case]]
+id = "r5-attr-block-34"
+from = "commonmark_x"
+input = "- {.a}\n- {.b}\n  x\n"
+
+[[case]]
+id = "r5-attr-block-35"
+from = "commonmark_x"
+input = "t\n: {.a}\n\n  x\n"
+
+[[case]]
+id = "r5-attr-block-36"
+from = "commonmark_x"
+input = "t\n: {.a}\n  x\n\n  y\n"
+
+[[case]]
+id = "r5-attr-block-37"
+from = "commonmark_x"
+input = "{.a}\n: x\n"
+
+[[case]]
+id = "r5-attr-block-38"
+from = "commonmark_x"
+input = "{.a}\n[^1]: x\n\ny[^1]\n"
+
+[[case]]
+id = "r5-attr-block-39"
+from = "commonmark_x"
+input = "{.a\n.b}\n{.c}\nx\n"
+
+[[case]]
+id = "r5-attr-block-40"
+from = "commonmark_x"
+input = "{.a}\n{.b\n.c}\nx\n"
+
+[[case]]
+id = "r5-attr-block-41"
+from = "commonmark_x"
+input = "- {.a}\n  {.b}\n- x\n"
+
+[[case]]
+id = "r5-attr-block-42"
+from = "commonmark_x"
+input = "::: d\n{.a}\n:::\n\nx\n"
+
+[[case]]
+id = "r5-attr-block-43"
+from = "commonmark_x"
+input = "{.a}\n> {.b}\n\n> x\n"
+
+[[case]]
+id = "r5-attr-block-44"
+from = "commonmark_x"
+input = "- {.a}\n- x\n\n  y\n"
+
+[[case]]
+id = "r5-attr-block-45"
+from = "commonmark_x"
+input = "- a\n\n  {.b}\n- c\n\n  d\n"
+
+[[case]]
+id = "r5-attr-block-46"
+from = "commonmark_x"
+input = "t\n: {.a}\n: x\n\n  y\n"
+
+[[case]]
+id = "r5-attr-block-47"
+from = "commonmark_x"
+input = "- [ ] {.a}\n- [x] b\n"
+
+[[case]]
+id = "r5-attr-block-48"
+from = "commonmark_x"
+input = "1. a\n   {.b}\n2. c\n   - d\n"
+
+[[case]]
+id = "r5-attr-block-49"
+from = "commonmark_x"
+input = "- {.a}\n  - x\n  - y\n"
+
+[[case]]
+id = "r5-yaml-00"
+from = "commonmark_x"
+input = "---\na: ! ~\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-01"
+from = "commonmark_x"
+input = "---\na: ! true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-02"
+from = "commonmark_x"
+input = "---\na: ! 12\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-03"
+from = "commonmark_x"
+input = "---\na: !x y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-04"
+from = "commonmark_x"
+input = "---\na: !x 1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-05"
+from = "commonmark_x"
+input = "---\na: !x true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-06"
+from = "commonmark_x"
+input = "---\na: !x ~\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-07"
+from = "commonmark_x"
+input = "---\na: !!timestamp 2001-01-01\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-08"
+from = "commonmark_x"
+input = "---\na: !!str 1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-09"
+from = "commonmark_x"
+input = "---\na: !!str true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-10"
+from = "commonmark_x"
+input = "---\na: !!str ~\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-11"
+from = "commonmark_x"
+input = "---\na: !!int 1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-12"
+from = "commonmark_x"
+input = "---\na: !!int x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-13"
+from = "commonmark_x"
+input = "---\na: !!float 1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-14"
+from = "commonmark_x"
+input = "---\na: !!float 1.5\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-15"
+from = "commonmark_x"
+input = "---\na: !!bool true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-16"
+from = "commonmark_x"
+input = "---\na: !!bool yes\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-17"
+from = "commonmark_x"
+input = "---\na: !!null ~\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-18"
+from = "commonmark_x"
+input = "---\na: !!null x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-19"
+from = "commonmark_x"
+input = "---\na: !!binary aGk=\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-20"
+from = "commonmark_x"
+input = "---\na: !!seq [1]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-21"
+from = "commonmark_x"
+input = "---\na: !!map {b: c}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-22"
+from = "commonmark_x"
+input = "---\na: !!set {b}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-23"
+from = "commonmark_x"
+input = "---\na: !!omap [b: c]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-24"
+from = "commonmark_x"
+input = "---\na: ! [1]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-25"
+from = "commonmark_x"
+input = "---\na: ! [true]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-26"
+from = "commonmark_x"
+input = "---\na: !x [1]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-27"
+from = "commonmark_x"
+input = "---\na: !x {b: 1}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-28"
+from = "commonmark_x"
+input = "---\na: !x {b: true}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-29"
+from = "commonmark_x"
+input = "---\na: !e!x 1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-30"
+from = "commonmark_x"
+input = "---\n! a: b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-31"
+from = "commonmark_x"
+input = "---\n!!str a: b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-32"
+from = "commonmark_x"
+input = "---\n!x a: true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-33"
+from = "commonmark_x"
+input = "---\na: !!str\n  b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-34"
+from = "commonmark_x"
+input = "---\na: !\n  b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-35"
+from = "commonmark_x"
+input = "---\na: !!python/none x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-36"
+from = "commonmark_x"
+input = "---\na: !!str |\n  1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-37"
+from = "commonmark_x"
+input = "---\na: ! |\n  true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-38"
+from = "commonmark_x"
+input = "---\na: !x |\n  true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-39"
+from = "commonmark_x"
+input = "---\na: !!int \"1\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-40"
+from = "commonmark_x"
+input = "---\na: !!bool \"true\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-41"
+from = "commonmark_x"
+input = "---\na: ! \"true\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-42"
+from = "commonmark_x"
+input = "---\na: !x \"true\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-43"
+from = "commonmark_x"
+input = "---\na: !x 'true'\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-44"
+from = "commonmark_x"
+input = "---\na: !!merge x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-45"
+from = "commonmark_x"
+input = "---\na: !!value x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-46"
+from = "commonmark_x"
+input = "---\na: !!yaml x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-47"
+from = "commonmark_x"
+input = "---\na: !! x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-48"
+from = "commonmark_x"
+input = "---\na: !!str\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-49"
+from = "commonmark_x"
+input = "---\na: !\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-50"
+from = "commonmark_x"
+input = "---\na: !x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-51"
+from = "commonmark_x"
+input = "---\na: !!null\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-52"
+from = "commonmark_x"
+input = "---\n- ! true\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-53"
+from = "commonmark_x"
+input = "---\n- !x ~\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-54"
+from = "commonmark_x"
+input = "---\n[! true, !x ~]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-55"
+from = "commonmark_x"
+input = "---\n{a: ! true}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-56"
+from = "commonmark_x"
+input = "---\na: &x 1\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-57"
+from = "commonmark_x"
+input = "---\na: &x [1, 2]\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-58"
+from = "commonmark_x"
+input = "---\na: &x {c: d}\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-59"
+from = "commonmark_x"
+input = "---\na: &x\n  b: 1\nc: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-60"
+from = "commonmark_x"
+input = "---\na: &x !!str 1\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-61"
+from = "commonmark_x"
+input = "---\na: !!str &x 1\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-62"
+from = "commonmark_x"
+input = "---\na: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-63"
+from = "commonmark_x"
+input = "---\na: &x 1\na2: &x 2\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-64"
+from = "commonmark_x"
+input = "---\na: &x true\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-65"
+from = "commonmark_x"
+input = "---\na: &x ~\nb: [*x, *x]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-66"
+from = "commonmark_x"
+input = "---\na: &x |\n  t\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-67"
+from = "commonmark_x"
+input = "---\na: &x\nb: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-68"
+from = "commonmark_x"
+input = "---\na: [&x 1, *x]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-69"
+from = "commonmark_x"
+input = "---\na: {b: &x 1, c: *x}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-70"
+from = "commonmark_x"
+input = "---\na: |\n  x\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-71"
+from = "commonmark_x"
+input = "---\na: >\n  x\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-72"
+from = "commonmark_x"
+input = "---\na: |-\n  x\n\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-73"
+from = "commonmark_x"
+input = "---\na: |+\n  x\n\n\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-74"
+from = "commonmark_x"
+input = "---\na: >-\n  x\n  y\n\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-75"
+from = "commonmark_x"
+input = "---\na: >+\n  x\n\n\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-76"
+from = "commonmark_x"
+input = "---\na: |2\n    x\n   y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-77"
+from = "commonmark_x"
+input = "---\na: |1-\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-78"
+from = "commonmark_x"
+input = "---\na: >2+\n   x\n\n\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-79"
+from = "commonmark_x"
+input = "---\na: |+2\n   x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-80"
+from = "commonmark_x"
+input = "---\na: |-2\n   x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-81"
+from = "commonmark_x"
+input = "---\na: |\n\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-82"
+from = "commonmark_x"
+input = "---\na: |\n  x\n\n\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-83"
+from = "commonmark_x"
+input = "---\na: >\n  x\n\n  y\n   z\n  w\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-84"
+from = "commonmark_x"
+input = "---\na: >\n   x\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-85"
+from = "commonmark_x"
+input = "---\na: | # c\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-86"
+from = "commonmark_x"
+input = "---\na: |\n  x\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-87"
+from = "commonmark_x"
+input = "---\na: |\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-88"
+from = "commonmark_x"
+input = "---\na: >\n\n\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-89"
+from = "commonmark_x"
+input = "---\na: |+\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-90"
+from = "commonmark_x"
+input = "---\na: |\n  x\n y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-91"
+from = "commonmark_x"
+input = "---\na: |\n \n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-92"
+from = "commonmark_x"
+input = "---\na: >\n  x\n\n\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-93"
+from = "commonmark_x"
+input = "---\na: >\n  x\n   y\n  z\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-94"
+from = "commonmark_x"
+input = "---\na: >\n\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-95"
+from = "commonmark_x"
+input = "---\na: |-+\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-96"
+from = "commonmark_x"
+input = "---\na:\n  |\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-97"
+from = "commonmark_x"
+input = "---\n- |\n  x\n- >\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-98"
+from = "commonmark_x"
+input = "---\na: [1, 2]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-99"
+from = "commonmark_x"
+input = "---\na: {b: c}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-100"
+from = "commonmark_x"
+input = "---\na: [1, [2, 3], {b: c}]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-101"
+from = "commonmark_x"
+input = "---\na: [a b, c]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-102"
+from = "commonmark_x"
+input = "---\na: {b: [1,2]}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-103"
+from = "commonmark_x"
+input = "---\na: [1,\n  2]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-104"
+from = "commonmark_x"
+input = "---\na: {b}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-105"
+from = "commonmark_x"
+input = "---\na: [b: c]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-106"
+from = "commonmark_x"
+input = "---\na: {b: c, }\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-107"
+from = "commonmark_x"
+input = "---\na: [1, ]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-108"
+from = "commonmark_x"
+input = "---\na: [,]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-109"
+from = "commonmark_x"
+input = "---\na: [\"x\", 'y']\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-110"
+from = "commonmark_x"
+input = "---\na: [x:y]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-111"
+from = "commonmark_x"
+input = "---\na: {b: }\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-112"
+from = "commonmark_x"
+input = "---\na: [ ]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-113"
+from = "commonmark_x"
+input = "---\na: {}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-114"
+from = "commonmark_x"
+input = "---\na: [null, ~, true, 1.0]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-115"
+from = "commonmark_x"
+input = "---\na: {\"b\":c}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-116"
+from = "commonmark_x"
+input = "---\na: {b:c}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-117"
+from = "commonmark_x"
+input = "---\na: [a]b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-118"
+from = "commonmark_x"
+input = "---\na: {b: c} d\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-119"
+from = "commonmark_x"
+input = "---\na: [1] # c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-120"
+from = "commonmark_x"
+input = "---\na: [a #b\n  , c]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-121"
+from = "commonmark_x"
+input = "---\na: {b: 1, b: 2}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-122"
+from = "commonmark_x"
+input = "---\na: [[[[1]]]]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-123"
+from = "commonmark_x"
+input = "---\na: {a: {b: {c: d}}}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-124"
+from = "commonmark_x"
+input = "---\na: [a: b, c: d]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-125"
+from = "commonmark_x"
+input = "---\na: {[x]: y}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-126"
+from = "commonmark_x"
+input = "---\na: ['a', \"b\n  c\"]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-127"
+from = "commonmark_x"
+input = "---\na: x\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-128"
+from = "commonmark_x"
+input = "---\na: x\n\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-129"
+from = "commonmark_x"
+input = "---\na: x\n  y\n  z\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-130"
+from = "commonmark_x"
+input = "---\na: x # c\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-131"
+from = "commonmark_x"
+input = "---\na:\n  x\n  y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-132"
+from = "commonmark_x"
+input = "---\na: x\n y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-133"
+from = "commonmark_x"
+input = "---\na: - x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-134"
+from = "commonmark_x"
+input = "---\na: x: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-135"
+from = "commonmark_x"
+input = "---\na: x:y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-136"
+from = "commonmark_x"
+input = "---\na: 'x\n  y'\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-137"
+from = "commonmark_x"
+input = "---\na: \"x\n\n  y\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-138"
+from = "commonmark_x"
+input = "---\na: \"x\\\\\n  y\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-139"
+from = "commonmark_x"
+input = "---\na: x\n  - y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-140"
+from = "commonmark_x"
+input = "---\na: x\n  y: z\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-141"
+from = "commonmark_x"
+input = "---\na: x\nb\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-142"
+from = "commonmark_x"
+input = "---\na:\n  x\n  y: z\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-143"
+from = "commonmark_x"
+input = "---\na: 'x''y'\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-144"
+from = "commonmark_x"
+input = "---\na: \"x\ty\\u00e9\\x41\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-145"
+from = "commonmark_x"
+input = "---\na: \"\\q\"\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-146"
+from = "commonmark_x"
+input = "---\na: x\\\ny\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-147"
+from = "commonmark_x"
+input = "---\na: &x {b: 1}\nc:\n  <<: *x\n  d: 2\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-148"
+from = "commonmark_x"
+input = "---\n<<: {a: 1}\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-149"
+from = "commonmark_x"
+input = "---\na:\n  <<: [{b: 1}, {c: 2}]\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-150"
+from = "commonmark_x"
+input = "---\n\"<<\": x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-151"
+from = "commonmark_x"
+input = "---\na:\n  <<: {b: 1}\n  b: 2\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-152"
+from = "commonmark_x"
+input = "---\na: &x {b: 1}\n<<: *x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-153"
+from = "commonmark_x"
+input = "---\na: 1\n...\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-154"
+from = "commonmark_x"
+input = "---\na: 1\n--- \nb: 2\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-155"
+from = "commonmark_x"
+input = "---\n--- \na: 1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-156"
+from = "commonmark_x"
+input = "---\n--- a\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-157"
+from = "commonmark_x"
+input = "---\na: 1\n...\nb: 2\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-158"
+from = "commonmark_x"
+input = "---\na: 0x1F\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-159"
+from = "commonmark_x"
+input = "---\na: 0o17\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-160"
+from = "commonmark_x"
+input = "---\na: 1e3\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-161"
+from = "commonmark_x"
+input = "---\na: .inf\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-162"
+from = "commonmark_x"
+input = "---\na: -.INF\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-163"
+from = "commonmark_x"
+input = "---\na: .nan\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-164"
+from = "commonmark_x"
+input = "---\na: +1\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-165"
+from = "commonmark_x"
+input = "---\na: 1_000\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-166"
+from = "commonmark_x"
+input = "---\na: 0b11\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-167"
+from = "commonmark_x"
+input = "---\na: yes\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-168"
+from = "commonmark_x"
+input = "---\na: No\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-169"
+from = "commonmark_x"
+input = "---\na: TRUE\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-170"
+from = "commonmark_x"
+input = "---\na: False\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-171"
+from = "commonmark_x"
+input = "---\na: ~\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-172"
+from = "commonmark_x"
+input = "---\na: null\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-173"
+from = "commonmark_x"
+input = "---\na: Null\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-174"
+from = "commonmark_x"
+input = "---\na: NULL\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-175"
+from = "commonmark_x"
+input = "---\na:\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-176"
+from = "commonmark_x"
+input = "---\na: ''\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-177"
+from = "commonmark_x"
+input = "---\na: 2001-01-01\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-178"
+from = "commonmark_x"
+input = "---\na: 1:30\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-179"
+from = "commonmark_x"
+input = "---\na: 012\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-180"
+from = "commonmark_x"
+input = "---\na: 1.\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-181"
+from = "commonmark_x"
+input = "---\na: .5\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-182"
+from = "commonmark_x"
+input = "---\na: -0\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-183"
+from = "commonmark_x"
+input = "---\na: 1e400\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-184"
+from = "commonmark_x"
+input = "---\na: 0x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-185"
+from = "commonmark_x"
+input = "---\na: 1.0\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-186"
+from = "commonmark_x"
+input = "---\na: 1.50\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-187"
+from = "commonmark_x"
+input = "---\na: 12345678901234567890\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-188"
+from = "commonmark_x"
+input = "---\na: 0.1e-2\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-189"
+from = "commonmark_x"
+input = "---\na: 1\na: 2\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-190"
+from = "commonmark_x"
+input = "---\n1: a\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-191"
+from = "commonmark_x"
+input = "---\ntrue: a\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-192"
+from = "commonmark_x"
+input = "---\n~: a\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-193"
+from = "commonmark_x"
+input = "---\n[a]: b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-194"
+from = "commonmark_x"
+input = "---\na b: c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-195"
+from = "commonmark_x"
+input = "---\n\"a\": b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-196"
+from = "commonmark_x"
+input = "---\n'a': b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-197"
+from = "commonmark_x"
+input = "---\na : b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-198"
+from = "commonmark_x"
+input = "---\na:b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-199"
+from = "commonmark_x"
+input = "---\n-a: b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-200"
+from = "commonmark_x"
+input = "---\n- a\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-201"
+from = "commonmark_x"
+input = "---\n- a\n- b: c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-202"
+from = "commonmark_x"
+input = "---\nx\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-203"
+from = "commonmark_x"
+input = "---\n# c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-204"
+from = "commonmark_x"
+input = "---\na: b # c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-205"
+from = "commonmark_x"
+input = "---\na: b#c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-206"
+from = "commonmark_x"
+input = "---\na: \"b\" # c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-207"
+from = "commonmark_x"
+input = "---\na: # c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-208"
+from = "commonmark_x"
+input = "---\na: @x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-209"
+from = "commonmark_x"
+input = "---\na: `x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-210"
+from = "commonmark_x"
+input = "---\na: %x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-211"
+from = "commonmark_x"
+input = "---\na: :x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-212"
+from = "commonmark_x"
+input = "---\na: -x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-213"
+from = "commonmark_x"
+input = "---\na: - \n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-214"
+from = "commonmark_x"
+input = "---\na: ,x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-215"
+from = "commonmark_x"
+input = "---\na: ]x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-216"
+from = "commonmark_x"
+input = "---\na: 'x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-217"
+from = "commonmark_x"
+input = "---\na: \"x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-218"
+from = "commonmark_x"
+input = "---\na: &\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-219"
+from = "commonmark_x"
+input = "---\na: *\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-220"
+from = "commonmark_x"
+input = "---\na: #x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-221"
+from = "commonmark_x"
+input = "---\na: x\t# c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-222"
+from = "commonmark_x"
+input = "---\n a: b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-223"
+from = "commonmark_x"
+input = "---\n  a: b\n  c: d\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-224"
+from = "commonmark_x"
+input = "---\na: b\n c: d\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-225"
+from = "commonmark_x"
+input = "---\na:\n- b\n- c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-226"
+from = "commonmark_x"
+input = "---\na:\n  - b\n  -\n    c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-227"
+from = "commonmark_x"
+input = "---\na:\n  - - b\n    - c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-228"
+from = "commonmark_x"
+input = "---\na:\n  - b: c\n    d: e\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-229"
+from = "commonmark_x"
+input = "---\n- - - a\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-230"
+from = "commonmark_x"
+input = "---\na:\n  b:\n    c:\n      - d\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-231"
+from = "commonmark_x"
+input = "---\na: b\n\nc: d\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-232"
+from = "commonmark_x"
+input = "---\n\ta: b\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-233"
+from = "commonmark_x"
+input = "---\na:\n\tb: c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-234"
+from = "commonmark_x"
+input = "---\na: b\t\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-235"
+from = "commonmark_x"
+input = "---\na:   b   \n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-236"
+from = "commonmark_x"
+input = "---\na: |+\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-237"
+from = "commonmark_x"
+input = "---\na: |+\n\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-238"
+from = "commonmark_x"
+input = "---\na: |+\n\n\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-239"
+from = "commonmark_x"
+input = "---\na: >+\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-240"
+from = "commonmark_x"
+input = "---\na: >+\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-241"
+from = "commonmark_x"
+input = "---\na: |+\n\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-242"
+from = "commonmark_x"
+input = "---\na:\n  b: |+\n  c: d\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-243"
+from = "commonmark_x"
+input = "---\na:\n  - |+\n  - c\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-244"
+from = "commonmark_x"
+input = "---\na: |+\n# c\nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-245"
+from = "commonmark_x"
+input = "---\na: |+\n \nb: y\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-246"
+from = "commonmark_x"
+input = "---\na: |++\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-247"
+from = "commonmark_x"
+input = "---\na: >--\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-248"
+from = "commonmark_x"
+input = "---\na: |1+\n  x\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-249"
+from = "commonmark_x"
+input = "---\na: !x!y z\n---\n\nbody\n"
+
+[[case]]
+id = "r5-yaml-250"
+from = "commonmark_x"
+input = "---\na: !!x!y z\n---\n\nbody\n"
+
+[[case]]
+id = "r5-collapsed-attr-00"
+from = "commonmark_x"
+input = "[a][]{.c}\n"
+
+[[case]]
+id = "r5-collapsed-attr-01"
+from = "commonmark_x"
+input = "[a][]\n"
+
+[[case]]
+id = "r5-collapsed-attr-02"
+from = "commonmark_x"
+input = "[a][](u)\n"
+
+[[case]]
+id = "r5-collapsed-attr-03"
+from = "commonmark_x"
+input = "![a][](u)\n"
+
+[[case]]
+id = "r5-collapsed-attr-04"
+from = "commonmark_x"
+input = "[[]][]()\n"
+
+[[case]]
+id = "r5-collapsed-attr-05"
+from = "commonmark_x"
+input = "[a][]{.c}{.d} x\n"
+
+[[case]]
+id = "r5-collapsed-attr-06"
+from = "commonmark_x"
+input = "![a][]{#i}\n"
+
+[[case]]
+id = "r5-collapsed-attr-07"
+from = "commonmark_x"
+input = "[a][][]{.c}\n"
+
+[[case]]
+id = "r5-collapsed-attr-08"
+from = "commonmark_x"
+input = "x [a][] y{.c}\n"
+
+[[case]]
+id = "r5-collapsed-attr-09"
+from = "commonmark_x"
+input = "{.a\n}\n# h\n\n{.b\n}\n# i\n"
+
+[[case]]
+id = "r5-collapsed-attr-10"
+from = "commonmark_x"
+input = "{.a\n.b\n}\nx\n\n::: {.c\n}\ny\n:::\n\n{.d\n}\nz\n"
+
+[[case]]
+id = "r5-quote-bracket-00"
+from = "commonmark_x+smart"
+input = "[a](u)'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-01"
+from = "commonmark_x+smart"
+input = "x]'a b'\n"
+
+[[case]]
+id = "r5-quote-bracket-02"
+from = "commonmark_x+smart"
+input = "[a]'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-03"
+from = "commonmark_x+smart"
+input = "[a][r]'b c'\n\n[r]: u\n"
+
+[[case]]
+id = "r5-quote-bracket-04"
+from = "commonmark_x+smart"
+input = "![a](u)'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-05"
+from = "commonmark_x+smart"
+input = "[a]{.c}'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-06"
+from = "commonmark_x+smart"
+input = "[a](u) 'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-07"
+from = "commonmark_x+smart"
+input = "x)'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-08"
+from = "commonmark_x+smart"
+input = "[a](u)'s dog'\n"
+
+[[case]]
+id = "r5-quote-bracket-09"
+from = "commonmark_x+smart"
+input = "[a]\\\\'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-10"
+from = "commonmark_x+smart"
+input = "[[a]]'b c'\n"
+
+[[case]]
+id = "r5-quote-bracket-11"
+from = "commonmark_x+smart"
+input = "[a](u)\"b c\"\n"
+
+[[case]]
+id = "r5-quote-bracket-12"
+from = "commonmark_x+smart"
+input = "*[a](u)'b* c'\n"
+
+[[case]]
+id = "r5-quote-bracket-13"
+from = "commonmark_x+smart"
+input = "[a]('b c')'d e'\n"
+
+[[case]]
+id = "r5-table-indent-00"
+from = "gfm"
+input = "| a |\n| - |\n    | y |\n"
+
+[[case]]
+id = "r5-table-indent-01"
+from = "gfm"
+input = "| a | b |\n| - | - |\n    | y | z |\n     w | v\n   | p | q |\n"
+
+[[case]]
+id = "r5-table-indent-02"
+from = "gfm"
+input = "| a |\n| - |\n    |\n"
+
+[[case]]
+id = "r5-table-indent-03"
+from = "gfm"
+input = "| a | b |\n|-|-|\n    y | z\n"
+
+[[case]]
+id = "r5-table-indent-04"
+from = "gfm"
+input = "> | a |\n> | - |\n>     | y |\n"
+
+[[case]]
+id = "r5-table-indent-05"
+from = "gfm"
+input = "- | a |\n  | - |\n      | y |\n"
+
+[[case]]
+id = "r5-attr-para-00"
+from = "commonmark_x"
+input = "x\n{.a}\ny\n"
+
+[[case]]
+id = "r5-attr-para-01"
+from = "commonmark_x"
+input = "x\n{.a}\n\ny\n"
+
+[[case]]
+id = "r5-attr-para-02"
+from = "commonmark_x"
+input = "- x\n  {.a}\n  y\n"
+
+[[case]]
+id = "r5-attr-para-03"
+from = "commonmark_x"
+input = "> x\n> {.a}\n> # h\n"
+
+[[case]]
+id = "r5-attr-indented-00"
+from = "commonmark_x"
+input = "    {.a}\nx\n"
+
+[[case]]
+id = "r5-attr-indented-01"
+from = "commonmark_x"
+input = "    {.a}\n"
+
+[[case]]
+id = "r5-attr-indented-02"
+from = "commonmark_x"
+input = "- a\n\n      {.b}\n\n  c\n"
+
+[[case]]
+id = "rv-eal"
+from = "commonmark_x+east_asian_line_breaks"
+input = "你\n你\n你 a\n你\n"
+
+[[case]]
+id = "rv-meta-00-gfm"
+from = "gfm"
+input = "---\na: <b>\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-00-commonmark_x"
+from = "commonmark_x"
+input = "---\na: <b>\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-01-gfm"
+from = "gfm"
+input = "---\na: <div>\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-01-commonmark_x"
+from = "commonmark_x"
+input = "---\na: <div>\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-02-gfm"
+from = "gfm"
+input = "---\na: '<!-- x -->'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-02-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '<!-- x -->'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-03-gfm"
+from = "gfm"
+input = "---\na: '*'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-03-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '*'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-04-gfm"
+from = "gfm"
+input = "---\na: '-'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-04-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '-'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-05-gfm"
+from = "gfm"
+input = "---\na: '1.'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-05-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '1.'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-06-gfm"
+from = "gfm"
+input = "---\na: '***'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-06-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '***'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-07-gfm"
+from = "gfm"
+input = "---\na: '#'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-07-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '#'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-08-gfm"
+from = "gfm"
+input = "---\na: '    code'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-08-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '    code'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-09-gfm"
+from = "gfm"
+input = "---\na: '# h'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-09-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '# h'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-10-gfm"
+from = "gfm"
+input = "---\na: '- a'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-10-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '- a'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-11-gfm"
+from = "gfm"
+input = "---\na: '1. a'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-11-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '1. a'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-12-gfm"
+from = "gfm"
+input = "---\na: '> q'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-12-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '> q'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-13-gfm"
+from = "gfm"
+input = "---\na: 'a|b'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-13-commonmark_x"
+from = "commonmark_x"
+input = "---\na: 'a|b'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-14-gfm"
+from = "gfm"
+input = "---\na: '- '\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-14-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '- '\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-15-gfm"
+from = "gfm"
+input = "---\na: '`x`'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-15-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '`x`'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-16-gfm"
+from = "gfm"
+input = "---\na: '[x]: /u'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-16-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '[x]: /u'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-17-gfm"
+from = "gfm"
+input = "---\na: 'a\\n- b'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-17-commonmark_x"
+from = "commonmark_x"
+input = "---\na: 'a\\n- b'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-18-gfm"
+from = "gfm"
+input = "---\na: 'b\\n\\nc'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-18-commonmark_x"
+from = "commonmark_x"
+input = "---\na: 'b\\n\\nc'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-19-gfm"
+from = "gfm"
+input = "---\na: '```\\nx\\n```'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-19-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '```\\nx\\n```'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-20-gfm"
+from = "gfm"
+input = "---\na: '```\\nx'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-20-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '```\\nx'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-21-gfm"
+from = "gfm"
+input = "---\na: '> [!NOTE]'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-21-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '> [!NOTE]'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-22-gfm"
+from = "gfm"
+input = "---\na: 't\\n: d'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-22-commonmark_x"
+from = "commonmark_x"
+input = "---\na: 't\\n: d'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-23-gfm"
+from = "gfm"
+input = "---\na: 'x\\n '\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-23-commonmark_x"
+from = "commonmark_x"
+input = "---\na: 'x\\n '\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-24-gfm"
+from = "gfm"
+input = "---\na: |\n  # h\n  text\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-24-commonmark_x"
+from = "commonmark_x"
+input = "---\na: |\n  # h\n  text\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-25-gfm"
+from = "gfm"
+input = "---\na: '<b> x'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-25-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '<b> x'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-26-gfm"
+from = "gfm"
+input = "---\na: '- # h'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-26-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '- # h'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-27-gfm"
+from = "gfm"
+input = "---\na: '> # h'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-27-commonmark_x"
+from = "commonmark_x"
+input = "---\na: '> # h'\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-28-gfm"
+from = "gfm"
+input = "---\na: \"::: d\\n:::\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-28-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"::: d\\n:::\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-29-gfm"
+from = "gfm"
+input = "---\na: \"a|b\\n-|-\\nx|y\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-29-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"a|b\\n-|-\\nx|y\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-30-gfm"
+from = "gfm"
+input = "---\na: \"<?x\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-30-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"<?x\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-31-gfm"
+from = "gfm"
+input = "---\na: \"| a |\\n|---|\\n| b |\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-31-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"| a |\\n|---|\\n| b |\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-32-gfm"
+from = "gfm"
+input = "---\na: \"```\\nx\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-32-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"```\\nx\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-33-gfm"
+from = "gfm"
+input = "---\na: \"<div>\\nx\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-33-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"<div>\\nx\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-34-gfm"
+from = "gfm"
+input = "---\na: \"<!-- a\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-34-commonmark_x"
+from = "commonmark_x"
+input = "---\na: \"<!-- a\\n\"\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-35-gfm"
+from = "gfm"
+input = "---\na: [\"<?x\\n\", \"a|b\\n-|-\\nx|y\"]\n---\n\nbody\n"
+
+[[case]]
+id = "rv-meta-35-commonmark_x"
+from = "commonmark_x"
+input = "---\na: [\"<?x\\n\", \"a|b\\n-|-\\nx|y\"]\n---\n\nbody\n"

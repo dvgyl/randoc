@@ -400,6 +400,35 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   - Tests: the library set of full mode against the oracle; the removals
     of restricted mode; a binary chunk; a loop inside `pcall`.
 
+## ADR 12: The CommonMark reader ports the rules of `commonmark-hs` (2026-11-10)
+- **Context.** Pandoc 3.13 reads `commonmark`, `gfm` and `commonmark_x` with
+  the libraries `commonmark` 0.3.1, `commonmark-extensions` 0.2.7.3 and
+  `commonmark-pandoc` 0.3.0.2. The first version of `randoc-commonmark` came
+  from black-box tests. Five review rounds found new differences each time.
+  One example: the result for `a****b***c` comes from the place of the last
+  closer that found no opener. A fit to test results did not find that rule.
+- **Decision.** For each rule where the reader differs from the oracle, the
+  reader ports the upstream rule from the release archive of the version
+  above. The first ports are: delimiter run matching (`processEm`), the path
+  rule of `rebase_relative_paths` with its URI scheme list, the footnote
+  definition that leaves the block tree, the start of a definition, and the
+  block of attribute lines. The structure of the reader (a block tree and a
+  list of inline nodes) stays.
+- **Why.** The oracle result is the result of these libraries, so a port of
+  a rule gives the same result for each input, not only for the inputs of a
+  test matrix. A dependency is not possible: the libraries are Haskell. No
+  Rust crate gives the same tree for each extension.
+- **Licence.** BSD-3-Clause for each of the three packages (the `LICENSE`
+  file of each release archive; the three files are equal). The text is in
+  `third_party/licences/commonmark-hs.txt` and in
+  `crates/randoc-commonmark/NOTICE.md`. The test files of the packages hold
+  the CommonMark specification (CC-BY-SA-4.0) and are not in the repository.
+- **Consequences.** Randoc maintains the ported rules and follows a new
+  version of the libraries when Pandoc changes its version. Each port has
+  oracle cases (`conformance/cases/commonmark/runs.toml`, `rules/r5-*`,
+  `rebase/r5-*`). The rules that are not compared yet stay as they were:
+  the report of the workstream lists them.
+
 ## ADR 13: The HTML reader ports the `tagsoup` tokenizer (2026-11-10)
 
 - **Context.** Pandoc reads HTML in two layers: the library `tagsoup`

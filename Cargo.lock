@@ -291,6 +291,7 @@ version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-citeproc",
+ "randoc-commonmark",
  "randoc-core",
  "randoc-html",
  "randoc-html-reader",
@@ -319,6 +320,17 @@ version = "0.1.0"
 dependencies = [
  "randoc",
  "randoc-harness",
+]
+
+[[package]]
+name = "randoc-commonmark"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "randoc-yaml",
+ "serde_json",
+ "toml",
 ]
 
 [[package]]

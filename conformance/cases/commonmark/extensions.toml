@@ -1,0 +1,1590 @@
+# Extension cases: inputs from the BSD-3-Clause test files of commonmark-extensions.
+from = "commonmark"
+to = []
+
+[[case]]
+id = "attributes-01"
+from = "commonmark+attributes"
+input = '''
+# Heading {#ident .class key="value value" key2=value2}
+'''
+
+[[case]]
+id = "attributes-02"
+from = "commonmark+attributes"
+input = '''
+Heading {#ident .class key="value"}
+=====
+'''
+
+[[case]]
+id = "attributes-03"
+from = "commonmark+attributes"
+input = '''
+# Heading {  #ident  .class key="value" }
+'''
+
+[[case]]
+id = "attributes-04"
+from = "commonmark+attributes"
+input = '''
+# Heading {.class1 .class2 class="class3"}
+'''
+
+[[case]]
+id = "attributes-05"
+from = "commonmark+attributes"
+input = '''
+# Heading {#id1 #id2 id="id3"}
+'''
+
+[[case]]
+id = "attributes-06"
+from = "commonmark+attributes"
+input = '''
+# Foo {#bar}   
+'''
+
+[[case]]
+id = "attributes-07"
+from = "commonmark+attributes"
+input = '''
+# ATX
+
+Setext
+------
+'''
+
+[[case]]
+id = "attributes-08"
+from = "commonmark+attributes"
+input = '''
+``` {#ident .class key="value value" key2=value2} 
+xyz
+```
+'''
+
+[[case]]
+id = "attributes-09"
+from = "commonmark+attributes"
+input = '''
+~~~~{#mycode .ruby .number-lines}
+xyz
+~~~~
+'''
+
+[[case]]
+id = "attributes-10"
+from = "commonmark+attributes"
+input = '''
+``` {#foo} bar
+xyz
+```
+'''
+
+[[case]]
+id = "attributes-11"
+from = "commonmark+attributes"
+input = '''
+``` bar {#foo}
+xyz
+```
+'''
+
+[[case]]
+id = "attributes-12"
+from = "commonmark+attributes"
+input = '''
+`hi`{#ident .class key=value}
+'''
+
+[[case]]
+id = "attributes-13"
+from = "commonmark+attributes"
+input = '''
+`hi` {#ident .class key=value}
+'''
+
+[[case]]
+id = "attributes-14"
+from = "commonmark+attributes"
+input = '''
+`hi`{#ident .class
+key=value}
+'''
+
+[[case]]
+id = "attributes-15"
+from = "commonmark+attributes"
+input = '''
+{.special}
+* * * *
+'''
+
+[[case]]
+id = "attributes-16"
+from = "commonmark+attributes"
+input = '''
+{#foo .special}
+bar
+'''
+
+[[case]]
+id = "attributes-17"
+from = "commonmark+attributes"
+input = '''
+{#foo .special}
+# Hi
+'''
+
+[[case]]
+id = "attributes-18"
+from = "commonmark+attributes"
+input = '''
+{#id1}
+{#id2}
+# Heading {#id3}
+'''
+
+[[case]]
+id = "attributes-19"
+from = "commonmark+attributes"
+input = '''
+{#id1}
+{#id3}
+# Heading
+'''
+
+[[case]]
+id = "attributes-20"
+from = "commonmark+attributes"
+input = '''
+{.class1 k=1}
+{.class2 .class3 k=2}
+# Heading {.class4}
+'''
+
+[[case]]
+id = "attributes-21"
+from = "commonmark+attributes"
+input = '''
+[foo]
+
+[foo]: bar "title" {#ident .centered .big}
+'''
+
+[[case]]
+id = "attributes-22"
+from = "commonmark+attributes"
+input = '''
+[foo](bar){#ident .class key="value value" key2=value2}
+'''
+
+[[case]]
+id = "attributes-23"
+from = "commonmark+attributes"
+input = '''
+![foo](bar){#ident .centered .big}
+'''
+
+[[case]]
+id = "attributes-24"
+from = "commonmark+attributes"
+input = '''
+[foo]{#ident .centered .big}
+
+[foo]: bar
+'''
+
+[[case]]
+id = "attributes-25"
+from = "commonmark+attributes"
+input = '''
+*hi*{.underline}
+'''
+
+[[case]]
+id = "attributes-26"
+from = "commonmark+attributes"
+input = '''
+*hi*{.underline}{#foo}
+'''
+
+[[case]]
+id = "attributes-27"
+from = "commonmark+attributes"
+input = '''
+{.special}
+{#foo}
+* * * *
+'''
+
+[[case]]
+id = "attributes-28"
+from = "commonmark+attributes"
+input = '''
+# Heading {key="v&#97;lue" }
+'''
+
+[[case]]
+id = "auto-identifiers-01"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+#   Heading  with_two_spaces! 
+'''
+
+[[case]]
+id = "auto-identifiers-02"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+Heading  with_two_spaces!
+-------------------------
+'''
+
+[[case]]
+id = "auto-identifiers-03"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+# Heading {#foo}
+'''
+
+[[case]]
+id = "auto-identifiers-04"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+{#foo}
+# Heading
+'''
+
+[[case]]
+id = "auto-identifiers-05"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+Hi
+'''
+
+[[case]]
+id = "auto-identifiers-06"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+# Hi
+# Hi
+# Hi
+'''
+
+[[case]]
+id = "auto-identifiers-07"
+from = "commonmark+gfm_auto_identifiers"
+input = '''
+# Hi
+# Hi {#hi}
+# Hi
+
+Hi
+==
+'''
+
+[[case]]
+id = "auto-identifiers-ascii-01"
+from = "commonmark+gfm_auto_identifiers+ascii_identifiers"
+input = '''
+# Heading with &auml; and &alpha;
+'''
+
+[[case]]
+id = "auto-identifiers-ascii-02"
+from = "commonmark+gfm_auto_identifiers+ascii_identifiers"
+input = '''
+# Heading with ❤️
+'''
+
+[[case]]
+id = "bracketed-spans-01"
+from = "commonmark+bracketed_spans"
+input = '''
+[foo]{#ident .class key="value value" key2=value2}
+'''
+
+[[case]]
+id = "bracketed-spans-02"
+from = "commonmark+bracketed_spans"
+input = '''
+[foo
+*bar*]{#ident
+.class}
+'''
+
+[[case]]
+id = "bracketed-spans-03"
+from = "commonmark+bracketed_spans"
+input = '''
+[foo]
+'''
+
+[[case]]
+id = "definition-lists-01"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+:   small green berry
+
+plum
+:   plum fruit
+'''
+
+[[case]]
+id = "definition-lists-02"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+
+:   small green berry
+
+plum
+
+:   plum fruit
+'''
+
+[[case]]
+id = "definition-lists-03"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+  : small green berry
+
+plum
+  : plum fruit
+'''
+
+[[case]]
+id = "definition-lists-04"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+
+ : small green berry
+
+plum
+
+ : plum fruit
+'''
+
+[[case]]
+id = "definition-lists-05"
+from = "commonmark+definition_lists"
+input = '''
+*kiwi*
+
+:   small green berry
+
+    contains seeds,
+    crisp, pleasant to taste
+
+*plum*
+
+:   plum fruit
+
+        { plum code block }
+
+    > plum block quote
+'''
+
+[[case]]
+id = "definition-lists-06"
+from = "commonmark+definition_lists"
+input = '''
+term
+
+:   1. Para one
+
+       Para two
+'''
+
+[[case]]
+id = "definition-lists-07"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+:   small green berry
+:   computer company
+
+plum
+:   plum fruit
+:   telecom company
+'''
+
+[[case]]
+id = "definition-lists-08"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+
+:   small green berry
+
+:   computer company
+
+plum
+
+:   plum fruit
+:   telecom company
+'''
+
+[[case]]
+id = "definition-lists-09"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+
+:   small green berry
+
+:   computer
+company
+
+plum
+
+:   plum
+fruit
+:   telecom company
+'''
+
+[[case]]
+id = "definition-lists-10"
+from = "commonmark+definition_lists"
+input = '''
+kiwi
+  ~ small green berry
+
+plum
+  ~ plum fruit
+'''
+
+[[case]]
+id = "definition-lists-11"
+from = "commonmark+definition_lists"
+input = '''
+a
+b\
+c
+
+:   foo
+'''
+
+[[case]]
+id = "definition-lists-12"
+from = "commonmark+definition_lists"
+input = '''
+Foo
+
+bar
+:   baz
+
+bim
+:   bor
+'''
+
+[[case]]
+id = "emoji-01"
+from = "commonmark+emoji"
+input = '''
+:blush:
+A:broken_heart:
+:smiley_cat:
+'''
+
+[[case]]
+id = "emoji-02"
+from = "commonmark+emoji"
+input = '''
+:nothing_really:
+:broken_heart
+'''
+
+[[case]]
+id = "fancy-lists-01"
+from = "commonmark+fancy_lists"
+input = '''
+1. decimal
+2. decimal
+'''
+
+[[case]]
+id = "fancy-lists-02"
+from = "commonmark+fancy_lists"
+input = '''
+A.  upper alpha
+B.  upper alpha
+'''
+
+[[case]]
+id = "fancy-lists-03"
+from = "commonmark+fancy_lists"
+input = '''
+a. lower alpha
+b. lower alpha
+'''
+
+[[case]]
+id = "fancy-lists-04"
+from = "commonmark+fancy_lists"
+input = '''
+I.  Upper Roman
+II.  Upper Roman
+'''
+
+[[case]]
+id = "fancy-lists-05"
+from = "commonmark+fancy_lists"
+input = '''
+i. Lower Roman
+ii. Lower Roman
+'''
+
+[[case]]
+id = "fancy-lists-06"
+from = "commonmark+fancy_lists"
+input = '''
+1) decimal
+2) decimal
+'''
+
+[[case]]
+id = "fancy-lists-07"
+from = "commonmark+fancy_lists"
+input = '''
+A)  upper alpha
+B)  upper alpha
+'''
+
+[[case]]
+id = "fancy-lists-08"
+from = "commonmark+fancy_lists"
+input = '''
+a) lower alpha
+b) lower alpha
+'''
+
+[[case]]
+id = "fancy-lists-09"
+from = "commonmark+fancy_lists"
+input = '''
+I)  Upper Roman
+II)  Upper Roman
+'''
+
+[[case]]
+id = "fancy-lists-10"
+from = "commonmark+fancy_lists"
+input = '''
+i) Lower Roman
+ii) Lower Roman
+'''
+
+[[case]]
+id = "fancy-lists-11"
+from = "commonmark+fancy_lists"
+input = '''
+(1) decimal
+(2) decimal
+'''
+
+[[case]]
+id = "fancy-lists-12"
+from = "commonmark+fancy_lists"
+input = '''
+(A)  upper alpha
+(B)  upper alpha
+'''
+
+[[case]]
+id = "fancy-lists-13"
+from = "commonmark+fancy_lists"
+input = '''
+(a) lower alpha
+(b) lower alpha
+'''
+
+[[case]]
+id = "fancy-lists-14"
+from = "commonmark+fancy_lists"
+input = '''
+(I)  Upper Roman
+(II)  Upper Roman
+'''
+
+[[case]]
+id = "fancy-lists-15"
+from = "commonmark+fancy_lists"
+input = '''
+(i) Lower Roman
+(ii) Lower Roman
+'''
+
+[[case]]
+id = "fancy-lists-16"
+from = "commonmark+fancy_lists"
+input = '''
+B.  Russell
+
+B. Russell
+
+I.  J. Good
+
+I. J. Good
+'''
+
+[[case]]
+id = "fancy-lists-17"
+from = "commonmark+fancy_lists"
+input = '''
+1. one
+2) one
+'''
+
+[[case]]
+id = "fancy-lists-18"
+from = "commonmark+fancy_lists"
+input = '''
+1. one
+a. one
+'''
+
+[[case]]
+id = "fancy-lists-19"
+from = "commonmark+fancy_lists"
+input = '''
+b. two
+
+(vi) six
+'''
+
+[[case]]
+id = "fancy-lists-20"
+from = "commonmark+fancy_lists"
+input = '''
+u. one
+v. two
+'''
+
+[[case]]
+id = "fancy-lists-21"
+from = "commonmark+fancy_lists"
+input = '''
+iv. one
+v. two
+'''
+
+[[case]]
+id = "fancy-lists-22"
+from = "commonmark+fancy_lists"
+input = '''
+i. one
+ii. two
+'''
+
+[[case]]
+id = "fancy-lists-23"
+from = "commonmark+fancy_lists"
+input = '''
+I.  one
+'''
+
+[[case]]
+id = "fancy-lists-24"
+from = "commonmark+fancy_lists"
+input = '''
+C.  one
+CI.  one
+'''
+
+[[case]]
+id = "fancy-lists-25"
+from = "commonmark+fancy_lists"
+input = '''
+vv. not a list
+
+il. not a list
+
+iv. a list
+'''
+
+[[case]]
+id = "fancy-lists-26"
+from = "commonmark+fancy_lists"
+input = '''
+* * *
+
+- - -
+'''
+
+[[case]]
+id = "fenced-divs-01"
+from = "commonmark+fenced_divs"
+input = '''
+::: {#bar .foo}
+Hi
+
+> A block quote.
+:::
+'''
+
+[[case]]
+id = "fenced-divs-02"
+from = "commonmark+fenced_divs"
+input = '''
+:::: {#bar .foo} 
+Hi
+
+> A block quote.
+::::::::::::::::::::::::: 
+'''
+
+[[case]]
+id = "fenced-divs-03"
+from = "commonmark+fenced_divs"
+input = '''
+::: {#bar .foo}
+Hi
+::: {.baz}
+> A block quote.
+:::
+:::
+'''
+
+[[case]]
+id = "fenced-divs-04"
+from = "commonmark+fenced_divs"
+input = '''
+Paragraph text
+::: {#bar .foo}
+Hi
+:::
+'''
+
+[[case]]
+id = "fenced-divs-05"
+from = "commonmark+fenced_divs"
+input = '''
+:::
+Hi
+:::
+'''
+
+[[case]]
+id = "fenced-divs-06"
+from = "commonmark+fenced_divs"
+input = '''
+::::: {.foo}
+Hi
+:::
+::::::
+'''
+
+[[case]]
+id = "fenced-divs-07"
+from = "commonmark+fenced_divs"
+input = '''
+> ::: {.foo}
+> Hi
+'''
+
+[[case]]
+id = "fenced-divs-08"
+from = "commonmark+fenced_divs"
+input = '''
+::: c_d
+Hi
+:::
+'''
+
+[[case]]
+id = "hard-line-breaks-01"
+from = "commonmark+hard_line_breaks"
+input = '''
+Hello
+there
+'''
+
+[[case]]
+id = "hard-line-breaks-02"
+from = "commonmark+hard_line_breaks"
+input = '''
+*Hello 
+there*
+'''
+
+[[case]]
+id = "implicit-heading-references-01"
+from = "commonmark+implicit_header_references+gfm_auto_identifiers"
+input = '''
+# Heading
+
+See the [Heading] above.
+'''
+
+[[case]]
+id = "implicit-heading-references-02"
+from = "commonmark+implicit_header_references+gfm_auto_identifiers"
+input = '''
+{#foo}
+# Heading
+
+See the [Heading] above.
+'''
+
+[[case]]
+id = "implicit-heading-references-03"
+from = "commonmark+implicit_header_references+gfm_auto_identifiers"
+input = '''
+# Heading
+
+See the [Heading] above.
+
+[Heading]: foo
+'''
+
+[[case]]
+id = "implicit-heading-references-04"
+from = "commonmark+implicit_header_references+gfm_auto_identifiers"
+input = '''
+# Heading
+
+# Heading
+
+See the [Heading] above.
+'''
+
+[[case]]
+id = "implicit-heading-references-05"
+from = "commonmark+implicit_header_references+gfm_auto_identifiers"
+input = '''
+#
+
+##   
+
+See [] and [   ].
+'''
+
+[[case]]
+id = "math-01"
+from = "commonmark+tex_math_dollars"
+input = '''
+Let $x$ and $y$ be integers such that
+$$x=y + 2$$
+'''
+
+[[case]]
+id = "math-02"
+from = "commonmark+tex_math_dollars"
+input = '''
+This is not math: 2000$.
+And neither is this $ 4 $.
+Or this $4
+$.
+'''
+
+[[case]]
+id = "math-03"
+from = "commonmark+tex_math_dollars"
+input = '''
+This is display math:
+$$
+e=mc^2
+$$
+'''
+
+[[case]]
+id = "math-04"
+from = "commonmark+tex_math_dollars"
+input = '''
+This is display math:
+$$
+\text{Hello $x^2$}
+$$
+And this is inline math:
+$\text{Hello $x$ there!}$
+'''
+
+[[case]]
+id = "math-05"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a $ b$$
+'''
+
+[[case]]
+id = "math-06"
+from = "commonmark+tex_math_dollars"
+input = '''
+The cost is between \$10 and 30$.
+'''
+
+[[case]]
+id = "math-07"
+from = "commonmark+tex_math_dollars"
+input = '''
+$\text{\$}$
+'''
+
+[[case]]
+id = "math-08"
+from = "commonmark+tex_math_dollars"
+input = '''
+$b<a>c$
+'''
+
+[[case]]
+id = "math-09"
+from = "commonmark+tex_math_dollars"
+input = '''
+$1$2$3
+
+$1$2$3$
+
+$1{$2$}3$
+
+$$1$$2$$3
+
+$$1$$2$$3$$
+
+$$1{$$2$$}3$$
+'''
+
+[[case]]
+id = "math-10"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a%$ ignored
++b$
+'''
+
+[[case]]
+id = "math-11"
+from = "commonmark+tex_math_dollars"
+input = '''
+${a%} $
+b}$
+'''
+
+[[case]]
+id = "math-12"
+from = "commonmark+tex_math_dollars"
+input = '''
+${a%{
+b}$
+'''
+
+[[case]]
+id = "math-13"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a\%$
+'''
+
+[[case]]
+id = "math-14"
+from = "commonmark+tex_math_dollars"
+input = '''
+${a\%}$
+'''
+
+[[case]]
+id = "math-15"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a\%{b$c$}$
+'''
+
+[[case]]
+id = "math-16"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a\\%$
+b$
+'''
+
+[[case]]
+id = "math-17"
+from = "commonmark+tex_math_dollars"
+input = '''
+${a\\%}
+b}$
+'''
+
+[[case]]
+id = "math-18"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a\\\%$
+'''
+
+[[case]]
+id = "math-19"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a%
+% } $ \
+b$
+'''
+
+[[case]]
+id = "math-20"
+from = "commonmark+tex_math_dollars"
+input = '''
+$a%$
+'''
+
+[[case]]
+id = "math-21"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a%$$ ignored
++b$$
+'''
+
+[[case]]
+id = "math-22"
+from = "commonmark+tex_math_dollars"
+input = '''
+$${a%} $$
+b}$$
+'''
+
+[[case]]
+id = "math-23"
+from = "commonmark+tex_math_dollars"
+input = '''
+$${a%{
+b}$$
+'''
+
+[[case]]
+id = "math-24"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a\%$$
+'''
+
+[[case]]
+id = "math-25"
+from = "commonmark+tex_math_dollars"
+input = '''
+$${a\%}$$
+'''
+
+[[case]]
+id = "math-26"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a\%{b$$c$$}$$
+'''
+
+[[case]]
+id = "math-27"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a\\%$$
+b$$
+'''
+
+[[case]]
+id = "math-28"
+from = "commonmark+tex_math_dollars"
+input = '''
+$${a\\%}
+b}$$
+'''
+
+[[case]]
+id = "math-29"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a\\\%$$
+'''
+
+[[case]]
+id = "math-30"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a%
+% } $$ \
+b$$
+'''
+
+[[case]]
+id = "math-31"
+from = "commonmark+tex_math_dollars"
+input = '''
+$$a%$$
+'''
+
+[[case]]
+id = "raw-attribute-01"
+from = "commonmark+raw_attribute"
+input = '''
+``` {=html}
+<b>foo</b>
+```
+'''
+
+[[case]]
+id = "raw-attribute-02"
+from = "commonmark+raw_attribute"
+input = '''
+`<b>foo</b>`{=html}
+'''
+
+[[case]]
+id = "raw-attribute-03"
+from = "commonmark+raw_attribute"
+input = '''
+``` {=html #id}
+<b>foo</b>
+'''
+
+[[case]]
+id = "raw-attribute-04"
+from = "commonmark+raw_attribute"
+input = '''
+`<b>foo</b>`{=html .bar}
+'''
+
+[[case]]
+id = "smart-01"
+from = "commonmark+smart"
+input = '''
+"Look," said the cat.
+"'Rex' is my dog."
+'''
+
+[[case]]
+id = "smart-02"
+from = "commonmark+smart"
+input = '''
+'A', 'B', and 'C' are letters.
+'''
+
+[[case]]
+id = "smart-03"
+from = "commonmark+smart"
+input = '''
+'Ash,' 'fir,' and 'yew' are short words.
+So is 'box.'
+'''
+
+[[case]]
+id = "smart-04"
+from = "commonmark+smart"
+input = '''
+'He said, "I want to go."'
+'''
+
+[[case]]
+id = "smart-05"
+from = "commonmark+smart"
+input = '''
+Were you alive in the 70's?
+'''
+
+[[case]]
+id = "smart-06"
+from = "commonmark+smart"
+input = '''
+Some text with '`x`' and a "[link text](url)" inside.
+'''
+
+[[case]]
+id = "smart-07"
+from = "commonmark+smart"
+input = '''
+'tis the season to be 'jolly'
+'''
+
+[[case]]
+id = "smart-08"
+from = "commonmark+smart"
+input = '''
+'We'll use Jane's boat and John's truck,' Jenna said.
+'''
+
+[[case]]
+id = "smart-09"
+from = "commonmark+smart"
+input = '''
+"A paragraph with no closing quote.
+
+"Second paragraph by same speaker, in fiction."
+'''
+
+[[case]]
+id = "smart-10"
+from = "commonmark+smart"
+input = '''
+[a]'s b'
+'''
+
+[[case]]
+id = "smart-11"
+from = "commonmark+smart"
+input = '''
+\"This is not smart.\"
+This isn\'t either.
+5\'8\"
+'''
+
+[[case]]
+id = "smart-12"
+from = "commonmark+smart"
+input = '''
+''hi''
+'''
+
+[[case]]
+id = "smart-13"
+from = "commonmark+smart"
+input = '''
+Some dashes:  em---em
+en--en
+em --- em
+en -- en
+2--3
+'''
+
+[[case]]
+id = "smart-14"
+from = "commonmark+smart"
+input = '''
+one-
+two--
+three---
+four----
+five-----
+six------
+seven-------
+eight--------
+nine---------
+thirteen-------------.
+'''
+
+[[case]]
+id = "smart-15"
+from = "commonmark+smart"
+input = '''
+Escaped hyphens: \-- \-\-\-.
+'''
+
+[[case]]
+id = "smart-16"
+from = "commonmark+smart"
+input = '''
+Ellipses...and...and....
+'''
+
+[[case]]
+id = "smart-17"
+from = "commonmark+smart"
+input = '''
+No ellipses\.\.\.
+'''
+
+[[case]]
+id = "strikethrough-01"
+from = "commonmark+strikeout"
+input = '''
+~~This is *stricken out*~~
+'''
+
+[[case]]
+id = "strikethrough-02"
+from = "commonmark+strikeout"
+input = '''
+~This is nothing~
+'''
+
+[[case]]
+id = "strikethrough-03"
+from = "commonmark+strikeout"
+input = '''
+~~This is \~\~stricken~~
+'''
+
+[[case]]
+id = "strikethrough-04"
+from = "commonmark+strikeout"
+input = '''
+This~~is~~stricken
+'''
+
+[[case]]
+id = "strikethrough-05"
+from = "commonmark+strikeout"
+input = '''
+~~This~~is~~stricken~~
+'''
+
+[[case]]
+id = "strikethrough-06"
+from = "commonmark+strikeout"
+input = '''
+Here I strike out an exclamation point~~!~~.
+'''
+
+[[case]]
+id = "strikethrough-07"
+from = "commonmark+strikeout"
+input = '''
+~4 **~75 GB.**
+'''
+
+[[case]]
+id = "strikethrough-08"
+from = "commonmark+strikeout"
+input = '''
+~~a~ ~b~~
+'''
+
+[[case]]
+id = "subscript-01"
+from = "commonmark+subscript"
+input = '''
+E=mc~2~.
+'''
+
+[[case]]
+id = "subscript-02"
+from = "commonmark+subscript"
+input = '''
+E=mc\~2\~.
+'''
+
+[[case]]
+id = "subscript-03"
+from = "commonmark+subscript"
+input = '''
+E=mc~2 or *3*~.
+'''
+
+[[case]]
+id = "subscript-04"
+from = "commonmark+subscript"
+input = '''
+E=mc~!~.
+'''
+
+[[case]]
+id = "subscript-05"
+from = "commonmark+subscript"
+input = '''
+E=mc~ 2~.
+
+E=mc~2 ~.
+
+~ ~
+'''
+
+[[case]]
+id = "superscript-01"
+from = "commonmark+superscript"
+input = '''
+E=mc^2^.
+'''
+
+[[case]]
+id = "superscript-02"
+from = "commonmark+superscript"
+input = '''
+E=mc\^2\^.
+'''
+
+[[case]]
+id = "superscript-03"
+from = "commonmark+superscript"
+input = '''
+E=mc^2 or *3*^.
+'''
+
+[[case]]
+id = "superscript-04"
+from = "commonmark+superscript"
+input = '''
+E=mc^!^.
+'''
+
+[[case]]
+id = "superscript-05"
+from = "commonmark+superscript"
+input = '''
+E=mc^ 2^.
+
+E=mc^2 ^.
+
+^ ^
+'''
+
+[[case]]
+id = "task-lists-01"
+from = "commonmark+task_lists"
+input = '''
+- [ ] buy milk
+- [x] walk the dog
+'''
+
+[[case]]
+id = "task-lists-02"
+from = "commonmark+task_lists"
+input = '''
+* [ ] buy milk
+
+  with two paragraphs
+
+* [x] walk the dog
+'''
+
+[[case]]
+id = "task-lists-03"
+from = "commonmark+task_lists"
+input = '''
+- [x]unreal
+'''
+
+[[case]]
+id = "task-lists-04"
+from = "commonmark+task_lists"
+input = '''
+-  [x] real
+
+  not indented enough
+'''
+
+[[case]]
+id = "task-lists-05"
+from = "commonmark+task_lists"
+input = '''
+- [x] * some text
+- [ ] > some text
+- [x]
+  * some text
+- [ ]
+  > some text
+'''
+
+[[case]]
+id = "task-lists-06"
+from = "commonmark+task_lists"
+input = '''
+- [x] * some text
+
+- [x]
+
+  some text
+
+- [x]	
+
+  some text
+'''
+
+[[case]]
+id = "task-lists-07"
+from = "commonmark+task_lists"
+input = '''
+- [ ]
+- [ ] b
+'''
+
+[[case]]
+id = "task-lists-08"
+from = "commonmark+task_lists"
+input = '''
+- [ ] a
+- [ ] b
+
+
+x
+'''
+
+[[case]]
+id = "task-lists-09"
+from = "commonmark+task_lists"
+input = '''
+- [ ] a
+  - [ ] b
+
+- [ ] c
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-01"
+from = "commonmark+wikilinks_title_after_pipe"
+input = '''
+[[https://example.org]]
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-02"
+from = "commonmark+wikilinks_title_after_pipe"
+input = '''
+[[https://example.org|title]]
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-03"
+from = "commonmark+wikilinks_title_after_pipe"
+input = '''
+[[Name of page]]
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-04"
+from = "commonmark+wikilinks_title_after_pipe"
+input = '''
+[[Name of page|Title]]
+'''
+
+[[case]]
+id = "wikilinks-title-after-pipe-05"
+from = "commonmark+wikilinks_title_after_pipe"
+input = '''
+[[Gesch&uuml;tztes Leerzeichen|&#xDC;ber &amp;nbsp;]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-01"
+from = "commonmark+wikilinks_title_before_pipe"
+input = '''
+[[https://example.org]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-02"
+from = "commonmark+wikilinks_title_before_pipe"
+input = '''
+[[title|https://example.org]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-03"
+from = "commonmark+wikilinks_title_before_pipe"
+input = '''
+[[Name of page]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-04"
+from = "commonmark+wikilinks_title_before_pipe"
+input = '''
+[[Title|Name of page]]
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-05"
+from = "commonmark+wikilinks_title_before_pipe"
+input = '''
+[Title](Name%20of%20page)
+'''
+
+[[case]]
+id = "wikilinks-title-before-pipe-06"
+from = "commonmark+wikilinks_title_before_pipe"
+input = '''
+[[&#xDC;ber &amp;nbsp;|Gesch&uuml;tztes Leerzeichen]]
+'''
+

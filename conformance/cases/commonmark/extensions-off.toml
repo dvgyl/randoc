@@ -1,0 +1,1386 @@
+# The same extension inputs with the extension off, and commonmark_x cases written for Randoc.
+from = "commonmark"
+to = []
+
+[[case]]
+id = "off-attributes-1"
+input = '''
+# Heading {#ident .class key="value value" key2=value2}
+'''
+
+[[case]]
+id = "off-attributes-2"
+input = '''
+``` {#ident .class key="value value" key2=value2} 
+xyz
+```
+'''
+
+[[case]]
+id = "off-attributes-3"
+input = '''
+{.special}
+* * * *
+'''
+
+[[case]]
+id = "off-attributes-4"
+input = '''
+[foo](bar){#ident .class key="value value" key2=value2}
+'''
+
+[[case]]
+id = "off-auto-identifiers-1"
+input = '''
+#   Heading  with_two_spaces! 
+'''
+
+[[case]]
+id = "off-auto-identifiers-2"
+input = '''
+Heading  with_two_spaces!
+-------------------------
+'''
+
+[[case]]
+id = "off-auto-identifiers-3"
+input = '''
+# Heading {#foo}
+'''
+
+[[case]]
+id = "off-auto-identifiers-4"
+input = '''
+{#foo}
+# Heading
+'''
+
+[[case]]
+id = "off-auto-identifiers-ascii-1"
+input = '''
+# Heading with &auml; and &alpha;
+'''
+
+[[case]]
+id = "off-auto-identifiers-ascii-2"
+input = '''
+# Heading with ❤️
+'''
+
+[[case]]
+id = "off-bracketed-spans-1"
+input = '''
+[foo]{#ident .class key="value value" key2=value2}
+'''
+
+[[case]]
+id = "off-bracketed-spans-2"
+input = '''
+[foo
+*bar*]{#ident
+.class}
+'''
+
+[[case]]
+id = "off-bracketed-spans-3"
+input = '''
+[foo]
+'''
+
+[[case]]
+id = "off-definition-lists-1"
+input = '''
+kiwi
+:   small green berry
+
+plum
+:   plum fruit
+'''
+
+[[case]]
+id = "off-definition-lists-2"
+input = '''
+kiwi
+
+ : small green berry
+
+plum
+
+ : plum fruit
+'''
+
+[[case]]
+id = "off-definition-lists-3"
+input = '''
+kiwi
+:   small green berry
+:   computer company
+
+plum
+:   plum fruit
+:   telecom company
+'''
+
+[[case]]
+id = "off-definition-lists-4"
+input = '''
+kiwi
+  ~ small green berry
+
+plum
+  ~ plum fruit
+'''
+
+[[case]]
+id = "off-emoji-1"
+input = '''
+:blush:
+A:broken_heart:
+:smiley_cat:
+'''
+
+[[case]]
+id = "off-emoji-2"
+input = '''
+:nothing_really:
+:broken_heart
+'''
+
+[[case]]
+id = "off-fancy-lists-1"
+input = '''
+1. decimal
+2. decimal
+'''
+
+[[case]]
+id = "off-fancy-lists-2"
+input = '''
+A)  upper alpha
+B)  upper alpha
+'''
+
+[[case]]
+id = "off-fancy-lists-3"
+input = '''
+(a) lower alpha
+(b) lower alpha
+'''
+
+[[case]]
+id = "off-fancy-lists-4"
+input = '''
+b. two
+
+(vi) six
+'''
+
+[[case]]
+id = "off-fenced-divs-1"
+input = '''
+::: {#bar .foo}
+Hi
+
+> A block quote.
+:::
+'''
+
+[[case]]
+id = "off-fenced-divs-2"
+input = '''
+::: {#bar .foo}
+Hi
+::: {.baz}
+> A block quote.
+:::
+:::
+'''
+
+[[case]]
+id = "off-fenced-divs-3"
+input = '''
+:::
+Hi
+:::
+'''
+
+[[case]]
+id = "off-fenced-divs-4"
+input = '''
+> ::: {.foo}
+> Hi
+'''
+
+[[case]]
+id = "off-hard-line-breaks-1"
+input = '''
+Hello
+there
+'''
+
+[[case]]
+id = "off-hard-line-breaks-2"
+input = '''
+*Hello 
+there*
+'''
+
+[[case]]
+id = "off-implicit-heading-references-1"
+input = '''
+# Heading
+
+See the [Heading] above.
+'''
+
+[[case]]
+id = "off-implicit-heading-references-2"
+input = '''
+{#foo}
+# Heading
+
+See the [Heading] above.
+'''
+
+[[case]]
+id = "off-implicit-heading-references-3"
+input = '''
+# Heading
+
+See the [Heading] above.
+
+[Heading]: foo
+'''
+
+[[case]]
+id = "off-implicit-heading-references-4"
+input = '''
+# Heading
+
+# Heading
+
+See the [Heading] above.
+'''
+
+[[case]]
+id = "off-math-1"
+input = '''
+Let $x$ and $y$ be integers such that
+$$x=y + 2$$
+'''
+
+[[case]]
+id = "off-math-2"
+input = '''
+$b<a>c$
+'''
+
+[[case]]
+id = "off-math-3"
+input = '''
+$a\%{b$c$}$
+'''
+
+[[case]]
+id = "off-math-4"
+input = '''
+$${a%} $$
+b}$$
+'''
+
+[[case]]
+id = "off-raw-attribute-1"
+input = '''
+``` {=html}
+<b>foo</b>
+```
+'''
+
+[[case]]
+id = "off-raw-attribute-2"
+input = '''
+`<b>foo</b>`{=html}
+'''
+
+[[case]]
+id = "off-raw-attribute-3"
+input = '''
+``` {=html #id}
+<b>foo</b>
+'''
+
+[[case]]
+id = "off-raw-attribute-4"
+input = '''
+`<b>foo</b>`{=html .bar}
+'''
+
+[[case]]
+id = "off-smart-1"
+input = '''
+"Look," said the cat.
+"'Rex' is my dog."
+'''
+
+[[case]]
+id = "off-smart-2"
+input = '''
+Were you alive in the 70's?
+'''
+
+[[case]]
+id = "off-smart-3"
+input = '''
+"A paragraph with no closing quote.
+
+"Second paragraph by same speaker, in fiction."
+'''
+
+[[case]]
+id = "off-smart-4"
+input = '''
+Some dashes:  em---em
+en--en
+em --- em
+en -- en
+2--3
+'''
+
+[[case]]
+id = "off-strikethrough-1"
+input = '''
+~~This is *stricken out*~~
+'''
+
+[[case]]
+id = "off-strikethrough-2"
+input = '''
+~~This is \~\~stricken~~
+'''
+
+[[case]]
+id = "off-strikethrough-3"
+input = '''
+~~This~~is~~stricken~~
+'''
+
+[[case]]
+id = "off-strikethrough-4"
+input = '''
+~4 **~75 GB.**
+'''
+
+[[case]]
+id = "off-subscript-1"
+input = '''
+E=mc~2~.
+'''
+
+[[case]]
+id = "off-subscript-2"
+input = '''
+E=mc\~2\~.
+'''
+
+[[case]]
+id = "off-subscript-3"
+input = '''
+E=mc~2 or *3*~.
+'''
+
+[[case]]
+id = "off-subscript-4"
+input = '''
+E=mc~!~.
+'''
+
+[[case]]
+id = "off-superscript-1"
+input = '''
+E=mc^2^.
+'''
+
+[[case]]
+id = "off-superscript-2"
+input = '''
+E=mc\^2\^.
+'''
+
+[[case]]
+id = "off-superscript-3"
+input = '''
+E=mc^2 or *3*^.
+'''
+
+[[case]]
+id = "off-superscript-4"
+input = '''
+E=mc^!^.
+'''
+
+[[case]]
+id = "off-task-lists-1"
+input = '''
+- [ ] buy milk
+- [x] walk the dog
+'''
+
+[[case]]
+id = "off-task-lists-2"
+input = '''
+- [x]unreal
+'''
+
+[[case]]
+id = "off-task-lists-3"
+input = '''
+- [x] * some text
+- [ ] > some text
+- [x]
+  * some text
+- [ ]
+  > some text
+'''
+
+[[case]]
+id = "off-task-lists-4"
+input = '''
+- [ ]
+- [ ] b
+'''
+
+[[case]]
+id = "off-wikilinks-title-after-pipe-1"
+input = '''
+[[https://example.org]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-after-pipe-2"
+input = '''
+[[https://example.org|title]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-after-pipe-3"
+input = '''
+[[Name of page]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-after-pipe-4"
+input = '''
+[[Name of page|Title]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-before-pipe-1"
+input = '''
+[[https://example.org]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-before-pipe-2"
+input = '''
+[[title|https://example.org]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-before-pipe-3"
+input = '''
+[[Name of page]]
+'''
+
+[[case]]
+id = "off-wikilinks-title-before-pipe-4"
+input = '''
+[[Title|Name of page]]
+'''
+
+[[case]]
+id = "x-mix-01"
+from = "commonmark_x"
+input = '''
+# Title {#id .cls}
+
+Text with ~~strike~~, H~2~O, x^2^ and :smile: and "quotes" -- dash...
+'''
+
+[[case]]
+id = "x-mix-02"
+from = "commonmark_x"
+input = '''
+::: warning
+A *div* with [span]{.x} and footnote[^1].
+:::
+
+[^1]: The note.
+'''
+
+[[case]]
+id = "x-mix-03"
+from = "commonmark_x"
+input = '''
+Term
+:   Definition with $x^2$ math
+
+Term 2
+:   Another
+'''
+
+[[case]]
+id = "x-mix-04"
+from = "commonmark_x"
+input = '''
+| a | b |
+|---|---|
+| ~~x~~ | $y$ |
+
+Table: caption {#tbl}
+'''
+
+[[case]]
+id = "x-mix-05"
+from = "commonmark_x"
+input = '''
+- [x] task with https://example.com
+- [ ] other `code`{.rs}
+'''
+
+[[case]]
+id = "x-mix-06"
+from = "commonmark_x"
+input = '''
+a. one
+b. two
+
+i) three
+ii) four
+'''
+
+[[case]]
+id = "x-mix-07"
+from = "commonmark_x"
+input = '''
+```{.python .numberLines}
+print(1)
+```
+
+`x`{=html} and ```y```{=latex}
+'''
+
+[[case]]
+id = "x-mix-08"
+from = "commonmark_x"
+input = '''
+> [!NOTE]
+> alert with [^n]
+
+[^n]: foot
+'''
+
+[[case]]
+id = "x-mix-09"
+from = "commonmark_x"
+input = '''
+![img](a.png){width=50%}
+
+![fig](b.png "title")
+'''
+
+[[case]]
+id = "x-mix-10"
+from = "commonmark_x"
+input = '''
+Line one\
+line two  
+line three
+'''
+
+[[case]]
+id = "x-mix-11"
+from = "commonmark_x"
+input = '''
+[[wiki link]] and [[a|b]]
+'''
+
+[[case]]
+id = "x-mix-12"
+from = "commonmark_x"
+input = '''
+$a$ and $$b$$ and `$c$`
+
+$$
+x = y
+$$
+'''
+
+[[case]]
+id = "x-mix-13"
+from = "commonmark_x"
+input = '''
+'single' "double" ``backtick'' -- --- ...
+'''
+
+[[case]]
+id = "x-mix-14"
+from = "commonmark_x"
+input = '''
+[text]{#sp .c1 .c2 k=v} and [x](/u){.link}
+'''
+
+[[case]]
+id = "x-mix-15"
+from = "commonmark_x"
+input = '''
+# Heading
+
+[Heading]
+
+[Heading][] and [other][Heading]
+'''
+
+[[case]]
+id = "x-mix-16"
+from = "commonmark_x"
+input = '''
+::: {#d .a}
+::: b
+nested
+:::
+:::
+'''
+
+[[case]]
+id = "x-mix-17"
+from = "commonmark_x"
+input = '''
+Text^[inline note] and^[another]
+'''
+
+[[case]]
+id = "x-mix-18"
+from = "commonmark_x"
+input = '''
+<div>raw html</div>
+
+<span>inline</span> text
+'''
+
+[[case]]
+id = "x-mix-19"
+from = "commonmark_x"
+input = '''
+1. one
+   - [ ] nested task
+2. two
+
+   | t |
+   |---|
+   | c |
+'''
+
+[[case]]
+id = "x-mix-20"
+from = "commonmark_x"
+input = '''
+H~2~O ~~del~~ ~sub~ ^sup^ ^a b^ ~a b~
+'''
+
+[[case]]
+id = "x-mix-21"
+from = "commonmark_x"
+input = '''
+www.example.com and https://example.com. foo@bar.com
+'''
+
+[[case]]
+id = "x-mix-22"
+from = "commonmark_x"
+input = '''
+Header 1
+========
+
+Header 2 {#h2}
+--------
+'''
+
+[[case]]
+id = "x-mix-23"
+from = "commonmark_x"
+input = '''
+Hello :+1: :unknown: :joy:
+'''
+
+[[case]]
+id = "x-mix-24"
+from = "commonmark_x"
+input = '''
+- a
+- b
+
+
+- c
+
+(@) ex one
+(@) ex two
+'''
+
+[[case]]
+id = "x-mix-26"
+from = "commonmark_x"
+input = '''
+&amp; &copy; &#35; &#x1F600; &bogus;
+'''
+
+[[case]]
+id = "x-mix-27"
+from = "commonmark_x"
+input = '''
+[link](<url with spaces> 'title') and <http://auto.link>
+'''
+
+[[case]]
+id = "x-mix-28"
+from = "commonmark_x"
+input = '''
+    indented code
+
+	code with tab
+'''
+
+[[case]]
+id = "x-mix-29"
+from = "commonmark_x"
+input = '''
+Para
+
+---
+title: x
+---
+
+More
+'''
+
+[[case]]
+id = "x-mix-30"
+from = "commonmark_x"
+input = '''
+---
+title: Meta *emph*
+list:
+  - a
+  - b
+---
+
+Body
+'''
+
+[[case]]
+id = "x-mix-31"
+from = "commonmark_x"
+input = '''
+~~~
+fence
+~~~
+
+~~~{.c}
+int x;
+~~~
+'''
+
+[[case]]
+id = "x-mix-32"
+from = "commonmark_x"
+input = '''
+Foo[^1] bar[^2].
+
+[^1]: One.
+[^2]: Two
+    continued.
+
+    Second para.
+'''
+
+[[case]]
+id = "x-mix-33"
+from = "commonmark_x"
+input = '''
+* * *
+
+- - -
+
++ + +
+'''
+
+[[case]]
+id = "x-mix-34"
+from = "commonmark_x"
+input = '''
+Smart: 'tis the '90s, don't "quote 'nested'"
+'''
+
+[[case]]
+id = "x-mix-35"
+from = "commonmark_x"
+input = '''
+A line with trailing backslash\
+
+and a block
+'''
+
+[[case]]
+id = "x-mix-36"
+from = "commonmark_x"
+input = '''
+[ref]: /url "title"
+[ref2]: <> 
+
+[ref] [ref2]
+'''
+
+[[case]]
+id = "x-mix-37"
+from = "commonmark_x"
+input = '''
+ nbsp and ​ zwsp and 中文
+'''
+
+[[case]]
+id = "x-mix-38"
+from = "commonmark_x"
+input = '''
+{.cls} paragraph with attrs?
+
+# H {-}
+'''
+
+[[case]]
+id = "x-mix-39"
+from = "commonmark_x"
+input = '''
+- a
+  b
+
+  c
+- d
+'''
+
+[[case]]
+id = "x-mix-40"
+from = "commonmark_x"
+input = '''
+$$ a $$ $b$ 5$ and $6
+'''
+
+[[case]]
+id = "x-var-01-gfm-autolink-bare-uris"
+from = "gfm-autolink_bare_uris"
+input = '''
+# Title {#id .cls}
+
+Text with ~~strike~~, H~2~O, x^2^ and :smile: and "quotes" -- dash...
+'''
+
+[[case]]
+id = "x-var-02-gfm-smart"
+from = "gfm+smart"
+input = '''
+::: warning
+A *div* with [span]{.x} and footnote[^1].
+:::
+
+[^1]: The note.
+'''
+
+[[case]]
+id = "x-var-03-commonmark-x-footnotes"
+from = "commonmark_x-footnotes"
+input = '''
+Term
+:   Definition with $x^2$ math
+
+Term 2
+:   Another
+'''
+
+[[case]]
+id = "x-var-03-b-commonmark-x-raw-html"
+from = "commonmark_x-raw_html"
+input = '''
+Term
+:   Definition with $x^2$ math
+
+Term 2
+:   Another
+'''
+
+[[case]]
+id = "x-var-04-commonmark-x-fenced-divs"
+from = "commonmark_x-fenced_divs"
+input = '''
+| a | b |
+|---|---|
+| ~~x~~ | $y$ |
+
+Table: caption {#tbl}
+'''
+
+[[case]]
+id = "x-var-05-commonmark-x-pipe-tables"
+from = "commonmark_x-pipe_tables"
+input = '''
+- [x] task with https://example.com
+- [ ] other `code`{.rs}
+'''
+
+[[case]]
+id = "x-var-06-gfm-tex-math-dollars"
+from = "gfm-tex_math_dollars"
+input = '''
+a. one
+b. two
+
+i) three
+ii) four
+'''
+
+[[case]]
+id = "x-var-06-b-commonmark-x-smart"
+from = "commonmark_x-smart"
+input = '''
+a. one
+b. two
+
+i) three
+ii) four
+'''
+
+[[case]]
+id = "x-var-07-commonmark-x-raw-html"
+from = "commonmark_x-raw_html"
+input = '''
+```{.python .numberLines}
+print(1)
+```
+
+`x`{=html} and ```y```{=latex}
+'''
+
+[[case]]
+id = "x-var-08-commonmark-x-attributes"
+from = "commonmark_x-attributes"
+input = '''
+> [!NOTE]
+> alert with [^n]
+
+[^n]: foot
+'''
+
+[[case]]
+id = "x-var-09-commonmark-x-hard-line-breaks"
+from = "commonmark_x+hard_line_breaks"
+input = '''
+![img](a.png){width=50%}
+
+![fig](b.png "title")
+'''
+
+[[case]]
+id = "x-var-09-b-commonmark-x-footnotes"
+from = "commonmark_x-footnotes"
+input = '''
+![img](a.png){width=50%}
+
+![fig](b.png "title")
+'''
+
+[[case]]
+id = "x-var-10-commonmark-x-smart"
+from = "commonmark_x-smart"
+input = '''
+Line one\
+line two  
+line three
+'''
+
+[[case]]
+id = "x-var-11-gfm-autolink-bare-uris"
+from = "gfm-autolink_bare_uris"
+input = '''
+[[wiki link]] and [[a|b]]
+'''
+
+[[case]]
+id = "x-var-12-gfm-smart"
+from = "gfm+smart"
+input = '''
+$a$ and $$b$$ and `$c$`
+
+$$
+x = y
+$$
+'''
+
+[[case]]
+id = "x-var-12-b-gfm-tex-math-dollars"
+from = "gfm-tex_math_dollars"
+input = '''
+$a$ and $$b$$ and `$c$`
+
+$$
+x = y
+$$
+'''
+
+[[case]]
+id = "x-var-13-commonmark-x-footnotes"
+from = "commonmark_x-footnotes"
+input = '''
+'single' "double" ``backtick'' -- --- ...
+'''
+
+[[case]]
+id = "x-var-14-commonmark-x-fenced-divs"
+from = "commonmark_x-fenced_divs"
+input = '''
+[text]{#sp .c1 .c2 k=v} and [x](/u){.link}
+'''
+
+[[case]]
+id = "x-var-15-commonmark-x-pipe-tables"
+from = "commonmark_x-pipe_tables"
+input = '''
+# Heading
+
+[Heading]
+
+[Heading][] and [other][Heading]
+'''
+
+[[case]]
+id = "x-var-15-b-commonmark-x-hard-line-breaks"
+from = "commonmark_x+hard_line_breaks"
+input = '''
+# Heading
+
+[Heading]
+
+[Heading][] and [other][Heading]
+'''
+
+[[case]]
+id = "x-var-16-gfm-tex-math-dollars"
+from = "gfm-tex_math_dollars"
+input = '''
+::: {#d .a}
+::: b
+nested
+:::
+:::
+'''
+
+[[case]]
+id = "x-var-17-commonmark-x-raw-html"
+from = "commonmark_x-raw_html"
+input = '''
+Text^[inline note] and^[another]
+'''
+
+[[case]]
+id = "x-var-18-commonmark-x-attributes"
+from = "commonmark_x-attributes"
+input = '''
+<div>raw html</div>
+
+<span>inline</span> text
+'''
+
+[[case]]
+id = "x-var-18-b-gfm-smart"
+from = "gfm+smart"
+input = '''
+<div>raw html</div>
+
+<span>inline</span> text
+'''
+
+[[case]]
+id = "x-var-19-commonmark-x-hard-line-breaks"
+from = "commonmark_x+hard_line_breaks"
+input = '''
+1. one
+   - [ ] nested task
+2. two
+
+   | t |
+   |---|
+   | c |
+'''
+
+[[case]]
+id = "x-var-20-commonmark-x-smart"
+from = "commonmark_x-smart"
+input = '''
+H~2~O ~~del~~ ~sub~ ^sup^ ^a b^ ~a b~
+'''
+
+[[case]]
+id = "x-var-21-gfm-autolink-bare-uris"
+from = "gfm-autolink_bare_uris"
+input = '''
+www.example.com and https://example.com. foo@bar.com
+'''
+
+[[case]]
+id = "x-var-21-b-commonmark-x-pipe-tables"
+from = "commonmark_x-pipe_tables"
+input = '''
+www.example.com and https://example.com. foo@bar.com
+'''
+
+[[case]]
+id = "x-var-22-gfm-smart"
+from = "gfm+smart"
+input = '''
+Header 1
+========
+
+Header 2 {#h2}
+--------
+'''
+
+[[case]]
+id = "x-var-23-commonmark-x-footnotes"
+from = "commonmark_x-footnotes"
+input = '''
+Hello :+1: :unknown: :joy:
+'''
+
+[[case]]
+id = "x-var-24-commonmark-x-fenced-divs"
+from = "commonmark_x-fenced_divs"
+input = '''
+- a
+- b
+
+
+- c
+
+(@) ex one
+(@) ex two
+'''
+
+[[case]]
+id = "x-var-24-b-commonmark-x-attributes"
+from = "commonmark_x-attributes"
+input = '''
+- a
+- b
+
+
+- c
+
+(@) ex one
+(@) ex two
+'''
+
+[[case]]
+id = "x-var-26-gfm-tex-math-dollars"
+from = "gfm-tex_math_dollars"
+input = '''
+&amp; &copy; &#35; &#x1F600; &bogus;
+'''
+
+[[case]]
+id = "x-var-27-commonmark-x-raw-html"
+from = "commonmark_x-raw_html"
+input = '''
+[link](<url with spaces> 'title') and <http://auto.link>
+'''
+
+[[case]]
+id = "x-var-27-b-gfm-autolink-bare-uris"
+from = "gfm-autolink_bare_uris"
+input = '''
+[link](<url with spaces> 'title') and <http://auto.link>
+'''
+
+[[case]]
+id = "x-var-28-commonmark-x-attributes"
+from = "commonmark_x-attributes"
+input = '''
+    indented code
+
+	code with tab
+'''
+
+[[case]]
+id = "x-var-29-commonmark-x-hard-line-breaks"
+from = "commonmark_x+hard_line_breaks"
+input = '''
+Para
+
+---
+title: x
+---
+
+More
+'''
+
+[[case]]
+id = "x-var-30-commonmark-x-smart"
+from = "commonmark_x-smart"
+input = '''
+---
+title: Meta *emph*
+list:
+  - a
+  - b
+---
+
+Body
+'''
+
+[[case]]
+id = "x-var-30-b-commonmark-x-fenced-divs"
+from = "commonmark_x-fenced_divs"
+input = '''
+---
+title: Meta *emph*
+list:
+  - a
+  - b
+---
+
+Body
+'''
+
+[[case]]
+id = "x-var-31-gfm-autolink-bare-uris"
+from = "gfm-autolink_bare_uris"
+input = '''
+~~~
+fence
+~~~
+
+~~~{.c}
+int x;
+~~~
+'''
+
+[[case]]
+id = "x-var-32-gfm-smart"
+from = "gfm+smart"
+input = '''
+Foo[^1] bar[^2].
+
+[^1]: One.
+[^2]: Two
+    continued.
+
+    Second para.
+'''
+
+[[case]]
+id = "x-var-33-commonmark-x-footnotes"
+from = "commonmark_x-footnotes"
+input = '''
+* * *
+
+- - -
+
++ + +
+'''
+
+[[case]]
+id = "x-var-33-b-commonmark-x-raw-html"
+from = "commonmark_x-raw_html"
+input = '''
+* * *
+
+- - -
+
++ + +
+'''
+
+[[case]]
+id = "x-var-34-commonmark-x-fenced-divs"
+from = "commonmark_x-fenced_divs"
+input = '''
+Smart: 'tis the '90s, don't "quote 'nested'"
+'''
+
+[[case]]
+id = "x-var-35-commonmark-x-pipe-tables"
+from = "commonmark_x-pipe_tables"
+input = '''
+A line with trailing backslash\
+
+and a block
+'''
+
+[[case]]
+id = "x-var-36-gfm-tex-math-dollars"
+from = "gfm-tex_math_dollars"
+input = '''
+[ref]: /url "title"
+[ref2]: <> 
+
+[ref] [ref2]
+'''
+
+[[case]]
+id = "x-var-36-b-commonmark-x-smart"
+from = "commonmark_x-smart"
+input = '''
+[ref]: /url "title"
+[ref2]: <> 
+
+[ref] [ref2]
+'''
+
+[[case]]
+id = "x-var-37-commonmark-x-raw-html"
+from = "commonmark_x-raw_html"
+input = '''
+ nbsp and ​ zwsp and 中文
+'''
+
+[[case]]
+id = "x-var-38-commonmark-x-attributes"
+from = "commonmark_x-attributes"
+input = '''
+{.cls} paragraph with attrs?
+
+# H {-}
+'''
+
+[[case]]
+id = "x-var-39-commonmark-x-hard-line-breaks"
+from = "commonmark_x+hard_line_breaks"
+input = '''
+- a
+  b
+
+  c
+- d
+'''
+
+[[case]]
+id = "x-var-39-b-commonmark-x-footnotes"
+from = "commonmark_x-footnotes"
+input = '''
+- a
+  b
+
+  c
+- d
+'''
+
+[[case]]
+id = "x-var-40-commonmark-x-smart"
+from = "commonmark_x-smart"
+input = '''
+$$ a $$ $b$ 5$ and $6
+'''

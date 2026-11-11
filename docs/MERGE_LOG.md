@@ -666,3 +666,40 @@ groups with no proven level; the worker says that they count as medium
 until they are examined. Rows I-MD-37 and I-MD-38 (low). Scope gaps
 I-MD-01 to I-MD-05 and I-MD-08. Open checks: mutation, coverage, the time
 table. Requests of the worker to the coordinator: none.
+
+## Workstream commonmark-reader (branch `ws/commonmark-reader`, head 22266f3, one squashed commit, batch 2 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-commonmark` with the readers `commonmark`, `gfm` and
+`commonmark_x` (a port of the rules of `commonmark-hs`, ADR 12), the tools
+`tools/commonmark-spec` and `tools/commonmark-cases`, registered in
+`crates/randoc/src/formats.rs`. YAML metadata blocks are read with
+`randoc-yaml`. The branch contains the merged commits of `ws/yaml`; the
+squash changes no file of `crates/randoc-yaml` (`git diff --cached --stat`).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 22266f3 (18:36 to 18:51 UTC; worker report): baseline 2217 units, 0 regressions. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Harness suite `commonmark/`: 1740 units, 1724 pass, 16 fail (`extra/sp-*`, scope gap I-CM-01). Specification 652 of 652 (at ba6e862). `matrices.py --compare`: 7,506 inputs, 0 different, 3 known (I-CM-17). YAML replay through the reader: 17,178 texts, 0 different. |
+| 3. Tests | `cargo test -p randoc-commonmark`: 41 pass, 1 ignored. Mutation sample: 28 of 55 named mutants (21 caught, 6 missed, 1 timeout); shard 2/2 and the 162 mutants of the last unit not run. Coverage number: not measured. |
+| 4. No panics | Fuzz target `read` on 22266f3: 901 s, 1,173,826 runs, 0 crashes, peak memory 604 MB (`checks-fuzz-b.md`, check 2). |
+| 5. Reviews | 6 rounds. Round 6 on 412807c: Codex and Opus REQUEST CHANGES (1 high, 7 medium in all). The worker reports each one as closed in units b and c (the YAML findings by the move to `randoc-yaml`). No review of the head exists. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before; it adds the readers to the format table. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Conflicts in the merge: the root `Cargo.toml`, `crates/randoc/Cargo.toml`
+and `crates/randoc/src/formats.rs` (member, dependency and registration
+lines: both sides kept, a line that both sides have one time),
+`docs/ADR.md` (ADR 12 of the branch: kept, in number order), `Cargo.lock`
+(the version of `main`; the build wrote it again), `THIRD_PARTY_NOTICES.md`
+and `docs/ISSUES.md` (`resolve-tables`: 6 and 5 rows of the branch added),
+`docs/PRIOR_ART.md` (the "in use" row of the branch added; in the table
+"Candidates to study", `main` had moved the row "Citations" and the branch
+had moved the row "CommonMark and GFM reader" to the table of material in
+use, so neither candidate row stays).
+
+Licence scan: the copied inputs were replaced in 22266f3; generic table and
+punctuation runs remain. Open findings: low rows (I-CM-10, I-CM-11,
+I-CM-16, I-CM-17) and the scope gap I-CM-01 (`sourcepos`). Open checks:
+half of the mutation sample, a coverage number. Requests of the worker to
+the coordinator: none.

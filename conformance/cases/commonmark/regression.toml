@@ -1,0 +1,332 @@
+# Inputs from the BSD-3-Clause file regression.md of the commonmark library.
+from = "commonmark"
+to = []
+
+[[case]]
+id = "reg-01-important-first-line-ends-with"
+input = "line1\r\r\nline2\n"
+
+[[case]]
+id = "reg-02-important-the-blank-lines-arou"
+input = '''
+By taking it apart
+
+- alternative solutions
+	
+Repeatedly solving
+	
+- how techniques
+'''
+
+[[case]]
+id = "reg-03-issue-jgm-commonmark-430-h2-h6"
+input = '''
+<h1>lorem</h1>
+
+<h2>lorem</h2>
+
+<h3>lorem</h3>
+
+<h4>lorem</h4>
+
+<h5>lorem</h5>
+
+<h6>lorem</h6>
+'''
+
+[[case]]
+id = "reg-04-issue-jgm-commonmark-js-109-ta"
+input = '''
+hi
+--	
+'''
+
+[[case]]
+id = "reg-05-issue-177-incorrect-emphasis-p"
+input = '''
+a***b* c*
+'''
+
+[[case]]
+id = "reg-06-issue-193-unescaped-left-angle"
+input = '''
+[a]
+
+[a]: <te<st>
+'''
+
+[[case]]
+id = "reg-07-issue-192-escaped-spaces-in-li"
+input = '''
+[a](te\ st)
+'''
+
+[[case]]
+id = "reg-08-issue-527-meta-tags-in-inline"
+input = '''
+City:
+<span itemprop="contentLocation" itemscope itemtype="https://schema.org/City">
+  <meta itemprop="name" content="Springfield">
+</span>
+'''
+
+[[case]]
+id = "reg-09-issue-530-link-parsing-corner"
+input = '''
+[a](\ b)
+
+[a](<<b)
+
+[a](<b
+)
+'''
+
+[[case]]
+id = "reg-10-issue-commonmark-526-unescaped"
+input = '''
+[link](url ((title))
+'''
+
+[[case]]
+id = "reg-11-opener"
+input = '''
+</script>
+
+</pre>
+
+</style>
+'''
+
+[[case]]
+id = "reg-12-issue-289"
+input = '''
+[a](<b) c>
+'''
+
+[[case]]
+id = "reg-13-issue-54"
+input = '''
+1. Point 1
+    ```bash
+    date
+    pwd
+    ```
+'''
+
+[[case]]
+id = "reg-14-issue-56"
+input = '''
+- a
+  - b
+  - c
+
+
+
+'''
+
+[[case]]
+id = "reg-15-issue-67"
+input = '''
+[test ](http://www.example.com/)
+[ test](http://www.example.com/)
+'''
+
+[[case]]
+id = "reg-16-issue-114"
+input = '''
+*.*̀.
+'''
+
+[[case]]
+id = "reg-17-issue-115"
+input = '''
+~~~\
+x
+'''
+
+[[case]]
+id = "reg-18-issue-119"
+input = '''
+[[]](https://haskell.org)
+
+[[][]](https://haskell.org)
+
+[[[][]](https://haskell.org)
+
+[[][][]](https://haskell.org)
+'''
+
+[[case]]
+id = "reg-19-issue-122"
+input = '''
+* x
+* -
+
+
+Test
+'''
+
+[[case]]
+id = "reg-20-issue-130"
+input = '''
+[my-link]: https://example.com "\
+"
+[my-link]
+'''
+
+[[case]]
+id = "reg-21-issue-130"
+input = '''
+[my-link](https://example.com "\
+")
+'''
+
+[[case]]
+id = "reg-22-issue-133"
+input = '''
+  * * xx
+
+      * yy
+
+    zz
+'''
+
+[[case]]
+id = "reg-23-issue-133"
+input = '''
+  * * xx
+      * yy
+
+    zz
+'''
+
+[[case]]
+id = "reg-24-issue-139"
+input = '''
+Test <?xml?> <?xml?>
+
+Test <?xml?> x <?xml?>
+
+Test <![CDATA[ x ]]> <![CDATA[ x ]]>
+
+Test <![CDATA[ x ]]> x <![CDATA[ x ]]>
+
+Test <!DOCTYPE html> <!DOCTYPE html>
+
+Test <!DOCTYPE html> x <!DOCTYPE html>
+
+Test <span> <span>
+
+Test <span> x <span>
+'''
+
+[[case]]
+id = "reg-25-issue-142"
+input = '''
+<!X
+>
+<!x
+>
+'''
+
+[[case]]
+id = "reg-26-issue-149"
+input = '''
+[link](\&#33;)
+
+[link](&#33;)
+'''
+
+[[case]]
+id = "reg-27-issue-144"
+input = '''
++ Is this wrapping list tight, or loose?
+  * This nested list is definitely tight.
+  -
+
+
+  -
+'''
+
+[[case]]
+id = "reg-28-issue-144"
+input = '''
++ Is this wrapping list tight, or loose?
+  * This nested list is definitely tight.
+  - First item
+
+
+  -
+'''
+
+[[case]]
+id = "reg-29-issue-144"
+input = '''
++ Is this wrapping list tight, or loose?
+  * This nested list is definitely tight.
+  -
+
+
+  - Second item
+'''
+
+[[case]]
+id = "reg-30-issue-144"
+input = '''
++ Is this wrapping list tight, or loose?
+  * This nested list is definitely tight.
+  - First item
+
+
+  - Second item
+'''
+
+[[case]]
+id = "reg-31-issue-136"
+input = '''
+[link](`) `x`
+'''
+
+[[case]]
+id = "reg-32-issue-136"
+input = '''
+[link](`)[link](`) `x`
+'''
+
+[[case]]
+id = "reg-33-issue-136"
+input = '''
+[link](<foo bar=">)">) `x`
+'''
+
+[[case]]
+id = "reg-34-issue-136"
+input = '''
+[![image](<foo bar=">)">)![image](<foo bar=">)">)](v) `x`
+'''
+
+[[case]]
+id = "reg-35-issue-136"
+input = '''
+[x](`) <a href="`">
+'''
+
+[[case]]
+id = "reg-36-link-must-be-separated-from-ti"
+input = '''
+[a](https://example.com"test")
+[a](<https://example.com>"test")
+[a](https://example.com(test))
+[a](<https://example.com>(test))
+
+[a](https://example.com "test")
+[a](<https://example.com> "test")
+[a](https://example.com (test))
+[a](<https://example.com> (test))
+'''
+
+[[case]]
+id = "reg-37-cmark-383"
+input = '''
+*****Hello*world****
+'''

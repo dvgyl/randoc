@@ -1,0 +1,856 @@
+# GFM cases: inputs from the BSD-3-Clause test files of commonmark-extensions
+# (strikethrough, task lists, math, emoji) and inputs written for Randoc.
+from = "gfm"
+to = []
+
+[[case]]
+id = "strikethrough-01"
+input = '''
+~~This is *stricken out*~~
+'''
+
+[[case]]
+id = "strikethrough-02"
+input = '''
+~This is nothing~
+'''
+
+[[case]]
+id = "strikethrough-03"
+input = '''
+~~This is \~\~stricken~~
+'''
+
+[[case]]
+id = "strikethrough-04"
+input = '''
+This~~is~~stricken
+'''
+
+[[case]]
+id = "strikethrough-05"
+input = '''
+~~This~~is~~stricken~~
+'''
+
+[[case]]
+id = "strikethrough-06"
+input = '''
+Here I strike out an exclamation point~~!~~.
+'''
+
+[[case]]
+id = "strikethrough-07"
+input = '''
+~4 **~75 GB.**
+'''
+
+[[case]]
+id = "strikethrough-08"
+input = '''
+~~a~ ~b~~
+'''
+
+[[case]]
+id = "task-lists-01"
+input = '''
+- [ ] buy milk
+- [x] walk the dog
+'''
+
+[[case]]
+id = "task-lists-02"
+input = '''
+* [ ] buy milk
+
+  with two paragraphs
+
+* [x] walk the dog
+'''
+
+[[case]]
+id = "task-lists-03"
+input = '''
+- [x]unreal
+'''
+
+[[case]]
+id = "task-lists-04"
+input = '''
+-  [x] real
+
+  not indented enough
+'''
+
+[[case]]
+id = "task-lists-05"
+input = '''
+- [x] * some text
+- [ ] > some text
+- [x]
+  * some text
+- [ ]
+  > some text
+'''
+
+[[case]]
+id = "task-lists-06"
+input = '''
+- [x] * some text
+
+- [x]
+
+  some text
+
+- [x]	
+
+  some text
+'''
+
+[[case]]
+id = "task-lists-07"
+input = '''
+- [ ]
+- [ ] b
+'''
+
+[[case]]
+id = "task-lists-08"
+input = '''
+- [ ] a
+- [ ] b
+
+
+x
+'''
+
+[[case]]
+id = "task-lists-09"
+input = '''
+- [ ] a
+  - [ ] b
+
+- [ ] c
+'''
+
+[[case]]
+id = "math-01"
+input = '''
+Let $x$ and $y$ be integers such that
+$$x=y + 2$$
+'''
+
+[[case]]
+id = "math-02"
+input = '''
+This is not math: 2000$.
+And neither is this $ 4 $.
+Or this $4
+$.
+'''
+
+[[case]]
+id = "math-03"
+input = '''
+This is display math:
+$$
+e=mc^2
+$$
+'''
+
+[[case]]
+id = "math-04"
+input = '''
+This is display math:
+$$
+\text{Hello $x^2$}
+$$
+And this is inline math:
+$\text{Hello $x$ there!}$
+'''
+
+[[case]]
+id = "math-05"
+input = '''
+$$a $ b$$
+'''
+
+[[case]]
+id = "math-06"
+input = '''
+The cost is between \$10 and 30$.
+'''
+
+[[case]]
+id = "math-07"
+input = '''
+$\text{\$}$
+'''
+
+[[case]]
+id = "math-08"
+input = '''
+$b<a>c$
+'''
+
+[[case]]
+id = "math-09"
+input = '''
+$1$2$3
+
+$1$2$3$
+
+$1{$2$}3$
+
+$$1$$2$$3
+
+$$1$$2$$3$$
+
+$$1{$$2$$}3$$
+'''
+
+[[case]]
+id = "math-10"
+input = '''
+$a%$ ignored
++b$
+'''
+
+[[case]]
+id = "math-11"
+input = '''
+${a%} $
+b}$
+'''
+
+[[case]]
+id = "math-12"
+input = '''
+${a%{
+b}$
+'''
+
+[[case]]
+id = "math-13"
+input = '''
+$a\%$
+'''
+
+[[case]]
+id = "math-14"
+input = '''
+${a\%}$
+'''
+
+[[case]]
+id = "math-15"
+input = '''
+$a\%{b$c$}$
+'''
+
+[[case]]
+id = "math-16"
+input = '''
+$a\\%$
+b$
+'''
+
+[[case]]
+id = "math-17"
+input = '''
+${a\\%}
+b}$
+'''
+
+[[case]]
+id = "math-18"
+input = '''
+$a\\\%$
+'''
+
+[[case]]
+id = "math-19"
+input = '''
+$a%
+% } $ \
+b$
+'''
+
+[[case]]
+id = "math-20"
+input = '''
+$a%$
+'''
+
+[[case]]
+id = "math-21"
+input = '''
+$$a%$$ ignored
++b$$
+'''
+
+[[case]]
+id = "math-22"
+input = '''
+$${a%} $$
+b}$$
+'''
+
+[[case]]
+id = "math-23"
+input = '''
+$${a%{
+b}$$
+'''
+
+[[case]]
+id = "math-24"
+input = '''
+$$a\%$$
+'''
+
+[[case]]
+id = "math-25"
+input = '''
+$${a\%}$$
+'''
+
+[[case]]
+id = "math-26"
+input = '''
+$$a\%{b$$c$$}$$
+'''
+
+[[case]]
+id = "math-27"
+input = '''
+$$a\\%$$
+b$$
+'''
+
+[[case]]
+id = "math-28"
+input = '''
+$${a\\%}
+b}$$
+'''
+
+[[case]]
+id = "math-29"
+input = '''
+$$a\\\%$$
+'''
+
+[[case]]
+id = "math-30"
+input = '''
+$$a%
+% } $$ \
+b$$
+'''
+
+[[case]]
+id = "math-31"
+input = '''
+$$a%$$
+'''
+
+[[case]]
+id = "emoji-01"
+input = '''
+:blush:
+A:broken_heart:
+:smiley_cat:
+'''
+
+[[case]]
+id = "emoji-02"
+input = '''
+:nothing_really:
+:broken_heart
+'''
+
+[[case]]
+id = "hw-tbl-basic"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "hw-tbl-align"
+input = '''
+| l | c | r | d |
+|:--|:-:|--:|---|
+| 1 | 2 | 3 | 4 |
+'''
+
+[[case]]
+id = "hw-tbl-inline"
+input = '''
+| *em* | `code` | [link](/u "t") |
+|---|---|---|
+| **strong** | ~~del~~ | ![img](/i.png) |
+'''
+
+[[case]]
+id = "hw-tbl-escaped-pipe"
+input = '''
+| a \| b | c |
+|---|---|
+| d \| e | f |
+'''
+
+[[case]]
+id = "hw-tbl-pipe-in-code"
+input = '''
+| a | b |
+|---|---|
+| `x\|y` | `p|q` |
+'''
+
+[[case]]
+id = "hw-tbl-no-outer-pipes"
+input = '''
+a | b
+--|--
+1 | 2
+'''
+
+[[case]]
+id = "hw-tbl-in-list"
+input = '''
+- item
+
+  | a | b |
+  |---|---|
+  | 1 | 2 |
+'''
+
+[[case]]
+id = "hw-tbl-in-quote"
+input = '''
+> | a | b |
+> |---|---|
+> | 1 | 2 |
+'''
+
+[[case]]
+id = "hw-tbl-ragged-rows"
+input = '''
+| a | b | c |
+|---|---|---|
+| 1 |
+| 1 | 2 | 3 | 4 |
+'''
+
+[[case]]
+id = "hw-tbl-header-only"
+input = '''
+| a | b |
+|---|---|
+'''
+
+[[case]]
+id = "hw-tbl-interrupt-para"
+input = '''
+text before
+| a | b |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "hw-tbl-delim-mismatch"
+input = '''
+| a | b |
+|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "hw-tbl-empty-cells"
+input = '''
+| a | b |
+|---|---|
+|   |   |
+| 1 |   |
+'''
+
+[[case]]
+id = "hw-tbl-ends-by-blank"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+
+after
+'''
+
+[[case]]
+id = "hw-tbl-ends-by-heading"
+input = '''
+| a | b |
+|---|---|
+| 1 | 2 |
+# Heading
+'''
+
+[[case]]
+id = "hw-tbl-wide-delim"
+input = '''
+| a | b |
+|:----------:|-----------:|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "hw-tbl-html-entities"
+input = '''
+| &amp; | &lt; |
+|---|---|
+| &copy; | &#35; |
+'''
+
+[[case]]
+id = "hw-tbl-single-col"
+input = '''
+| a |
+|---|
+| 1 |
+| 2 |
+'''
+
+[[case]]
+id = "hw-task-states"
+input = '''
+- [ ] open
+- [x] done
+- [X] done upper
+'''
+
+[[case]]
+id = "hw-task-nested"
+input = '''
+- [x] parent
+  - [ ] child
+  - [x] child2
+'''
+
+[[case]]
+id = "hw-task-empty"
+input = '''
+- [ ]
+- [x]
+'''
+
+[[case]]
+id = "hw-task-no-space"
+input = '''
+- [x]text
+- [ ]text
+'''
+
+[[case]]
+id = "hw-task-ordered"
+input = '''
+1. [ ] one
+2. [x] two
+'''
+
+[[case]]
+id = "hw-task-loose"
+input = '''
+- [ ] one
+
+- [x] two
+'''
+
+[[case]]
+id = "hw-task-not-first"
+input = '''
+- text [ ] later
+- *[x]* emph
+'''
+
+[[case]]
+id = "hw-auto-trailing-dot"
+input = '''
+Visit https://example.com.
+'''
+
+[[case]]
+id = "hw-auto-parens"
+input = '''
+(https://example.com) and (https://example.com/a_(b))
+'''
+
+[[case]]
+id = "hw-auto-trailing-punct"
+input = '''
+https://example.com/a! https://example.com/b? https://example.com/c, https://example.com/d;
+'''
+
+[[case]]
+id = "hw-auto-www"
+input = '''
+www.example.com and www.example.com/path?x=1&y=2.
+'''
+
+[[case]]
+id = "hw-auto-entity"
+input = '''
+https://example.com/?a=1&amp;b=2 and https://example.com/&hl;
+'''
+
+[[case]]
+id = "hw-auto-underscore"
+input = '''
+https://example.com/a_b_ and www.a_b.example.com
+'''
+
+[[case]]
+id = "hw-auto-email"
+input = '''
+foo@bar.com, foo+tag@baz.co.uk and foo@bar.com.
+'''
+
+[[case]]
+id = "hw-auto-email-bad"
+input = '''
+foo@bar and @bar.com and foo@.com
+'''
+
+[[case]]
+id = "hw-auto-angle"
+input = '''
+<https://example.com> and <foo@bar.com>
+'''
+
+[[case]]
+id = "hw-auto-in-emphasis"
+input = '''
+*https://example.com* and **www.example.com**
+'''
+
+[[case]]
+id = "hw-auto-ftp"
+input = '''
+ftp://example.com/file and mailto:foo@bar.com
+'''
+
+[[case]]
+id = "hw-strike-single"
+input = '''
+~one~ text
+'''
+
+[[case]]
+id = "hw-strike-double"
+input = '''
+~~two~~ text
+'''
+
+[[case]]
+id = "hw-strike-triple"
+input = '''
+~~~three~~~ text
+'''
+
+[[case]]
+id = "hw-strike-nested"
+input = '''
+~a ~~b~~ c~
+'''
+
+[[case]]
+id = "hw-strike-space"
+input = '''
+~~ a~~ and ~~a ~~
+'''
+
+[[case]]
+id = "hw-strike-intraword"
+input = '''
+x~~a~~y and x~a~y
+'''
+
+[[case]]
+id = "hw-strike-with-emph"
+input = '''
+~~*a* **b**~~
+'''
+
+[[case]]
+id = "hw-alert-note"
+input = '''
+> [!NOTE]
+> Note text.
+'''
+
+[[case]]
+id = "hw-alert-tip"
+input = '''
+> [!TIP]
+> Tip text.
+'''
+
+[[case]]
+id = "hw-alert-important"
+input = '''
+> [!IMPORTANT]
+> Important text.
+'''
+
+[[case]]
+id = "hw-alert-warning"
+input = '''
+> [!WARNING]
+> Warning text.
+'''
+
+[[case]]
+id = "hw-alert-caution"
+input = '''
+> [!CAUTION]
+> Caution text.
+'''
+
+[[case]]
+id = "hw-alert-lowercase"
+input = '''
+> [!note]
+> lower
+'''
+
+[[case]]
+id = "hw-alert-multi-para"
+input = '''
+> [!NOTE]
+> One.
+>
+> Two.
+>
+> - list
+'''
+
+[[case]]
+id = "hw-alert-unknown"
+input = '''
+> [!FOO]
+> Unknown type.
+'''
+
+[[case]]
+id = "hw-alert-empty"
+input = '''
+> [!NOTE]
+'''
+
+[[case]]
+id = "hw-alert-in-list"
+input = '''
+- item
+
+  > [!TIP]
+  > nested
+'''
+
+[[case]]
+id = "hw-alert-text-before"
+input = '''
+> text
+> [!NOTE]
+> later
+'''
+
+[[case]]
+id = "hw-alert-same-line"
+input = '''
+> [!NOTE] same line
+'''
+
+[[case]]
+id = "hw-head-duplicates"
+input = '''
+# Foo
+
+# Foo
+
+# Foo
+
+## Foo-1
+'''
+
+[[case]]
+id = "hw-head-punct"
+input = '''
+# Hello, World! (v2.0) -- really?
+'''
+
+[[case]]
+id = "hw-head-emoji"
+input = '''
+# 😀 Smile
+
+# Fire 🔥 Stuff
+'''
+
+[[case]]
+id = "hw-head-underscore-hyphen"
+input = '''
+# foo_bar-baz qux
+'''
+
+[[case]]
+id = "hw-head-numbered"
+input = '''
+# 1. Intro
+
+## 2.1 Sub
+'''
+
+[[case]]
+id = "hw-head-unicode"
+input = '''
+# Über café 中文
+'''
+
+[[case]]
+id = "hw-head-empty"
+input = '''
+#
+
+# 
+'''
+
+[[case]]
+id = "hw-head-code-link"
+input = '''
+# `code` and [link](/u) and *em*
+'''
+
+[[case]]
+id = "hw-head-only-punct"
+input = '''
+# !!!
+
+# ...
+'''
+
+[[case]]
+id = "hw-head-setext-dup"
+input = '''
+Title
+=====
+
+Title
+-----
+'''
+
+[[case]]
+id = "hw-head-case"
+input = '''
+# Mixed CASE Title
+'''

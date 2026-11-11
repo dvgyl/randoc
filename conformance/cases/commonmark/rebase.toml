@@ -1,0 +1,395 @@
+# rebase_relative_paths and several input files. The inputs are written for Randoc.
+
+[[case]]
+id = "image"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![alt](img.png)
+'''
+
+[[case]]
+id = "image-title"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![alt](img.png "title")
+'''
+
+[[case]]
+id = "image-dotdot"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![alt](../img.png) ![b](../../x/y.png)
+'''
+
+[[case]]
+id = "image-dot"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![alt](./img.png)
+'''
+
+[[case]]
+id = "link"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[text](other.md)
+'''
+
+[[case]]
+id = "link-dir"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[text](dir/other.md) [b](../up.md)
+'''
+
+[[case]]
+id = "link-query"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[text](other.md?x=1#frag)
+'''
+
+[[case]]
+id = "ref-link"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[text][r]
+
+[r]: other.md "T"
+'''
+
+[[case]]
+id = "ref-image"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![alt][r]
+
+[r]: img.png
+'''
+
+[[case]]
+id = "absolute-url"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a](http://example.com/x) ![b](https://example.com/y.png) [c](mailto:a@b.c)
+'''
+
+[[case]]
+id = "absolute-path"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a](/abs/path.md) ![b](/img.png)
+'''
+
+[[case]]
+id = "fragment"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a](#frag) [b](#)
+'''
+
+[[case]]
+id = "empty-dest"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a]() ![b]()
+'''
+
+[[case]]
+id = "data-uri"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](data:image/png;base64,AAAA)
+'''
+
+[[case]]
+id = "angle-dest"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a](<my file.md>) ![b](<my img.png>)
+'''
+
+[[case]]
+id = "autolink"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+<http://example.com/x> <a@b.c>
+'''
+
+[[case]]
+id = "raw-html"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+<img src="i.png"> <a href="o.md">x</a>
+
+<div><img src="j.png"></div>
+'''
+
+[[case]]
+id = "deep-path"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "a/b/c/doc.md"]
+[case.files]
+"a/b/c/doc.md" = '''
+![a](img.png) [b](o.md)
+'''
+
+[[case]]
+id = "root-doc"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "doc.md"]
+[case.files]
+"doc.md" = '''
+![a](img.png) [b](o.md)
+'''
+
+[[case]]
+id = "off"
+cmd = ["-f", "commonmark", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](img.png) [b](o.md)
+'''
+
+[[case]]
+id = "gfm"
+cmd = ["-f", "gfm+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](img.png) [b](o.md) www.example.com
+'''
+
+[[case]]
+id = "x-attrs"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](img.png){#i} [b](o.md){.c} [s]{.x}
+'''
+
+[[case]]
+id = "backslash"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](dir\img.png)
+'''
+
+[[case]]
+id = "percent"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](my%20img.png) [b](a%2Fb.md)
+'''
+
+[[case]]
+id = "scheme-like"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a](c:/x) [b](file:///x) [c](tel:123)
+'''
+
+[[case]]
+id = "double-dot-escape"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](../../../img.png)
+'''
+
+[[case]]
+id = "footnote"
+cmd = ["-f", "commonmark+footnotes+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+a[^1]
+
+[^1]: ![i](img.png)
+'''
+
+[[case]]
+id = "title-and-ref"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+[a][]
+
+[a]: ../x.md 'q'
+'''
+
+[[case]]
+id = "metadata"
+cmd = ["-f", "commonmark+yaml_metadata_block+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+---
+img: x.png
+---
+
+![a](img.png)
+'''
+
+[[case]]
+id = "two-inputs"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/doc.md"]
+[case.files]
+"sub/doc.md" = '''
+![a](img.png)
+'''
+"sub/b.md" = '''
+![b](bi.png)
+'''
+
+[[case]]
+id = "files-separate-blocks"
+cmd = ["-f", "commonmark", "-t", "json", "a.md", "b.md", "c.md", "d.md"]
+[case.files]
+"a.md" = "para one"
+"b.md" = "para two\n"
+"c.md" = ""
+"d.md" = "```\ncode"
+
+[[case]]
+id = "note-in-other-file"
+cmd = ["-f", "gfm+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "x[^1]"
+"sub/b.md" = "\n[^1]: ![m](q.png)"
+
+[[case]]
+id = "div-across-files"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "::: d\n[first](first.html)\n"
+"sub/b.md" = "[second](second.html)\n:::\n"
+
+[[case]]
+id = "r5-ref-other-folder-commonmark"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "[r]\n\n[r][]\n\n![r]\n\n[t][r]\n"
+"sub/b.md" = "\n[r]: r.html\n"
+
+[[case]]
+id = "r5-ref-other-folder-first-commonmark"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/b.md", "a.md"]
+[case.files]
+"a.md" = "[r]\n\n[r][]\n\n![r]\n\n[t][r]\n"
+"sub/b.md" = "\n[r]: r.html\n"
+
+[[case]]
+id = "r5-ref-other-folder-gfm"
+cmd = ["-f", "gfm+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "[r]\n\n[r][]\n\n![r]\n\n[t][r]\n"
+"sub/b.md" = "\n[r]: r.html\n"
+
+[[case]]
+id = "r5-ref-other-folder-first-gfm"
+cmd = ["-f", "gfm+rebase_relative_paths", "-t", "json", "sub/b.md", "a.md"]
+[case.files]
+"a.md" = "[r]\n\n[r][]\n\n![r]\n\n[t][r]\n"
+"sub/b.md" = "\n[r]: r.html\n"
+
+[[case]]
+id = "r5-ref-other-folder-commonmark_x"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "[r]\n\n[r][]\n\n![r]\n\n[t][r]\n"
+"sub/b.md" = "\n[r]: r.html\n"
+
+[[case]]
+id = "r5-ref-other-folder-first-commonmark_x"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "sub/b.md", "a.md"]
+[case.files]
+"a.md" = "[r]\n\n[r][]\n\n![r]\n\n[t][r]\n"
+"sub/b.md" = "\n[r]: r.html\n"
+
+[[case]]
+id = "r5-ref-two-folders"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "first/a.md", "second/b.md"]
+[case.files]
+"first/a.md" = "[a]\n"
+"second/b.md" = "[a]: u\n"
+
+[[case]]
+id = "r5-ref-first-definition-wins"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "first/a.md", "second/b.md"]
+[case.files]
+"first/a.md" = "[a]: u\n\n[a]\n"
+"second/b.md" = "[a]: v\n\n[a] [b]\n\n[b]: <w x>\n"
+
+[[case]]
+id = "r5-ref-definition-forms"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "[a] [b] [c] [d] [e]\n"
+"sub/b.md" = "[a]: #f\n[b]: /x\n[c]: http://h/p\n[d]: foo:bar\n\nText\n[e]: e.html\n===\n"
+
+[[case]]
+id = "r5-note-text-other-folder"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "x[^1]\n"
+"sub/b.md" = "\n[^1]: ![m](q.png)\n"
+
+[[case]]
+id = "r5-target-forms"
+cmd = ["-f", "commonmark+rebase_relative_paths+wikilinks_title_after_pipe", "-t", "json", "sub/t.md"]
+[case.files]
+"sub/t.md" = "[a](foo:bar)\n\n![i](foo:bar)\n\n[a](c:/x)\n\n![i](c:/x)\n\n[a](c:\\\\x)\n\n![i](c:\\\\x)\n\n[a](c:x)\n\n![i](c:x)\n\n[a](\\\\x)\n\n![i](\\\\x)\n\n[a](\\\\\\\\x)\n\n![i](\\\\\\\\x)\n\n[a](?q)\n\n![i](?q)\n\n[a](x:y/z)\n\n![i](x:y/z)\n\n[a](doi:10)\n\n![i](doi:10)\n\n[a](HTTP://a)\n\n![i](HTTP://a)\n\n[a](a/b:c)\n\n![i](a/b:c)\n\n[a](git+ssh://x)\n\n![i](git+ssh://x)\n\n[a](x.y:z)\n\n![i](x.y:z)\n\n[a](//h/p)\n\n![i](//h/p)\n\n[a](<a b>)\n\n![i](<a b>)\n\n[a](mailto:x)\n\n![i](mailto:x)\n\n[a](urn:x)\n\n![i](urn:x)\n\n[a](./x)\n\n![i](./x)\n\n[a](../x)\n\n![i](../x)\n\n[a](http:x)\n\n![i](http:x)\n\n[a](file:x)\n\n![i](file:x)\n\n[a](%41:x)\n\n![i](%41:x)\n\n[a](\u00e9:x)\n\n![i](\u00e9:x)\n\n[a](#f)\n\n![i](#f)\n\n[a](/x)\n\n![i](/x)\n\n[a](<http://a b>)\n\n![i](<http://a b>)\n\n[a](http://a/[x])\n\n![i](http://a/[x])\n\n[a](http://a/%zz)\n\n![i](http://a/%zz)\n\n[a](http://a#b#c)\n\n![i](http://a#b#c)\n\n[a](http://a/{x})\n\n![i](http://a/{x})\n\n[a](http://a/^)\n\n![i](http://a/^)\n\n[a](http://[::1]/x)\n\n![i](http://[::1]/x)\n\n[a](http:)\n\n![i](http:)\n\n[a](mailto:)\n\n![i](mailto:)\n\n[a](http://a/\u00e9)\n\n![i](http://a/\u00e9)\n\n[a](isbn:1)\n\n![i](isbn:1)\n\n[a](javascript:x)\n\n![i](javascript:x)\n\n[a](Doi:1)\n\n![i](Doi:1)\n\n[a](1a:x)\n\n![i](1a:x)\n\n[a](a+b:x)\n\n![i](a+b:x)\n\n[a](<http://a/|>)\n\n![i](<http://a/|>)\n\n[a](http://a/`)\n\n![i](http://a/`)\n\n[a](<http://a/\\\\>)\n\n![i](<http://a/\\\\>)\n\n[a](http://a/%4)\n\n![i](http://a/%4)\n\n[a](http://a?b?c)\n\n![i](http://a?b?c)\n\n[a](x)\n\n![i](x)\n\n[a]()\n\n![i]()\n\n<foo:bar>\n\n<http://a>\n\n[[wiki]]\n\n[r1]\n\n[r1]: foo:bar\n"
+
+[[case]]
+id = "r5-meta-link-commonmark_x"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "first/a.md"]
+[case.files]
+"first/a.md" = "---\na: \"[x](u)\"\nb: |\n  ![i](p.png) *[e](f)*\n\n  [r]\n\n  [r]: s\n---\n\n[y](v) [r]\n\n[r]: t\n"
+
+[[case]]
+id = "r5-meta-link-commonmark"
+cmd = ["-f", "commonmark+yaml_metadata_block+rebase_relative_paths", "-t", "json", "first/a.md"]
+[case.files]
+"first/a.md" = "---\na: \"[x](u)\"\nb: |\n  ![i](p.png) *[e](f)*\n\n  [r]\n\n  [r]: s\n---\n\n[y](v) [r]\n\n[r]: t\n"
+
+[[case]]
+id = "r5-meta-link-gfm"
+cmd = ["-f", "gfm+yaml_metadata_block+rebase_relative_paths", "-t", "json", "first/a.md"]
+[case.files]
+"first/a.md" = "---\na: \"[x](u)\"\nb: |\n  ![i](p.png) *[e](f)*\n\n  [r]\n\n  [r]: s\n---\n\n[y](v) [r]\n\n[r]: t\n"
+
+[[case]]
+id = "r5-meta-link-two-files"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "first/a.md", "second/b.md"]
+[case.files]
+"first/a.md" = "---\na: \"[x](u)\"\n---\n\n[y](v)\n"
+"second/b.md" = "[z](w)\n"
+
+[[case]]
+id = "r5-target-brackets"
+cmd = ["-f", "commonmark+rebase_relative_paths", "-t", "json", "sub/t.md"]
+[case.files]
+"sub/t.md" = "[a](http://u@[::1]:80/x) [b](http://[x]/y) [c](http://[::1]x/y) [d](http://a@[::1) [e](http://[v1.a]/x)\n"
+
+[[case]]
+id = "r5-lines-after-attr-group"
+cmd = ["-f", "commonmark_x+rebase_relative_paths", "-t", "json", "a.md", "sub/b.md"]
+[case.files]
+"a.md" = "{.a\n}\n# h\n"
+"sub/b.md" = "[x](y)\n\n![i](j)\n"

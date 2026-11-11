@@ -107,6 +107,7 @@ replaces it.
 | BCP 47 language tag (`Lang`, `parseLang`, `renderLang`) | `unicode-collation` 0.1.3.7 `src/Text/Collate/Lang.hs` (code only; no data file) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
 | XML events for CSL styles and locales | `quick-xml` 0.42.0 (`=0.42.0`, `default-features = false`), with `memchr` 2 | MIT; Unlicense OR MIT | Dependency (ADR 10) | `ws/citeproc` |
 | Candidate command names for the TeX math probes (names only, 1,013 names) | KaTeX 0.16.11, `dist/katex.js` of the npm package | MIT | Data: `crates/randoc-math/tools/katex-names.txt`; the tables of `src/symbols.rs` hold oracle results for these names (ADR 14) | `ws/math` |
+| CommonMark and GFM reader: delimiter run matching, the path rule of `rebase_relative_paths` with its URI scheme list, the footnote, definition list and attribute block rules | `commonmark` 0.3.1, `commonmark-extensions` 0.2.7.3, `commonmark-pandoc` 0.3.0.2 (Hackage release archives; the versions of the `stack.yaml` of Pandoc 3.13) | BSD-3-Clause | Port of rules and one data table; the list is in `crates/randoc-commonmark/NOTICE.md`; ADR 12 | `ws/commonmark-reader` |
 
 ## Candidates to study
 
@@ -123,7 +124,6 @@ snapshot `lts-24.51`, inside the bounds of `pandoc.cabal`:
 
 | Need | Candidate and checked release | Licence (licence file) | Compatible | Note |
 | --- | --- | --- | --- | --- |
-| CommonMark and GFM reader | `commonmark` 0.3.1, `commonmark-extensions` 0.2.7.3, `commonmark-pandoc` 0.3.0.2 (`commonmark-hs`) | BSD-3-Clause (https://hackage.haskell.org/package/commonmark-0.3.1/src/LICENSE, https://hackage.haskell.org/package/commonmark-extensions-0.2.7.3/src/LICENSE, https://hackage.haskell.org/package/commonmark-pandoc-0.3.0.2/src/LICENSE) | Yes | The parser that the oracle uses for `commonmark`, `gfm` and `commonmark_x`. `ws/commonmark-reader` was written from black-box tests; a comparison with this source can close its open rows. The copyright line of the licence file is the template text "Author name here"; the `.cabal` file gives "2018-2021 John MacFarlane". Keep both in the notice. |
 | Sort order for citations | `unicode-collation` 0.1.3.7 | Code BSD-2-Clause; data files under other terms (https://hackage.haskell.org/package/unicode-collation-0.1.3.7/src/LICENSE) | Code yes; part of the data no | `data/tailorings/*.txt` and `data/cjk/*.txt` come from the Perl module `Unicode::Collate` "under the same terms as Perl" (Artistic-1.0-Perl OR GPL-1.0-or-later). Do not copy them. `data/allkeys.txt` (UCA 13.0.0) and `UnicodeData.txt` (13.0.0) are Unicode data: take them from unicode.org. |
 | Djot reader and writer | `djot` 0.1.4.3 (`djoths`) | MIT (https://hackage.haskell.org/package/djot-0.1.4.3/src/LICENSE) | Yes | |
 | Typst reader | `typst` 0.12 (`typst-hs`) | BSD-3-Clause (https://hackage.haskell.org/package/typst-0.12/src/LICENSE) | Yes | |
