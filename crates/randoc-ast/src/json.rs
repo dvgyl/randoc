@@ -18,7 +18,11 @@ mod encode;
 mod haskell;
 mod parse;
 
-pub use haskell::show_double;
+pub use haskell::{show_char, show_double, show_string};
+pub use parse::{
+    Entries as JsonEntries, Items as JsonItems, Kind as JsonKind, Tape as JsonTape,
+    Value as JsonValue,
+};
 
 use crate::Pandoc;
 use parse::ParseError;
@@ -122,17 +126,48 @@ pub fn value_from_json_with_limit<T: FromJson>(
         message: error.render(),
         too_deep: false,
     })?;
-    let rest = &text.as_bytes()[end..];
-    if !rest
+    check_rest(text, end)?;
+    Ok(value)
+}
+
+/// Parses one JSON value, for JSON that is not a document, for example CSL
+/// JSON. Text with more than `max_depth` levels of arrays and objects is an
+/// error ([`JsonError::is_too_deep`]). A syntax error has the text of
+/// `aeson`, as for [`from_json`]; white space can follow the value, and other
+/// text after it is the error `Trailing garbage`.
+///
+/// ```
+/// use randoc_ast::json::{JsonKind, parse_value};
+/// let tape = parse_value(r#"{"a": [1, "x"]}"#, 16).unwrap();
+/// let (key, array) = tape.root().entries().next().unwrap();
+/// assert_eq!(key, "a");
+/// let kinds: Vec<JsonKind> = array.items().map(|item| item.kind()).collect();
+/// assert_eq!(kinds, [JsonKind::Number("1"), JsonKind::String("x")]);
+/// assert_eq!(
+///     parse_value("[1,", 16).unwrap_err().to_string(),
+///     "Unexpected end-of-input, expecting JSON value"
+/// );
+/// ```
+pub fn parse_value(text: &str, max_depth: usize) -> Result<JsonTape<'_>, JsonError> {
+    let (tape, end) = parse::parse(text, max_depth).map_err(JsonError::from_parse)?;
+    check_rest(text, end)?;
+    Ok(tape)
+}
+
+/// Accepts only white space after the value that ends at `end`.
+fn check_rest(text: &str, end: usize) -> Result<(), JsonError> {
+    let rest = text.as_bytes().get(end..).unwrap_or_default();
+    if rest
         .iter()
         .all(|b| matches!(b, b' ' | b'\n' | b'\r' | b'\t'))
     {
-        return Err(JsonError {
+        Ok(())
+    } else {
+        Err(JsonError {
             message: "Trailing garbage".to_owned(),
             too_deep: false,
-        });
+        })
     }
-    Ok(value)
 }
 
 /// Returns the largest depth of arrays and objects in JSON text.
@@ -169,6 +204,18 @@ pub fn nesting_depth(text: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn parse_value_limits_the_depth_and_refuses_trailing_text() {
+        let tape = super::parse_value("[[1]] \n", 2).unwrap();
+        assert_eq!(tape.root().len(), 1);
+        assert!(super::parse_value("[[[1]]]", 2).unwrap_err().is_too_deep());
+        assert!(super::parse_value("[[[1]]]", 3).is_ok());
+        let error = super::parse_value("[1] x", 8).unwrap_err();
+        assert!(!error.is_too_deep());
+        // Oracle: `pandoc -f csljson` with the input `[1] x`.
+        assert_eq!(error.to_string(), "Trailing garbage");
+    }
+
     use super::*;
     use crate::{Block, Inline};
 

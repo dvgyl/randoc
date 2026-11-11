@@ -10,7 +10,7 @@
 //! number of tokens and not in the number of characters.
 
 use randoc_ast::Text;
-use randoc_core::shared::named_entity;
+use randoc_core::shared::{named_entity, show_string};
 
 /// One token of the input.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -779,70 +779,34 @@ pub(crate) fn show_token(kind: &TokenKind) -> String {
     match kind {
         TokenKind::Open(name, attributes) => {
             out.push_str("TagOpen ");
-            show_string(name, &mut out);
+            out.push_str(&show_string(name));
             out.push_str(" [");
             for (index, (key, value)) in attributes.iter().enumerate() {
                 if index > 0 {
                     out.push(',');
                 }
                 out.push('(');
-                show_string(key, &mut out);
+                out.push_str(&show_string(key));
                 out.push(',');
-                show_string(value, &mut out);
+                out.push_str(&show_string(value));
                 out.push(')');
             }
             out.push(']');
         }
         TokenKind::Close(name) => {
             out.push_str("TagClose ");
-            show_string(name, &mut out);
+            out.push_str(&show_string(name));
         }
         TokenKind::Text(text) => {
             out.push_str("TagText ");
-            show_string(text, &mut out);
+            out.push_str(&show_string(text));
         }
         TokenKind::Comment(text) => {
             out.push_str("TagComment ");
-            show_string(text, &mut out);
+            out.push_str(&show_string(text));
         }
     }
     out
-}
-
-/// Writes a string literal with the escapes of Haskell.
-fn show_string(text: &str, out: &mut String) {
-    const CONTROL_NAMES: [&str; 32] = [
-        "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "a", "b", "t", "n", "v", "f", "r", "SO",
-        "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC",
-        "FS", "GS", "RS", "US",
-    ];
-    out.push('"');
-    let mut chars = text.chars().peekable();
-    while let Some(c) = chars.next() {
-        let code = u32::from(c);
-        match c {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            _ if code < 32 => {
-                out.push('\\');
-                out.push_str(CONTROL_NAMES.get(code as usize).copied().unwrap_or("NUL"));
-                // `\SO` before `H` would read as `\SOH`.
-                if code == 14 && chars.peek() == Some(&'H') {
-                    out.push_str("\\&");
-                }
-            }
-            _ if code == 127 => out.push_str("\\DEL"),
-            _ if code > 127 => {
-                out.push('\\');
-                out.push_str(&code.to_string());
-                if chars.peek().is_some_and(char::is_ascii_digit) {
-                    out.push_str("\\&");
-                }
-            }
-            _ => out.push(c),
-        }
-    }
-    out.push('"');
 }
 
 #[cfg(test)]

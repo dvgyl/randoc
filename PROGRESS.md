@@ -286,6 +286,7 @@ through an engine, and the `lua` and `server` modes.
 | math | `randoc-math`: TeX math to MathML and to inline elements (no program path calls it yet) |
 | lua | `randoc-lua`: the Lua runtime with Lua 5.4.8, the document types, Lua filters and the first modules (no program option calls it yet) |
 | html-writer | `randoc-html`: the writers `html` and `html4` |
+| contracts | Shared contracts for the next units: two new `Limits`, 15 new `Host` methods, one Haskell `show`, the public JSON value parser, the `zip` pin (ADR 18) |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

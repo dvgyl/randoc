@@ -8,6 +8,7 @@
 //! - Emoji: [`emoji_from_alias`], [`alias_from_emoji`], [`replace_emoji_with_aliases`].
 //! - The default abbreviations of the `smart` extension: [`default_abbreviations`].
 //! - Unicode Normalization Form C: [`nfc`], [`is_nfc_quick`].
+//! - The Haskell `show` of a string and of a character: [`show_string`], [`show_char`].
 //!
 //! `tools/shared_tables.py` writes the tables. `tools/shared_oracle.py` writes
 //! the oracle results that the test `tests/shared_replay.rs` replays.
@@ -34,4 +35,5 @@ pub use identifiers::{
     CommonmarkIdentifierSet, IdentifierSet, auto_identifier, commonmark_auto_identifier,
 };
 pub use nfc::{is_nfc_quick, nfc};
+pub use randoc_ast::json::{show_char, show_string};
 pub use text::{stringify, stringify_blocks, stringify_meta};

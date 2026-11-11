@@ -20,7 +20,7 @@ mod schemes;
 use std::sync::Arc;
 
 use randoc_ast::{Meta, Pandoc};
-use randoc_core::{Context, Extension, Reader, ReaderOptions, Result, Sources};
+use randoc_core::{Context, Extension, Limits, Reader, ReaderOptions, Result, Sources};
 
 /// A count of the work of the parsers in test builds, for tests of the time that inputs need.
 #[cfg(test)]
@@ -94,6 +94,10 @@ pub(crate) struct Config {
     /// For `rebase_relative_paths`: the first line of each source and its directory.
     pub(crate) sources: Vec<(usize, String)>,
     pub(crate) max_depth: usize,
+    /// The largest number of cells that the reader adds to the short rows of one table
+    /// (`Limits::max_table_cells`). A row after that ends the table (`pipeTableBlockSpec`
+    /// in `Commonmark/Extensions/PipeTable.hs`).
+    pub(crate) max_added_cells: usize,
 }
 
 impl Config {
@@ -125,7 +129,7 @@ impl Config {
         out
     }
 
-    fn new(options: &ReaderOptions, max_depth: usize) -> Self {
+    fn new(options: &ReaderOptions, limits: &Limits) -> Self {
         let on = |e| options.extensions.contains(e);
         Config {
             smart: on(Extension::Smart),
@@ -156,13 +160,14 @@ impl Config {
             east_asian: on(Extension::EastAsianLineBreaks),
             strip_comments: options.strip_comments,
             sources: Vec::new(),
-            max_depth: max_depth.max(4),
+            max_depth: limits.max_nesting_depth.max(4),
+            max_added_cells: limits.max_table_cells,
         }
     }
 }
 
 fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
-    let mut config = Config::new(options, context.limits.max_nesting_depth);
+    let mut config = Config::new(options, &context.limits);
     if options.extensions.contains(Extension::RebaseRelativePaths) {
         // `Sources::concat` ends each source with a line ending and puts one more between sources.
         let mut line = 1;
@@ -283,6 +288,28 @@ mod tests {
             .read(&Sources::from_text(text), &options, &mut Context::pure())
             .unwrap()
             .blocks
+    }
+
+    #[test]
+    fn the_added_cells_of_a_pipe_table_come_from_the_limits_of_the_context() {
+        let text = "| a | b | c |\n|---|---|---|\n| 1 |\n| 2 |\n| 3 |\n| 4 |\n";
+        let read = |max_table_cells| {
+            let mut context = Context::pure();
+            context.limits.max_table_cells = max_table_cells;
+            let mut options = ReaderOptions::default();
+            options.extensions = default_extensions("gfm");
+            let Some(Reader::Text(reader)) = reader("gfm") else {
+                panic!("no reader")
+            };
+            let blocks = reader
+                .read(&Sources::from_text(text), &options, &mut context)
+                .unwrap()
+                .blocks;
+            blocks.len()
+        };
+        assert_eq!(read(200_000), 1);
+        // Two short rows add 4 cells; the next row ends the table.
+        assert_eq!(read(3), 2);
     }
 
     fn image_urls(format: &str, sources: Vec<(&str, &str)>) -> Vec<String> {

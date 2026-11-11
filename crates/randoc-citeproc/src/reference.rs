@@ -922,7 +922,7 @@ mod tests {
     }
 
     fn read(text: &str) -> Result<Reference<Vec<Markup>>, ReadError> {
-        let value: Json = serde_json::from_str(text).unwrap();
+        let value = Json::from_value(randoc_ast::json::parse_value(text, 128).unwrap().root());
         read_reference(&value, 128)
     }
 
@@ -1072,7 +1072,8 @@ mod tests {
             error(r#"{"note":5}"#),
             "Error in $: parsing Text failed, expected String, but encountered Number"
         );
-        let value: Json = serde_json::from_str(r#"{"title":"<b><b>x</b></b>"}"#).unwrap();
+        let text = r#"{"title":"<b><b>x</b></b>"}"#;
+        let value = Json::from_value(randoc_ast::json::parse_value(text, 128).unwrap().root());
         assert_eq!(read_reference(&value, 1), Err(ReadError::TooDeep));
     }
 

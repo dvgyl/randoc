@@ -56,6 +56,12 @@ the change one time for all workstreams.
   depth count is a defect.
 - **Archives.** Obey `context.limits` for the size and the number of entries.
   Reject an entry path that is absolute or that contains `..`.
+- **Size limits.** Refuse an input above `context.limits.max_input_size`
+  bytes before you read or open it. Stop when the tables of one document need
+  more than `context.limits.max_table_cells` cells and columns that the input
+  does not write (a span attribute or a short row can ask for them).
+- **Haskell `show`.** Use `randoc_core::shared::show_string` and `show_char`
+  (also `randoc_ast::json`) for the text that Pandoc writes with `show`.
 - **No `unsafe`.** Each crate forbids `unsafe` code through the workspace lints.
 - **Strings.** Use `randoc_ast::Text` for strings in the tree.
 - **General logic.** Implement the rule of the format. Do not add a special
@@ -74,6 +80,24 @@ pub fn writer(format: &str) -> Option<randoc_core::Writer>;
 
 The coordinator adds the crate to the root `Cargo.toml` and one line to
 `crates/randoc/src/formats.rs`.
+
+## System access of the host
+
+Each system access is a method of the trait `Host`: files, directories, the
+working directory, the environment, processes, the clock and the network.
+Each method has a default body that returns an error of the kind
+`Unsupported`, so a host refuses a method that it does not implement.
+`NativeHost` uses the real system; it keeps environment changes in a table
+of the program and gives them to `run_process`. `PureHost` answers from its
+file map and its environment map. The `--sandbox` host of the program reads
+only the files that the command line names. ADR 18 lists the methods.
+
+## JSON values
+
+`randoc_ast::json::parse_value` parses one JSON value with a depth limit and
+gives the error texts of `aeson`. The result is a `JsonTape`; its root is a
+`JsonValue`, and `JsonValue::kind` gives a `JsonKind`. Use it for JSON that
+is not a Pandoc document, for example CSL JSON.
 
 ## Input preparation
 

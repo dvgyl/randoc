@@ -8,6 +8,7 @@ use std::collections::BTreeMap;
 use quick_xml::Reader;
 use quick_xml::errors::{Error as QuickError, IllFormedError, SyntaxError};
 use quick_xml::events::{BytesStart, Event};
+use randoc_core::shared::show_string;
 
 /// The largest number of bytes that entity references can add to one document.
 const MAX_ENTITY_BYTES: usize = 16 << 20;
@@ -1022,41 +1023,6 @@ fn show_event(event: &ShownEvent) -> String {
         ShownEvent::End(name) => format!("EventEndElement ({})", show_name(name)),
         ShownEvent::Content(text) => format!("EventContent (ContentText {})", show_string(text)),
     }
-}
-
-/// The Haskell `show` of a string.
-pub(crate) fn show_string(text: &str) -> String {
-    const NAMES: [&str; 32] = [
-        "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "a", "b", "t", "n", "v", "f", "r", "SO",
-        "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC",
-        "FS", "GS", "RS", "US",
-    ];
-    let mut out = String::from("\"");
-    let mut chars = text.chars().peekable();
-    while let Some(c) = chars.next() {
-        let next = chars.peek().copied();
-        match c {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            '\u{7f}' => out.push_str("\\DEL"),
-            ' '..='~' => out.push(c),
-            c if (c as u32) < 32 => {
-                out.push('\\');
-                out.push_str(NAMES.get(c as usize).copied().unwrap_or(""));
-                if c == '\u{e}' && next == Some('H') {
-                    out.push_str("\\&");
-                }
-            }
-            c => {
-                out.push_str(&format!("\\{}", c as u32));
-                if next.is_some_and(|n| n.is_ascii_digit()) {
-                    out.push_str("\\&");
-                }
-            }
-        }
-    }
-    out.push('"');
-    out
 }
 
 #[cfg(test)]

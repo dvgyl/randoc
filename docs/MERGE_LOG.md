@@ -776,3 +776,38 @@ their fuzz results (both 0 crashes). No branch was left out or undone.
   d8fa6c0; no finding with the level medium or higher; one low finding
   (layout-perf-R2-01, `Debug` formatter flags), recorded as I-LAYOUT-06 in
   this commit.
+
+## Workstream contracts (branch `ws/contracts`, head cbead12, one squashed commit, session 4 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: shared
+contracts for the next units. `Limits::max_table_cells` (the HTML and
+CommonMark readers use it in place of their own constants) and
+`Limits::max_input_size`; 15 new methods of the trait `Host` with the
+types `PathKind`, `PathTimes` and `ProcessOutput`; one Haskell `show` of a
+string (`randoc_ast::json::{show_string, show_char}`, five copies removed);
+the public JSON value parser `randoc_ast::json::parse_value`, which
+replaces `serde_json` in `randoc-citeproc`; the pin `zip = "=9.5.0"` with
+the licence texts of `zip`, `flate2` and `zlib-rs`; ADR 18.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head cbead12 (run ended 21:29 UTC; worker report). The merged tree is checked at the end of the batch. |
+| 2. Measured progress | No new units. The `show` matrix: 2,600 strings against the oracle, 0 differences (`crates/randoc-ast/tests/show_matrix.tsv`). |
+| 3. Tests | `cargo test` of `randoc-core`, `randoc-ast`, `randoc-citeproc`, `randoc-html-reader`, `randoc-commonmark` and `randoc-harness` on the merged tree: 327 pass, 0 fail, 6 ignored. Coverage and mutation tests: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | No review round exists for this block. It is a small block under owner instruction 17; its review is due with the next major block that uses these contracts. |
+| 6. No slowdowns | Benchmarks: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. The gate script passed on the branch head (see gate 1). |
+
+Conflicts in the merge: none. Licence scan: the only hits are lists of
+HTML element names in `crates/randoc-commonmark/src/blocks.rs` and
+`crates/randoc-html-reader/src/parse.rs`. These lists are on `main`
+already, and the branch does not change them.
+
+Open findings: the rows I-CONTRACTS-01, I-CONTRACTS-02 and I-CONTRACTS-03
+of `docs/ISSUES.md`. Open checks: coverage, mutation tests, fuzzing,
+benchmarks. Requests of the worker to the coordinator: I-CONTRACTS-03
+(the `--sandbox` host), I-CONTRACTS-01 (a processor clock needs a
+dependency or `unsafe`), and a fourth string escape in
+`crates/randoc-markdown/src/yaml.rs` (`quote`), which this block did not
+change.

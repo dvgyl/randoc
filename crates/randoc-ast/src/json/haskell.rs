@@ -16,52 +16,80 @@ const ASCII_NAMES: [&str; 32] = [
     "RS", "US",
 ];
 
-/// Appends one character as `showLitChar` does, for a byte read as a Latin-1 character.
-/// `next` is the byte after it in a string literal, for the `\&` separator.
-fn push_lit_char(out: &mut String, byte: u8, next: Option<u8>) {
-    match byte {
-        b'\\' => out.push_str("\\\\"),
-        0x7f => out.push_str("\\DEL"),
-        0x80..=0xff => {
-            let _ = write!(out, "\\{byte}");
-            if next.is_some_and(|b| b.is_ascii_digit()) {
+/// Appends one character as `showLitChar` does. `next` is the character
+/// after it in a string literal, for the `\&` separator.
+fn push_lit_char(out: &mut String, c: char, next: Option<char>) {
+    match c {
+        '\\' => out.push_str("\\\\"),
+        '\u{7f}' => out.push_str("\\DEL"),
+        ' '..='~' => out.push(c),
+        '\u{0}'..='\u{1f}' => {
+            out.push('\\');
+            out.push_str(ASCII_NAMES[usize::from(c as u8)]);
+            if c == '\u{e}' && next == Some('H') {
                 out.push_str("\\&");
             }
         }
-        0x20..=0x7e => out.push(byte as char),
         _ => {
-            out.push('\\');
-            out.push_str(ASCII_NAMES[usize::from(byte)]);
-            if byte == 0x0e && next == Some(b'H') {
+            let _ = write!(out, "\\{}", u32::from(c));
+            if next.is_some_and(|n| n.is_ascii_digit()) {
                 out.push_str("\\&");
             }
         }
     }
 }
 
-/// Shows bytes as a Haskell string literal, one Latin-1 character for each byte.
-pub fn show_byte_string(bytes: &[u8]) -> String {
+/// Shows a string as the Haskell function `show` does for a `String` or a
+/// `Text`: a string literal in double quotes.
+///
+/// A character outside printable ASCII gets an escape: a name for an ASCII
+/// control character and for U+007F, else its decimal code. `\&` separates a
+/// decimal escape from a digit after it, and `\SO` from an `H` after it.
+///
+/// ```
+/// use randoc_ast::json::show_string;
+/// assert_eq!(show_string("é1\u{e}H"), r#""\233\&1\SO\&H""#);
+/// ```
+pub fn show_string(text: &str) -> String {
     let mut out = String::from("\"");
-    for (index, &byte) in bytes.iter().enumerate() {
-        if byte == b'"' {
+    let mut chars = text.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '"' {
             out.push_str("\\\"");
         } else {
-            push_lit_char(&mut out, byte, bytes.get(index + 1).copied());
+            push_lit_char(&mut out, c, chars.peek().copied());
         }
     }
     out.push('"');
     out
 }
 
-/// Shows one byte as a Haskell character literal.
-pub fn show_byte_char(byte: u8) -> String {
-    if byte == b'\'' {
+/// Shows a character as the Haskell function `show` does for a `Char`: a
+/// character literal in single quotes, with the escapes of [`show_string`].
+///
+/// ```
+/// use randoc_ast::json::show_char;
+/// assert_eq!(show_char('\''), r"'\''");
+/// assert_eq!(show_char('"'), "'\"'");
+/// ```
+pub fn show_char(c: char) -> String {
+    if c == '\'' {
         return "'\\''".to_owned();
     }
     let mut out = String::from("'");
-    push_lit_char(&mut out, byte, None);
+    push_lit_char(&mut out, c, None);
     out.push('\'');
     out
+}
+
+/// Shows bytes as a Haskell string literal, one Latin-1 character for each byte.
+pub(crate) fn show_byte_string(bytes: &[u8]) -> String {
+    show_string(&bytes.iter().copied().map(char::from).collect::<String>())
+}
+
+/// Shows one byte as a Haskell character literal of a Latin-1 character.
+pub(crate) fn show_byte_char(byte: u8) -> String {
+    show_char(char::from(byte))
 }
 
 /// Formats decimal digits as `show` does for a `Double` or a `Scientific`.
@@ -399,6 +427,33 @@ mod tests {
             show_digits(false, &[1], i64::MIN),
             "1.0e9223372036854775807"
         );
+    }
+
+    /// `tools/show_matrix.py` writes the table from the oracle.
+    #[test]
+    fn show_string_gives_the_text_of_the_oracle_for_each_string_of_the_matrix() {
+        let table = include_str!("../../tests/show_matrix.tsv");
+        let mut count = 0;
+        for line in table.lines() {
+            let (hex, expected) = line.split_once('\t').unwrap();
+            let bytes: Vec<u8> = (0..hex.len())
+                .step_by(2)
+                .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
+                .collect();
+            let text = String::from_utf8(bytes).unwrap();
+            assert_eq!(show_string(&text), expected, "{text:?}");
+            count += 1;
+        }
+        assert_eq!(count, 2600);
+    }
+
+    #[test]
+    fn show_char_escapes_only_its_own_quote() {
+        assert_eq!(show_char('\''), r"'\''");
+        assert_eq!(show_char('"'), "'\"'");
+        assert_eq!(show_char('\u{e}'), r"'\SO'");
+        assert_eq!(show_char('\u{1F600}'), r"'\128512'");
+        assert_eq!(show_char('a'), "'a'");
     }
 
     #[test]

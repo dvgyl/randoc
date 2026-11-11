@@ -18,6 +18,42 @@ pub struct Timestamp {
     pub utc_offset_minutes: i32,
 }
 
+/// The kind of the file system object at a path.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PathKind {
+    /// No object is at the path. A symbolic link to nothing is missing when
+    /// the query follows links.
+    Missing,
+    /// An object that is not a directory or a symbolic link, for example a
+    /// regular file or a device.
+    File,
+    /// A directory.
+    Directory,
+    /// A symbolic link. Only a query that does not follow links gives it.
+    SymbolicLink,
+}
+
+/// The times of a file system object.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PathTimes {
+    /// The time of the last change of the contents.
+    pub modified: Timestamp,
+    /// The time of the last read.
+    pub accessed: Timestamp,
+}
+
+/// The result of a process that ran to its end.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProcessOutput {
+    /// The exit code: 0 for success. A process that a signal stopped has the
+    /// negative signal number, as in Haskell.
+    pub exit_code: i32,
+    /// The bytes that the process wrote to standard output.
+    pub stdout: Vec<u8>,
+    /// The bytes that the process wrote to standard error.
+    pub stderr: Vec<u8>,
+}
+
 /// The services that a conversion gets from its environment.
 ///
 /// A reader or a writer must not use the file system, the network, the clock
@@ -73,6 +109,91 @@ pub trait Host: Send {
     /// Shows a log message to the user. The context calls this method only
     /// for a message that the verbosity level permits.
     fn show_log_message(&mut self, _message: &LogMessage) {}
+
+    /// Returns the names of the entries of a directory, without `.` and `..`,
+    /// in the order of the system.
+    fn list_directory(&mut self, path: &str) -> io::Result<Vec<Text>> {
+        Err(unsupported(path))
+    }
+
+    /// Makes a directory. With `parents`, also makes each missing parent and
+    /// accepts a directory that exists.
+    fn create_directory(&mut self, path: &str, _parents: bool) -> io::Result<()> {
+        Err(unsupported(path))
+    }
+
+    /// Removes a file.
+    fn remove_file(&mut self, path: &str) -> io::Result<()> {
+        Err(unsupported(path))
+    }
+
+    /// Removes a directory. Without `recursive`, the directory must be empty.
+    fn remove_directory(&mut self, path: &str, _recursive: bool) -> io::Result<()> {
+        Err(unsupported(path))
+    }
+
+    /// Gives a file or a directory a new path.
+    fn rename(&mut self, from: &str, _to: &str) -> io::Result<()> {
+        Err(unsupported(from))
+    }
+
+    /// Copies a file with its permissions. The copy replaces a file at `to`.
+    fn copy_file(&mut self, from: &str, _to: &str) -> io::Result<()> {
+        Err(unsupported(from))
+    }
+
+    /// Returns the kind of the object at a path. With `follow_links`, the
+    /// result is the kind of the object that a symbolic link points to.
+    fn path_kind(&mut self, path: &str, _follow_links: bool) -> io::Result<PathKind> {
+        Err(unsupported(path))
+    }
+
+    /// Returns the modification and access times of a file or a directory.
+    fn path_times(&mut self, path: &str) -> io::Result<PathTimes> {
+        Err(unsupported(path))
+    }
+
+    /// Returns the absolute path of the working directory.
+    fn working_directory(&mut self) -> io::Result<Text> {
+        Err(not_available("the working directory"))
+    }
+
+    /// Changes the working directory.
+    fn set_working_directory(&mut self, path: &str) -> io::Result<()> {
+        Err(unsupported(path))
+    }
+
+    /// Returns each environment variable with its value.
+    fn environment(&mut self) -> io::Result<Vec<(Text, Text)>> {
+        Err(not_available("the environment"))
+    }
+
+    /// Sets an environment variable, or removes it when `value` is `None`.
+    fn set_environment_variable(&mut self, name: &str, _value: Option<&str>) -> io::Result<()> {
+        Err(not_available(name))
+    }
+
+    /// Runs a program with arguments, writes `input` to its standard input,
+    /// and waits for its end. The system search path finds `program`.
+    fn run_process(
+        &mut self,
+        program: &str,
+        _arguments: &[Text],
+        _input: &[u8],
+    ) -> io::Result<ProcessOutput> {
+        Err(not_available(program))
+    }
+
+    /// Makes a new directory in `parent` whose name starts with `template`,
+    /// and returns its path.
+    fn create_temporary_directory(&mut self, parent: &str, _template: &str) -> io::Result<Text> {
+        Err(unsupported(parent))
+    }
+
+    /// Returns the processor time that the process used.
+    fn processor_time(&mut self) -> io::Result<std::time::Duration> {
+        Err(not_available("the processor time"))
+    }
 }
 
 fn unsupported(path: &str) -> io::Error {
@@ -82,9 +203,51 @@ fn unsupported(path: &str) -> io::Error {
     )
 }
 
+fn not_available(what: &str) -> io::Error {
+    io::Error::new(
+        io::ErrorKind::Unsupported,
+        format!("{what}: system access is not available"),
+    )
+}
+
+fn timestamp(time: std::time::SystemTime) -> Timestamp {
+    let since_epoch = time
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default();
+    Timestamp {
+        unix_seconds: i64::try_from(since_epoch.as_secs()).unwrap_or(i64::MAX),
+        nanoseconds: since_epoch.subsec_nanos(),
+        utc_offset_minutes: 0,
+    }
+}
+
+fn path_text(path: &std::path::Path) -> io::Result<Text> {
+    path.to_str().map(Text::from).ok_or_else(|| {
+        io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("{}: the path is not UTF-8", path.display()),
+        )
+    })
+}
+
+/// The environment changes of [`NativeHost`]: a value, or `None` for a
+/// removed variable. The process environment itself stays unchanged,
+/// because a change of it is `unsafe` in Rust 2024 when other threads run.
+static ENVIRONMENT_CHANGES: std::sync::Mutex<BTreeMap<Text, Option<Text>>> =
+    std::sync::Mutex::new(BTreeMap::new());
+
+fn environment_changes() -> std::sync::MutexGuard<'static, BTreeMap<Text, Option<Text>>> {
+    ENVIRONMENT_CHANGES
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
 /// A host that uses the real file system, clock and environment.
 ///
-/// Network access and random bytes are not available in this host yet.
+/// Network access, random bytes and the processor time are not available in
+/// this host yet. Environment changes are a table of the program that
+/// [`Host::environment_variable`], [`Host::environment`] and
+/// [`Host::run_process`] apply; the process environment stays unchanged.
 #[derive(Debug, Default)]
 pub struct NativeHost;
 
@@ -102,18 +265,14 @@ impl Host for NativeHost {
     }
 
     fn current_time(&mut self) -> Timestamp {
-        let since_epoch = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap_or_default();
-        Timestamp {
-            unix_seconds: i64::try_from(since_epoch.as_secs()).unwrap_or(i64::MAX),
-            nanoseconds: since_epoch.subsec_nanos(),
-            utc_offset_minutes: 0,
-        }
+        timestamp(std::time::SystemTime::now())
     }
 
     fn environment_variable(&mut self, name: &str) -> Option<Text> {
-        std::env::var(name).ok()
+        match environment_changes().get(name) {
+            Some(changed) => changed.clone(),
+            None => std::env::var(name).ok(),
+        }
     }
 
     fn show_log_message(&mut self, message: &LogMessage) {
@@ -121,6 +280,176 @@ impl Host for NativeHost {
         // A failure to write a log message must not stop the conversion.
         let _ = io::stderr().write_all(message.render().as_bytes());
     }
+
+    fn list_directory(&mut self, path: &str) -> io::Result<Vec<Text>> {
+        std::fs::read_dir(path)?
+            .map(|entry| {
+                let name = entry?.file_name();
+                name.into_string().map_err(|name| {
+                    io::Error::new(
+                        io::ErrorKind::InvalidData,
+                        format!("{}: the name is not UTF-8", name.display()),
+                    )
+                })
+            })
+            .collect()
+    }
+
+    fn create_directory(&mut self, path: &str, parents: bool) -> io::Result<()> {
+        if parents {
+            std::fs::create_dir_all(path)
+        } else {
+            std::fs::create_dir(path)
+        }
+    }
+
+    fn remove_file(&mut self, path: &str) -> io::Result<()> {
+        std::fs::remove_file(path)
+    }
+
+    fn remove_directory(&mut self, path: &str, recursive: bool) -> io::Result<()> {
+        if recursive {
+            std::fs::remove_dir_all(path)
+        } else {
+            std::fs::remove_dir(path)
+        }
+    }
+
+    fn rename(&mut self, from: &str, to: &str) -> io::Result<()> {
+        std::fs::rename(from, to)
+    }
+
+    fn copy_file(&mut self, from: &str, to: &str) -> io::Result<()> {
+        std::fs::copy(from, to).map(drop)
+    }
+
+    fn path_kind(&mut self, path: &str, follow_links: bool) -> io::Result<PathKind> {
+        let metadata = if follow_links {
+            std::fs::metadata(path)
+        } else {
+            std::fs::symlink_metadata(path)
+        };
+        match metadata {
+            Ok(metadata) if metadata.is_dir() => Ok(PathKind::Directory),
+            Ok(metadata) if metadata.is_symlink() => Ok(PathKind::SymbolicLink),
+            Ok(_) => Ok(PathKind::File),
+            Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(PathKind::Missing),
+            Err(error) => Err(error),
+        }
+    }
+
+    fn path_times(&mut self, path: &str) -> io::Result<PathTimes> {
+        let metadata = std::fs::metadata(path)?;
+        Ok(PathTimes {
+            modified: timestamp(metadata.modified()?),
+            accessed: timestamp(metadata.accessed()?),
+        })
+    }
+
+    fn working_directory(&mut self) -> io::Result<Text> {
+        path_text(&std::env::current_dir()?)
+    }
+
+    fn set_working_directory(&mut self, path: &str) -> io::Result<()> {
+        std::env::set_current_dir(path)
+    }
+
+    fn environment(&mut self) -> io::Result<Vec<(Text, Text)>> {
+        let changes = environment_changes();
+        let mut variables: Vec<(Text, Text)> = std::env::vars()
+            .filter(|(name, _)| !changes.contains_key(name))
+            .collect();
+        variables.extend(
+            changes
+                .iter()
+                .filter_map(|(name, value)| Some((name.clone(), value.clone()?))),
+        );
+        Ok(variables)
+    }
+
+    fn set_environment_variable(&mut self, name: &str, value: Option<&str>) -> io::Result<()> {
+        if name.is_empty() || name.contains(['=', '\0']) || value.is_some_and(|v| v.contains('\0'))
+        {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("{name}: not a valid environment variable"),
+            ));
+        }
+        environment_changes().insert(Text::from(name), value.map(Text::from));
+        Ok(())
+    }
+
+    fn run_process(
+        &mut self,
+        program: &str,
+        arguments: &[Text],
+        input: &[u8],
+    ) -> io::Result<ProcessOutput> {
+        use std::io::Write;
+        use std::process::{Command, Stdio};
+        let mut command = Command::new(program);
+        command
+            .args(arguments)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        for (name, value) in environment_changes().iter() {
+            match value {
+                Some(value) => command.env(name, value),
+                None => command.env_remove(name),
+            };
+        }
+        let mut child = command.spawn()?;
+        let stdin = child.stdin.take();
+        let output = std::thread::scope(|scope| {
+            // A separate writer, so that a process that writes much output
+            // before it reads all of its input does not block both sides.
+            if let Some(mut stdin) = stdin {
+                scope.spawn(move || {
+                    // The process can end before it reads all of its input.
+                    let _ = stdin.write_all(input);
+                });
+            }
+            child.wait_with_output()
+        })?;
+        Ok(ProcessOutput {
+            exit_code: exit_code(output.status),
+            stdout: output.stdout,
+            stderr: output.stderr,
+        })
+    }
+
+    fn create_temporary_directory(&mut self, parent: &str, template: &str) -> io::Result<Text> {
+        use std::hash::{BuildHasher, RandomState};
+        let seed = RandomState::new();
+        let mut last_error = None;
+        for attempt in 0..100_u32 {
+            let suffix = seed.hash_one(attempt);
+            let path = std::path::Path::new(parent).join(format!("{template}-{suffix:016x}"));
+            match std::fs::create_dir(&path) {
+                Ok(()) => return path_text(&path),
+                Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
+                    last_error = Some(error);
+                }
+                Err(error) => return Err(error),
+            }
+        }
+        Err(last_error.unwrap_or_else(|| io::Error::from(io::ErrorKind::AlreadyExists)))
+    }
+}
+
+#[cfg(unix)]
+fn exit_code(status: std::process::ExitStatus) -> i32 {
+    use std::os::unix::process::ExitStatusExt;
+    status
+        .code()
+        .or_else(|| status.signal().map(|signal| -signal))
+        .unwrap_or(-1)
+}
+
+#[cfg(not(unix))]
+fn exit_code(status: std::process::ExitStatus) -> i32 {
+    status.code().unwrap_or(-1)
 }
 
 /// A host that has no access to the system.
@@ -160,6 +489,103 @@ impl Host for PureHost {
     fn environment_variable(&mut self, name: &str) -> Option<Text> {
         self.environment.get(name).cloned()
     }
+
+    /// Lists the files of the map under `path` and the first part of each
+    /// longer path. A map without such a file has no directory `path`.
+    fn list_directory(&mut self, path: &str) -> io::Result<Vec<Text>> {
+        let prefix = directory_prefix(path);
+        let mut names: Vec<Text> = self
+            .files
+            .range::<str, _>((
+                std::ops::Bound::Included(prefix.as_str()),
+                std::ops::Bound::Unbounded,
+            ))
+            .map_while(|(key, _)| key.strip_prefix(prefix.as_str()))
+            .filter_map(|rest| rest.split('/').next())
+            .filter(|name| !name.is_empty())
+            .map(Text::from)
+            .collect();
+        names.sort();
+        names.dedup();
+        if names.is_empty() {
+            return Err(not_found(path));
+        }
+        Ok(names)
+    }
+
+    fn remove_file(&mut self, path: &str) -> io::Result<()> {
+        self.files
+            .remove(path)
+            .map(drop)
+            .ok_or_else(|| not_found(path))
+    }
+
+    /// Renames a file of the map.
+    fn rename(&mut self, from: &str, to: &str) -> io::Result<()> {
+        let contents = self.files.remove(from).ok_or_else(|| not_found(from))?;
+        self.files.insert(Text::from(to), contents);
+        Ok(())
+    }
+
+    fn copy_file(&mut self, from: &str, to: &str) -> io::Result<()> {
+        let contents = self
+            .files
+            .get(from)
+            .cloned()
+            .ok_or_else(|| not_found(from))?;
+        self.files.insert(Text::from(to), contents);
+        Ok(())
+    }
+
+    /// A path of the map is a file. A path that is the start of a longer
+    /// path of the map, up to a `/`, is a directory. The map has no links.
+    fn path_kind(&mut self, path: &str, _follow_links: bool) -> io::Result<PathKind> {
+        if self.files.contains_key(path) {
+            return Ok(PathKind::File);
+        }
+        let prefix = directory_prefix(path);
+        let is_directory = self
+            .files
+            .range::<str, _>((
+                std::ops::Bound::Included(prefix.as_str()),
+                std::ops::Bound::Unbounded,
+            ))
+            .next()
+            .is_some_and(|(key, _)| key.starts_with(prefix.as_str()));
+        Ok(if is_directory {
+            PathKind::Directory
+        } else {
+            PathKind::Missing
+        })
+    }
+
+    fn environment(&mut self) -> io::Result<Vec<(Text, Text)>> {
+        Ok(self
+            .environment
+            .iter()
+            .map(|(name, value)| (name.clone(), value.clone()))
+            .collect())
+    }
+
+    fn set_environment_variable(&mut self, name: &str, value: Option<&str>) -> io::Result<()> {
+        match value {
+            Some(value) => self.environment.insert(Text::from(name), Text::from(value)),
+            None => self.environment.remove(name),
+        };
+        Ok(())
+    }
+}
+
+/// The start that each path in the directory `path` of a [`PureHost`] has.
+fn directory_prefix(path: &str) -> Text {
+    match path.trim_end_matches('/') {
+        "" | "." => Text::new(),
+        directory => format!("{directory}/"),
+    }
+}
+
+fn not_found(path: &str) -> io::Error {
+    io::Error::new(io::ErrorKind::NotFound, format!("{path}: does not exist"))
 }
 
 /// Limits that protect the program from hostile input.
@@ -180,6 +606,13 @@ pub struct Limits {
     pub max_archive_entries: usize,
     /// The largest size, in bytes, of one fetched resource.
     pub max_resource_size: u64,
+    /// The largest number of table cells and columns that a reader makes for
+    /// one document without input text for each one. One span attribute can
+    /// ask for them; Pandoc has no limit.
+    pub max_table_cells: usize,
+    /// The largest size, in bytes, of one input that a reader accepts: a
+    /// file, standard input, or an archive file before the reader opens it.
+    pub max_input_size: u64,
 }
 
 impl Default for Limits {
@@ -189,6 +622,8 @@ impl Default for Limits {
             max_archive_size: 4 << 30,
             max_archive_entries: 100_000,
             max_resource_size: 1 << 30,
+            max_table_cells: 200_000,
+            max_input_size: 4 << 30,
         }
     }
 }
@@ -201,6 +636,8 @@ impl Limits {
             max_archive_size: 256 << 20,
             max_archive_entries: 10_000,
             max_resource_size: 64 << 20,
+            max_table_cells: 20_000,
+            max_input_size: 64 << 20,
         }
     }
 }
@@ -452,6 +889,96 @@ mod tests {
         assert_eq!(host.current_time(), Timestamp::default());
         assert_eq!(host.random_bytes(3), [0, 0, 0]);
         assert_eq!(host.environment_variable("A"), None);
+        let unsupported = io::ErrorKind::Unsupported;
+        assert_eq!(host.list_directory("a").unwrap_err().kind(), unsupported);
+        assert_eq!(
+            host.create_directory("a", true).unwrap_err().kind(),
+            unsupported
+        );
+        assert_eq!(host.remove_file("a").unwrap_err().kind(), unsupported);
+        assert_eq!(
+            host.remove_directory("a", true).unwrap_err().kind(),
+            unsupported
+        );
+        assert_eq!(host.rename("a", "b").unwrap_err().kind(), unsupported);
+        assert_eq!(host.copy_file("a", "b").unwrap_err().kind(), unsupported);
+        assert_eq!(host.path_kind("a", true).unwrap_err().kind(), unsupported);
+        assert_eq!(host.path_times("a").unwrap_err().kind(), unsupported);
+        assert_eq!(host.working_directory().unwrap_err().kind(), unsupported);
+        assert_eq!(
+            host.set_working_directory("a").unwrap_err().kind(),
+            unsupported
+        );
+        assert_eq!(host.environment().unwrap_err().kind(), unsupported);
+        assert_eq!(
+            host.set_environment_variable("A", Some("1"))
+                .unwrap_err()
+                .kind(),
+            unsupported
+        );
+        assert_eq!(
+            host.run_process("true", &[], b"").unwrap_err().kind(),
+            unsupported
+        );
+        assert_eq!(
+            host.create_temporary_directory(".", "t")
+                .unwrap_err()
+                .kind(),
+            unsupported
+        );
+        assert_eq!(host.processor_time().unwrap_err().kind(), unsupported);
+    }
+
+    #[test]
+    fn pure_host_answers_from_its_file_map() {
+        let mut host = PureHost::default();
+        for path in ["d/a.txt", "d/e/b.txt", "d.txt", "top.txt"] {
+            host.files.insert(path.into(), path.as_bytes().to_vec());
+        }
+        assert_eq!(host.list_directory("d").unwrap(), ["a.txt", "e"]);
+        assert_eq!(host.list_directory("d/").unwrap(), ["a.txt", "e"]);
+        assert_eq!(host.list_directory(".").unwrap(), ["d", "d.txt", "top.txt"]);
+        assert_eq!(
+            host.list_directory("x").unwrap_err().kind(),
+            io::ErrorKind::NotFound
+        );
+        assert_eq!(host.path_kind("d", true).unwrap(), PathKind::Directory);
+        assert_eq!(host.path_kind("d/e", false).unwrap(), PathKind::Directory);
+        assert_eq!(host.path_kind("d.txt", true).unwrap(), PathKind::File);
+        assert_eq!(host.path_kind("d/a", true).unwrap(), PathKind::Missing);
+        assert_eq!(host.path_kind("e", true).unwrap(), PathKind::Missing);
+
+        host.copy_file("top.txt", "copy.txt").unwrap();
+        assert_eq!(host.files["copy.txt"], b"top.txt");
+        host.rename("copy.txt", "moved.txt").unwrap();
+        assert!(!host.files.contains_key("copy.txt"));
+        assert_eq!(host.files["moved.txt"], b"top.txt");
+        host.remove_file("moved.txt").unwrap();
+        assert_eq!(
+            host.path_kind("moved.txt", true).unwrap(),
+            PathKind::Missing
+        );
+        for result in [
+            host.remove_file("moved.txt"),
+            host.rename("moved.txt", "x"),
+            host.copy_file("moved.txt", "x"),
+        ] {
+            assert_eq!(result.unwrap_err().kind(), io::ErrorKind::NotFound);
+        }
+        assert_eq!(
+            host.create_directory("n", false).unwrap_err().kind(),
+            io::ErrorKind::Unsupported
+        );
+
+        host.set_environment_variable("B", Some("2")).unwrap();
+        host.set_environment_variable("A", Some("1")).unwrap();
+        assert_eq!(
+            host.environment().unwrap(),
+            [("A".into(), "1".into()), ("B".into(), "2".into())]
+        );
+        host.set_environment_variable("A", None).unwrap();
+        assert_eq!(host.environment_variable("A"), None);
+        assert_eq!(host.environment().unwrap().len(), 1);
     }
 
     #[test]
@@ -481,6 +1008,8 @@ mod tests {
         assert!(strict.max_archive_size < normal.max_archive_size);
         assert!(strict.max_archive_entries < normal.max_archive_entries);
         assert!(strict.max_resource_size < normal.max_resource_size);
+        assert!(strict.max_table_cells < normal.max_table_cells);
+        assert!(strict.max_input_size < normal.max_input_size);
     }
 
     #[test]
@@ -496,5 +1025,215 @@ mod tests {
         assert_eq!(context.read_file(path).unwrap(), b"data");
         assert!(context.host().current_time().unix_seconds > 1_700_000_000);
         std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    /// A new directory under the temporary directory, for one test.
+    fn scratch(name: &str) -> String {
+        let dir = std::env::temp_dir().join(format!("randoc-core-{name}-{}", std::process::id()));
+        if dir.exists() {
+            std::fs::remove_dir_all(&dir).unwrap();
+        }
+        std::fs::create_dir_all(&dir).unwrap();
+        dir.to_str().unwrap().to_owned()
+    }
+
+    #[test]
+    fn native_host_manages_files_and_directories() {
+        let dir = scratch("files");
+        let mut host = NativeHost;
+        let path = |name: &str| format!("{dir}/{name}");
+
+        assert_eq!(
+            host.create_directory(&path("a/b"), false)
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+        host.create_directory(&path("a/b"), true).unwrap();
+        host.create_directory(&path("a/b"), true).unwrap();
+        assert_eq!(
+            host.create_directory(&path("a/b"), false)
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::AlreadyExists
+        );
+        host.write_file(&path("a/f.txt"), b"text").unwrap();
+        // The system lists each entry; on exFAT, macOS adds `._` entries.
+        let mut names = host.list_directory(&path("a")).unwrap();
+        names.retain(|name| !name.starts_with("._"));
+        names.sort();
+        assert_eq!(names, ["b", "f.txt"]);
+        assert_eq!(
+            host.list_directory(&path("none")).unwrap_err().kind(),
+            io::ErrorKind::NotFound
+        );
+
+        assert_eq!(
+            host.path_kind(&path("a"), true).unwrap(),
+            PathKind::Directory
+        );
+        assert_eq!(
+            host.path_kind(&path("a/f.txt"), false).unwrap(),
+            PathKind::File
+        );
+        assert_eq!(
+            host.path_kind(&path("none"), true).unwrap(),
+            PathKind::Missing
+        );
+        #[cfg(unix)]
+        {
+            std::os::unix::fs::symlink(path("a/f.txt"), path("link")).unwrap();
+            std::os::unix::fs::symlink(path("none"), path("dangling")).unwrap();
+            assert_eq!(
+                host.path_kind(&path("link"), false).unwrap(),
+                PathKind::SymbolicLink
+            );
+            assert_eq!(host.path_kind(&path("link"), true).unwrap(), PathKind::File);
+            assert_eq!(
+                host.path_kind(&path("dangling"), false).unwrap(),
+                PathKind::SymbolicLink
+            );
+            assert_eq!(
+                host.path_kind(&path("dangling"), true).unwrap(),
+                PathKind::Missing
+            );
+        }
+
+        let times = host.path_times(&path("a/f.txt")).unwrap();
+        assert!(times.modified.unix_seconds > 1_700_000_000);
+        assert!(times.accessed.unix_seconds > 1_700_000_000);
+        assert_eq!(
+            host.path_times(&path("none")).unwrap_err().kind(),
+            io::ErrorKind::NotFound
+        );
+
+        host.copy_file(&path("a/f.txt"), &path("copy.txt")).unwrap();
+        assert_eq!(host.read_file(&path("copy.txt")).unwrap(), b"text");
+        host.rename(&path("copy.txt"), &path("moved.txt")).unwrap();
+        assert_eq!(
+            host.path_kind(&path("copy.txt"), true).unwrap(),
+            PathKind::Missing
+        );
+        assert_eq!(host.read_file(&path("moved.txt")).unwrap(), b"text");
+        host.remove_file(&path("moved.txt")).unwrap();
+        assert_eq!(
+            host.remove_file(&path("moved.txt")).unwrap_err().kind(),
+            io::ErrorKind::NotFound
+        );
+        assert_eq!(
+            host.rename(&path("moved.txt"), &path("x"))
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+        assert_eq!(
+            host.copy_file(&path("moved.txt"), &path("x"))
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+
+        assert!(host.remove_directory(&path("a"), false).is_err());
+        host.remove_directory(&path("a/b"), false).unwrap();
+        host.remove_directory(&path("a"), true).unwrap();
+        assert_eq!(host.path_kind(&path("a"), true).unwrap(), PathKind::Missing);
+
+        let first = host.create_temporary_directory(&dir, "tpl").unwrap();
+        let second = host.create_temporary_directory(&dir, "tpl").unwrap();
+        assert_ne!(first, second);
+        for made in [&first, &second] {
+            let suffix = made.strip_prefix(&format!("{dir}/tpl-")).unwrap();
+            assert_eq!(suffix.len(), 16);
+            assert!(suffix.chars().all(|c| c.is_ascii_hexdigit()));
+            assert_eq!(host.path_kind(made, true).unwrap(), PathKind::Directory);
+        }
+        assert_eq!(
+            host.create_temporary_directory(&path("none"), "tpl")
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn native_host_changes_the_working_directory() {
+        let dir = scratch("cwd");
+        let mut host = NativeHost;
+        let before = host.working_directory().unwrap();
+        host.set_working_directory(&dir).unwrap();
+        let inside = host.working_directory().unwrap();
+        host.set_working_directory(&before).unwrap();
+        let canonical = std::fs::canonicalize(&dir).unwrap();
+        assert_eq!(std::path::Path::new(&inside), canonical);
+        assert_eq!(host.working_directory().unwrap(), before);
+        assert_eq!(
+            host.set_working_directory(&format!("{dir}/none"))
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn native_host_runs_a_process_with_input_and_the_changed_environment() {
+        let mut host = NativeHost;
+        let shell = |host: &mut NativeHost, script: &str, input: &[u8]| {
+            host.run_process("sh", &["-c".into(), script.into()], input)
+                .unwrap()
+        };
+        let output = shell(&mut host, "cat; printf err >&2; exit 3", b"abc");
+        assert_eq!(
+            output,
+            ProcessOutput {
+                exit_code: 3,
+                stdout: b"abc".to_vec(),
+                stderr: b"err".to_vec(),
+            }
+        );
+        let large = vec![b'x'; 1 << 20];
+        assert_eq!(shell(&mut host, "cat", &large).stdout.len(), large.len());
+        assert_eq!(shell(&mut host, "exit 0", &large).exit_code, 0);
+        assert_eq!(shell(&mut host, "kill -9 $$", b"").exit_code, -9);
+        assert_eq!(
+            host.run_process("randoc-no-such-program", &[], b"")
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+
+        let name = "RANDOC_CORE_HOST_TEST";
+        let show = "printf %s \"${RANDOC_CORE_HOST_TEST-unset}\"";
+        host.set_environment_variable(name, Some("v=1")).unwrap();
+        assert_eq!(host.environment_variable(name).as_deref(), Some("v=1"));
+        assert!(
+            host.environment()
+                .unwrap()
+                .contains(&(name.into(), "v=1".into()))
+        );
+        assert_eq!(shell(&mut host, show, b"").stdout, b"v=1");
+        host.set_environment_variable(name, None).unwrap();
+        assert_eq!(host.environment_variable(name), None);
+        assert!(host.environment().unwrap().iter().all(|(n, _)| n != name));
+        assert_eq!(shell(&mut host, show, b"").stdout, b"unset");
+        assert!(host.environment().unwrap().iter().any(|(n, _)| n == "PATH"));
+        for (bad, value) in [("", Some("1")), ("A=B", Some("1")), ("A", Some("\0"))] {
+            assert_eq!(
+                host.set_environment_variable(bad, value)
+                    .unwrap_err()
+                    .kind(),
+                io::ErrorKind::InvalidInput
+            );
+        }
+    }
+
+    #[test]
+    fn native_host_has_no_processor_time_yet() {
+        assert_eq!(
+            NativeHost.processor_time().unwrap_err().kind(),
+            io::ErrorKind::Unsupported
+        );
     }
 }

@@ -15,6 +15,7 @@ use randoc_ast::{
 use randoc_core::shared::stringify;
 use randoc_core::{Extension, Extensions, LogMessage, SourcePos};
 
+use crate::table::CellBudget;
 use crate::text::{
     Inlines, TextMode, attribute, clean_attributes, escape_uri, is_blank, quoted_text_inlines,
     read_integer, style_property, text_inlines, to_attr,
@@ -30,7 +31,7 @@ pub(crate) enum Stop {
     TooDeep,
     /// The input needs more backtracking than the step budget permits.
     Budget,
-    /// The tables need more generated cells than `table::MAX_GENERATED_CELLS`.
+    /// The tables need more generated cells than `Limits::max_table_cells`.
     TooLarge,
     /// Pandoc stops with an error at the token with this index.
     Fatal(usize),
@@ -186,7 +187,7 @@ fn next_definition_parts(toks: &[Token]) -> Vec<usize> {
 #[derive(Clone, Copy)]
 struct Snapshot {
     pos: usize,
-    generated_cells: usize,
+    cell_budget: CellBudget,
     logs: usize,
     notes: usize,
     headings: usize,
@@ -209,8 +210,8 @@ pub(crate) struct Parser<'a> {
     quote_context: Option<QuoteType>,
     in_list_item: bool,
     /// The cells that the tables of the document made without input text
-    /// for them; see `table::generated_cells`. A failed rule gives them back.
-    pub(crate) generated_cells: usize,
+    /// for them. A failed rule gives them back.
+    pub(crate) cell_budget: CellBudget,
     /// The number of open code elements.
     code_depth: usize,
     /// True when the last element ended at the end of the input.
@@ -241,6 +242,7 @@ impl<'a> Parser<'a> {
         extensions: Extensions,
         source: Text,
         max_depth: usize,
+        max_generated_cells: usize,
     ) -> Self {
         let tokens = u64::try_from(toks.len()).unwrap_or(u64::MAX);
         Parser {
@@ -258,7 +260,10 @@ impl<'a> Parser<'a> {
             quote_context: None,
             in_list_item: false,
             code_depth: 0,
-            generated_cells: 0,
+            cell_budget: CellBudget {
+                used: 0,
+                max: max_generated_cells,
+            },
             ended_at_eof: false,
             furthest_failure: 0,
             close_tables: Vec::new(),
@@ -305,7 +310,7 @@ impl<'a> Parser<'a> {
     fn snapshot(&self) -> Snapshot {
         Snapshot {
             pos: self.pos,
-            generated_cells: self.generated_cells,
+            cell_budget: self.cell_budget,
             logs: self.logs.len(),
             notes: self.notes.len(),
             headings: self.heading_ends.len(),
@@ -314,7 +319,7 @@ impl<'a> Parser<'a> {
 
     fn restore(&mut self, snapshot: Snapshot) {
         self.pos = snapshot.pos;
-        self.generated_cells = snapshot.generated_cells;
+        self.cell_budget = snapshot.cell_budget;
         self.logs.truncate(snapshot.logs);
         self.notes.truncate(snapshot.notes);
         self.heading_ends.truncate(snapshot.headings);

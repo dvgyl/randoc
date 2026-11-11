@@ -12,10 +12,6 @@ use crate::parse::{Parse, Parser, Stop};
 use crate::text::{attribute, clean_attributes, is_blank, read_decimal, read_integer, to_attr};
 use crate::tokens::TokenKind;
 
-/// The largest number of grid cells (columns times rows) of one table. Pandoc
-/// has no limit; one short `colspan` value can make it allocate gigabytes.
-pub(crate) const MAX_GENERATED_CELLS: usize = 200_000;
-
 /// The cost of a table for the budget of the document: one for each column
 /// specification, and one for each grid slot that no cell of the input
 /// starts in its row (a slot of a span or of padding). A cell that the
@@ -27,15 +23,28 @@ fn generated_cells(columns: usize, row_cells: impl Iterator<Item = usize>) -> us
     })
 }
 
-/// Adds `cost` to the cells that the tables of the document made so far.
-/// Returns false, and changes nothing, when the sum is above the budget.
-fn take_budget(used: &mut usize, cost: usize) -> bool {
-    match used.checked_add(cost) {
-        Some(total) if total <= MAX_GENERATED_CELLS => {
-            *used = total;
-            true
+/// The cells that the tables of the document made without input text for
+/// them; see `generated_cells`. Pandoc has no limit; one short `colspan`
+/// value can make it allocate gigabytes.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct CellBudget {
+    /// The cells that the tables made so far.
+    pub(crate) used: usize,
+    /// The largest sum (`Limits::max_table_cells`).
+    pub(crate) max: usize,
+}
+
+impl CellBudget {
+    /// Adds `cost` to the used cells. Returns false, and changes nothing,
+    /// when the sum is above the maximum.
+    fn take(&mut self, cost: usize) -> bool {
+        match self.used.checked_add(cost) {
+            Some(total) if total <= self.max => {
+                self.used = total;
+                true
+            }
+            _ => false,
         }
-        _ => false,
     }
 }
 
@@ -135,7 +144,7 @@ pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> 
             head,
             bodies,
             foot.unwrap_or_default(),
-            &mut parser.generated_cells,
+            &mut parser.cell_budget,
         )
     })?;
     out.push(Block::Table(Box::new(table)));
@@ -336,7 +345,7 @@ fn build(
     head: (Attr, Vec<ReadRow>),
     bodies: Vec<(Attr, Vec<ReadRow>)>,
     foot: (Attr, Vec<ReadRow>),
-    generated: &mut usize,
+    budget: &mut CellBudget,
 ) -> Parse<Table> {
     let all_rows = || {
         head.1
@@ -353,7 +362,7 @@ fn build(
     let column_count = usize::try_from(cell_columns).unwrap_or(0);
     // The check comes before each allocation whose size depends on a span.
     let cost = generated_cells(column_count, all_rows().map(|row| row.1.len()));
-    if !take_budget(generated, cost) {
+    if !budget.take(cost) {
         return Err(Stop::TooLarge);
     }
     let simple = all_rows().all(|row| row.1.iter().all(is_simple_cell));
@@ -575,14 +584,15 @@ mod tests {
         // `<td colspan="5">a</td><td>b</td>`, then a row of one cell.
         assert_eq!(generated_cells(6, [2, 1].into_iter()), 6 + 4 + 5);
         assert_eq!(generated_cells(usize::MAX, [1].into_iter()), usize::MAX);
-        let mut used = 0;
-        assert!(take_budget(&mut used, MAX_GENERATED_CELLS - 1));
-        assert!(take_budget(&mut used, 1));
-        assert!(!take_budget(&mut used, 1));
-        assert_eq!(used, MAX_GENERATED_CELLS);
-        let mut used = 1;
-        assert!(!take_budget(&mut used, usize::MAX));
-        assert_eq!(used, 1);
+        let max = 200_000;
+        let mut budget = CellBudget { used: 0, max };
+        assert!(budget.take(max - 1));
+        assert!(budget.take(1));
+        assert!(!budget.take(1));
+        assert_eq!(budget.used, max);
+        let mut budget = CellBudget { used: 1, max };
+        assert!(!budget.take(usize::MAX));
+        assert_eq!(budget.used, 1);
     }
 
     #[test]

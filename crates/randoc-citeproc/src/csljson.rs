@@ -34,8 +34,8 @@ pub fn writer(format: &str) -> Option<Writer> {
 
 const TOO_DEEP: &str = "the CSL JSON input is nested too deeply";
 
-/// The depth of `serde_json`'s own recursion limit.
-const SERDE_MAX_DEPTH: usize = 127;
+/// The largest depth of CSL JSON at each nesting limit (I-CITE-10).
+const MAX_JSON_DEPTH: usize = 127;
 
 fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
     let max_depth = context.limits.max_nesting_depth;
@@ -57,7 +57,7 @@ fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<P
 ///
 /// The error texts are the texts of the oracle (exit code 64).
 pub fn read_references(text: &str, max_depth: usize) -> Result<Vec<Reference<Vec<Markup>>>> {
-    if randoc_ast::json::nesting_depth(text) > max_depth.min(SERDE_MAX_DEPTH) {
+    if randoc_ast::json::nesting_depth(text) > max_depth.min(MAX_JSON_DEPTH) {
         return Err(Error::Parse(TOO_DEEP.into()));
     }
     let root = parse_json(text)?;
@@ -101,33 +101,20 @@ fn error_at(error: ReadError, index: usize, under_items: bool) -> ReadError {
     }
 }
 
-/// Parses JSON text. A syntax error has the text of `aeson`.
+/// Parses JSON text. A syntax error has the text of `aeson`. Pandoc gives
+/// the parser the text with a final newline and one more newline.
 fn parse_json(text: &str) -> Result<Json> {
-    let mut deserializer = serde_json::Deserializer::from_str(text);
-    let value = serde::Deserialize::deserialize(&mut deserializer);
-    match value {
-        Ok(value) => match deserializer.end() {
-            Ok(()) => Ok(value),
-            Err(_) => Err(Error::Parse("Trailing garbage".into())),
-        },
-        Err(error) => Err(Error::Parse(
-            aeson_syntax_error(text).unwrap_or_else(|| error.to_string()),
-        )),
-    }
-}
-
-/// The `aeson` text of a syntax error, from the JSON parser of `randoc-ast`.
-/// Pandoc gives the parser the text with a final newline and one more newline.
-fn aeson_syntax_error(text: &str) -> Option<String> {
     let mut input = String::with_capacity(text.len() + 2);
     input.push_str(text);
     if !text.ends_with('\n') {
         input.push('\n');
     }
     input.push('\n');
-    randoc_ast::json::from_json(&input)
-        .err()
-        .map(|error| error.to_string())
+    match randoc_ast::json::parse_value(&input, MAX_JSON_DEPTH) {
+        Ok(tape) => Ok(Json::from_value(tape.root())),
+        Err(error) if error.is_too_deep() => Err(Error::Parse(TOO_DEEP.into())),
+        Err(error) => Err(Error::Parse(error.to_string())),
+    }
 }
 
 fn nocite_all() -> MetaValue {

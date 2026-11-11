@@ -550,3 +550,40 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   and returns an error where the oracle gives output (`docs/ISSUES.md`).
   The tests of the gate use small styles and locales written for Randoc.
   Tests with the real locales read the folder of `RANDOC_CSL_DATA`.
+
+## ADR 18: Limits for table cells and input size, and Host methods for system access (2026-11-11)
+
+- **Context.** Three workstreams asked for shared contracts. The HTML and
+  CommonMark readers each had a constant of 200,000 for the table cells
+  that a span or a short row asks for, without input text for them. The
+  container readers need a size limit for one input before they open it
+  (ADR 9, rule 1, and ADR 10). The Lua modules `pandoc.system`,
+  `pandoc.path.exists` and `pandoc.pipe` need file system, environment and
+  process access, and the rules of `docs/ARCHITECTURE.md` permit system
+  access only through the `Host`.
+- **Decision.** `Limits` gets `max_table_cells` (default 200,000,
+  restricted 20,000) and `max_input_size` (default 4 GiB, restricted
+  64 MiB). The two readers use the field and the constants are deleted.
+  `Host` gets 15 methods: `list_directory`, `create_directory`,
+  `remove_file`, `remove_directory`, `rename`, `copy_file`, `path_kind`,
+  `path_times`, `working_directory`, `set_working_directory`,
+  `environment`, `set_environment_variable`, `run_process`,
+  `create_temporary_directory` and `processor_time`. Paths are `&str`, the
+  results are `io::Result`, and the result types `PathKind`, `PathTimes`
+  and `ProcessOutput` are small and plain. Each default body returns an
+  error of the kind `Unsupported`. `NativeHost` uses `std`. `PureHost`
+  answers from its file map and its environment map where it can.
+- **Why.** One field is one place to change a limit, and a server can
+  lower it with `Limits::restricted()`. A default body for each method
+  keeps each existing host correct: a host that does not know the method
+  refuses it. So the `--sandbox` host of the program refuses each new
+  method until the command-line workstream decides otherwise.
+- **Consequences.** `NativeHost` does not change the process environment,
+  because `std::env::set_var` is `unsafe` in Rust 2024 and the workspace
+  forbids `unsafe`. It keeps the changes in a table of the program, and
+  `environment_variable`, `environment` and `run_process` apply them; the C
+  function `getenv` (for example `os.getenv` of Lua) does not see them.
+  `processor_time` has no `NativeHost` body: `std` has no processor clock,
+  and a body needs a dependency or `unsafe`. Pandoc 3.13 permits each of
+  these Lua functions under `--sandbox` (probed); a refusal in Randoc is a
+  difference that the command-line workstream must decide.

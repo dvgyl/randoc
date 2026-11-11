@@ -7,7 +7,8 @@
 //! space for the group and for the text that follows the group on that line.
 //! Otherwise each item of the group starts a new line.
 
-use crate::value::{Value, show_string};
+use crate::value::Value;
+use randoc_core::shared::show_string;
 
 /// A layout document. `width` is the length of the document on one line.
 struct Doc {
@@ -91,12 +92,12 @@ fn to_doc(value: &Value) -> Doc {
         Value::Tuple(items) => block('(', ')', items.iter().map(to_doc).collect()),
         Value::Str(content) => {
             let mut shown = String::new();
-            show_string(content, &mut shown);
+            shown.push_str(&show_string(content));
             text(shown)
         }
         Value::Char(c) => {
             let mut shown = String::new();
-            show_string(&c.to_string(), &mut shown);
+            shown.push_str(&show_string(&c.to_string()));
             text(shown)
         }
         Value::Num { negative, digits } => {

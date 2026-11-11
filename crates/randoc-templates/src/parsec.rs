@@ -215,62 +215,10 @@ fn show_many(prefix: &str, msgs: &[&str]) -> String {
     }
 }
 
-const ASCII_NAMES: [&str; 32] = [
-    "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "a", "b", "t", "n", "v", "f", "r", "SO", "SI",
-    "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS",
-    "RS", "US",
-];
-
-/// Haskell `showLitChar`, followed by the `\&` protection that the next
-/// character needs.
-fn show_lit(out: &mut String, c: char, next: Option<char>, quote: char) {
-    let code = u32::from(c);
-    if code > 127 {
-        out.push('\\');
-        out.push_str(&code.to_string());
-        if next.is_some_and(|n| n.is_ascii_digit()) {
-            out.push_str("\\&");
-        }
-    } else if c == '\\' {
-        out.push_str("\\\\");
-    } else if code == 127 {
-        out.push_str("\\DEL");
-    } else if c == quote {
-        out.push('\\');
-        out.push(c);
-    } else if code >= 32 {
-        out.push(c);
-    } else {
-        let name = ASCII_NAMES.get(code as usize).copied().unwrap_or("");
-        out.push('\\');
-        out.push_str(name);
-        if c == '\u{e}' && next == Some('H') {
-            out.push_str("\\&");
-        }
-    }
-}
-
-/// Haskell `show` for a string.
-pub(crate) fn show_string(s: &str) -> String {
-    let mut out = String::from("\"");
-    let mut chars = s.chars().peekable();
-    while let Some(c) = chars.next() {
-        show_lit(&mut out, c, chars.peek().copied(), '"');
-    }
-    out.push('"');
-    out
-}
-
-/// Haskell `show` for a character.
-pub(crate) fn show_char(c: char) -> String {
-    let mut out = String::from("'");
-    show_lit(&mut out, c, None, '\'');
-    out.push('\'');
-    out
-}
-
 #[cfg(test)]
 mod tests {
+    use randoc_ast::json::{show_char, show_string};
+
     use super::*;
 
     #[test]

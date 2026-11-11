@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 use std::fmt;
 
-use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+use randoc_ast::json::{JsonKind, JsonValue};
 
 /// A JSON value.
 #[derive(Debug, Clone, PartialEq)]
@@ -71,67 +71,37 @@ impl Number {
     }
 }
 
-impl<'de> Deserialize<'de> for Json {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Json, D::Error> {
-        deserializer.deserialize_any(JsonVisitor)
+impl Json {
+    /// Converts a parsed value to a tree. The parser limits the depth, so the
+    /// recursion is as deep as that limit.
+    pub fn from_value(value: JsonValue<'_>) -> Json {
+        match value.kind() {
+            JsonKind::Null => Json::Null,
+            JsonKind::Bool(flag) => Json::Bool(flag),
+            JsonKind::Number(text) => Json::Number(Number::parse(text)),
+            JsonKind::String(text) => Json::String(text.to_owned()),
+            JsonKind::Array => Json::Array(value.items().map(Json::from_value).collect()),
+            JsonKind::Object => {
+                let mut entries = BTreeMap::new();
+                for (key, item) in value.entries() {
+                    entries
+                        .entry(key.to_owned())
+                        .or_insert_with(|| Json::from_value(item));
+                }
+                Json::Object(entries)
+            }
+        }
     }
 }
 
-struct JsonVisitor;
-
-impl<'de> Visitor<'de> for JsonVisitor {
-    type Value = Json;
-
-    fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("a JSON value")
-    }
-
-    fn visit_bool<E: de::Error>(self, value: bool) -> Result<Json, E> {
-        Ok(Json::Bool(value))
-    }
-
-    fn visit_i64<E: de::Error>(self, value: i64) -> Result<Json, E> {
-        Ok(Json::Number(Number::Int(value)))
-    }
-
-    fn visit_u64<E: de::Error>(self, value: u64) -> Result<Json, E> {
-        Ok(Json::Number(match i64::try_from(value) {
+impl Number {
+    /// Reads the text of a JSON number: a whole number without fraction and
+    /// exponent that fits in 64 bits is an `Int`, each other number a `Float`.
+    fn parse(text: &str) -> Number {
+        match text.parse::<i64>() {
             Ok(value) => Number::Int(value),
-            #[allow(clippy::cast_precision_loss)]
-            Err(_) => Number::Float(value as f64),
-        }))
-    }
-
-    fn visit_f64<E: de::Error>(self, value: f64) -> Result<Json, E> {
-        Ok(Json::Number(Number::Float(value)))
-    }
-
-    fn visit_str<E: de::Error>(self, value: &str) -> Result<Json, E> {
-        Ok(Json::String(value.to_owned()))
-    }
-
-    fn visit_string<E: de::Error>(self, value: String) -> Result<Json, E> {
-        Ok(Json::String(value))
-    }
-
-    fn visit_unit<E: de::Error>(self) -> Result<Json, E> {
-        Ok(Json::Null)
-    }
-
-    fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<Json, A::Error> {
-        let mut items = Vec::new();
-        while let Some(item) = seq.next_element()? {
-            items.push(item);
+            Err(_) => Number::Float(text.parse::<f64>().unwrap_or(f64::NAN)),
         }
-        Ok(Json::Array(items))
-    }
-
-    fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Json, A::Error> {
-        let mut entries = BTreeMap::new();
-        while let Some((key, value)) = map.next_entry::<String, Json>()? {
-            entries.entry(key).or_insert(value);
-        }
-        Ok(Json::Object(entries))
     }
 }
 
@@ -261,7 +231,7 @@ mod tests {
     use super::*;
 
     fn parse(text: &str) -> Json {
-        serde_json::from_str(text).unwrap()
+        Json::from_value(randoc_ast::json::parse_value(text, 128).unwrap().root())
     }
 
     #[test]

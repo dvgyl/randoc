@@ -7,8 +7,9 @@ use std::rc::Rc;
 
 use randoc_layout::{literal, space};
 
-use crate::parsec::{Msg, PErr, Pos, show_char, show_string};
+use crate::parsec::{Msg, PErr, Pos};
 use crate::render::{Align, Node, Pipe, Variable};
+use randoc_ast::json::{show_char, show_string};
 
 /// A Parsec reply: `Ok((value, consumed, error))` or
 /// `Err((consumed, error))`.

@@ -120,11 +120,6 @@ pub(crate) struct TableData {
     pub(crate) cells: usize,
 }
 
-/// The largest number of cells that the reader adds to the short rows of one table.
-/// A row after that ends the table (`pipeTableBlockSpec` in
-/// `Commonmark/Extensions/PipeTable.hs`).
-const MAX_ADDED_CELLS: usize = 200_000;
-
 /// The result of block parsing.
 pub(crate) struct Tree {
     pub(crate) nodes: Vec<Node>,
@@ -769,7 +764,8 @@ impl Parser<'_> {
             Kind::Table(_) => {
                 let full = match kind {
                     Kind::Table(table) => self.tables.get(table).is_some_and(|data| {
-                        data.rows.len() * data.aligns.len() - data.cells > MAX_ADDED_CELLS
+                        data.rows.len() * data.aligns.len() - data.cells
+                            > self.config.max_added_cells
                     }),
                     _ => false,
                 };

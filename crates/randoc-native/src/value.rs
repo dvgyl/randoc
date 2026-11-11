@@ -3,7 +3,7 @@
 //! The writer turns the tree into a [`Value`] and prints it. The reader parses
 //! text into a [`Value`] and decodes it (see `decode.rs`).
 
-use randoc_ast::json::show_double;
+use randoc_ast::json::{show_double, show_string};
 use randoc_ast::{
     Alignment, Attr, Block, Caption, Cell, Citation, CitationMode, ColSpec, ColWidth, Format,
     Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MathType, Meta, MetaValue, Pandoc,
@@ -492,45 +492,6 @@ fn col_spec(spec: &ColSpec) -> Value {
     Value::Tuple(vec![Value::nullary(align_name(spec.align)), width])
 }
 
-/// The names of the ASCII control characters 0 to 31, as Haskell escapes them.
-const CONTROL_NAMES: [&str; 32] = [
-    "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "a", "b", "t", "n", "v", "f", "r", "SO", "SI",
-    "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS",
-    "RS", "US",
-];
-
-/// Writes a string literal as the Haskell function `show` does.
-pub(crate) fn show_string(text: &str, out: &mut String) {
-    out.push('"');
-    let mut chars = text.chars().peekable();
-    while let Some(c) = chars.next() {
-        let code = c as u32;
-        match c {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            ' '..='~' => out.push(c),
-            '\u{7f}' => out.push_str("\\DEL"),
-            _ if code < 32 => {
-                let name = CONTROL_NAMES.get(code as usize).copied().unwrap_or("NUL");
-                out.push('\\');
-                out.push_str(name);
-                // `\SO` before `H` would read as `\SOH`.
-                if name == "SO" && chars.peek() == Some(&'H') {
-                    out.push_str("\\&");
-                }
-            }
-            _ => {
-                out.push('\\');
-                out.push_str(&code.to_string());
-                if chars.peek().is_some_and(char::is_ascii_digit) {
-                    out.push_str("\\&");
-                }
-            }
-        }
-    }
-    out.push('"');
-}
-
 /// Writes a value on one line, as the Haskell function `show` does.
 pub(crate) fn show_value(value: &Value, in_argument: bool, out: &mut String) {
     match value {
@@ -561,8 +522,8 @@ pub(crate) fn show_value(value: &Value, in_argument: bool, out: &mut String) {
         }
         Value::List(items) => show_sequence('[', ']', items, out),
         Value::Tuple(items) => show_sequence('(', ')', items, out),
-        Value::Str(text) => show_string(text, out),
-        Value::Char(c) => show_string(&c.to_string(), out),
+        Value::Str(text) => out.push_str(&show_string(text)),
+        Value::Char(c) => out.push_str(&show_string(&c.to_string())),
         Value::Num { negative, digits } => {
             parenthesize(in_argument && *negative, out, |out| {
                 if *negative {

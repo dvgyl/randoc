@@ -14,7 +14,8 @@ use crate::types::{
     StyleOptions, SubsequentAuthorSubstituteRule, Term, TermForm, TermNumber, TextType, Variable,
     VariableForm, read_as_int,
 };
-use crate::xml::{XmlElement, parse_document, show_string};
+use crate::xml::{XmlElement, parse_document};
+use randoc_core::shared::show_string;
 
 /// Parses a style. `parent` returns the text of the independent parent of a
 /// dependent style, given the `href` of its link.

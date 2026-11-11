@@ -57,14 +57,20 @@ fn read_html(
     let mut tokens = tokens::tokenize(input);
     canonicalize(&mut tokens);
     let extensions = options.extensions;
-    let max_depth = context.limits.max_nesting_depth;
-    let mut parser = Parser::new(&tokens, extensions, source.to_owned(), max_depth);
+    let limits = context.limits;
+    let mut parser = Parser::new(
+        &tokens,
+        extensions,
+        source.to_owned(),
+        limits.max_nesting_depth,
+        limits.max_table_cells,
+    );
     let mut blocks = parser.document().map_err(|stop| {
         Error::Parse(match stop {
             Stop::TooDeep => Text::from("the document is nested too deeply"),
             Stop::TooLarge => format!(
                 "the tables need more than {} cells that the input does not write",
-                table::MAX_GENERATED_CELLS
+                limits.max_table_cells
             ),
             Stop::Fail | Stop::Budget => Text::from("the document needs too much backtracking"),
             Stop::Fatal(index) => tokens
@@ -366,8 +372,22 @@ mod tests {
         .0
     }
 
+    #[test]
+    fn the_cell_budget_comes_from_the_limits_of_the_context() {
+        let input = "<table><tr><td colspan=\"10\">a</td><td>b</td></tr></table>";
+        let mut context = Context::pure();
+        context.limits.max_table_cells = 20;
+        let options = ReaderOptions::default();
+        let error = read_html(&input.repeat(2), "", &options, &mut context).unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "the tables need more than 20 cells that the input does not write"
+        );
+        assert!(read_html(input, "", &options, &mut context).is_ok());
+    }
+
     // Pandoc has no limit. Randoc stops when the tables of one document need
-    // more than `MAX_GENERATED_CELLS` cells that the input does not write.
+    // more than `Limits::max_table_cells` cells that the input does not write.
     // The spans stay small, so that a broken budget costs megabytes only;
     // huge values are checked in `table::tests` on the pure functions.
     #[test]
@@ -682,7 +702,7 @@ mod tests {
         let mut tokens = tokens::tokenize(&input);
         canonicalize(&mut tokens);
         let extensions = Extensions::from_list(&[Extension::NativeDivs, Extension::NativeSpans]);
-        let mut parser = Parser::new(&tokens, extensions, Text::new(), 128);
+        let mut parser = Parser::new(&tokens, extensions, Text::new(), 128, 200_000);
         let result = parser.document();
         assert_ne!(result.err(), Some(Stop::Budget), "{unit}");
         parser.steps
@@ -722,7 +742,13 @@ mod tests {
         let input = format!("{}x{}", "<tt><b>".repeat(count), "</b></tt>".repeat(count));
         let mut tokens = tokens::tokenize(&input);
         canonicalize(&mut tokens);
-        let mut parser = Parser::new(&tokens, Extensions::empty(), Text::new(), 4 * count);
+        let mut parser = Parser::new(
+            &tokens,
+            Extensions::empty(),
+            Text::new(),
+            4 * count,
+            200_000,
+        );
         parse::CODIFY_VISITS.with(|visits| visits.set(0));
         let blocks = parser.document();
         assert!(blocks.is_ok_and(|blocks| !json::value_to_json(&blocks).contains("Cite")));

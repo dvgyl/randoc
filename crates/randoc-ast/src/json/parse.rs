@@ -123,6 +123,11 @@ impl<'t> Value<'t> {
         }
     }
 
+    /// Returns `true` for an empty array or object, and for each other kind of value.
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     /// The items of an array, in order.
     pub fn items(&self) -> Items<'t> {
         Items {
