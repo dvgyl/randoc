@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T13:18:00Z",
+  "updated": "2026-11-11T20:03:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,29 +14,30 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 4546,
-    "pass": 2217,
-    "fail": 1959,
-    "skipped": 370,
-    "baseline_units": 2217
+    "units": 20938,
+    "pass": 19375,
+    "fail": 1161,
+    "skipped": 402,
+    "baseline_units": 19375,
+    "measured": "2026-11-11T19:58:00Z on 6089e1f (merge check of batch 2)"
   },
   "pandoc_test_suite": {
     "status": "measured",
     "run": 2231,
     "oracle_pass": 2231,
-    "randoc_pass": 0,
+    "randoc_pass": 282,
     "cannot_run_estimate": 1939,
     "details": "spec/pandoc-testsuite.json",
-    "measured": "2026-11-10T09:01:00Z on 3dbc884"
+    "measured": "2026-11-11T20:00:00Z on a896ff4"
   },
   "corpus": {
     "status": "measured",
     "documents": 230,
     "units": 690,
     "oracle_pass": 690,
-    "randoc_pass": 0,
+    "randoc_pass": 79,
     "details": "spec/corpus.json",
-    "measured": "2026-11-10T09:01:00Z on 3dbc884"
+    "measured": "2026-11-11T20:00:00Z on a896ff4"
   },
   "workstreams": [
     {
@@ -62,18 +63,18 @@
     },
     {
       "id": "markdown-reader",
-      "state": "in_work",
-      "note": "head 72250dc (wip): two review rounds; gate passed at 3d644ec; both high time findings corrected; three medium rows open; unit 2 stopped"
+      "state": "merged",
+      "note": "On main (d5386de). Two review rounds, both in session 2; three units of this session with no review. Differential runs: 55 to 114 of 2,000 generated documents differ. Row I-MD-41 has 8 examined groups and some small groups with no proven level; they count as medium until they are examined. Scope gaps I-MD-01 to I-MD-05 and I-MD-08. Mutation, coverage and the time table did not run on the head."
     },
     {
       "id": "html-writer",
-      "state": "review",
-      "note": "head 5d91b64 (wip): four review rounds; gate passed at eee175e; round 4: 1 high and 14 medium findings; unit 2 stopped"
+      "state": "merged",
+      "note": "On main (4d4373f). Five review rounds; round 5: both requested changes (1 critical, 2 high, 12 medium in all); the worker closed each one with a joint oracle matrix of 28,965 cases. No review of the head. Row I-HTML-28 (medium: time with the nesting depth) is open until the writer is measured again with the new layout crate; I-HTML-29 low. Scope gaps: math, highlighting. Mutation and coverage did not run on the head."
     },
     {
       "id": "cli",
-      "state": "review",
-      "note": "head 78bb0d7: six review rounds; gate passed at 2c28b35; round 6: 1 high and 9 medium findings; unit 2 (cli-s2b) stopped"
+      "state": "merged",
+      "note": "On main (6089e1f). Seven review rounds; round 7: both requested changes (3 high, 4 medium); the worker closed each one. No review of the head. The run of 3,548 generated command lines was not repeated after the corrections. Row I-CLI-31: 8 cases that print a data file with a copyleft licence are removed from the suite. Mutation and coverage did not run on the head."
     },
     {
       "id": "native",
@@ -85,8 +86,8 @@
     },
     {
       "id": "commonmark-reader",
-      "state": "review",
-      "note": "head 9615173: five review rounds; gate passed at 5b7cc50; round 5: 7 medium findings; unit 2 (port from commonmark-hs) stopped"
+      "state": "merged",
+      "note": "On main (6ba44b5). Six review rounds; round 6: both requested changes (1 high, 7 medium); the worker closed each one. The reader uses randoc-yaml (17,178 metadata block texts replay with 0 differences). The CommonMark specification run gives 652 of 652. No review of the head. Scope gap I-CM-01 (sourcepos). Half of the mutation sample ran; no coverage number."
     },
     {
       "id": "research",
@@ -99,13 +100,13 @@
     },
     {
       "id": "latex-writer",
-      "state": "review",
-      "note": "head d5a005e: two review rounds; gate passed at d5a005e; round 2: Opus 4 high and 4 medium findings"
+      "state": "in_work",
+      "note": "Not touched in this session. Branch ws/latex-writer at d5a005e; round 2 of session 2: both reviewers requested changes (4 high, 11 medium). The worktree is removed. On GitHub as wip/latex-writer."
     },
     {
       "id": "yaml",
-      "state": "review",
-      "note": "head f96ec26: five review rounds; gate passed at f96ec26; round 5: three medium findings open (two in the reader for flow collections, one in the replay comparison of the tests)"
+      "state": "merged",
+      "note": "On main (dda9676, test file 4bce317). Eight review rounds. Round 8: both reviewers request changes; 3 medium rows are open: I-YAML-15 (a float text in the replay comparison), I-YAML-16 (a comment line below a block scalar that is less indented is refused), I-YAML-17 (a key that starts with --- or ... passes the replay checks). Checks on the head are complete: fuzzing 901 s with 0 crashes, coverage 96.35%, all 63 mutants of the last diff."
     },
     {
       "id": "shared",
@@ -114,38 +115,53 @@
     {
       "id": "highlight",
       "state": "in_work",
-      "note": "head a9c1784 (wip): one review round; gate passed at 82d9059; the fixed step limits are gone; unit 2 (step cost, worst lines) stopped"
+      "note": "Not touched in this session. Branch ws/highlight at a9c1784 (a wip commit whose last three edits are not compiled). One review round in session 2. The worktree is removed. wip/highlight is not on GitHub (section \"Open issues\")."
     },
     {
       "id": "markdown-writer",
       "state": "in_work",
-      "note": "head 235b8a8: not touched in session 2; waits for the HTML writer on main"
+      "note": "Not touched in sessions 2 and 3. Branch ws/markdown-writer at 235b8a8; no review. The worktree is removed. On GitHub as wip/markdown-writer."
     },
     {
       "id": "math",
-      "state": "in_work",
-      "note": "head 6f8fbf9: no review; a session 2 unit (merge of main, reuse study, open constructs) stopped"
+      "state": "merged",
+      "note": "On main (9bce369). Rounds 1 and 2: both reviewers requested changes each time; the worker corrected or recorded each finding. No review of the head. Replay: 35,904 formulas; a differential run with pairs of 237,006 formulas shows 0 wrong conversions. Scope gap I-MATH-01 (formulas for which Randoc returns an error and the caller writes the TeX source); low row I-MATH-06. The mutation sample did not run."
     },
     {
       "id": "lua",
-      "state": "in_work",
-      "note": "head 87747d4 (wip): new in session 2; first unit (Lua 5.4.8 build, runtime, document types, filters) stopped"
+      "state": "merged",
+      "note": "On main (18cf178): unit 1 and a part of unit 2. Round 1: Opus requested changes (1 critical, 1 high, 3 medium), the Codex run was stopped by its service; the worker closed the critical and the high finding. The old tree walk was removed without being read and written again from permitted sources. Medium rows open: I-LUA-11 (walk time grows with the nesting depth), I-LUA-13 (the Lua state uses the C locale). Scope gaps I-LUA-03 to I-LUA-06 (most modules, custom readers and writers, the program options)."
     },
     {
       "id": "html-reader",
-      "state": "in_work",
-      "note": "head 457f577 (wip): new in session 2; first unit (tagsoup study, tokenizer, blocks) stopped"
+      "state": "merged",
+      "note": "On main (6eed2df). Round 1 and round 2 (Opus only; the Codex run of round 2 was lost in the stop of the computer). The critical and the high finding of round 2 are closed (a budget of 200,000 for cells without input text, for the whole document). Medium row I-HTMLR-19 is open (lost text in a malformed note list). Scope gaps: MathML input, the fetch of an iframe, epub:type sections."
     },
     {
       "id": "reuse",
       "state": "merged",
       "note": "documents only: docs/PRIOR_ART.md, ADR 9 to 11"
+    },
+    {
+      "id": "harness-flaky",
+      "state": "merged",
+      "note": "On main (5e22a58). Both reviewers approved. Low rows H-003, H-004, H-005 are open."
+    },
+    {
+      "id": "layout-perf",
+      "state": "merged",
+      "note": "On main (fabec83). Both reviewers approve d8fa6c0 in round 2 (Codex: one low finding, row I-LAYOUT-06). The mutation sample of the last diff did not run."
+    },
+    {
+      "id": "citeproc",
+      "state": "merged",
+      "note": "On main (5c71e99): units 1 and 2 of 6 (the CSL style and locale parser; the reference model, CSL JSON, the formats csljson). Round 1 reviewed unit 1 only; the worker closed each finding with the level medium or higher. No review of the head. All 926 styles of the CSL repository parse."
     }
   ],
   "next_tasks": [
-    "Merge yaml (one correction in its replay test, one review round on the diff). Then finish the stopped units of cli, commonmark-reader and html-writer (briefs NAME-s2b.md in env/store/briefs), one review round each, merge-ws. Then measure CommonMark to HTML with the harness, the Pandoc test suite and the corpus.",
-    "Bring highlight, markdown-reader, latex-writer and math to a review: finish the stopped unit of each one. markdown-writer waits for the HTML writer on main.",
-    "Continue the next wave: lua and html-reader have a first unit in work; then docx, odt and epub on zip and quick-xml (ADR 9, ADR 10), rst, org, JSON filters, citeproc."
+    "Review the major blocks that are on main (both reviewers, resumed where possible), correct each finding with the level medium or higher, and measure main with the harness, the Pandoc test suite and the corpus.",
+    "Connect the parts: templates in the output, the HTML writer with randoc-math, --lua-filter in the program, the Markdown reader and the command line on randoc-yaml, tab expansion, the table cell budget in Limits.",
+    "Finish highlight, latex-writer and markdown-writer; then citeproc units 3 to 6, lua unit 3, the container formats, rst and org, JSON filters."
   ],
   "handoff": "PROGRESS.md, section Handoff"
 }
