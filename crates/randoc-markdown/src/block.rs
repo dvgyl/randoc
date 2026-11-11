@@ -181,6 +181,45 @@ pub(crate) struct Parser {
     meta: Meta,
 }
 
+/// The characters that Pandoc trims as white space in Markdown. Other
+/// Unicode spaces, such as U+00A0, are text.
+pub(crate) const SPACE: [char; 4] = [' ', '\t', '\n', '\r'];
+
+/// Tells whether `t` starts with an example marker (`(@)`, `@x.`, `(@x)`)
+/// and a space or the line end.
+fn is_example_marker(t: &str) -> bool {
+    let (paren, body) = match t.strip_prefix('(') {
+        Some(rest) => (true, rest),
+        None => (false, t),
+    };
+    let Some(label) = body.strip_prefix('@') else {
+        return false;
+    };
+    let rest = label.trim_start_matches(|c: char| c.is_alphanumeric() || c == '_' || c == '-');
+    let after = if paren {
+        rest.strip_prefix(')')
+    } else {
+        rest.strip_prefix(['.', ')'])
+    };
+    after.is_some_and(|a| a.is_empty() || a.starts_with(' '))
+}
+
+/// Tells whether `s` ends with a backslash that is not escaped.
+fn ends_with_escape(s: &str) -> bool {
+    (s.len() - s.trim_end_matches('\\').len()) % 2 == 1
+}
+
+/// Removes the spaces at the end of `s`, but keeps the space of a final
+/// escaped space (`\ `), which is a nonbreaking space.
+fn trim_end_unescaped(s: &str) -> &str {
+    let trimmed = s.trim_end_matches(SPACE);
+    if ends_with_escape(trimmed) {
+        s.get(..trimmed.len() + 1).unwrap_or(trimmed)
+    } else {
+        trimmed
+    }
+}
+
 fn blank(s: &str) -> bool {
     let rest = s.trim_start_matches([' ', '\t']);
     crate::step(s.len() - rest.len());
@@ -295,7 +334,7 @@ fn roman_value(s: &str) -> Option<i64> {
 }
 
 fn is_hrule(s: &str) -> bool {
-    let t = s.trim();
+    let t = s.trim_matches(SPACE);
     crate::step(1);
     let Some(first) = t.chars().next() else {
         return false;
@@ -340,7 +379,7 @@ fn div_fence(t: &str) -> Option<(usize, &str)> {
     if n < 3 {
         return None;
     }
-    Some((n, t.get(n..)?.trim()))
+    Some((n, t.get(n..)?.trim_matches(SPACE)))
 }
 
 /// Block-level HTML tag names. A black-box test of each HTML element name
@@ -590,7 +629,7 @@ fn matching_brackets(bytes: &[u8]) -> HashMap<usize, usize> {
 
 /// Tells whether `s` is a line of `=` or of `-` with only spaces after it.
 fn is_setext_underline(s: &str) -> bool {
-    let u = s.trim_end();
+    let u = s.trim_end_matches(SPACE);
     !u.is_empty() && (u.chars().all(|c| c == '=') || u.chars().all(|c| c == '-'))
 }
 
@@ -713,12 +752,12 @@ impl Parser {
             let Some(rest) = line.t().strip_prefix('%') else {
                 break;
             };
-            let mut field = rest.trim().to_string();
+            let mut field = rest.trim_matches(SPACE).to_string();
             i += 1;
             while let Some(next) = lines.get(i) {
                 if next.t().starts_with(' ') && !next.is_blank() {
                     field.push('\n');
-                    field.push_str(next.t().trim());
+                    field.push_str(next.t().trim_matches(SPACE));
                     i += 1;
                 } else {
                     break;
@@ -769,7 +808,7 @@ impl Parser {
             if line.t().starts_with([' ', '\t']) {
                 if let Some(last) = fields.last_mut() {
                     last.1.push('\n');
-                    last.1.push_str(line.t().trim());
+                    last.1.push_str(line.t().trim_matches(SPACE));
                     i += 1;
                     continue;
                 }
@@ -790,7 +829,7 @@ impl Parser {
                 .chars()
                 .filter(|c| !c.is_whitespace())
                 .collect();
-            fields.push((key, value.trim().to_string()));
+            fields.push((key, value.trim_matches(SPACE).to_string()));
             i += 1;
         }
         if fields.is_empty() {
@@ -827,7 +866,7 @@ impl Parser {
                 return Ok(Vec::new());
             }
             return Ok(vec![Block::Para(vec![Inline::Str(
-                text.trim().to_string(),
+                text.trim_matches(SPACE).to_string(),
             )])]);
         }
         self.depth += 1;
@@ -931,7 +970,9 @@ impl Parser {
 
     /// Returns the kind of paragraph that the line `s` ends, or `None` when the paragraph continues.
     fn interrupts(&self, s: &str) -> Option<bool> {
-        if !self.ext(Extension::BlankBeforeBlockquote) && s.trim_start().starts_with('>') {
+        if !self.ext(Extension::BlankBeforeBlockquote)
+            && s.trim_start_matches(SPACE).starts_with('>')
+        {
             return Some(true);
         }
         if !self.ext(Extension::BlankBeforeHeader) && self.atx(s).is_some() {
@@ -956,11 +997,37 @@ impl Parser {
         if self.ext(Extension::ListsWithoutPrecedingBlankline)
             && indent(s) <= 3
             && !is_hrule(s)
-            && (self.marker_with(s, None, true).is_some() || self.def_marker(s).is_some())
+            && (self.marker(s, None).is_some()
+                || self.foreign_marker(s)
+                || self.def_marker(s).is_some())
         {
             return Some(true);
         }
         None
+    }
+
+    /// Tells whether the line `s` starts a block that needs a line break at
+    /// the end of the line: a list item, an ATX heading, a line block or a
+    /// horizontal rule.
+    fn needs_line_end(&self, s: &str) -> bool {
+        let item = indent(s) <= 3
+            && !is_hrule(s)
+            && (self.marker(s, None).is_some() || self.foreign_marker(s));
+        let line_block = self.ext(Extension::LineBlocks) && (s == "|" || s.starts_with("| "));
+        item || self.atx(s).is_some() || line_block || is_hrule(s)
+    }
+
+    /// Tells whether a line without a quote marker ends a block quote. A
+    /// heading, a list marker or a definition marker that can end a
+    /// paragraph does; a block tag does not.
+    fn ends_lazy_quote(&self, s: &str) -> bool {
+        (!self.ext(Extension::BlankBeforeHeader) && self.atx(s).is_some())
+            || (self.ext(Extension::ListsWithoutPrecedingBlankline)
+                && indent(s) <= 3
+                && !is_hrule(s)
+                && (self.marker(s, None).is_some()
+                    || self.foreign_marker(s)
+                    || self.def_marker(s).is_some()))
     }
 
     /// Tells whether a block tag ends a paragraph. Its indentation does not
@@ -969,7 +1036,7 @@ impl Parser {
     fn html_interrupts(&self, s: &str) -> bool {
         self.ext(Extension::RawHtml)
             && (self.ext(Extension::MarkdownInHtmlBlocks) || self.ext(Extension::MarkdownAttribute))
-            && is_block_tag(s.trim_start())
+            && is_block_tag(s.trim_start_matches(SPACE))
     }
 
     /// Parses a paragraph at `lines`, which start at line `at` of the slice
@@ -1037,7 +1104,7 @@ impl Parser {
         {
             return Ok(n);
         }
-        let inlines = vec![placeholder(text.trim_start())];
+        let inlines = vec![placeholder(text.trim_start_matches(SPACE))];
         if para.unwrap_or(self.end_blank) {
             out.push(Block::Para(inlines));
         } else {
@@ -1201,7 +1268,7 @@ impl Parser {
         let Some(n) = parsed? else {
             return Ok(None);
         };
-        out.push(Block::Plain(vec![placeholder(before.trim())]));
+        out.push(Block::Plain(vec![placeholder(before.trim_matches(SPACE))]));
         out.extend(blocks);
         Ok(Some(l + n))
     }
@@ -1230,7 +1297,7 @@ impl Parser {
         if !enabled {
             return None;
         }
-        let info = info.trim();
+        let info = info.trim_matches(SPACE);
         let mut raw_format = None;
         let attr = if info.is_empty() {
             Attr::default()
@@ -1245,7 +1312,7 @@ impl Parser {
             }
         } else {
             let word = info.split_whitespace().next().unwrap_or("");
-            let after = info.get(word.len()..).unwrap_or("").trim();
+            let after = info.get(word.len()..).unwrap_or("").trim_matches(SPACE);
             let mut attr = if after.is_empty() {
                 Attr::default()
             } else if after.starts_with('{') && self.ext(Extension::FencedCodeAttributes) {
@@ -1264,7 +1331,7 @@ impl Parser {
             let t = line.t();
             let ti = indent(t);
             if ti < 4 {
-                let tt = t.trim();
+                let tt = t.trim_matches(SPACE);
                 let m = tt.len() - tt.trim_start_matches(c).len();
                 if m >= n && tt.trim_start_matches(c).is_empty() {
                     closed = true;
@@ -1291,7 +1358,10 @@ impl Parser {
         if !self.ext(Extension::RawAttribute) {
             return None;
         }
-        let inner = info.strip_prefix('{')?.strip_suffix('}')?.trim();
+        let inner = info
+            .strip_prefix('{')?
+            .strip_suffix('}')?
+            .trim_matches(SPACE);
         let name = inner.strip_prefix('=')?;
         (!name.is_empty()
             && name
@@ -1327,7 +1397,7 @@ impl Parser {
     // ----- headers -----
 
     fn atx(&self, s: &str) -> Option<(i64, Text)> {
-        let t = s.trim_end();
+        let t = s.trim_end_matches(SPACE);
         let level = t.len() - t.trim_start_matches('#').len();
         if level == 0 || indent(s) > 0 {
             return None;
@@ -1336,7 +1406,10 @@ impl Parser {
         if self.ext(Extension::SpaceInAtxHeader) && !rest.is_empty() && !rest.starts_with(' ') {
             return None;
         }
-        Some((i64::try_from(level).unwrap_or(1), rest.trim().to_string()))
+        Some((
+            i64::try_from(level).unwrap_or(1),
+            rest.trim_matches(SPACE).to_string(),
+        ))
     }
 
     fn header(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
@@ -1354,14 +1427,14 @@ impl Parser {
                 Some(_) => 2,
                 None => return None,
             };
-            if first.indent() >= 4 || first.t().trim_start().starts_with('>') {
+            if first.indent() >= 4 || first.t().trim_start_matches(SPACE).starts_with('>') {
                 return None;
             }
-            (level, first.t().trim().to_string(), 2)
+            (level, first.t().trim_matches(SPACE).to_string(), 2)
         };
         let (text, attr) = self.header_attr(&content);
         let text = if used == 1 {
-            text.trim_end_matches('#').trim_end().to_string()
+            trim_end_unescaped(text.trim_end_matches('#')).to_string()
         } else {
             text
         };
@@ -1397,7 +1470,7 @@ impl Parser {
             && !self.inline_takes_attr(content.get(..open).unwrap_or(""))
             && let Some(attr) = self.parse_attr(content.get(open..).unwrap_or(""))
         {
-            let text = content.get(..open).unwrap_or("").trim_end();
+            let text = trim_end_unescaped(content.get(..open).unwrap_or(""));
             return (text.to_string(), attr);
         }
         if self.ext(Extension::MmdHeaderIdentifiers)
@@ -1406,7 +1479,7 @@ impl Parser {
         {
             let id = content.get(open + 1..content.len() - 1).unwrap_or("");
             if !id.is_empty() && !id.contains([' ', '[', ']']) {
-                let text = content.get(..open).unwrap_or("").trim_end();
+                let text = content.get(..open).unwrap_or("").trim_end_matches(SPACE);
                 return (text.to_string(), Attr::new(id, vec![], vec![]));
             }
         }
@@ -1420,7 +1493,7 @@ impl Parser {
             if indent(s) > 3 {
                 return None;
             }
-            let t = s.trim_start().strip_prefix('>')?;
+            let t = s.trim_start_matches(SPACE).strip_prefix('>')?;
             Some(t.strip_prefix(' ').unwrap_or(t))
         }
         let Some(first) = lines.first() else {
@@ -1438,7 +1511,7 @@ impl Parser {
             let budget = self.max_depth.saturating_sub(self.depth).max(1);
             while levels < budget
                 && indent(rest) <= 3
-                && let Some(after) = rest.trim_start().strip_prefix('>')
+                && let Some(after) = rest.trim_start_matches(SPACE).strip_prefix('>')
             {
                 rest = after.strip_prefix(' ').unwrap_or(after);
                 levels += 1;
@@ -1458,6 +1531,8 @@ impl Parser {
             return Ok(Some(1));
         }
         let mut inner = vec![first.tail(text, first.n)];
+        let saved = std::mem::replace(&mut self.in_list, false);
+        let mut fences = FenceMemo::default();
         let mut j = 1;
         while let Some(line) = lines.get(j) {
             crate::step(1);
@@ -1466,20 +1541,35 @@ impl Parser {
             }
             match quote_start(line.t()) {
                 Some(text) => inner.push(line.tail(text, line.n)),
+                None if self.ends_lazy_quote(line.t()) => break,
+                // A backtick fence ends a paragraph, so it ends the quote.
+                None if line.t().starts_with('`')
+                    && self
+                        .fenced_code(
+                            lines.get(j..).unwrap_or(&[]),
+                            j,
+                            &mut fences,
+                            &mut Vec::new(),
+                        )
+                        .is_some() =>
+                {
+                    break;
+                }
                 None => inner.push(line.clone()),
             }
             j += 1;
         }
         inner.push(Ln::new("", 0));
         let alert = if self.ext(Extension::Alerts) {
-            inner.first().and_then(|l| alert_kind(l.t().trim()))
+            inner
+                .first()
+                .and_then(|l| alert_kind(l.t().trim_matches(SPACE)))
         } else {
             None
         };
         if alert.is_some() {
             inner.remove(0);
         }
-        let saved = std::mem::replace(&mut self.in_list, false);
         let blocks = self.blocks(&inner);
         self.in_list = saved;
         let blocks = blocks?;
@@ -1504,6 +1594,23 @@ impl Parser {
 
     fn marker(&self, s: &str, expected: Option<ListKind>) -> Option<Marker> {
         self.marker_with(s, expected, self.ext(Extension::FancyLists))
+    }
+
+    /// Tells whether `s` starts with a marker of `fancy_lists` or
+    /// `example_lists` that the flavor does not read as a list marker. Such
+    /// a line ends a list item, and with `lists_without_preceding_blankline`
+    /// a paragraph. A number with one parenthesis (`1)`) is no such marker.
+    fn foreign_marker(&self, s: &str) -> bool {
+        if indent(s) > 3 || self.marker(s, None).is_some() {
+            return false;
+        }
+        let fancy = !self.ext(Extension::FancyLists)
+            && self.marker_with(s, None, true).is_some_and(|m| {
+                m.kind != ListKind::Ordered(ListNumberStyle::Decimal, ListNumberDelim::OneParen)
+            });
+        fancy
+            || (!self.ext(Extension::ExampleLists)
+                && is_example_marker(s.trim_start_matches(SPACE)))
     }
 
     /// Reads a list marker; `fancy` allows the markers of `fancy_lists`.
@@ -1785,7 +1892,7 @@ impl Parser {
                 {
                     break;
                 }
-                if self.def_marker(line.t()).is_some() {
+                if self.def_marker(line.t()).is_some() || self.foreign_marker(line.t()) {
                     break;
                 }
                 // A lazy line keeps its spaces, so it is not a setext underline.
@@ -1945,7 +2052,7 @@ impl Parser {
         if blank(first_line) && !more.is_empty() {
             return;
         }
-        let rest = rest.trim_start();
+        let rest = rest.trim_start_matches(SPACE);
         let mut inlines = vec![Inline::Str(symbol.to_string())];
         if !rest.is_empty() {
             inlines.push(Inline::Space);
@@ -1963,7 +2070,7 @@ impl Parser {
         }
         let t = s.get(ind..)?;
         let rest = t.strip_prefix(':').or_else(|| t.strip_prefix('~'))?;
-        if !rest.starts_with(' ') {
+        if !(rest.is_empty() || rest.starts_with(' ')) {
             return None;
         }
         let spaces = indent(rest);
@@ -2043,7 +2150,7 @@ impl Parser {
                     {
                         break;
                     }
-                    inner.push(line.tail(line.t().trim_start(), line.n));
+                    inner.push(line.tail(line.t().trim_start_matches(SPACE), line.n));
                     k += 1;
                 }
                 while inner.last().is_some_and(|l| l.is_blank()) && !loose {
@@ -2084,7 +2191,7 @@ impl Parser {
                     }
                 }
             }
-            items.push((vec![placeholder(term.t().trim())], defs));
+            items.push((vec![placeholder(term.t().trim_matches(SPACE))], defs));
             j = k;
         }
         if items.is_empty() {
@@ -2115,7 +2222,7 @@ impl Parser {
             } else if line.t().starts_with(' ') && !line.is_blank() && !entries.is_empty() {
                 if let Some(last) = entries.last_mut() {
                     last.push(' ');
-                    last.push_str(line.t().trim_start());
+                    last.push_str(line.t());
                 }
             } else {
                 break;
@@ -2130,7 +2237,11 @@ impl Parser {
                 inlines.push(Inline::Str("\u{a0}".repeat(spaces)));
             }
             let rest = entry.get(spaces..).unwrap_or("");
-            if !rest.is_empty() {
+            // A line ends without a line break, so its final backslash is
+            // text and not an escaped line break.
+            if ends_with_escape(rest) {
+                inlines.push(placeholder(&format!("{rest}\\")));
+            } else if !rest.is_empty() {
                 inlines.push(placeholder(rest));
             }
             result.push(inlines);
@@ -2151,7 +2262,7 @@ impl Parser {
         let Some((_, info)) = div_fence(first.t()) else {
             return Ok(None);
         };
-        let info = info.trim_end_matches(':').trim();
+        let info = info.trim_end_matches(':').trim_matches(SPACE);
         if info.is_empty() {
             return Ok(None);
         }
@@ -2199,7 +2310,7 @@ impl Parser {
         while let Some(line) = lines.get(j) {
             crate::step(1);
             if let Some((c, n)) = in_fence {
-                let tt = line.t().trim();
+                let tt = line.t().trim_matches(SPACE);
                 if tt.len() - tt.trim_start_matches(c).len() >= n
                     && tt.trim_start_matches(c).is_empty()
                 {
@@ -2208,7 +2319,7 @@ impl Parser {
             } else if let Some((c, n, _, _)) = fence_open(line.t()) {
                 in_fence = Some((c, n));
             } else if let Some((_, rest)) = div_fence(line.t()) {
-                if rest.trim_end_matches(':').trim().is_empty() {
+                if rest.trim_end_matches(':').trim_matches(SPACE).is_empty() {
                     if let Some(open) = stack.pop()
                         && let Some(k) = lines.get(open).and_then(key)
                     {
@@ -2309,7 +2420,7 @@ impl Parser {
         let Some(first) = lines.first() else {
             return Ok(None);
         };
-        let s = first.t().trim_start();
+        let s = first.t().trim_start_matches(SPACE);
         if !s.starts_with('<') {
             return Ok(None);
         }
@@ -2457,7 +2568,7 @@ impl Parser {
             // No closing tag follows: the element holds the rest of the lines.
             // Consecutive opening tags on the first line nest without copies.
             let mut attrs = vec![(html_attr(tag), 1)];
-            let mut text = first_rest.trim_start();
+            let mut text = first_rest.trim_start_matches(SPACE);
             while native_div
                 && attrs.len() < self.max_depth.saturating_sub(self.depth).max(1)
                 && html_tag_name(text).is_some_and(|(n, c)| n == "div" && !c)
@@ -2469,7 +2580,7 @@ impl Parser {
                     1
                 };
                 attrs.push((html_attr(text.get(..len).unwrap_or("")), column));
-                text = text.get(len..).unwrap_or("").trim_start();
+                text = text.get(len..).unwrap_or("").trim_start_matches(SPACE);
             }
             let following = lines.get(tag_lines + 1..).unwrap_or(&[]);
             let saved = std::mem::replace(&mut self.in_list, false);
@@ -2520,12 +2631,12 @@ impl Parser {
         if close_line == tag_lines {
             let before = first_line.get(first_rest_start..close_pos).unwrap_or("");
             if !blank(before) {
-                inner.push(Ln::new(before.trim_start(), first_n));
+                inner.push(Ln::new(before.trim_start_matches(SPACE), first_n));
                 closer_own_line = false;
             }
         } else {
             if !blank(first_rest) {
-                inner.push(Ln::new(first_rest.trim_start(), first_n));
+                inner.push(Ln::new(first_rest.trim_start_matches(SPACE), first_n));
             }
             let before_blank = lines
                 .get(close_line)
@@ -2587,7 +2698,7 @@ impl Parser {
             && !blank(&rest)
         {
             let n = lines.get(j.saturating_sub(1)).map_or(0, |l| l.n);
-            let mut more = vec![Ln::new(rest.trim_start(), n)];
+            let mut more = vec![Ln::new(rest.trim_start_matches(SPACE), n)];
             let mut k = j;
             while let Some(line) = lines.get(k) {
                 if line.is_blank() {
@@ -2616,7 +2727,7 @@ impl Parser {
             return Ok(tag_lines + 1);
         }
         let n = lines.get(tag_lines).map_or(0, |l| l.n);
-        let mut more = vec![Ln::new(rest.trim_start(), n)];
+        let mut more = vec![Ln::new(rest.trim_start_matches(SPACE), n)];
         more.extend(lines.get(tag_lines + 1..).unwrap_or(&[]).iter().cloned());
         let mut sub = Vec::new();
         let used = self.block_at(&more, 0, false, &mut FenceMemo::default(), &mut sub)?;
@@ -2629,7 +2740,7 @@ impl Parser {
             return None;
         }
         let first = lines.first()?;
-        let s = first.t().trim_start();
+        let s = first.t().trim_start_matches(SPACE);
         const DEFINITIONS: &[&str] = &[
             "\\newcommand",
             "\\renewcommand",
@@ -2712,11 +2823,11 @@ impl Parser {
             return None;
         }
         let is_dashes = |s: &str| {
-            let t = s.trim();
+            let t = s.trim_matches(SPACE);
             !t.is_empty() && t.chars().all(|c| c == '-' || c == ' ' || c == ':')
         };
         let first = lines.first()?.t();
-        let first_trim = first.trim_start();
+        let first_trim = first.trim_start_matches(SPACE);
         let dash_start = is_dashes(first);
         let possible = dash_start
             || first.contains('|')
@@ -2764,14 +2875,14 @@ impl Parser {
         let Some(first) = lines.first() else {
             return Ok(None);
         };
-        if first.t().trim_end() != "---" || lines.get(1).is_none_or(|l| l.is_blank()) {
+        if first.t().trim_end_matches(SPACE) != "---" || lines.get(1).is_none_or(|l| l.is_blank()) {
             return Ok(None);
         }
         let mut j = 1;
         let mut end = None;
         while let Some(line) = lines.get(j) {
             crate::step(1);
-            let t = line.t().trim_end();
+            let t = line.t().trim_end_matches(SPACE);
             if t == "---" || t == "..." {
                 end = Some(j);
                 break;
@@ -2810,6 +2921,12 @@ impl Parser {
 
     /// Parses a string of a metadata field as blocks with the main reader state.
     fn sub_document(&mut self, text: &str) -> Vec<Block> {
+        // Some blocks need the line break at the end of their line, so one
+        // line without it is a paragraph.
+        if !text.contains('\n') && self.needs_line_end(text) {
+            let para = Block::Para(vec![placeholder(text.trim_matches(SPACE))]);
+            return self.resolve_blocks(vec![para]);
+        }
         let mut lines: Vec<Ln> = text
             .split('\n')
             .map(|t| Ln::new(expand_tabs(t, 4), 0))
@@ -2829,7 +2946,7 @@ impl Parser {
         if first.indent() > 3 {
             return None;
         }
-        let s = first.t().trim_start();
+        let s = first.t().trim_start_matches(SPACE);
         // A label can continue on the next line.
         let (label, rest, mut used) = match bracket_label(s) {
             Some((label, rest)) => (label.to_string(), rest.to_string(), 1),
@@ -2852,14 +2969,16 @@ impl Parser {
         let rest = rest.strip_prefix(':')?;
         let mut text = rest.to_string();
         if blank(&text) {
-            let next = lines.get(used)?;
-            if next.is_blank() {
-                return None;
+            // With no text on the next line, the destination is empty.
+            if let Some(next) = lines.get(used).filter(|l| !l.is_blank()) {
+                text = next.t().to_string();
+                used += 1;
             }
-            text = next.t().to_string();
-            used += 1;
         }
-        let t = text.trim();
+        let t = text.trim_matches(SPACE);
+        if t.starts_with('[') {
+            return None;
+        }
         let (url, after) = if let Some(inner) = t.strip_prefix('<') {
             let close = inner.find('>')?;
             (inner.get(..close)?.to_string(), inner.get(close + 1..)?)
@@ -2868,7 +2987,7 @@ impl Parser {
             // attributes start after white space.
             // A title ends at the end of the text, so only an opening mark
             // that pairs with the last character can start it.
-            let last = t.trim_end().chars().last();
+            let last = t.trim_end_matches(SPACE).chars().last();
             let pairs = move |c: char| {
                 last == Some('}')
                     || match c {
@@ -2894,26 +3013,33 @@ impl Parser {
                 .find(|i| {
                     let tail = t.get(*i..).unwrap_or("");
                     title_of(tail).is_some_and(|(_, r)| {
-                        let r = r.trim();
+                        let r = r.trim_matches(SPACE);
                         r.is_empty() || r.starts_with('{')
-                    }) || (tail.starts_with('{') && self.parse_attr(tail.trim()).is_some())
+                    }) || (tail.starts_with('{')
+                        && self.parse_attr(tail.trim_matches(SPACE)).is_some())
                 })
                 .unwrap_or(t.len());
-            (t.get(..end)?.trim_end().to_string(), t.get(end..)?)
+            let destination = t.get(..end)?.trim_end_matches(SPACE);
+            // A closed title or attribute group in the middle of the
+            // destination makes the line no definition.
+            if self.has_inner_title(t, end) {
+                return None;
+            }
+            (destination.to_string(), t.get(end..)?)
         };
-        let mut after = after.trim().to_string();
+        let mut after = after.trim_matches(SPACE).to_string();
         if after.is_empty()
             && let Some(next) = lines.get(used)
             && !next.is_blank()
         {
-            let nt = next.t().trim();
+            let nt = next.t().trim_matches(SPACE);
             if nt.starts_with(['"', '\'', '(']) && title_of(nt).is_some_and(|(_, r)| blank(r)) {
                 after = nt.to_string();
                 used += 1;
             }
         }
         let (title, after) = match title_of(&after) {
-            Some((title, rest)) => (title, rest.trim().to_string()),
+            Some((title, rest)) => (title, rest.trim_matches(SPACE).to_string()),
             None => (Text::new(), after),
         };
         let attr = if after.is_empty() {
@@ -2940,6 +3066,41 @@ impl Parser {
         Some(used)
     }
 
+    /// Tells whether a title (`"t"`, `'t'`, `(t)`) or attributes (`{.c}`)
+    /// start after white space in `text`, not after `end`, and more text
+    /// follows them. Such a line is no reference definition.
+    fn has_inner_title(&self, text: &str, end: usize) -> bool {
+        text.char_indices()
+            .take_while(|(i, _)| *i <= end)
+            .any(|(i, open)| {
+                let close = match open {
+                    '"' => '"',
+                    '\'' => '\'',
+                    '(' => ')',
+                    '{' => '}',
+                    _ => return false,
+                };
+                if !text
+                    .get(..i)
+                    .is_some_and(|b| b.ends_with(char::is_whitespace))
+                {
+                    return false;
+                }
+                let Some(k) = text.get(i + 1..).and_then(|rest| rest.find(close)) else {
+                    return false;
+                };
+                let group_end = i + 1 + k + 1;
+                let after = text.get(group_end..).unwrap_or("");
+                after.starts_with(char::is_whitespace)
+                    && !after.trim_matches(SPACE).is_empty()
+                    && !after.trim_start_matches(SPACE).starts_with('{')
+                    && (open != '{'
+                        || self
+                            .parse_attr(text.get(i..group_end).unwrap_or(""))
+                            .is_some())
+            })
+    }
+
     fn abbreviation(&mut self, lines: &[Ln]) -> Option<usize> {
         if !self.ext(Extension::Abbreviations) {
             return None;
@@ -2963,7 +3124,7 @@ impl Parser {
         if first.indent() > 3 {
             return Ok(None);
         }
-        let s = first.t().trim_start();
+        let s = first.t().trim_start_matches(SPACE);
         let Some((label, rest)) = bracket_label(s) else {
             return Ok(None);
         };
@@ -2976,7 +3137,7 @@ impl Parser {
         if key.is_empty() || key.contains(char::is_whitespace) {
             return Ok(None);
         }
-        let mut inner = vec![Ln::new(rest.trim_start(), first.n)];
+        let mut inner = vec![Ln::new(rest.trim_start_matches(SPACE), first.n)];
         let mut j = 1;
         let mut prev_blank = false;
         while let Some(line) = lines.get(j) {
@@ -2996,7 +3157,7 @@ impl Parser {
             if prev_blank {
                 break;
             }
-            if bracket_label(line.t().trim_start())
+            if bracket_label(line.t().trim_start_matches(SPACE))
                 .is_some_and(|(l, r)| l.starts_with('^') && r.starts_with(':'))
             {
                 break;
@@ -3298,9 +3459,13 @@ impl Parser {
 
 impl CellParser for Parser {
     fn inlines(&mut self, text: &str) -> Vec<Inline> {
-        let t = text.trim();
+        let t = text.trim_matches(SPACE);
         if t.is_empty() {
             Vec::new()
+        } else if ends_with_escape(t) {
+            // The text ends without a line break, so its final backslash
+            // is text and not an escaped line break.
+            vec![placeholder(&format!("{t}\\"))]
         } else {
             vec![placeholder(t)]
         }
@@ -3313,7 +3478,7 @@ impl CellParser for Parser {
     }
 
     fn attributes(&mut self, text: &str) -> Option<Attr> {
-        self.parse_attr(text.trim())
+        self.parse_attr(text.trim_matches(SPACE))
     }
 }
 
@@ -3368,7 +3533,19 @@ fn compactify(items: &mut [Vec<Block>]) {
 fn same_list(a: ListKind, b: ListKind) -> bool {
     let hash = ListKind::Ordered(ListNumberStyle::DefaultStyle, ListNumberDelim::DefaultDelim);
     let decimal = ListKind::Ordered(ListNumberStyle::Decimal, ListNumberDelim::Period);
-    a == b || (a == hash && b == decimal) || (a == decimal && b == hash)
+    // A `#.` item continues a decimal or lowercase list with periods.
+    a == b
+        || (a == hash
+            && matches!(
+                b,
+                ListKind::Ordered(
+                    ListNumberStyle::Decimal
+                        | ListNumberStyle::LowerAlpha
+                        | ListNumberStyle::LowerRoman,
+                    ListNumberDelim::Period
+                )
+            ))
+        || (a == decimal && b == hash)
 }
 
 /// Returns the label inside `[...]` at the start of `s` and the text after `]`.
@@ -3419,7 +3596,7 @@ pub(crate) fn title_of(s: &str) -> Option<(Text, &str)> {
             escaped = true;
         } else if c == close {
             let after = inner.get(i + 1..)?;
-            if blank(after) || after.trim_start().starts_with('{') {
+            if blank(after) || after.trim_start_matches(SPACE).starts_with('{') {
                 last = Some(i);
             }
         }
@@ -3442,7 +3619,9 @@ pub(crate) fn normalize_key(label: &str) -> Text {
 pub(crate) fn escape_uri(url: &str) -> Text {
     let mut out = Text::new();
     for c in url.chars() {
-        if c.is_whitespace() || matches!(c, '<' | '>' | '|' | '"' | '{' | '}' | '^' | '`') {
+        if c.is_whitespace()
+            || matches!(c, '<' | '>' | '|' | '"' | '{' | '}' | '[' | ']' | '^' | '`')
+        {
             let mut buf = [0u8; 4];
             for b in c.encode_utf8(&mut buf).bytes() {
                 out.push_str(&format!("%{b:02X}"));
@@ -3472,25 +3651,25 @@ pub(crate) fn html_attr(tag: &str) -> Attr {
         .trim_end_matches('/');
     let mut rest = inner
         .trim_start_matches(|c: char| c.is_ascii_alphanumeric())
-        .trim_start();
+        .trim_start_matches(SPACE);
     while !rest.is_empty() {
         let name_len = rest
             .find(|c: char| c == '=' || c.is_whitespace())
             .unwrap_or(rest.len());
         let name = rest.get(..name_len).unwrap_or("").to_string();
-        rest = rest.get(name_len..).unwrap_or("").trim_start();
+        rest = rest.get(name_len..).unwrap_or("").trim_start_matches(SPACE);
         let mut value = Text::new();
         if let Some(r) = rest.strip_prefix('=') {
-            let r = r.trim_start();
+            let r = r.trim_start_matches(SPACE);
             if let Some(q) = r.chars().next().filter(|c| *c == '"' || *c == '\'') {
                 let body = r.get(1..).unwrap_or("");
                 let end = body.find(q).unwrap_or(body.len());
                 value = body.get(..end).unwrap_or("").to_string();
-                rest = body.get(end + 1..).unwrap_or("").trim_start();
+                rest = body.get(end + 1..).unwrap_or("").trim_start_matches(SPACE);
             } else {
                 let end = r.find(char::is_whitespace).unwrap_or(r.len());
                 value = r.get(..end).unwrap_or("").to_string();
-                rest = r.get(end..).unwrap_or("").trim_start();
+                rest = r.get(end..).unwrap_or("").trim_start_matches(SPACE);
             }
         }
         if name.is_empty() {

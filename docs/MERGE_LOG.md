@@ -850,3 +850,42 @@ I-YAML-24 name I-YAML-21. Low: I-YAML-21, Opus yaml-R9-L01 and L02
 (corrected in 33ed724), Codex yaml-R9-05 and yaml-R9-06 (not recorded as
 rows). Open checks: mutation shards 1/6 to 5/6, coverage of the head,
 fuzzing of the head. Requests of the worker to the coordinator: none.
+
+## Workstream markdown-reader (branch `ws/markdown-reader-2`, head 91b869a, one squashed commit, session 4 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: corrections
+of the difference groups of I-MD-41 and of the random differential runs
+(bare definition markers, lazy quote lines, list markers that the flavor
+does not read, final backslashes, `\ ` before heading attributes, `[` and
+`]` in link destinations, backtick fences in quotes, `#.` lists), and YAML
+metadata through `randoc-yaml`: `crates/randoc-markdown/src/yaml.rs` now
+only converts the node tree. The branch removes the dependency line
+`saphyr-parser` from `crates/randoc-markdown/Cargo.toml`; the root
+`Cargo.toml` keeps its `saphyr-parser` line because `randoc-cli` still
+uses it.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 91b869a (22:20 to 23:18 UTC; worker report): baseline 19375 units, 0 regressions, 39 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `markdown/`: 1398 units, 1345 pass, 53 fail (before: 1360, 1306, 54). Matrix `differ.py matrix lazy` (2,592 inputs): 437 differ on 98806b9, 73 on the head, 0 new. Random runs with the abbreviation list of Pandoc (3 seeds of 2,000 documents): 32, 72, 29 differ. YAML replay `tests/yaml_replay.json`: 17,196 block texts, 0 differ apart from 417 error texts that `randoc-yaml` gives alone. About 60 small difference groups (1 or 2 inputs each) of the differential runs have no proven level yet. |
+| 3. Tests | `cargo test -p randoc-markdown` on the merged tree: 39 pass, 3 ignored. Coverage of the head: 95.69 % of lines (`yaml.rs` 87.04 %). Mutation sample (shard 1/20 of 300 mutants of the diff): 15 mutants, 14 caught, 1 timeout, 0 missed. |
+| 4. No panics | Fuzz target `markdown_read` on 91b869a: 901 s, 1,200,552 runs, 0 crashes, peak memory 720 MB. |
+| 5. Reviews | 2 rounds, both in session 2. The units of sessions 3 and 4 have no review. Review round 3 of the major block starts after this merge. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Time table (rule 21c, debug program, 25,000 and 50,000 repetitions of 11 changed paths): largest ratio 2.7, peak memory 125 MB. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. The gate script passed on the branch head (see gate 1). |
+
+Conflicts in the merge: none (`docs/ISSUES.md` and `Cargo.lock` merged
+without a conflict). Licence scan: the hits are code fragments of
+character tests, a list of HTML element names and minimal pipe and grid
+table runs in `block.rs`, `inline.rs` and `tables.rs`; the worker reports
+no hit in new text.
+
+Rows closed by this merge: I-MD-22 (low) and the old I-MD-41. Open
+findings: the rows I-MD-41 to I-MD-53 of the branch (all low) and the
+scope gaps I-MD-01 to I-MD-05 and I-MD-08. Open checks: the level of
+about 60 small difference groups, the rest of the mutation sample.
+Requests of the worker to the coordinator: `abbreviations()` in
+`crates/randoc-cli/src/convert.rs` must return
+`randoc_core::shared::default_abbreviations()` when the data folder has no
+`abbreviations` file (I-MD-08, 15 units); the alias limit error text of
+`randoc-yaml` (I-MD-53).

@@ -1,5 +1,6 @@
 //! The table parser of the Markdown reader: simple, multiline, grid and pipe tables.
 
+use crate::block::SPACE;
 use std::collections::BTreeSet;
 
 use randoc_ast::{
@@ -156,7 +157,7 @@ fn rest<'a, 'b>(lines: &'a [&'b str], start: usize) -> &'a [&'b str] {
 
 /// Returns true when the line has only spaces.
 fn is_blank(line: &str) -> bool {
-    line.trim().is_empty()
+    line.trim_matches(SPACE).is_empty()
 }
 
 /// Counts the blank lines at the start of `lines`.
@@ -175,7 +176,7 @@ fn caption_at(lines: &[&str]) -> Option<(String, usize)> {
     if indent(first) > 3 {
         return None;
     }
-    let body = first.trim_start();
+    let body = first.trim_start_matches(SPACE);
     if body.starts_with(":::") {
         return None;
     }
@@ -183,16 +184,16 @@ fn caption_at(lines: &[&str]) -> Option<(String, usize)> {
         .strip_prefix("Table:")
         .or_else(|| body.strip_prefix("table:"))
         .or_else(|| body.strip_prefix(':'))?;
-    let mut parts = vec![text.trim()];
+    let mut parts = vec![text.trim_matches(SPACE)];
     let mut used = 1;
     for line in rest(lines, 1) {
         if is_blank(line) {
             break;
         }
-        parts.push(line.trim());
+        parts.push(line.trim_matches(SPACE));
         used += 1;
     }
-    Some((parts.join("\n").trim().to_string(), used))
+    Some((parts.join("\n").trim_matches(SPACE).to_string(), used))
 }
 
 /// Builds the table attributes and the caption from the caption text.
@@ -228,7 +229,7 @@ fn split_attributes<'a>(text: &'a str, parser: &mut dyn CellParser) -> (&'a str,
                 continue;
             };
             if let Some(attr) = parser.attributes(candidate) {
-                let before = text.get(..index).unwrap_or("").trim_end();
+                let before = text.get(..index).unwrap_or("").trim_end_matches(SPACE);
                 return (before, attr);
             }
         }
@@ -295,7 +296,7 @@ struct DashColumn {
 
 /// Parses a line of dash runs separated by spaces. Returns the runs, or None when the line is not a dashed line.
 fn dashed_line(line: &str) -> Option<Vec<DashColumn>> {
-    let line = line.trim_end();
+    let line = line.trim_end_matches(SPACE);
     if indent(line) > 3 || line.is_empty() {
         return None;
     }
@@ -353,7 +354,7 @@ fn split_columns(line: &str, columns: &[DashColumn]) -> Vec<String> {
 fn column_alignment(texts: &[&str], dashes: usize) -> Alignment {
     let texts: Vec<&str> = texts
         .iter()
-        .map(|text| text.trim_end())
+        .map(|text| text.trim_end_matches(SPACE))
         .filter(|text| !text.is_empty())
         .collect();
     let left = texts.iter().any(|text| text.starts_with(' '));
@@ -387,7 +388,7 @@ fn alignments(lines: &[&str], columns: &[DashColumn]) -> Vec<Alignment> {
 
 /// Makes a cell with a `Plain` block of the inlines, or no block for an empty text.
 fn inline_cell(text: &str, parser: &mut dyn CellParser) -> Cell {
-    let text = text.trim();
+    let text = text.trim_matches(SPACE);
     let content = if text.is_empty() {
         Vec::new()
     } else {
@@ -409,7 +410,7 @@ fn line_row(lines: &[&str], columns: &[DashColumn], parser: &mut dyn CellParser)
         .map(|index| {
             let parts: Vec<&str> = split
                 .iter()
-                .filter_map(|parts| parts.get(index).map(|part| part.trim()))
+                .filter_map(|parts| parts.get(index).map(|part| part.trim_matches(SPACE)))
                 .filter(|part| !part.is_empty())
                 .collect();
             inline_cell(&parts.join("\n"), parser)
@@ -668,7 +669,7 @@ fn pipe_separator(line: &str) -> Option<Vec<(Alignment, usize)>> {
     parts
         .iter()
         .map(|part| {
-            let part = part.trim();
+            let part = part.trim_matches(SPACE);
             let left = part.starts_with(':');
             let right = part.ends_with(':') && part.len() > 1;
             let dashes = part.trim_matches(':');
@@ -875,7 +876,7 @@ impl Grid {
                     .filter_map(|x| self.at(y, x))
                     .filter(|c| *c != WIDE_FILL)
                     .collect();
-                text.trim_end().to_string()
+                text.trim_end_matches(SPACE).to_string()
             })
             .collect();
         let all_indented = lines
@@ -909,7 +910,7 @@ struct GridCell {
 
 /// Returns true when the text (without the indentation) is a grid border line such as `+---+===+`.
 fn is_grid_border(text: &str) -> bool {
-    let text = text.trim_end();
+    let text = text.trim_end_matches(SPACE);
     text.len() > 1
         && text.starts_with('+')
         && text.ends_with('+')
@@ -919,7 +920,7 @@ fn is_grid_border(text: &str) -> bool {
 
 /// Returns true when the text is a border line of `fill` characters with optional alignment colons at the segment ends, such as `+:---+---:+` for `-`.
 fn is_rule_line(text: &str, fill: char) -> bool {
-    let Some(inner) = text.trim_end().strip_prefix('+') else {
+    let Some(inner) = text.trim_end_matches(SPACE).strip_prefix('+') else {
         return false;
     };
     let Some(segments) = inner.strip_suffix('+') else {
@@ -1191,8 +1192,8 @@ mod tests {
 
         fn blocks(&mut self, text: &str) -> Vec<Block> {
             text.split("\n\n")
-                .filter(|chunk| !chunk.trim().is_empty())
-                .map(|chunk| Block::Para(self.inlines(chunk.trim())))
+                .filter(|chunk| !chunk.trim_matches(SPACE).is_empty())
+                .map(|chunk| Block::Para(self.inlines(chunk.trim_matches(SPACE))))
                 .collect()
         }
 

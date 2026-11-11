@@ -1,5 +1,6 @@
 //! The inline phase: Pandoc's inline grammar for Markdown.
 
+use crate::block::SPACE;
 use randoc_ast::{
     Attr, Block, Citation, CitationMode, Format, Inline, MathType, QuoteType, Target, Text,
 };
@@ -1009,7 +1010,10 @@ impl Inl<'_> {
         let pos = rest.find(&closer)?;
         let body = rest.get(..pos)?.to_string();
         self.i = start + body.chars().count() + closer.chars().count();
-        Some(vec![Inline::Math(kind, body.trim().to_string())])
+        Some(vec![Inline::Math(
+            kind,
+            body.trim_matches(SPACE).to_string(),
+        )])
     }
 
     /// Parses an emphasis opener. An emphasis writes its result into one
@@ -1483,12 +1487,12 @@ impl Inl<'_> {
                 None => (inner.clone(), inner.clone()),
             };
             self.i = close + 1;
-            let text = self.sub(title.trim(), true);
+            let text = self.sub(title.trim_matches(SPACE), true);
             let attr = Attr::new("", vec!["wikilink".into()], vec![]);
             return Some(vec![Inline::Link(
                 attr,
                 text,
-                Target::new(escape_uri(url.trim()), ""),
+                Target::new(escape_uri(url.trim_matches(SPACE)), ""),
             )]);
         }
         let label = self.text(open + 1, close);
@@ -1809,7 +1813,7 @@ impl Inl<'_> {
             };
             let key = at.1.clone();
             let suffix_text = rest.get(at.2..).unwrap_or("");
-            let prefix = trim_inlines(self.sub(prefix_text.trim_start(), false));
+            let prefix = trim_inlines(self.sub(prefix_text.trim_start_matches(SPACE), false));
             let suffix = self.suffix(suffix_text);
             // Pandoc parses the bracket content as one text, so an emphasis
             // opener that finds no closer takes the closing bracket.
@@ -1837,7 +1841,7 @@ impl Inl<'_> {
     }
 
     fn suffix(&mut self, text: &str) -> Vec<Inline> {
-        let t = text.trim_end();
+        let t = text.trim_end_matches(SPACE);
         if t.is_empty() {
             return Vec::new();
         }
@@ -1909,7 +1913,7 @@ impl Inl<'_> {
                 // A note reference after the key is not a suffix.
                 let after = self.s.get(end + 1).copied();
                 if after != Some('(') && after != Some('[') && after != Some('{') {
-                    suffix = self.suffix(inner.trim());
+                    suffix = self.suffix(inner.trim_matches(SPACE));
                     self.i = end + 1;
                 }
             }
@@ -2108,13 +2112,13 @@ impl Inl<'_> {
             let start = self.i + 2;
             let k = self.find(Find::DoubleDollar, start)?;
             let body = self.text(start, k);
-            if body.trim().is_empty() {
+            if body.trim_matches(SPACE).is_empty() {
                 return None;
             }
             self.i = k + 2;
             return Some(vec![Inline::Math(
                 MathType::DisplayMath,
-                body.trim().to_string(),
+                body.trim_matches(SPACE).to_string(),
             )]);
         }
         if is_space(self.peek(1)) {

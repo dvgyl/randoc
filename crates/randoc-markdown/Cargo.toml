@@ -11,7 +11,7 @@ authors.workspace = true
 [dependencies]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
-saphyr-parser = "0.3.3"
+randoc-yaml = { workspace = true }
 
 [lints]
 workspace = true

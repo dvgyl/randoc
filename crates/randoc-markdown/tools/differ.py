@@ -2,19 +2,22 @@
 """Differential runs of the Markdown reader against the oracle.
 
 Usage:
-  differ.py matrix raw|blocktag OUT_DIR
+  differ.py matrix raw|blocktag|lazy OUT_DIR
   differ.py random COUNT SEED OUT_DIR [wide]
+  differ.py rerun OUT_DIR
 
 Each command writes OUT_DIR/cases.json, runs the oracle once for all cases
 (`pandoc lua oracle.lua`), runs `target/debug/randoc -t json` for each case,
 and prints a signature table: the cases grouped by the first node where the
 two trees differ. OUT_DIR/diffs.json holds each differing case.
-Environment: RANDOC_ORACLE_PANDOC, and RANDOC (default target/debug/randoc).
+Environment: RANDOC_ORACLE_PANDOC, RANDOC (default target/debug/randoc), and
+RANDOC_ARGS (more arguments for Randoc, in shell syntax).
 """
 import concurrent.futures
 import json
 import os
 import random
+import shlex
 import subprocess
 import sys
 
@@ -157,6 +160,45 @@ def blocktag_matrix():
                         "id": f"bt-{tid}-{place}-{ext}",
                         "from": ext,
                         "input": tpl.replace("{t}", tag),
+                    }
+                )
+    return cases
+
+
+def lazy_matrix():
+    """Lines after a block quote line or a term: lazy lines and bare markers."""
+    lines = [
+        "b", "# h", "## h ##", "- b", "* b", "1. b", "1) b", "a. b", "(@) b",
+        "#. b", ": d", ":", "~ d", "~", ":   ", "> b", ">", "```", "~~~",
+        "---", "***", "<div>", "<div>b</div>", "<!-- c -->", "| b",
+        "    b", "  : d", "::: d", "[x]: u", "[^x]: n", "+ b", "B) b",
+        "```\nq\n```", "~~~\nq\n~~~", "``` {.c}\nq\n```", "```{=html}\n<b>q</b>\n```",
+    ]
+    heads = {
+        "quote": "> a\n{l}\nz\n",
+        "empty-quote": ">\n{l}\nz\n",
+        "quote-blank": "> a\n>\n{l}\nz\n",
+        "nested": "> > a\n{l}\nz\n",
+        "item-quote": "- > a\n{l}\nz\n",
+        "term": "a\n{l}\n    z\n",
+        "term-loose": "a\n\n{l}\n    z\n",
+        "para": "a\nb\n{l}\n",
+        "item": "- a\n{l}\n  z\n",
+    }
+    exts = [
+        "markdown", "markdown_github", "markdown_phpextra", "markdown_mmd",
+        "markdown_strict", "markdown+lists_without_preceding_blankline",
+        "markdown-blank_before_header", "markdown-blank_before_blockquote",
+    ]
+    cases = []
+    for li, line in enumerate(lines):
+        for head, tpl in heads.items():
+            for ext in exts:
+                cases.append(
+                    {
+                        "id": f"lazy-{li}-{head}-{ext}",
+                        "from": ext,
+                        "input": tpl.replace("{l}", line),
                     }
                 )
     return cases
@@ -359,7 +401,7 @@ def run_oracle(cases_path, results_path):
 def run_randoc(case):
     try:
         p = subprocess.run(
-            [RANDOC, "-f", case["from"], "-t", "json"],
+            [RANDOC, "-f", case["from"], "-t", "json", *shlex.split(os.environ.get("RANDOC_ARGS", ""))],
             input=case["input"].encode("utf-8"),
             capture_output=True,
             timeout=60,
@@ -414,6 +456,11 @@ def run(cases, out_dir):
     with open(cases_path, "w", encoding="utf-8") as f:
         json.dump(cases, f)
     oracle = run_oracle(cases_path, os.path.join(out_dir, "oracle.json"))
+    table(cases, oracle, out_dir)
+
+
+def table(cases, oracle, out_dir):
+    os.makedirs(out_dir, exist_ok=True)
     with concurrent.futures.ThreadPoolExecutor(4) as pool:
         mine = list(pool.map(run_randoc, cases))
     groups = {}
@@ -435,10 +482,22 @@ def run(cases, out_dir):
         print(f"{len(members):5}  {sig}\n       {small['from']} {small['input']!r}")
 
 
+def rerun(out_dir):
+    """Runs Randoc again on the differing cases of OUT_DIR and prints the new table."""
+    with open(os.path.join(out_dir, "diffs.json"), encoding="utf-8") as f:
+        cases = [{k: c[k] for k in ("id", "from", "input")} for c in json.load(f)]
+    with open(os.path.join(out_dir, "oracle.json"), encoding="utf-8") as f:
+        oracle = json.load(f)
+    table(cases, oracle, os.path.join(out_dir, "rerun"))
+
+
 def main():
     cmd = sys.argv[1]
+    if cmd == "rerun":
+        rerun(sys.argv[2])
+        return
     if cmd == "matrix":
-        cases = {"raw": raw_matrix, "blocktag": blocktag_matrix}[sys.argv[2]]()
+        cases = {"raw": raw_matrix, "blocktag": blocktag_matrix, "lazy": lazy_matrix}[sys.argv[2]]()
         run(cases, sys.argv[3])
     elif cmd == "random":
         wide = sys.argv[5:] == ["wide"]

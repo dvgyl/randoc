@@ -139,3 +139,125 @@ fn listed_cases_match_the_oracle() {
         "failing: {failing:?}; missing: {missing:?}"
     );
 }
+
+/// Expands the tabs of `text` with a tab stop of 4, as the program does
+/// before it reads.
+fn expand_tabs(text: &str) -> String {
+    let mut out = String::new();
+    let mut column = 0;
+    for c in text.chars() {
+        match c {
+            '\t' => {
+                let n = 4 - column % 4;
+                out.extend(std::iter::repeat_n(' ', n));
+                column += n;
+            }
+            '\n' => {
+                out.push(c);
+                column = 0;
+            }
+            _ => {
+                out.push(c);
+                column += 1;
+            }
+        }
+    }
+    out
+}
+
+/// Runs `check` on a thread with a large stack: the replay reads deep YAML
+/// in a debug build.
+fn on_big_stack(check: impl FnOnce() + Send + 'static) {
+    let handle = std::thread::Builder::new()
+        .stack_size(1 << 30)
+        .spawn(check)
+        .unwrap();
+    if let Err(panic) = handle.join() {
+        std::panic::resume_unwind(panic);
+    }
+}
+
+/// Replays each metadata block text of `tests/yaml_replay.json` (written by
+/// `tools/yaml_replay.py`) through the reader. The accept decision, the
+/// error text, the metadata and the number of blocks must be the oracle
+/// result. A different error text is a known difference only when
+/// `randoc-yaml` alone gives the same text (the rows I-YAML-* of
+/// `docs/ISSUES.md`).
+#[test]
+fn yaml_replay_matches_the_oracle() {
+    on_big_stack(|| {
+        let text =
+            std::fs::read_to_string(crate_dir().join("tests/yaml_replay.json")).unwrap_or_default();
+        let cases: Vec<serde_json::Value> = serde_json::from_str(&text).unwrap_or_default();
+        let (mut known, mut failures, mut texts) = (0, Vec::new(), Vec::new());
+        for case in &cases {
+            let yaml = case["yaml"].as_str().unwrap_or("");
+            let spec = FormatSpec::parse("markdown");
+            let Some(Reader::Text(reader)) = crate::reader(&spec.name) else {
+                return;
+            };
+            let mut context = Context::pure();
+            context.limits.max_nesting_depth = 16384;
+            let got = reader
+                .read(
+                    &Sources::from_text(format!("---\n{yaml}---\n")),
+                    &options_for(&spec),
+                    &mut context,
+                )
+                .map(|doc| {
+                    serde_json::from_str::<serde_json::Value>(&randoc_ast::json::to_json(&doc))
+                        .unwrap_or_default()
+                })
+                .map_err(|e| e.to_string());
+            let same = match (&got, case["err"].as_str()) {
+                (Err(ours), Some(theirs)) if ours == theirs => true,
+                (Err(ours), Some(_)) => {
+                    let alone = randoc_yaml::parse(
+                        &expand_tabs(&format!("---\n{yaml}")),
+                        randoc_yaml::Limits {
+                            max_depth: 16384,
+                            ..randoc_yaml::Limits::default()
+                        },
+                    )
+                    .err()
+                    .map(|e| e.report(randoc_yaml::Entrance::MetadataBlock { name: "", line: 1 }));
+                    known += usize::from(alone.as_ref() == Some(ours));
+                    alone.as_ref() == Some(ours)
+                }
+                (Ok(doc), None) => {
+                    doc["meta"] == case["meta"]
+                        && doc["blocks"].as_array().map(Vec::len)
+                            == case["blocks"].as_u64().map(|n| n as usize)
+                }
+                _ => false,
+            };
+            if !same {
+                failures.push(format!("{yaml:?}\n  oracle {case}\n  randoc {got:?}"));
+                texts.push(yaml.to_string());
+            }
+        }
+        // `RANDOC_REPLAY_OUT=FILE` writes the differing texts, so that two
+        // versions of the reader can be compared.
+        if let Some(path) = std::env::var_os("RANDOC_REPLAY_OUT") {
+            let _ = std::fs::write(path, serde_json::Value::from(texts).to_string());
+        }
+        eprintln!(
+            "yaml replay: {} blocks, {} different, {known} known error texts",
+            cases.len(),
+            failures.len()
+        );
+        assert!(cases.len() >= 3000, "replay data missing: {}", cases.len());
+        assert!(
+            failures.is_empty(),
+            "{} of {} differ:\n{}",
+            failures.len(),
+            cases.len(),
+            failures
+                .iter()
+                .take(30)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join("\n")
+        );
+    });
+}

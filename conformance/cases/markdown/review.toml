@@ -1569,3 +1569,166 @@ input = "3. a\n#. b\n7. c\n"
 [[case]]
 id = "s3c-hash-marker-then-paren-marker"
 input = "#. a\n1) b\n"
+
+[[case]]
+id = "s4-bare-colon-marker-then-indented-definition"
+input = "Kettle\n:\n    A pot that boils water.\n"
+
+[[case]]
+id = "s4-bare-tilde-marker-then-lazy-line"
+input = "Lamp\n~\nA light on a desk.\n"
+
+[[case]]
+id = "s4-bare-colon-markers-two-definitions"
+input = "Gate\n:\n    The way in.\n:\n    The way out.\n"
+
+[[case]]
+id = "s4-bare-colon-marker-loose"
+input = "River\n\n:\n    Water that moves.\n"
+
+[[case]]
+id = "s4-bare-colon-marker-ends-list-item"
+input = "- pear\n:\n  plum\n"
+
+[[case]]
+id = "s4-github-bare-colon-line-ends-paragraph"
+from = "markdown_github"
+input = "Tea\n:\n"
+
+[[case]]
+id = "s4-line-block-final-backslash"
+input = "| One road \\\n| two roads\\\n"
+
+[[case]]
+id = "s4-line-block-escaped-space-then-continuation"
+input = "| Snow\\\n  falls\n"
+
+[[case]]
+id = "s4-heading-escaped-space-before-attributes"
+input = "# Harbour\\ {#port}\n"
+
+[[case]]
+id = "s4-heading-escaped-space-before-closing-hashes"
+input = "## Delta\\ ##\n"
+
+[[case]]
+id = "s4-github-heading-after-quote-ends-quote"
+from = "markdown_github"
+input = "> Wind from the west.\n# Weather\n"
+
+[[case]]
+id = "s4-github-list-after-empty-quote-line"
+from = "markdown_github"
+input = ">\n- bread\n"
+
+[[case]]
+id = "s4-github-colon-line-after-quote"
+from = "markdown_github"
+input = "> Rain today.\n: maybe\n"
+
+[[case]]
+id = "s4-quote-keeps-lazy-block-tag"
+input = "> Cold air.\n<div>\nwarm\n</div>\n"
+
+[[case]]
+id = "s4-github-number-paren-continues-paragraph"
+from = "markdown_github"
+input = "Count to\n1) start\n"
+
+[[case]]
+id = "s4-github-example-marker-ends-paragraph"
+from = "markdown_github"
+input = "See this\n(@) case\n"
+
+[[case]]
+id = "s4-strict-letter-marker-ends-list-item"
+from = "markdown_strict"
+input = "- bread\na. butter\n"
+
+[[case]]
+id = "s4-github-number-paren-continues-list-item"
+from = "markdown_github"
+input = "- bread\n1) butter\n"
+
+[[case]]
+id = "s4-phpextra-roman-marker-ends-list-item"
+from = "markdown_phpextra"
+input = "- bread\nii. jam\n"
+
+[[case]]
+id = "s4-github-letter-marker-after-empty-quote-line"
+from = "markdown_github"
+input = ">\na. fog\n"
+
+[[case]]
+id = "s4-reference-destination-with-brackets"
+input = "[shop]: http://shop.test/?item[]=7\n\nSee [shop] and [map](http://map.test/a[1]).\n"
+
+[[case]]
+id = "s4-autolink-with-brackets"
+input = "<http://[::1]/status>\n"
+
+[[case]]
+id = "s4-reference-destination-cannot-start-with-bracket"
+input = "[note]: [draft]\n\n[note]\n"
+
+[[case]]
+id = "s4-reference-with-empty-destination"
+input = "[later]:\n\nRead [later].\n"
+
+[[case]]
+id = "s4-strict-reference-bracket-then-indented-line"
+from = "markdown_strict"
+input = "[x]:[\n    text\n"
+
+[[case]]
+id = "s4-backtick-fence-ends-quote"
+input = "> Run this:\n```\nmake all\n```\n"
+
+[[case]]
+id = "s4-raw-fence-ends-quote"
+input = "> Markup:\n```{=html}\n<b>bold</b>\n```\n"
+
+[[case]]
+id = "s4-tilde-fence-is-lazy-quote-text"
+input = "> Run this:\n~~~\nmake all\n~~~\n"
+
+[[case]]
+id = "s4-pipe-cell-final-backslash"
+input = "| path | note |\n|---|:--:|\n| C:\\ | root |\n"
+
+[[case]]
+id = "s4-reference-title-then-more-text"
+input = "[home]: http://home.test (main) page\n\n[home]\n"
+
+[[case]]
+id = "s4-reference-two-titles"
+input = "[home]: http://home.test \"main\" \"page\"\n\n[home]\n"
+
+[[case]]
+id = "s4-reference-title-with-parentheses"
+input = "[home]: http://home.test \"main (old) page\"\n\n[home]\n"
+
+[[case]]
+id = "s4-hash-marker-continues-letter-list"
+input = "a. salt\nb. pepper\n#. oil\n"
+
+[[case]]
+id = "s4-hash-marker-after-upper-letter-list"
+input = "A.  salt\n#. oil\n"
+
+[[case]]
+id = "s4-nonbreaking-space-starts-paragraph"
+input = " Indented by a nonbreaking space.\n\n-  item\n\n# Total \n"
+
+[[case]]
+id = "s4-metadata-one-line-strings-are-text"
+input = "---\ntitle: 1. Introduction\nsubtitle: \"- draft\"\nkeywords: \"# tag\"\nrule: \"---\"\nquote: \"> said\"\n---\n\nBody\n"
+
+[[case]]
+id = "s4-metadata-carriage-return-in-string"
+input = "---\na: \"x\\r\"\nb: \"y\\r\\n\"\nc: \"\\n\\r\"\n---\n"
+
+[[case]]
+id = "s4-metadata-second-document-is-text"
+input = "---\n--- x\n---\n"
