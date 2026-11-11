@@ -1,0 +1,123 @@
+# HTML that Pandoc writes for 30 Markdown documents.
+from = "html"
+to = []
+
+[[case]]
+id = "roundtrip-001"
+input = "<blockquote>\n<p>A quote with <em>emphasis</em>.</p>\n<p>Second paragraph.</p>\n<blockquote>\n<p>Nested quote.</p>\n</blockquote>\n<ul>\n<li>list in quote</li>\n</ul>\n</blockquote>"
+
+[[case]]
+id = "roundtrip-002"
+input = "<p>Line one<br />\nline two with a hard break.</p>\n<p>Line with two spaces at the end<br />\nnext line.</p>"
+
+[[case]]
+id = "roundtrip-003"
+input = "<ul>\n<li>one</li>\n<li>two\n<ul>\n<li>nested a</li>\n<li>nested b\n<ul>\n<li>deep</li>\n</ul></li>\n</ul></li>\n<li>three</li>\n</ul>\n<p>Loose list:</p>\n<ul>\n<li><p>first</p></li>\n<li><p>second</p>\n<p>continued paragraph</p></li>\n</ul>"
+
+[[case]]
+id = "roundtrip-004"
+input = "<p>See <span class=\"citation\" data-cites=\"doe2020\">[@doe2020, p.\n3]</span> and <span class=\"citation\"\ndata-cites=\"smith\">@smith</span>.</p>\n<p>Text with a <code class=\"sourceCode c\">code span</code> and a\n<code>double ` tick</code>.</p>"
+
+[[case]]
+id = "roundtrip-005"
+input = "<div class=\"sourceCode\" id=\"cb1\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"cb1-1\"><a href=\"#cb1-1\" aria-hidden=\"true\" tabindex=\"-1\"></a><span class=\"kw\">def</span> f(x):</span>\n<span id=\"cb1-2\"><a href=\"#cb1-2\" aria-hidden=\"true\" tabindex=\"-1\"></a>    <span class=\"cf\">return</span> x <span class=\"op\">+</span> <span class=\"dv\">1</span></span></code></pre></div>\n<pre><code>indented code\n  with spaces</code></pre>\n<div class=\"sourceCode\" id=\"code1\" data-startFrom=\"10\"><pre\nclass=\"sourceCode numberSource haskell numberLines\"><code class=\"sourceCode haskell\" style=\"counter-reset: source-line 9;\"><span id=\"code1-10\"><a href=\"#code1-10\" aria-label=\"10\"></a>main <span class=\"ot\">=</span> <span class=\"fu\">putStrLn</span> <span class=\"st\">&quot;hi&quot;</span></span></code></pre></div>\n<pre><code>plain fence &lt;b&gt;&amp;amp;</code></pre>"
+
+[[case]]
+id = "roundtrip-006"
+input = "<dl>\n<dt>Term one</dt>\n<dd>\nDefinition one.\n</dd>\n<dt>Term two</dt>\n<dd>\nDefinition two a.\n</dd>\n<dd>\nDefinition two b with <strong>bold</strong>.\nSecond paragraph.\n</dd>\n</dl>"
+
+[[case]]
+id = "roundtrip-007"
+input = "<div id=\"box\" class=\"warning\" data-custom=\"yes\">\n<p>A paragraph in a div.</p>\n<div class=\"inner\">\n<p>Nested div.</p>\n</div>\n</div>\n<p>A <span id=\"s1\" class=\"hl\" lang=\"fr\">span with attributes</span>\nhere.</p>"
+
+[[case]]
+id = "roundtrip-008"
+input = "<p>Plain, <em>emphasis</em>, <strong>strong</strong>,\n<strong><em>both</em></strong>, <del>strike</del>, H<sub>2</sub>O,\nx<sup>2</sup>, <span class=\"smallcaps\">small caps</span>,\n<u>underline</u>, <code>inline code</code>, and “quoted” text with\n‘single’ quotes – and an ellipsis…</p>"
+
+[[case]]
+id = "roundtrip-009"
+input = "<p>Special characters: &lt; &gt; &amp; ” ’ © — … and a\nnon-breaking space.</p>\n<p>Escapes: * _ # and a literal <code>&lt;tag&gt;</code>.</p>"
+
+[[case]]
+id = "roundtrip-010"
+input = "<figure id=\"fig:one\">\n<img src=\"figure.png\" style=\"width:50.0%\"\nalt=\"A caption with emphasis\" />\n<figcaption aria-hidden=\"true\">A caption with\n<em>emphasis</em></figcaption>\n</figure>\n<p>Text after the figure.</p>"
+
+[[case]]
+id = "roundtrip-011"
+input = "<p>Text with a note<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> and another<a href=\"#fn2\"\nclass=\"footnote-ref\" id=\"fnref2\"\nrole=\"doc-noteref\"><sup>2</sup></a>.</p>\n<p>Inline note.<a href=\"#fn3\" class=\"footnote-ref\" id=\"fnref3\"\nrole=\"doc-noteref\"><sup>3</sup></a></p>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>The first note.<a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>A longer note.</p>\n<p>With a second paragraph and <code>code</code>.<a href=\"#fnref2\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn3\"><p>An inline note with <em>emphasis</em>.<a href=\"#fnref3\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>"
+
+[[case]]
+id = "roundtrip-012"
+input = "<h1 id=\"first-heading\">First heading</h1>\n<p>Text under the first heading.</p>\n<h2 class=\"cls\" data-key=\"val\" id=\"custom\">Second level</h2>\n<h3 id=\"third-level-with-code\">Third <em>level</em> with\n<code>code</code></h3>\n<h4 id=\"fourth\">Fourth</h4>\n<h5 id=\"fifth\">Fifth</h5>\n<h6 id=\"sixth\">Sixth</h6>"
+
+[[case]]
+id = "roundtrip-013"
+input = "<p>Before.</p>\n<hr />\n<p>After.</p>\n<hr />"
+
+[[case]]
+id = "roundtrip-014"
+input = "<figure>\n<img src=\"image.png\" title=\"Image title\" alt=\"Alt text\" />\n<figcaption aria-hidden=\"true\">Alt text</figcaption>\n</figure>\n<p>Inline <img src=\"icon.png\" width=\"20\" height=\"20\" alt=\"small\" />\nimage and <img src=\"pic.jpg\" id=\"pic\" class=\"right\"\nalt=\"with class\" />.</p>"
+
+[[case]]
+id = "roundtrip-015"
+input = "<div class=\"line-block\">The first line<br />\n   indented second line<br />\nthird <em>line</em></div>"
+
+[[case]]
+id = "roundtrip-016"
+input = "<p>A <a href=\"http://example.com/a\" title=\"Title\">link</a>, an <a\nhref=\"http://example.com/auto\" class=\"uri\">http://example.com/auto</a>\nlink, a <a href=\"page.html\" id=\"l1\" class=\"ext\" target=\"_blank\">link\nwith attributes</a>, an email <a href=\"mailto:someone@example.com\"\nclass=\"email\">someone@example.com</a>, and a <a\nhref=\"http://example.com/ref\" title=\"Reference title\">reference\nlink</a>.</p>"
+
+[[case]]
+id = "roundtrip-017"
+input = "<ol start=\"7\" type=\"1\">\n<li>seven</li>\n<li>eight</li>\n</ol>\n<ol type=\"1\">\n<li>paren one</li>\n<li>paren two</li>\n</ol>\n<ul>\n<li><p>item</p>\n<ol type=\"1\">\n<li>sub one</li>\n<li>sub two</li>\n</ol></li>\n</ul>"
+
+[[case]]
+id = "roundtrip-018"
+input = "<p>Inline <span class=\"math inline\">\\(x^2 + y^2\\)</span> math and\ndisplay:</p>\n<p><span class=\"math display\">\\[\\int_0^1 f(x)\\,dx\\]</span></p>"
+
+[[case]]
+id = "roundtrip-019"
+input = "<p><strong>Bold with <em>nested emphasis</em> and\n<code>code</code></strong> then <a href=\"u.html\">a <strong>bold</strong>\nlink</a> and an image link <a href=\"target.html\"><img src=\"i.png\"\nalt=\"alt\" /></a>.</p>"
+
+[[case]]
+id = "roundtrip-020"
+input = "<ol type=\"1\">\n<li><p>First</p>\n<p>Paragraph in item.</p>\n<blockquote>\n<p>Quote in item.</p>\n</blockquote>\n<pre><code>code in item</code></pre></li>\n<li><p>Second</p>\n<ul>\n<li>bullet in ordered\n<ol type=\"1\">\n<li>deep ordered</li>\n</ol></li>\n</ul></li>\n</ol>"
+
+[[case]]
+id = "roundtrip-021"
+input = "<ol type=\"1\">\n<li>one</li>\n<li>two</li>\n<li>three</li>\n</ol>\n<ol start=\"5\" type=\"1\">\n<li>five</li>\n<li>six</li>\n</ol>\n<ol type=\"a\">\n<li><p>alpha</p></li>\n<li><p>beta</p></li>\n<li><p>roman</p></li>\n</ol>\n<ol start=\"2\" type=\"i\">\n<li>roman two</li>\n</ol>\n<p>A. upper B. upper two</p>\n<ol>\n<li>auto</li>\n<li>auto two</li>\n</ol>"
+
+[[case]]
+id = "roundtrip-022"
+input = "<div class=\"raw\">\n<p>Markdown <em>inside</em> a raw div.</p>\n</div>\n<p>Text with <span class=\"x\">a span</span> and <kbd>Ctrl</kbd>.</p>"
+
+[[case]]
+id = "roundtrip-023"
+input = "<section id=\"one\" class=\"level1\">\n<h1>One</h1>\n<p>Text one.</p>\n<section id=\"one-a\" class=\"level2\">\n<h2>One A</h2>\n<p>Text a.</p>\n</section>\n</section>\n<section id=\"two\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Two</h1>\n<p>Text two.</p>\n</section>"
+
+[[case]]
+id = "roundtrip-024"
+input = "<p>E = mc<sup>2</sup> and CO<sub>2</sub> and <del>gone</del> and\n<mark>marked</mark> text.</p>"
+
+[[case]]
+id = "roundtrip-025"
+input = "<table style=\"width:70%;\">\n<colgroup>\n<col style=\"width: 22%\" />\n<col style=\"width: 19%\" />\n<col style=\"width: 29%\" />\n</colgroup>\n<thead>\n<tr>\n<th><p>Tool</p></th>\n<th><p>Weight</p></th>\n<th><p>Notes</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><p>Hammer</p></td>\n<td><p>0.8 kg</p></td>\n<td><ul>\n<li>steel head</li>\n<li>wood grip</li>\n</ul></td>\n</tr>\n<tr>\n<td><p>Saw</p></td>\n<td><p>0.5 kg</p></td>\n<td><p>Cuts timber.</p>\n<p>Keep it dry.</p></td>\n</tr>\n</tbody>\n</table>"
+
+[[case]]
+id = "roundtrip-026"
+input = "<table style=\"width:86%;\">\n<caption>Stations of the old line.</caption>\n<colgroup>\n<col style=\"width: 16%\" />\n<col style=\"width: 12%\" />\n<col style=\"width: 16%\" />\n<col style=\"width: 40%\" />\n</colgroup>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Station Name</th>\n<th style=\"text-align: center;\">Code</th>\n<th style=\"text-align: right;\">Distance (km)</th>\n<th style=\"text-align: center;\">Remark</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">North</td>\n<td style=\"text-align: center;\">N1</td>\n<td style=\"text-align: right;\">3.5</td>\n<td style=\"text-align: center;\">The line to this station goes over two\nbridges.</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\">Harbour</td>\n<td style=\"text-align: center;\">H7</td>\n<td style=\"text-align: right;\">11.0</td>\n<td style=\"text-align: center;\">Closed on Sunday.</td>\n</tr>\n</tbody>\n</table>"
+
+[[case]]
+id = "roundtrip-027"
+input = "<table>\n<caption>Pipe table</caption>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Name</th>\n<th style=\"text-align: right;\">Value</th>\n<th style=\"text-align: center;\">Note</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">one</td>\n<td style=\"text-align: right;\">1</td>\n<td style=\"text-align: center;\"><em>a</em></td>\n</tr>\n<tr>\n<td style=\"text-align: left;\">two</td>\n<td style=\"text-align: right;\">2</td>\n<td style=\"text-align: center;\"><code>b</code></td>\n</tr>\n</tbody>\n</table>"
+
+[[case]]
+id = "roundtrip-028"
+input = "<table>\n<caption>Parts in box 3.</caption>\n<thead>\n<tr>\n<th style=\"text-align: right;\">Qty</th>\n<th style=\"text-align: left;\">Item</th>\n<th style=\"text-align: center;\">Colour</th>\n<th>Size</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: right;\">7</td>\n<td style=\"text-align: left;\">bolt</td>\n<td style=\"text-align: center;\">red</td>\n<td>M4</td>\n</tr>\n<tr>\n<td style=\"text-align: right;\">40</td>\n<td style=\"text-align: left;\">nut</td>\n<td style=\"text-align: center;\">blue</td>\n<td>M6</td>\n</tr>\n</tbody>\n</table>"
+
+[[case]]
+id = "roundtrip-029"
+input = "<ul>\n<li><label><input type=\"checkbox\" />open task</label></li>\n<li><label><input type=\"checkbox\" checked=\"\" />done task</label></li>\n<li>plain item</li>\n</ul>"
+
+[[case]]
+id = "roundtrip-030"
+input = "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=yes\" />\n  <meta name=\"author\" content=\"First Author\" />\n  <meta name=\"author\" content=\"Second Author\" />\n  <meta name=\"dcterms.date\" content=\"2024-01-02\" />\n  <meta name=\"keywords\" content=\"one, two\" />\n  <title>The Title</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n<header id=\"title-block-header\">\n<h1 class=\"title\">The <em>Title</em></h1>\n<p class=\"author\">First Author</p>\n<p class=\"author\">Second Author</p>\n<p class=\"date\">2024-01-02</p>\n</header>\n<h1 id=\"intro\">Intro</h1>\n<p>Body text.</p>\n</body>\n</html>"

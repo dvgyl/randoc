@@ -1,0 +1,3291 @@
+# The tokenizer: attributes, character references, comments, broken markup.
+from = "html"
+to = []
+
+[[case]]
+id = "tokens-001"
+input = "<p>nul &#0; big &#x110000; sur &#xD800; dec &#99999999999; x &#x; y &# z &#xZ; &#65 &#x41g</p>"
+
+[[case]]
+id = "tokens-002"
+input = "<p>&ampx; &ampx &amp= &copy1 &copy_ &lt&gt &AMP; &Amp; &notit; &notin; &not; &a-b; &a:b; & &; &1; &&amp;</p>"
+
+[[case]]
+id = "tokens-003"
+from = "html+raw_html"
+input = "<p><span title=\"a&amp;b &lt; &quot; ' > &copy=1 &nosuch; &#65; &x\">s</span><a href=\"a?b=1&copy=2&reg;&c=3\">l</a></p>"
+
+[[case]]
+id = "tokens-004"
+from = "html+raw_html"
+input = "<p><foo a=\"1\" b='2' c=3 d e=\"\" F=\"G\" a=\"dup\" \"q\" x=y/><bar/><BAZ Z=\"1\">t</BAZ><br/><br></br><img src=\"a\"/><x:y a:b=\"c\">n</x:y></p>"
+
+[[case]]
+id = "tokens-005"
+from = "html+raw_html"
+input = "<p>a < b <> c </> d <1 e </ f> g <!> h <!x> i <?> j <? k ?> l <a</p>"
+
+[[case]]
+id = "tokens-006"
+from = "html+raw_html"
+input = "<p>a<!----->b<!--->c<!-->d<!-- x -- y -->e<!-- x --!>f<!--x-- >g<!-- unterminated</p>"
+
+[[case]]
+id = "tokens-007"
+from = "html+raw_html"
+input = "<p>a<b class=x>b</b c>c</b/>d<i/>e</i>f<b =x>g<b \"x\"=y>h<b x=>i<b x= >j<b x=''>k<b x=a\"b y=c'd>l</p>"
+
+[[case]]
+id = "tokens-008"
+from = "html+raw_html"
+input = "<script type=\"text/javascript\">if (a<b && c>d) { x = \"</p>\"; }</SCRIPT>after<script>unterminated <b>"
+
+[[case]]
+id = "tokens-009"
+input = "<p>tab\there  nl\n\n  two\nthree \u000C ff   nbsp emsp ​ zw</p>"
+
+[[case]]
+id = "tokens-010"
+input = "<p> lead</p><p>trail </p><p>\n both \n</p> <p>a</p> \n\n <p>b</p>text  \n  more\n\n\nlines <b>x</b>\n\n"
+
+[[case]]
+id = "tokens-011"
+input = "<span xml:lang=\"en\">a</span><span XML:LANG=\"fr\" lang=\"de\">b</span><span data-id=\"x\" data-class=\"y\" data-title=\"t\" data-foo-bar=\"z\" data-=\"e\" data-lang=\"l\" data-style=\"s\" data-href=\"h\" data-width=\"w\" data-ID2=\"q\">c</span><span id=\"a\" id=\"b\" class=\"c\" class=\"d\">d</span><span class=\"  a   b\n c \">e</span><span id=\" sp ace \">f</span>\n"
+
+[[case]]
+id = "tokens-012"
+input = "<span data-abbr=\"v\">x</span>"
+
+[[case]]
+id = "tokens-013"
+input = "<span data-alt=\"v\">x</span>"
+
+[[case]]
+id = "tokens-014"
+input = "<span data-background=\"v\">x</span>"
+
+[[case]]
+id = "tokens-015"
+input = "<span data-charoff=\"v\">x</span>"
+
+[[case]]
+id = "tokens-016"
+input = "<span data-codetype=\"v\">x</span>"
+
+[[case]]
+id = "tokens-017"
+input = "<span data-coords=\"v\">x</span>"
+
+[[case]]
+id = "tokens-018"
+input = "<span data-dir=\"v\">x</span>"
+
+[[case]]
+id = "tokens-019"
+input = "<span data-for=\"v\">x</span>"
+
+[[case]]
+id = "tokens-020"
+input = "<span data-headers=\"v\">x</span>"
+
+[[case]]
+id = "tokens-021"
+input = "<span data-id=\"v\">x</span>"
+
+[[case]]
+id = "tokens-022"
+input = "<span data-itemprop=\"v\">x</span>"
+
+[[case]]
+id = "tokens-023"
+input = "<span data-link=\"v\">x</span>"
+
+[[case]]
+id = "tokens-024"
+input = "<span data-max=\"v\">x</span>"
+
+[[case]]
+id = "tokens-025"
+input = "<span data-nohref=\"v\">x</span>"
+
+[[case]]
+id = "tokens-026"
+input = "<span data-onblur=\"v\">x</span>"
+
+[[case]]
+id = "tokens-027"
+input = "<span data-onload=\"v\">x</span>"
+
+[[case]]
+id = "tokens-028"
+input = "<span data-onunload=\"v\">x</span>"
+
+[[case]]
+id = "tokens-029"
+input = "<span data-poster=\"v\">x</span>"
+
+[[case]]
+id = "tokens-030"
+input = "<span data-rev=\"v\">x</span>"
+
+[[case]]
+id = "tokens-031"
+input = "<span data-scoped=\"v\">x</span>"
+
+[[case]]
+id = "tokens-032"
+input = "<span data-spellcheck=\"v\">x</span>"
+
+[[case]]
+id = "tokens-033"
+input = "<span data-summary=\"v\">x</span>"
+
+[[case]]
+id = "tokens-034"
+input = "<span data-valign=\"v\">x</span>"
+
+[[case]]
+id = "tokens-035"
+input = "<span data-epub:type=\"v\">x</span>"
+
+[[case]]
+id = "chars-001"
+input = "<p>a&#128;b</p>"
+
+[[case]]
+id = "chars-002"
+input = "<p>a&#129;b</p>"
+
+[[case]]
+id = "chars-003"
+input = "<p>a&#130;b</p>"
+
+[[case]]
+id = "chars-004"
+input = "<p>a&#131;b</p>"
+
+[[case]]
+id = "chars-005"
+input = "<p>a&#132;b</p>"
+
+[[case]]
+id = "chars-006"
+input = "<p>a&#133;b</p>"
+
+[[case]]
+id = "chars-007"
+input = "<p>a&#134;b</p>"
+
+[[case]]
+id = "chars-008"
+input = "<p>a&#135;b</p>"
+
+[[case]]
+id = "chars-009"
+input = "<p>a&#136;b</p>"
+
+[[case]]
+id = "chars-010"
+input = "<p>a&#137;b</p>"
+
+[[case]]
+id = "chars-011"
+input = "<p>a&#138;b</p>"
+
+[[case]]
+id = "chars-012"
+input = "<p>a&#139;b</p>"
+
+[[case]]
+id = "chars-013"
+input = "<p>a&#140;b</p>"
+
+[[case]]
+id = "chars-014"
+input = "<p>a&#141;b</p>"
+
+[[case]]
+id = "chars-015"
+input = "<p>a&#142;b</p>"
+
+[[case]]
+id = "chars-016"
+input = "<p>a&#143;b</p>"
+
+[[case]]
+id = "chars-017"
+input = "<p>a&#144;b</p>"
+
+[[case]]
+id = "chars-018"
+input = "<p>a&#145;b</p>"
+
+[[case]]
+id = "chars-019"
+input = "<p>a&#146;b</p>"
+
+[[case]]
+id = "chars-020"
+input = "<p>a&#147;b</p>"
+
+[[case]]
+id = "chars-021"
+input = "<p>a&#148;b</p>"
+
+[[case]]
+id = "chars-022"
+input = "<p>a&#149;b</p>"
+
+[[case]]
+id = "chars-023"
+input = "<p>a&#150;b</p>"
+
+[[case]]
+id = "chars-024"
+input = "<p>a&#151;b</p>"
+
+[[case]]
+id = "chars-025"
+input = "<p>a&#152;b</p>"
+
+[[case]]
+id = "chars-026"
+input = "<p>a&#153;b</p>"
+
+[[case]]
+id = "chars-027"
+input = "<p>a&#154;b</p>"
+
+[[case]]
+id = "chars-028"
+input = "<p>a&#155;b</p>"
+
+[[case]]
+id = "chars-029"
+input = "<p>a&#156;b</p>"
+
+[[case]]
+id = "chars-030"
+input = "<p>a&#157;b</p>"
+
+[[case]]
+id = "chars-031"
+input = "<p>a&#158;b</p>"
+
+[[case]]
+id = "chars-032"
+input = "<p>a&#159;b</p>"
+
+[[case]]
+id = "chars-033"
+input = "<p>ab</p>"
+
+[[case]]
+id = "chars-034"
+input = "<p>a&#x80;b</p>"
+
+[[case]]
+id = "chars-035"
+input = "<p>ab</p>"
+
+[[case]]
+id = "chars-036"
+input = "<p>a&#x81;b</p>"
+
+[[case]]
+id = "chars-037"
+input = "<p>ab</p>"
+
+[[case]]
+id = "chars-038"
+input = "<p>a&#x8d;b</p>"
+
+[[case]]
+id = "chars-039"
+input = "<p>ab</p>"
+
+[[case]]
+id = "chars-040"
+input = "<p>a&#x9f;b</p>"
+
+[[case]]
+id = "chars-041"
+input = "<p>ab</p>"
+
+[[case]]
+id = "chars-042"
+input = "<p>a&#x85;b</p>"
+
+[[case]]
+id = "chars-043"
+input = "<p>ab</p>"
+
+[[case]]
+id = "chars-044"
+input = "<p>a&#x9d;b</p>"
+
+[[case]]
+id = "chars-045"
+input = "<p>a&#13;b</p>"
+
+[[case]]
+id = "chars-046"
+input = "<p>a&#xD;b</p>"
+
+[[case]]
+id = "chars-047"
+input = "<p>a&#13;&#10;b</p>"
+
+[[case]]
+id = "chars-048"
+input = "<p>a&#10;b</p>"
+
+[[case]]
+id = "chars-049"
+input = "<p>a &#13; b</p>"
+
+[[case]]
+id = "chars-050"
+input = "<p>a&#13;\nb</p>"
+
+[[case]]
+id = "chars-051"
+input = "<p>a&#x0d;b</p>"
+
+[[case]]
+id = "chars-052"
+input = "<p>a&#x0D;xb</p>"
+
+[[case]]
+id = "chars-053"
+input = "<pre>a&#128;b</pre>"
+
+[[case]]
+id = "chars-054"
+input = "<pre>a&#129;b</pre>"
+
+[[case]]
+id = "chars-055"
+input = "<pre>a&#130;b</pre>"
+
+[[case]]
+id = "chars-056"
+input = "<pre>a&#131;b</pre>"
+
+[[case]]
+id = "chars-057"
+input = "<pre>a&#132;b</pre>"
+
+[[case]]
+id = "chars-058"
+input = "<pre>a&#133;b</pre>"
+
+[[case]]
+id = "chars-059"
+input = "<pre>a&#134;b</pre>"
+
+[[case]]
+id = "chars-060"
+input = "<pre>a&#135;b</pre>"
+
+[[case]]
+id = "chars-061"
+input = "<pre>a&#136;b</pre>"
+
+[[case]]
+id = "chars-062"
+input = "<pre>a&#137;b</pre>"
+
+[[case]]
+id = "chars-063"
+input = "<pre>a&#138;b</pre>"
+
+[[case]]
+id = "chars-064"
+input = "<pre>a&#139;b</pre>"
+
+[[case]]
+id = "chars-065"
+input = "<pre>a&#140;b</pre>"
+
+[[case]]
+id = "chars-066"
+input = "<pre>a&#141;b</pre>"
+
+[[case]]
+id = "chars-067"
+input = "<pre>a&#142;b</pre>"
+
+[[case]]
+id = "chars-068"
+input = "<pre>a&#143;b</pre>"
+
+[[case]]
+id = "chars-069"
+input = "<pre>a&#144;b</pre>"
+
+[[case]]
+id = "chars-070"
+input = "<pre>a&#145;b</pre>"
+
+[[case]]
+id = "chars-071"
+input = "<pre>a&#146;b</pre>"
+
+[[case]]
+id = "chars-072"
+input = "<pre>a&#147;b</pre>"
+
+[[case]]
+id = "chars-073"
+input = "<pre>a&#148;b</pre>"
+
+[[case]]
+id = "chars-074"
+input = "<pre>a&#149;b</pre>"
+
+[[case]]
+id = "chars-075"
+input = "<pre>a&#150;b</pre>"
+
+[[case]]
+id = "chars-076"
+input = "<pre>a&#151;b</pre>"
+
+[[case]]
+id = "chars-077"
+input = "<pre>a&#152;b</pre>"
+
+[[case]]
+id = "chars-078"
+input = "<pre>a&#153;b</pre>"
+
+[[case]]
+id = "chars-079"
+input = "<pre>a&#154;b</pre>"
+
+[[case]]
+id = "chars-080"
+input = "<pre>a&#155;b</pre>"
+
+[[case]]
+id = "chars-081"
+input = "<pre>a&#156;b</pre>"
+
+[[case]]
+id = "chars-082"
+input = "<pre>a&#157;b</pre>"
+
+[[case]]
+id = "chars-083"
+input = "<pre>a&#158;b</pre>"
+
+[[case]]
+id = "chars-084"
+input = "<pre>a&#159;b</pre>"
+
+[[case]]
+id = "chars-085"
+input = "<pre>ab</pre>"
+
+[[case]]
+id = "chars-086"
+input = "<pre>a&#x80;b</pre>"
+
+[[case]]
+id = "chars-087"
+input = "<pre>ab</pre>"
+
+[[case]]
+id = "chars-088"
+input = "<pre>a&#x81;b</pre>"
+
+[[case]]
+id = "chars-089"
+input = "<pre>ab</pre>"
+
+[[case]]
+id = "chars-090"
+input = "<pre>a&#x8d;b</pre>"
+
+[[case]]
+id = "chars-091"
+input = "<pre>ab</pre>"
+
+[[case]]
+id = "chars-092"
+input = "<pre>a&#x9f;b</pre>"
+
+[[case]]
+id = "chars-093"
+input = "<pre>ab</pre>"
+
+[[case]]
+id = "chars-094"
+input = "<pre>a&#x85;b</pre>"
+
+[[case]]
+id = "chars-095"
+input = "<pre>ab</pre>"
+
+[[case]]
+id = "chars-096"
+input = "<pre>a&#x9d;b</pre>"
+
+[[case]]
+id = "chars-097"
+input = "<pre>a&#13;b</pre>"
+
+[[case]]
+id = "chars-098"
+input = "<pre>a&#xD;b</pre>"
+
+[[case]]
+id = "chars-099"
+input = "<pre>a&#13;&#10;b</pre>"
+
+[[case]]
+id = "chars-100"
+input = "<pre>a&#10;b</pre>"
+
+[[case]]
+id = "chars-101"
+input = "<pre>a &#13; b</pre>"
+
+[[case]]
+id = "chars-102"
+input = "<pre>a&#13;\nb</pre>"
+
+[[case]]
+id = "chars-103"
+input = "<pre>a&#x0d;b</pre>"
+
+[[case]]
+id = "chars-104"
+input = "<pre>a&#x0D;xb</pre>"
+
+[[case]]
+id = "chars-105"
+input = "<pre><code>a&#128;b</code></pre>"
+
+[[case]]
+id = "chars-106"
+input = "<pre><code>a&#129;b</code></pre>"
+
+[[case]]
+id = "chars-107"
+input = "<pre><code>a&#130;b</code></pre>"
+
+[[case]]
+id = "chars-108"
+input = "<pre><code>a&#131;b</code></pre>"
+
+[[case]]
+id = "chars-109"
+input = "<pre><code>a&#132;b</code></pre>"
+
+[[case]]
+id = "chars-110"
+input = "<pre><code>a&#133;b</code></pre>"
+
+[[case]]
+id = "chars-111"
+input = "<pre><code>a&#134;b</code></pre>"
+
+[[case]]
+id = "chars-112"
+input = "<pre><code>a&#135;b</code></pre>"
+
+[[case]]
+id = "chars-113"
+input = "<pre><code>a&#136;b</code></pre>"
+
+[[case]]
+id = "chars-114"
+input = "<pre><code>a&#137;b</code></pre>"
+
+[[case]]
+id = "chars-115"
+input = "<pre><code>a&#138;b</code></pre>"
+
+[[case]]
+id = "chars-116"
+input = "<pre><code>a&#139;b</code></pre>"
+
+[[case]]
+id = "chars-117"
+input = "<pre><code>a&#140;b</code></pre>"
+
+[[case]]
+id = "chars-118"
+input = "<pre><code>a&#141;b</code></pre>"
+
+[[case]]
+id = "chars-119"
+input = "<pre><code>a&#142;b</code></pre>"
+
+[[case]]
+id = "chars-120"
+input = "<pre><code>a&#143;b</code></pre>"
+
+[[case]]
+id = "chars-121"
+input = "<pre><code>a&#144;b</code></pre>"
+
+[[case]]
+id = "chars-122"
+input = "<pre><code>a&#145;b</code></pre>"
+
+[[case]]
+id = "chars-123"
+input = "<pre><code>a&#146;b</code></pre>"
+
+[[case]]
+id = "chars-124"
+input = "<pre><code>a&#147;b</code></pre>"
+
+[[case]]
+id = "chars-125"
+input = "<pre><code>a&#148;b</code></pre>"
+
+[[case]]
+id = "chars-126"
+input = "<pre><code>a&#149;b</code></pre>"
+
+[[case]]
+id = "chars-127"
+input = "<pre><code>a&#150;b</code></pre>"
+
+[[case]]
+id = "chars-128"
+input = "<pre><code>a&#151;b</code></pre>"
+
+[[case]]
+id = "chars-129"
+input = "<pre><code>a&#152;b</code></pre>"
+
+[[case]]
+id = "chars-130"
+input = "<pre><code>a&#153;b</code></pre>"
+
+[[case]]
+id = "chars-131"
+input = "<pre><code>a&#154;b</code></pre>"
+
+[[case]]
+id = "chars-132"
+input = "<pre><code>a&#155;b</code></pre>"
+
+[[case]]
+id = "chars-133"
+input = "<pre><code>a&#156;b</code></pre>"
+
+[[case]]
+id = "chars-134"
+input = "<pre><code>a&#157;b</code></pre>"
+
+[[case]]
+id = "chars-135"
+input = "<pre><code>a&#158;b</code></pre>"
+
+[[case]]
+id = "chars-136"
+input = "<pre><code>a&#159;b</code></pre>"
+
+[[case]]
+id = "chars-137"
+input = "<pre><code>ab</code></pre>"
+
+[[case]]
+id = "chars-138"
+input = "<pre><code>a&#x80;b</code></pre>"
+
+[[case]]
+id = "chars-139"
+input = "<pre><code>ab</code></pre>"
+
+[[case]]
+id = "chars-140"
+input = "<pre><code>a&#x81;b</code></pre>"
+
+[[case]]
+id = "chars-141"
+input = "<pre><code>ab</code></pre>"
+
+[[case]]
+id = "chars-142"
+input = "<pre><code>a&#x8d;b</code></pre>"
+
+[[case]]
+id = "chars-143"
+input = "<pre><code>ab</code></pre>"
+
+[[case]]
+id = "chars-144"
+input = "<pre><code>a&#x9f;b</code></pre>"
+
+[[case]]
+id = "chars-145"
+input = "<pre><code>ab</code></pre>"
+
+[[case]]
+id = "chars-146"
+input = "<pre><code>a&#x85;b</code></pre>"
+
+[[case]]
+id = "chars-147"
+input = "<pre><code>ab</code></pre>"
+
+[[case]]
+id = "chars-148"
+input = "<pre><code>a&#x9d;b</code></pre>"
+
+[[case]]
+id = "chars-149"
+input = "<pre><code>a&#13;b</code></pre>"
+
+[[case]]
+id = "chars-150"
+input = "<pre><code>a&#xD;b</code></pre>"
+
+[[case]]
+id = "chars-151"
+input = "<pre><code>a&#13;&#10;b</code></pre>"
+
+[[case]]
+id = "chars-152"
+input = "<pre><code>a&#10;b</code></pre>"
+
+[[case]]
+id = "chars-153"
+input = "<pre><code>a &#13; b</code></pre>"
+
+[[case]]
+id = "chars-154"
+input = "<pre><code>a&#13;\nb</code></pre>"
+
+[[case]]
+id = "chars-155"
+input = "<pre><code>a&#x0d;b</code></pre>"
+
+[[case]]
+id = "chars-156"
+input = "<pre><code>a&#x0D;xb</code></pre>"
+
+[[case]]
+id = "chars-157"
+input = "<p><code>a&#128;b</code></p>"
+
+[[case]]
+id = "chars-158"
+input = "<p><code>a&#129;b</code></p>"
+
+[[case]]
+id = "chars-159"
+input = "<p><code>a&#130;b</code></p>"
+
+[[case]]
+id = "chars-160"
+input = "<p><code>a&#131;b</code></p>"
+
+[[case]]
+id = "chars-161"
+input = "<p><code>a&#132;b</code></p>"
+
+[[case]]
+id = "chars-162"
+input = "<p><code>a&#133;b</code></p>"
+
+[[case]]
+id = "chars-163"
+input = "<p><code>a&#134;b</code></p>"
+
+[[case]]
+id = "chars-164"
+input = "<p><code>a&#135;b</code></p>"
+
+[[case]]
+id = "chars-165"
+input = "<p><code>a&#136;b</code></p>"
+
+[[case]]
+id = "chars-166"
+input = "<p><code>a&#137;b</code></p>"
+
+[[case]]
+id = "chars-167"
+input = "<p><code>a&#138;b</code></p>"
+
+[[case]]
+id = "chars-168"
+input = "<p><code>a&#139;b</code></p>"
+
+[[case]]
+id = "chars-169"
+input = "<p><code>a&#140;b</code></p>"
+
+[[case]]
+id = "chars-170"
+input = "<p><code>a&#141;b</code></p>"
+
+[[case]]
+id = "chars-171"
+input = "<p><code>a&#142;b</code></p>"
+
+[[case]]
+id = "chars-172"
+input = "<p><code>a&#143;b</code></p>"
+
+[[case]]
+id = "chars-173"
+input = "<p><code>a&#144;b</code></p>"
+
+[[case]]
+id = "chars-174"
+input = "<p><code>a&#145;b</code></p>"
+
+[[case]]
+id = "chars-175"
+input = "<p><code>a&#146;b</code></p>"
+
+[[case]]
+id = "chars-176"
+input = "<p><code>a&#147;b</code></p>"
+
+[[case]]
+id = "chars-177"
+input = "<p><code>a&#148;b</code></p>"
+
+[[case]]
+id = "chars-178"
+input = "<p><code>a&#149;b</code></p>"
+
+[[case]]
+id = "chars-179"
+input = "<p><code>a&#150;b</code></p>"
+
+[[case]]
+id = "chars-180"
+input = "<p><code>a&#151;b</code></p>"
+
+[[case]]
+id = "chars-181"
+input = "<p><code>a&#152;b</code></p>"
+
+[[case]]
+id = "chars-182"
+input = "<p><code>a&#153;b</code></p>"
+
+[[case]]
+id = "chars-183"
+input = "<p><code>a&#154;b</code></p>"
+
+[[case]]
+id = "chars-184"
+input = "<p><code>a&#155;b</code></p>"
+
+[[case]]
+id = "chars-185"
+input = "<p><code>a&#156;b</code></p>"
+
+[[case]]
+id = "chars-186"
+input = "<p><code>a&#157;b</code></p>"
+
+[[case]]
+id = "chars-187"
+input = "<p><code>a&#158;b</code></p>"
+
+[[case]]
+id = "chars-188"
+input = "<p><code>a&#159;b</code></p>"
+
+[[case]]
+id = "chars-189"
+input = "<p><code>ab</code></p>"
+
+[[case]]
+id = "chars-190"
+input = "<p><code>a&#x80;b</code></p>"
+
+[[case]]
+id = "chars-191"
+input = "<p><code>ab</code></p>"
+
+[[case]]
+id = "chars-192"
+input = "<p><code>a&#x81;b</code></p>"
+
+[[case]]
+id = "chars-193"
+input = "<p><code>ab</code></p>"
+
+[[case]]
+id = "chars-194"
+input = "<p><code>a&#x8d;b</code></p>"
+
+[[case]]
+id = "chars-195"
+input = "<p><code>ab</code></p>"
+
+[[case]]
+id = "chars-196"
+input = "<p><code>a&#x9f;b</code></p>"
+
+[[case]]
+id = "chars-197"
+input = "<p><code>ab</code></p>"
+
+[[case]]
+id = "chars-198"
+input = "<p><code>a&#x85;b</code></p>"
+
+[[case]]
+id = "chars-199"
+input = "<p><code>ab</code></p>"
+
+[[case]]
+id = "chars-200"
+input = "<p><code>a&#x9d;b</code></p>"
+
+[[case]]
+id = "chars-201"
+input = "<p><code>a&#13;b</code></p>"
+
+[[case]]
+id = "chars-202"
+input = "<p><code>a&#xD;b</code></p>"
+
+[[case]]
+id = "chars-203"
+input = "<p><code>a&#13;&#10;b</code></p>"
+
+[[case]]
+id = "chars-204"
+input = "<p><code>a&#10;b</code></p>"
+
+[[case]]
+id = "chars-205"
+input = "<p><code>a &#13; b</code></p>"
+
+[[case]]
+id = "chars-206"
+input = "<p><code>a&#13;\nb</code></p>"
+
+[[case]]
+id = "chars-207"
+input = "<p><code>a&#x0d;b</code></p>"
+
+[[case]]
+id = "chars-208"
+input = "<p><code>a&#x0D;xb</code></p>"
+
+[[case]]
+id = "chars-209"
+input = "<p><a href=\"u&#128;\" title=\"t&#128;\">x</a></p>"
+
+[[case]]
+id = "chars-210"
+input = "<p><a href=\"u&#129;\" title=\"t&#129;\">x</a></p>"
+
+[[case]]
+id = "chars-211"
+input = "<p><a href=\"u&#130;\" title=\"t&#130;\">x</a></p>"
+
+[[case]]
+id = "chars-212"
+input = "<p><a href=\"u&#131;\" title=\"t&#131;\">x</a></p>"
+
+[[case]]
+id = "chars-213"
+input = "<p><a href=\"u&#132;\" title=\"t&#132;\">x</a></p>"
+
+[[case]]
+id = "chars-214"
+input = "<p><a href=\"u&#133;\" title=\"t&#133;\">x</a></p>"
+
+[[case]]
+id = "chars-215"
+input = "<p><a href=\"u&#134;\" title=\"t&#134;\">x</a></p>"
+
+[[case]]
+id = "chars-216"
+input = "<p><a href=\"u&#135;\" title=\"t&#135;\">x</a></p>"
+
+[[case]]
+id = "chars-217"
+input = "<p><a href=\"u&#136;\" title=\"t&#136;\">x</a></p>"
+
+[[case]]
+id = "chars-218"
+input = "<p><a href=\"u&#137;\" title=\"t&#137;\">x</a></p>"
+
+[[case]]
+id = "chars-219"
+input = "<p><a href=\"u&#138;\" title=\"t&#138;\">x</a></p>"
+
+[[case]]
+id = "chars-220"
+input = "<p><a href=\"u&#139;\" title=\"t&#139;\">x</a></p>"
+
+[[case]]
+id = "chars-221"
+input = "<p><a href=\"u&#140;\" title=\"t&#140;\">x</a></p>"
+
+[[case]]
+id = "chars-222"
+input = "<p><a href=\"u&#141;\" title=\"t&#141;\">x</a></p>"
+
+[[case]]
+id = "chars-223"
+input = "<p><a href=\"u&#142;\" title=\"t&#142;\">x</a></p>"
+
+[[case]]
+id = "chars-224"
+input = "<p><a href=\"u&#143;\" title=\"t&#143;\">x</a></p>"
+
+[[case]]
+id = "chars-225"
+input = "<p><a href=\"u&#144;\" title=\"t&#144;\">x</a></p>"
+
+[[case]]
+id = "chars-226"
+input = "<p><a href=\"u&#145;\" title=\"t&#145;\">x</a></p>"
+
+[[case]]
+id = "chars-227"
+input = "<p><a href=\"u&#146;\" title=\"t&#146;\">x</a></p>"
+
+[[case]]
+id = "chars-228"
+input = "<p><a href=\"u&#147;\" title=\"t&#147;\">x</a></p>"
+
+[[case]]
+id = "chars-229"
+input = "<p><a href=\"u&#148;\" title=\"t&#148;\">x</a></p>"
+
+[[case]]
+id = "chars-230"
+input = "<p><a href=\"u&#149;\" title=\"t&#149;\">x</a></p>"
+
+[[case]]
+id = "chars-231"
+input = "<p><a href=\"u&#150;\" title=\"t&#150;\">x</a></p>"
+
+[[case]]
+id = "chars-232"
+input = "<p><a href=\"u&#151;\" title=\"t&#151;\">x</a></p>"
+
+[[case]]
+id = "chars-233"
+input = "<p><a href=\"u&#152;\" title=\"t&#152;\">x</a></p>"
+
+[[case]]
+id = "chars-234"
+input = "<p><a href=\"u&#153;\" title=\"t&#153;\">x</a></p>"
+
+[[case]]
+id = "chars-235"
+input = "<p><a href=\"u&#154;\" title=\"t&#154;\">x</a></p>"
+
+[[case]]
+id = "chars-236"
+input = "<p><a href=\"u&#155;\" title=\"t&#155;\">x</a></p>"
+
+[[case]]
+id = "chars-237"
+input = "<p><a href=\"u&#156;\" title=\"t&#156;\">x</a></p>"
+
+[[case]]
+id = "chars-238"
+input = "<p><a href=\"u&#157;\" title=\"t&#157;\">x</a></p>"
+
+[[case]]
+id = "chars-239"
+input = "<p><a href=\"u&#158;\" title=\"t&#158;\">x</a></p>"
+
+[[case]]
+id = "chars-240"
+input = "<p><a href=\"u&#159;\" title=\"t&#159;\">x</a></p>"
+
+[[case]]
+id = "chars-241"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "chars-242"
+input = "<p><a href=\"u&#x80;\" title=\"t&#x80;\">x</a></p>"
+
+[[case]]
+id = "chars-243"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "chars-244"
+input = "<p><a href=\"u&#x81;\" title=\"t&#x81;\">x</a></p>"
+
+[[case]]
+id = "chars-245"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "chars-246"
+input = "<p><a href=\"u&#x8d;\" title=\"t&#x8d;\">x</a></p>"
+
+[[case]]
+id = "chars-247"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "chars-248"
+input = "<p><a href=\"u&#x9f;\" title=\"t&#x9f;\">x</a></p>"
+
+[[case]]
+id = "chars-249"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "chars-250"
+input = "<p><a href=\"u&#x85;\" title=\"t&#x85;\">x</a></p>"
+
+[[case]]
+id = "chars-251"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "chars-252"
+input = "<p><a href=\"u&#x9d;\" title=\"t&#x9d;\">x</a></p>"
+
+[[case]]
+id = "chars-253"
+input = "<p><a href=\"u&#13;\" title=\"t&#13;\">x</a></p>"
+
+[[case]]
+id = "chars-254"
+input = "<p><a href=\"u&#xD;\" title=\"t&#xD;\">x</a></p>"
+
+[[case]]
+id = "chars-255"
+input = "<p><a href=\"u&#13;&#10;\" title=\"t&#13;&#10;\">x</a></p>"
+
+[[case]]
+id = "chars-256"
+input = "<p><a href=\"u&#10;\" title=\"t&#10;\">x</a></p>"
+
+[[case]]
+id = "chars-257"
+input = "<p><a href=\"u &#13; \" title=\"t &#13; \">x</a></p>"
+
+[[case]]
+id = "chars-258"
+input = "<p><a href=\"u&#13;\n\" title=\"t&#13;\n\">x</a></p>"
+
+[[case]]
+id = "chars-259"
+input = "<p><a href=\"u&#x0d;\" title=\"t&#x0d;\">x</a></p>"
+
+[[case]]
+id = "chars-260"
+input = "<p><a href=\"u&#x0D;x\" title=\"t&#x0D;x\">x</a></p>"
+
+[[case]]
+id = "chars-261"
+input = "<p><img src=\"i\" alt=\"a&#128;b\"></p>"
+
+[[case]]
+id = "chars-262"
+input = "<p><img src=\"i\" alt=\"a&#129;b\"></p>"
+
+[[case]]
+id = "chars-263"
+input = "<p><img src=\"i\" alt=\"a&#130;b\"></p>"
+
+[[case]]
+id = "chars-264"
+input = "<p><img src=\"i\" alt=\"a&#131;b\"></p>"
+
+[[case]]
+id = "chars-265"
+input = "<p><img src=\"i\" alt=\"a&#132;b\"></p>"
+
+[[case]]
+id = "chars-266"
+input = "<p><img src=\"i\" alt=\"a&#133;b\"></p>"
+
+[[case]]
+id = "chars-267"
+input = "<p><img src=\"i\" alt=\"a&#134;b\"></p>"
+
+[[case]]
+id = "chars-268"
+input = "<p><img src=\"i\" alt=\"a&#135;b\"></p>"
+
+[[case]]
+id = "chars-269"
+input = "<p><img src=\"i\" alt=\"a&#136;b\"></p>"
+
+[[case]]
+id = "chars-270"
+input = "<p><img src=\"i\" alt=\"a&#137;b\"></p>"
+
+[[case]]
+id = "chars-271"
+input = "<p><img src=\"i\" alt=\"a&#138;b\"></p>"
+
+[[case]]
+id = "chars-272"
+input = "<p><img src=\"i\" alt=\"a&#139;b\"></p>"
+
+[[case]]
+id = "chars-273"
+input = "<p><img src=\"i\" alt=\"a&#140;b\"></p>"
+
+[[case]]
+id = "chars-274"
+input = "<p><img src=\"i\" alt=\"a&#141;b\"></p>"
+
+[[case]]
+id = "chars-275"
+input = "<p><img src=\"i\" alt=\"a&#142;b\"></p>"
+
+[[case]]
+id = "chars-276"
+input = "<p><img src=\"i\" alt=\"a&#143;b\"></p>"
+
+[[case]]
+id = "chars-277"
+input = "<p><img src=\"i\" alt=\"a&#144;b\"></p>"
+
+[[case]]
+id = "chars-278"
+input = "<p><img src=\"i\" alt=\"a&#145;b\"></p>"
+
+[[case]]
+id = "chars-279"
+input = "<p><img src=\"i\" alt=\"a&#146;b\"></p>"
+
+[[case]]
+id = "chars-280"
+input = "<p><img src=\"i\" alt=\"a&#147;b\"></p>"
+
+[[case]]
+id = "chars-281"
+input = "<p><img src=\"i\" alt=\"a&#148;b\"></p>"
+
+[[case]]
+id = "chars-282"
+input = "<p><img src=\"i\" alt=\"a&#149;b\"></p>"
+
+[[case]]
+id = "chars-283"
+input = "<p><img src=\"i\" alt=\"a&#150;b\"></p>"
+
+[[case]]
+id = "chars-284"
+input = "<p><img src=\"i\" alt=\"a&#151;b\"></p>"
+
+[[case]]
+id = "chars-285"
+input = "<p><img src=\"i\" alt=\"a&#152;b\"></p>"
+
+[[case]]
+id = "chars-286"
+input = "<p><img src=\"i\" alt=\"a&#153;b\"></p>"
+
+[[case]]
+id = "chars-287"
+input = "<p><img src=\"i\" alt=\"a&#154;b\"></p>"
+
+[[case]]
+id = "chars-288"
+input = "<p><img src=\"i\" alt=\"a&#155;b\"></p>"
+
+[[case]]
+id = "chars-289"
+input = "<p><img src=\"i\" alt=\"a&#156;b\"></p>"
+
+[[case]]
+id = "chars-290"
+input = "<p><img src=\"i\" alt=\"a&#157;b\"></p>"
+
+[[case]]
+id = "chars-291"
+input = "<p><img src=\"i\" alt=\"a&#158;b\"></p>"
+
+[[case]]
+id = "chars-292"
+input = "<p><img src=\"i\" alt=\"a&#159;b\"></p>"
+
+[[case]]
+id = "chars-293"
+input = "<p><img src=\"i\" alt=\"ab\"></p>"
+
+[[case]]
+id = "chars-294"
+input = "<p><img src=\"i\" alt=\"a&#x80;b\"></p>"
+
+[[case]]
+id = "chars-295"
+input = "<p><img src=\"i\" alt=\"ab\"></p>"
+
+[[case]]
+id = "chars-296"
+input = "<p><img src=\"i\" alt=\"a&#x81;b\"></p>"
+
+[[case]]
+id = "chars-297"
+input = "<p><img src=\"i\" alt=\"ab\"></p>"
+
+[[case]]
+id = "chars-298"
+input = "<p><img src=\"i\" alt=\"a&#x8d;b\"></p>"
+
+[[case]]
+id = "chars-299"
+input = "<p><img src=\"i\" alt=\"ab\"></p>"
+
+[[case]]
+id = "chars-300"
+input = "<p><img src=\"i\" alt=\"a&#x9f;b\"></p>"
+
+[[case]]
+id = "chars-301"
+input = "<p><img src=\"i\" alt=\"ab\"></p>"
+
+[[case]]
+id = "chars-302"
+input = "<p><img src=\"i\" alt=\"a&#x85;b\"></p>"
+
+[[case]]
+id = "chars-303"
+input = "<p><img src=\"i\" alt=\"ab\"></p>"
+
+[[case]]
+id = "chars-304"
+input = "<p><img src=\"i\" alt=\"a&#x9d;b\"></p>"
+
+[[case]]
+id = "chars-305"
+input = "<p><img src=\"i\" alt=\"a&#13;b\"></p>"
+
+[[case]]
+id = "chars-306"
+input = "<p><img src=\"i\" alt=\"a&#xD;b\"></p>"
+
+[[case]]
+id = "chars-307"
+input = "<p><img src=\"i\" alt=\"a&#13;&#10;b\"></p>"
+
+[[case]]
+id = "chars-308"
+input = "<p><img src=\"i\" alt=\"a&#10;b\"></p>"
+
+[[case]]
+id = "chars-309"
+input = "<p><img src=\"i\" alt=\"a &#13; b\"></p>"
+
+[[case]]
+id = "chars-310"
+input = "<p><img src=\"i\" alt=\"a&#13;\nb\"></p>"
+
+[[case]]
+id = "chars-311"
+input = "<p><img src=\"i\" alt=\"a&#x0d;b\"></p>"
+
+[[case]]
+id = "chars-312"
+input = "<p><img src=\"i\" alt=\"a&#x0D;xb\"></p>"
+
+[[case]]
+id = "chars-313"
+input = "<head><title>a&#128;b</title></head>"
+
+[[case]]
+id = "chars-314"
+input = "<head><title>a&#129;b</title></head>"
+
+[[case]]
+id = "chars-315"
+input = "<head><title>a&#130;b</title></head>"
+
+[[case]]
+id = "chars-316"
+input = "<head><title>a&#131;b</title></head>"
+
+[[case]]
+id = "chars-317"
+input = "<head><title>a&#132;b</title></head>"
+
+[[case]]
+id = "chars-318"
+input = "<head><title>a&#133;b</title></head>"
+
+[[case]]
+id = "chars-319"
+input = "<head><title>a&#134;b</title></head>"
+
+[[case]]
+id = "chars-320"
+input = "<head><title>a&#135;b</title></head>"
+
+[[case]]
+id = "chars-321"
+input = "<head><title>a&#136;b</title></head>"
+
+[[case]]
+id = "chars-322"
+input = "<head><title>a&#137;b</title></head>"
+
+[[case]]
+id = "chars-323"
+input = "<head><title>a&#138;b</title></head>"
+
+[[case]]
+id = "chars-324"
+input = "<head><title>a&#139;b</title></head>"
+
+[[case]]
+id = "chars-325"
+input = "<head><title>a&#140;b</title></head>"
+
+[[case]]
+id = "chars-326"
+input = "<head><title>a&#141;b</title></head>"
+
+[[case]]
+id = "chars-327"
+input = "<head><title>a&#142;b</title></head>"
+
+[[case]]
+id = "chars-328"
+input = "<head><title>a&#143;b</title></head>"
+
+[[case]]
+id = "chars-329"
+input = "<head><title>a&#144;b</title></head>"
+
+[[case]]
+id = "chars-330"
+input = "<head><title>a&#145;b</title></head>"
+
+[[case]]
+id = "chars-331"
+input = "<head><title>a&#146;b</title></head>"
+
+[[case]]
+id = "chars-332"
+input = "<head><title>a&#147;b</title></head>"
+
+[[case]]
+id = "chars-333"
+input = "<head><title>a&#148;b</title></head>"
+
+[[case]]
+id = "chars-334"
+input = "<head><title>a&#149;b</title></head>"
+
+[[case]]
+id = "chars-335"
+input = "<head><title>a&#150;b</title></head>"
+
+[[case]]
+id = "chars-336"
+input = "<head><title>a&#151;b</title></head>"
+
+[[case]]
+id = "chars-337"
+input = "<head><title>a&#152;b</title></head>"
+
+[[case]]
+id = "chars-338"
+input = "<head><title>a&#153;b</title></head>"
+
+[[case]]
+id = "chars-339"
+input = "<head><title>a&#154;b</title></head>"
+
+[[case]]
+id = "chars-340"
+input = "<head><title>a&#155;b</title></head>"
+
+[[case]]
+id = "chars-341"
+input = "<head><title>a&#156;b</title></head>"
+
+[[case]]
+id = "chars-342"
+input = "<head><title>a&#157;b</title></head>"
+
+[[case]]
+id = "chars-343"
+input = "<head><title>a&#158;b</title></head>"
+
+[[case]]
+id = "chars-344"
+input = "<head><title>a&#159;b</title></head>"
+
+[[case]]
+id = "chars-345"
+input = "<head><title>ab</title></head>"
+
+[[case]]
+id = "chars-346"
+input = "<head><title>a&#x80;b</title></head>"
+
+[[case]]
+id = "chars-347"
+input = "<head><title>ab</title></head>"
+
+[[case]]
+id = "chars-348"
+input = "<head><title>a&#x81;b</title></head>"
+
+[[case]]
+id = "chars-349"
+input = "<head><title>ab</title></head>"
+
+[[case]]
+id = "chars-350"
+input = "<head><title>a&#x8d;b</title></head>"
+
+[[case]]
+id = "chars-351"
+input = "<head><title>ab</title></head>"
+
+[[case]]
+id = "chars-352"
+input = "<head><title>a&#x9f;b</title></head>"
+
+[[case]]
+id = "chars-353"
+input = "<head><title>ab</title></head>"
+
+[[case]]
+id = "chars-354"
+input = "<head><title>a&#x85;b</title></head>"
+
+[[case]]
+id = "chars-355"
+input = "<head><title>ab</title></head>"
+
+[[case]]
+id = "chars-356"
+input = "<head><title>a&#x9d;b</title></head>"
+
+[[case]]
+id = "chars-357"
+input = "<head><title>a&#13;b</title></head>"
+
+[[case]]
+id = "chars-358"
+input = "<head><title>a&#xD;b</title></head>"
+
+[[case]]
+id = "chars-359"
+input = "<head><title>a&#13;&#10;b</title></head>"
+
+[[case]]
+id = "chars-360"
+input = "<head><title>a&#10;b</title></head>"
+
+[[case]]
+id = "chars-361"
+input = "<head><title>a &#13; b</title></head>"
+
+[[case]]
+id = "chars-362"
+input = "<head><title>a&#13;\nb</title></head>"
+
+[[case]]
+id = "chars-363"
+input = "<head><title>a&#x0d;b</title></head>"
+
+[[case]]
+id = "chars-364"
+input = "<head><title>a&#x0D;xb</title></head>"
+
+[[case]]
+id = "chars-365"
+input = "<head><meta name=\"m\" content=\"a&#128;b\"></head>"
+
+[[case]]
+id = "chars-366"
+input = "<head><meta name=\"m\" content=\"a&#129;b\"></head>"
+
+[[case]]
+id = "chars-367"
+input = "<head><meta name=\"m\" content=\"a&#130;b\"></head>"
+
+[[case]]
+id = "chars-368"
+input = "<head><meta name=\"m\" content=\"a&#131;b\"></head>"
+
+[[case]]
+id = "chars-369"
+input = "<head><meta name=\"m\" content=\"a&#132;b\"></head>"
+
+[[case]]
+id = "chars-370"
+input = "<head><meta name=\"m\" content=\"a&#133;b\"></head>"
+
+[[case]]
+id = "chars-371"
+input = "<head><meta name=\"m\" content=\"a&#134;b\"></head>"
+
+[[case]]
+id = "chars-372"
+input = "<head><meta name=\"m\" content=\"a&#135;b\"></head>"
+
+[[case]]
+id = "chars-373"
+input = "<head><meta name=\"m\" content=\"a&#136;b\"></head>"
+
+[[case]]
+id = "chars-374"
+input = "<head><meta name=\"m\" content=\"a&#137;b\"></head>"
+
+[[case]]
+id = "chars-375"
+input = "<head><meta name=\"m\" content=\"a&#138;b\"></head>"
+
+[[case]]
+id = "chars-376"
+input = "<head><meta name=\"m\" content=\"a&#139;b\"></head>"
+
+[[case]]
+id = "chars-377"
+input = "<head><meta name=\"m\" content=\"a&#140;b\"></head>"
+
+[[case]]
+id = "chars-378"
+input = "<head><meta name=\"m\" content=\"a&#141;b\"></head>"
+
+[[case]]
+id = "chars-379"
+input = "<head><meta name=\"m\" content=\"a&#142;b\"></head>"
+
+[[case]]
+id = "chars-380"
+input = "<head><meta name=\"m\" content=\"a&#143;b\"></head>"
+
+[[case]]
+id = "chars-381"
+input = "<head><meta name=\"m\" content=\"a&#144;b\"></head>"
+
+[[case]]
+id = "chars-382"
+input = "<head><meta name=\"m\" content=\"a&#145;b\"></head>"
+
+[[case]]
+id = "chars-383"
+input = "<head><meta name=\"m\" content=\"a&#146;b\"></head>"
+
+[[case]]
+id = "chars-384"
+input = "<head><meta name=\"m\" content=\"a&#147;b\"></head>"
+
+[[case]]
+id = "chars-385"
+input = "<head><meta name=\"m\" content=\"a&#148;b\"></head>"
+
+[[case]]
+id = "chars-386"
+input = "<head><meta name=\"m\" content=\"a&#149;b\"></head>"
+
+[[case]]
+id = "chars-387"
+input = "<head><meta name=\"m\" content=\"a&#150;b\"></head>"
+
+[[case]]
+id = "chars-388"
+input = "<head><meta name=\"m\" content=\"a&#151;b\"></head>"
+
+[[case]]
+id = "chars-389"
+input = "<head><meta name=\"m\" content=\"a&#152;b\"></head>"
+
+[[case]]
+id = "chars-390"
+input = "<head><meta name=\"m\" content=\"a&#153;b\"></head>"
+
+[[case]]
+id = "chars-391"
+input = "<head><meta name=\"m\" content=\"a&#154;b\"></head>"
+
+[[case]]
+id = "chars-392"
+input = "<head><meta name=\"m\" content=\"a&#155;b\"></head>"
+
+[[case]]
+id = "chars-393"
+input = "<head><meta name=\"m\" content=\"a&#156;b\"></head>"
+
+[[case]]
+id = "chars-394"
+input = "<head><meta name=\"m\" content=\"a&#157;b\"></head>"
+
+[[case]]
+id = "chars-395"
+input = "<head><meta name=\"m\" content=\"a&#158;b\"></head>"
+
+[[case]]
+id = "chars-396"
+input = "<head><meta name=\"m\" content=\"a&#159;b\"></head>"
+
+[[case]]
+id = "chars-397"
+input = "<head><meta name=\"m\" content=\"ab\"></head>"
+
+[[case]]
+id = "chars-398"
+input = "<head><meta name=\"m\" content=\"a&#x80;b\"></head>"
+
+[[case]]
+id = "chars-399"
+input = "<head><meta name=\"m\" content=\"ab\"></head>"
+
+[[case]]
+id = "chars-400"
+input = "<head><meta name=\"m\" content=\"a&#x81;b\"></head>"
+
+[[case]]
+id = "chars-401"
+input = "<head><meta name=\"m\" content=\"ab\"></head>"
+
+[[case]]
+id = "chars-402"
+input = "<head><meta name=\"m\" content=\"a&#x8d;b\"></head>"
+
+[[case]]
+id = "chars-403"
+input = "<head><meta name=\"m\" content=\"ab\"></head>"
+
+[[case]]
+id = "chars-404"
+input = "<head><meta name=\"m\" content=\"a&#x9f;b\"></head>"
+
+[[case]]
+id = "chars-405"
+input = "<head><meta name=\"m\" content=\"ab\"></head>"
+
+[[case]]
+id = "chars-406"
+input = "<head><meta name=\"m\" content=\"a&#x85;b\"></head>"
+
+[[case]]
+id = "chars-407"
+input = "<head><meta name=\"m\" content=\"ab\"></head>"
+
+[[case]]
+id = "chars-408"
+input = "<head><meta name=\"m\" content=\"a&#x9d;b\"></head>"
+
+[[case]]
+id = "chars-409"
+input = "<head><meta name=\"m\" content=\"a&#13;b\"></head>"
+
+[[case]]
+id = "chars-410"
+input = "<head><meta name=\"m\" content=\"a&#xD;b\"></head>"
+
+[[case]]
+id = "chars-411"
+input = "<head><meta name=\"m\" content=\"a&#13;&#10;b\"></head>"
+
+[[case]]
+id = "chars-412"
+input = "<head><meta name=\"m\" content=\"a&#10;b\"></head>"
+
+[[case]]
+id = "chars-413"
+input = "<head><meta name=\"m\" content=\"a &#13; b\"></head>"
+
+[[case]]
+id = "chars-414"
+input = "<head><meta name=\"m\" content=\"a&#13;\nb\"></head>"
+
+[[case]]
+id = "chars-415"
+input = "<head><meta name=\"m\" content=\"a&#x0d;b\"></head>"
+
+[[case]]
+id = "chars-416"
+input = "<head><meta name=\"m\" content=\"a&#x0D;xb\"></head>"
+
+[[case]]
+id = "chars-417"
+from = "html+raw_html"
+input = "<p><!--a&#128;b--></p>"
+
+[[case]]
+id = "chars-418"
+from = "html+raw_html"
+input = "<p><!--a&#129;b--></p>"
+
+[[case]]
+id = "chars-419"
+from = "html+raw_html"
+input = "<p><!--a&#130;b--></p>"
+
+[[case]]
+id = "chars-420"
+from = "html+raw_html"
+input = "<p><!--a&#131;b--></p>"
+
+[[case]]
+id = "chars-421"
+from = "html+raw_html"
+input = "<p><!--a&#132;b--></p>"
+
+[[case]]
+id = "chars-422"
+from = "html+raw_html"
+input = "<p><!--a&#133;b--></p>"
+
+[[case]]
+id = "chars-423"
+from = "html+raw_html"
+input = "<p><!--a&#134;b--></p>"
+
+[[case]]
+id = "chars-424"
+from = "html+raw_html"
+input = "<p><!--a&#135;b--></p>"
+
+[[case]]
+id = "chars-425"
+from = "html+raw_html"
+input = "<p><!--a&#136;b--></p>"
+
+[[case]]
+id = "chars-426"
+from = "html+raw_html"
+input = "<p><!--a&#137;b--></p>"
+
+[[case]]
+id = "chars-427"
+from = "html+raw_html"
+input = "<p><!--a&#138;b--></p>"
+
+[[case]]
+id = "chars-428"
+from = "html+raw_html"
+input = "<p><!--a&#139;b--></p>"
+
+[[case]]
+id = "chars-429"
+from = "html+raw_html"
+input = "<p><!--a&#140;b--></p>"
+
+[[case]]
+id = "chars-430"
+from = "html+raw_html"
+input = "<p><!--a&#141;b--></p>"
+
+[[case]]
+id = "chars-431"
+from = "html+raw_html"
+input = "<p><!--a&#142;b--></p>"
+
+[[case]]
+id = "chars-432"
+from = "html+raw_html"
+input = "<p><!--a&#143;b--></p>"
+
+[[case]]
+id = "chars-433"
+from = "html+raw_html"
+input = "<p><!--a&#144;b--></p>"
+
+[[case]]
+id = "chars-434"
+from = "html+raw_html"
+input = "<p><!--a&#145;b--></p>"
+
+[[case]]
+id = "chars-435"
+from = "html+raw_html"
+input = "<p><!--a&#146;b--></p>"
+
+[[case]]
+id = "chars-436"
+from = "html+raw_html"
+input = "<p><!--a&#147;b--></p>"
+
+[[case]]
+id = "chars-437"
+from = "html+raw_html"
+input = "<p><!--a&#148;b--></p>"
+
+[[case]]
+id = "chars-438"
+from = "html+raw_html"
+input = "<p><!--a&#149;b--></p>"
+
+[[case]]
+id = "chars-439"
+from = "html+raw_html"
+input = "<p><!--a&#150;b--></p>"
+
+[[case]]
+id = "chars-440"
+from = "html+raw_html"
+input = "<p><!--a&#151;b--></p>"
+
+[[case]]
+id = "chars-441"
+from = "html+raw_html"
+input = "<p><!--a&#152;b--></p>"
+
+[[case]]
+id = "chars-442"
+from = "html+raw_html"
+input = "<p><!--a&#153;b--></p>"
+
+[[case]]
+id = "chars-443"
+from = "html+raw_html"
+input = "<p><!--a&#154;b--></p>"
+
+[[case]]
+id = "chars-444"
+from = "html+raw_html"
+input = "<p><!--a&#155;b--></p>"
+
+[[case]]
+id = "chars-445"
+from = "html+raw_html"
+input = "<p><!--a&#156;b--></p>"
+
+[[case]]
+id = "chars-446"
+from = "html+raw_html"
+input = "<p><!--a&#157;b--></p>"
+
+[[case]]
+id = "chars-447"
+from = "html+raw_html"
+input = "<p><!--a&#158;b--></p>"
+
+[[case]]
+id = "chars-448"
+from = "html+raw_html"
+input = "<p><!--a&#159;b--></p>"
+
+[[case]]
+id = "chars-449"
+from = "html+raw_html"
+input = "<p><!--ab--></p>"
+
+[[case]]
+id = "chars-450"
+from = "html+raw_html"
+input = "<p><!--a&#x80;b--></p>"
+
+[[case]]
+id = "chars-451"
+from = "html+raw_html"
+input = "<p><!--ab--></p>"
+
+[[case]]
+id = "chars-452"
+from = "html+raw_html"
+input = "<p><!--a&#x81;b--></p>"
+
+[[case]]
+id = "chars-453"
+from = "html+raw_html"
+input = "<p><!--ab--></p>"
+
+[[case]]
+id = "chars-454"
+from = "html+raw_html"
+input = "<p><!--a&#x8d;b--></p>"
+
+[[case]]
+id = "chars-455"
+from = "html+raw_html"
+input = "<p><!--ab--></p>"
+
+[[case]]
+id = "chars-456"
+from = "html+raw_html"
+input = "<p><!--a&#x9f;b--></p>"
+
+[[case]]
+id = "chars-457"
+from = "html+raw_html"
+input = "<p><!--ab--></p>"
+
+[[case]]
+id = "chars-458"
+from = "html+raw_html"
+input = "<p><!--a&#x85;b--></p>"
+
+[[case]]
+id = "chars-459"
+from = "html+raw_html"
+input = "<p><!--ab--></p>"
+
+[[case]]
+id = "chars-460"
+from = "html+raw_html"
+input = "<p><!--a&#x9d;b--></p>"
+
+[[case]]
+id = "chars-461"
+from = "html+raw_html"
+input = "<p><!--a&#13;b--></p>"
+
+[[case]]
+id = "chars-462"
+from = "html+raw_html"
+input = "<p><!--a&#xD;b--></p>"
+
+[[case]]
+id = "chars-463"
+from = "html+raw_html"
+input = "<p><!--a&#13;&#10;b--></p>"
+
+[[case]]
+id = "chars-464"
+from = "html+raw_html"
+input = "<p><!--a&#10;b--></p>"
+
+[[case]]
+id = "chars-465"
+from = "html+raw_html"
+input = "<p><!--a &#13; b--></p>"
+
+[[case]]
+id = "chars-466"
+from = "html+raw_html"
+input = "<p><!--a&#13;\nb--></p>"
+
+[[case]]
+id = "chars-467"
+from = "html+raw_html"
+input = "<p><!--a&#x0d;b--></p>"
+
+[[case]]
+id = "chars-468"
+from = "html+raw_html"
+input = "<p><!--a&#x0D;xb--></p>"
+
+[[case]]
+id = "chars-469"
+input = "<p><span data-x=\"a&#128;b\">x</span></p>"
+
+[[case]]
+id = "chars-470"
+input = "<p><span data-x=\"a&#129;b\">x</span></p>"
+
+[[case]]
+id = "chars-471"
+input = "<p><span data-x=\"a&#130;b\">x</span></p>"
+
+[[case]]
+id = "chars-472"
+input = "<p><span data-x=\"a&#131;b\">x</span></p>"
+
+[[case]]
+id = "chars-473"
+input = "<p><span data-x=\"a&#132;b\">x</span></p>"
+
+[[case]]
+id = "chars-474"
+input = "<p><span data-x=\"a&#133;b\">x</span></p>"
+
+[[case]]
+id = "chars-475"
+input = "<p><span data-x=\"a&#134;b\">x</span></p>"
+
+[[case]]
+id = "chars-476"
+input = "<p><span data-x=\"a&#135;b\">x</span></p>"
+
+[[case]]
+id = "chars-477"
+input = "<p><span data-x=\"a&#136;b\">x</span></p>"
+
+[[case]]
+id = "chars-478"
+input = "<p><span data-x=\"a&#137;b\">x</span></p>"
+
+[[case]]
+id = "chars-479"
+input = "<p><span data-x=\"a&#138;b\">x</span></p>"
+
+[[case]]
+id = "chars-480"
+input = "<p><span data-x=\"a&#139;b\">x</span></p>"
+
+[[case]]
+id = "chars-481"
+input = "<p><span data-x=\"a&#140;b\">x</span></p>"
+
+[[case]]
+id = "chars-482"
+input = "<p><span data-x=\"a&#141;b\">x</span></p>"
+
+[[case]]
+id = "chars-483"
+input = "<p><span data-x=\"a&#142;b\">x</span></p>"
+
+[[case]]
+id = "chars-484"
+input = "<p><span data-x=\"a&#143;b\">x</span></p>"
+
+[[case]]
+id = "chars-485"
+input = "<p><span data-x=\"a&#144;b\">x</span></p>"
+
+[[case]]
+id = "chars-486"
+input = "<p><span data-x=\"a&#145;b\">x</span></p>"
+
+[[case]]
+id = "chars-487"
+input = "<p><span data-x=\"a&#146;b\">x</span></p>"
+
+[[case]]
+id = "chars-488"
+input = "<p><span data-x=\"a&#147;b\">x</span></p>"
+
+[[case]]
+id = "chars-489"
+input = "<p><span data-x=\"a&#148;b\">x</span></p>"
+
+[[case]]
+id = "chars-490"
+input = "<p><span data-x=\"a&#149;b\">x</span></p>"
+
+[[case]]
+id = "chars-491"
+input = "<p><span data-x=\"a&#150;b\">x</span></p>"
+
+[[case]]
+id = "chars-492"
+input = "<p><span data-x=\"a&#151;b\">x</span></p>"
+
+[[case]]
+id = "chars-493"
+input = "<p><span data-x=\"a&#152;b\">x</span></p>"
+
+[[case]]
+id = "chars-494"
+input = "<p><span data-x=\"a&#153;b\">x</span></p>"
+
+[[case]]
+id = "chars-495"
+input = "<p><span data-x=\"a&#154;b\">x</span></p>"
+
+[[case]]
+id = "chars-496"
+input = "<p><span data-x=\"a&#155;b\">x</span></p>"
+
+[[case]]
+id = "chars-497"
+input = "<p><span data-x=\"a&#156;b\">x</span></p>"
+
+[[case]]
+id = "chars-498"
+input = "<p><span data-x=\"a&#157;b\">x</span></p>"
+
+[[case]]
+id = "chars-499"
+input = "<p><span data-x=\"a&#158;b\">x</span></p>"
+
+[[case]]
+id = "chars-500"
+input = "<p><span data-x=\"a&#159;b\">x</span></p>"
+
+[[case]]
+id = "chars-501"
+input = "<p><span data-x=\"ab\">x</span></p>"
+
+[[case]]
+id = "chars-502"
+input = "<p><span data-x=\"a&#x80;b\">x</span></p>"
+
+[[case]]
+id = "chars-503"
+input = "<p><span data-x=\"ab\">x</span></p>"
+
+[[case]]
+id = "chars-504"
+input = "<p><span data-x=\"a&#x81;b\">x</span></p>"
+
+[[case]]
+id = "chars-505"
+input = "<p><span data-x=\"ab\">x</span></p>"
+
+[[case]]
+id = "chars-506"
+input = "<p><span data-x=\"a&#x8d;b\">x</span></p>"
+
+[[case]]
+id = "chars-507"
+input = "<p><span data-x=\"ab\">x</span></p>"
+
+[[case]]
+id = "chars-508"
+input = "<p><span data-x=\"a&#x9f;b\">x</span></p>"
+
+[[case]]
+id = "chars-509"
+input = "<p><span data-x=\"ab\">x</span></p>"
+
+[[case]]
+id = "chars-510"
+input = "<p><span data-x=\"a&#x85;b\">x</span></p>"
+
+[[case]]
+id = "chars-511"
+input = "<p><span data-x=\"ab\">x</span></p>"
+
+[[case]]
+id = "chars-512"
+input = "<p><span data-x=\"a&#x9d;b\">x</span></p>"
+
+[[case]]
+id = "chars-513"
+input = "<p><span data-x=\"a&#13;b\">x</span></p>"
+
+[[case]]
+id = "chars-514"
+input = "<p><span data-x=\"a&#xD;b\">x</span></p>"
+
+[[case]]
+id = "chars-515"
+input = "<p><span data-x=\"a&#13;&#10;b\">x</span></p>"
+
+[[case]]
+id = "chars-516"
+input = "<p><span data-x=\"a&#10;b\">x</span></p>"
+
+[[case]]
+id = "chars-517"
+input = "<p><span data-x=\"a &#13; b\">x</span></p>"
+
+[[case]]
+id = "chars-518"
+input = "<p><span data-x=\"a&#13;\nb\">x</span></p>"
+
+[[case]]
+id = "chars-519"
+input = "<p><span data-x=\"a&#x0d;b\">x</span></p>"
+
+[[case]]
+id = "chars-520"
+input = "<p><span data-x=\"a&#x0D;xb\">x</span></p>"
+
+[[case]]
+id = "chars-521"
+input = "<p><script type=\"math/tex\">a&#128;b</script></p>"
+
+[[case]]
+id = "chars-522"
+input = "<p><script type=\"math/tex\">a&#129;b</script></p>"
+
+[[case]]
+id = "chars-523"
+input = "<p><script type=\"math/tex\">a&#130;b</script></p>"
+
+[[case]]
+id = "chars-524"
+input = "<p><script type=\"math/tex\">a&#131;b</script></p>"
+
+[[case]]
+id = "chars-525"
+input = "<p><script type=\"math/tex\">a&#132;b</script></p>"
+
+[[case]]
+id = "chars-526"
+input = "<p><script type=\"math/tex\">a&#133;b</script></p>"
+
+[[case]]
+id = "chars-527"
+input = "<p><script type=\"math/tex\">a&#134;b</script></p>"
+
+[[case]]
+id = "chars-528"
+input = "<p><script type=\"math/tex\">a&#135;b</script></p>"
+
+[[case]]
+id = "chars-529"
+input = "<p><script type=\"math/tex\">a&#136;b</script></p>"
+
+[[case]]
+id = "chars-530"
+input = "<p><script type=\"math/tex\">a&#137;b</script></p>"
+
+[[case]]
+id = "chars-531"
+input = "<p><script type=\"math/tex\">a&#138;b</script></p>"
+
+[[case]]
+id = "chars-532"
+input = "<p><script type=\"math/tex\">a&#139;b</script></p>"
+
+[[case]]
+id = "chars-533"
+input = "<p><script type=\"math/tex\">a&#140;b</script></p>"
+
+[[case]]
+id = "chars-534"
+input = "<p><script type=\"math/tex\">a&#141;b</script></p>"
+
+[[case]]
+id = "chars-535"
+input = "<p><script type=\"math/tex\">a&#142;b</script></p>"
+
+[[case]]
+id = "chars-536"
+input = "<p><script type=\"math/tex\">a&#143;b</script></p>"
+
+[[case]]
+id = "chars-537"
+input = "<p><script type=\"math/tex\">a&#144;b</script></p>"
+
+[[case]]
+id = "chars-538"
+input = "<p><script type=\"math/tex\">a&#145;b</script></p>"
+
+[[case]]
+id = "chars-539"
+input = "<p><script type=\"math/tex\">a&#146;b</script></p>"
+
+[[case]]
+id = "chars-540"
+input = "<p><script type=\"math/tex\">a&#147;b</script></p>"
+
+[[case]]
+id = "chars-541"
+input = "<p><script type=\"math/tex\">a&#148;b</script></p>"
+
+[[case]]
+id = "chars-542"
+input = "<p><script type=\"math/tex\">a&#149;b</script></p>"
+
+[[case]]
+id = "chars-543"
+input = "<p><script type=\"math/tex\">a&#150;b</script></p>"
+
+[[case]]
+id = "chars-544"
+input = "<p><script type=\"math/tex\">a&#151;b</script></p>"
+
+[[case]]
+id = "chars-545"
+input = "<p><script type=\"math/tex\">a&#152;b</script></p>"
+
+[[case]]
+id = "chars-546"
+input = "<p><script type=\"math/tex\">a&#153;b</script></p>"
+
+[[case]]
+id = "chars-547"
+input = "<p><script type=\"math/tex\">a&#154;b</script></p>"
+
+[[case]]
+id = "chars-548"
+input = "<p><script type=\"math/tex\">a&#155;b</script></p>"
+
+[[case]]
+id = "chars-549"
+input = "<p><script type=\"math/tex\">a&#156;b</script></p>"
+
+[[case]]
+id = "chars-550"
+input = "<p><script type=\"math/tex\">a&#157;b</script></p>"
+
+[[case]]
+id = "chars-551"
+input = "<p><script type=\"math/tex\">a&#158;b</script></p>"
+
+[[case]]
+id = "chars-552"
+input = "<p><script type=\"math/tex\">a&#159;b</script></p>"
+
+[[case]]
+id = "chars-553"
+input = "<p><script type=\"math/tex\">ab</script></p>"
+
+[[case]]
+id = "chars-554"
+input = "<p><script type=\"math/tex\">a&#x80;b</script></p>"
+
+[[case]]
+id = "chars-555"
+input = "<p><script type=\"math/tex\">ab</script></p>"
+
+[[case]]
+id = "chars-556"
+input = "<p><script type=\"math/tex\">a&#x81;b</script></p>"
+
+[[case]]
+id = "chars-557"
+input = "<p><script type=\"math/tex\">ab</script></p>"
+
+[[case]]
+id = "chars-558"
+input = "<p><script type=\"math/tex\">a&#x8d;b</script></p>"
+
+[[case]]
+id = "chars-559"
+input = "<p><script type=\"math/tex\">ab</script></p>"
+
+[[case]]
+id = "chars-560"
+input = "<p><script type=\"math/tex\">a&#x9f;b</script></p>"
+
+[[case]]
+id = "chars-561"
+input = "<p><script type=\"math/tex\">ab</script></p>"
+
+[[case]]
+id = "chars-562"
+input = "<p><script type=\"math/tex\">a&#x85;b</script></p>"
+
+[[case]]
+id = "chars-563"
+input = "<p><script type=\"math/tex\">ab</script></p>"
+
+[[case]]
+id = "chars-564"
+input = "<p><script type=\"math/tex\">a&#x9d;b</script></p>"
+
+[[case]]
+id = "chars-565"
+input = "<p><script type=\"math/tex\">a&#13;b</script></p>"
+
+[[case]]
+id = "chars-566"
+input = "<p><script type=\"math/tex\">a&#xD;b</script></p>"
+
+[[case]]
+id = "chars-567"
+input = "<p><script type=\"math/tex\">a&#13;&#10;b</script></p>"
+
+[[case]]
+id = "chars-568"
+input = "<p><script type=\"math/tex\">a&#10;b</script></p>"
+
+[[case]]
+id = "chars-569"
+input = "<p><script type=\"math/tex\">a &#13; b</script></p>"
+
+[[case]]
+id = "chars-570"
+input = "<p><script type=\"math/tex\">a&#13;\nb</script></p>"
+
+[[case]]
+id = "chars-571"
+input = "<p><script type=\"math/tex\">a&#x0d;b</script></p>"
+
+[[case]]
+id = "chars-572"
+input = "<p><script type=\"math/tex\">a&#x0D;xb</script></p>"
+
+[[case]]
+id = "chars-573"
+input = "<pre>&#128;</pre>"
+
+[[case]]
+id = "chars-574"
+input = "<pre>&#129;</pre>"
+
+[[case]]
+id = "chars-575"
+input = "<pre>&#130;</pre>"
+
+[[case]]
+id = "chars-576"
+input = "<pre>&#131;</pre>"
+
+[[case]]
+id = "chars-577"
+input = "<pre>&#132;</pre>"
+
+[[case]]
+id = "chars-578"
+input = "<pre>&#133;</pre>"
+
+[[case]]
+id = "chars-579"
+input = "<pre>&#134;</pre>"
+
+[[case]]
+id = "chars-580"
+input = "<pre>&#135;</pre>"
+
+[[case]]
+id = "chars-581"
+input = "<pre>&#136;</pre>"
+
+[[case]]
+id = "chars-582"
+input = "<pre>&#137;</pre>"
+
+[[case]]
+id = "chars-583"
+input = "<pre>&#138;</pre>"
+
+[[case]]
+id = "chars-584"
+input = "<pre>&#139;</pre>"
+
+[[case]]
+id = "chars-585"
+input = "<pre>&#140;</pre>"
+
+[[case]]
+id = "chars-586"
+input = "<pre>&#141;</pre>"
+
+[[case]]
+id = "chars-587"
+input = "<pre>&#142;</pre>"
+
+[[case]]
+id = "chars-588"
+input = "<pre>&#143;</pre>"
+
+[[case]]
+id = "chars-589"
+input = "<pre>&#144;</pre>"
+
+[[case]]
+id = "chars-590"
+input = "<pre>&#145;</pre>"
+
+[[case]]
+id = "chars-591"
+input = "<pre>&#146;</pre>"
+
+[[case]]
+id = "chars-592"
+input = "<pre>&#147;</pre>"
+
+[[case]]
+id = "chars-593"
+input = "<pre>&#148;</pre>"
+
+[[case]]
+id = "chars-594"
+input = "<pre>&#149;</pre>"
+
+[[case]]
+id = "chars-595"
+input = "<pre>&#150;</pre>"
+
+[[case]]
+id = "chars-596"
+input = "<pre>&#151;</pre>"
+
+[[case]]
+id = "chars-597"
+input = "<pre>&#152;</pre>"
+
+[[case]]
+id = "chars-598"
+input = "<pre>&#153;</pre>"
+
+[[case]]
+id = "chars-599"
+input = "<pre>&#154;</pre>"
+
+[[case]]
+id = "chars-600"
+input = "<pre>&#155;</pre>"
+
+[[case]]
+id = "chars-601"
+input = "<pre>&#156;</pre>"
+
+[[case]]
+id = "chars-602"
+input = "<pre>&#157;</pre>"
+
+[[case]]
+id = "chars-603"
+input = "<pre>&#158;</pre>"
+
+[[case]]
+id = "chars-604"
+input = "<pre>&#159;</pre>"
+
+[[case]]
+id = "chars-605"
+input = "<pre></pre>"
+
+[[case]]
+id = "chars-606"
+input = "<pre>&#x80;</pre>"
+
+[[case]]
+id = "chars-607"
+input = "<pre></pre>"
+
+[[case]]
+id = "chars-608"
+input = "<pre>&#x81;</pre>"
+
+[[case]]
+id = "chars-609"
+input = "<pre></pre>"
+
+[[case]]
+id = "chars-610"
+input = "<pre>&#x8d;</pre>"
+
+[[case]]
+id = "chars-611"
+input = "<pre></pre>"
+
+[[case]]
+id = "chars-612"
+input = "<pre>&#x9f;</pre>"
+
+[[case]]
+id = "chars-613"
+input = "<pre></pre>"
+
+[[case]]
+id = "chars-614"
+input = "<pre>&#x85;</pre>"
+
+[[case]]
+id = "chars-615"
+input = "<pre></pre>"
+
+[[case]]
+id = "chars-616"
+input = "<pre>&#x9d;</pre>"
+
+[[case]]
+id = "chars-617"
+input = "<pre>&#13;</pre>"
+
+[[case]]
+id = "chars-618"
+input = "<pre>&#xD;</pre>"
+
+[[case]]
+id = "chars-619"
+input = "<pre>&#13;&#10;</pre>"
+
+[[case]]
+id = "chars-620"
+input = "<pre>&#10;</pre>"
+
+[[case]]
+id = "chars-621"
+input = "<pre> &#13; </pre>"
+
+[[case]]
+id = "chars-622"
+input = "<pre>&#13;\n</pre>"
+
+[[case]]
+id = "chars-623"
+input = "<pre>&#x0d;</pre>"
+
+[[case]]
+id = "chars-624"
+input = "<pre>&#x0D;x</pre>"
+
+[[case]]
+id = "chars-625"
+input = "<p>&#128;</p>"
+
+[[case]]
+id = "chars-626"
+input = "<p>&#129;</p>"
+
+[[case]]
+id = "chars-627"
+input = "<p>&#130;</p>"
+
+[[case]]
+id = "chars-628"
+input = "<p>&#131;</p>"
+
+[[case]]
+id = "chars-629"
+input = "<p>&#132;</p>"
+
+[[case]]
+id = "chars-630"
+input = "<p>&#133;</p>"
+
+[[case]]
+id = "chars-631"
+input = "<p>&#134;</p>"
+
+[[case]]
+id = "chars-632"
+input = "<p>&#135;</p>"
+
+[[case]]
+id = "chars-633"
+input = "<p>&#136;</p>"
+
+[[case]]
+id = "chars-634"
+input = "<p>&#137;</p>"
+
+[[case]]
+id = "chars-635"
+input = "<p>&#138;</p>"
+
+[[case]]
+id = "chars-636"
+input = "<p>&#139;</p>"
+
+[[case]]
+id = "chars-637"
+input = "<p>&#140;</p>"
+
+[[case]]
+id = "chars-638"
+input = "<p>&#141;</p>"
+
+[[case]]
+id = "chars-639"
+input = "<p>&#142;</p>"
+
+[[case]]
+id = "chars-640"
+input = "<p>&#143;</p>"
+
+[[case]]
+id = "chars-641"
+input = "<p>&#144;</p>"
+
+[[case]]
+id = "chars-642"
+input = "<p>&#145;</p>"
+
+[[case]]
+id = "chars-643"
+input = "<p>&#146;</p>"
+
+[[case]]
+id = "chars-644"
+input = "<p>&#147;</p>"
+
+[[case]]
+id = "chars-645"
+input = "<p>&#148;</p>"
+
+[[case]]
+id = "chars-646"
+input = "<p>&#149;</p>"
+
+[[case]]
+id = "chars-647"
+input = "<p>&#150;</p>"
+
+[[case]]
+id = "chars-648"
+input = "<p>&#151;</p>"
+
+[[case]]
+id = "chars-649"
+input = "<p>&#152;</p>"
+
+[[case]]
+id = "chars-650"
+input = "<p>&#153;</p>"
+
+[[case]]
+id = "chars-651"
+input = "<p>&#154;</p>"
+
+[[case]]
+id = "chars-652"
+input = "<p>&#155;</p>"
+
+[[case]]
+id = "chars-653"
+input = "<p>&#156;</p>"
+
+[[case]]
+id = "chars-654"
+input = "<p>&#157;</p>"
+
+[[case]]
+id = "chars-655"
+input = "<p>&#158;</p>"
+
+[[case]]
+id = "chars-656"
+input = "<p>&#159;</p>"
+
+[[case]]
+id = "chars-657"
+input = "<p></p>"
+
+[[case]]
+id = "chars-658"
+input = "<p>&#x80;</p>"
+
+[[case]]
+id = "chars-659"
+input = "<p></p>"
+
+[[case]]
+id = "chars-660"
+input = "<p>&#x81;</p>"
+
+[[case]]
+id = "chars-661"
+input = "<p></p>"
+
+[[case]]
+id = "chars-662"
+input = "<p>&#x8d;</p>"
+
+[[case]]
+id = "chars-663"
+input = "<p></p>"
+
+[[case]]
+id = "chars-664"
+input = "<p>&#x9f;</p>"
+
+[[case]]
+id = "chars-665"
+input = "<p></p>"
+
+[[case]]
+id = "chars-666"
+input = "<p>&#x85;</p>"
+
+[[case]]
+id = "chars-667"
+input = "<p></p>"
+
+[[case]]
+id = "chars-668"
+input = "<p>&#x9d;</p>"
+
+[[case]]
+id = "chars-669"
+input = "<p>&#13;</p>"
+
+[[case]]
+id = "chars-670"
+input = "<p>&#xD;</p>"
+
+[[case]]
+id = "chars-671"
+input = "<p>&#13;&#10;</p>"
+
+[[case]]
+id = "chars-672"
+input = "<p>&#10;</p>"
+
+[[case]]
+id = "chars-673"
+input = "<p> &#13; </p>"
+
+[[case]]
+id = "chars-674"
+input = "<p>&#13;\n</p>"
+
+[[case]]
+id = "chars-675"
+input = "<p>&#x0d;</p>"
+
+[[case]]
+id = "chars-676"
+input = "<p>&#x0D;x</p>"
+
+[[case]]
+id = "chars-677"
+from = "html+raw_html"
+input = "<p><x y=\"&#128;\"></x></p>"
+
+[[case]]
+id = "chars-678"
+from = "html+raw_html"
+input = "<p><x y=\"&#129;\"></x></p>"
+
+[[case]]
+id = "chars-679"
+from = "html+raw_html"
+input = "<p><x y=\"&#130;\"></x></p>"
+
+[[case]]
+id = "chars-680"
+from = "html+raw_html"
+input = "<p><x y=\"&#131;\"></x></p>"
+
+[[case]]
+id = "chars-681"
+from = "html+raw_html"
+input = "<p><x y=\"&#132;\"></x></p>"
+
+[[case]]
+id = "chars-682"
+from = "html+raw_html"
+input = "<p><x y=\"&#133;\"></x></p>"
+
+[[case]]
+id = "chars-683"
+from = "html+raw_html"
+input = "<p><x y=\"&#134;\"></x></p>"
+
+[[case]]
+id = "chars-684"
+from = "html+raw_html"
+input = "<p><x y=\"&#135;\"></x></p>"
+
+[[case]]
+id = "chars-685"
+from = "html+raw_html"
+input = "<p><x y=\"&#136;\"></x></p>"
+
+[[case]]
+id = "chars-686"
+from = "html+raw_html"
+input = "<p><x y=\"&#137;\"></x></p>"
+
+[[case]]
+id = "chars-687"
+from = "html+raw_html"
+input = "<p><x y=\"&#138;\"></x></p>"
+
+[[case]]
+id = "chars-688"
+from = "html+raw_html"
+input = "<p><x y=\"&#139;\"></x></p>"
+
+[[case]]
+id = "chars-689"
+from = "html+raw_html"
+input = "<p><x y=\"&#140;\"></x></p>"
+
+[[case]]
+id = "chars-690"
+from = "html+raw_html"
+input = "<p><x y=\"&#141;\"></x></p>"
+
+[[case]]
+id = "chars-691"
+from = "html+raw_html"
+input = "<p><x y=\"&#142;\"></x></p>"
+
+[[case]]
+id = "chars-692"
+from = "html+raw_html"
+input = "<p><x y=\"&#143;\"></x></p>"
+
+[[case]]
+id = "chars-693"
+from = "html+raw_html"
+input = "<p><x y=\"&#144;\"></x></p>"
+
+[[case]]
+id = "chars-694"
+from = "html+raw_html"
+input = "<p><x y=\"&#145;\"></x></p>"
+
+[[case]]
+id = "chars-695"
+from = "html+raw_html"
+input = "<p><x y=\"&#146;\"></x></p>"
+
+[[case]]
+id = "chars-696"
+from = "html+raw_html"
+input = "<p><x y=\"&#147;\"></x></p>"
+
+[[case]]
+id = "chars-697"
+from = "html+raw_html"
+input = "<p><x y=\"&#148;\"></x></p>"
+
+[[case]]
+id = "chars-698"
+from = "html+raw_html"
+input = "<p><x y=\"&#149;\"></x></p>"
+
+[[case]]
+id = "chars-699"
+from = "html+raw_html"
+input = "<p><x y=\"&#150;\"></x></p>"
+
+[[case]]
+id = "chars-700"
+from = "html+raw_html"
+input = "<p><x y=\"&#151;\"></x></p>"
+
+[[case]]
+id = "chars-701"
+from = "html+raw_html"
+input = "<p><x y=\"&#152;\"></x></p>"
+
+[[case]]
+id = "chars-702"
+from = "html+raw_html"
+input = "<p><x y=\"&#153;\"></x></p>"
+
+[[case]]
+id = "chars-703"
+from = "html+raw_html"
+input = "<p><x y=\"&#154;\"></x></p>"
+
+[[case]]
+id = "chars-704"
+from = "html+raw_html"
+input = "<p><x y=\"&#155;\"></x></p>"
+
+[[case]]
+id = "chars-705"
+from = "html+raw_html"
+input = "<p><x y=\"&#156;\"></x></p>"
+
+[[case]]
+id = "chars-706"
+from = "html+raw_html"
+input = "<p><x y=\"&#157;\"></x></p>"
+
+[[case]]
+id = "chars-707"
+from = "html+raw_html"
+input = "<p><x y=\"&#158;\"></x></p>"
+
+[[case]]
+id = "chars-708"
+from = "html+raw_html"
+input = "<p><x y=\"&#159;\"></x></p>"
+
+[[case]]
+id = "chars-709"
+from = "html+raw_html"
+input = "<p><x y=\"\"></x></p>"
+
+[[case]]
+id = "chars-710"
+from = "html+raw_html"
+input = "<p><x y=\"&#x80;\"></x></p>"
+
+[[case]]
+id = "chars-711"
+from = "html+raw_html"
+input = "<p><x y=\"\"></x></p>"
+
+[[case]]
+id = "chars-712"
+from = "html+raw_html"
+input = "<p><x y=\"&#x81;\"></x></p>"
+
+[[case]]
+id = "chars-713"
+from = "html+raw_html"
+input = "<p><x y=\"\"></x></p>"
+
+[[case]]
+id = "chars-714"
+from = "html+raw_html"
+input = "<p><x y=\"&#x8d;\"></x></p>"
+
+[[case]]
+id = "chars-715"
+from = "html+raw_html"
+input = "<p><x y=\"\"></x></p>"
+
+[[case]]
+id = "chars-716"
+from = "html+raw_html"
+input = "<p><x y=\"&#x9f;\"></x></p>"
+
+[[case]]
+id = "chars-717"
+from = "html+raw_html"
+input = "<p><x y=\"\"></x></p>"
+
+[[case]]
+id = "chars-718"
+from = "html+raw_html"
+input = "<p><x y=\"&#x85;\"></x></p>"
+
+[[case]]
+id = "chars-719"
+from = "html+raw_html"
+input = "<p><x y=\"\"></x></p>"
+
+[[case]]
+id = "chars-720"
+from = "html+raw_html"
+input = "<p><x y=\"&#x9d;\"></x></p>"
+
+[[case]]
+id = "chars-721"
+from = "html+raw_html"
+input = "<p><x y=\"&#13;\"></x></p>"
+
+[[case]]
+id = "chars-722"
+from = "html+raw_html"
+input = "<p><x y=\"&#xD;\"></x></p>"
+
+[[case]]
+id = "chars-723"
+from = "html+raw_html"
+input = "<p><x y=\"&#13;&#10;\"></x></p>"
+
+[[case]]
+id = "chars-724"
+from = "html+raw_html"
+input = "<p><x y=\"&#10;\"></x></p>"
+
+[[case]]
+id = "chars-725"
+from = "html+raw_html"
+input = "<p><x y=\" &#13; \"></x></p>"
+
+[[case]]
+id = "chars-726"
+from = "html+raw_html"
+input = "<p><x y=\"&#13;\n\"></x></p>"
+
+[[case]]
+id = "chars-727"
+from = "html+raw_html"
+input = "<p><x y=\"&#x0d;\"></x></p>"
+
+[[case]]
+id = "chars-728"
+from = "html+raw_html"
+input = "<p><x y=\"&#x0D;x\"></x></p>"
+
+[[case]]
+id = "chars-729"
+input = "<span İ>x</span>"
+
+[[case]]
+id = "chars-730"
+input = "<q></DİV>"
+
+[[case]]
+id = "chars-731"
+input = "<SPAN İD=\"a\">x</SPAN>"
+
+[[case]]
+id = "chars-732"
+input = "<p>x</P>"
+
+[[case]]
+id = "chars-733"
+input = "<DİV>x</DİV>"
+
+[[case]]
+id = "chars-734"
+input = "<span ΣΑ=\"1\">x</span>"
+
+[[case]]
+id = "chars-735"
+input = "<span Ǆ=\"1\">x</span>"
+
+[[case]]
+id = "chars-736"
+input = "<span ẞ=\"1\">x</span>"
+
+[[case]]
+id = "chars-737"
+input = "<span K=\"1\">x</span>"
+
+[[case]]
+id = "chars-738"
+input = "<span Ω=\"1\">x</span>"
+
+[[case]]
+id = "chars-739"
+input = "<span ᾈ=\"1\">x</span>"
+
+[[case]]
+id = "chars-740"
+input = "<B>x</B>"
+
+[[case]]
+id = "chars-741"
+input = "<span data-İ=\"1\">x</span>"
+
+[[case]]
+id = "chars-742"
+input = "<Tİtle>x</Tİtle>"
+
+[[case]]
+id = "chars-743"
+from = "html+raw_html"
+input = "<span İ>x</span>"
+
+[[case]]
+id = "chars-744"
+from = "html+raw_html"
+input = "<q></DİV>"
+
+[[case]]
+id = "chars-745"
+from = "html+raw_html"
+input = "<SPAN İD=\"a\">x</SPAN>"
+
+[[case]]
+id = "chars-746"
+from = "html+raw_html"
+input = "<p>x</P>"
+
+[[case]]
+id = "chars-747"
+from = "html+raw_html"
+input = "<DİV>x</DİV>"
+
+[[case]]
+id = "chars-748"
+from = "html+raw_html"
+input = "<span ΣΑ=\"1\">x</span>"
+
+[[case]]
+id = "chars-749"
+from = "html+raw_html"
+input = "<span Ǆ=\"1\">x</span>"
+
+[[case]]
+id = "chars-750"
+from = "html+raw_html"
+input = "<span ẞ=\"1\">x</span>"
+
+[[case]]
+id = "chars-751"
+from = "html+raw_html"
+input = "<span K=\"1\">x</span>"
+
+[[case]]
+id = "chars-752"
+from = "html+raw_html"
+input = "<span Ω=\"1\">x</span>"
+
+[[case]]
+id = "chars-753"
+from = "html+raw_html"
+input = "<span ᾈ=\"1\">x</span>"
+
+[[case]]
+id = "chars-754"
+from = "html+raw_html"
+input = "<B>x</B>"
+
+[[case]]
+id = "chars-755"
+from = "html+raw_html"
+input = "<span data-İ=\"1\">x</span>"
+
+[[case]]
+id = "chars-756"
+from = "html+raw_html"
+input = "<Tİtle>x</Tİtle>"

@@ -1,0 +1,1581 @@
+# A block-level tag inside each inline element, in three contexts.
+from = "html"
+to = []
+
+[[case]]
+id = "inline-walls-001"
+input = "<b>a</div>b</b>c"
+
+[[case]]
+id = "inline-walls-002"
+input = "<div><b>a</div>b</b>c</div>"
+
+[[case]]
+id = "inline-walls-003"
+input = "<p><b>a<video>x</video>b</b>c</p>"
+
+[[case]]
+id = "inline-walls-004"
+input = "<b>a<script>s</script>b</b>c"
+
+[[case]]
+id = "inline-walls-005"
+input = "<div><b>a<script>s</script>b</b>c</div>"
+
+[[case]]
+id = "inline-walls-006"
+input = "<p><b>a<img>b</b>c</p>"
+
+[[case]]
+id = "inline-walls-007"
+input = "<b>a<p>p</p>b</b>c"
+
+[[case]]
+id = "inline-walls-008"
+input = "<div><b>a<p>p</p>b</b>c</div>"
+
+[[case]]
+id = "inline-walls-009"
+input = "<p><b>a<button a=\"1\"></button>b</b>c</p>"
+
+[[case]]
+id = "inline-walls-010"
+input = "<b>a<li>b</b>c"
+
+[[case]]
+id = "inline-walls-011"
+input = "<div><b>a<li>b</b>c</div>"
+
+[[case]]
+id = "inline-walls-012"
+input = "<p><i>a</div>b</i>c</p>"
+
+[[case]]
+id = "inline-walls-013"
+input = "<i>a<video>x</video>b</i>c"
+
+[[case]]
+id = "inline-walls-014"
+input = "<div><i>a<video>x</video>b</i>c</div>"
+
+[[case]]
+id = "inline-walls-015"
+input = "<p><i>a<script>s</script>b</i>c</p>"
+
+[[case]]
+id = "inline-walls-016"
+input = "<i>a<img>b</i>c"
+
+[[case]]
+id = "inline-walls-017"
+input = "<div><i>a<img>b</i>c</div>"
+
+[[case]]
+id = "inline-walls-018"
+input = "<p><i>a<p>p</p>b</i>c</p>"
+
+[[case]]
+id = "inline-walls-019"
+input = "<i>a<button a=\"1\"></button>b</i>c"
+
+[[case]]
+id = "inline-walls-020"
+input = "<div><i>a<button a=\"1\"></button>b</i>c</div>"
+
+[[case]]
+id = "inline-walls-021"
+input = "<p><i>a<li>b</i>c</p>"
+
+[[case]]
+id = "inline-walls-022"
+input = "<em>a</div>b</em>c"
+
+[[case]]
+id = "inline-walls-023"
+input = "<div><em>a</div>b</em>c</div>"
+
+[[case]]
+id = "inline-walls-024"
+input = "<p><em>a<video>x</video>b</em>c</p>"
+
+[[case]]
+id = "inline-walls-025"
+input = "<em>a<script>s</script>b</em>c"
+
+[[case]]
+id = "inline-walls-026"
+input = "<div><em>a<script>s</script>b</em>c</div>"
+
+[[case]]
+id = "inline-walls-027"
+input = "<p><em>a<img>b</em>c</p>"
+
+[[case]]
+id = "inline-walls-028"
+input = "<em>a<p>p</p>b</em>c"
+
+[[case]]
+id = "inline-walls-029"
+input = "<div><em>a<p>p</p>b</em>c</div>"
+
+[[case]]
+id = "inline-walls-030"
+input = "<p><em>a<button a=\"1\"></button>b</em>c</p>"
+
+[[case]]
+id = "inline-walls-031"
+input = "<em>a<li>b</em>c"
+
+[[case]]
+id = "inline-walls-032"
+input = "<div><em>a<li>b</em>c</div>"
+
+[[case]]
+id = "inline-walls-033"
+input = "<p><strong>a</div>b</strong>c</p>"
+
+[[case]]
+id = "inline-walls-034"
+input = "<strong>a<video>x</video>b</strong>c"
+
+[[case]]
+id = "inline-walls-035"
+input = "<div><strong>a<video>x</video>b</strong>c</div>"
+
+[[case]]
+id = "inline-walls-036"
+input = "<p><strong>a<script>s</script>b</strong>c</p>"
+
+[[case]]
+id = "inline-walls-037"
+input = "<strong>a<img>b</strong>c"
+
+[[case]]
+id = "inline-walls-038"
+input = "<div><strong>a<img>b</strong>c</div>"
+
+[[case]]
+id = "inline-walls-039"
+input = "<p><strong>a<p>p</p>b</strong>c</p>"
+
+[[case]]
+id = "inline-walls-040"
+input = "<strong>a<button a=\"1\"></button>b</strong>c"
+
+[[case]]
+id = "inline-walls-041"
+input = "<div><strong>a<button a=\"1\"></button>b</strong>c</div>"
+
+[[case]]
+id = "inline-walls-042"
+input = "<p><strong>a<li>b</strong>c</p>"
+
+[[case]]
+id = "inline-walls-043"
+input = "<u>a</div>b</u>c"
+
+[[case]]
+id = "inline-walls-044"
+input = "<div><u>a</div>b</u>c</div>"
+
+[[case]]
+id = "inline-walls-045"
+input = "<p><u>a<video>x</video>b</u>c</p>"
+
+[[case]]
+id = "inline-walls-046"
+input = "<u>a<script>s</script>b</u>c"
+
+[[case]]
+id = "inline-walls-047"
+input = "<div><u>a<script>s</script>b</u>c</div>"
+
+[[case]]
+id = "inline-walls-048"
+input = "<p><u>a<img>b</u>c</p>"
+
+[[case]]
+id = "inline-walls-049"
+input = "<u>a<p>p</p>b</u>c"
+
+[[case]]
+id = "inline-walls-050"
+input = "<div><u>a<p>p</p>b</u>c</div>"
+
+[[case]]
+id = "inline-walls-051"
+input = "<p><u>a<button a=\"1\"></button>b</u>c</p>"
+
+[[case]]
+id = "inline-walls-052"
+input = "<u>a<li>b</u>c"
+
+[[case]]
+id = "inline-walls-053"
+input = "<div><u>a<li>b</u>c</div>"
+
+[[case]]
+id = "inline-walls-054"
+input = "<p><ins>a</div>b</ins>c</p>"
+
+[[case]]
+id = "inline-walls-055"
+input = "<ins>a<video>x</video>b</ins>c"
+
+[[case]]
+id = "inline-walls-056"
+input = "<div><ins>a<video>x</video>b</ins>c</div>"
+
+[[case]]
+id = "inline-walls-057"
+input = "<p><ins>a<script>s</script>b</ins>c</p>"
+
+[[case]]
+id = "inline-walls-058"
+input = "<ins>a<img>b</ins>c"
+
+[[case]]
+id = "inline-walls-059"
+input = "<div><ins>a<img>b</ins>c</div>"
+
+[[case]]
+id = "inline-walls-060"
+input = "<p><ins>a<p>p</p>b</ins>c</p>"
+
+[[case]]
+id = "inline-walls-061"
+input = "<ins>a<button a=\"1\"></button>b</ins>c"
+
+[[case]]
+id = "inline-walls-062"
+input = "<div><ins>a<button a=\"1\"></button>b</ins>c</div>"
+
+[[case]]
+id = "inline-walls-063"
+input = "<p><ins>a<li>b</ins>c</p>"
+
+[[case]]
+id = "inline-walls-064"
+input = "<s>a</div>b</s>c"
+
+[[case]]
+id = "inline-walls-065"
+input = "<div><s>a</div>b</s>c</div>"
+
+[[case]]
+id = "inline-walls-066"
+input = "<p><s>a<video>x</video>b</s>c</p>"
+
+[[case]]
+id = "inline-walls-067"
+input = "<s>a<script>s</script>b</s>c"
+
+[[case]]
+id = "inline-walls-068"
+input = "<div><s>a<script>s</script>b</s>c</div>"
+
+[[case]]
+id = "inline-walls-069"
+input = "<p><s>a<img>b</s>c</p>"
+
+[[case]]
+id = "inline-walls-070"
+input = "<s>a<p>p</p>b</s>c"
+
+[[case]]
+id = "inline-walls-071"
+input = "<div><s>a<p>p</p>b</s>c</div>"
+
+[[case]]
+id = "inline-walls-072"
+input = "<p><s>a<button a=\"1\"></button>b</s>c</p>"
+
+[[case]]
+id = "inline-walls-073"
+input = "<s>a<li>b</s>c"
+
+[[case]]
+id = "inline-walls-074"
+input = "<div><s>a<li>b</s>c</div>"
+
+[[case]]
+id = "inline-walls-075"
+input = "<p><strike>a</div>b</strike>c</p>"
+
+[[case]]
+id = "inline-walls-076"
+input = "<strike>a<video>x</video>b</strike>c"
+
+[[case]]
+id = "inline-walls-077"
+input = "<div><strike>a<video>x</video>b</strike>c</div>"
+
+[[case]]
+id = "inline-walls-078"
+input = "<p><strike>a<script>s</script>b</strike>c</p>"
+
+[[case]]
+id = "inline-walls-079"
+input = "<strike>a<img>b</strike>c"
+
+[[case]]
+id = "inline-walls-080"
+input = "<div><strike>a<img>b</strike>c</div>"
+
+[[case]]
+id = "inline-walls-081"
+input = "<p><strike>a<p>p</p>b</strike>c</p>"
+
+[[case]]
+id = "inline-walls-082"
+input = "<strike>a<button a=\"1\"></button>b</strike>c"
+
+[[case]]
+id = "inline-walls-083"
+input = "<div><strike>a<button a=\"1\"></button>b</strike>c</div>"
+
+[[case]]
+id = "inline-walls-084"
+input = "<p><strike>a<li>b</strike>c</p>"
+
+[[case]]
+id = "inline-walls-085"
+input = "<del>a</div>b</del>c"
+
+[[case]]
+id = "inline-walls-086"
+input = "<div><del>a</div>b</del>c</div>"
+
+[[case]]
+id = "inline-walls-087"
+input = "<p><del>a<video>x</video>b</del>c</p>"
+
+[[case]]
+id = "inline-walls-088"
+input = "<del>a<script>s</script>b</del>c"
+
+[[case]]
+id = "inline-walls-089"
+input = "<div><del>a<script>s</script>b</del>c</div>"
+
+[[case]]
+id = "inline-walls-090"
+input = "<p><del>a<img>b</del>c</p>"
+
+[[case]]
+id = "inline-walls-091"
+input = "<del>a<p>p</p>b</del>c"
+
+[[case]]
+id = "inline-walls-092"
+input = "<div><del>a<p>p</p>b</del>c</div>"
+
+[[case]]
+id = "inline-walls-093"
+input = "<p><del>a<button a=\"1\"></button>b</del>c</p>"
+
+[[case]]
+id = "inline-walls-094"
+input = "<del>a<li>b</del>c"
+
+[[case]]
+id = "inline-walls-095"
+input = "<div><del>a<li>b</del>c</div>"
+
+[[case]]
+id = "inline-walls-096"
+input = "<p><sub>a</div>b</sub>c</p>"
+
+[[case]]
+id = "inline-walls-097"
+input = "<sub>a<video>x</video>b</sub>c"
+
+[[case]]
+id = "inline-walls-098"
+input = "<div><sub>a<video>x</video>b</sub>c</div>"
+
+[[case]]
+id = "inline-walls-099"
+input = "<p><sub>a<script>s</script>b</sub>c</p>"
+
+[[case]]
+id = "inline-walls-100"
+input = "<sub>a<img>b</sub>c"
+
+[[case]]
+id = "inline-walls-101"
+input = "<div><sub>a<img>b</sub>c</div>"
+
+[[case]]
+id = "inline-walls-102"
+input = "<p><sub>a<p>p</p>b</sub>c</p>"
+
+[[case]]
+id = "inline-walls-103"
+input = "<sub>a<button a=\"1\"></button>b</sub>c"
+
+[[case]]
+id = "inline-walls-104"
+input = "<div><sub>a<button a=\"1\"></button>b</sub>c</div>"
+
+[[case]]
+id = "inline-walls-105"
+input = "<p><sub>a<li>b</sub>c</p>"
+
+[[case]]
+id = "inline-walls-106"
+input = "<sup>a</div>b</sup>c"
+
+[[case]]
+id = "inline-walls-107"
+input = "<div><sup>a</div>b</sup>c</div>"
+
+[[case]]
+id = "inline-walls-108"
+input = "<p><sup>a<video>x</video>b</sup>c</p>"
+
+[[case]]
+id = "inline-walls-109"
+input = "<sup>a<script>s</script>b</sup>c"
+
+[[case]]
+id = "inline-walls-110"
+input = "<div><sup>a<script>s</script>b</sup>c</div>"
+
+[[case]]
+id = "inline-walls-111"
+input = "<p><sup>a<img>b</sup>c</p>"
+
+[[case]]
+id = "inline-walls-112"
+input = "<sup>a<p>p</p>b</sup>c"
+
+[[case]]
+id = "inline-walls-113"
+input = "<div><sup>a<p>p</p>b</sup>c</div>"
+
+[[case]]
+id = "inline-walls-114"
+input = "<p><sup>a<button a=\"1\"></button>b</sup>c</p>"
+
+[[case]]
+id = "inline-walls-115"
+input = "<sup>a<li>b</sup>c"
+
+[[case]]
+id = "inline-walls-116"
+input = "<div><sup>a<li>b</sup>c</div>"
+
+[[case]]
+id = "inline-walls-117"
+input = "<p><small>a</div>b</small>c</p>"
+
+[[case]]
+id = "inline-walls-118"
+input = "<small>a<video>x</video>b</small>c"
+
+[[case]]
+id = "inline-walls-119"
+input = "<div><small>a<video>x</video>b</small>c</div>"
+
+[[case]]
+id = "inline-walls-120"
+input = "<p><small>a<script>s</script>b</small>c</p>"
+
+[[case]]
+id = "inline-walls-121"
+input = "<small>a<img>b</small>c"
+
+[[case]]
+id = "inline-walls-122"
+input = "<div><small>a<img>b</small>c</div>"
+
+[[case]]
+id = "inline-walls-123"
+input = "<p><small>a<p>p</p>b</small>c</p>"
+
+[[case]]
+id = "inline-walls-124"
+input = "<small>a<button a=\"1\"></button>b</small>c"
+
+[[case]]
+id = "inline-walls-125"
+input = "<div><small>a<button a=\"1\"></button>b</small>c</div>"
+
+[[case]]
+id = "inline-walls-126"
+input = "<p><small>a<li>b</small>c</p>"
+
+[[case]]
+id = "inline-walls-127"
+input = "<mark>a</div>b</mark>c"
+
+[[case]]
+id = "inline-walls-128"
+input = "<div><mark>a</div>b</mark>c</div>"
+
+[[case]]
+id = "inline-walls-129"
+input = "<p><mark>a<video>x</video>b</mark>c</p>"
+
+[[case]]
+id = "inline-walls-130"
+input = "<mark>a<script>s</script>b</mark>c"
+
+[[case]]
+id = "inline-walls-131"
+input = "<div><mark>a<script>s</script>b</mark>c</div>"
+
+[[case]]
+id = "inline-walls-132"
+input = "<p><mark>a<img>b</mark>c</p>"
+
+[[case]]
+id = "inline-walls-133"
+input = "<mark>a<p>p</p>b</mark>c"
+
+[[case]]
+id = "inline-walls-134"
+input = "<div><mark>a<p>p</p>b</mark>c</div>"
+
+[[case]]
+id = "inline-walls-135"
+input = "<p><mark>a<button a=\"1\"></button>b</mark>c</p>"
+
+[[case]]
+id = "inline-walls-136"
+input = "<mark>a<li>b</mark>c"
+
+[[case]]
+id = "inline-walls-137"
+input = "<div><mark>a<li>b</mark>c</div>"
+
+[[case]]
+id = "inline-walls-138"
+input = "<p><kbd>a</div>b</kbd>c</p>"
+
+[[case]]
+id = "inline-walls-139"
+input = "<kbd>a<video>x</video>b</kbd>c"
+
+[[case]]
+id = "inline-walls-140"
+input = "<div><kbd>a<video>x</video>b</kbd>c</div>"
+
+[[case]]
+id = "inline-walls-141"
+input = "<p><kbd>a<script>s</script>b</kbd>c</p>"
+
+[[case]]
+id = "inline-walls-142"
+input = "<kbd>a<img>b</kbd>c"
+
+[[case]]
+id = "inline-walls-143"
+input = "<div><kbd>a<img>b</kbd>c</div>"
+
+[[case]]
+id = "inline-walls-144"
+input = "<p><kbd>a<p>p</p>b</kbd>c</p>"
+
+[[case]]
+id = "inline-walls-145"
+input = "<kbd>a<button a=\"1\"></button>b</kbd>c"
+
+[[case]]
+id = "inline-walls-146"
+input = "<div><kbd>a<button a=\"1\"></button>b</kbd>c</div>"
+
+[[case]]
+id = "inline-walls-147"
+input = "<p><kbd>a<li>b</kbd>c</p>"
+
+[[case]]
+id = "inline-walls-148"
+input = "<dfn>a</div>b</dfn>c"
+
+[[case]]
+id = "inline-walls-149"
+input = "<div><dfn>a</div>b</dfn>c</div>"
+
+[[case]]
+id = "inline-walls-150"
+input = "<p><dfn>a<video>x</video>b</dfn>c</p>"
+
+[[case]]
+id = "inline-walls-151"
+input = "<dfn>a<script>s</script>b</dfn>c"
+
+[[case]]
+id = "inline-walls-152"
+input = "<div><dfn>a<script>s</script>b</dfn>c</div>"
+
+[[case]]
+id = "inline-walls-153"
+input = "<p><dfn>a<img>b</dfn>c</p>"
+
+[[case]]
+id = "inline-walls-154"
+input = "<dfn>a<p>p</p>b</dfn>c"
+
+[[case]]
+id = "inline-walls-155"
+input = "<div><dfn>a<p>p</p>b</dfn>c</div>"
+
+[[case]]
+id = "inline-walls-156"
+input = "<p><dfn>a<button a=\"1\"></button>b</dfn>c</p>"
+
+[[case]]
+id = "inline-walls-157"
+input = "<dfn>a<li>b</dfn>c"
+
+[[case]]
+id = "inline-walls-158"
+input = "<div><dfn>a<li>b</dfn>c</div>"
+
+[[case]]
+id = "inline-walls-159"
+input = "<p><abbr>a</div>b</abbr>c</p>"
+
+[[case]]
+id = "inline-walls-160"
+input = "<abbr>a<video>x</video>b</abbr>c"
+
+[[case]]
+id = "inline-walls-161"
+input = "<div><abbr>a<video>x</video>b</abbr>c</div>"
+
+[[case]]
+id = "inline-walls-162"
+input = "<p><abbr>a<script>s</script>b</abbr>c</p>"
+
+[[case]]
+id = "inline-walls-163"
+input = "<abbr>a<img>b</abbr>c"
+
+[[case]]
+id = "inline-walls-164"
+input = "<div><abbr>a<img>b</abbr>c</div>"
+
+[[case]]
+id = "inline-walls-165"
+input = "<p><abbr>a<p>p</p>b</abbr>c</p>"
+
+[[case]]
+id = "inline-walls-166"
+input = "<abbr>a<button a=\"1\"></button>b</abbr>c"
+
+[[case]]
+id = "inline-walls-167"
+input = "<div><abbr>a<button a=\"1\"></button>b</abbr>c</div>"
+
+[[case]]
+id = "inline-walls-168"
+input = "<p><abbr>a<li>b</abbr>c</p>"
+
+[[case]]
+id = "inline-walls-169"
+input = "<bdo>a</div>b</bdo>c"
+
+[[case]]
+id = "inline-walls-170"
+input = "<div><bdo>a</div>b</bdo>c</div>"
+
+[[case]]
+id = "inline-walls-171"
+input = "<p><bdo>a<video>x</video>b</bdo>c</p>"
+
+[[case]]
+id = "inline-walls-172"
+input = "<bdo>a<script>s</script>b</bdo>c"
+
+[[case]]
+id = "inline-walls-173"
+input = "<div><bdo>a<script>s</script>b</bdo>c</div>"
+
+[[case]]
+id = "inline-walls-174"
+input = "<p><bdo>a<img>b</bdo>c</p>"
+
+[[case]]
+id = "inline-walls-175"
+input = "<bdo>a<p>p</p>b</bdo>c"
+
+[[case]]
+id = "inline-walls-176"
+input = "<div><bdo>a<p>p</p>b</bdo>c</div>"
+
+[[case]]
+id = "inline-walls-177"
+input = "<p><bdo>a<button a=\"1\"></button>b</bdo>c</p>"
+
+[[case]]
+id = "inline-walls-178"
+input = "<bdo>a<li>b</bdo>c"
+
+[[case]]
+id = "inline-walls-179"
+input = "<div><bdo>a<li>b</bdo>c</div>"
+
+[[case]]
+id = "inline-walls-180"
+input = "<p><q>a</div>b</q>c</p>"
+
+[[case]]
+id = "inline-walls-181"
+input = "<q>a<video>x</video>b</q>c"
+
+[[case]]
+id = "inline-walls-182"
+input = "<div><q>a<video>x</video>b</q>c</div>"
+
+[[case]]
+id = "inline-walls-183"
+input = "<p><q>a<script>s</script>b</q>c</p>"
+
+[[case]]
+id = "inline-walls-184"
+input = "<q>a<img>b</q>c"
+
+[[case]]
+id = "inline-walls-185"
+input = "<div><q>a<img>b</q>c</div>"
+
+[[case]]
+id = "inline-walls-186"
+input = "<p><q>a<p>p</p>b</q>c</p>"
+
+[[case]]
+id = "inline-walls-187"
+input = "<q>a<button a=\"1\"></button>b</q>c"
+
+[[case]]
+id = "inline-walls-188"
+input = "<div><q>a<button a=\"1\"></button>b</q>c</div>"
+
+[[case]]
+id = "inline-walls-189"
+input = "<p><q>a<li>b</q>c</p>"
+
+[[case]]
+id = "inline-walls-190"
+input = "<a>a</div>b</a>c"
+
+[[case]]
+id = "inline-walls-191"
+input = "<div><a>a</div>b</a>c</div>"
+
+[[case]]
+id = "inline-walls-192"
+input = "<p><a>a<video>x</video>b</a>c</p>"
+
+[[case]]
+id = "inline-walls-193"
+input = "<a>a<script>s</script>b</a>c"
+
+[[case]]
+id = "inline-walls-194"
+input = "<div><a>a<script>s</script>b</a>c</div>"
+
+[[case]]
+id = "inline-walls-195"
+input = "<p><a>a<img>b</a>c</p>"
+
+[[case]]
+id = "inline-walls-196"
+input = "<a>a<p>p</p>b</a>c"
+
+[[case]]
+id = "inline-walls-197"
+input = "<div><a>a<p>p</p>b</a>c</div>"
+
+[[case]]
+id = "inline-walls-198"
+input = "<p><a>a<button a=\"1\"></button>b</a>c</p>"
+
+[[case]]
+id = "inline-walls-199"
+input = "<a>a<li>b</a>c"
+
+[[case]]
+id = "inline-walls-200"
+input = "<div><a>a<li>b</a>c</div>"
+
+[[case]]
+id = "inline-walls-201"
+input = "<p><code>a</div>b</code>c</p>"
+
+[[case]]
+id = "inline-walls-202"
+input = "<code>a<video>x</video>b</code>c"
+
+[[case]]
+id = "inline-walls-203"
+input = "<div><code>a<video>x</video>b</code>c</div>"
+
+[[case]]
+id = "inline-walls-204"
+input = "<p><code>a<script>s</script>b</code>c</p>"
+
+[[case]]
+id = "inline-walls-205"
+input = "<code>a<img>b</code>c"
+
+[[case]]
+id = "inline-walls-206"
+input = "<div><code>a<img>b</code>c</div>"
+
+[[case]]
+id = "inline-walls-207"
+input = "<p><code>a<p>p</p>b</code>c</p>"
+
+[[case]]
+id = "inline-walls-208"
+input = "<code>a<button a=\"1\"></button>b</code>c"
+
+[[case]]
+id = "inline-walls-209"
+input = "<div><code>a<button a=\"1\"></button>b</code>c</div>"
+
+[[case]]
+id = "inline-walls-210"
+input = "<p><code>a<li>b</code>c</p>"
+
+[[case]]
+id = "inline-walls-211"
+input = "<tt>a</div>b</tt>c"
+
+[[case]]
+id = "inline-walls-212"
+input = "<div><tt>a</div>b</tt>c</div>"
+
+[[case]]
+id = "inline-walls-213"
+input = "<p><tt>a<video>x</video>b</tt>c</p>"
+
+[[case]]
+id = "inline-walls-214"
+input = "<tt>a<script>s</script>b</tt>c"
+
+[[case]]
+id = "inline-walls-215"
+input = "<div><tt>a<script>s</script>b</tt>c</div>"
+
+[[case]]
+id = "inline-walls-216"
+input = "<p><tt>a<img>b</tt>c</p>"
+
+[[case]]
+id = "inline-walls-217"
+input = "<tt>a<p>p</p>b</tt>c"
+
+[[case]]
+id = "inline-walls-218"
+input = "<div><tt>a<p>p</p>b</tt>c</div>"
+
+[[case]]
+id = "inline-walls-219"
+input = "<p><tt>a<button a=\"1\"></button>b</tt>c</p>"
+
+[[case]]
+id = "inline-walls-220"
+input = "<tt>a<li>b</tt>c"
+
+[[case]]
+id = "inline-walls-221"
+input = "<div><tt>a<li>b</tt>c</div>"
+
+[[case]]
+id = "inline-walls-222"
+input = "<p><samp>a</div>b</samp>c</p>"
+
+[[case]]
+id = "inline-walls-223"
+input = "<samp>a<video>x</video>b</samp>c"
+
+[[case]]
+id = "inline-walls-224"
+input = "<div><samp>a<video>x</video>b</samp>c</div>"
+
+[[case]]
+id = "inline-walls-225"
+input = "<p><samp>a<script>s</script>b</samp>c</p>"
+
+[[case]]
+id = "inline-walls-226"
+input = "<samp>a<img>b</samp>c"
+
+[[case]]
+id = "inline-walls-227"
+input = "<div><samp>a<img>b</samp>c</div>"
+
+[[case]]
+id = "inline-walls-228"
+input = "<p><samp>a<p>p</p>b</samp>c</p>"
+
+[[case]]
+id = "inline-walls-229"
+input = "<samp>a<button a=\"1\"></button>b</samp>c"
+
+[[case]]
+id = "inline-walls-230"
+input = "<div><samp>a<button a=\"1\"></button>b</samp>c</div>"
+
+[[case]]
+id = "inline-walls-231"
+input = "<p><samp>a<li>b</samp>c</p>"
+
+[[case]]
+id = "inline-walls-232"
+input = "<var>a</div>b</var>c"
+
+[[case]]
+id = "inline-walls-233"
+input = "<div><var>a</div>b</var>c</div>"
+
+[[case]]
+id = "inline-walls-234"
+input = "<p><var>a<video>x</video>b</var>c</p>"
+
+[[case]]
+id = "inline-walls-235"
+input = "<var>a<script>s</script>b</var>c"
+
+[[case]]
+id = "inline-walls-236"
+input = "<div><var>a<script>s</script>b</var>c</div>"
+
+[[case]]
+id = "inline-walls-237"
+input = "<p><var>a<img>b</var>c</p>"
+
+[[case]]
+id = "inline-walls-238"
+input = "<var>a<p>p</p>b</var>c"
+
+[[case]]
+id = "inline-walls-239"
+input = "<div><var>a<p>p</p>b</var>c</div>"
+
+[[case]]
+id = "inline-walls-240"
+input = "<p><var>a<button a=\"1\"></button>b</var>c</p>"
+
+[[case]]
+id = "inline-walls-241"
+input = "<var>a<li>b</var>c"
+
+[[case]]
+id = "inline-walls-242"
+input = "<div><var>a<li>b</var>c</div>"
+
+[[case]]
+id = "inline-walls-243"
+input = "<p><span>a</div>b</span>c</p>"
+
+[[case]]
+id = "inline-walls-244"
+input = "<span>a<video>x</video>b</span>c"
+
+[[case]]
+id = "inline-walls-245"
+input = "<div><span>a<video>x</video>b</span>c</div>"
+
+[[case]]
+id = "inline-walls-246"
+input = "<p><span>a<script>s</script>b</span>c</p>"
+
+[[case]]
+id = "inline-walls-247"
+input = "<span>a<img>b</span>c"
+
+[[case]]
+id = "inline-walls-248"
+input = "<div><span>a<img>b</span>c</div>"
+
+[[case]]
+id = "inline-walls-249"
+input = "<p><span>a<p>p</p>b</span>c</p>"
+
+[[case]]
+id = "inline-walls-250"
+input = "<span>a<button a=\"1\"></button>b</span>c"
+
+[[case]]
+id = "inline-walls-251"
+input = "<div><span>a<button a=\"1\"></button>b</span>c</div>"
+
+[[case]]
+id = "inline-walls-252"
+input = "<p><span>a<li>b</span>c</p>"
+
+[[case]]
+id = "inline-walls-253"
+input = "<cite>a</div>b</cite>c"
+
+[[case]]
+id = "inline-walls-254"
+input = "<div><cite>a</div>b</cite>c</div>"
+
+[[case]]
+id = "inline-walls-255"
+input = "<p><cite>a<video>x</video>b</cite>c</p>"
+
+[[case]]
+id = "inline-walls-256"
+input = "<cite>a<script>s</script>b</cite>c"
+
+[[case]]
+id = "inline-walls-257"
+input = "<div><cite>a<script>s</script>b</cite>c</div>"
+
+[[case]]
+id = "inline-walls-258"
+input = "<p><cite>a<img>b</cite>c</p>"
+
+[[case]]
+id = "inline-walls-259"
+input = "<cite>a<p>p</p>b</cite>c"
+
+[[case]]
+id = "inline-walls-260"
+input = "<div><cite>a<p>p</p>b</cite>c</div>"
+
+[[case]]
+id = "inline-walls-261"
+input = "<p><cite>a<button a=\"1\"></button>b</cite>c</p>"
+
+[[case]]
+id = "inline-walls-262"
+input = "<cite>a<li>b</cite>c"
+
+[[case]]
+id = "inline-walls-263"
+input = "<div><cite>a<li>b</cite>c</div>"
+
+[[case]]
+id = "inline-walls-264"
+input = "<p><label>a</div>b</label>c</p>"
+
+[[case]]
+id = "inline-walls-265"
+input = "<label>a<video>x</video>b</label>c"
+
+[[case]]
+id = "inline-walls-266"
+input = "<div><label>a<video>x</video>b</label>c</div>"
+
+[[case]]
+id = "inline-walls-267"
+input = "<p><label>a<script>s</script>b</label>c</p>"
+
+[[case]]
+id = "inline-walls-268"
+input = "<label>a<img>b</label>c"
+
+[[case]]
+id = "inline-walls-269"
+input = "<div><label>a<img>b</label>c</div>"
+
+[[case]]
+id = "inline-walls-270"
+input = "<p><label>a<p>p</p>b</label>c</p>"
+
+[[case]]
+id = "inline-walls-271"
+input = "<label>a<button a=\"1\"></button>b</label>c"
+
+[[case]]
+id = "inline-walls-272"
+input = "<div><label>a<button a=\"1\"></button>b</label>c</div>"
+
+[[case]]
+id = "inline-walls-273"
+input = "<p><label>a<li>b</label>c</p>"
+
+[[case]]
+id = "inline-walls-274"
+input = "<font>a</div>b</font>c"
+
+[[case]]
+id = "inline-walls-275"
+input = "<div><font>a</div>b</font>c</div>"
+
+[[case]]
+id = "inline-walls-276"
+input = "<p><font>a<video>x</video>b</font>c</p>"
+
+[[case]]
+id = "inline-walls-277"
+input = "<font>a<script>s</script>b</font>c"
+
+[[case]]
+id = "inline-walls-278"
+input = "<div><font>a<script>s</script>b</font>c</div>"
+
+[[case]]
+id = "inline-walls-279"
+input = "<p><font>a<img>b</font>c</p>"
+
+[[case]]
+id = "inline-walls-280"
+input = "<font>a<p>p</p>b</font>c"
+
+[[case]]
+id = "inline-walls-281"
+input = "<div><font>a<p>p</p>b</font>c</div>"
+
+[[case]]
+id = "inline-walls-282"
+input = "<p><font>a<button a=\"1\"></button>b</font>c</p>"
+
+[[case]]
+id = "inline-walls-283"
+input = "<font>a<li>b</font>c"
+
+[[case]]
+id = "inline-walls-284"
+input = "<div><font>a<li>b</font>c</div>"
+
+[[case]]
+id = "sweepfix-001"
+from = "html"
+input = "<div epub:type=\"x\">a</div>"
+
+[[case]]
+id = "sweepfix-002"
+from = "html"
+input = "<span epub:type=\"x\">a</span>"
+
+[[case]]
+id = "sweepfix-003"
+from = "html"
+input = "<h1 epub:type=\"x\">a</h1>"
+
+[[case]]
+id = "sweepfix-004"
+from = "html"
+input = "<p epub:type=\"x\">a</p>"
+
+[[case]]
+id = "sweepfix-005"
+from = "html"
+input = "<section epub:type=\"x\"><p>a</p></section>"
+
+[[case]]
+id = "sweepfix-006"
+from = "html"
+input = "<h1 epub:type=\"x\" class=\"c\">a</h1>"
+
+[[case]]
+id = "sweepfix-007"
+from = "html"
+input = "<div epub:type=\"x y\" class=\"c\">a</div>"
+
+[[case]]
+id = "sweepfix-008"
+from = "html"
+input = "<a href=\"u\" epub:type=\"x\">a</a>"
+
+[[case]]
+id = "sweepfix-009"
+from = "html"
+input = "<ul epub:type=\"x\"><li>a</li></ul>"
+
+[[case]]
+id = "sweepfix-010"
+from = "html"
+input = "<table epub:type=\"x\"><tr><td>a</td></tr></table>"
+
+[[case]]
+id = "sweepfix-011"
+from = "html"
+input = "<img src=\"i\" epub:type=\"x\">"
+
+[[case]]
+id = "sweepfix-012"
+from = "html"
+input = "<code epub:type=\"x\">a</code>"
+
+[[case]]
+id = "sweepfix-013"
+from = "html"
+input = "<aside epub:type=\"x\"><p>a</p></aside>"
+
+[[case]]
+id = "sweepfix-014"
+from = "html+epub_html_exts"
+input = "<span epub:type=\"x\">a</span>"
+
+[[case]]
+id = "sweepfix-015"
+from = "html+epub_html_exts"
+input = "<h1 epub:type=\"x\">a</h1>"
+
+[[case]]
+id = "sweepfix-016"
+from = "html+epub_html_exts"
+input = "<p epub:type=\"x\">a</p>"
+
+[[case]]
+id = "sweepfix-017"
+from = "html+epub_html_exts"
+input = "<h1 epub:type=\"x\" class=\"c\">a</h1>"
+
+[[case]]
+id = "sweepfix-018"
+from = "html+epub_html_exts"
+input = "<a href=\"u\" epub:type=\"x\">a</a>"
+
+[[case]]
+id = "sweepfix-019"
+from = "html+epub_html_exts"
+input = "<ul epub:type=\"x\"><li>a</li></ul>"
+
+[[case]]
+id = "sweepfix-020"
+from = "html+epub_html_exts"
+input = "<table epub:type=\"x\"><tr><td>a</td></tr></table>"
+
+[[case]]
+id = "sweepfix-021"
+from = "html+epub_html_exts"
+input = "<img src=\"i\" epub:type=\"x\">"
+
+[[case]]
+id = "sweepfix-022"
+from = "html+epub_html_exts"
+input = "<code epub:type=\"x\">a</code>"
+
+[[case]]
+id = "sweepfix-023"
+from = "html+smart"
+input = "<pre>a -- b... \"q\" $m$ \\(n\\) \\ref{r}</pre>"
+
+[[case]]
+id = "sweepfix-024"
+from = "html+smart"
+input = "<pre><code>a -- b $m$</code></pre>"
+
+[[case]]
+id = "sweepfix-025"
+from = "html+smart"
+input = "<pre><b>a -- \"q\"</b></pre>"
+
+[[case]]
+id = "sweepfix-026"
+from = "html+smart"
+input = "<pre>\n$x$\n</pre>"
+
+[[case]]
+id = "sweepfix-027"
+from = "html+tex_math_dollars"
+input = "<pre>a -- b... \"q\" $m$ \\(n\\) \\ref{r}</pre>"
+
+[[case]]
+id = "sweepfix-028"
+from = "html+tex_math_dollars"
+input = "<pre><code>a -- b $m$</code></pre>"
+
+[[case]]
+id = "sweepfix-029"
+from = "html+tex_math_dollars"
+input = "<pre><b>a -- \"q\"</b></pre>"
+
+[[case]]
+id = "sweepfix-030"
+from = "html+tex_math_dollars"
+input = "<pre>\n$x$\n</pre>"
+
+[[case]]
+id = "sweepfix-031"
+from = "html+tex_math_single_backslash"
+input = "<pre>a -- b... \"q\" $m$ \\(n\\) \\ref{r}</pre>"
+
+[[case]]
+id = "sweepfix-032"
+from = "html+tex_math_single_backslash"
+input = "<pre><code>a -- b $m$</code></pre>"
+
+[[case]]
+id = "sweepfix-033"
+from = "html+tex_math_single_backslash"
+input = "<pre><b>a -- \"q\"</b></pre>"
+
+[[case]]
+id = "sweepfix-034"
+from = "html+tex_math_single_backslash"
+input = "<pre>\n$x$\n</pre>"
+
+[[case]]
+id = "sweepfix-035"
+from = "html+raw_tex"
+input = "<pre>a -- b... \"q\" $m$ \\(n\\) \\ref{r}</pre>"
+
+[[case]]
+id = "sweepfix-036"
+from = "html+raw_tex"
+input = "<pre><code>a -- b $m$</code></pre>"
+
+[[case]]
+id = "sweepfix-037"
+from = "html+raw_tex"
+input = "<pre><b>a -- \"q\"</b></pre>"
+
+[[case]]
+id = "sweepfix-038"
+from = "html+raw_tex"
+input = "<pre>\n$x$\n</pre>"
+
+[[case]]
+id = "sweepfix-039"
+from = "html+smart+tex_math_dollars"
+input = "<pre>a -- b... \"q\" $m$ \\(n\\) \\ref{r}</pre>"
+
+[[case]]
+id = "sweepfix-040"
+from = "html+smart+tex_math_dollars"
+input = "<pre><code>a -- b $m$</code></pre>"
+
+[[case]]
+id = "sweepfix-041"
+from = "html+smart+tex_math_dollars"
+input = "<pre><b>a -- \"q\"</b></pre>"
+
+[[case]]
+id = "sweepfix-042"
+from = "html+smart+tex_math_dollars"
+input = "<pre>\n$x$\n</pre>"
+
+[[case]]
+id = "sweepfix-043"
+input = "<p><svg id=\"i\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-044"
+input = "<svg id=\"i\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-045"
+input = "<p><svg class=\"c\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-046"
+input = "<svg class=\"c\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-047"
+input = "<p><svg style=\"color:red\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-048"
+input = "<svg style=\"color:red\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-049"
+input = "<p><svg width=\"10\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-050"
+input = "<svg width=\"10\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-051"
+input = "<p><svg height=\"5\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-052"
+input = "<svg height=\"5\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-053"
+input = "<p><svg data-k=\"v\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-054"
+input = "<svg data-k=\"v\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-055"
+input = "<p><svg title=\"t\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-056"
+input = "<svg title=\"t\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-057"
+input = "<p><svg lang=\"en\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-058"
+input = "<svg lang=\"en\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-059"
+input = "<p><svg id=\"i\" class=\"c d\" width=\"10\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-060"
+input = "<svg id=\"i\" class=\"c d\" width=\"10\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-061"
+input = "<p><svg xmlns=\"http://www.w3.org/2000/svg\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-062"
+input = "<svg xmlns=\"http://www.w3.org/2000/svg\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-063"
+input = "<p><svg role=\"img\"><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-064"
+input = "<svg role=\"img\"><rect/></svg>"
+
+[[case]]
+id = "sweepfix-065"
+input = "<p><svg><text>a &amp; b &lt; c</text></svg></p>"
+
+[[case]]
+id = "sweepfix-066"
+input = "<p><svg><text>&#128;&#x41;</text></svg></p>"
+
+[[case]]
+id = "sweepfix-067"
+input = "<p><svg><text  x = \"1\" >a</text></svg></p>"
+
+[[case]]
+id = "sweepfix-068"
+input = "<p><svg><rect x='1'/></svg></p>"
+
+[[case]]
+id = "sweepfix-069"
+input = "<p><SVG><Rect/></SVG></p>"
+
+[[case]]
+id = "sweepfix-070"
+input = "<p><svg><!-- c --><rect/></svg></p>"
+
+[[case]]
+id = "sweepfix-071"
+input = "<p><math> \"q\" </p>"
+
+[[case]]
+id = "sweepfix-072"
+input = "<p>a<math>b"
+
+[[case]]
+id = "sweepfix-073"
+input = "<math>x"
+
+[[case]]
+id = "sweepfix-074"
+input = "<p><math><mi>x</mi></p>"
+
+[[case]]
+id = "sweepfix-075"
+input = "<p>a <math>b</p> c"
+
+[[case]]
+id = "sweepfix-076"
+input = "<p><svg><g></g><text>a</text></svg></p>"
+
+[[case]]
+id = "sweepfix-077"
+input = "<p><svg><g a=\"1\"></g></svg></p>"
+
+[[case]]
+id = "sweepfix-078"
+input = "<p><svg></svg></p>"
+
+[[case]]
+id = "sweepfix-079"
+input = "<p><svg><text>'q' \"r\" &gt;</text></svg></p>"
+
+[[case]]
+id = "sweepfix-080"
+input = "<p><svg><style>a&b</style></svg></p>"
+
+[[case]]
+id = "sweepfix-081"
+input = "<p><svg><script>a&b</script></svg></p>"
+
+[[case]]
+id = "sweepfix-082"
+from = "html+smart"
+input = "<pre>'a' \"b\" a--b</pre>"
+
+[[case]]
+id = "sweepfix-083"
+from = "html+smart"
+input = "<pre>\"a b\"</pre>"
+
+[[case]]
+id = "sweepfix-084"
+from = "html+smart"
+input = "<pre>$a b$</pre>"
+
+[[case]]
+id = "sweepfix-085"
+from = "html+smart"
+input = "<pre>it's\n\"x\ny\"</pre>"
+
+[[case]]
+id = "sweepfix-086"
+from = "html+smart+raw_tex"
+input = "<pre>'a' \"b\" a--b</pre>"
+
+[[case]]
+id = "sweepfix-087"
+from = "html+smart+raw_tex"
+input = "<pre>\"a b\"</pre>"
+
+[[case]]
+id = "sweepfix-088"
+from = "html+smart+raw_tex"
+input = "<pre>$a b$</pre>"
+
+[[case]]
+id = "sweepfix-089"
+from = "html+smart+raw_tex"
+input = "<pre>it's\n\"x\ny\"</pre>"
+
+[[case]]
+id = "sweepfix-090"
+from = "html+tex_math_dollars"
+input = "<pre>'a' \"b\" a--b</pre>"
+
+[[case]]
+id = "sweepfix-091"
+from = "html+tex_math_dollars"
+input = "<pre>\"a b\"</pre>"
+
+[[case]]
+id = "sweepfix-092"
+from = "html+tex_math_dollars"
+input = "<pre>$a b$</pre>"
+
+[[case]]
+id = "sweepfix-093"
+from = "html+tex_math_dollars"
+input = "<pre>it's\n\"x\ny\"</pre>"
+
+[[case]]
+id = "sweepfix-094"
+input = "<main role=\"main\"><p>a</p></main>"
+
+[[case]]
+id = "sweepfix-095"
+input = "<main role=\"x\"><p>a</p></main>"
+
+[[case]]
+id = "sweepfix-096"
+input = "<p>q</p><main role=\"doc-noteref\"><p>a</p></main>"
+
+[[case]]
+id = "sweepfix-097"
+input = "<main id=\"m\" role=\"main\">a</main>"

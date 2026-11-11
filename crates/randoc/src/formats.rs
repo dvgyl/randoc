@@ -18,6 +18,7 @@ const READERS: &[ReaderLookup] = &[
     json_format::reader,
     randoc_native::reader,
     randoc_citeproc::csljson::reader,
+    randoc_html_reader::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.

@@ -1,0 +1,1027 @@
+# Elements without a close tag, stray tags and wrong nesting.
+from = "html"
+to = []
+
+[[case]]
+id = "malformed-001"
+input = "pre <div>text"
+
+[[case]]
+id = "malformed-002"
+input = "<p>pre</p><div>text\n\n"
+
+[[case]]
+id = "malformed-003"
+input = "pre <p>text"
+
+[[case]]
+id = "malformed-004"
+input = "<p>pre</p><p>text\n\n"
+
+[[case]]
+id = "malformed-005"
+input = "pre <b>text"
+
+[[case]]
+id = "malformed-006"
+input = "<p>pre</p><b>text\n\n"
+
+[[case]]
+id = "malformed-007"
+input = "pre <ul><li>text"
+
+[[case]]
+id = "malformed-008"
+input = "<p>pre</p><ul><li>text\n\n"
+
+[[case]]
+id = "malformed-009"
+input = "pre <ol><li>text"
+
+[[case]]
+id = "malformed-010"
+input = "<p>pre</p><ol><li>text\n\n"
+
+[[case]]
+id = "malformed-011"
+input = "pre <blockquote>text"
+
+[[case]]
+id = "malformed-012"
+input = "<p>pre</p><blockquote>text\n\n"
+
+[[case]]
+id = "malformed-013"
+input = "pre <h1>text"
+
+[[case]]
+id = "malformed-014"
+input = "<p>pre</p><h1>text\n\n"
+
+[[case]]
+id = "malformed-015"
+input = "pre <table><tr><td>x"
+
+[[case]]
+id = "malformed-016"
+input = "<p>pre</p><table><tr><td>x\n\n"
+
+[[case]]
+id = "malformed-017"
+input = "pre <span>x"
+
+[[case]]
+id = "malformed-018"
+input = "<p>pre</p><span>x\n\n"
+
+[[case]]
+id = "malformed-019"
+input = "pre <q>x"
+
+[[case]]
+id = "malformed-020"
+input = "<p>pre</p><q>x\n\n"
+
+[[case]]
+id = "malformed-021"
+input = "pre <a href=\"u\">x"
+
+[[case]]
+id = "malformed-022"
+input = "<p>pre</p><a href=\"u\">x\n\n"
+
+[[case]]
+id = "malformed-023"
+input = "pre <a>x"
+
+[[case]]
+id = "malformed-024"
+input = "<p>pre</p><a>x\n\n"
+
+[[case]]
+id = "malformed-025"
+input = "pre <code>x"
+
+[[case]]
+id = "malformed-026"
+input = "<p>pre</p><code>x\n\n"
+
+[[case]]
+id = "malformed-027"
+input = "pre <pre>x"
+
+[[case]]
+id = "malformed-028"
+input = "<p>pre</p><pre>x\n\n"
+
+[[case]]
+id = "malformed-029"
+input = "pre <pre><code>x"
+
+[[case]]
+id = "malformed-030"
+input = "<p>pre</p><pre><code>x\n\n"
+
+[[case]]
+id = "malformed-031"
+input = "pre <dl><dt>a<dd>b"
+
+[[case]]
+id = "malformed-032"
+input = "<p>pre</p><dl><dt>a<dd>b\n\n"
+
+[[case]]
+id = "malformed-033"
+input = "pre <dl><dt>a</dt><dd>b"
+
+[[case]]
+id = "malformed-034"
+input = "<p>pre</p><dl><dt>a</dt><dd>b\n\n"
+
+[[case]]
+id = "malformed-035"
+input = "pre <figure>x"
+
+[[case]]
+id = "malformed-036"
+input = "<p>pre</p><figure>x\n\n"
+
+[[case]]
+id = "malformed-037"
+input = "pre <section>x"
+
+[[case]]
+id = "malformed-038"
+input = "<p>pre</p><section>x\n\n"
+
+[[case]]
+id = "malformed-039"
+input = "pre <i>x"
+
+[[case]]
+id = "malformed-040"
+input = "<p>pre</p><i>x\n\n"
+
+[[case]]
+id = "malformed-041"
+input = "pre <sub>x"
+
+[[case]]
+id = "malformed-042"
+input = "<p>pre</p><sub>x\n\n"
+
+[[case]]
+id = "malformed-043"
+input = "pre <small>x"
+
+[[case]]
+id = "malformed-044"
+input = "<p>pre</p><small>x\n\n"
+
+[[case]]
+id = "malformed-045"
+input = "pre <mark>x"
+
+[[case]]
+id = "malformed-046"
+input = "<p>pre</p><mark>x\n\n"
+
+[[case]]
+id = "malformed-047"
+input = "pre <del>x"
+
+[[case]]
+id = "malformed-048"
+input = "<p>pre</p><del>x\n\n"
+
+[[case]]
+id = "malformed-049"
+input = "pre <bdo dir=\"rtl\">x"
+
+[[case]]
+id = "malformed-050"
+input = "<p>pre</p><bdo dir=\"rtl\">x\n\n"
+
+[[case]]
+id = "malformed-051"
+input = "pre <figure><figcaption>c"
+
+[[case]]
+id = "malformed-052"
+input = "<p>pre</p><figure><figcaption>c\n\n"
+
+[[case]]
+id = "malformed-053"
+input = "pre <table><caption>c"
+
+[[case]]
+id = "malformed-054"
+input = "<p>pre</p><table><caption>c\n\n"
+
+[[case]]
+id = "malformed-055"
+input = "pre <table><tr><td>x</td></tr>"
+
+[[case]]
+id = "malformed-056"
+input = "<p>pre</p><table><tr><td>x</td></tr>\n\n"
+
+[[case]]
+id = "malformed-057"
+input = "pre <table><thead><tr><th>x"
+
+[[case]]
+id = "malformed-058"
+input = "<p>pre</p><table><thead><tr><th>x\n\n"
+
+[[case]]
+id = "malformed-059"
+input = "pre <li>x"
+
+[[case]]
+id = "malformed-060"
+input = "<p>pre</p><li>x\n\n"
+
+[[case]]
+id = "malformed-061"
+input = "pre <dd>x"
+
+[[case]]
+id = "malformed-062"
+input = "<p>pre</p><dd>x\n\n"
+
+[[case]]
+id = "malformed-063"
+input = "pre <td>x"
+
+[[case]]
+id = "malformed-064"
+input = "<p>pre</p><td>x\n\n"
+
+[[case]]
+id = "malformed-065"
+input = "pre <svg>x"
+
+[[case]]
+id = "malformed-066"
+input = "<p>pre</p><svg>x\n\n"
+
+[[case]]
+id = "malformed-067"
+input = "pre <style>x"
+
+[[case]]
+id = "malformed-068"
+input = "<p>pre</p><style>x\n\n"
+
+[[case]]
+id = "malformed-069"
+input = "pre <textarea>x"
+
+[[case]]
+id = "malformed-070"
+input = "<p>pre</p><textarea>x\n\n"
+
+[[case]]
+id = "malformed-071"
+input = "pre <title>x"
+
+[[case]]
+id = "malformed-072"
+input = "<p>pre</p><title>x\n\n"
+
+[[case]]
+id = "malformed-073"
+input = "pre <header>x"
+
+[[case]]
+id = "malformed-074"
+input = "<p>pre</p><header>x\n\n"
+
+[[case]]
+id = "malformed-075"
+input = "pre <main>x"
+
+[[case]]
+id = "malformed-076"
+input = "<p>pre</p><main>x\n\n"
+
+[[case]]
+id = "malformed-077"
+input = "pre <aside>x"
+
+[[case]]
+id = "malformed-078"
+input = "<p>pre</p><aside>x\n\n"
+
+[[case]]
+id = "malformed-079"
+input = "pre <details>x"
+
+[[case]]
+id = "malformed-080"
+input = "<p>pre</p><details>x\n\n"
+
+[[case]]
+id = "malformed-081"
+input = "pre <ul>"
+
+[[case]]
+id = "malformed-082"
+input = "<p>pre</p><ul>\n\n"
+
+[[case]]
+id = "malformed-083"
+input = "pre <ol>"
+
+[[case]]
+id = "malformed-084"
+input = "<p>pre</p><ol>\n\n"
+
+[[case]]
+id = "malformed-085"
+input = "pre <dl>"
+
+[[case]]
+id = "malformed-086"
+input = "<p>pre</p><dl>\n\n"
+
+[[case]]
+id = "malformed-087"
+input = "pre <div>"
+
+[[case]]
+id = "malformed-088"
+input = "<p>pre</p><div>\n\n"
+
+[[case]]
+id = "malformed-089"
+input = "pre <b>"
+
+[[case]]
+id = "malformed-090"
+input = "<p>pre</p><b>\n\n"
+
+[[case]]
+id = "malformed-091"
+input = "pre <p>"
+
+[[case]]
+id = "malformed-092"
+input = "<p>pre</p><p>\n\n"
+
+[[case]]
+id = "malformed-093"
+input = "pre <h2>"
+
+[[case]]
+id = "malformed-094"
+input = "<p>pre</p><h2>\n\n"
+
+[[case]]
+id = "malformed-095"
+input = "pre <blockquote>"
+
+[[case]]
+id = "malformed-096"
+input = "<p>pre</p><blockquote>\n\n"
+
+[[case]]
+id = "malformed-097"
+input = "pre <ul><li>a</li>"
+
+[[case]]
+id = "malformed-098"
+input = "<p>pre</p><ul><li>a</li>\n\n"
+
+[[case]]
+id = "malformed-099"
+input = "pre <div><p>a"
+
+[[case]]
+id = "malformed-100"
+input = "<p>pre</p><div><p>a\n\n"
+
+[[case]]
+id = "malformed-101"
+input = "pre <div><b>a"
+
+[[case]]
+id = "malformed-102"
+input = "<p>pre</p><div><b>a\n\n"
+
+[[case]]
+id = "malformed-103"
+input = "pre <ul><li><b>a"
+
+[[case]]
+id = "malformed-104"
+input = "<p>pre</p><ul><li><b>a\n\n"
+
+[[case]]
+id = "malformed-105"
+input = "pre <blockquote><p><i>a"
+
+[[case]]
+id = "malformed-106"
+input = "<p>pre</p><blockquote><p><i>a\n\n"
+
+[[case]]
+id = "malformed-107"
+input = "<div>a<td>x</td>b</div>c"
+
+[[case]]
+id = "malformed-108"
+input = "<div>a</td>b</div>c"
+
+[[case]]
+id = "malformed-109"
+input = "<blockquote>a</th>b</blockquote>c"
+
+[[case]]
+id = "malformed-110"
+input = "<ul><li>a</td>b</li><li>c</li></ul>"
+
+[[case]]
+id = "malformed-111"
+input = "<p>a</td>b</p>c"
+
+[[case]]
+id = "malformed-112"
+input = "<b>a</td>b</b>c"
+
+[[case]]
+id = "malformed-113"
+input = "<div>a<tr>x</tr>b</div>c"
+
+[[case]]
+id = "malformed-114"
+input = "<section>a</td>b</section>"
+
+[[case]]
+id = "malformed-115"
+input = "<figure>a</td>b</figure><h1>h</td>x</h1>\n"
+
+[[case]]
+id = "malformed-116"
+input = "<aside><th></th></aside>"
+
+[[case]]
+id = "malformed-117"
+input = "<aside><td>x</td></aside>y"
+
+[[case]]
+id = "malformed-118"
+input = "<div><th></th></div>"
+
+[[case]]
+id = "malformed-119"
+input = "<p>x</p><td>cell</td>"
+
+[[case]]
+id = "malformed-120"
+input = "a<i><del><img type=\"A\" id=\"i\"></del>x</i>"
+
+[[case]]
+id = "malformed-121"
+input = "a<img id=\"i\">b"
+
+[[case]]
+id = "malformed-122"
+input = "<p>a<img id=\"i\">b</p>"
+
+[[case]]
+id = "malformed-123"
+input = "<center dir=\"rtl\"><bdo><tfoot>&amp;\n</tfoot><ol><dd></dd></ol><img alt=\"a b\" lang=\"en\"></bdo></center>"
+
+[[case]]
+id = "malformed-124"
+input = "<aside colspan=\"2\" dir=\"rtl\"><th></th></aside>delta.<hr start=\"4\">"
+
+[[case]]
+id = "malformed-125"
+input = "a\tba\tb<i><del><img type=\"A\" id=\"i\"></del>x < y</i>"
+
+[[case]]
+id = "malformed-126"
+input = "&copy<bdo></bdo>"
+
+[[case]]
+id = "malformed-127"
+input = "<ul><pre><!-- c -->beta<ul></ul></pre></ul>delta."
+
+[[case]]
+id = "malformed-128"
+input = "<dl id=\"i\" type=\"A\">alphadelta.<bdo title=\"t\"><tfoot dir=\"rtl\">a\tb</tfoot></bdo></dl>"
+
+[[case]]
+id = "malformed-129"
+input = "<bdo src=\"s.png\"><blockquote></blockquote>&amp;<big><dl></dl> gamma </big></bdo> "
+
+[[case]]
+id = "malformed-130"
+from = "html+raw_html"
+input = "<cite dir=\"rtl\"><details><img>\n</details></cite>"
+
+[[case]]
+id = "malformed-131"
+input = "<body><q><figure rowspan=\"2\" lang=\"en\"><mark> </mark></figure></q></body><pre></pre>"
+
+[[case]]
+id = "malformed-132"
+input = "<p><button rowspan=\"2\" data-k=\"v\"></button>x</p>"
+
+[[case]]
+id = "malformed-133"
+input = "<p><span data-k=\"v\"><button rowspan=\"2\" data-k=\"v\"></button></span>1</p>"
+
+[[case]]
+id = "malformed-134"
+input = "<dfn><code><span data-k=\"v\"><button rowspan=\"2\" data-k=\"v\"></button></span>1 &lt; 2&#65;</code></dfn>"
+
+[[case]]
+id = "malformed-135"
+from = "html+raw_html"
+input = "<q><video width=\"50%\" width=\"50%\"><aside>1 &lt; 2</aside>&#65;</video></q>\n"
+
+[[case]]
+id = "malformed-136"
+input = "<p>a <b>b <i>c</p><p>d</i> e</b> f</p>"
+
+[[case]]
+id = "malformed-137"
+input = "<div><b>unclosed bold <i>and italic</div><p>next</p>"
+
+[[case]]
+id = "malformed-138"
+input = "<p>a<span>b<div>c</div>d</span>e</p>"
+
+[[case]]
+id = "malformed-139"
+input = "<a href=\"u\"><div>block in link</div></a><b><p>p in b</p></b><del><p>p in del</p></del>"
+
+# A stray close tag of each block-level or either-level element inside `p`.
+
+[[case]]
+id = "malformed-140"
+input = "<p>y</address>z</p>"
+
+[[case]]
+id = "malformed-141"
+input = "<p>y</article>z</p>"
+
+[[case]]
+id = "malformed-142"
+input = "<p>y</aside>z</p>"
+
+[[case]]
+id = "malformed-143"
+input = "<p>y</bibliolist>z</p>"
+
+[[case]]
+id = "malformed-144"
+input = "<p>y</blockquote>z</p>"
+
+[[case]]
+id = "malformed-145"
+input = "<p>y</body>z</p>"
+
+[[case]]
+id = "malformed-146"
+input = "<p>y</calloutlist>z</p>"
+
+[[case]]
+id = "malformed-147"
+input = "<p>y</canvas>z</p>"
+
+[[case]]
+id = "malformed-148"
+input = "<p>y</caption>z</p>"
+
+[[case]]
+id = "malformed-149"
+input = "<p>y</case>z</p>"
+
+[[case]]
+id = "malformed-150"
+input = "<p>y</caution>z</p>"
+
+[[case]]
+id = "malformed-151"
+input = "<p>y</center>z</p>"
+
+[[case]]
+id = "malformed-152"
+input = "<p>y</classsynopsis>z</p>"
+
+[[case]]
+id = "malformed-153"
+input = "<p>y</cmdsynopsis>z</p>"
+
+[[case]]
+id = "malformed-154"
+input = "<p>y</col>z</p>"
+
+[[case]]
+id = "malformed-155"
+input = "<p>y</colgroup>z</p>"
+
+[[case]]
+id = "malformed-156"
+input = "<p>y</dd>z</p>"
+
+[[case]]
+id = "malformed-157"
+input = "<p>y</default>z</p>"
+
+[[case]]
+id = "malformed-158"
+input = "<p>y</details>z</p>"
+
+[[case]]
+id = "malformed-159"
+input = "<p>y</dir>z</p>"
+
+[[case]]
+id = "malformed-160"
+input = "<p>y</div>z</p>"
+
+[[case]]
+id = "malformed-161"
+input = "<p>y</dl>z</p>"
+
+[[case]]
+id = "malformed-162"
+input = "<p>y</dt>z</p>"
+
+[[case]]
+id = "malformed-163"
+input = "<p>y</epigraph>z</p>"
+
+[[case]]
+id = "malformed-164"
+input = "<p>y</equation>z</p>"
+
+[[case]]
+id = "malformed-165"
+input = "<p>y</example>z</p>"
+
+[[case]]
+id = "malformed-166"
+input = "<p>y</fieldset>z</p>"
+
+[[case]]
+id = "malformed-167"
+input = "<p>y</figcaption>z</p>"
+
+[[case]]
+id = "malformed-168"
+input = "<p>y</figure>z</p>"
+
+[[case]]
+id = "malformed-169"
+input = "<p>y</footer>z</p>"
+
+[[case]]
+id = "malformed-170"
+input = "<p>y</form>z</p>"
+
+[[case]]
+id = "malformed-171"
+input = "<p>y</formalpara>z</p>"
+
+[[case]]
+id = "malformed-172"
+input = "<p>y</frameset>z</p>"
+
+[[case]]
+id = "malformed-173"
+input = "<p>y</funcsynopsis>z</p>"
+
+[[case]]
+id = "malformed-174"
+input = "<p>y</glosslist>z</p>"
+
+[[case]]
+id = "malformed-175"
+input = "<p>y</h1>z</p>"
+
+[[case]]
+id = "malformed-176"
+input = "<p>y</h2>z</p>"
+
+[[case]]
+id = "malformed-177"
+input = "<p>y</h3>z</p>"
+
+[[case]]
+id = "malformed-178"
+input = "<p>y</h4>z</p>"
+
+[[case]]
+id = "malformed-179"
+input = "<p>y</h5>z</p>"
+
+[[case]]
+id = "malformed-180"
+input = "<p>y</h6>z</p>"
+
+[[case]]
+id = "malformed-181"
+input = "<p>y</head>z</p>"
+
+[[case]]
+id = "malformed-182"
+input = "<p>y</header>z</p>"
+
+[[case]]
+id = "malformed-183"
+input = "<p>y</hgroup>z</p>"
+
+[[case]]
+id = "malformed-184"
+input = "<p>y</hr>z</p>"
+
+[[case]]
+id = "malformed-185"
+input = "<p>y</html>z</p>"
+
+[[case]]
+id = "malformed-186"
+input = "<p>y</important>z</p>"
+
+[[case]]
+id = "malformed-187"
+input = "<p>y</informalequation>z</p>"
+
+[[case]]
+id = "malformed-188"
+input = "<p>y</informalexample>z</p>"
+
+[[case]]
+id = "malformed-189"
+input = "<p>y</informalfigure>z</p>"
+
+[[case]]
+id = "malformed-190"
+input = "<p>y</informaltable>z</p>"
+
+[[case]]
+id = "malformed-191"
+input = "<p>y</isindex>z</p>"
+
+[[case]]
+id = "malformed-192"
+input = "<p>y</itemizedlist>z</p>"
+
+[[case]]
+id = "malformed-193"
+input = "<p>y</li>z</p>"
+
+[[case]]
+id = "malformed-194"
+input = "<p>y</literallayout>z</p>"
+
+[[case]]
+id = "malformed-195"
+input = "<p>y</main>z</p>"
+
+[[case]]
+id = "malformed-196"
+input = "<p>y</mediaobject>z</p>"
+
+[[case]]
+id = "malformed-197"
+input = "<p>y</menu>z</p>"
+
+[[case]]
+id = "malformed-198"
+input = "<p>y</meta>z</p>"
+
+[[case]]
+id = "malformed-199"
+input = "<p>y</msgset>z</p>"
+
+[[case]]
+id = "malformed-200"
+input = "<p>y</nav>z</p>"
+
+[[case]]
+id = "malformed-201"
+input = "<p>y</noframes>z</p>"
+
+[[case]]
+id = "malformed-202"
+input = "<p>y</note>z</p>"
+
+[[case]]
+id = "malformed-203"
+input = "<p>y</ol>z</p>"
+
+[[case]]
+id = "malformed-204"
+input = "<p>y</orderedlist>z</p>"
+
+[[case]]
+id = "malformed-205"
+input = "<p>y</output>z</p>"
+
+[[case]]
+id = "malformed-206"
+input = "<p>y</p>z</p>"
+
+[[case]]
+id = "malformed-207"
+input = "<p>y</para>z</p>"
+
+[[case]]
+id = "malformed-208"
+input = "<p>y</pre>z</p>"
+
+[[case]]
+id = "malformed-209"
+input = "<p>y</procedure>z</p>"
+
+[[case]]
+id = "malformed-210"
+input = "<p>y</programlisting>z</p>"
+
+[[case]]
+id = "malformed-211"
+input = "<p>y</programlistingco>z</p>"
+
+[[case]]
+id = "malformed-212"
+input = "<p>y</qandaset>z</p>"
+
+[[case]]
+id = "malformed-213"
+input = "<p>y</screen>z</p>"
+
+[[case]]
+id = "malformed-214"
+input = "<p>y</screenco>z</p>"
+
+[[case]]
+id = "malformed-215"
+input = "<p>y</screenshot>z</p>"
+
+[[case]]
+id = "malformed-216"
+input = "<p>y</script>z</p>"
+
+[[case]]
+id = "malformed-217"
+input = "<p>y</section>z</p>"
+
+[[case]]
+id = "malformed-218"
+input = "<p>y</segmentedlist>z</p>"
+
+[[case]]
+id = "malformed-219"
+input = "<p>y</sidebar>z</p>"
+
+[[case]]
+id = "malformed-220"
+input = "<p>y</simpara>z</p>"
+
+[[case]]
+id = "malformed-221"
+input = "<p>y</simplelist>z</p>"
+
+[[case]]
+id = "malformed-222"
+input = "<p>y</style>z</p>"
+
+[[case]]
+id = "malformed-223"
+input = "<p>y</summary>z</p>"
+
+[[case]]
+id = "malformed-224"
+input = "<p>y</switch>z</p>"
+
+[[case]]
+id = "malformed-225"
+input = "<p>y</synopsis>z</p>"
+
+[[case]]
+id = "malformed-226"
+input = "<p>y</table>z</p>"
+
+[[case]]
+id = "malformed-227"
+input = "<p>y</task>z</p>"
+
+[[case]]
+id = "malformed-228"
+input = "<p>y</tbody>z</p>"
+
+[[case]]
+id = "malformed-229"
+input = "<p>y</td>z</p>"
+
+[[case]]
+id = "malformed-230"
+input = "<p>y</textarea>z</p>"
+
+[[case]]
+id = "malformed-231"
+input = "<p>y</tfoot>z</p>"
+
+[[case]]
+id = "malformed-232"
+input = "<p>y</th>z</p>"
+
+[[case]]
+id = "malformed-233"
+input = "<p>y</thead>z</p>"
+
+[[case]]
+id = "malformed-234"
+input = "<p>y</tip>z</p>"
+
+[[case]]
+id = "malformed-235"
+input = "<p>y</title>z</p>"
+
+[[case]]
+id = "malformed-236"
+input = "<p>y</tr>z</p>"
+
+[[case]]
+id = "malformed-237"
+input = "<p>y</ul>z</p>"
+
+[[case]]
+id = "malformed-238"
+input = "<p>y</variablelist>z</p>"
+
+[[case]]
+id = "malformed-239"
+input = "<p>y</warning>z</p>"
+
+[[case]]
+id = "malformed-240"
+input = "<p>y</applet>z</p>"
+
+[[case]]
+id = "malformed-241"
+input = "<p>y</area>z</p>"
+
+[[case]]
+id = "malformed-242"
+input = "<p>y</audio>z</p>"
+
+[[case]]
+id = "malformed-243"
+input = "<p>y</button>z</p>"
+
+[[case]]
+id = "malformed-244"
+input = "<p>y</del>z</p>"
+
+[[case]]
+id = "malformed-245"
+input = "<p>y</embed>z</p>"
+
+[[case]]
+id = "malformed-246"
+input = "<p>y</iframe>z</p>"
+
+[[case]]
+id = "malformed-247"
+input = "<p>y</ins>z</p>"
+
+[[case]]
+id = "malformed-248"
+input = "<p>y</map>z</p>"
+
+[[case]]
+id = "malformed-249"
+input = "<p>y</noscript>z</p>"
+
+[[case]]
+id = "malformed-250"
+input = "<p>y</object>z</p>"
+
+[[case]]
+id = "malformed-251"
+input = "<p>y</progress>z</p>"
+
+[[case]]
+id = "malformed-252"
+input = "<p>y</source>z</p>"
+
+[[case]]
+id = "malformed-253"
+input = "<p>y</svg>z</p>"
+
+[[case]]
+id = "malformed-254"
+input = "<p>y</track>z</p>"
+
+[[case]]
+id = "malformed-255"
+input = "<p>y</video>z</p>"

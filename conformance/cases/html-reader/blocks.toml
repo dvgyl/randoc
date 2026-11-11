@@ -1,0 +1,2516 @@
+# Block elements: paragraphs, headings, quotes, code, divisions, figures.
+from = "html"
+to = []
+
+[[case]]
+id = "blocks-001"
+input = "<p>Hello <b>world</b> &amp; &copy &nosuch; &#65; &#x41 x</p>"
+
+[[case]]
+id = "blocks-002"
+input = "<p>a</p><p>b</p> text <i>i</i>\n<div id=\"d\" class=\"c1 c2\" data-x=\"1\" lang=\"en\" title=\"t\">in div</div>"
+
+[[case]]
+id = "blocks-003"
+input = "<h1 id=\"x\">Head</h1><h2>Sub <em>e</em></h2><h7>seven</h7>"
+
+[[case]]
+id = "blocks-004"
+input = "<ul><li>a</li><li><p>b</p></li><li>c<ul><li>d</li></ul></li></ul>\n<ol start=\"3\" type=\"a\"><li>x</li></ol>"
+
+[[case]]
+id = "blocks-005"
+input = "<blockquote><p>q</p></blockquote><pre><code class=\"language-rust\">fn main() {}\n</code></pre><hr/>"
+
+[[case]]
+id = "blocks-006"
+input = "<a href=\"u\" title=\"t\">link</a> <img src=\"i.png\" alt=\"alt\" title=\"tt\" width=\"10\"> <br> <code>c</code> <span class=\"s\">sp</span>"
+
+[[case]]
+id = "blocks-007"
+from = "html+raw_html"
+input = "<p>Hello <foo>x</foo> <!-- c --> </p><custom>y</custom>"
+
+[[case]]
+id = "blocks-008"
+input = "<table><caption>Cap</caption><thead><tr><th>A</th><th align=\"right\">B</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr></tbody></table>"
+
+[[case]]
+id = "blocks-009"
+input = "<html><head><title>T</title><meta name=\"author\" content=\"Me\"><meta name=\"date\" content=\"2020\"></head><body><p>x</p></body></html>"
+
+[[case]]
+id = "blocks-010"
+input = "<dl><dt>t</dt><dd>d</dd><dt>t2</dt><dd><p>d2</p></dd></dl>\n"
+
+[[case]]
+id = "blocks-011"
+input = "<h7>seven</h7>"
+
+[[case]]
+id = "blocks-012"
+input = "<html><head><title>T <b>b</b></title><meta name=\"author\" content=\"Me\"><meta name=\"date\" content=\"2020\"><meta property=\"og:x\" content=\"y\"><meta name=\"keywords\" content=\"a, b\"><base href=\"http://example.com/dir/\"></head><body><p><a href=\"x.html\">l</a><img src=\"i.png\"></p></body></html>"
+
+[[case]]
+id = "blocks-013"
+input = "text <i>i</i>\n<div>d</div>"
+
+[[case]]
+id = "blocks-014"
+input = "text <i>i</i>\n<p>p</p>\nmore"
+
+[[case]]
+id = "blocks-015"
+input = "<div>text<p>p</p>more</div>"
+
+[[case]]
+id = "blocks-016"
+input = "<ul><li>text<p>p</p>more</li></ul>"
+
+[[case]]
+id = "blocks-017"
+input = "<P CLASS=\"X\" Id=\"Y\">Upper <B>bold</B></P><DIV Data-Foo=\"1\" CLASS=\"K\">x</DIV>"
+
+[[case]]
+id = "blocks-018"
+input = "<p>a<br/>b<br>c</p><p>  lead   and trail  </p><p>a\nb\tc</p>"
+
+[[case]]
+id = "blocks-019"
+input = "<p><em>e</em><strong>s</strong><i>i</i><b>b</b><u>u</u><s>s</s><strike>k</strike><del>d</del><ins>n</ins><sub>1</sub><sup>2</sup><small>sm</small><big>bg</big><mark>m</mark><kbd>k</kbd><samp>sa</samp><var>v</var><tt>tt</tt><q>quote</q><cite>ci</cite><abbr title=\"x\">ab</abbr><dfn>df</dfn><bdo dir=\"rtl\">bd</bdo><span style=\"font-variant: small-caps\">sc</span></p>"
+
+[[case]]
+id = "blocks-020"
+input = "<p>x</p><script>var a = \"<p>no</p>\";</script><style>p { color: red }</style><p>y</p><noscript>ns</noscript><textarea>ta</textarea><button>bt</button><input type=\"text\" value=\"v\"><select><option>o1</option></select><form><p>in form</p></form>"
+
+[[case]]
+id = "blocks-021"
+input = "<section id=\"s\" class=\"level1\"><h1>H</h1><p>p</p></section><article>a</article><aside>as</aside><nav>n</nav><header>h</header><footer>f</footer><main>m</main><address>ad</address><center>ce</center>"
+
+[[case]]
+id = "blocks-022"
+input = "<figure><img src=\"a.png\" alt=\"alt\"><figcaption>cap</figcaption></figure>"
+
+[[case]]
+id = "blocks-023"
+input = "<figure id=\"f\" class=\"c\"><p>para</p><figcaption><p>cap <b>b</b></p></figcaption></figure>"
+
+[[case]]
+id = "blocks-024"
+input = "<p><img src=\"a.png\" alt=\"alt\" title=\"t\"></p><p><img src=\"a.png\" alt=\"\"></p>"
+
+[[case]]
+id = "blocks-025"
+input = "<pre>plain\n  pre &amp; <b>bold</b>\n</pre><pre class=\"haskell numberLines\" id=\"c\">\n\nx\n</pre><pre><code>a\nb</code></pre>"
+
+[[case]]
+id = "blocks-026"
+input = "<p>a<!-- comment -->b</p><!-- block comment --><p>c</p>"
+
+[[case]]
+id = "blocks-027"
+input = "<p>a &lt;b&gt; &quot;c&quot; &nbsp; &#160; &hellip; &mdash; ' \" -- ...</p>"
+
+[[case]]
+id = "blocks-028"
+input = "<iframe src=\"x.html\"></iframe><object>o</object><embed src=\"e\"><video src=\"v.mp4\">vid</video><audio src=\"a.mp3\"></audio><canvas>cv</canvas><svg><circle r=\"1\"/></svg>"
+
+[[case]]
+id = "blocks-029"
+input = "<math><mi>x</mi></math> <p>and <math display=\"block\"><mfrac><mn>1</mn><mn>2</mn></mfrac></math></p>"
+
+[[case]]
+id = "blocks-030"
+input = "<p>one<p>two<div>three</div>four</p><li>stray</li></ul></b>"
+
+[[case]]
+id = "blocks-031"
+input = "<ol><li>a<li>b</ol><ul><li>x<ol><li>y</ul>"
+
+[[case]]
+id = "blocks-032"
+input = "<ol type=\"1\"><li>a</li></ol><ol type=\"A\"><li>a</li></ol><ol type=\"i\"><li>a</li></ol><ol type=\"I\"><li>a</li></ol><ol class=\"decimal\" start=\"x\"><li>a</li></ol><ol style=\"list-style-type: lower-roman\"><li>a</li></ol><ol reversed><li value=\"5\">a</li></ol>"
+
+[[case]]
+id = "blocks-033"
+input = "<ul class=\"task-list\"><li><input type=\"checkbox\" checked> done</li><li><input type=\"checkbox\"> todo</li></ul>"
+
+[[case]]
+id = "blocks-034"
+input = "<div class=\"line-block\">a<br>b<br>&nbsp;&nbsp;c</div>"
+
+[[case]]
+id = "blocks-035"
+input = "<p>fn<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" role=\"doc-noteref\"><sup>1</sup></a></p><section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\" role=\"doc-endnotes\"><hr /><ol><li id=\"fn1\"><p>note<a href=\"#fnref1\" class=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li></ol></section>\n"
+
+[[case]]
+id = "blocks-036"
+input = "<pre>plain\n  pre</pre>"
+
+[[case]]
+id = "blocks-037"
+input = "<pre>\n\ntwo   spaces\ttab\n</pre>"
+
+[[case]]
+id = "blocks-038"
+input = "<pre class=\"haskell numberLines\" id=\"c\" data-k=\"v\"><code class=\"language-rust x\" id=\"d\">a &amp; b\n</code></pre>"
+
+[[case]]
+id = "blocks-039"
+input = "<pre><code>a<b>bold</b>c\n</code></pre>"
+
+[[case]]
+id = "blocks-040"
+input = "<pre>a<span>s</span>b</pre>"
+
+[[case]]
+id = "blocks-041"
+input = "<blockquote>text<p>p</p>more</blockquote>"
+
+[[case]]
+id = "blocks-042"
+input = "<dl><dt>t</dt><dd>text<p>p</p>more</dd></dl>"
+
+[[case]]
+id = "blocks-043"
+input = "<table><tr><td>text<p>p</p>more</td></tr></table>"
+
+[[case]]
+id = "blocks-044"
+input = "<main><p>m</p></main><p>out</p>"
+
+[[case]]
+id = "blocks-045"
+input = "<p>out</p><main id=\"i\" class=\"c\"><p>m</p>text</main>"
+
+[[case]]
+id = "blocks-046"
+input = "<p></p><p> </p><p>&nbsp;</p><div></div><ul></ul><ul><li></li></ul><blockquote></blockquote><h1></h1><pre></pre>"
+
+[[case]]
+id = "blocks-047"
+from = "html+empty_paragraphs"
+input = "<p></p><p> </p><p><br></p>x"
+
+[[case]]
+id = "blocks-048"
+input = "<p>a<q>b<q>c</q></q><q cite=\"http://x\">d</q></p>"
+
+[[case]]
+id = "blocks-049"
+input = "<h1>A</h1><h1>A</h1><h2 id=\"a\">B</h2><h3 class=\"c\" data-x=\"y\">A</h3><h1></h1><h1>!!!</h1><h6>six</h6>"
+
+[[case]]
+id = "blocks-050"
+from = "html-auto_identifiers"
+input = "<h1>A</h1><h2 id=\"k\">B</h2>"
+
+[[case]]
+id = "blocks-051"
+from = "html+ascii_identifiers"
+input = "<h1>Ünï cödé</h1>"
+
+[[case]]
+id = "blocks-052"
+from = "html+gfm_auto_identifiers"
+input = "<h1>Some Thing. (x)</h1>"
+
+[[case]]
+id = "blocks-053"
+input = "<hr class=\"c\" id=\"i\"><br><br>text<br>"
+
+[[case]]
+id = "blocks-054"
+input = "<div><br></div><p><br></p><p>a<br></p><p><br>a</p>\n"
+
+[[case]]
+id = "blocks-055"
+input = "<section id=\"s\" class=\"level1\"><h1>H</h1><p>p</p>text</section>"
+
+[[case]]
+id = "blocks-056"
+input = "<aside id=\"a\" class=\"k\">as<p>x</p></aside>"
+
+[[case]]
+id = "blocks-057"
+input = "<header id=\"h\" class=\"k\">hd<p>x</p></header><footer>f</footer><nav>n</nav><article>a</article>"
+
+[[case]]
+id = "blocks-058"
+input = "<details><summary>Sum</summary>body<p>p</p></details>"
+
+[[case]]
+id = "blocks-059"
+input = "<address>ad</address><center>ce</center><fieldset><legend>lg</legend>x</fieldset><hgroup><h1>a</h1></hgroup>"
+
+[[case]]
+id = "blocks-060"
+input = "<div>text<div>inner</div><span>sp</span><p>p</p></div>"
+
+[[case]]
+id = "blocks-061"
+input = "<figure>text<p>p</p>more<figcaption>cap text<p>p</p></figcaption></figure>"
+
+[[case]]
+id = "blocks-062"
+input = "<figure><figcaption>first</figcaption><img src=\"x.png\"><figcaption>second</figcaption></figure>"
+
+[[case]]
+id = "blocks-063"
+input = "<figure><img src=\"x.png\" alt=\"a\"></figure><figure></figure>"
+
+[[case]]
+id = "blocks-064"
+input = "<table><caption>text<p>p</p>more</caption><tr><th>text<p>p</p>more</th></tr></table>"
+
+[[case]]
+id = "blocks-065"
+input = "<section id=\"one\" class=\"level1\">\n<h1>One</h1>\n<p>Text one.</p>\n<section id=\"one-a\" class=\"level2\">\n<h2>One A</h2>\n</section>\n</section>\n<section id=\"two\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Two</h1>\n</section>"
+
+[[case]]
+id = "blocks-066"
+input = "<section id=\"x\"><h1>One</h1></section><h1>One</h1><div id=\"one\"><h1>One</h1></div><section id=\"q\"><p>p</p><h1>Late</h1></section><section><h1>No id</h1></section><section id=\"w\"><h2 id=\"own\">Own</h2></section>"
+
+[[case]]
+id = "blocks-067"
+input = "<section id=\"a\" class=\"level2\"><h2>A</h2><h2>B</h2></section><section id=\"b\">text<h1>C</h1></section><div id=\"d\" class=\"section\"><h1>D</h1></div><section id=\"e\"> <!-- c --> <h1>E</h1></section>\n"
+
+[[case]]
+id = "lineblock-001"
+input = "<div class=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-002"
+input = "<div class=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-003"
+input = "<div class=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-004"
+input = "<div class=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-005"
+input = "<div class=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-006"
+input = "<div class=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-007"
+input = "<div class=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-008"
+input = "<div class=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-009"
+input = "<div class=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-010"
+input = "<div class=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-011"
+input = "<div class=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-012"
+input = "<div class=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-013"
+input = "<div class=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-014"
+input = "<div class=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-015"
+input = "<div class=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-016"
+input = "<div class=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-017"
+input = "<div class=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-018"
+input = "<div class=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-019"
+input = "<div class=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-020"
+input = "<div class=\"line-block\" id=\"x\"></div>"
+
+[[case]]
+id = "lineblock-021"
+input = "<div class=\"line-block\" id=\"x\">a</div>"
+
+[[case]]
+id = "lineblock-022"
+input = "<div class=\"line-block\" id=\"x\">a<br></div>"
+
+[[case]]
+id = "lineblock-023"
+input = "<div class=\"line-block\" id=\"x\"><br></div>"
+
+[[case]]
+id = "lineblock-024"
+input = "<div class=\"line-block\" id=\"x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-025"
+input = "<div class=\"line-block\" id=\"x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-026"
+input = "<div class=\"line-block\" id=\"x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-027"
+input = "<div class=\"line-block\" id=\"x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-028"
+input = "<div class=\"line-block\" id=\"x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-029"
+input = "<div class=\"line-block\" id=\"x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-030"
+input = "<div class=\"line-block\" id=\"x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-031"
+input = "<div class=\"line-block\" id=\"x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-032"
+input = "<div class=\"line-block\" id=\"x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-033"
+input = "<div class=\"line-block\" id=\"x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-034"
+input = "<div class=\"line-block\" id=\"x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-035"
+input = "<div class=\"line-block\" id=\"x\"> </div>"
+
+[[case]]
+id = "lineblock-036"
+input = "<div class=\"line-block\" id=\"x\">\n</div>"
+
+[[case]]
+id = "lineblock-037"
+input = "<div class=\"line-block\" id=\"x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-038"
+input = "<div class=\"line-block\" id=\"x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-039"
+input = "<div class=\"line-block x\"></div>"
+
+[[case]]
+id = "lineblock-040"
+input = "<div class=\"line-block x\">a</div>"
+
+[[case]]
+id = "lineblock-041"
+input = "<div class=\"line-block x\">a<br></div>"
+
+[[case]]
+id = "lineblock-042"
+input = "<div class=\"line-block x\"><br></div>"
+
+[[case]]
+id = "lineblock-043"
+input = "<div class=\"line-block x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-044"
+input = "<div class=\"line-block x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-045"
+input = "<div class=\"line-block x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-046"
+input = "<div class=\"line-block x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-047"
+input = "<div class=\"line-block x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-048"
+input = "<div class=\"line-block x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-049"
+input = "<div class=\"line-block x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-050"
+input = "<div class=\"line-block x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-051"
+input = "<div class=\"line-block x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-052"
+input = "<div class=\"line-block x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-053"
+input = "<div class=\"line-block x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-054"
+input = "<div class=\"line-block x\"> </div>"
+
+[[case]]
+id = "lineblock-055"
+input = "<div class=\"line-block x\">\n</div>"
+
+[[case]]
+id = "lineblock-056"
+input = "<div class=\"line-block x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-057"
+input = "<div class=\"line-block x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-058"
+input = "<div class=\"x line-block\"></div>"
+
+[[case]]
+id = "lineblock-059"
+input = "<div class=\"x line-block\">a</div>"
+
+[[case]]
+id = "lineblock-060"
+input = "<div class=\"x line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-061"
+input = "<div class=\"x line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-062"
+input = "<div class=\"x line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-063"
+input = "<div class=\"x line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-064"
+input = "<div class=\"x line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-065"
+input = "<div class=\"x line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-066"
+input = "<div class=\"x line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-067"
+input = "<div class=\"x line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-068"
+input = "<div class=\"x line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-069"
+input = "<div class=\"x line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-070"
+input = "<div class=\"x line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-071"
+input = "<div class=\"x line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-072"
+input = "<div class=\"x line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-073"
+input = "<div class=\"x line-block\"> </div>"
+
+[[case]]
+id = "lineblock-074"
+input = "<div class=\"x line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-075"
+input = "<div class=\"x line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-076"
+input = "<div class=\"x line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-077"
+input = "<div CLASS=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-078"
+input = "<div CLASS=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-079"
+input = "<div CLASS=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-080"
+input = "<div CLASS=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-081"
+input = "<div CLASS=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-082"
+input = "<div CLASS=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-083"
+input = "<div CLASS=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-084"
+input = "<div CLASS=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-085"
+input = "<div CLASS=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-086"
+input = "<div CLASS=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-087"
+input = "<div CLASS=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-088"
+input = "<div CLASS=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-089"
+input = "<div CLASS=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-090"
+input = "<div CLASS=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-091"
+input = "<div CLASS=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-092"
+input = "<div CLASS=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-093"
+input = "<div CLASS=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-094"
+input = "<div CLASS=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-095"
+input = "<div CLASS=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-096"
+input = "<section class=\"line-block\"></section>"
+
+[[case]]
+id = "lineblock-097"
+input = "<section class=\"line-block\">a</section>"
+
+[[case]]
+id = "lineblock-098"
+input = "<section class=\"line-block\">a<br></section>"
+
+[[case]]
+id = "lineblock-099"
+input = "<section class=\"line-block\"><br></section>"
+
+[[case]]
+id = "lineblock-100"
+input = "<section class=\"line-block\">a<br>b</section>"
+
+[[case]]
+id = "lineblock-101"
+input = "<section class=\"line-block\">a<br><br>b</section>"
+
+[[case]]
+id = "lineblock-102"
+input = "<section class=\"line-block\"> a <br> b </section>"
+
+[[case]]
+id = "lineblock-103"
+input = "<section class=\"line-block\">a<br>\n</section>"
+
+[[case]]
+id = "lineblock-104"
+input = "<section class=\"line-block\">\n a\n<br>\n b\n</section>"
+
+[[case]]
+id = "lineblock-105"
+input = "<section class=\"line-block\"><br><br></section>"
+
+[[case]]
+id = "lineblock-106"
+input = "<section class=\"line-block\">a<br> </section>"
+
+[[case]]
+id = "lineblock-107"
+input = "<section class=\"line-block\"><b>a<br>b</b></section>"
+
+[[case]]
+id = "lineblock-108"
+input = "<section class=\"line-block\">a<p>b</p></section>"
+
+[[case]]
+id = "lineblock-109"
+input = "<section class=\"line-block\"><p>a</p></section>"
+
+[[case]]
+id = "lineblock-110"
+input = "<section class=\"line-block\">a<br>b<br></section>"
+
+[[case]]
+id = "lineblock-111"
+input = "<section class=\"line-block\"> </section>"
+
+[[case]]
+id = "lineblock-112"
+input = "<section class=\"line-block\">\n</section>"
+
+[[case]]
+id = "lineblock-113"
+input = "<section class=\"line-block\">a<br/>b</section>"
+
+[[case]]
+id = "lineblock-114"
+input = "<section class=\"line-block\"><span>a</span><br></section>"
+
+[[case]]
+id = "lineblock-115"
+from = "html-native_divs"
+input = "<div class=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-116"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-117"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-118"
+from = "html-native_divs"
+input = "<div class=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-119"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-120"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-121"
+from = "html-native_divs"
+input = "<div class=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-122"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-123"
+from = "html-native_divs"
+input = "<div class=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-124"
+from = "html-native_divs"
+input = "<div class=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-125"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-126"
+from = "html-native_divs"
+input = "<div class=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-127"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-128"
+from = "html-native_divs"
+input = "<div class=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-129"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-130"
+from = "html-native_divs"
+input = "<div class=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-131"
+from = "html-native_divs"
+input = "<div class=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-132"
+from = "html-native_divs"
+input = "<div class=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-133"
+from = "html-native_divs"
+input = "<div class=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-134"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"></div>"
+
+[[case]]
+id = "lineblock-135"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a</div>"
+
+[[case]]
+id = "lineblock-136"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br></div>"
+
+[[case]]
+id = "lineblock-137"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"><br></div>"
+
+[[case]]
+id = "lineblock-138"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-139"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-140"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-141"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-142"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-143"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-144"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-145"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-146"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-147"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-148"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-149"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"> </div>"
+
+[[case]]
+id = "lineblock-150"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">\n</div>"
+
+[[case]]
+id = "lineblock-151"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-152"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-153"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"></div>"
+
+[[case]]
+id = "lineblock-154"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a</div>"
+
+[[case]]
+id = "lineblock-155"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br></div>"
+
+[[case]]
+id = "lineblock-156"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"><br></div>"
+
+[[case]]
+id = "lineblock-157"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-158"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-159"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-160"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-161"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-162"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-163"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-164"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-165"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-166"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-167"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-168"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"> </div>"
+
+[[case]]
+id = "lineblock-169"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">\n</div>"
+
+[[case]]
+id = "lineblock-170"
+from = "html-native_divs"
+input = "<div class=\"line-block x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-171"
+from = "html-native_divs"
+input = "<div class=\"line-block x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-172"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"></div>"
+
+[[case]]
+id = "lineblock-173"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a</div>"
+
+[[case]]
+id = "lineblock-174"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-175"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-176"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-177"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-178"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-179"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-180"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-181"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-182"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-183"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-184"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-185"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-186"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-187"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"> </div>"
+
+[[case]]
+id = "lineblock-188"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-189"
+from = "html-native_divs"
+input = "<div class=\"x line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-190"
+from = "html-native_divs"
+input = "<div class=\"x line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-191"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-192"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-193"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-194"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-195"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-196"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-197"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-198"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-199"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-200"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-201"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-202"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-203"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-204"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-205"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-206"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-207"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-208"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-209"
+from = "html-native_divs"
+input = "<div CLASS=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-210"
+from = "html-native_divs"
+input = "<section class=\"line-block\"></section>"
+
+[[case]]
+id = "lineblock-211"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a</section>"
+
+[[case]]
+id = "lineblock-212"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br></section>"
+
+[[case]]
+id = "lineblock-213"
+from = "html-native_divs"
+input = "<section class=\"line-block\"><br></section>"
+
+[[case]]
+id = "lineblock-214"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br>b</section>"
+
+[[case]]
+id = "lineblock-215"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br><br>b</section>"
+
+[[case]]
+id = "lineblock-216"
+from = "html-native_divs"
+input = "<section class=\"line-block\"> a <br> b </section>"
+
+[[case]]
+id = "lineblock-217"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br>\n</section>"
+
+[[case]]
+id = "lineblock-218"
+from = "html-native_divs"
+input = "<section class=\"line-block\">\n a\n<br>\n b\n</section>"
+
+[[case]]
+id = "lineblock-219"
+from = "html-native_divs"
+input = "<section class=\"line-block\"><br><br></section>"
+
+[[case]]
+id = "lineblock-220"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br> </section>"
+
+[[case]]
+id = "lineblock-221"
+from = "html-native_divs"
+input = "<section class=\"line-block\"><b>a<br>b</b></section>"
+
+[[case]]
+id = "lineblock-222"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<p>b</p></section>"
+
+[[case]]
+id = "lineblock-223"
+from = "html-native_divs"
+input = "<section class=\"line-block\"><p>a</p></section>"
+
+[[case]]
+id = "lineblock-224"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br>b<br></section>"
+
+[[case]]
+id = "lineblock-225"
+from = "html-native_divs"
+input = "<section class=\"line-block\"> </section>"
+
+[[case]]
+id = "lineblock-226"
+from = "html-native_divs"
+input = "<section class=\"line-block\">\n</section>"
+
+[[case]]
+id = "lineblock-227"
+from = "html-native_divs"
+input = "<section class=\"line-block\">a<br/>b</section>"
+
+[[case]]
+id = "lineblock-228"
+from = "html-native_divs"
+input = "<section class=\"line-block\"><span>a</span><br></section>"
+
+[[case]]
+id = "lineblock-229"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-230"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-231"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-232"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-233"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-234"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-235"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-236"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-237"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-238"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-239"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-240"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-241"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-242"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-243"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-244"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-245"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-246"
+from = "html-line_blocks"
+input = "<div class=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-247"
+from = "html-line_blocks"
+input = "<div class=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-248"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"></div>"
+
+[[case]]
+id = "lineblock-249"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a</div>"
+
+[[case]]
+id = "lineblock-250"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br></div>"
+
+[[case]]
+id = "lineblock-251"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><br></div>"
+
+[[case]]
+id = "lineblock-252"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-253"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-254"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-255"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-256"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-257"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-258"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-259"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-260"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-261"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-262"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-263"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"> </div>"
+
+[[case]]
+id = "lineblock-264"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">\n</div>"
+
+[[case]]
+id = "lineblock-265"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-266"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-267"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"></div>"
+
+[[case]]
+id = "lineblock-268"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a</div>"
+
+[[case]]
+id = "lineblock-269"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br></div>"
+
+[[case]]
+id = "lineblock-270"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"><br></div>"
+
+[[case]]
+id = "lineblock-271"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-272"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-273"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-274"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-275"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-276"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-277"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-278"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-279"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-280"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-281"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-282"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"> </div>"
+
+[[case]]
+id = "lineblock-283"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">\n</div>"
+
+[[case]]
+id = "lineblock-284"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-285"
+from = "html-line_blocks"
+input = "<div class=\"line-block x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-286"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"></div>"
+
+[[case]]
+id = "lineblock-287"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a</div>"
+
+[[case]]
+id = "lineblock-288"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-289"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-290"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-291"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-292"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-293"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-294"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-295"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-296"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-297"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-298"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-299"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-300"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-301"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"> </div>"
+
+[[case]]
+id = "lineblock-302"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-303"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-304"
+from = "html-line_blocks"
+input = "<div class=\"x line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-305"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-306"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-307"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-308"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-309"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-310"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-311"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-312"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-313"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-314"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-315"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-316"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-317"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-318"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-319"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-320"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-321"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-322"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-323"
+from = "html-line_blocks"
+input = "<div CLASS=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-324"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"></section>"
+
+[[case]]
+id = "lineblock-325"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a</section>"
+
+[[case]]
+id = "lineblock-326"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br></section>"
+
+[[case]]
+id = "lineblock-327"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"><br></section>"
+
+[[case]]
+id = "lineblock-328"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br>b</section>"
+
+[[case]]
+id = "lineblock-329"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br><br>b</section>"
+
+[[case]]
+id = "lineblock-330"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"> a <br> b </section>"
+
+[[case]]
+id = "lineblock-331"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br>\n</section>"
+
+[[case]]
+id = "lineblock-332"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">\n a\n<br>\n b\n</section>"
+
+[[case]]
+id = "lineblock-333"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"><br><br></section>"
+
+[[case]]
+id = "lineblock-334"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br> </section>"
+
+[[case]]
+id = "lineblock-335"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"><b>a<br>b</b></section>"
+
+[[case]]
+id = "lineblock-336"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<p>b</p></section>"
+
+[[case]]
+id = "lineblock-337"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"><p>a</p></section>"
+
+[[case]]
+id = "lineblock-338"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br>b<br></section>"
+
+[[case]]
+id = "lineblock-339"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"> </section>"
+
+[[case]]
+id = "lineblock-340"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">\n</section>"
+
+[[case]]
+id = "lineblock-341"
+from = "html-line_blocks"
+input = "<section class=\"line-block\">a<br/>b</section>"
+
+[[case]]
+id = "lineblock-342"
+from = "html-line_blocks"
+input = "<section class=\"line-block\"><span>a</span><br></section>"
+
+[[case]]
+id = "lineblock-343"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-344"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-345"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-346"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-347"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-348"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-349"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-350"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-351"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-352"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-353"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-354"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-355"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-356"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-357"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-358"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-359"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-360"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-361"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-362"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"></div>"
+
+[[case]]
+id = "lineblock-363"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a</div>"
+
+[[case]]
+id = "lineblock-364"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br></div>"
+
+[[case]]
+id = "lineblock-365"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><br></div>"
+
+[[case]]
+id = "lineblock-366"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-367"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-368"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-369"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-370"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-371"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-372"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-373"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-374"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-375"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-376"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-377"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"> </div>"
+
+[[case]]
+id = "lineblock-378"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">\n</div>"
+
+[[case]]
+id = "lineblock-379"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-380"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block\" id=\"x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-381"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"></div>"
+
+[[case]]
+id = "lineblock-382"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a</div>"
+
+[[case]]
+id = "lineblock-383"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br></div>"
+
+[[case]]
+id = "lineblock-384"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"><br></div>"
+
+[[case]]
+id = "lineblock-385"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-386"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-387"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-388"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-389"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-390"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"><br><br></div>"
+
+[[case]]
+id = "lineblock-391"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br> </div>"
+
+[[case]]
+id = "lineblock-392"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-393"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-394"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-395"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-396"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"> </div>"
+
+[[case]]
+id = "lineblock-397"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">\n</div>"
+
+[[case]]
+id = "lineblock-398"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-399"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"line-block x\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-400"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"></div>"
+
+[[case]]
+id = "lineblock-401"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a</div>"
+
+[[case]]
+id = "lineblock-402"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-403"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-404"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-405"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-406"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-407"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-408"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-409"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-410"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-411"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-412"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-413"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-414"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-415"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"> </div>"
+
+[[case]]
+id = "lineblock-416"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-417"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-418"
+from = "html-native_divs-line_blocks"
+input = "<div class=\"x line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-419"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"></div>"
+
+[[case]]
+id = "lineblock-420"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-421"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br></div>"
+
+[[case]]
+id = "lineblock-422"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"><br></div>"
+
+[[case]]
+id = "lineblock-423"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-424"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br><br>b</div>"
+
+[[case]]
+id = "lineblock-425"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"> a <br> b </div>"
+
+[[case]]
+id = "lineblock-426"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br>\n</div>"
+
+[[case]]
+id = "lineblock-427"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">\n a\n<br>\n b\n</div>"
+
+[[case]]
+id = "lineblock-428"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"><br><br></div>"
+
+[[case]]
+id = "lineblock-429"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br> </div>"
+
+[[case]]
+id = "lineblock-430"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"><b>a<br>b</b></div>"
+
+[[case]]
+id = "lineblock-431"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<p>b</p></div>"
+
+[[case]]
+id = "lineblock-432"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"><p>a</p></div>"
+
+[[case]]
+id = "lineblock-433"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br>b<br></div>"
+
+[[case]]
+id = "lineblock-434"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"> </div>"
+
+[[case]]
+id = "lineblock-435"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">\n</div>"
+
+[[case]]
+id = "lineblock-436"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\">a<br/>b</div>"
+
+[[case]]
+id = "lineblock-437"
+from = "html-native_divs-line_blocks"
+input = "<div CLASS=\"line-block\"><span>a</span><br></div>"
+
+[[case]]
+id = "lineblock-438"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"></section>"
+
+[[case]]
+id = "lineblock-439"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a</section>"
+
+[[case]]
+id = "lineblock-440"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br></section>"
+
+[[case]]
+id = "lineblock-441"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"><br></section>"
+
+[[case]]
+id = "lineblock-442"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br>b</section>"
+
+[[case]]
+id = "lineblock-443"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br><br>b</section>"
+
+[[case]]
+id = "lineblock-444"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"> a <br> b </section>"
+
+[[case]]
+id = "lineblock-445"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br>\n</section>"
+
+[[case]]
+id = "lineblock-446"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">\n a\n<br>\n b\n</section>"
+
+[[case]]
+id = "lineblock-447"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"><br><br></section>"
+
+[[case]]
+id = "lineblock-448"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br> </section>"
+
+[[case]]
+id = "lineblock-449"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"><b>a<br>b</b></section>"
+
+[[case]]
+id = "lineblock-450"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<p>b</p></section>"
+
+[[case]]
+id = "lineblock-451"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"><p>a</p></section>"
+
+[[case]]
+id = "lineblock-452"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br>b<br></section>"
+
+[[case]]
+id = "lineblock-453"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"> </section>"
+
+[[case]]
+id = "lineblock-454"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">\n</section>"
+
+[[case]]
+id = "lineblock-455"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\">a<br/>b</section>"
+
+[[case]]
+id = "lineblock-456"
+from = "html-native_divs-line_blocks"
+input = "<section class=\"line-block\"><span>a</span><br></section>"
+
+[[case]]
+id = "lineblock-457"
+input = "<div class=\"line-block x\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-458"
+input = "<div class=\"x line-block\">a<br>b</div>"
+
+[[case]]
+id = "lineblock-459"
+input = "<div class=\"line-block\" title=\"t\">a</div>"
+
+[[case]]
+id = "lineblock-460"
+input = "<div class=\"line-block\" class=\"y\">a</div>"
+
+[[case]]
+id = "lineblock-461"
+input = "<div  class=\" line-block \">a</div>"
+
+[[case]]
+id = "lineblock-462"
+from = "html-line_blocks"
+input = "<div class=\"line-block\" id=\"x\">a</div>"
+
+[[case]]
+id = "lineblock-463"
+from = "html-native_divs"
+input = "<div class=\"line-block\" id=\"x\">a</div>"
+
+[[case]]
+id = "lineblock-464"
+input = "<div class=\"line-block\" data-x=\"1\">a</div>"
+
+[[case]]
+id = "lineblock-465"
+input = "<div id=\"x\" class=\"line-block\">a</div>"
+
+[[case]]
+id = "lineblock-466"
+input = "<div class=\"Line-block\">a</div>"
+
+[[case]]
+id = "lineblock-467"
+input = "<div class=\"line-block\"><p>a</p>b</div>"
+
+[[case]]
+id = "lineblock-468"
+input = "<div class=\"line-block\">a<br>b<p>c</p></div>"
+
+[[case]]
+id = "lbnewline-001"
+input = "<div class=\"line-block\">a\nb</div>"
+
+[[case]]
+id = "lbnewline-002"
+input = "<div class=\"line-block\">long line\nwrapped<br>\nnext</div>"
+
+[[case]]
+id = "lbnewline-003"
+input = "<div class=\"line-block\"><b>a\nb</b></div>"
+
+[[case]]
+id = "lbnewline-004"
+input = "<div class=\"line-block\">a \n b<br>c\n\nd</div>"
+
+[[case]]
+id = "lbnewline-005"
+input = "<div class=\"line-block\">a\n<br>\nb\n</div>"
+
+[[case]]
+id = "lbnewline-006"
+input = "<div class=\"line-block\">a<span>\n</span>b</div>"

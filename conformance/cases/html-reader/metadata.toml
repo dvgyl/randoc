@@ -1,0 +1,4321 @@
+# The head element, the title, meta elements, the base URL, the main element.
+from = "html"
+to = []
+
+[[case]]
+id = "metadata-001"
+input = "<main><p>m</p></main><p>out</p>"
+
+[[case]]
+id = "metadata-002"
+input = "<p>out</p><main id=\"i\" class=\"c\"><p>m</p>text</main>"
+
+[[case]]
+id = "metadata-003"
+input = "<section id=\"s\" class=\"level1\"><h1>H</h1><p>p</p></section><aside>as<p>x</p></aside><header>h</header><div role=\"main\">r</div>"
+
+[[case]]
+id = "metadata-004"
+input = "<html lang=\"en\"><head><title>  My   Title\n two </title></head><body lang=\"fr\" class=\"b\"><p>x</p></body></html>"
+
+[[case]]
+id = "metadata-005"
+input = "<title>T</title><meta name=\"a\" content=\"1\"><meta name=\"a\" content=\"2\"><meta content=\"nocontent\"><meta name=\"\" content=\"e\"><meta name=\"x\"><meta http-equiv=\"refresh\" content=\"1\"><meta charset=\"utf-8\"><link rel=\"stylesheet\" href=\"s.css\"><p>x</p>"
+
+[[case]]
+id = "metadata-006"
+input = "<p>para with <title>T2</title> title in body</p>"
+
+[[case]]
+id = "metadata-007"
+input = "<head><title>T</title></head><p>after head, no body</p>"
+
+[[case]]
+id = "metadata-008"
+input = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Doc</title>\n<style>x{}</style>\n<script src=\"a.js\"></script>\n</head>\n<body>\n<h1 class=\"title\">Doc</h1>\n<p>text</p>\n</body>\n</html>\ntrailing"
+
+[[case]]
+id = "metadata-009"
+input = "<html><head><title>T1</title><title>T2</title><meta name=\"a\" content=\"1\"><meta name=\"a\" content=\"2\"><meta name=\"b\" content=\"\"><meta name=\"c\" content=\"x  y\nz\"><meta property=\"og:p\" content=\"pp\"><meta name=\"UP\" content=\"Case\"><meta name=\"description\" content=\"d\"><meta name=\"generator\" content=\"pandoc\"><meta name=\"viewport\" content=\"v\"></head><body><p>x</p></body></html>"
+
+[[case]]
+id = "metadata-010"
+input = "<head><title>A &amp; B</title><base href=\"http://e.com/a/b/c.html\"></head><a href=\"../x\">1</a><a href=\"/y\">2</a><a href=\"#f\">3</a><a href=\"?q\">4</a><a href=\"http://o.com/z\">5</a><a href=\"//p.com/w\">6</a><a href=\"mailto:a@b\">7</a><a href=\"\">8</a><a href=\"z z.html\">9</a><img src=\"i.png\"><a href=\"./d/../e\">10</a>"
+
+[[case]]
+id = "metadata-011"
+input = "<head><title>T</title></head><main><p>m</p></main><p>out</p>"
+
+[[case]]
+id = "metadata-012"
+input = "<body><div><main class=\"c\"><p>m</p></main></div><p>out</p></body>"
+
+[[case]]
+id = "metadata-013"
+input = "<p>a</p><div role=\"main\" id=\"r\"><p>m</p></div><main>second</main>"
+
+[[case]]
+id = "metadata-014"
+input = "<head><title>A small page\n</head>\n<body>\n<p>x</p>"
+
+[[case]]
+id = "metadata-015"
+input = "<head><title>T</title><title></title></head><p>x</p>"
+
+[[case]]
+id = "metadata-016"
+input = "<head><title><b>T</b></title></head><p>x</p>"
+
+[[case]]
+id = "metadata-017"
+input = "<head><meta name=\"a\" content=\"1\"><title>T</title><p>in head</p><meta name=\"b\" content=\"2\"></head><p>x</p>"
+
+[[case]]
+id = "metadata-018"
+input = "<head><meta name=\"a\" content=\"1\"><div>d</div></head><p>x</p>\n"
+
+[[case]]
+id = "metadata-019"
+input = "<head><title></title></head><p>x</p>"
+
+[[case]]
+id = "metadata-020"
+input = "<head><title> </title></head><p>x</p>"
+
+[[case]]
+id = "metadata-021"
+input = "<head><title>T</title><title><b>U</b></title></head><p>x</p>"
+
+[[case]]
+id = "metadata-022"
+input = "<head><title><!-- c -->T</title></head><p>x</p>"
+
+[[case]]
+id = "metadata-023"
+input = "<head><title>A</title></head><body><p>x</p><title>B</title></body>"
+
+[[case]]
+id = "metadata-024"
+input = "<head><title>A<p>x</p></title></head>"
+
+[[case]]
+id = "metadata-025"
+input = "<head><title>A</head><body><p>y</title></p>"
+
+[[case]]
+id = "head-001"
+input = "<head><p>y</head><p>b</p>"
+
+[[case]]
+id = "head-002"
+input = "<head></p>y</head><p>b</p>"
+
+[[case]]
+id = "head-003"
+input = "<head></p>y"
+
+[[case]]
+id = "head-004"
+input = "<head><div>y</head><p>b</p>"
+
+[[case]]
+id = "head-005"
+input = "<head></div>y</head><p>b</p>"
+
+[[case]]
+id = "head-006"
+input = "<head></div>y"
+
+[[case]]
+id = "head-007"
+input = "<head><blockquote>y</head><p>b</p>"
+
+[[case]]
+id = "head-008"
+input = "<head></blockquote>y</head><p>b</p>"
+
+[[case]]
+id = "head-009"
+input = "<head></blockquote>y"
+
+[[case]]
+id = "head-010"
+input = "<head><ul>y</head><p>b</p>"
+
+[[case]]
+id = "head-011"
+input = "<head></ul>y</head><p>b</p>"
+
+[[case]]
+id = "head-012"
+input = "<head></ul>y"
+
+[[case]]
+id = "head-013"
+input = "<head><ol>y</head><p>b</p>"
+
+[[case]]
+id = "head-014"
+input = "<head></ol>y</head><p>b</p>"
+
+[[case]]
+id = "head-015"
+input = "<head></ol>y"
+
+[[case]]
+id = "head-016"
+input = "<head><li>y</head><p>b</p>"
+
+[[case]]
+id = "head-017"
+input = "<head></li>y</head><p>b</p>"
+
+[[case]]
+id = "head-018"
+input = "<head></li>y"
+
+[[case]]
+id = "head-019"
+input = "<head><h1>y</head><p>b</p>"
+
+[[case]]
+id = "head-020"
+input = "<head></h1>y</head><p>b</p>"
+
+[[case]]
+id = "head-021"
+input = "<head></h1>y"
+
+[[case]]
+id = "head-022"
+input = "<head><pre>y</head><p>b</p>"
+
+[[case]]
+id = "head-023"
+input = "<head></pre>y</head><p>b</p>"
+
+[[case]]
+id = "head-024"
+input = "<head></pre>y"
+
+[[case]]
+id = "head-025"
+input = "<head><table>y</head><p>b</p>"
+
+[[case]]
+id = "head-026"
+input = "<head></table>y</head><p>b</p>"
+
+[[case]]
+id = "head-027"
+input = "<head></table>y"
+
+[[case]]
+id = "head-028"
+input = "<head><tr>y</head><p>b</p>"
+
+[[case]]
+id = "head-029"
+input = "<head></tr>y</head><p>b</p>"
+
+[[case]]
+id = "head-030"
+input = "<head></tr>y"
+
+[[case]]
+id = "head-031"
+input = "<head><td>y</head><p>b</p>"
+
+[[case]]
+id = "head-032"
+input = "<head></td>y</head><p>b</p>"
+
+[[case]]
+id = "head-033"
+input = "<head></td>y"
+
+[[case]]
+id = "head-034"
+input = "<head><th>y</head><p>b</p>"
+
+[[case]]
+id = "head-035"
+input = "<head></th>y</head><p>b</p>"
+
+[[case]]
+id = "head-036"
+input = "<head></th>y"
+
+[[case]]
+id = "head-037"
+input = "<head><dl>y</head><p>b</p>"
+
+[[case]]
+id = "head-038"
+input = "<head></dl>y</head><p>b</p>"
+
+[[case]]
+id = "head-039"
+input = "<head></dl>y"
+
+[[case]]
+id = "head-040"
+input = "<head><dt>y</head><p>b</p>"
+
+[[case]]
+id = "head-041"
+input = "<head></dt>y</head><p>b</p>"
+
+[[case]]
+id = "head-042"
+input = "<head></dt>y"
+
+[[case]]
+id = "head-043"
+input = "<head><dd>y</head><p>b</p>"
+
+[[case]]
+id = "head-044"
+input = "<head></dd>y</head><p>b</p>"
+
+[[case]]
+id = "head-045"
+input = "<head></dd>y"
+
+[[case]]
+id = "head-046"
+input = "<head><section>y</head><p>b</p>"
+
+[[case]]
+id = "head-047"
+input = "<head></section>y</head><p>b</p>"
+
+[[case]]
+id = "head-048"
+input = "<head></section>y"
+
+[[case]]
+id = "head-049"
+input = "<head><figure>y</head><p>b</p>"
+
+[[case]]
+id = "head-050"
+input = "<head></figure>y</head><p>b</p>"
+
+[[case]]
+id = "head-051"
+input = "<head></figure>y"
+
+[[case]]
+id = "head-052"
+input = "<head><hr>y</head><p>b</p>"
+
+[[case]]
+id = "head-053"
+input = "<head></hr>y</head><p>b</p>"
+
+[[case]]
+id = "head-054"
+input = "<head></hr>y"
+
+[[case]]
+id = "head-055"
+input = "<head><thead>y</head><p>b</p>"
+
+[[case]]
+id = "head-056"
+input = "<head></thead>y</head><p>b</p>"
+
+[[case]]
+id = "head-057"
+input = "<head></thead>y"
+
+[[case]]
+id = "head-058"
+input = "<head><tbody>y</head><p>b</p>"
+
+[[case]]
+id = "head-059"
+input = "<head></tbody>y</head><p>b</p>"
+
+[[case]]
+id = "head-060"
+input = "<head></tbody>y"
+
+[[case]]
+id = "head-061"
+input = "<head><tfoot>y</head><p>b</p>"
+
+[[case]]
+id = "head-062"
+input = "<head></tfoot>y</head><p>b</p>"
+
+[[case]]
+id = "head-063"
+input = "<head></tfoot>y"
+
+[[case]]
+id = "head-064"
+input = "<head><caption>y</head><p>b</p>"
+
+[[case]]
+id = "head-065"
+input = "<head></caption>y</head><p>b</p>"
+
+[[case]]
+id = "head-066"
+input = "<head></caption>y"
+
+[[case]]
+id = "head-067"
+input = "<head><aside>y</head><p>b</p>"
+
+[[case]]
+id = "head-068"
+input = "<head></aside>y</head><p>b</p>"
+
+[[case]]
+id = "head-069"
+input = "<head></aside>y"
+
+[[case]]
+id = "head-070"
+input = "<head><header>y</head><p>b</p>"
+
+[[case]]
+id = "head-071"
+input = "<head></header>y</head><p>b</p>"
+
+[[case]]
+id = "head-072"
+input = "<head></header>y"
+
+[[case]]
+id = "head-073"
+input = "<head><main>y</head><p>b</p>"
+
+[[case]]
+id = "head-074"
+input = "<head></main>y</head><p>b</p>"
+
+[[case]]
+id = "head-075"
+input = "<head></main>y"
+
+[[case]]
+id = "head-076"
+input = "<head><nav>y</head><p>b</p>"
+
+[[case]]
+id = "head-077"
+input = "<head></nav>y</head><p>b</p>"
+
+[[case]]
+id = "head-078"
+input = "<head></nav>y"
+
+[[case]]
+id = "head-079"
+input = "<head><article>y</head><p>b</p>"
+
+[[case]]
+id = "head-080"
+input = "<head></article>y</head><p>b</p>"
+
+[[case]]
+id = "head-081"
+input = "<head></article>y"
+
+[[case]]
+id = "head-082"
+input = "<head><b>y</head><p>b</p>"
+
+[[case]]
+id = "head-083"
+input = "<head></b>y</head><p>b</p>"
+
+[[case]]
+id = "head-084"
+input = "<head></b>y"
+
+[[case]]
+id = "head-085"
+input = "<head><i>y</head><p>b</p>"
+
+[[case]]
+id = "head-086"
+input = "<head></i>y</head><p>b</p>"
+
+[[case]]
+id = "head-087"
+input = "<head></i>y"
+
+[[case]]
+id = "head-088"
+input = "<head><em>y</head><p>b</p>"
+
+[[case]]
+id = "head-089"
+input = "<head></em>y</head><p>b</p>"
+
+[[case]]
+id = "head-090"
+input = "<head></em>y"
+
+[[case]]
+id = "head-091"
+input = "<head><a>y</head><p>b</p>"
+
+[[case]]
+id = "head-092"
+input = "<head></a>y</head><p>b</p>"
+
+[[case]]
+id = "head-093"
+input = "<head></a>y"
+
+[[case]]
+id = "head-094"
+input = "<head><span>y</head><p>b</p>"
+
+[[case]]
+id = "head-095"
+input = "<head></span>y</head><p>b</p>"
+
+[[case]]
+id = "head-096"
+input = "<head></span>y"
+
+[[case]]
+id = "head-097"
+input = "<head><code>y</head><p>b</p>"
+
+[[case]]
+id = "head-098"
+input = "<head></code>y</head><p>b</p>"
+
+[[case]]
+id = "head-099"
+input = "<head></code>y"
+
+[[case]]
+id = "head-100"
+input = "<head><br>y</head><p>b</p>"
+
+[[case]]
+id = "head-101"
+input = "<head></br>y</head><p>b</p>"
+
+[[case]]
+id = "head-102"
+input = "<head></br>y"
+
+[[case]]
+id = "head-103"
+input = "<head><img>y</head><p>b</p>"
+
+[[case]]
+id = "head-104"
+input = "<head></img>y</head><p>b</p>"
+
+[[case]]
+id = "head-105"
+input = "<head></img>y"
+
+[[case]]
+id = "head-106"
+input = "<head><q>y</head><p>b</p>"
+
+[[case]]
+id = "head-107"
+input = "<head></q>y</head><p>b</p>"
+
+[[case]]
+id = "head-108"
+input = "<head></q>y"
+
+[[case]]
+id = "head-109"
+input = "<head><script>y</head><p>b</p>"
+
+[[case]]
+id = "head-110"
+input = "<head></script>y</head><p>b</p>"
+
+[[case]]
+id = "head-111"
+input = "<head></script>y"
+
+[[case]]
+id = "head-112"
+input = "<head><style>y</head><p>b</p>"
+
+[[case]]
+id = "head-113"
+input = "<head></style>y</head><p>b</p>"
+
+[[case]]
+id = "head-114"
+input = "<head></style>y"
+
+[[case]]
+id = "head-115"
+input = "<head><title>y</head><p>b</p>"
+
+[[case]]
+id = "head-116"
+input = "<head></title>y</head><p>b</p>"
+
+[[case]]
+id = "head-117"
+input = "<head></title>y"
+
+[[case]]
+id = "head-118"
+input = "<head><meta>y</head><p>b</p>"
+
+[[case]]
+id = "head-119"
+input = "<head></meta>y</head><p>b</p>"
+
+[[case]]
+id = "head-120"
+input = "<head></meta>y"
+
+[[case]]
+id = "head-121"
+input = "<head><link>y</head><p>b</p>"
+
+[[case]]
+id = "head-122"
+input = "<head></link>y</head><p>b</p>"
+
+[[case]]
+id = "head-123"
+input = "<head></link>y"
+
+[[case]]
+id = "head-124"
+input = "<head><head>y</head><p>b</p>"
+
+[[case]]
+id = "head-125"
+input = "<head></head>y</head><p>b</p>"
+
+[[case]]
+id = "head-126"
+input = "<head></head>y"
+
+[[case]]
+id = "head-127"
+input = "<head><body>y</head><p>b</p>"
+
+[[case]]
+id = "head-128"
+input = "<head></body>y</head><p>b</p>"
+
+[[case]]
+id = "head-129"
+input = "<head></body>y"
+
+[[case]]
+id = "head-130"
+input = "<head><html>y</head><p>b</p>"
+
+[[case]]
+id = "head-131"
+input = "<head></html>y</head><p>b</p>"
+
+[[case]]
+id = "head-132"
+input = "<head></html>y"
+
+[[case]]
+id = "head-133"
+input = "<head><input>y</head><p>b</p>"
+
+[[case]]
+id = "head-134"
+input = "<head></input>y</head><p>b</p>"
+
+[[case]]
+id = "head-135"
+input = "<head></input>y"
+
+[[case]]
+id = "head-136"
+input = "<head><svg>y</head><p>b</p>"
+
+[[case]]
+id = "head-137"
+input = "<head></svg>y</head><p>b</p>"
+
+[[case]]
+id = "head-138"
+input = "<head></svg>y"
+
+[[case]]
+id = "head-139"
+input = "<head><noscript>y</head><p>b</p>"
+
+[[case]]
+id = "head-140"
+input = "<head></noscript>y</head><p>b</p>"
+
+[[case]]
+id = "head-141"
+input = "<head></noscript>y"
+
+[[case]]
+id = "head-142"
+input = "<head><textarea>y</head><p>b</p>"
+
+[[case]]
+id = "head-143"
+input = "<head></textarea>y</head><p>b</p>"
+
+[[case]]
+id = "head-144"
+input = "<head></textarea>y"
+
+[[case]]
+id = "head-145"
+input = "<head><col>y</head><p>b</p>"
+
+[[case]]
+id = "head-146"
+input = "<head></col>y</head><p>b</p>"
+
+[[case]]
+id = "head-147"
+input = "<head></col>y"
+
+[[case]]
+id = "head-148"
+input = "<head><colgroup>y</head><p>b</p>"
+
+[[case]]
+id = "head-149"
+input = "<head></colgroup>y</head><p>b</p>"
+
+[[case]]
+id = "head-150"
+input = "<head></colgroup>y"
+
+[[case]]
+id = "head-151"
+input = "<head><x>y</head><p>b</p>"
+
+[[case]]
+id = "head-152"
+input = "<head></x>y</head><p>b</p>"
+
+[[case]]
+id = "head-153"
+input = "<head></x>y"
+
+[[case]]
+id = "head-154"
+input = "<head><iframe>y</head><p>b</p>"
+
+[[case]]
+id = "head-155"
+input = "<head></iframe>y</head><p>b</p>"
+
+[[case]]
+id = "head-156"
+input = "<head></iframe>y"
+
+[[case]]
+id = "head-157"
+input = "<head><math>y</head><p>b</p>"
+
+[[case]]
+id = "head-158"
+input = "<head></math>y</head><p>b</p>"
+
+[[case]]
+id = "head-159"
+input = "<head></math>y"
+
+[[case]]
+id = "head-160"
+input = "<head><base>y</head><p>b</p>"
+
+[[case]]
+id = "head-161"
+input = "<head></base>y</head><p>b</p>"
+
+[[case]]
+id = "head-162"
+input = "<head></base>y"
+
+[[case]]
+id = "head-163"
+input = "<head><object>y</head><p>b</p>"
+
+[[case]]
+id = "head-164"
+input = "<head></object>y</head><p>b</p>"
+
+[[case]]
+id = "head-165"
+input = "<head></object>y"
+
+[[case]]
+id = "head-166"
+input = "<head><template>y</head><p>b</p>"
+
+[[case]]
+id = "head-167"
+input = "<head></template>y</head><p>b</p>"
+
+[[case]]
+id = "head-168"
+input = "<head></template>y"
+
+[[case]]
+id = "head-169"
+input = "<head><form>y</head><p>b</p>"
+
+[[case]]
+id = "head-170"
+input = "<head></form>y</head><p>b</p>"
+
+[[case]]
+id = "head-171"
+input = "<head></form>y"
+
+[[case]]
+id = "head-172"
+input = "<head><option>y</head><p>b</p>"
+
+[[case]]
+id = "head-173"
+input = "<head></option>y</head><p>b</p>"
+
+[[case]]
+id = "head-174"
+input = "<head></option>y"
+
+[[case]]
+id = "head-175"
+input = "<head><select>y</head><p>b</p>"
+
+[[case]]
+id = "head-176"
+input = "<head></select>y</head><p>b</p>"
+
+[[case]]
+id = "head-177"
+input = "<head></select>y"
+
+[[case]]
+id = "head-178"
+input = "<head><font>y</head><p>b</p>"
+
+[[case]]
+id = "head-179"
+input = "<head></font>y</head><p>b</p>"
+
+[[case]]
+id = "head-180"
+input = "<head></font>y"
+
+[[case]]
+id = "head-181"
+input = "<head><center>y</head><p>b</p>"
+
+[[case]]
+id = "head-182"
+input = "<head></center>y</head><p>b</p>"
+
+[[case]]
+id = "head-183"
+input = "<head></center>y"
+
+[[case]]
+id = "head-184"
+input = "<head><title>a<!--x-->b</title></head>"
+
+[[case]]
+id = "head-185"
+input = "<title>a<!--x-->b</title><p>q</p>"
+
+[[case]]
+id = "head-186"
+input = "<head><title>a<!--x--><!--y-->b</title></head>"
+
+[[case]]
+id = "head-187"
+input = "<title>a<!--x--><!--y-->b</title><p>q</p>"
+
+[[case]]
+id = "head-188"
+input = "<head><title><!--x-->a</title></head>"
+
+[[case]]
+id = "head-189"
+input = "<title><!--x-->a</title><p>q</p>"
+
+[[case]]
+id = "head-190"
+input = "<head><title>a<!--x--></title></head>"
+
+[[case]]
+id = "head-191"
+input = "<title>a<!--x--></title><p>q</p>"
+
+[[case]]
+id = "head-192"
+input = "<head><title>a &amp; b</title></head>"
+
+[[case]]
+id = "head-193"
+input = "<title>a &amp; b</title><p>q</p>"
+
+[[case]]
+id = "head-194"
+input = "<head><title>a<b>c</b>d</title></head>"
+
+[[case]]
+id = "head-195"
+input = "<title>a<b>c</b>d</title><p>q</p>"
+
+[[case]]
+id = "head-196"
+input = "<head><title>a<br>b</title></head>"
+
+[[case]]
+id = "head-197"
+input = "<title>a<br>b</title><p>q</p>"
+
+[[case]]
+id = "head-198"
+input = "<head><title>a\nb</title></head>"
+
+[[case]]
+id = "head-199"
+input = "<title>a\nb</title><p>q</p>"
+
+[[case]]
+id = "head-200"
+input = "<head><title> a </title></head>"
+
+[[case]]
+id = "head-201"
+input = "<title> a </title><p>q</p>"
+
+[[case]]
+id = "head-202"
+input = "<head><title></title></head>"
+
+[[case]]
+id = "head-203"
+input = "<title></title><p>q</p>"
+
+[[case]]
+id = "head-204"
+input = "<head><title><![CDATA[x]]></title></head>"
+
+[[case]]
+id = "head-205"
+input = "<title><![CDATA[x]]></title><p>q</p>"
+
+[[case]]
+id = "head-206"
+input = "<head><title>a<?p?>b</title></head>"
+
+[[case]]
+id = "head-207"
+input = "<title>a<?p?>b</title><p>q</p>"
+
+[[case]]
+id = "head-208"
+input = "<head><title>a</x>b</title></head>"
+
+[[case]]
+id = "head-209"
+input = "<title>a</x>b</title><p>q</p>"
+
+[[case]]
+id = "head-210"
+input = "<head><title>a<!--x-->b<!--y-->c</title></head>"
+
+[[case]]
+id = "head-211"
+input = "<title>a<!--x-->b<!--y-->c</title><p>q</p>"
+
+[[case]]
+id = "head-212"
+input = "<head><meta name=\"n\"></head><p>x</p>"
+
+[[case]]
+id = "head-213"
+input = "<head><meta name=\"n\" content=\"\"></head><p>x</p>"
+
+[[case]]
+id = "head-214"
+input = "<head><meta content=\"c\"></head><p>x</p>"
+
+[[case]]
+id = "head-215"
+input = "<head><meta name=\"\" content=\"c\"></head><p>x</p>"
+
+[[case]]
+id = "head-216"
+input = "<head><meta name=\"n\" content=\"a\" content=\"b\"></head><p>x</p>"
+
+[[case]]
+id = "head-217"
+input = "<head><meta NAME=\"n\" Content=\" x  y \"></head><p>x</p>"
+
+[[case]]
+id = "head-218"
+input = "<head><meta name=\"n\" content=\"1\"><meta name=\"n\" content=\"2\"></head><p>x</p>"
+
+[[case]]
+id = "head-219"
+input = "<head><meta name=\"title\" content=\"t\"><title>u</title></head><p>x</p>"
+
+[[case]]
+id = "head-220"
+input = "<head><title>u</title><meta name=\"title\" content=\"t\"></head><p>x</p>"
+
+[[case]]
+id = "head-221"
+input = "<head><meta name=\"date\" content=\"d\"></head><p>x</p>"
+
+[[case]]
+id = "head-222"
+input = "<head><meta name=\"author\" content=\"a\"></head><p>x</p>"
+
+[[case]]
+id = "head-223"
+input = "<head><meta name=\"author\" content=\"a\"><meta name=\"author\" content=\"b\"></head><p>x</p>"
+
+[[case]]
+id = "head-224"
+from = "html+raw_html"
+input = "<head><title>y</head><p>b</p>"
+
+[[case]]
+id = "head-225"
+from = "html+raw_html"
+input = "<head></title>y</head><p>b</p>"
+
+[[case]]
+id = "head-226"
+from = "html+raw_html"
+input = "<head></title>y"
+
+[[case]]
+id = "head-227"
+from = "html+raw_html"
+input = "<head><meta>y</head><p>b</p>"
+
+[[case]]
+id = "head-228"
+from = "html+raw_html"
+input = "<head></meta>y</head><p>b</p>"
+
+[[case]]
+id = "head-229"
+from = "html+raw_html"
+input = "<head></meta>y"
+
+[[case]]
+id = "head-230"
+from = "html+raw_html"
+input = "<head><title>a<!--x-->b</title></head>"
+
+[[case]]
+id = "head-231"
+from = "html+raw_html"
+input = "<title>a<!--x-->b</title><p>q</p>"
+
+[[case]]
+id = "head-232"
+from = "html+raw_html"
+input = "<head><title>a<!--x--><!--y-->b</title></head>"
+
+[[case]]
+id = "head-233"
+from = "html+raw_html"
+input = "<title>a<!--x--><!--y-->b</title><p>q</p>"
+
+[[case]]
+id = "head-234"
+from = "html+raw_html"
+input = "<head><title><!--x-->a</title></head>"
+
+[[case]]
+id = "head-235"
+from = "html+raw_html"
+input = "<title><!--x-->a</title><p>q</p>"
+
+[[case]]
+id = "head-236"
+from = "html+raw_html"
+input = "<head><title>a<!--x--></title></head>"
+
+[[case]]
+id = "head-237"
+from = "html+raw_html"
+input = "<title>a<!--x--></title><p>q</p>"
+
+[[case]]
+id = "head-238"
+from = "html+raw_html"
+input = "<head><title>a &amp; b</title></head>"
+
+[[case]]
+id = "head-239"
+from = "html+raw_html"
+input = "<title>a &amp; b</title><p>q</p>"
+
+[[case]]
+id = "head-240"
+from = "html+raw_html"
+input = "<head><title>a<b>c</b>d</title></head>"
+
+[[case]]
+id = "head-241"
+from = "html+raw_html"
+input = "<title>a<b>c</b>d</title><p>q</p>"
+
+[[case]]
+id = "head-242"
+from = "html+raw_html"
+input = "<head><title>a<br>b</title></head>"
+
+[[case]]
+id = "head-243"
+from = "html+raw_html"
+input = "<title>a<br>b</title><p>q</p>"
+
+[[case]]
+id = "head-244"
+from = "html+raw_html"
+input = "<head><title>a\nb</title></head>"
+
+[[case]]
+id = "head-245"
+from = "html+raw_html"
+input = "<title>a\nb</title><p>q</p>"
+
+[[case]]
+id = "head-246"
+from = "html+raw_html"
+input = "<head><title> a </title></head>"
+
+[[case]]
+id = "head-247"
+from = "html+raw_html"
+input = "<title> a </title><p>q</p>"
+
+[[case]]
+id = "head-248"
+from = "html+raw_html"
+input = "<head><title></title></head>"
+
+[[case]]
+id = "head-249"
+from = "html+raw_html"
+input = "<title></title><p>q</p>"
+
+[[case]]
+id = "head-250"
+from = "html+raw_html"
+input = "<head><title><![CDATA[x]]></title></head>"
+
+[[case]]
+id = "head-251"
+from = "html+raw_html"
+input = "<title><![CDATA[x]]></title><p>q</p>"
+
+[[case]]
+id = "head-252"
+from = "html+raw_html"
+input = "<head><title>a<?p?>b</title></head>"
+
+[[case]]
+id = "head-253"
+from = "html+raw_html"
+input = "<title>a<?p?>b</title><p>q</p>"
+
+[[case]]
+id = "head-254"
+from = "html+raw_html"
+input = "<head><title>a</x>b</title></head>"
+
+[[case]]
+id = "head-255"
+from = "html+raw_html"
+input = "<title>a</x>b</title><p>q</p>"
+
+[[case]]
+id = "head-256"
+from = "html+raw_html"
+input = "<head><title>a<!--x-->b<!--y-->c</title></head>"
+
+[[case]]
+id = "head-257"
+from = "html+raw_html"
+input = "<title>a<!--x-->b<!--y-->c</title><p>q</p>"
+
+[[case]]
+id = "head-258"
+from = "html+raw_html"
+input = "<head><meta name=\"n\"></head><p>x</p>"
+
+[[case]]
+id = "head-259"
+from = "html+raw_html"
+input = "<head><meta name=\"n\" content=\"\"></head><p>x</p>"
+
+[[case]]
+id = "head-260"
+from = "html+raw_html"
+input = "<head><meta content=\"c\"></head><p>x</p>"
+
+[[case]]
+id = "head-261"
+from = "html+raw_html"
+input = "<head><meta name=\"\" content=\"c\"></head><p>x</p>"
+
+[[case]]
+id = "head-262"
+from = "html+raw_html"
+input = "<head><meta name=\"n\" content=\"a\" content=\"b\"></head><p>x</p>"
+
+[[case]]
+id = "head-263"
+from = "html+raw_html"
+input = "<head><meta NAME=\"n\" Content=\" x  y \"></head><p>x</p>"
+
+[[case]]
+id = "head-264"
+from = "html+raw_html"
+input = "<head><meta name=\"n\" content=\"1\"><meta name=\"n\" content=\"2\"></head><p>x</p>"
+
+[[case]]
+id = "head-265"
+from = "html+raw_html"
+input = "<head><meta name=\"title\" content=\"t\"><title>u</title></head><p>x</p>"
+
+[[case]]
+id = "head-266"
+from = "html+raw_html"
+input = "<head><title>u</title><meta name=\"title\" content=\"t\"></head><p>x</p>"
+
+[[case]]
+id = "head-267"
+from = "html+raw_html"
+input = "<head><meta name=\"date\" content=\"d\"></head><p>x</p>"
+
+[[case]]
+id = "head-268"
+from = "html+raw_html"
+input = "<head><meta name=\"author\" content=\"a\"></head><p>x</p>"
+
+[[case]]
+id = "head-269"
+from = "html+raw_html"
+input = "<head><meta name=\"author\" content=\"a\"><meta name=\"author\" content=\"b\"></head><p>x</p>"
+
+[[case]]
+id = "head-270"
+input = "<head><title>a<!-- x --></title><p>z</p>"
+
+[[case]]
+id = "head-271"
+input = "<head><title>a</title><p>z</p>"
+
+[[case]]
+id = "head-272"
+input = "<head><meta name=\"a\" content=\"&amp; x\"></head>"
+
+[[case]]
+id = "head-273"
+input = "<head><meta name=\"a\" content=\"a\nb\"></head>"
+
+[[case]]
+id = "head-274"
+input = "<head><title>a<b>c</b>d</title></head>"
+
+[[case]]
+id = "head-275"
+input = "<head><title>a<br>b</title></head>"
+
+[[case]]
+id = "head-276"
+input = "<head><title>a</x>b</title></head>"
+
+[[case]]
+id = "head-277"
+input = "<head><title>a<?p?>b</title></head>"
+
+[[case]]
+id = "head-278"
+input = "<head><title>a<!--x--> b </title></head>"
+
+[[case]]
+id = "head-279"
+input = "<head><title><!--x--></title></head>"
+
+[[case]]
+id = "head-280"
+input = "<head><title>a<b>c</title></head>"
+
+[[case]]
+id = "head-281"
+input = "<head><title>a<!-- x --></title><p>z</p>"
+
+[[case]]
+id = "base-001"
+input = "<head><base href=\"/a/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-002"
+input = "<head><base href=\"/a/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-003"
+input = "<head><base href=\"/a/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-004"
+input = "<head><base href=\"/a/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-005"
+input = "<head><base href=\"/a/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-006"
+input = "<head><base href=\"/a/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-007"
+input = "<head><base href=\"/a/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-008"
+input = "<head><base href=\"/a/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-009"
+input = "<head><base href=\"/a/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-010"
+input = "<head><base href=\"/a/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-011"
+input = "<head><base href=\"/a/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-012"
+input = "<head><base href=\"/a/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-013"
+input = "<head><base href=\"/a/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-014"
+input = "<head><base href=\"/a/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-015"
+input = "<head><base href=\"/a/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-016"
+input = "<head><base href=\"/a/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-017"
+input = "<head><base href=\"/a/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-018"
+input = "<head><base href=\"/a/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-019"
+input = "<head><base href=\"/a/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-020"
+input = "<head><base href=\"/a/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-021"
+input = "<head><base href=\"/a/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-022"
+input = "<head><base href=\"/a/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-023"
+input = "<head><base href=\"/a/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-024"
+input = "<head><base href=\"/a/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-025"
+input = "<head><base href=\"/a/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-026"
+input = "<head><base href=\"/a/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-027"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-028"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-029"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-030"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-031"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-032"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-033"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-034"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-035"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-036"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-037"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-038"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-039"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-040"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-041"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-042"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-043"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-044"
+input = "<head><base href=\"https://e/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-045"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-046"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-047"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-048"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-049"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-050"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-051"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-052"
+input = "<head><base href=\"https://e/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-053"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-054"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-055"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-056"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-057"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-058"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-059"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-060"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-061"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-062"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-063"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-064"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-065"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-066"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-067"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-068"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-069"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-070"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-071"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-072"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-073"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-074"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-075"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-076"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-077"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-078"
+input = "<head><base href=\"https://e/a/b\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-079"
+input = "<head><base href=\"dir/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-080"
+input = "<head><base href=\"dir/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-081"
+input = "<head><base href=\"dir/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-082"
+input = "<head><base href=\"dir/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-083"
+input = "<head><base href=\"dir/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-084"
+input = "<head><base href=\"dir/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-085"
+input = "<head><base href=\"dir/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-086"
+input = "<head><base href=\"dir/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-087"
+input = "<head><base href=\"dir/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-088"
+input = "<head><base href=\"dir/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-089"
+input = "<head><base href=\"dir/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-090"
+input = "<head><base href=\"dir/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-091"
+input = "<head><base href=\"dir/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-092"
+input = "<head><base href=\"dir/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-093"
+input = "<head><base href=\"dir/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-094"
+input = "<head><base href=\"dir/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-095"
+input = "<head><base href=\"dir/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-096"
+input = "<head><base href=\"dir/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-097"
+input = "<head><base href=\"dir/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-098"
+input = "<head><base href=\"dir/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-099"
+input = "<head><base href=\"dir/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-100"
+input = "<head><base href=\"dir/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-101"
+input = "<head><base href=\"dir/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-102"
+input = "<head><base href=\"dir/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-103"
+input = "<head><base href=\"dir/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-104"
+input = "<head><base href=\"dir/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-105"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-106"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-107"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-108"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-109"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-110"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-111"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-112"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-113"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-114"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-115"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-116"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-117"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-118"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-119"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-120"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-121"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-122"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-123"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-124"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-125"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-126"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-127"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-128"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-129"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-130"
+input = "<head><base href=\"dir/x.html\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-131"
+input = "<head><base href=\"../d/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-132"
+input = "<head><base href=\"../d/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-133"
+input = "<head><base href=\"../d/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-134"
+input = "<head><base href=\"../d/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-135"
+input = "<head><base href=\"../d/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-136"
+input = "<head><base href=\"../d/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-137"
+input = "<head><base href=\"../d/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-138"
+input = "<head><base href=\"../d/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-139"
+input = "<head><base href=\"../d/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-140"
+input = "<head><base href=\"../d/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-141"
+input = "<head><base href=\"../d/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-142"
+input = "<head><base href=\"../d/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-143"
+input = "<head><base href=\"../d/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-144"
+input = "<head><base href=\"../d/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-145"
+input = "<head><base href=\"../d/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-146"
+input = "<head><base href=\"../d/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-147"
+input = "<head><base href=\"../d/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-148"
+input = "<head><base href=\"../d/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-149"
+input = "<head><base href=\"../d/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-150"
+input = "<head><base href=\"../d/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-151"
+input = "<head><base href=\"../d/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-152"
+input = "<head><base href=\"../d/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-153"
+input = "<head><base href=\"../d/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-154"
+input = "<head><base href=\"../d/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-155"
+input = "<head><base href=\"../d/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-156"
+input = "<head><base href=\"../d/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-157"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-158"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-159"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-160"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-161"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-162"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-163"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-164"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-165"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-166"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-167"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-168"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-169"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-170"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-171"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-172"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-173"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-174"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-175"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-176"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-177"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-178"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-179"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-180"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-181"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-182"
+input = "<head><base href=\"//cdn.com/x/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-183"
+input = "<head><base href=\"/root/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-184"
+input = "<head><base href=\"/root/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-185"
+input = "<head><base href=\"/root/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-186"
+input = "<head><base href=\"/root/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-187"
+input = "<head><base href=\"/root/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-188"
+input = "<head><base href=\"/root/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-189"
+input = "<head><base href=\"/root/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-190"
+input = "<head><base href=\"/root/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-191"
+input = "<head><base href=\"/root/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-192"
+input = "<head><base href=\"/root/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-193"
+input = "<head><base href=\"/root/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-194"
+input = "<head><base href=\"/root/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-195"
+input = "<head><base href=\"/root/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-196"
+input = "<head><base href=\"/root/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-197"
+input = "<head><base href=\"/root/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-198"
+input = "<head><base href=\"/root/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-199"
+input = "<head><base href=\"/root/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-200"
+input = "<head><base href=\"/root/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-201"
+input = "<head><base href=\"/root/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-202"
+input = "<head><base href=\"/root/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-203"
+input = "<head><base href=\"/root/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-204"
+input = "<head><base href=\"/root/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-205"
+input = "<head><base href=\"/root/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-206"
+input = "<head><base href=\"/root/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-207"
+input = "<head><base href=\"/root/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-208"
+input = "<head><base href=\"/root/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-209"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-210"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-211"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-212"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-213"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-214"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-215"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-216"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-217"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-218"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-219"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-220"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-221"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-222"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-223"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-224"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-225"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-226"
+input = "<head><base href=\"?q=1\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-227"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-228"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-229"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-230"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-231"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-232"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-233"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-234"
+input = "<head><base href=\"?q=1\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-235"
+input = "<head><base href=\"#top\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-236"
+input = "<head><base href=\"#top\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-237"
+input = "<head><base href=\"#top\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-238"
+input = "<head><base href=\"#top\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-239"
+input = "<head><base href=\"#top\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-240"
+input = "<head><base href=\"#top\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-241"
+input = "<head><base href=\"#top\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-242"
+input = "<head><base href=\"#top\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-243"
+input = "<head><base href=\"#top\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-244"
+input = "<head><base href=\"#top\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-245"
+input = "<head><base href=\"#top\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-246"
+input = "<head><base href=\"#top\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-247"
+input = "<head><base href=\"#top\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-248"
+input = "<head><base href=\"#top\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-249"
+input = "<head><base href=\"#top\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-250"
+input = "<head><base href=\"#top\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-251"
+input = "<head><base href=\"#top\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-252"
+input = "<head><base href=\"#top\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-253"
+input = "<head><base href=\"#top\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-254"
+input = "<head><base href=\"#top\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-255"
+input = "<head><base href=\"#top\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-256"
+input = "<head><base href=\"#top\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-257"
+input = "<head><base href=\"#top\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-258"
+input = "<head><base href=\"#top\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-259"
+input = "<head><base href=\"#top\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-260"
+input = "<head><base href=\"#top\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-261"
+input = "<head><base href=\"\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-262"
+input = "<head><base href=\"\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-263"
+input = "<head><base href=\"\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-264"
+input = "<head><base href=\"\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-265"
+input = "<head><base href=\"\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-266"
+input = "<head><base href=\"\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-267"
+input = "<head><base href=\"\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-268"
+input = "<head><base href=\"\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-269"
+input = "<head><base href=\"\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-270"
+input = "<head><base href=\"\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-271"
+input = "<head><base href=\"\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-272"
+input = "<head><base href=\"\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-273"
+input = "<head><base href=\"\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-274"
+input = "<head><base href=\"\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-275"
+input = "<head><base href=\"\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-276"
+input = "<head><base href=\"\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-277"
+input = "<head><base href=\"\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-278"
+input = "<head><base href=\"\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-279"
+input = "<head><base href=\"\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-280"
+input = "<head><base href=\"\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-281"
+input = "<head><base href=\"\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-282"
+input = "<head><base href=\"\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-283"
+input = "<head><base href=\"\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-284"
+input = "<head><base href=\"\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-285"
+input = "<head><base href=\"\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-286"
+input = "<head><base href=\"\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-287"
+input = "<head><base href=\"http://e\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-288"
+input = "<head><base href=\"http://e\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-289"
+input = "<head><base href=\"http://e\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-290"
+input = "<head><base href=\"http://e\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-291"
+input = "<head><base href=\"http://e\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-292"
+input = "<head><base href=\"http://e\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-293"
+input = "<head><base href=\"http://e\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-294"
+input = "<head><base href=\"http://e\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-295"
+input = "<head><base href=\"http://e\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-296"
+input = "<head><base href=\"http://e\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-297"
+input = "<head><base href=\"http://e\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-298"
+input = "<head><base href=\"http://e\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-299"
+input = "<head><base href=\"http://e\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-300"
+input = "<head><base href=\"http://e\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-301"
+input = "<head><base href=\"http://e\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-302"
+input = "<head><base href=\"http://e\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-303"
+input = "<head><base href=\"http://e\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-304"
+input = "<head><base href=\"http://e\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-305"
+input = "<head><base href=\"http://e\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-306"
+input = "<head><base href=\"http://e\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-307"
+input = "<head><base href=\"http://e\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-308"
+input = "<head><base href=\"http://e\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-309"
+input = "<head><base href=\"http://e\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-310"
+input = "<head><base href=\"http://e\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-311"
+input = "<head><base href=\"http://e\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-312"
+input = "<head><base href=\"http://e\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-313"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-314"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-315"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-316"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-317"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-318"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-319"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-320"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-321"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-322"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-323"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-324"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-325"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-326"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-327"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-328"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-329"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-330"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-331"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-332"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-333"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-334"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-335"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-336"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-337"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-338"
+input = "<head><base href=\"http://e?x\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-339"
+input = "<head><base href=\"a:b\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-340"
+input = "<head><base href=\"a:b\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-341"
+input = "<head><base href=\"a:b\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-342"
+input = "<head><base href=\"a:b\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-343"
+input = "<head><base href=\"a:b\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-344"
+input = "<head><base href=\"a:b\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-345"
+input = "<head><base href=\"a:b\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-346"
+input = "<head><base href=\"a:b\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-347"
+input = "<head><base href=\"a:b\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-348"
+input = "<head><base href=\"a:b\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-349"
+input = "<head><base href=\"a:b\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-350"
+input = "<head><base href=\"a:b\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-351"
+input = "<head><base href=\"a:b\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-352"
+input = "<head><base href=\"a:b\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-353"
+input = "<head><base href=\"a:b\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-354"
+input = "<head><base href=\"a:b\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-355"
+input = "<head><base href=\"a:b\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-356"
+input = "<head><base href=\"a:b\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-357"
+input = "<head><base href=\"a:b\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-358"
+input = "<head><base href=\"a:b\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-359"
+input = "<head><base href=\"a:b\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-360"
+input = "<head><base href=\"a:b\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-361"
+input = "<head><base href=\"a:b\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-362"
+input = "<head><base href=\"a:b\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-363"
+input = "<head><base href=\"a:b\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-364"
+input = "<head><base href=\"a:b\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-365"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-366"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-367"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-368"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-369"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-370"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-371"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-372"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-373"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-374"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-375"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-376"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-377"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-378"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-379"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-380"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-381"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-382"
+input = "<head><base href=\"1a:b\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-383"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-384"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-385"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-386"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-387"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-388"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-389"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-390"
+input = "<head><base href=\"1a:b\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-391"
+input = "<head><base href=\"a b\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-392"
+input = "<head><base href=\"a b\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-393"
+input = "<head><base href=\"a b\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-394"
+input = "<head><base href=\"a b\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-395"
+input = "<head><base href=\"a b\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-396"
+input = "<head><base href=\"a b\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-397"
+input = "<head><base href=\"a b\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-398"
+input = "<head><base href=\"a b\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-399"
+input = "<head><base href=\"a b\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-400"
+input = "<head><base href=\"a b\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-401"
+input = "<head><base href=\"a b\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-402"
+input = "<head><base href=\"a b\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-403"
+input = "<head><base href=\"a b\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-404"
+input = "<head><base href=\"a b\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-405"
+input = "<head><base href=\"a b\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-406"
+input = "<head><base href=\"a b\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-407"
+input = "<head><base href=\"a b\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-408"
+input = "<head><base href=\"a b\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-409"
+input = "<head><base href=\"a b\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-410"
+input = "<head><base href=\"a b\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-411"
+input = "<head><base href=\"a b\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-412"
+input = "<head><base href=\"a b\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-413"
+input = "<head><base href=\"a b\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-414"
+input = "<head><base href=\"a b\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-415"
+input = "<head><base href=\"a b\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-416"
+input = "<head><base href=\"a b\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-417"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-418"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-419"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-420"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-421"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-422"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-423"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-424"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-425"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-426"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-427"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-428"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-429"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-430"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-431"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-432"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-433"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-434"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-435"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-436"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-437"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-438"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-439"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-440"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-441"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-442"
+input = "<head><base href=\"http://e/%41/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-443"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-444"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-445"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-446"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-447"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-448"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-449"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-450"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-451"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-452"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-453"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-454"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-455"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-456"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-457"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-458"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-459"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-460"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-461"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-462"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-463"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-464"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-465"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-466"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-467"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-468"
+input = "<head><base href=\"mailto:x@y\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-469"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-470"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-471"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-472"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-473"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-474"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-475"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-476"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-477"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-478"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-479"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-480"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-481"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-482"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-483"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-484"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-485"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-486"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-487"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-488"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-489"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-490"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-491"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-492"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-493"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-494"
+input = "<head><base href=\"http://e/a/./b/../c\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-495"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-496"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-497"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-498"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-499"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-500"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-501"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-502"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-503"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-504"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-505"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-506"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-507"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-508"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-509"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-510"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-511"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-512"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-513"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-514"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-515"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-516"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-517"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-518"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-519"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-520"
+input = "<head><base href=\"x/y/z\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-521"
+input = "<head><base href=\"./\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-522"
+input = "<head><base href=\"./\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-523"
+input = "<head><base href=\"./\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-524"
+input = "<head><base href=\"./\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-525"
+input = "<head><base href=\"./\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-526"
+input = "<head><base href=\"./\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-527"
+input = "<head><base href=\"./\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-528"
+input = "<head><base href=\"./\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-529"
+input = "<head><base href=\"./\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-530"
+input = "<head><base href=\"./\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-531"
+input = "<head><base href=\"./\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-532"
+input = "<head><base href=\"./\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-533"
+input = "<head><base href=\"./\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-534"
+input = "<head><base href=\"./\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-535"
+input = "<head><base href=\"./\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-536"
+input = "<head><base href=\"./\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-537"
+input = "<head><base href=\"./\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-538"
+input = "<head><base href=\"./\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-539"
+input = "<head><base href=\"./\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-540"
+input = "<head><base href=\"./\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-541"
+input = "<head><base href=\"./\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-542"
+input = "<head><base href=\"./\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-543"
+input = "<head><base href=\"./\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-544"
+input = "<head><base href=\"./\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-545"
+input = "<head><base href=\"./\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-546"
+input = "<head><base href=\"./\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-547"
+input = "<head><base href=\".\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-548"
+input = "<head><base href=\".\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-549"
+input = "<head><base href=\".\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-550"
+input = "<head><base href=\".\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-551"
+input = "<head><base href=\".\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-552"
+input = "<head><base href=\".\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-553"
+input = "<head><base href=\".\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-554"
+input = "<head><base href=\".\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-555"
+input = "<head><base href=\".\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-556"
+input = "<head><base href=\".\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-557"
+input = "<head><base href=\".\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-558"
+input = "<head><base href=\".\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-559"
+input = "<head><base href=\".\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-560"
+input = "<head><base href=\".\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-561"
+input = "<head><base href=\".\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-562"
+input = "<head><base href=\".\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-563"
+input = "<head><base href=\".\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-564"
+input = "<head><base href=\".\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-565"
+input = "<head><base href=\".\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-566"
+input = "<head><base href=\".\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-567"
+input = "<head><base href=\".\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-568"
+input = "<head><base href=\".\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-569"
+input = "<head><base href=\".\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-570"
+input = "<head><base href=\".\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-571"
+input = "<head><base href=\".\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-572"
+input = "<head><base href=\".\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-573"
+input = "<head><base href=\"..\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-574"
+input = "<head><base href=\"..\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-575"
+input = "<head><base href=\"..\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-576"
+input = "<head><base href=\"..\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-577"
+input = "<head><base href=\"..\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-578"
+input = "<head><base href=\"..\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-579"
+input = "<head><base href=\"..\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-580"
+input = "<head><base href=\"..\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-581"
+input = "<head><base href=\"..\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-582"
+input = "<head><base href=\"..\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-583"
+input = "<head><base href=\"..\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-584"
+input = "<head><base href=\"..\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-585"
+input = "<head><base href=\"..\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-586"
+input = "<head><base href=\"..\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-587"
+input = "<head><base href=\"..\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-588"
+input = "<head><base href=\"..\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-589"
+input = "<head><base href=\"..\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-590"
+input = "<head><base href=\"..\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-591"
+input = "<head><base href=\"..\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-592"
+input = "<head><base href=\"..\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-593"
+input = "<head><base href=\"..\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-594"
+input = "<head><base href=\"..\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-595"
+input = "<head><base href=\"..\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-596"
+input = "<head><base href=\"..\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-597"
+input = "<head><base href=\"..\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-598"
+input = "<head><base href=\"..\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-599"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-600"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-601"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-602"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-603"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-604"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-605"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-606"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-607"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-608"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-609"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-610"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-611"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-612"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-613"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-614"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-615"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-616"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-617"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-618"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-619"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-620"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-621"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-622"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-623"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-624"
+input = "<head><base href=\"http://[::1]/a/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-625"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-626"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-627"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-628"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-629"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-630"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-631"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-632"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-633"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-634"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-635"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-636"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-637"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-638"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-639"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-640"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-641"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-642"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-643"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-644"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-645"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-646"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-647"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-648"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-649"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-650"
+input = "<head><base href=\"http://e/a?b#c\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-651"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-652"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-653"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-654"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-655"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-656"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-657"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-658"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-659"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-660"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-661"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-662"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-663"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-664"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-665"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-666"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-667"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-668"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-669"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-670"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-671"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-672"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-673"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-674"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-675"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-676"
+input = "<head><base href=\"file:///tmp/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-677"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-678"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-679"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-680"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-681"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-682"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-683"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-684"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-685"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-686"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-687"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-688"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-689"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-690"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-691"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-692"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-693"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-694"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-695"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-696"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-697"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-698"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-699"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-700"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-701"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-702"
+input = "<head><base href=\"c:/w/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-703"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-704"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-705"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-706"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-707"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-708"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-709"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-710"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-711"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-712"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-713"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-714"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-715"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-716"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-717"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-718"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-719"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-720"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-721"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-722"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-723"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-724"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-725"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-726"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-727"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-728"
+input = "<head><base href=\"http://e/ä/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-729"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"b\">x</a><img src=\"b\"></p>"
+
+[[case]]
+id = "base-730"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"c\">x</a><img src=\"c\"></p>"
+
+[[case]]
+id = "base-731"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"#f\">x</a><img src=\"#f\"></p>"
+
+[[case]]
+id = "base-732"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"\">x</a><img src=\"\"></p>"
+
+[[case]]
+id = "base-733"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"/abs\">x</a><img src=\"/abs\"></p>"
+
+[[case]]
+id = "base-734"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"?q\">x</a><img src=\"?q\"></p>"
+
+[[case]]
+id = "base-735"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"../x\">x</a><img src=\"../x\"></p>"
+
+[[case]]
+id = "base-736"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"./y\">x</a><img src=\"./y\"></p>"
+
+[[case]]
+id = "base-737"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"//h/p\">x</a><img src=\"//h/p\"></p>"
+
+[[case]]
+id = "base-738"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"https://e/a/../b\">x</a><img src=\"https://e/a/../b\"></p>"
+
+[[case]]
+id = "base-739"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"a/../b\">x</a><img src=\"a/../b\"></p>"
+
+[[case]]
+id = "base-740"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"a:b\">x</a><img src=\"a:b\"></p>"
+
+[[case]]
+id = "base-741"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"1a:b\">x</a><img src=\"1a:b\"></p>"
+
+[[case]]
+id = "base-742"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"x y\">x</a><img src=\"x y\"></p>"
+
+[[case]]
+id = "base-743"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"%20\">x</a><img src=\"%20\"></p>"
+
+[[case]]
+id = "base-744"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"../../../z\">x</a><img src=\"../../../z\"></p>"
+
+[[case]]
+id = "base-745"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"b/\">x</a><img src=\"b/\"></p>"
+
+[[case]]
+id = "base-746"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\".\">x</a><img src=\".\"></p>"
+
+[[case]]
+id = "base-747"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"..\">x</a><img src=\"..\"></p>"
+
+[[case]]
+id = "base-748"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"mailto:u\">x</a><img src=\"mailto:u\"></p>"
+
+[[case]]
+id = "base-749"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"#\">x</a><img src=\"#\"></p>"
+
+[[case]]
+id = "base-750"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"?\">x</a><img src=\"?\"></p>"
+
+[[case]]
+id = "base-751"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"ä\">x</a><img src=\"ä\"></p>"
+
+[[case]]
+id = "base-752"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"a/./b/./c\">x</a><img src=\"a/./b/./c\"></p>"
+
+[[case]]
+id = "base-753"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"/./a\">x</a><img src=\"/./a\"></p>"
+
+[[case]]
+id = "base-754"
+input = "<head><base href=\"-x:y/\"></head><p><a href=\"c:d/e\">x</a><img src=\"c:d/e\"></p>"
+
+[[case]]
+id = "base-755"
+input = "<p><a href=\"https://e/a/../b\">x</a></p>"
+
+[[case]]
+id = "base-756"
+input = "<head><base href=\"/a/\"><base href=\"/b/\"></head><p><a href=\"c\">x</a></p>"
+
+[[case]]
+id = "base-757"
+input = "<base href=\"/a/\"><p><a href=\"c\">x</a></p>"
+
+[[case]]
+id = "base-758"
+input = "<p><a href=\"c\">x</a></p><head><base href=\"/a/\"></head>"
+
+[[case]]
+id = "base-759"
+input = "<p><a href=\"a b\">x</a></p>"
+
+[[case]]
+id = "base-760"
+input = "<p><a href=\"ab\">x</a></p>"
+
+[[case]]
+id = "base-761"
+input = "<p><a href=\"a b\">x</a></p>"
+
+[[case]]
+id = "base-762"
+input = "<p><a href=\"a b\">x</a></p>"

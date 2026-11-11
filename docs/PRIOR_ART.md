@@ -78,6 +78,9 @@ the repository; the behaviour was found with the oracle.
 | JSON error texts | `aeson` 2.2 | BSD-3-Clause | Observed | `crates/randoc-ast/src/json/` | none (no reuse) |
 | Layout rules of the native writer | `pretty-show` 1.10, `pretty` 1.1.3 | MIT; BSD-3-Clause | Observed | `crates/randoc-native` | none (no reuse) |
 | Default abbreviation list | none: 76 entries found with 3,926,072 oracle probes | not applicable | Observed | `crates/randoc-core/src/shared/` | none (no reuse) |
+| HTML tag tokenizer and tag renderer | `tagsoup` 0.14.8 (the version of the Stackage snapshot `lts-24.51` that Pandoc 3.13 builds with) | BSD-3-Clause | Port | `crates/randoc-html-reader/src/tokens.rs` | ADR 13 |
+| Join rules of an inline list, grid rules of a table | `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`) | BSD-3-Clause | Port | `crates/randoc-html-reader/src/text.rs`, `src/table.rs` | ADR 13 |
+| Tree rules of the HTML reader | none: found with oracle probes | not applicable | Observed | `crates/randoc-html-reader/src/parse.rs`, `src/table.rs` | ADR 13 |
 
 Rust dependencies on `main`, pinned by `Cargo.lock`:
 

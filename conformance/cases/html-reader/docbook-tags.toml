@@ -1,0 +1,578 @@
+# DocBook and EPUB tag names: block-level or inline.
+from = "html"
+to = []
+
+[[case]]
+id = "docbook-tags-001"
+from = "html+raw_html"
+input = "x<abbrev>y</abbrev>z"
+
+[[case]]
+id = "docbook-tags-002"
+from = "html+raw_html"
+input = "x<ackno>y</ackno>z"
+
+[[case]]
+id = "docbook-tags-003"
+from = "html+raw_html"
+input = "x<address>y</address>z"
+
+[[case]]
+id = "docbook-tags-004"
+from = "html+raw_html"
+input = "x<anchor>y</anchor>z"
+
+[[case]]
+id = "docbook-tags-005"
+from = "html+raw_html"
+input = "x<appendix>y</appendix>z"
+
+[[case]]
+id = "docbook-tags-006"
+from = "html+raw_html"
+input = "x<area>y</area>z"
+
+[[case]]
+id = "docbook-tags-007"
+from = "html+raw_html"
+input = "x<arg>y</arg>z"
+
+[[case]]
+id = "docbook-tags-008"
+from = "html+raw_html"
+input = "x<attribution>y</attribution>z"
+
+[[case]]
+id = "docbook-tags-009"
+from = "html+raw_html"
+input = "x<authorblurb>y</authorblurb>z"
+
+[[case]]
+id = "docbook-tags-010"
+from = "html+raw_html"
+input = "x<beginpage>y</beginpage>z"
+
+[[case]]
+id = "docbook-tags-011"
+from = "html+raw_html"
+input = "x<biblioentry>y</biblioentry>z"
+
+[[case]]
+id = "docbook-tags-012"
+from = "html+raw_html"
+input = "x<biblioid>y</biblioid>z"
+
+[[case]]
+id = "docbook-tags-013"
+from = "html+raw_html"
+input = "x<bibliomset>y</bibliomset>z"
+
+[[case]]
+id = "docbook-tags-014"
+from = "html+raw_html"
+input = "x<bibliosource>y</bibliosource>z"
+
+[[case]]
+id = "docbook-tags-015"
+from = "html+raw_html"
+input = "x<bookinfo>y</bookinfo>z"
+
+[[case]]
+id = "docbook-tags-016"
+from = "html+raw_html"
+input = "x<calloutlist>y</calloutlist>z"
+
+[[case]]
+id = "docbook-tags-017"
+from = "html+raw_html"
+input = "x<caution>y</caution>z"
+
+[[case]]
+id = "docbook-tags-018"
+from = "html+raw_html"
+input = "x<citation>y</citation>z"
+
+[[case]]
+id = "docbook-tags-019"
+from = "html+raw_html"
+input = "x<citetitle>y</citetitle>z"
+
+[[case]]
+id = "docbook-tags-020"
+from = "html+raw_html"
+input = "x<classsynopsis>y</classsynopsis>z"
+
+[[case]]
+id = "docbook-tags-021"
+from = "html+raw_html"
+input = "x<co>y</co>z"
+
+[[case]]
+id = "docbook-tags-022"
+from = "html+raw_html"
+input = "x<colophon>y</colophon>z"
+
+[[case]]
+id = "docbook-tags-023"
+from = "html+raw_html"
+input = "x<computeroutput>y</computeroutput>z"
+
+[[case]]
+id = "docbook-tags-024"
+from = "html+raw_html"
+input = "x<confnum>y</confnum>z"
+
+[[case]]
+id = "docbook-tags-025"
+from = "html+raw_html"
+input = "x<constant>y</constant>z"
+
+[[case]]
+id = "docbook-tags-026"
+from = "html+raw_html"
+input = "x<contractnum>y</contractnum>z"
+
+[[case]]
+id = "docbook-tags-027"
+from = "html+raw_html"
+input = "x<copyright>y</copyright>z"
+
+[[case]]
+id = "docbook-tags-028"
+from = "html+raw_html"
+input = "x<country>y</country>z"
+
+[[case]]
+id = "docbook-tags-029"
+from = "html+raw_html"
+input = "x<dedication>y</dedication>z"
+
+[[case]]
+id = "docbook-tags-030"
+from = "html+raw_html"
+input = "x<edition>y</edition>z"
+
+[[case]]
+id = "docbook-tags-031"
+from = "html+raw_html"
+input = "x<emphasis>y</emphasis>z"
+
+[[case]]
+id = "docbook-tags-032"
+from = "html+raw_html"
+input = "x<envar>y</envar>z"
+
+[[case]]
+id = "docbook-tags-033"
+from = "html+raw_html"
+input = "x<equation>y</equation>z"
+
+[[case]]
+id = "docbook-tags-034"
+from = "html+raw_html"
+input = "x<errortype>y</errortype>z"
+
+[[case]]
+id = "docbook-tags-035"
+from = "html+raw_html"
+input = "x<fax>y</fax>z"
+
+[[case]]
+id = "docbook-tags-036"
+from = "html+raw_html"
+input = "x<filename>y</filename>z"
+
+[[case]]
+id = "docbook-tags-037"
+from = "html+raw_html"
+input = "x<footnote>y</footnote>z"
+
+[[case]]
+id = "docbook-tags-038"
+from = "html+raw_html"
+input = "x<formalpara>y</formalpara>z"
+
+[[case]]
+id = "docbook-tags-039"
+from = "html+raw_html"
+input = "x<funcsynopsis>y</funcsynopsis>z"
+
+[[case]]
+id = "docbook-tags-040"
+from = "html+raw_html"
+input = "x<glossaryinfo>y</glossaryinfo>z"
+
+[[case]]
+id = "docbook-tags-041"
+from = "html+raw_html"
+input = "x<glossentry>y</glossentry>z"
+
+[[case]]
+id = "docbook-tags-042"
+from = "html+raw_html"
+input = "x<glossseealso>y</glossseealso>z"
+
+[[case]]
+id = "docbook-tags-043"
+from = "html+raw_html"
+input = "x<group>y</group>z"
+
+[[case]]
+id = "docbook-tags-044"
+from = "html+raw_html"
+input = "x<guilabel>y</guilabel>z"
+
+[[case]]
+id = "docbook-tags-045"
+from = "html+raw_html"
+input = "x<guisubmenu>y</guisubmenu>z"
+
+[[case]]
+id = "docbook-tags-046"
+from = "html+raw_html"
+input = "x<honorific>y</honorific>z"
+
+[[case]]
+id = "docbook-tags-047"
+from = "html+raw_html"
+input = "x<index>y</index>z"
+
+[[case]]
+id = "docbook-tags-048"
+from = "html+raw_html"
+input = "x<indexinfo>y</indexinfo>z"
+
+[[case]]
+id = "docbook-tags-049"
+from = "html+raw_html"
+input = "x<informalequation>y</informalequation>z"
+
+[[case]]
+id = "docbook-tags-050"
+from = "html+raw_html"
+input = "x<informaltable>y</informaltable>z"
+
+[[case]]
+id = "docbook-tags-051"
+from = "html+raw_html"
+input = "x<interfacename>y</interfacename>z"
+
+[[case]]
+id = "docbook-tags-052"
+from = "html+raw_html"
+input = "x<issn>y</issn>z"
+
+[[case]]
+id = "docbook-tags-053"
+from = "html+raw_html"
+input = "x<itermset>y</itermset>z"
+
+[[case]]
+id = "docbook-tags-054"
+from = "html+raw_html"
+input = "x<keycode>y</keycode>z"
+
+[[case]]
+id = "docbook-tags-055"
+from = "html+raw_html"
+input = "x<keyword>y</keyword>z"
+
+[[case]]
+id = "docbook-tags-056"
+from = "html+raw_html"
+input = "x<legalnotice>y</legalnotice>z"
+
+[[case]]
+id = "docbook-tags-057"
+from = "html+raw_html"
+input = "x<link>y</link>z"
+
+[[case]]
+id = "docbook-tags-058"
+from = "html+raw_html"
+input = "x<literallayout>y</literallayout>z"
+
+[[case]]
+id = "docbook-tags-059"
+from = "html+raw_html"
+input = "x<mathphrase>y</mathphrase>z"
+
+[[case]]
+id = "docbook-tags-060"
+from = "html+raw_html"
+input = "x<member>y</member>z"
+
+[[case]]
+id = "docbook-tags-061"
+from = "html+raw_html"
+input = "x<methodsynopsis>y</methodsynopsis>z"
+
+[[case]]
+id = "docbook-tags-062"
+from = "html+raw_html"
+input = "x<msg>y</msg>z"
+
+[[case]]
+id = "docbook-tags-063"
+from = "html+raw_html"
+input = "x<msgexplan>y</msgexplan>z"
+
+[[case]]
+id = "docbook-tags-064"
+from = "html+raw_html"
+input = "x<msgmain>y</msgmain>z"
+
+[[case]]
+id = "docbook-tags-065"
+from = "html+raw_html"
+input = "x<msgset>y</msgset>z"
+
+[[case]]
+id = "docbook-tags-066"
+from = "html+raw_html"
+input = "x<nav>y</nav>z"
+
+[[case]]
+id = "docbook-tags-067"
+from = "html+raw_html"
+input = "x<olink>y</olink>z"
+
+[[case]]
+id = "docbook-tags-068"
+from = "html+raw_html"
+input = "x<optional>y</optional>z"
+
+[[case]]
+id = "docbook-tags-069"
+from = "html+raw_html"
+input = "x<orgname>y</orgname>z"
+
+[[case]]
+id = "docbook-tags-070"
+from = "html+raw_html"
+input = "x<othername>y</othername>z"
+
+[[case]]
+id = "docbook-tags-071"
+from = "html+raw_html"
+input = "x<paramdef>y</paramdef>z"
+
+[[case]]
+id = "docbook-tags-072"
+from = "html+raw_html"
+input = "x<partinfo>y</partinfo>z"
+
+[[case]]
+id = "docbook-tags-073"
+from = "html+raw_html"
+input = "x<phrase>y</phrase>z"
+
+[[case]]
+id = "docbook-tags-074"
+from = "html+raw_html"
+input = "x<preface>y</preface>z"
+
+[[case]]
+id = "docbook-tags-075"
+from = "html+raw_html"
+input = "x<primaryie>y</primaryie>z"
+
+[[case]]
+id = "docbook-tags-076"
+from = "html+raw_html"
+input = "x<productname>y</productname>z"
+
+[[case]]
+id = "docbook-tags-077"
+from = "html+raw_html"
+input = "x<programlistingco>y</programlistingco>z"
+
+[[case]]
+id = "docbook-tags-078"
+from = "html+raw_html"
+input = "x<pubdate>y</pubdate>z"
+
+[[case]]
+id = "docbook-tags-079"
+from = "html+raw_html"
+input = "x<qandadiv>y</qandadiv>z"
+
+[[case]]
+id = "docbook-tags-080"
+from = "html+raw_html"
+input = "x<question>y</question>z"
+
+[[case]]
+id = "docbook-tags-081"
+from = "html+raw_html"
+input = "x<refentryinfo>y</refentryinfo>z"
+
+[[case]]
+id = "docbook-tags-082"
+from = "html+raw_html"
+input = "x<refname>y</refname>z"
+
+[[case]]
+id = "docbook-tags-083"
+from = "html+raw_html"
+input = "x<refsect1>y</refsect1>z"
+
+[[case]]
+id = "docbook-tags-084"
+from = "html+raw_html"
+input = "x<refsect3>y</refsect3>z"
+
+[[case]]
+id = "docbook-tags-085"
+from = "html+raw_html"
+input = "x<refsynopsisdiv>y</refsynopsisdiv>z"
+
+[[case]]
+id = "docbook-tags-086"
+from = "html+raw_html"
+input = "x<replaceable>y</replaceable>z"
+
+[[case]]
+id = "docbook-tags-087"
+from = "html+raw_html"
+input = "x<revision>y</revision>z"
+
+[[case]]
+id = "docbook-tags-088"
+from = "html+raw_html"
+input = "x<screen>y</screen>z"
+
+[[case]]
+id = "docbook-tags-089"
+from = "html+raw_html"
+input = "x<screenshot>y</screenshot>z"
+
+[[case]]
+id = "docbook-tags-090"
+from = "html+raw_html"
+input = "x<sect1>y</sect1>z"
+
+[[case]]
+id = "docbook-tags-091"
+from = "html+raw_html"
+input = "x<sect3>y</sect3>z"
+
+[[case]]
+id = "docbook-tags-092"
+from = "html+raw_html"
+input = "x<sectioninfo>y</sectioninfo>z"
+
+[[case]]
+id = "docbook-tags-093"
+from = "html+raw_html"
+input = "x<seealsoie>y</seealsoie>z"
+
+[[case]]
+id = "docbook-tags-094"
+from = "html+raw_html"
+input = "x<seglistitem>y</seglistitem>z"
+
+[[case]]
+id = "docbook-tags-095"
+from = "html+raw_html"
+input = "x<seriesvolnums>y</seriesvolnums>z"
+
+[[case]]
+id = "docbook-tags-096"
+from = "html+raw_html"
+input = "x<sgmltag>y</sgmltag>z"
+
+[[case]]
+id = "docbook-tags-097"
+from = "html+raw_html"
+input = "x<sidebar>y</sidebar>z"
+
+[[case]]
+id = "docbook-tags-098"
+from = "html+raw_html"
+input = "x<simplelist>y</simplelist>z"
+
+[[case]]
+id = "docbook-tags-099"
+from = "html+raw_html"
+input = "x<spanspec>y</spanspec>z"
+
+[[case]]
+id = "docbook-tags-100"
+from = "html+raw_html"
+input = "x<street>y</street>z"
+
+[[case]]
+id = "docbook-tags-101"
+from = "html+raw_html"
+input = "x<subject>y</subject>z"
+
+[[case]]
+id = "docbook-tags-102"
+from = "html+raw_html"
+input = "x<substeps>y</substeps>z"
+
+[[case]]
+id = "docbook-tags-103"
+from = "html+raw_html"
+input = "x<surname>y</surname>z"
+
+[[case]]
+id = "docbook-tags-104"
+from = "html+raw_html"
+input = "x<synopfragment>y</synopfragment>z"
+
+[[case]]
+id = "docbook-tags-105"
+from = "html+raw_html"
+input = "x<task>y</task>z"
+
+[[case]]
+id = "docbook-tags-106"
+from = "html+raw_html"
+input = "x<tasksummary>y</tasksummary>z"
+
+[[case]]
+id = "docbook-tags-107"
+from = "html+raw_html"
+input = "x<tertiaryie>y</tertiaryie>z"
+
+[[case]]
+id = "docbook-tags-108"
+from = "html+raw_html"
+input = "x<tfoot>y</tfoot>z"
+
+[[case]]
+id = "docbook-tags-109"
+from = "html+raw_html"
+input = "x<titleabbrev>y</titleabbrev>z"
+
+[[case]]
+id = "docbook-tags-110"
+from = "html+raw_html"
+input = "x<tocentry>y</tocentry>z"
+
+[[case]]
+id = "docbook-tags-111"
+from = "html+raw_html"
+input = "x<type>y</type>z"
+
+[[case]]
+id = "docbook-tags-112"
+from = "html+raw_html"
+input = "x<varargs>y</varargs>z"
+
+[[case]]
+id = "docbook-tags-113"
+from = "html+raw_html"
+input = "x<varname>y</varname>z"
+
+[[case]]
+id = "docbook-tags-114"
+from = "html+raw_html"
+input = "x<volumenum>y</volumenum>z"
+
+[[case]]
+id = "docbook-tags-115"
+from = "html+raw_html"
+input = "x<xref>y</xref>z"

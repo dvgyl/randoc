@@ -1,0 +1,2399 @@
+# Tables: sections, captions, columns, spans, alignments.
+from = "html"
+to = []
+
+[[case]]
+id = "tables-001"
+input = "<table><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>"
+
+[[case]]
+id = "tables-002"
+input = "<table><thead><tr><th>h</th></tr></thead><tbody><tr><td>b</td></tr></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "tables-003"
+input = "<table id=\"t\" class=\"c\" data-x=\"y\" style=\"width:50%\"><colgroup><col style=\"width: 25%\"><col width=\"75%\"></colgroup><tr><th>h1</th><td>d</td></tr><tr><th>h2</th><td>e</td></tr></table>"
+
+[[case]]
+id = "tables-004"
+input = "<table><tr><td colspan=\"2\" rowspan=\"2\" align=\"center\" id=\"c\" class=\"k\" style=\"text-align: right;\">a</td><td>b</td></tr><tr><td style=\"text-align:left\">c</td></tr><tr><td>1</td><td>2</td><td>3</td></tr></table>"
+
+[[case]]
+id = "tables-005"
+input = "<table><tr><th>A</th><th>B</th></tr><tr><td>1</td><td>2</td></tr></table>"
+
+[[case]]
+id = "tables-006"
+input = "<table><tbody><tr><th>A</th><th>B</th></tr><tr><td>1</td><td>2</td></tr></tbody></table>"
+
+[[case]]
+id = "tables-007"
+input = "<table><tr><td>1<td>2<tr><td>3<td>4</table>"
+
+[[case]]
+id = "tables-008"
+input = "<table><caption>c1</caption><caption>c2</caption><tr><td>x</td></tr>text<p>p</p></table>after"
+
+[[case]]
+id = "tables-009"
+input = "<table></table><table><tr></tr></table><table><tbody></tbody></table><table><caption>only</caption></table>"
+
+[[case]]
+id = "tables-010"
+input = "<table><col width=\"10\"><col width=\"30\"><tr><td>a</td><td>b</td></tr></table><table><col width=\"2*\"><col width=\"1*\"><tr><td>a</td><td>b</td></tr></table><table><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-011"
+input = "<table><thead class=\"h\" id=\"hi\"><tr class=\"r\" id=\"ri\"><th>a</th></tr></thead><tbody class=\"b\"><tr><td>1</td></tr></tbody><tbody id=\"b2\"><tr><th>x</th></tr><tr><td>2</td></tr></tbody><tfoot class=\"f\"><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "tables-012"
+input = "<table><tr><td><table><tr><td>inner</td></tr></table></td></tr></table>"
+
+[[case]]
+id = "tables-013"
+input = "<table><tr><td>a</td></tr><tr><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-014"
+input = "<table><tr><td align=\"left\">l</td><td align=\"right\">r</td><td align=\"center\">c</td><td align=\"justify\">j</td><td valign=\"top\">v</td></tr><tr><th align=\"right\">l</th><td>r</td><td>c</td><td>j</td><td>v</td></tr></table>"
+
+[[case]]
+id = "tables-015"
+input = "<table><thead><tr><th style=\"text-align: left;\">l</th><th style=\"text-align: center;\">c</th></tr></thead><tbody><tr><td style=\"text-align: left;\">1</td><td style=\"text-align: center;\">2</td></tr></tbody></table>"
+
+[[case]]
+id = "tables-016"
+input = "<p>x</p><td>cell</td><tr><td>row</td></tr><th>h</th><tbody><tr><td>b</td></tr></tbody><caption>cap</caption><col><colgroup></colgroup><thead></thead>\n"
+
+[[case]]
+id = "tables-017"
+input = "<table><caption>c1</caption><caption>c2</caption><tr><td>x</td></tr></table>"
+
+[[case]]
+id = "tables-018"
+input = "<table><tr><td>x</td></tr>text</table>"
+
+[[case]]
+id = "tables-019"
+input = "<table><tr><td>x</td></tr><p>p</p></table>"
+
+[[case]]
+id = "tables-020"
+input = "<table>text<tr><td>x</td></tr></table>"
+
+[[case]]
+id = "tables-021"
+input = "<table><tr><td>x</td></tr><caption>late</caption></table>"
+
+[[case]]
+id = "tables-022"
+input = "<table><tfoot><tr><td>f</td></tr></tfoot><tr><td>x</td></tr></table>"
+
+[[case]]
+id = "tables-023"
+input = "<table><tr><td>x</td></tr><thead><tr><th>h</th></tr></thead></table>"
+
+[[case]]
+id = "tables-024"
+input = "<table><tr><td>a</td></tr><tbody><tr><td>b</td></tr></tbody><tr><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-025"
+input = "<table><thead><tr><th>h</th></tr></thead><tr><th>x</th></tr><tr><td>y</td></tr></table>"
+
+[[case]]
+id = "tables-026"
+input = "<table><tr><th>a</th></tr><tr><th>b</th></tr><tr><td>c</td></tr><tr><th>d</th></tr></table>"
+
+[[case]]
+id = "tables-027"
+input = "<table><tr><th>only</th></tr></table>"
+
+[[case]]
+id = "tables-028"
+input = "<table><tr><td rowspan=\"3\">a</td><td>b</td></tr><tr></tr><tr><td>c</td><td>d</td><td>e</td></tr></table>"
+
+[[case]]
+id = "tables-029"
+input = "<table><tr><td colspan=\"0\">a</td><td rowspan=\"x\">b</td><td colspan=\"-1\">c</td><td colspan=\"2.5\">d</td></tr></table>"
+
+[[case]]
+id = "tables-030"
+input = "<table><colgroup span=\"2\" width=\"50%\"></colgroup><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-031"
+input = "<table><col width=\"50%\"><col><tr><td>a</td><td>b</td></tr></table><table><col width=\"50px\"><col style=\"width:3em\"><tr><td>a</td><td>b</td></tr></table><table><col width=\"150%\"><col width=\"0%\"><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "tables-032"
+input = "<table><tr><td><p>one para</p></td></tr></table><table><tr><td>a<br>b</td><td><ul><li>x</li></ul></td></tr></table><table><tr><td>a</td><td></td></tr></table>"
+
+[[case]]
+id = "tables-033"
+input = "<table><tr><td>a<td>b</td></td></tr></table><table><tr>stray<td>a</td>more</tr></table>"
+
+[[case]]
+id = "tables-034"
+input = "<table><tbody><tr><td>a</td></tr></tbody><tfoot><tr><td>f</td></tr></tfoot><tbody><tr><td>b</td></tr></tbody></table>"
+
+[[case]]
+id = "tables-035"
+input = "<table><thead><tr><td>td in head</td></tr><tr><th>second</th></tr></thead><tbody><tr><th>x</th><th>y</th></tr></tbody></table>"
+
+[[case]]
+id = "tables-036"
+input = "<table><tr><th>h</th><td style=\"text-align: center; color: red\" class=\"k\">x</td><td style=\"color:red\">y</td><td align=\"CENTER\">z</td><td style=\"TEXT-ALIGN:RIGHT\">w</td></tr></table>"
+
+[[case]]
+id = "tables-037"
+input = "<div><table><tr><td>in div</td></tr></table></div><ul><li><table><tr><td>in li</td></tr></table></li></ul>"
+
+[[case]]
+id = "tables-038"
+input = "<table><col width=\"20%\"><col width=\"30%\"><col width=\"50%\"><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "tables-039"
+input = "<table><colgroup><col span=\"2\" width=\"25%\"><col width=\"50%\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-040"
+input = "<table><colgroup span=\"2\"></colgroup><colgroup><col width=\"50%\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-041"
+input = "<table><colgroup><col width=\"10%\"></colgroup><colgroup><col width=\"90%\"></colgroup><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "tables-042"
+input = "<table><col width=\"50%\"><col width=\"25%\"><tr><td>a<p>b</p></td><td>c</td><td>d</td></tr></table>"
+
+[[case]]
+id = "tables-043"
+input = "<table><tr><td><p>a</p><p>b</p></td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-044"
+input = "<table><tr><td><div>a</div></td><td>c</td></tr></table>"
+
+[[case]]
+id = "tables-045"
+input = "<table><tr><td><h1>a</h1></td></tr></table>"
+
+[[case]]
+id = "tables-046"
+input = "<table><tr><td>a<br>b</td><td><b>c</b> <i>d</i></td></tr></table>"
+
+[[case]]
+id = "tables-047"
+input = "<table><thead><tr><th>h</th></tr></thead></table>"
+
+[[case]]
+id = "tables-048"
+input = "<table><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "tables-049"
+input = "<table><thead><tr><th align=\"right\">h</th><th>i</th></tr></thead><tbody><tr><td>1</td><td align=\"center\">2</td></tr></tbody></table>"
+
+[[case]]
+id = "tables-050"
+input = "<table><tr><th align=\"left\">h</th></tr><tr><td align=\"right\">1</td></tr></table>"
+
+[[case]]
+id = "tables-051"
+input = "<table><tbody><tr><td style=\"text-align: center; color: red; font-weight: bold;\">x</td></tr></tbody></table>"
+
+[[case]]
+id = "tables-052"
+input = "<table><tr><td colspan=\"3\">a</td></tr><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "tables-053"
+input = "<table><tr><th>a</th><th>b</th><td>c</td></tr><tr><th>d</th><th>e</th><td>f</td></tr></table>"
+
+[[case]]
+id = "tables-054"
+input = "<table><tr><th colspan=\"2\">a</th><td>c</td></tr><tr><th>d</th><th>e</th><td>f</td></tr></table>"
+
+[[case]]
+id = "tables-055"
+input = "<table>\n  <tr>\n    <td>a</td>\n    <!-- comment -->\n    <td>b</td>\n  </tr>\n</table>"
+
+[[case]]
+id = "tables-056"
+input = "<table border=\"1\" width=\"100%\" cellpadding=\"2\"><tr valign=\"top\" bgcolor=\"red\"><td width=\"50%\" nowrap>a</td></tr></table>\n"
+
+[[case]]
+id = "spans-001"
+input = "<table><tr><td colspan=\"0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-002"
+input = "<table><thead><tr><th colspan=\"0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-003"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-004"
+input = "<table><tr><td colspan=\"0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-005"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-006"
+input = "<table><tr><th>h</th><td colspan=\"0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-007"
+input = "<table><tr><td colspan=\"1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-008"
+input = "<table><thead><tr><th colspan=\"1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-009"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-010"
+input = "<table><tr><td colspan=\"1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-011"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-012"
+input = "<table><tr><th>h</th><td colspan=\"1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-013"
+input = "<table><tr><td colspan=\"2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-014"
+input = "<table><thead><tr><th colspan=\"2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-015"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-016"
+input = "<table><tr><td colspan=\"2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-017"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-018"
+input = "<table><tr><th>h</th><td colspan=\"2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-019"
+input = "<table><tr><td colspan=\"3\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-020"
+input = "<table><thead><tr><th colspan=\"3\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-021"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"3\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-022"
+input = "<table><tr><td colspan=\"3\">a</td></tr></table>"
+
+[[case]]
+id = "spans-023"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"3\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-024"
+input = "<table><tr><th>h</th><td colspan=\"3\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-025"
+input = "<table><tr><td colspan=\"5\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-026"
+input = "<table><thead><tr><th colspan=\"5\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-027"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"5\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-028"
+input = "<table><tr><td colspan=\"5\">a</td></tr></table>"
+
+[[case]]
+id = "spans-029"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"5\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-030"
+input = "<table><tr><th>h</th><td colspan=\"5\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-031"
+input = "<table><tr><td colspan=\"-1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-032"
+input = "<table><thead><tr><th colspan=\"-1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-033"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"-1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-034"
+input = "<table><tr><td colspan=\"-1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-035"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"-1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-036"
+input = "<table><tr><th>h</th><td colspan=\"-1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-037"
+input = "<table><tr><td colspan=\"-3\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-038"
+input = "<table><thead><tr><th colspan=\"-3\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-039"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"-3\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-040"
+input = "<table><tr><td colspan=\"-3\">a</td></tr></table>"
+
+[[case]]
+id = "spans-041"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"-3\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-042"
+input = "<table><tr><th>h</th><td colspan=\"-3\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-043"
+input = "<table><tr><td colspan=\"+2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-044"
+input = "<table><thead><tr><th colspan=\"+2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-045"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"+2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-046"
+input = "<table><tr><td colspan=\"+2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-047"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"+2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-048"
+input = "<table><tr><th>h</th><td colspan=\"+2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-049"
+input = "<table><tr><td colspan=\" 2 \">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-050"
+input = "<table><thead><tr><th colspan=\" 2 \">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-051"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\" 2 \">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-052"
+input = "<table><tr><td colspan=\" 2 \">a</td></tr></table>"
+
+[[case]]
+id = "spans-053"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\" 2 \">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-054"
+input = "<table><tr><th>h</th><td colspan=\" 2 \">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-055"
+input = "<table><tr><td colspan=\"2x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-056"
+input = "<table><thead><tr><th colspan=\"2x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-057"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"2x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-058"
+input = "<table><tr><td colspan=\"2x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-059"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"2x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-060"
+input = "<table><tr><th>h</th><td colspan=\"2x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-061"
+input = "<table><tr><td colspan=\"x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-062"
+input = "<table><thead><tr><th colspan=\"x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-063"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-064"
+input = "<table><tr><td colspan=\"x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-065"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-066"
+input = "<table><tr><th>h</th><td colspan=\"x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-067"
+input = "<table><tr><td colspan=\"2.5\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-068"
+input = "<table><thead><tr><th colspan=\"2.5\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-069"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"2.5\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-070"
+input = "<table><tr><td colspan=\"2.5\">a</td></tr></table>"
+
+[[case]]
+id = "spans-071"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"2.5\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-072"
+input = "<table><tr><th>h</th><td colspan=\"2.5\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-073"
+input = "<table><tr><td colspan=\"\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-074"
+input = "<table><thead><tr><th colspan=\"\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-075"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-076"
+input = "<table><tr><td colspan=\"\">a</td></tr></table>"
+
+[[case]]
+id = "spans-077"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-078"
+input = "<table><tr><th>h</th><td colspan=\"\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-079"
+input = "<table><tr><td colspan=\"07\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-080"
+input = "<table><thead><tr><th colspan=\"07\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-081"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"07\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-082"
+input = "<table><tr><td colspan=\"07\">a</td></tr></table>"
+
+[[case]]
+id = "spans-083"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"07\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-084"
+input = "<table><tr><th>h</th><td colspan=\"07\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-085"
+input = "<table><tr><td colspan=\"0x2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-086"
+input = "<table><thead><tr><th colspan=\"0x2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-087"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"0x2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-088"
+input = "<table><tr><td colspan=\"0x2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-089"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"0x2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-090"
+input = "<table><tr><th>h</th><td colspan=\"0x2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-091"
+input = "<table><tr><td colspan=\"1e1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-092"
+input = "<table><thead><tr><th colspan=\"1e1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-093"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"1e1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-094"
+input = "<table><tr><td colspan=\"1e1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-095"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"1e1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-096"
+input = "<table><tr><th>h</th><td colspan=\"1e1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-097"
+input = "<table><tr><td colspan=\"٢\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-098"
+input = "<table><thead><tr><th colspan=\"٢\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-099"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"٢\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-100"
+input = "<table><tr><td colspan=\"٢\">a</td></tr></table>"
+
+[[case]]
+id = "spans-101"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"٢\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-102"
+input = "<table><tr><th>h</th><td colspan=\"٢\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-103"
+input = "<table><tr><td colspan=\"-0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-104"
+input = "<table><thead><tr><th colspan=\"-0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-105"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"-0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-106"
+input = "<table><tr><td colspan=\"-0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-107"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"-0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-108"
+input = "<table><tr><th>h</th><td colspan=\"-0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-109"
+input = "<table><tr><td colspan=\"00\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-110"
+input = "<table><thead><tr><th colspan=\"00\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-111"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td colspan=\"00\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-112"
+input = "<table><tr><td colspan=\"00\">a</td></tr></table>"
+
+[[case]]
+id = "spans-113"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td colspan=\"00\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-114"
+input = "<table><tr><th>h</th><td colspan=\"00\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-115"
+input = "<table><tr><td rowspan=\"0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-116"
+input = "<table><thead><tr><th rowspan=\"0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-117"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-118"
+input = "<table><tr><td rowspan=\"0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-119"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-120"
+input = "<table><tr><th>h</th><td rowspan=\"0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-121"
+input = "<table><tr><td rowspan=\"1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-122"
+input = "<table><thead><tr><th rowspan=\"1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-123"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-124"
+input = "<table><tr><td rowspan=\"1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-125"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-126"
+input = "<table><tr><th>h</th><td rowspan=\"1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-127"
+input = "<table><tr><td rowspan=\"2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-128"
+input = "<table><thead><tr><th rowspan=\"2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-129"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-130"
+input = "<table><tr><td rowspan=\"2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-131"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-132"
+input = "<table><tr><th>h</th><td rowspan=\"2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-133"
+input = "<table><tr><td rowspan=\"3\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-134"
+input = "<table><thead><tr><th rowspan=\"3\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-135"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"3\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-136"
+input = "<table><tr><td rowspan=\"3\">a</td></tr></table>"
+
+[[case]]
+id = "spans-137"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"3\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-138"
+input = "<table><tr><th>h</th><td rowspan=\"3\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-139"
+input = "<table><tr><td rowspan=\"5\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-140"
+input = "<table><thead><tr><th rowspan=\"5\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-141"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"5\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-142"
+input = "<table><tr><td rowspan=\"5\">a</td></tr></table>"
+
+[[case]]
+id = "spans-143"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"5\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-144"
+input = "<table><tr><th>h</th><td rowspan=\"5\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-145"
+input = "<table><tr><td rowspan=\"-1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-146"
+input = "<table><thead><tr><th rowspan=\"-1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-147"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-148"
+input = "<table><tr><td rowspan=\"-1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-149"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-150"
+input = "<table><tr><th>h</th><td rowspan=\"-1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-151"
+input = "<table><tr><td rowspan=\"-3\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-152"
+input = "<table><thead><tr><th rowspan=\"-3\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-153"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-3\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-154"
+input = "<table><tr><td rowspan=\"-3\">a</td></tr></table>"
+
+[[case]]
+id = "spans-155"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-3\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-156"
+input = "<table><tr><th>h</th><td rowspan=\"-3\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-157"
+input = "<table><tr><td rowspan=\"+2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-158"
+input = "<table><thead><tr><th rowspan=\"+2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-159"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"+2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-160"
+input = "<table><tr><td rowspan=\"+2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-161"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"+2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-162"
+input = "<table><tr><th>h</th><td rowspan=\"+2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-163"
+input = "<table><tr><td rowspan=\" 2 \">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-164"
+input = "<table><thead><tr><th rowspan=\" 2 \">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-165"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\" 2 \">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-166"
+input = "<table><tr><td rowspan=\" 2 \">a</td></tr></table>"
+
+[[case]]
+id = "spans-167"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\" 2 \">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-168"
+input = "<table><tr><th>h</th><td rowspan=\" 2 \">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-169"
+input = "<table><tr><td rowspan=\"2x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-170"
+input = "<table><thead><tr><th rowspan=\"2x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-171"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-172"
+input = "<table><tr><td rowspan=\"2x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-173"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-174"
+input = "<table><tr><th>h</th><td rowspan=\"2x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-175"
+input = "<table><tr><td rowspan=\"x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-176"
+input = "<table><thead><tr><th rowspan=\"x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-177"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-178"
+input = "<table><tr><td rowspan=\"x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-179"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-180"
+input = "<table><tr><th>h</th><td rowspan=\"x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-181"
+input = "<table><tr><td rowspan=\"2.5\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-182"
+input = "<table><thead><tr><th rowspan=\"2.5\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-183"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2.5\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-184"
+input = "<table><tr><td rowspan=\"2.5\">a</td></tr></table>"
+
+[[case]]
+id = "spans-185"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2.5\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-186"
+input = "<table><tr><th>h</th><td rowspan=\"2.5\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-187"
+input = "<table><tr><td rowspan=\"\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-188"
+input = "<table><thead><tr><th rowspan=\"\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-189"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-190"
+input = "<table><tr><td rowspan=\"\">a</td></tr></table>"
+
+[[case]]
+id = "spans-191"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-192"
+input = "<table><tr><th>h</th><td rowspan=\"\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-193"
+input = "<table><tr><td rowspan=\"07\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-194"
+input = "<table><thead><tr><th rowspan=\"07\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-195"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"07\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-196"
+input = "<table><tr><td rowspan=\"07\">a</td></tr></table>"
+
+[[case]]
+id = "spans-197"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"07\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-198"
+input = "<table><tr><th>h</th><td rowspan=\"07\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-199"
+input = "<table><tr><td rowspan=\"0x2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-200"
+input = "<table><thead><tr><th rowspan=\"0x2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-201"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"0x2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-202"
+input = "<table><tr><td rowspan=\"0x2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-203"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"0x2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-204"
+input = "<table><tr><th>h</th><td rowspan=\"0x2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-205"
+input = "<table><tr><td rowspan=\"1e1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-206"
+input = "<table><thead><tr><th rowspan=\"1e1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-207"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"1e1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-208"
+input = "<table><tr><td rowspan=\"1e1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-209"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"1e1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-210"
+input = "<table><tr><th>h</th><td rowspan=\"1e1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-211"
+input = "<table><tr><td rowspan=\"٢\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-212"
+input = "<table><thead><tr><th rowspan=\"٢\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-213"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"٢\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-214"
+input = "<table><tr><td rowspan=\"٢\">a</td></tr></table>"
+
+[[case]]
+id = "spans-215"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"٢\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-216"
+input = "<table><tr><th>h</th><td rowspan=\"٢\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-217"
+input = "<table><tr><td rowspan=\"-0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-218"
+input = "<table><thead><tr><th rowspan=\"-0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-219"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-220"
+input = "<table><tr><td rowspan=\"-0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-221"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-222"
+input = "<table><tr><th>h</th><td rowspan=\"-0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-223"
+input = "<table><tr><td rowspan=\"00\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-224"
+input = "<table><thead><tr><th rowspan=\"00\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-225"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"00\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-226"
+input = "<table><tr><td rowspan=\"00\">a</td></tr></table>"
+
+[[case]]
+id = "spans-227"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"00\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-228"
+input = "<table><tr><th>h</th><td rowspan=\"00\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-229"
+input = "<table><tr><td rowspan=\"2147483648\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-230"
+input = "<table><thead><tr><th rowspan=\"2147483648\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-231"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2147483648\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-232"
+input = "<table><tr><td rowspan=\"2147483648\">a</td></tr></table>"
+
+[[case]]
+id = "spans-233"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2147483648\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-234"
+input = "<table><tr><th>h</th><td rowspan=\"2147483648\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-235"
+input = "<table><tr><td rowspan=\"99999999999999999999\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-236"
+input = "<table><thead><tr><th rowspan=\"99999999999999999999\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-237"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"99999999999999999999\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-238"
+input = "<table><tr><td rowspan=\"99999999999999999999\">a</td></tr></table>"
+
+[[case]]
+id = "spans-239"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"99999999999999999999\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-240"
+input = "<table><tr><th>h</th><td rowspan=\"99999999999999999999\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-241"
+input = "<table><tr><td rowspan=\"0\" colspan=\"0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-242"
+input = "<table><thead><tr><th rowspan=\"0\" colspan=\"0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-243"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"0\" colspan=\"0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-244"
+input = "<table><tr><td rowspan=\"0\" colspan=\"0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-245"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"0\" colspan=\"0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-246"
+input = "<table><tr><th>h</th><td rowspan=\"0\" colspan=\"0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-247"
+input = "<table><tr><td rowspan=\"0\" colspan=\"2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-248"
+input = "<table><thead><tr><th rowspan=\"0\" colspan=\"2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-249"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"0\" colspan=\"2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-250"
+input = "<table><tr><td rowspan=\"0\" colspan=\"2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-251"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"0\" colspan=\"2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-252"
+input = "<table><tr><th>h</th><td rowspan=\"0\" colspan=\"2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-253"
+input = "<table><tr><td rowspan=\"0\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-254"
+input = "<table><thead><tr><th rowspan=\"0\" colspan=\"-1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-255"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"0\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-256"
+input = "<table><tr><td rowspan=\"0\" colspan=\"-1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-257"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"0\" colspan=\"-1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-258"
+input = "<table><tr><th>h</th><td rowspan=\"0\" colspan=\"-1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-259"
+input = "<table><tr><td rowspan=\"0\" colspan=\"x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-260"
+input = "<table><thead><tr><th rowspan=\"0\" colspan=\"x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-261"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"0\" colspan=\"x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-262"
+input = "<table><tr><td rowspan=\"0\" colspan=\"x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-263"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"0\" colspan=\"x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-264"
+input = "<table><tr><th>h</th><td rowspan=\"0\" colspan=\"x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-265"
+input = "<table><tr><td rowspan=\"2\" colspan=\"0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-266"
+input = "<table><thead><tr><th rowspan=\"2\" colspan=\"0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-267"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2\" colspan=\"0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-268"
+input = "<table><tr><td rowspan=\"2\" colspan=\"0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-269"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2\" colspan=\"0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-270"
+input = "<table><tr><th>h</th><td rowspan=\"2\" colspan=\"0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-271"
+input = "<table><tr><td rowspan=\"2\" colspan=\"2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-272"
+input = "<table><thead><tr><th rowspan=\"2\" colspan=\"2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-273"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2\" colspan=\"2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-274"
+input = "<table><tr><td rowspan=\"2\" colspan=\"2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-275"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2\" colspan=\"2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-276"
+input = "<table><tr><th>h</th><td rowspan=\"2\" colspan=\"2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-277"
+input = "<table><tr><td rowspan=\"2\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-278"
+input = "<table><thead><tr><th rowspan=\"2\" colspan=\"-1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-279"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-280"
+input = "<table><tr><td rowspan=\"2\" colspan=\"-1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-281"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2\" colspan=\"-1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-282"
+input = "<table><tr><th>h</th><td rowspan=\"2\" colspan=\"-1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-283"
+input = "<table><tr><td rowspan=\"2\" colspan=\"x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-284"
+input = "<table><thead><tr><th rowspan=\"2\" colspan=\"x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-285"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"2\" colspan=\"x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-286"
+input = "<table><tr><td rowspan=\"2\" colspan=\"x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-287"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"2\" colspan=\"x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-288"
+input = "<table><tr><th>h</th><td rowspan=\"2\" colspan=\"x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-289"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-290"
+input = "<table><thead><tr><th rowspan=\"-1\" colspan=\"0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-291"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-1\" colspan=\"0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-292"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-293"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-1\" colspan=\"0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-294"
+input = "<table><tr><th>h</th><td rowspan=\"-1\" colspan=\"0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-295"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-296"
+input = "<table><thead><tr><th rowspan=\"-1\" colspan=\"2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-297"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-1\" colspan=\"2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-298"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-299"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-1\" colspan=\"2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-300"
+input = "<table><tr><th>h</th><td rowspan=\"-1\" colspan=\"2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-301"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-302"
+input = "<table><thead><tr><th rowspan=\"-1\" colspan=\"-1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-303"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-1\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-304"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"-1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-305"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-1\" colspan=\"-1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-306"
+input = "<table><tr><th>h</th><td rowspan=\"-1\" colspan=\"-1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-307"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-308"
+input = "<table><thead><tr><th rowspan=\"-1\" colspan=\"x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-309"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"-1\" colspan=\"x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-310"
+input = "<table><tr><td rowspan=\"-1\" colspan=\"x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-311"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"-1\" colspan=\"x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-312"
+input = "<table><tr><th>h</th><td rowspan=\"-1\" colspan=\"x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-313"
+input = "<table><tr><td rowspan=\"x\" colspan=\"0\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-314"
+input = "<table><thead><tr><th rowspan=\"x\" colspan=\"0\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-315"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"x\" colspan=\"0\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-316"
+input = "<table><tr><td rowspan=\"x\" colspan=\"0\">a</td></tr></table>"
+
+[[case]]
+id = "spans-317"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"x\" colspan=\"0\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-318"
+input = "<table><tr><th>h</th><td rowspan=\"x\" colspan=\"0\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-319"
+input = "<table><tr><td rowspan=\"x\" colspan=\"2\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-320"
+input = "<table><thead><tr><th rowspan=\"x\" colspan=\"2\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-321"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"x\" colspan=\"2\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-322"
+input = "<table><tr><td rowspan=\"x\" colspan=\"2\">a</td></tr></table>"
+
+[[case]]
+id = "spans-323"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"x\" colspan=\"2\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-324"
+input = "<table><tr><th>h</th><td rowspan=\"x\" colspan=\"2\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-325"
+input = "<table><tr><td rowspan=\"x\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-326"
+input = "<table><thead><tr><th rowspan=\"x\" colspan=\"-1\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-327"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"x\" colspan=\"-1\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-328"
+input = "<table><tr><td rowspan=\"x\" colspan=\"-1\">a</td></tr></table>"
+
+[[case]]
+id = "spans-329"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"x\" colspan=\"-1\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-330"
+input = "<table><tr><th>h</th><td rowspan=\"x\" colspan=\"-1\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-331"
+input = "<table><tr><td rowspan=\"x\" colspan=\"x\">a</td><td>b</td></tr><tr><td>c</td><td>d</td><td>e</td></tr><tr><td>f</td></tr></table>"
+
+[[case]]
+id = "spans-332"
+input = "<table><thead><tr><th rowspan=\"x\" colspan=\"x\">a</th><th>b</th></tr></thead><tbody><tr><td>c</td><td>d</td></tr></tbody></table>"
+
+[[case]]
+id = "spans-333"
+input = "<table><tbody><tr><td>c</td><td>d</td></tr></tbody><tfoot><tr><td rowspan=\"x\" colspan=\"x\">a</td><td>b</td></tr><tr><td>g</td></tr></tfoot></table>"
+
+[[case]]
+id = "spans-334"
+input = "<table><tr><td rowspan=\"x\" colspan=\"x\">a</td></tr></table>"
+
+[[case]]
+id = "spans-335"
+input = "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td rowspan=\"x\" colspan=\"x\">d</td><td>e</td></tr><tr><td>f</td><td>g</td><td>h</td></tr></table>"
+
+[[case]]
+id = "spans-336"
+input = "<table><tr><th>h</th><td rowspan=\"x\" colspan=\"x\">a</td></tr><tr><th>i</th><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-337"
+input = "<table><tr><td colspan=\"9223372036854775807\">a</td><td>b</td><td colspan=\"-9223372036854775807\">c</td></tr></table>"
+
+[[case]]
+id = "spans-338"
+input = "<table><tr><td colspan=\"9223372036854775807\">a</td><td colspan=\"-9223372036854775806\">c</td></tr></table>"
+
+[[case]]
+id = "spans-339"
+input = "<table><tr><td colspan=2 colspan=3>a</td><td>b</td></tr><tr><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-340"
+input = "<table></table>"
+
+[[case]]
+id = "spans-341"
+input = "<table><tr></tr></table>"
+
+[[case]]
+id = "spans-342"
+input = "<table><tr><td colspan=0>a</td></tr><tr><td colspan=-5>b</td></tr></table>"
+
+[[case]]
+id = "spans-343"
+input = "<table><thead><tr><th colspan=0>a</th></tr></thead></table>"
+
+[[case]]
+id = "spans-344"
+input = "<table><tr><td rowspan=0>a</td></tr></table>"
+
+[[case]]
+id = "spans-345"
+input = "<table><col width=\"50%\"><tr><td colspan=0>a</td></tr></table>"
+
+[[case]]
+id = "spans-346"
+input = "<table><caption>c</caption><tr><td colspan=0>a</td></tr></table>"
+
+[[case]]
+id = "spans-347"
+input = "<table><tr><td colspan=-1>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "spans-348"
+input = "<table><tr><td colspan=-1>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-349"
+input = "<table><tr><td colspan=-1>a</td><td colspan=3>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-350"
+input = "<table><tr><td>a</td><td colspan=-2>b</td><td>c</td><td>d</td></tr></table>"
+
+[[case]]
+id = "spans-351"
+input = "<table><tr><td colspan=2>a</td><td colspan=-1>b</td></tr><tr><td>c</td><td>d</td></tr></table>"
+
+[[case]]
+id = "spans-352"
+input = "<table><tr><td colspan=0>a</td><td colspan=0>b</td></tr><tr><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-353"
+input = "<table><tr><th colspan=0>a</th></tr><tr><td>c</td></tr></table>"
+
+[[case]]
+id = "spans-354"
+input = "<table><tr><td colspan=3>a</td></tr><tr><td colspan=-3>x</td><td>c</td><td>d</td><td>e</td><td>f</td></tr></table>"
+
+[[case]]
+id = "widths-001"
+input = "<table><col width=\"20%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-002"
+input = "<table><col width=\"20%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-003"
+input = "<table><col style=\"width: 20%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-004"
+input = "<table><col width=\"20%\"><col width=\"20%\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-005"
+input = "<table><colgroup><col width=\"20%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-006"
+input = "<table><col width=\"1*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-007"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-008"
+input = "<table><col style=\"width: 1*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-009"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-010"
+input = "<table><colgroup><col width=\"1*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-011"
+input = "<table><col width=\"2*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-012"
+input = "<table><col width=\"2*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-013"
+input = "<table><col style=\"width: 2*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-014"
+input = "<table><col width=\"2*\"><col width=\"2*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-015"
+input = "<table><colgroup><col width=\"2*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-016"
+input = "<table><col width=\"*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-017"
+input = "<table><col width=\"*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-018"
+input = "<table><col style=\"width: *\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-019"
+input = "<table><col width=\"*\"><col width=\"*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-020"
+input = "<table><colgroup><col width=\"*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-021"
+input = "<table><col width=\"0*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-022"
+input = "<table><col width=\"0*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-023"
+input = "<table><col style=\"width: 0*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-024"
+input = "<table><col width=\"0*\"><col width=\"0*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-025"
+input = "<table><colgroup><col width=\"0*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-026"
+input = "<table><col width=\"50\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-027"
+input = "<table><col width=\"50\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-028"
+input = "<table><col style=\"width: 50\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-029"
+input = "<table><col width=\"50\"><col width=\"50\"><col width=\"50\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-030"
+input = "<table><colgroup><col width=\"50\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-031"
+input = "<table><col width=\"50px\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-032"
+input = "<table><col width=\"50px\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-033"
+input = "<table><col style=\"width: 50px\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-034"
+input = "<table><col width=\"50px\"><col width=\"50px\"><col width=\"50px\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-035"
+input = "<table><colgroup><col width=\"50px\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-036"
+input = "<table><col width=\" 2% \"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-037"
+input = "<table><col width=\" 2% \"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-038"
+input = "<table><col style=\"width:  2% \"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-039"
+input = "<table><col width=\" 2% \"><col width=\" 2% \"><col width=\" 2% \"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-040"
+input = "<table><colgroup><col width=\" 2% \"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-041"
+input = "<table><col width=\"2%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-042"
+input = "<table><col width=\"2%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-043"
+input = "<table><col style=\"width: 2%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-044"
+input = "<table><col width=\"2%\"><col width=\"2%\"><col width=\"2%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-045"
+input = "<table><colgroup><col width=\"2%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-046"
+input = "<table><col width=\"2.5%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-047"
+input = "<table><col width=\"2.5%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-048"
+input = "<table><col style=\"width: 2.5%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-049"
+input = "<table><col width=\"2.5%\"><col width=\"2.5%\"><col width=\"2.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-050"
+input = "<table><colgroup><col width=\"2.5%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-051"
+input = "<table><col width=\"2e0*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-052"
+input = "<table><col width=\"2e0*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-053"
+input = "<table><col style=\"width: 2e0*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-054"
+input = "<table><col width=\"2e0*\"><col width=\"2e0*\"><col width=\"2e0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-055"
+input = "<table><colgroup><col width=\"2e0*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-056"
+input = "<table><col width=\"2e1%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-057"
+input = "<table><col width=\"2e1%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-058"
+input = "<table><col style=\"width: 2e1%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-059"
+input = "<table><col width=\"2e1%\"><col width=\"2e1%\"><col width=\"2e1%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-060"
+input = "<table><colgroup><col width=\"2e1%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-061"
+input = "<table><col width=\"1.5*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-062"
+input = "<table><col width=\"1.5*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-063"
+input = "<table><col style=\"width: 1.5*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-064"
+input = "<table><col width=\"1.5*\"><col width=\"1.5*\"><col width=\"1.5*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-065"
+input = "<table><colgroup><col width=\"1.5*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-066"
+input = "<table><col width=\".5*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-067"
+input = "<table><col width=\".5*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-068"
+input = "<table><col style=\"width: .5*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-069"
+input = "<table><col width=\".5*\"><col width=\".5*\"><col width=\".5*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-070"
+input = "<table><colgroup><col width=\".5*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-071"
+input = "<table><col width=\"5.*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-072"
+input = "<table><col width=\"5.*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-073"
+input = "<table><col style=\"width: 5.*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-074"
+input = "<table><col width=\"5.*\"><col width=\"5.*\"><col width=\"5.*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-075"
+input = "<table><colgroup><col width=\"5.*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-076"
+input = "<table><col width=\"-1*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-077"
+input = "<table><col width=\"-1*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-078"
+input = "<table><col style=\"width: -1*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-079"
+input = "<table><col width=\"-1*\"><col width=\"-1*\"><col width=\"-1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-080"
+input = "<table><colgroup><col width=\"-1*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-081"
+input = "<table><col width=\"+2*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-082"
+input = "<table><col width=\"+2*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-083"
+input = "<table><col style=\"width: +2*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-084"
+input = "<table><col width=\"+2*\"><col width=\"+2*\"><col width=\"+2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-085"
+input = "<table><colgroup><col width=\"+2*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-086"
+input = "<table><col width=\"abc\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-087"
+input = "<table><col width=\"abc\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-088"
+input = "<table><col style=\"width: abc\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-089"
+input = "<table><col width=\"abc\"><col width=\"abc\"><col width=\"abc\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-090"
+input = "<table><colgroup><col width=\"abc\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-091"
+input = "<table><col width=\"\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-092"
+input = "<table><col width=\"\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-093"
+input = "<table><col style=\"width: \"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-094"
+input = "<table><col width=\"\"><col width=\"\"><col width=\"\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-095"
+input = "<table><colgroup><col width=\"\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-096"
+input = "<table><col width=\"0%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-097"
+input = "<table><col width=\"0%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-098"
+input = "<table><col style=\"width: 0%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-099"
+input = "<table><col width=\"0%\"><col width=\"0%\"><col width=\"0%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-100"
+input = "<table><colgroup><col width=\"0%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-101"
+input = "<table><col width=\"100%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-102"
+input = "<table><col width=\"100%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-103"
+input = "<table><col style=\"width: 100%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-104"
+input = "<table><col width=\"100%\"><col width=\"100%\"><col width=\"100%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-105"
+input = "<table><colgroup><col width=\"100%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-106"
+input = "<table><col width=\"120%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-107"
+input = "<table><col width=\"120%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-108"
+input = "<table><col style=\"width: 120%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-109"
+input = "<table><col width=\"120%\"><col width=\"120%\"><col width=\"120%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-110"
+input = "<table><colgroup><col width=\"120%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-111"
+input = "<table><col width=\"30 %\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-112"
+input = "<table><col width=\"30 %\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-113"
+input = "<table><col style=\"width: 30 %\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-114"
+input = "<table><col width=\"30 %\"><col width=\"30 %\"><col width=\"30 %\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-115"
+input = "<table><colgroup><col width=\"30 %\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-116"
+input = "<table><col width=\"0x1*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-117"
+input = "<table><col width=\"0x1*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-118"
+input = "<table><col style=\"width: 0x1*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-119"
+input = "<table><col width=\"0x1*\"><col width=\"0x1*\"><col width=\"0x1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-120"
+input = "<table><colgroup><col width=\"0x1*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-121"
+input = "<table><col width=\"1 *\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-122"
+input = "<table><col width=\"1 *\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-123"
+input = "<table><col style=\"width: 1 *\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-124"
+input = "<table><col width=\"1 *\"><col width=\"1 *\"><col width=\"1 *\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-125"
+input = "<table><colgroup><col width=\"1 *\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-126"
+input = "<table><col width=\"%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-127"
+input = "<table><col width=\"%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-128"
+input = "<table><col style=\"width: %\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-129"
+input = "<table><col width=\"%\"><col width=\"%\"><col width=\"%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-130"
+input = "<table><colgroup><col width=\"%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-131"
+input = "<table><col width=\"1e2%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-132"
+input = "<table><col width=\"1e2%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-133"
+input = "<table><col style=\"width: 1e2%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-134"
+input = "<table><col width=\"1e2%\"><col width=\"1e2%\"><col width=\"1e2%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-135"
+input = "<table><colgroup><col width=\"1e2%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-136"
+input = "<table><col width=\"50.0%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-137"
+input = "<table><col width=\"50.0%\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-138"
+input = "<table><col style=\"width: 50.0%\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-139"
+input = "<table><col width=\"50.0%\"><col width=\"50.0%\"><col width=\"50.0%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-140"
+input = "<table><colgroup><col width=\"50.0%\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-141"
+input = "<table><col width=\"00.5*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-142"
+input = "<table><col width=\"00.5*\"><col width=\"1*\"><col width=\"20%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-143"
+input = "<table><col style=\"width: 00.5*\"><col><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-144"
+input = "<table><col width=\"00.5*\"><col width=\"00.5*\"><col width=\"00.5*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-145"
+input = "<table><colgroup><col width=\"00.5*\"><col width=\"2*\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-146"
+input = "<table><col width=\"20%\"><col width=\"1*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-147"
+input = "<table><col width=\"20%\"><col width=\"1*\"><col width=\"1*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-148"
+input = "<table><col width=\"20%\"><col width=\"30%\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-149"
+input = "<table><col width=\"20%\"><col width=\"30%\"><col width=\"1*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-150"
+input = "<table><col width=\"60%\"><col width=\"60%\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-151"
+input = "<table><col width=\"60%\"><col width=\"60%\"><col width=\"1*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-152"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-153"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"2*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-154"
+input = "<table><col width=\"20%\"><col width=\"\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-155"
+input = "<table><col width=\"20%\"><col width=\"\"><col width=\"1*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-156"
+input = "<table><col width=\"\"><col width=\"\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-157"
+input = "<table><col width=\"\"><col width=\"\"><col width=\"1*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-158"
+input = "<table><col width=\"50%\"><col width=\"\"><col width=\"\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-159"
+input = "<table><col width=\"50%\"><col width=\"\"><col width=\"\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-160"
+input = "<table><col width=\"100%\"><col width=\"1*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-161"
+input = "<table><col width=\"100%\"><col width=\"1*\"><col width=\"1*\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-162"
+input = "<table><col width=\"10%\"><col width=\"2*\"><col width=\"abc\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-163"
+input = "<table><col width=\"10%\"><col width=\"2*\"><col width=\"abc\"><tr><td><p>a</p><p>x</p></td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-164"
+input = "<table><col width=\"20%\"><col width=\"1*\"><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "widths-165"
+input = "<table><col span=\"2\" width=\"20%\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "widths-166"
+input = "<table><colgroup span=\"2\" width=\"30%\"></colgroup><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "colstyle-001"
+input = "<table><col style=\"width: 25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-002"
+input = "<table><col style=\"width:25%;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-003"
+input = "<table><col style=\"width: 30% ;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-004"
+input = "<table><col style=\"width: 25%; text-align: left\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-005"
+input = "<table><col style=\"text-align: left; width: 25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-006"
+input = "<table><col style=\"Width:25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-007"
+input = "<table><col style=\"WIDTH:30%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-008"
+input = "<table><col style=\"width:30%;width:40%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-009"
+input = "<table><col style=\"x:1;width:25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-010"
+input = "<table><col style=\"width:25%;x:1\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-011"
+input = "<table><col style=\" width:25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-012"
+input = "<table><col style=\"width :25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-013"
+input = "<table><col style=\"width:25% \"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-014"
+input = "<table><col style=\";width:25%\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-015"
+input = "<table><col style=\"width:25%;;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-016"
+input = "<table><col style=\"width: 25 %\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-017"
+input = "<table><col style=\"width:2*\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-018"
+input = "<table><col style=\"width:0.5\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-019"
+input = "<table><col style=\"width:50px\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-020"
+input = "<table><col style=\"width:25%; \"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-021"
+input = "<table><col style=\"width:25%;color:red;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-022"
+input = "<table><col style=\"color:red\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "colstyle-023"
+input = "<table><col style=\"\"><col><tr><td>a</td><td>b</td></tr></table>"

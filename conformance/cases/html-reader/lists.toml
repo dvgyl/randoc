@@ -1,0 +1,336 @@
+# Bullet lists, ordered lists, definition lists and task lists.
+from = "html"
+to = []
+
+[[case]]
+id = "lists-001"
+input = "<ul><li id=\"x\">plain</li><li id=\"y\"><p>para</p></li><li class=\"c\">cls</li><li id=\"z\" class=\"c\" data-a=\"b\">both</li></ul>"
+
+[[case]]
+id = "lists-002"
+input = "<ul><li>a</li><p>stray para</p><li>b</li>text<ul><li>sub</li></ul></ul>"
+
+[[case]]
+id = "lists-003"
+input = "<ul><ul><li>sub first</li></ul><li>b</li></ul>"
+
+[[case]]
+id = "lists-004"
+input = "<ol><li>a<ul><li>b</li></ul>c</li><li><p>p</p><ul><li>d</li></ul></li></ol>"
+
+[[case]]
+id = "lists-005"
+input = "<dl><dt>a</dt><dt>b</dt><dd>1</dd><dd>2</dd><dd>3</dd><dt>lone</dt></dl><dl><dd>orphan</dd></dl><dl></dl><dl>text<dt> t  <b>x</b> </dt><div><dt>w</dt><dd>v</dd></div></dl>"
+
+[[case]]
+id = "lists-006"
+input = "<ol start=\"0\"><li>a</li></ol><ol start=\"-3\"><li>a</li></ol><ol start=\"\"><li>a</li></ol><ol start=\"7\" class=\"fancy lower-roman\" style=\"list-style-type: upper-alpha\"><li>a</li></ol><ol class=\"example\"><li>a</li></ol><ol style=\"list-style-type:decimal;\"><li>a</li></ol><ol type=\"a\" class=\"upper-roman\"><li>a</li></ol>"
+
+[[case]]
+id = "lists-007"
+input = "<ul><li><input type=\"checkbox\" checked=\"\">x</li><li><input type=\"checkbox\" disabled><label>lab</label></li><li><p><input type=\"checkbox\">in p</p></li><li><input type=\"radio\">r</li></ul>"
+
+[[case]]
+id = "lists-008"
+from = "html+task_lists"
+input = "<ul><li><input type=\"checkbox\" checked> done</li><li><input type=\"checkbox\"> todo</li><li>none</li></ul><ol><li><input type=\"checkbox\"> o</li></ol>"
+
+[[case]]
+id = "lists-009"
+input = "<dl><dt>a</dt><dd>1</dd><dt>b</dt><dd>2</dd></dl>"
+
+[[case]]
+id = "lists-010"
+input = "<dl><dt>a</dt><dt>b</dt><dd>1</dd><dd>2</dd></dl>"
+
+[[case]]
+id = "lists-011"
+input = "<dl><dt>a</dt><dd>1</dd><dt>lone</dt></dl>"
+
+[[case]]
+id = "lists-012"
+input = "<dl><dd>orphan</dd><dt>a</dt><dd>1</dd></dl>"
+
+[[case]]
+id = "lists-013"
+input = "<dl><dt>a</dt>text<dd>1</dd></dl>"
+
+[[case]]
+id = "lists-014"
+input = "<dl><dt>a</dt><dd>1</dd>text<p>p</p></dl>"
+
+[[case]]
+id = "lists-015"
+input = "<dl>\n <dt>a\n <dd>1\n <dt>b\n <dd>2\n</dl>"
+
+[[case]]
+id = "lists-016"
+input = "<dl><dt>a<p>p</p></dt><dd>1</dd></dl>"
+
+[[case]]
+id = "lists-017"
+input = "<dl><dt><b>a</b> <i>b</i></dt><dd><ul><li>x</li></ul></dd></dl>"
+
+[[case]]
+id = "lists-018"
+input = "<dl><dt></dt><dd></dd></dl>"
+
+[[case]]
+id = "lists-019"
+input = "<dl><div><dt>w</dt><dd>v</dd></div><div><dt>w2</dt><dd>v2</dd></div></dl>"
+
+[[case]]
+id = "lists-020"
+input = "<dl><!-- c --><dt>a</dt><!-- c --><dd>1</dd><!-- c --></dl>"
+
+[[case]]
+id = "lists-021"
+input = "<p>x<input type=\"checkbox\"> y <input type=\"checkbox\" checked>z<input type=\"CHECKBOX\"></p><input type=\"checkbox\">top"
+
+[[case]]
+id = "lists-022"
+input = "<ul><li>a</li></b><li>b</li></ul>"
+
+[[case]]
+id = "lists-023"
+input = "<ul><li>a</li></div><li>b</li></ul>"
+
+[[case]]
+id = "lists-024"
+input = "<ul><li>a</li><!-- c --><li>b</li> <b>bold</b> <li>c</li><div>d</div><h2>h</h2></ul>"
+
+[[case]]
+id = "lists-025"
+input = "<ul><pre>beta</pre></ul>"
+
+[[case]]
+id = "lists-026"
+input = "<ul><pre>beta<ul></ul></pre></ul>"
+
+[[case]]
+id = "lists-027"
+input = "<ul><div>x</div></b></ul>"
+
+[[case]]
+id = "lists-028"
+input = "<ul>text</b></ul>"
+
+[[case]]
+id = "lists-029"
+input = "<ul><li>a</li></b></ul>"
+
+[[case]]
+id = "lists-030"
+input = "<ul><li>a</li>text</b><li>b</li></ul>"
+
+[[case]]
+id = "lists-031"
+input = "<ul><b>x</b></ul>"
+
+[[case]]
+id = "lists-032"
+input = "<ul></b></ul>"
+
+[[case]]
+id = "lists-033"
+input = "<ul><li>a</li></p><li>b</li></ul>"
+
+[[case]]
+id = "lists-034"
+input = "<dl><dt>t</dt><dd>text<ul><li>x</li></ul></dd><dt>u</dt><dd>text<h2>h</h2></dd><dt>v</dt><dd>text<dl><dt>a</dt><dd>b</dd></dl></dd><dt>w</dt><dd>text<pre><code>c</code></pre></dd><dt>x</dt><dd>text<blockquote>q</blockquote></dd></dl>"
+
+[[case]]
+id = "lists-035"
+input = "text<h1>h</h1>"
+
+[[case]]
+id = "lists-036"
+input = "text<ul><li>x</li></ul>"
+
+[[case]]
+id = "lists-037"
+input = "text<pre><code>c</code></pre>"
+
+[[case]]
+id = "lists-038"
+input = "text<blockquote>q</blockquote>"
+
+[[case]]
+id = "lists-039"
+input = "text<hr><table><tr><td>c</td></tr></table>"
+
+[[case]]
+id = "lists-040"
+input = "text<dl><dt>t</dt><dd>d</dd></dl>"
+
+[[case]]
+id = "lists-041"
+input = "<ul><li>text<h1>h</h1></li><li>text<pre><code>c</code></pre></li><li>t<blockquote>q</blockquote></li><li>t<ol><li>x</li></ol></li><li>t<dl><dt>t</dt><dd>d</dd></dl></li></ul>"
+
+[[case]]
+id = "lists-042"
+input = "<blockquote>text<ul><li>x</li></ul></blockquote><blockquote>text<div>d</div></blockquote>\n"
+
+[[case]]
+id = "start-001"
+input = "<ol start=\"0x2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-002"
+input = "<ol start=\"0X3\"><li>a</li></ol>"
+
+[[case]]
+id = "start-003"
+input = "<ol start=\"0o7\"><li>a</li></ol>"
+
+[[case]]
+id = "start-004"
+input = "<ol start=\"0O7\"><li>a</li></ol>"
+
+[[case]]
+id = "start-005"
+input = "<ol start=\"0b1\"><li>a</li></ol>"
+
+[[case]]
+id = "start-006"
+input = "<ol start=\"- 2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-007"
+input = "<ol start=\"(2)\"><li>a</li></ol>"
+
+[[case]]
+id = "start-008"
+input = "<ol start=\"(-2)\"><li>a</li></ol>"
+
+[[case]]
+id = "start-009"
+input = "<ol start=\" -2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-010"
+input = "<ol start=\"2 \"><li>a</li></ol>"
+
+[[case]]
+id = "start-011"
+input = "<ol start=\"\t2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-012"
+input = "<ol start=\"\n2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-013"
+input = "<ol start=\"0x\"><li>a</li></ol>"
+
+[[case]]
+id = "start-014"
+input = "<ol start=\"1_0\"><li>a</li></ol>"
+
+[[case]]
+id = "start-015"
+input = "<ol start=\"-0x2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-016"
+input = "<ol start=\"0x7fffffffffffffff\"><li>a</li></ol>"
+
+[[case]]
+id = "start-017"
+input = "<ol start=\"0xffffffffffffffff\"><li>a</li></ol>"
+
+[[case]]
+id = "start-018"
+input = "<ol start=\"99999999999999999999\"><li>a</li></ol>"
+
+[[case]]
+id = "start-019"
+input = "<ol start=\"9223372036854775808\"><li>a</li></ol>"
+
+[[case]]
+id = "start-020"
+input = "<ol start=\"-9223372036854775809\"><li>a</li></ol>"
+
+[[case]]
+id = "start-021"
+input = "<ol start=\"+2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-022"
+input = "<ol start=\"2.0\"><li>a</li></ol>"
+
+[[case]]
+id = "start-023"
+input = "<ol start=\"2e0\"><li>a</li></ol>"
+
+[[case]]
+id = "start-024"
+input = "<ol start=\"٢\"><li>a</li></ol>"
+
+[[case]]
+id = "start-025"
+input = "<ol start=\"２\"><li>a</li></ol>"
+
+[[case]]
+id = "start-026"
+input = "<ol start=\" ( 2 ) \"><li>a</li></ol>"
+
+[[case]]
+id = "start-027"
+input = "<ol start=\"--2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-028"
+input = "<ol start=\"-(2)\"><li>a</li></ol>"
+
+[[case]]
+id = "start-029"
+input = "<ol start=\"3 4\"><li>a</li></ol>"
+
+[[case]]
+id = "start-030"
+input = "<ol start=\"0xA\"><li>a</li></ol>"
+
+[[case]]
+id = "start-031"
+input = "<ol start=\"0x1G\"><li>a</li></ol>"
+
+[[case]]
+id = "start-032"
+input = "<ol start=\"00012\"><li>a</li></ol>"
+
+[[case]]
+id = "start-033"
+input = "<ol start=\"-\"><li>a</li></ol>"
+
+[[case]]
+id = "start-034"
+input = "<ol start=\"0b11\"><li>a</li></ol>"
+
+[[case]]
+id = "start-035"
+input = "<ol start=\"((2))\"><li>a</li></ol>"
+
+[[case]]
+id = "start-036"
+input = "<ol start=\" 2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-037"
+input = "<ol start=\"1e1\"><li>a</li></ol>"
+
+[[case]]
+id = "start-038"
+input = "<ol start=\"(2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-039"
+input = "<ol start=\"0x-2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-040"
+input = "<ol start=\" 2\"><li>a</li></ol>"
+
+[[case]]
+id = "start-041"
+input = "<ol start=\"(- 2)\"><li>a</li></ol>"

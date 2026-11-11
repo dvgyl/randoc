@@ -400,6 +400,37 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   - Tests: the library set of full mode against the oracle; the removals
     of restricted mode; a binary chunk; a loop inside `pcall`.
 
+## ADR 13: The HTML reader ports the `tagsoup` tokenizer (2026-11-10)
+
+- **Context.** Pandoc reads HTML in two layers: the library `tagsoup`
+  splits the input into tags, text and comments, and the reader of Pandoc
+  builds the tree from that token list. The tree depends on the exact
+  tokens for broken markup (an unquoted attribute, a comment that does not
+  end, a character reference without `;`).
+- **Decision.** `randoc-html-reader` ports the tokenizer, the tag renderer
+  and the function `canonicalizeTags` of `tagsoup` 0.14.8, the version of
+  the Stackage snapshot `lts-24.51` that Pandoc 3.13 builds with. It ports
+  two small parts of `Text.Pandoc.Builder` of `pandoc-types` 1.23.1: the
+  join rules of an inline list and the grid rules of a table. The tree
+  rules above the tokens are new code from oracle probes, because the
+  reader of Pandoc is GPL.
+- **Why.** A Rust HTML5 parser (`html5ever`) builds the tree of the HTML
+  standard, which differs from the token list of `tagsoup` for each form
+  of broken markup, so it cannot give the tree of Pandoc. No Rust crate
+  ports `tagsoup`. The tokenizer is small (about 500 lines of Haskell), so
+  a port is faster than a search for its rules with probes.
+- **Licence.** BSD-3-Clause for both. The licence file of `tagsoup`
+  0.14.8 was checked in the release archive from Hackage (SHA-256
+  `ba7e5500d853d29f0675b90655b7fdd032a4a7eee82a56e7ee3ef9949fe93ad5`).
+  The texts are in `crates/randoc-html-reader/NOTICE.md` and in
+  `third_party/licences/`.
+- **Consequences.** The port joins the two upstream passes into one pass,
+  so that memory is linear in the number of tokens. Upstream warnings are
+  not kept, because Pandoc does not show them. The character classes
+  (`isAlpha`, `isAlphaNum`) use the Unicode tables of Rust, which can
+  differ from GHC for a few characters. The port has a fuzz target and
+  oracle-derived tests.
+
 ## ADR 14: TeX math probes take candidate command names from KaTeX 0.16.11 (2026-11-11)
 
 - **Context.** `randoc-math` must write the exact MathML text and inline

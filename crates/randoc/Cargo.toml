@@ -14,6 +14,7 @@ randoc-core = { workspace = true }
 randoc-html = { workspace = true }
 randoc-native = { workspace = true }
 randoc-citeproc = { workspace = true }
+randoc-html-reader = { workspace = true }
 
 [lints]
 workspace = true

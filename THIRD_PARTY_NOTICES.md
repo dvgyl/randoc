@@ -40,6 +40,8 @@ until 2026-11-10.
 | The merge of inline lists and the table normalization of `Text.Pandoc.Builder` (ported) | `pandoc-types` 1.23.1 (Hackage) | BSD-3-Clause | `crates/randoc-lua/src/utils.rs`, `crates/randoc-lua/src/normalize.rs` | [`third_party/licences/pandoc-types.txt`](third_party/licences/pandoc-types.txt) |
 | Lua modules `pandoc.path` and `pandoc.text` (ported) | `hslua-module-path` 1.2.0, `hslua-module-text` 1.2.0 | MIT | `crates/randoc-lua/src/path.rs`, `crates/randoc-lua/src/text.rs` | [`third_party/licences/hslua-modules.txt`](third_party/licences/hslua-modules.txt) |
 | The POSIX path rules of `System.FilePath` (ported) | `filepath` 1.5.4.0 | BSD-3-Clause | `crates/randoc-lua/src/path.rs` | [`third_party/licences/filepath.txt`](third_party/licences/filepath.txt) |
+| HTML tag tokenizer and tag renderer (state machine, attribute and character reference rules, `canonicalizeTags`) | `tagsoup` 0.14.8 (https://hackage.haskell.org/package/tagsoup-0.14.8; `src/Text/HTML/TagSoup/Specification.hs`, `Implementation.hs`, `Render.hs`, `TagSoup.hs`) | BSD-3-Clause | `crates/randoc-html-reader/src/tokens.rs` | [`third_party/licences/tagsoup.txt`](third_party/licences/tagsoup.txt); the text of release 0.14.8 is in `crates/randoc-html-reader/NOTICE.md` |
+| Join rules of an inline list and grid rules of a table (`Text.Pandoc.Builder`: the `Inlines` monoid, `placeRowSection`, `clipRows`) | `pandoc-types` 1.23.1 | BSD-3-Clause | `crates/randoc-html-reader/src/text.rs`, `src/table.rs` | [`third_party/licences/pandoc-types.txt`](third_party/licences/pandoc-types.txt) |
 
 Add a row when a workstream adds material from a different project. Put the
 full upstream licence file, with its copyright notice and disclaimer, in

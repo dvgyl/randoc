@@ -1,0 +1,1627 @@
+# Each tag name as unknown markup, in five contexts.
+from = "html"
+to = []
+
+[[case]]
+id = "tags-001"
+input = "<b>a<a>b</a>c</b>d"
+
+[[case]]
+id = "tags-002"
+from = "html+raw_html"
+input = "<p>x<a>y</a>z</p>"
+
+[[case]]
+id = "tags-003"
+from = "html-native_divs-native_spans"
+input = "<div>a<a>b</a>c</div>d</a>"
+
+[[case]]
+id = "tags-004"
+from = "html+raw_html"
+input = "x<abbr>y</abbr>z"
+
+[[case]]
+id = "tags-005"
+input = "<span>a<abbr>b</abbr>c</span>d<abbr>"
+
+[[case]]
+id = "tags-006"
+input = "<b>a<acronym>b</acronym>c</b>d"
+
+[[case]]
+id = "tags-007"
+from = "html+raw_html"
+input = "<p>x<acronym>y</acronym>z</p>"
+
+[[case]]
+id = "tags-008"
+from = "html-native_divs-native_spans"
+input = "<div>a<acronym>b</acronym>c</div>d</acronym>"
+
+[[case]]
+id = "tags-009"
+from = "html+raw_html"
+input = "x<address>y</address>z"
+
+[[case]]
+id = "tags-010"
+input = "<span>a<address>b</address>c</span>d<address>"
+
+[[case]]
+id = "tags-011"
+input = "<b>a<applet>b</applet>c</b>d"
+
+[[case]]
+id = "tags-012"
+from = "html+raw_html"
+input = "<p>x<applet>y</applet>z</p>"
+
+[[case]]
+id = "tags-013"
+from = "html-native_divs-native_spans"
+input = "<div>a<applet>b</applet>c</div>d</applet>"
+
+[[case]]
+id = "tags-014"
+from = "html+raw_html"
+input = "x<area>y</area>z"
+
+[[case]]
+id = "tags-015"
+input = "<span>a<area>b</area>c</span>d<area>"
+
+[[case]]
+id = "tags-016"
+input = "<b>a<article>b</article>c</b>d"
+
+[[case]]
+id = "tags-017"
+from = "html+raw_html"
+input = "<p>x<article>y</article>z</p>"
+
+[[case]]
+id = "tags-018"
+from = "html-native_divs-native_spans"
+input = "<div>a<article>b</article>c</div>d</article>"
+
+[[case]]
+id = "tags-019"
+from = "html+raw_html"
+input = "x<aside>y</aside>z"
+
+[[case]]
+id = "tags-020"
+input = "<span>a<aside>b</aside>c</span>d<aside>"
+
+[[case]]
+id = "tags-021"
+input = "<b>a<audio>b</audio>c</b>d"
+
+[[case]]
+id = "tags-022"
+from = "html+raw_html"
+input = "<p>x<audio>y</audio>z</p>"
+
+[[case]]
+id = "tags-023"
+from = "html-native_divs-native_spans"
+input = "<div>a<audio>b</audio>c</div>d</audio>"
+
+[[case]]
+id = "tags-024"
+from = "html+raw_html"
+input = "x<b>y</b>z"
+
+[[case]]
+id = "tags-025"
+input = "<span>a<b>b</b>c</span>d<b>"
+
+[[case]]
+id = "tags-026"
+input = "<b>a<base>b</base>c</b>d"
+
+[[case]]
+id = "tags-027"
+from = "html+raw_html"
+input = "<p>x<base>y</base>z</p>"
+
+[[case]]
+id = "tags-028"
+from = "html-native_divs-native_spans"
+input = "<div>a<base>b</base>c</div>d</base>"
+
+[[case]]
+id = "tags-029"
+from = "html+raw_html"
+input = "x<basefont>y</basefont>z"
+
+[[case]]
+id = "tags-030"
+input = "<span>a<basefont>b</basefont>c</span>d<basefont>"
+
+[[case]]
+id = "tags-031"
+input = "<b>a<bdi>b</bdi>c</b>d"
+
+[[case]]
+id = "tags-032"
+from = "html+raw_html"
+input = "<p>x<bdi>y</bdi>z</p>"
+
+[[case]]
+id = "tags-033"
+from = "html-native_divs-native_spans"
+input = "<div>a<bdi>b</bdi>c</div>d</bdi>"
+
+[[case]]
+id = "tags-034"
+from = "html+raw_html"
+input = "x<bdo>y</bdo>z"
+
+[[case]]
+id = "tags-035"
+input = "<span>a<bdo>b</bdo>c</span>d<bdo>"
+
+[[case]]
+id = "tags-036"
+input = "<b>a<big>b</big>c</b>d"
+
+[[case]]
+id = "tags-037"
+from = "html+raw_html"
+input = "<p>x<big>y</big>z</p>"
+
+[[case]]
+id = "tags-038"
+from = "html-native_divs-native_spans"
+input = "<div>a<big>b</big>c</div>d</big>"
+
+[[case]]
+id = "tags-039"
+from = "html+raw_html"
+input = "x<blockquote>y</blockquote>z"
+
+[[case]]
+id = "tags-040"
+input = "<span>a<blockquote>b</blockquote>c</span>d<blockquote>"
+
+[[case]]
+id = "tags-041"
+input = "<b>a<body>b</body>c</b>d"
+
+[[case]]
+id = "tags-042"
+from = "html+raw_html"
+input = "<p>x<body>y</body>z</p>"
+
+[[case]]
+id = "tags-043"
+from = "html-native_divs-native_spans"
+input = "<div>a<body>b</body>c</div>d</body>"
+
+[[case]]
+id = "tags-044"
+from = "html+raw_html"
+input = "x<br>y</br>z"
+
+[[case]]
+id = "tags-045"
+input = "<span>a<br>b</br>c</span>d<br>"
+
+[[case]]
+id = "tags-046"
+input = "<b>a<button>b</button>c</b>d"
+
+[[case]]
+id = "tags-047"
+from = "html+raw_html"
+input = "<p>x<button>y</button>z</p>"
+
+[[case]]
+id = "tags-048"
+from = "html-native_divs-native_spans"
+input = "<div>a<button>b</button>c</div>d</button>"
+
+[[case]]
+id = "tags-049"
+from = "html+raw_html"
+input = "x<canvas>y</canvas>z"
+
+[[case]]
+id = "tags-050"
+input = "<span>a<canvas>b</canvas>c</span>d<canvas>"
+
+[[case]]
+id = "tags-051"
+input = "<b>a<caption>b</caption>c</b>d"
+
+[[case]]
+id = "tags-052"
+from = "html+raw_html"
+input = "<p>x<caption>y</caption>z</p>"
+
+[[case]]
+id = "tags-053"
+from = "html-native_divs-native_spans"
+input = "<div>a<caption>b</caption>c</div>d</caption>"
+
+[[case]]
+id = "tags-054"
+from = "html+raw_html"
+input = "x<center>y</center>z"
+
+[[case]]
+id = "tags-055"
+input = "<span>a<center>b</center>c</span>d<center>"
+
+[[case]]
+id = "tags-056"
+input = "<b>a<cite>b</cite>c</b>d"
+
+[[case]]
+id = "tags-057"
+from = "html+raw_html"
+input = "<p>x<cite>y</cite>z</p>"
+
+[[case]]
+id = "tags-058"
+from = "html-native_divs-native_spans"
+input = "<div>a<cite>b</cite>c</div>d</cite>"
+
+[[case]]
+id = "tags-059"
+from = "html+raw_html"
+input = "x<code>y</code>z"
+
+[[case]]
+id = "tags-060"
+input = "<span>a<code>b</code>c</span>d<code>"
+
+[[case]]
+id = "tags-061"
+input = "<b>a<col>b</col>c</b>d"
+
+[[case]]
+id = "tags-062"
+from = "html+raw_html"
+input = "<p>x<col>y</col>z</p>"
+
+[[case]]
+id = "tags-063"
+from = "html-native_divs-native_spans"
+input = "<div>a<col>b</col>c</div>d</col>"
+
+[[case]]
+id = "tags-064"
+from = "html+raw_html"
+input = "x<colgroup>y</colgroup>z"
+
+[[case]]
+id = "tags-065"
+input = "<span>a<colgroup>b</colgroup>c</span>d<colgroup>"
+
+[[case]]
+id = "tags-066"
+input = "<b>a<data>b</data>c</b>d"
+
+[[case]]
+id = "tags-067"
+from = "html+raw_html"
+input = "<p>x<data>y</data>z</p>"
+
+[[case]]
+id = "tags-068"
+from = "html-native_divs-native_spans"
+input = "<div>a<data>b</data>c</div>d</data>"
+
+[[case]]
+id = "tags-069"
+from = "html+raw_html"
+input = "x<datalist>y</datalist>z"
+
+[[case]]
+id = "tags-070"
+input = "<span>a<datalist>b</datalist>c</span>d<datalist>"
+
+[[case]]
+id = "tags-071"
+input = "<b>a<dd>b</dd>c</b>d"
+
+[[case]]
+id = "tags-072"
+from = "html+raw_html"
+input = "<p>x<dd>y</dd>z</p>"
+
+[[case]]
+id = "tags-073"
+from = "html-native_divs-native_spans"
+input = "<div>a<dd>b</dd>c</div>d</dd>"
+
+[[case]]
+id = "tags-074"
+from = "html+raw_html"
+input = "x<del>y</del>z"
+
+[[case]]
+id = "tags-075"
+input = "<span>a<del>b</del>c</span>d<del>"
+
+[[case]]
+id = "tags-076"
+input = "<b>a<details>b</details>c</b>d"
+
+[[case]]
+id = "tags-077"
+from = "html+raw_html"
+input = "<p>x<details>y</details>z</p>"
+
+[[case]]
+id = "tags-078"
+from = "html-native_divs-native_spans"
+input = "<div>a<details>b</details>c</div>d</details>"
+
+[[case]]
+id = "tags-079"
+from = "html+raw_html"
+input = "x<dfn>y</dfn>z"
+
+[[case]]
+id = "tags-080"
+input = "<span>a<dfn>b</dfn>c</span>d<dfn>"
+
+[[case]]
+id = "tags-081"
+input = "<b>a<dialog>b</dialog>c</b>d"
+
+[[case]]
+id = "tags-082"
+from = "html+raw_html"
+input = "<p>x<dialog>y</dialog>z</p>"
+
+[[case]]
+id = "tags-083"
+from = "html-native_divs-native_spans"
+input = "<div>a<dialog>b</dialog>c</div>d</dialog>"
+
+[[case]]
+id = "tags-084"
+from = "html+raw_html"
+input = "x<dir>y</dir>z"
+
+[[case]]
+id = "tags-085"
+input = "<span>a<dir>b</dir>c</span>d<dir>"
+
+[[case]]
+id = "tags-086"
+input = "<b>a<div>b</div>c</b>d"
+
+[[case]]
+id = "tags-087"
+from = "html+raw_html"
+input = "<p>x<div>y</div>z</p>"
+
+[[case]]
+id = "tags-088"
+from = "html-native_divs-native_spans"
+input = "<div>a<div>b</div>c</div>d</div>"
+
+[[case]]
+id = "tags-089"
+from = "html+raw_html"
+input = "x<dl>y</dl>z"
+
+[[case]]
+id = "tags-090"
+input = "<span>a<dl>b</dl>c</span>d<dl>"
+
+[[case]]
+id = "tags-091"
+input = "<b>a<dt>b</dt>c</b>d"
+
+[[case]]
+id = "tags-092"
+from = "html+raw_html"
+input = "<p>x<dt>y</dt>z</p>"
+
+[[case]]
+id = "tags-093"
+from = "html-native_divs-native_spans"
+input = "<div>a<dt>b</dt>c</div>d</dt>"
+
+[[case]]
+id = "tags-094"
+from = "html+raw_html"
+input = "x<em>y</em>z"
+
+[[case]]
+id = "tags-095"
+input = "<span>a<em>b</em>c</span>d<em>"
+
+[[case]]
+id = "tags-096"
+input = "<b>a<embed>b</embed>c</b>d"
+
+[[case]]
+id = "tags-097"
+from = "html+raw_html"
+input = "<p>x<embed>y</embed>z</p>"
+
+[[case]]
+id = "tags-098"
+from = "html-native_divs-native_spans"
+input = "<div>a<embed>b</embed>c</div>d</embed>"
+
+[[case]]
+id = "tags-099"
+from = "html+raw_html"
+input = "x<fieldset>y</fieldset>z"
+
+[[case]]
+id = "tags-100"
+input = "<span>a<fieldset>b</fieldset>c</span>d<fieldset>"
+
+[[case]]
+id = "tags-101"
+input = "<b>a<figcaption>b</figcaption>c</b>d"
+
+[[case]]
+id = "tags-102"
+from = "html+raw_html"
+input = "<p>x<figcaption>y</figcaption>z</p>"
+
+[[case]]
+id = "tags-103"
+from = "html-native_divs-native_spans"
+input = "<div>a<figcaption>b</figcaption>c</div>d</figcaption>"
+
+[[case]]
+id = "tags-104"
+from = "html+raw_html"
+input = "x<figure>y</figure>z"
+
+[[case]]
+id = "tags-105"
+input = "<span>a<figure>b</figure>c</span>d<figure>"
+
+[[case]]
+id = "tags-106"
+input = "<b>a<font>b</font>c</b>d"
+
+[[case]]
+id = "tags-107"
+from = "html+raw_html"
+input = "<p>x<font>y</font>z</p>"
+
+[[case]]
+id = "tags-108"
+from = "html-native_divs-native_spans"
+input = "<div>a<font>b</font>c</div>d</font>"
+
+[[case]]
+id = "tags-109"
+from = "html+raw_html"
+input = "x<footer>y</footer>z"
+
+[[case]]
+id = "tags-110"
+input = "<span>a<footer>b</footer>c</span>d<footer>"
+
+[[case]]
+id = "tags-111"
+input = "<b>a<form>b</form>c</b>d"
+
+[[case]]
+id = "tags-112"
+from = "html+raw_html"
+input = "<p>x<form>y</form>z</p>"
+
+[[case]]
+id = "tags-113"
+from = "html-native_divs-native_spans"
+input = "<div>a<form>b</form>c</div>d</form>"
+
+[[case]]
+id = "tags-114"
+from = "html+raw_html"
+input = "x<frame>y</frame>z"
+
+[[case]]
+id = "tags-115"
+input = "<span>a<frame>b</frame>c</span>d<frame>"
+
+[[case]]
+id = "tags-116"
+input = "<b>a<frameset>b</frameset>c</b>d"
+
+[[case]]
+id = "tags-117"
+from = "html+raw_html"
+input = "<p>x<frameset>y</frameset>z</p>"
+
+[[case]]
+id = "tags-118"
+from = "html-native_divs-native_spans"
+input = "<div>a<frameset>b</frameset>c</div>d</frameset>"
+
+[[case]]
+id = "tags-119"
+from = "html+raw_html"
+input = "x<h1>y</h1>z"
+
+[[case]]
+id = "tags-120"
+input = "<span>a<h1>b</h1>c</span>d<h1>"
+
+[[case]]
+id = "tags-121"
+input = "<b>a<h2>b</h2>c</b>d"
+
+[[case]]
+id = "tags-122"
+from = "html+raw_html"
+input = "<p>x<h2>y</h2>z</p>"
+
+[[case]]
+id = "tags-123"
+from = "html-native_divs-native_spans"
+input = "<div>a<h2>b</h2>c</div>d</h2>"
+
+[[case]]
+id = "tags-124"
+from = "html+raw_html"
+input = "x<h3>y</h3>z"
+
+[[case]]
+id = "tags-125"
+input = "<span>a<h3>b</h3>c</span>d<h3>"
+
+[[case]]
+id = "tags-126"
+input = "<b>a<h4>b</h4>c</b>d"
+
+[[case]]
+id = "tags-127"
+from = "html+raw_html"
+input = "<p>x<h4>y</h4>z</p>"
+
+[[case]]
+id = "tags-128"
+from = "html-native_divs-native_spans"
+input = "<div>a<h4>b</h4>c</div>d</h4>"
+
+[[case]]
+id = "tags-129"
+from = "html+raw_html"
+input = "x<h5>y</h5>z"
+
+[[case]]
+id = "tags-130"
+input = "<span>a<h5>b</h5>c</span>d<h5>"
+
+[[case]]
+id = "tags-131"
+input = "<b>a<h6>b</h6>c</b>d"
+
+[[case]]
+id = "tags-132"
+from = "html+raw_html"
+input = "<p>x<h6>y</h6>z</p>"
+
+[[case]]
+id = "tags-133"
+from = "html-native_divs-native_spans"
+input = "<div>a<h6>b</h6>c</div>d</h6>"
+
+[[case]]
+id = "tags-134"
+from = "html+raw_html"
+input = "x<head>y</head>z"
+
+[[case]]
+id = "tags-135"
+input = "<span>a<head>b</head>c</span>d<head>"
+
+[[case]]
+id = "tags-136"
+input = "<b>a<header>b</header>c</b>d"
+
+[[case]]
+id = "tags-137"
+from = "html+raw_html"
+input = "<p>x<header>y</header>z</p>"
+
+[[case]]
+id = "tags-138"
+from = "html-native_divs-native_spans"
+input = "<div>a<header>b</header>c</div>d</header>"
+
+[[case]]
+id = "tags-139"
+from = "html+raw_html"
+input = "x<hgroup>y</hgroup>z"
+
+[[case]]
+id = "tags-140"
+input = "<span>a<hgroup>b</hgroup>c</span>d<hgroup>"
+
+[[case]]
+id = "tags-141"
+input = "<b>a<hr>b</hr>c</b>d"
+
+[[case]]
+id = "tags-142"
+from = "html+raw_html"
+input = "<p>x<hr>y</hr>z</p>"
+
+[[case]]
+id = "tags-143"
+from = "html-native_divs-native_spans"
+input = "<div>a<hr>b</hr>c</div>d</hr>"
+
+[[case]]
+id = "tags-144"
+from = "html+raw_html"
+input = "x<html>y</html>z"
+
+[[case]]
+id = "tags-145"
+input = "<span>a<html>b</html>c</span>d<html>"
+
+[[case]]
+id = "tags-146"
+input = "<b>a<i>b</i>c</b>d"
+
+[[case]]
+id = "tags-147"
+from = "html+raw_html"
+input = "<p>x<i>y</i>z</p>"
+
+[[case]]
+id = "tags-148"
+from = "html-native_divs-native_spans"
+input = "<div>a<i>b</i>c</div>d</i>"
+
+[[case]]
+id = "tags-149"
+from = "html+raw_html"
+input = "x<iframe>y</iframe>z"
+
+[[case]]
+id = "tags-150"
+input = "<span>a<iframe>b</iframe>c</span>d<iframe>"
+
+[[case]]
+id = "tags-151"
+input = "<b>a<img>b</img>c</b>d"
+
+[[case]]
+id = "tags-152"
+from = "html+raw_html"
+input = "<p>x<img>y</img>z</p>"
+
+[[case]]
+id = "tags-153"
+from = "html-native_divs-native_spans"
+input = "<div>a<img>b</img>c</div>d</img>"
+
+[[case]]
+id = "tags-154"
+from = "html+raw_html"
+input = "x<input>y</input>z"
+
+[[case]]
+id = "tags-155"
+input = "<span>a<input>b</input>c</span>d<input>"
+
+[[case]]
+id = "tags-156"
+input = "<b>a<ins>b</ins>c</b>d"
+
+[[case]]
+id = "tags-157"
+from = "html+raw_html"
+input = "<p>x<ins>y</ins>z</p>"
+
+[[case]]
+id = "tags-158"
+from = "html-native_divs-native_spans"
+input = "<div>a<ins>b</ins>c</div>d</ins>"
+
+[[case]]
+id = "tags-159"
+from = "html+raw_html"
+input = "x<isindex>y</isindex>z"
+
+[[case]]
+id = "tags-160"
+input = "<span>a<isindex>b</isindex>c</span>d<isindex>"
+
+[[case]]
+id = "tags-161"
+input = "<b>a<kbd>b</kbd>c</b>d"
+
+[[case]]
+id = "tags-162"
+from = "html+raw_html"
+input = "<p>x<kbd>y</kbd>z</p>"
+
+[[case]]
+id = "tags-163"
+from = "html-native_divs-native_spans"
+input = "<div>a<kbd>b</kbd>c</div>d</kbd>"
+
+[[case]]
+id = "tags-164"
+from = "html+raw_html"
+input = "x<keygen>y</keygen>z"
+
+[[case]]
+id = "tags-165"
+input = "<span>a<keygen>b</keygen>c</span>d<keygen>"
+
+[[case]]
+id = "tags-166"
+input = "<b>a<label>b</label>c</b>d"
+
+[[case]]
+id = "tags-167"
+from = "html+raw_html"
+input = "<p>x<label>y</label>z</p>"
+
+[[case]]
+id = "tags-168"
+from = "html-native_divs-native_spans"
+input = "<div>a<label>b</label>c</div>d</label>"
+
+[[case]]
+id = "tags-169"
+from = "html+raw_html"
+input = "x<legend>y</legend>z"
+
+[[case]]
+id = "tags-170"
+input = "<span>a<legend>b</legend>c</span>d<legend>"
+
+[[case]]
+id = "tags-171"
+input = "<b>a<li>b</li>c</b>d"
+
+[[case]]
+id = "tags-172"
+from = "html+raw_html"
+input = "<p>x<li>y</li>z</p>"
+
+[[case]]
+id = "tags-173"
+from = "html-native_divs-native_spans"
+input = "<div>a<li>b</li>c</div>d</li>"
+
+[[case]]
+id = "tags-174"
+from = "html+raw_html"
+input = "x<link>y</link>z"
+
+[[case]]
+id = "tags-175"
+input = "<span>a<link>b</link>c</span>d<link>"
+
+[[case]]
+id = "tags-176"
+input = "<b>a<main>b</main>c</b>d"
+
+[[case]]
+id = "tags-177"
+from = "html+raw_html"
+input = "<p>x<main>y</main>z</p>"
+
+[[case]]
+id = "tags-178"
+from = "html-native_divs-native_spans"
+input = "<div>a<main>b</main>c</div>d</main>"
+
+[[case]]
+id = "tags-179"
+from = "html+raw_html"
+input = "x<map>y</map>z"
+
+[[case]]
+id = "tags-180"
+input = "<span>a<map>b</map>c</span>d<map>"
+
+[[case]]
+id = "tags-181"
+input = "<b>a<mark>b</mark>c</b>d"
+
+[[case]]
+id = "tags-182"
+from = "html+raw_html"
+input = "<p>x<mark>y</mark>z</p>"
+
+[[case]]
+id = "tags-183"
+from = "html-native_divs-native_spans"
+input = "<div>a<mark>b</mark>c</div>d</mark>"
+
+[[case]]
+id = "tags-184"
+from = "html+raw_html"
+input = "x<marquee>y</marquee>z"
+
+[[case]]
+id = "tags-185"
+input = "<span>a<marquee>b</marquee>c</span>d<marquee>"
+
+[[case]]
+id = "tags-186"
+input = "<b>a<menu>b</menu>c</b>d"
+
+[[case]]
+id = "tags-187"
+from = "html+raw_html"
+input = "<p>x<menu>y</menu>z</p>"
+
+[[case]]
+id = "tags-188"
+from = "html-native_divs-native_spans"
+input = "<div>a<menu>b</menu>c</div>d</menu>"
+
+[[case]]
+id = "tags-189"
+from = "html+raw_html"
+input = "x<menuitem>y</menuitem>z"
+
+[[case]]
+id = "tags-190"
+input = "<span>a<menuitem>b</menuitem>c</span>d<menuitem>"
+
+[[case]]
+id = "tags-191"
+input = "<b>a<meta>b</meta>c</b>d"
+
+[[case]]
+id = "tags-192"
+from = "html+raw_html"
+input = "<p>x<meta>y</meta>z</p>"
+
+[[case]]
+id = "tags-193"
+from = "html-native_divs-native_spans"
+input = "<div>a<meta>b</meta>c</div>d</meta>"
+
+[[case]]
+id = "tags-194"
+from = "html+raw_html"
+input = "x<meter>y</meter>z"
+
+[[case]]
+id = "tags-195"
+input = "<span>a<meter>b</meter>c</span>d<meter>"
+
+[[case]]
+id = "tags-196"
+input = "<b>a<nav>b</nav>c</b>d"
+
+[[case]]
+id = "tags-197"
+from = "html+raw_html"
+input = "<p>x<nav>y</nav>z</p>"
+
+[[case]]
+id = "tags-198"
+from = "html-native_divs-native_spans"
+input = "<div>a<nav>b</nav>c</div>d</nav>"
+
+[[case]]
+id = "tags-199"
+from = "html+raw_html"
+input = "x<nobr>y</nobr>z"
+
+[[case]]
+id = "tags-200"
+input = "<span>a<nobr>b</nobr>c</span>d<nobr>"
+
+[[case]]
+id = "tags-201"
+input = "<b>a<noframes>b</noframes>c</b>d"
+
+[[case]]
+id = "tags-202"
+from = "html+raw_html"
+input = "<p>x<noframes>y</noframes>z</p>"
+
+[[case]]
+id = "tags-203"
+from = "html-native_divs-native_spans"
+input = "<div>a<noframes>b</noframes>c</div>d</noframes>"
+
+[[case]]
+id = "tags-204"
+from = "html+raw_html"
+input = "x<noscript>y</noscript>z"
+
+[[case]]
+id = "tags-205"
+input = "<span>a<noscript>b</noscript>c</span>d<noscript>"
+
+[[case]]
+id = "tags-206"
+input = "<b>a<object>b</object>c</b>d"
+
+[[case]]
+id = "tags-207"
+from = "html+raw_html"
+input = "<p>x<object>y</object>z</p>"
+
+[[case]]
+id = "tags-208"
+from = "html-native_divs-native_spans"
+input = "<div>a<object>b</object>c</div>d</object>"
+
+[[case]]
+id = "tags-209"
+from = "html+raw_html"
+input = "x<ol>y</ol>z"
+
+[[case]]
+id = "tags-210"
+input = "<span>a<ol>b</ol>c</span>d<ol>"
+
+[[case]]
+id = "tags-211"
+input = "<b>a<optgroup>b</optgroup>c</b>d"
+
+[[case]]
+id = "tags-212"
+from = "html+raw_html"
+input = "<p>x<optgroup>y</optgroup>z</p>"
+
+[[case]]
+id = "tags-213"
+from = "html-native_divs-native_spans"
+input = "<div>a<optgroup>b</optgroup>c</div>d</optgroup>"
+
+[[case]]
+id = "tags-214"
+from = "html+raw_html"
+input = "x<option>y</option>z"
+
+[[case]]
+id = "tags-215"
+input = "<span>a<option>b</option>c</span>d<option>"
+
+[[case]]
+id = "tags-216"
+input = "<b>a<output>b</output>c</b>d"
+
+[[case]]
+id = "tags-217"
+from = "html+raw_html"
+input = "<p>x<output>y</output>z</p>"
+
+[[case]]
+id = "tags-218"
+from = "html-native_divs-native_spans"
+input = "<div>a<output>b</output>c</div>d</output>"
+
+[[case]]
+id = "tags-219"
+from = "html+raw_html"
+input = "x<p>y</p>z"
+
+[[case]]
+id = "tags-220"
+input = "<span>a<p>b</p>c</span>d<p>"
+
+[[case]]
+id = "tags-221"
+input = "<b>a<param>b</param>c</b>d"
+
+[[case]]
+id = "tags-222"
+from = "html+raw_html"
+input = "<p>x<param>y</param>z</p>"
+
+[[case]]
+id = "tags-223"
+from = "html-native_divs-native_spans"
+input = "<div>a<param>b</param>c</div>d</param>"
+
+[[case]]
+id = "tags-224"
+from = "html+raw_html"
+input = "x<picture>y</picture>z"
+
+[[case]]
+id = "tags-225"
+input = "<span>a<picture>b</picture>c</span>d<picture>"
+
+[[case]]
+id = "tags-226"
+input = "<b>a<pre>b</pre>c</b>d"
+
+[[case]]
+id = "tags-227"
+from = "html+raw_html"
+input = "<p>x<pre>y</pre>z</p>"
+
+[[case]]
+id = "tags-228"
+from = "html-native_divs-native_spans"
+input = "<div>a<pre>b</pre>c</div>d</pre>"
+
+[[case]]
+id = "tags-229"
+from = "html+raw_html"
+input = "x<progress>y</progress>z"
+
+[[case]]
+id = "tags-230"
+input = "<span>a<progress>b</progress>c</span>d<progress>"
+
+[[case]]
+id = "tags-231"
+input = "<b>a<q>b</q>c</b>d"
+
+[[case]]
+id = "tags-232"
+from = "html+raw_html"
+input = "<p>x<q>y</q>z</p>"
+
+[[case]]
+id = "tags-233"
+from = "html-native_divs-native_spans"
+input = "<div>a<q>b</q>c</div>d</q>"
+
+[[case]]
+id = "tags-234"
+from = "html+raw_html"
+input = "x<rb>y</rb>z"
+
+[[case]]
+id = "tags-235"
+input = "<span>a<rb>b</rb>c</span>d<rb>"
+
+[[case]]
+id = "tags-236"
+input = "<b>a<rp>b</rp>c</b>d"
+
+[[case]]
+id = "tags-237"
+from = "html+raw_html"
+input = "<p>x<rp>y</rp>z</p>"
+
+[[case]]
+id = "tags-238"
+from = "html-native_divs-native_spans"
+input = "<div>a<rp>b</rp>c</div>d</rp>"
+
+[[case]]
+id = "tags-239"
+from = "html+raw_html"
+input = "x<rt>y</rt>z"
+
+[[case]]
+id = "tags-240"
+input = "<span>a<rt>b</rt>c</span>d<rt>"
+
+[[case]]
+id = "tags-241"
+input = "<b>a<rtc>b</rtc>c</b>d"
+
+[[case]]
+id = "tags-242"
+from = "html+raw_html"
+input = "<p>x<rtc>y</rtc>z</p>"
+
+[[case]]
+id = "tags-243"
+from = "html-native_divs-native_spans"
+input = "<div>a<rtc>b</rtc>c</div>d</rtc>"
+
+[[case]]
+id = "tags-244"
+from = "html+raw_html"
+input = "x<ruby>y</ruby>z"
+
+[[case]]
+id = "tags-245"
+input = "<span>a<ruby>b</ruby>c</span>d<ruby>"
+
+[[case]]
+id = "tags-246"
+input = "<b>a<s>b</s>c</b>d"
+
+[[case]]
+id = "tags-247"
+from = "html+raw_html"
+input = "<p>x<s>y</s>z</p>"
+
+[[case]]
+id = "tags-248"
+from = "html-native_divs-native_spans"
+input = "<div>a<s>b</s>c</div>d</s>"
+
+[[case]]
+id = "tags-249"
+from = "html+raw_html"
+input = "x<samp>y</samp>z"
+
+[[case]]
+id = "tags-250"
+input = "<span>a<samp>b</samp>c</span>d<samp>"
+
+[[case]]
+id = "tags-251"
+input = "<b>a<script>b</script>c</b>d"
+
+[[case]]
+id = "tags-252"
+from = "html+raw_html"
+input = "<p>x<script>y</script>z</p>"
+
+[[case]]
+id = "tags-253"
+from = "html-native_divs-native_spans"
+input = "<div>a<script>b</script>c</div>d</script>"
+
+[[case]]
+id = "tags-254"
+from = "html+raw_html"
+input = "x<section>y</section>z"
+
+[[case]]
+id = "tags-255"
+input = "<span>a<section>b</section>c</span>d<section>"
+
+[[case]]
+id = "tags-256"
+input = "<b>a<select>b</select>c</b>d"
+
+[[case]]
+id = "tags-257"
+from = "html+raw_html"
+input = "<p>x<select>y</select>z</p>"
+
+[[case]]
+id = "tags-258"
+from = "html-native_divs-native_spans"
+input = "<div>a<select>b</select>c</div>d</select>"
+
+[[case]]
+id = "tags-259"
+from = "html+raw_html"
+input = "x<slot>y</slot>z"
+
+[[case]]
+id = "tags-260"
+input = "<span>a<slot>b</slot>c</span>d<slot>"
+
+[[case]]
+id = "tags-261"
+input = "<b>a<small>b</small>c</b>d"
+
+[[case]]
+id = "tags-262"
+from = "html+raw_html"
+input = "<p>x<small>y</small>z</p>"
+
+[[case]]
+id = "tags-263"
+from = "html-native_divs-native_spans"
+input = "<div>a<small>b</small>c</div>d</small>"
+
+[[case]]
+id = "tags-264"
+from = "html+raw_html"
+input = "x<source>y</source>z"
+
+[[case]]
+id = "tags-265"
+input = "<span>a<source>b</source>c</span>d<source>"
+
+[[case]]
+id = "tags-266"
+input = "<b>a<span>b</span>c</b>d"
+
+[[case]]
+id = "tags-267"
+from = "html+raw_html"
+input = "<p>x<span>y</span>z</p>"
+
+[[case]]
+id = "tags-268"
+from = "html-native_divs-native_spans"
+input = "<div>a<span>b</span>c</div>d</span>"
+
+[[case]]
+id = "tags-269"
+from = "html+raw_html"
+input = "x<strike>y</strike>z"
+
+[[case]]
+id = "tags-270"
+input = "<span>a<strike>b</strike>c</span>d<strike>"
+
+[[case]]
+id = "tags-271"
+input = "<b>a<strong>b</strong>c</b>d"
+
+[[case]]
+id = "tags-272"
+from = "html+raw_html"
+input = "<p>x<strong>y</strong>z</p>"
+
+[[case]]
+id = "tags-273"
+from = "html-native_divs-native_spans"
+input = "<div>a<strong>b</strong>c</div>d</strong>"
+
+[[case]]
+id = "tags-274"
+from = "html+raw_html"
+input = "x<style>y</style>z"
+
+[[case]]
+id = "tags-275"
+input = "<span>a<style>b</style>c</span>d<style>"
+
+[[case]]
+id = "tags-276"
+input = "<b>a<sub>b</sub>c</b>d"
+
+[[case]]
+id = "tags-277"
+from = "html+raw_html"
+input = "<p>x<sub>y</sub>z</p>"
+
+[[case]]
+id = "tags-278"
+from = "html-native_divs-native_spans"
+input = "<div>a<sub>b</sub>c</div>d</sub>"
+
+[[case]]
+id = "tags-279"
+from = "html+raw_html"
+input = "x<summary>y</summary>z"
+
+[[case]]
+id = "tags-280"
+input = "<span>a<summary>b</summary>c</span>d<summary>"
+
+[[case]]
+id = "tags-281"
+input = "<b>a<sup>b</sup>c</b>d"
+
+[[case]]
+id = "tags-282"
+from = "html+raw_html"
+input = "<p>x<sup>y</sup>z</p>"
+
+[[case]]
+id = "tags-283"
+from = "html-native_divs-native_spans"
+input = "<div>a<sup>b</sup>c</div>d</sup>"
+
+[[case]]
+id = "tags-284"
+from = "html+raw_html"
+input = "x<svg>y</svg>z"
+
+[[case]]
+id = "tags-285"
+input = "<span>a<svg>b</svg>c</span>d<svg>"
+
+[[case]]
+id = "tags-286"
+input = "<b>a<table>b</table>c</b>d"
+
+[[case]]
+id = "tags-287"
+from = "html+raw_html"
+input = "<p>x<table>y</table>z</p>"
+
+[[case]]
+id = "tags-288"
+from = "html-native_divs-native_spans"
+input = "<div>a<table>b</table>c</div>d</table>"
+
+[[case]]
+id = "tags-289"
+from = "html+raw_html"
+input = "x<tbody>y</tbody>z"
+
+[[case]]
+id = "tags-290"
+input = "<span>a<tbody>b</tbody>c</span>d<tbody>"
+
+[[case]]
+id = "tags-291"
+input = "<b>a<td>b</td>c</b>d"
+
+[[case]]
+id = "tags-292"
+from = "html+raw_html"
+input = "<p>x<td>y</td>z</p>"
+
+[[case]]
+id = "tags-293"
+from = "html-native_divs-native_spans"
+input = "<div>a<td>b</td>c</div>d</td>"
+
+[[case]]
+id = "tags-294"
+from = "html+raw_html"
+input = "x<template>y</template>z"
+
+[[case]]
+id = "tags-295"
+input = "<span>a<template>b</template>c</span>d<template>"
+
+[[case]]
+id = "tags-296"
+input = "<b>a<textarea>b</textarea>c</b>d"
+
+[[case]]
+id = "tags-297"
+from = "html+raw_html"
+input = "<p>x<textarea>y</textarea>z</p>"
+
+[[case]]
+id = "tags-298"
+from = "html-native_divs-native_spans"
+input = "<div>a<textarea>b</textarea>c</div>d</textarea>"
+
+[[case]]
+id = "tags-299"
+from = "html+raw_html"
+input = "x<tfoot>y</tfoot>z"
+
+[[case]]
+id = "tags-300"
+input = "<span>a<tfoot>b</tfoot>c</span>d<tfoot>"
+
+[[case]]
+id = "tags-301"
+input = "<b>a<th>b</th>c</b>d"
+
+[[case]]
+id = "tags-302"
+from = "html+raw_html"
+input = "<p>x<th>y</th>z</p>"
+
+[[case]]
+id = "tags-303"
+from = "html-native_divs-native_spans"
+input = "<div>a<th>b</th>c</div>d</th>"
+
+[[case]]
+id = "tags-304"
+from = "html+raw_html"
+input = "x<thead>y</thead>z"
+
+[[case]]
+id = "tags-305"
+input = "<span>a<thead>b</thead>c</span>d<thead>"
+
+[[case]]
+id = "tags-306"
+input = "<b>a<time>b</time>c</b>d"
+
+[[case]]
+id = "tags-307"
+from = "html+raw_html"
+input = "<p>x<time>y</time>z</p>"
+
+[[case]]
+id = "tags-308"
+from = "html-native_divs-native_spans"
+input = "<div>a<time>b</time>c</div>d</time>"
+
+[[case]]
+id = "tags-309"
+from = "html+raw_html"
+input = "x<title>y</title>z"
+
+[[case]]
+id = "tags-310"
+input = "<span>a<title>b</title>c</span>d<title>"
+
+[[case]]
+id = "tags-311"
+input = "<b>a<tr>b</tr>c</b>d"
+
+[[case]]
+id = "tags-312"
+from = "html+raw_html"
+input = "<p>x<tr>y</tr>z</p>"
+
+[[case]]
+id = "tags-313"
+from = "html-native_divs-native_spans"
+input = "<div>a<tr>b</tr>c</div>d</tr>"
+
+[[case]]
+id = "tags-314"
+from = "html+raw_html"
+input = "x<track>y</track>z"
+
+[[case]]
+id = "tags-315"
+input = "<span>a<track>b</track>c</span>d<track>"
+
+[[case]]
+id = "tags-316"
+input = "<b>a<tt>b</tt>c</b>d"
+
+[[case]]
+id = "tags-317"
+from = "html+raw_html"
+input = "<p>x<tt>y</tt>z</p>"
+
+[[case]]
+id = "tags-318"
+from = "html-native_divs-native_spans"
+input = "<div>a<tt>b</tt>c</div>d</tt>"
+
+[[case]]
+id = "tags-319"
+from = "html+raw_html"
+input = "x<u>y</u>z"
+
+[[case]]
+id = "tags-320"
+input = "<span>a<u>b</u>c</span>d<u>"
+
+[[case]]
+id = "tags-321"
+input = "<b>a<ul>b</ul>c</b>d"
+
+[[case]]
+id = "tags-322"
+from = "html+raw_html"
+input = "<p>x<ul>y</ul>z</p>"
+
+[[case]]
+id = "tags-323"
+from = "html-native_divs-native_spans"
+input = "<div>a<ul>b</ul>c</div>d</ul>"
+
+[[case]]
+id = "tags-324"
+from = "html+raw_html"
+input = "x<var>y</var>z"
+
+[[case]]
+id = "tags-325"
+input = "<span>a<var>b</var>c</span>d<var>"
+
+[[case]]
+id = "tags-326"
+input = "<b>a<video>b</video>c</b>d"
+
+[[case]]
+id = "tags-327"
+from = "html+raw_html"
+input = "<p>x<video>y</video>z</p>"
+
+[[case]]
+id = "tags-328"
+from = "html-native_divs-native_spans"
+input = "<div>a<video>b</video>c</div>d</video>"
+
+[[case]]
+id = "tags-329"
+from = "html+raw_html"
+input = "x<wbr>y</wbr>z"
+
+[[case]]
+id = "tags-330"
+input = "<span>a<wbr>b</wbr>c</span>d<wbr>"
+
+[[case]]
+id = "tags-331"
+input = "<b>a<custom>b</custom>c</b>d"
+
+[[case]]
+id = "tags-332"
+from = "html+raw_html"
+input = "<p>x<custom>y</custom>z</p>"
+
+[[case]]
+id = "tags-333"
+from = "html-native_divs-native_spans"
+input = "<div>a<custom>b</custom>c</div>d</custom>"
+
+[[case]]
+id = "tags-334"
+from = "html+raw_html"
+input = "x<x-foo>y</x-foo>z"
+
+[[case]]
+id = "tags-335"
+input = "<span>a<x-foo>b</x-foo>c</span>d<x-foo>"
+
+[[case]]
+id = "tags-336"
+input = "<b>a<case>b</case>c</b>d"
+
+[[case]]
+id = "tags-337"
+from = "html+raw_html"
+input = "<p>x<case>y</case>z</p>"
+
+[[case]]
+id = "tags-338"
+from = "html-native_divs-native_spans"
+input = "<div>a<case>b</case>c</div>d</case>"
+
+[[case]]
+id = "tags-339"
+from = "html+raw_html"
+input = "x<switch>y</switch>z"
+
+[[case]]
+id = "tags-340"
+input = "<span>a<switch>b</switch>c</span>d<switch>"
+
+[[case]]
+id = "tags-341"
+input = "<b>a<default>b</default>c</b>d"
+
+[[case]]
+id = "tags-342"
+from = "html+raw_html"
+input = "<p>x<default>y</default>z</p>"
+
+[[case]]
+id = "tags-343"
+from = "html-native_divs-native_spans"
+input = "<div>a<default>b</default>c</div>d</default>"
+
+[[case]]
+id = "tags-344"
+from = "html+raw_html"
+input = "x<para>y</para>z"
+
+[[case]]
+id = "tags-345"
+input = "<span>a<para>b</para>c</span>d<para>"
+
+[[case]]
+id = "tags-346"
+input = "<b>a<sect1>b</sect1>c</b>d"
+
+[[case]]
+id = "tags-347"
+from = "html+raw_html"
+input = "<p>x<sect1>y</sect1>z</p>"
+
+[[case]]
+id = "tags-348"
+from = "html-native_divs-native_spans"
+input = "<div>a<sect1>b</sect1>c</div>d</sect1>"
+
+[[case]]
+id = "tags-349"
+from = "html+raw_html"
+input = "x<note>y</note>z"
+
+[[case]]
+id = "tags-350"
+input = "<span>a<note>b</note>c</span>d<note>"
+
+[[case]]
+id = "tags-351"
+input = "<b>a<example>b</example>c</b>d"
+
+[[case]]
+id = "tags-352"
+from = "html+raw_html"
+input = "<p>x<example>y</example>z</p>"
+
+[[case]]
+id = "tags-353"
+from = "html-native_divs-native_spans"
+input = "<div>a<example>b</example>c</div>d</example>"

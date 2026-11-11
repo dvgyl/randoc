@@ -287,6 +287,7 @@ dependencies = [
  "randoc-citeproc",
  "randoc-core",
  "randoc-html",
+ "randoc-html-reader",
  "randoc-native",
 ]
 
@@ -345,6 +346,16 @@ dependencies = [
  "randoc-core",
  "randoc-layout",
  "serde_json",
+]
+
+[[package]]
+name = "randoc-html-reader"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "serde_json",
+ "toml",
 ]
 
 [[package]]

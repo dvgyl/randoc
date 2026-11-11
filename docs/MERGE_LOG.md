@@ -598,3 +598,41 @@ of `randoc-yaml` and `randoc-html`: both kept).
 The same commit adds the rows I-YAML-18 and I-YAML-19 (the low findings
 Opus yaml-R8-L01 and yaml-R8-L02 of the `yaml` round 8 review, at the
 request of the coordinator).
+
+## Workstream html-reader (branch `ws/html-reader`, head a40e1e5, one squashed commit, batch 2 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-html-reader` with the reader `html`: a port of the `tagsoup`
+tokenizer (ADR 13), the block and inline rules, tables with a cell budget
+for the document, notes and the math and raw TeX extensions. It is
+registered in `crates/randoc/src/formats.rs`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head a40e1e5 at 18:50 UTC (worker report): baseline 2217 units, 0 regressions. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | New harness units of the reader (counted in the batch check). Open divergences: I-HTMLR-03 to I-HTMLR-19; scope gaps I-HTMLR-01, I-HTMLR-02, I-HTMLR-07. |
+| 3. Tests | Crate tests on 4c85bd9: 35 passed, 1 ignored. Line coverage 97.11 % on 211400b (check at 13:33 UTC), not measured on the head. Mutation sample: not run. |
+| 4. No panics | Fuzz target `html_read` on a40e1e5: 901 s, 2,514,691 runs, 0 crashes, 0 timeouts, peak memory 739 MB (`checks-fuzz-a.md`, check 1). |
+| 5. Reviews | Round 1 on b346988: Codex and Opus REQUEST CHANGES. Round 2 on 211400b: Opus REQUEST CHANGES (1 critical html-reader-R2-01, the cell limit for each table; 1 high R2-02; 3 medium R2-03 to R2-05; 2 low); the Codex run of round 2 was lost when the computer stopped (no report). The worker closed R2-01, R2-02, R2-03 and R2-04 in a40e1e5 (55781f2, 4c85bd9); R2-05 is open (I-HTMLR-19); the low findings are in I-HTMLR-18. No review of the head exists. No known critical finding is open. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before; it adds the reader to the format table. Time table on 211400b: no class above a ratio of 2.6 for 2 times the input. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Conflicts in the merge: the root `Cargo.toml`, `crates/randoc/Cargo.toml`
+and `crates/randoc/src/formats.rs` (registration and dependency lines: both
+sides kept), `docs/ADR.md` (ADR 13 of the branch: kept, in number order),
+`Cargo.lock` (the version of `main`; the build wrote it again),
+`THIRD_PARTY_NOTICES.md` and `docs/ISSUES.md` (`resolve-tables`: 2 and 19
+rows of the branch added).
+
+Licence scan: the file `parse.rs` holds alphabetical lists of HTML tag
+names that are equal to lists in the Pandoc source file `TagCategories.hs`
+(37 runs of 8 words). The coordinator classes them as lists of names that
+follow from the tested behaviour: the worker made its tag matrices from
+oracle probes and was forbidden to open the Pandoc source. Item for the
+reviewers of the major block: check this classification.
+
+Open findings: I-HTMLR-19 (medium: lost text in a malformed note list) and
+the low rows. Open checks: mutation, coverage and the time table on the
+head. Requests of the worker to the coordinator: a field
+`max_generated_cells` (200,000) in `randoc_core::Limits` for the table
+budget.

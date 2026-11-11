@@ -1,0 +1,1321 @@
+# Inline elements: emphasis, links, images, code, spans, quotations.
+from = "html"
+to = []
+
+[[case]]
+id = "inlines-001"
+input = "<span id=\"i\" class=\"a b\" data-k=\"v\" style=\"color:red\" title=\"t\" lang=\"de\" dir=\"ltr\" role=\"note\" epub:type=\"x\" xml:lang=\"en\" hidden onclick=\"f()\">s</span>"
+
+[[case]]
+id = "inlines-002"
+input = "<a href=\"u\"></a><a name=\"anchor\">x</a><a id=\"i\" class=\"c\" href=\"#frag\" rel=\"nofollow\" target=\"_blank\">y</a><a>bare</a><a href=\"mailto:a@b.c\">m</a><a href=\" sp ace \">s</a>"
+
+[[case]]
+id = "inlines-003"
+input = "<img><img src=\"\"><img src=\"a b.png\" alt=\"a &amp; b\" class=\"c\" id=\"i\" height=\"5\" style=\"width:50%\" data-external=\"1\"><img alt=\"noSrc\">"
+
+[[case]]
+id = "inlines-004"
+input = "<p>a <b> bold </b> b<i> i</i>c <a href=\"u\"> link </a>d<span> s </span>e</p>"
+
+[[case]]
+id = "inlines-005"
+input = "<p><b></b><i> </i>x<span></span><em><strong></strong></em></p>"
+
+[[case]]
+id = "inlines-006"
+input = "<p><q> a </q><b><i> x </i></b><a> y </a><sub> z </sub><span class=\"smallcaps\"> s </span><small> m </small></p>"
+
+[[case]]
+id = "inlines-007"
+input = "<p><input type=\"checkbox\">x</p><ul><li> <input type=\"checkbox\"/> a</li><li><b><input type=\"checkbox\"></b>b</li><li>text <input type=\"checkbox\"></li><li><input type=\"checkbox\"><input type=\"checkbox\">c</li></ul>\n"
+
+[[case]]
+id = "inlines-008"
+input = "<p><code><s> spaced  </s>\n</code>x</p>"
+
+[[case]]
+id = "inlines-009"
+input = "<p><code>a<b>x</b>b</code> <code>a <i>x</i> b</code> <code><q>a</q></code> <code><span class=\"k\">x</span></code> <code><code>x</code>y</code> <code><a href=\"u\">x</a></code> <code><sup>2</sup></code> <code><em>e</em><strong>s</strong></code> <code><u>u</u></code> <code><del>d</del></code><code><sub>1</sub></code></p>"
+
+[[case]]
+id = "inlines-010"
+input = "<p>y<kbd> gamma </kbd>z<mark> m </mark>z<dfn> d </dfn>z<abbr> a </abbr>z<small> s </small>z<bdo> b </bdo>z<var> v </var>z<samp> s </samp>z<tt> t </tt>z<code> c </code>z</p>"
+
+[[case]]
+id = "inlines-011"
+input = "<p><code>a<br>b<img src=\"x\"><q>q</q> <span class=\"smallcaps\">s</span><span style=\"font-variant:small-caps\">t</span><kbd>k</kbd><small>m</small><mark>h</mark></code></p>"
+
+[[case]]
+id = "inlines-012"
+input = "<p><code class=\"c\" id=\"i\">a<b>x</b> <code class=\"d\">in</code></code> <samp>s<i>t</i></samp></p>"
+
+[[case]]
+id = "inlines-013"
+input = "<p><code>a<!-- c -->b<big>c</big>&amp;</code></p>"
+
+[[case]]
+id = "inlines-014"
+input = "<code>top <b>level</b></code>"
+
+[[case]]
+id = "inlines-015"
+input = "<p><tt><i>a b</i> c</tt><var> <b> x </b> </var></p>\n"
+
+[[case]]
+id = "inlines-016"
+input = "<b>a<script>s</script>b</b>c"
+
+[[case]]
+id = "inlines-017"
+input = "text<script>s</script>more"
+
+[[case]]
+id = "inlines-018"
+input = "<mark>a<script>s</script>b</mark>c"
+
+[[case]]
+id = "inlines-019"
+input = "<p>text<script>s</script>more</p>"
+
+[[case]]
+id = "inlines-020"
+input = "<p><b>a<script>s</script>b</b></p>"
+
+[[case]]
+id = "inlines-021"
+from = "html+raw_html"
+input = "<b>a<script>s</script>b</b>c"
+
+[[case]]
+id = "inlines-022"
+input = "<bdo>a<script>s</script>b</bdo>c"
+
+[[case]]
+id = "inlines-023"
+input = "<code>a<script>s</script>b</code>c"
+
+[[case]]
+id = "inlines-024"
+input = "<b>a<style>s</style>b</b>c<p>a<style>s</style>b</p>"
+
+[[case]]
+id = "inlines-025"
+from = "html+raw_html"
+input = "<b>a<style>s</style>b</b>c<p>a<style>s</style>b</p>"
+
+[[case]]
+id = "inlines-026"
+input = "<b>a<textarea>s</textarea>b</b>c<p>a<textarea>s</textarea>b</p>"
+
+[[case]]
+id = "inlines-027"
+input = "<b>a<title>s</title>b</b>c<p>a<title>s</title>b</p>"
+
+[[case]]
+id = "inlines-028"
+input = "<p>a<script type=\"math/tex\">x^2</script>b<script type=\"math/tex; mode=display\">y</script></p><script type=\"math/tex\">z</script>\n"
+
+[[case]]
+id = "inlines-029"
+input = "<a href=\"a<b>c|d&quot;e{f}g[h]i^j`k\\l m\tn%o\">u</a><a href=\"é/ü?x=ñ#frag ment\">v</a><img src=\"a<b\">"
+
+[[case]]
+id = "attrs-001"
+input = "<p><small id=\"i\">x</small></p>"
+
+[[case]]
+id = "attrs-002"
+input = "<p><small class=\"c\">x</small></p>"
+
+[[case]]
+id = "attrs-003"
+input = "<p><small title=\"t\">x</small></p>"
+
+[[case]]
+id = "attrs-004"
+input = "<p><small lang=\"en\">x</small></p>"
+
+[[case]]
+id = "attrs-005"
+input = "<p><small data-k=\"v\">x</small></p>"
+
+[[case]]
+id = "attrs-006"
+input = "<p><small dir=\"rtl\">x</small></p>"
+
+[[case]]
+id = "attrs-007"
+input = "<p><small id=\"i\" class=\"c d\" title=\"t\">x</small></p>"
+
+[[case]]
+id = "attrs-008"
+input = "<p><small style=\"color:red\">x</small></p>"
+
+[[case]]
+id = "attrs-009"
+input = "<p><small role=\"note\">x</small></p>"
+
+[[case]]
+id = "attrs-010"
+input = "<p><small hidden>x</small></p>"
+
+[[case]]
+id = "attrs-011"
+input = "<p><mark id=\"i\">x</mark></p>"
+
+[[case]]
+id = "attrs-012"
+input = "<p><mark class=\"c\">x</mark></p>"
+
+[[case]]
+id = "attrs-013"
+input = "<p><mark title=\"t\">x</mark></p>"
+
+[[case]]
+id = "attrs-014"
+input = "<p><mark lang=\"en\">x</mark></p>"
+
+[[case]]
+id = "attrs-015"
+input = "<p><mark data-k=\"v\">x</mark></p>"
+
+[[case]]
+id = "attrs-016"
+input = "<p><mark dir=\"rtl\">x</mark></p>"
+
+[[case]]
+id = "attrs-017"
+input = "<p><mark id=\"i\" class=\"c d\" title=\"t\">x</mark></p>"
+
+[[case]]
+id = "attrs-018"
+input = "<p><mark style=\"color:red\">x</mark></p>"
+
+[[case]]
+id = "attrs-019"
+input = "<p><mark role=\"note\">x</mark></p>"
+
+[[case]]
+id = "attrs-020"
+input = "<p><mark hidden>x</mark></p>"
+
+[[case]]
+id = "attrs-021"
+input = "<p><kbd id=\"i\">x</kbd></p>"
+
+[[case]]
+id = "attrs-022"
+input = "<p><kbd class=\"c\">x</kbd></p>"
+
+[[case]]
+id = "attrs-023"
+input = "<p><kbd title=\"t\">x</kbd></p>"
+
+[[case]]
+id = "attrs-024"
+input = "<p><kbd lang=\"en\">x</kbd></p>"
+
+[[case]]
+id = "attrs-025"
+input = "<p><kbd data-k=\"v\">x</kbd></p>"
+
+[[case]]
+id = "attrs-026"
+input = "<p><kbd dir=\"rtl\">x</kbd></p>"
+
+[[case]]
+id = "attrs-027"
+input = "<p><kbd id=\"i\" class=\"c d\" title=\"t\">x</kbd></p>"
+
+[[case]]
+id = "attrs-028"
+input = "<p><kbd style=\"color:red\">x</kbd></p>"
+
+[[case]]
+id = "attrs-029"
+input = "<p><kbd role=\"note\">x</kbd></p>"
+
+[[case]]
+id = "attrs-030"
+input = "<p><kbd hidden>x</kbd></p>"
+
+[[case]]
+id = "attrs-031"
+input = "<p><dfn id=\"i\">x</dfn></p>"
+
+[[case]]
+id = "attrs-032"
+input = "<p><dfn class=\"c\">x</dfn></p>"
+
+[[case]]
+id = "attrs-033"
+input = "<p><dfn title=\"t\">x</dfn></p>"
+
+[[case]]
+id = "attrs-034"
+input = "<p><dfn lang=\"en\">x</dfn></p>"
+
+[[case]]
+id = "attrs-035"
+input = "<p><dfn data-k=\"v\">x</dfn></p>"
+
+[[case]]
+id = "attrs-036"
+input = "<p><dfn dir=\"rtl\">x</dfn></p>"
+
+[[case]]
+id = "attrs-037"
+input = "<p><dfn id=\"i\" class=\"c d\" title=\"t\">x</dfn></p>"
+
+[[case]]
+id = "attrs-038"
+input = "<p><dfn style=\"color:red\">x</dfn></p>"
+
+[[case]]
+id = "attrs-039"
+input = "<p><dfn role=\"note\">x</dfn></p>"
+
+[[case]]
+id = "attrs-040"
+input = "<p><dfn hidden>x</dfn></p>"
+
+[[case]]
+id = "attrs-041"
+input = "<p><abbr id=\"i\">x</abbr></p>"
+
+[[case]]
+id = "attrs-042"
+input = "<p><abbr class=\"c\">x</abbr></p>"
+
+[[case]]
+id = "attrs-043"
+input = "<p><abbr title=\"t\">x</abbr></p>"
+
+[[case]]
+id = "attrs-044"
+input = "<p><abbr lang=\"en\">x</abbr></p>"
+
+[[case]]
+id = "attrs-045"
+input = "<p><abbr data-k=\"v\">x</abbr></p>"
+
+[[case]]
+id = "attrs-046"
+input = "<p><abbr dir=\"rtl\">x</abbr></p>"
+
+[[case]]
+id = "attrs-047"
+input = "<p><abbr id=\"i\" class=\"c d\" title=\"t\">x</abbr></p>"
+
+[[case]]
+id = "attrs-048"
+input = "<p><abbr style=\"color:red\">x</abbr></p>"
+
+[[case]]
+id = "attrs-049"
+input = "<p><abbr role=\"note\">x</abbr></p>"
+
+[[case]]
+id = "attrs-050"
+input = "<p><abbr hidden>x</abbr></p>"
+
+[[case]]
+id = "attrs-051"
+input = "<p><b id=\"i\">x</b></p>"
+
+[[case]]
+id = "attrs-052"
+input = "<p><b class=\"c\">x</b></p>"
+
+[[case]]
+id = "attrs-053"
+input = "<p><b title=\"t\">x</b></p>"
+
+[[case]]
+id = "attrs-054"
+input = "<p><b lang=\"en\">x</b></p>"
+
+[[case]]
+id = "attrs-055"
+input = "<p><b data-k=\"v\">x</b></p>"
+
+[[case]]
+id = "attrs-056"
+input = "<p><b dir=\"rtl\">x</b></p>"
+
+[[case]]
+id = "attrs-057"
+input = "<p><b id=\"i\" class=\"c d\" title=\"t\">x</b></p>"
+
+[[case]]
+id = "attrs-058"
+input = "<p><b style=\"color:red\">x</b></p>"
+
+[[case]]
+id = "attrs-059"
+input = "<p><b role=\"note\">x</b></p>"
+
+[[case]]
+id = "attrs-060"
+input = "<p><b hidden>x</b></p>"
+
+[[case]]
+id = "attrs-061"
+input = "<p><i id=\"i\">x</i></p>"
+
+[[case]]
+id = "attrs-062"
+input = "<p><i class=\"c\">x</i></p>"
+
+[[case]]
+id = "attrs-063"
+input = "<p><i title=\"t\">x</i></p>"
+
+[[case]]
+id = "attrs-064"
+input = "<p><i lang=\"en\">x</i></p>"
+
+[[case]]
+id = "attrs-065"
+input = "<p><i data-k=\"v\">x</i></p>"
+
+[[case]]
+id = "attrs-066"
+input = "<p><i dir=\"rtl\">x</i></p>"
+
+[[case]]
+id = "attrs-067"
+input = "<p><i id=\"i\" class=\"c d\" title=\"t\">x</i></p>"
+
+[[case]]
+id = "attrs-068"
+input = "<p><i style=\"color:red\">x</i></p>"
+
+[[case]]
+id = "attrs-069"
+input = "<p><i role=\"note\">x</i></p>"
+
+[[case]]
+id = "attrs-070"
+input = "<p><i hidden>x</i></p>"
+
+[[case]]
+id = "attrs-071"
+input = "<p><em id=\"i\">x</em></p>"
+
+[[case]]
+id = "attrs-072"
+input = "<p><em class=\"c\">x</em></p>"
+
+[[case]]
+id = "attrs-073"
+input = "<p><em title=\"t\">x</em></p>"
+
+[[case]]
+id = "attrs-074"
+input = "<p><em lang=\"en\">x</em></p>"
+
+[[case]]
+id = "attrs-075"
+input = "<p><em data-k=\"v\">x</em></p>"
+
+[[case]]
+id = "attrs-076"
+input = "<p><em dir=\"rtl\">x</em></p>"
+
+[[case]]
+id = "attrs-077"
+input = "<p><em id=\"i\" class=\"c d\" title=\"t\">x</em></p>"
+
+[[case]]
+id = "attrs-078"
+input = "<p><em style=\"color:red\">x</em></p>"
+
+[[case]]
+id = "attrs-079"
+input = "<p><em role=\"note\">x</em></p>"
+
+[[case]]
+id = "attrs-080"
+input = "<p><em hidden>x</em></p>"
+
+[[case]]
+id = "attrs-081"
+input = "<p><strong id=\"i\">x</strong></p>"
+
+[[case]]
+id = "attrs-082"
+input = "<p><strong class=\"c\">x</strong></p>"
+
+[[case]]
+id = "attrs-083"
+input = "<p><strong title=\"t\">x</strong></p>"
+
+[[case]]
+id = "attrs-084"
+input = "<p><strong lang=\"en\">x</strong></p>"
+
+[[case]]
+id = "attrs-085"
+input = "<p><strong data-k=\"v\">x</strong></p>"
+
+[[case]]
+id = "attrs-086"
+input = "<p><strong dir=\"rtl\">x</strong></p>"
+
+[[case]]
+id = "attrs-087"
+input = "<p><strong id=\"i\" class=\"c d\" title=\"t\">x</strong></p>"
+
+[[case]]
+id = "attrs-088"
+input = "<p><strong style=\"color:red\">x</strong></p>"
+
+[[case]]
+id = "attrs-089"
+input = "<p><strong role=\"note\">x</strong></p>"
+
+[[case]]
+id = "attrs-090"
+input = "<p><strong hidden>x</strong></p>"
+
+[[case]]
+id = "attrs-091"
+input = "<p><u id=\"i\">x</u></p>"
+
+[[case]]
+id = "attrs-092"
+input = "<p><u class=\"c\">x</u></p>"
+
+[[case]]
+id = "attrs-093"
+input = "<p><u title=\"t\">x</u></p>"
+
+[[case]]
+id = "attrs-094"
+input = "<p><u lang=\"en\">x</u></p>"
+
+[[case]]
+id = "attrs-095"
+input = "<p><u data-k=\"v\">x</u></p>"
+
+[[case]]
+id = "attrs-096"
+input = "<p><u dir=\"rtl\">x</u></p>"
+
+[[case]]
+id = "attrs-097"
+input = "<p><u id=\"i\" class=\"c d\" title=\"t\">x</u></p>"
+
+[[case]]
+id = "attrs-098"
+input = "<p><u style=\"color:red\">x</u></p>"
+
+[[case]]
+id = "attrs-099"
+input = "<p><u role=\"note\">x</u></p>"
+
+[[case]]
+id = "attrs-100"
+input = "<p><u hidden>x</u></p>"
+
+[[case]]
+id = "attrs-101"
+input = "<p><s id=\"i\">x</s></p>"
+
+[[case]]
+id = "attrs-102"
+input = "<p><s class=\"c\">x</s></p>"
+
+[[case]]
+id = "attrs-103"
+input = "<p><s title=\"t\">x</s></p>"
+
+[[case]]
+id = "attrs-104"
+input = "<p><s lang=\"en\">x</s></p>"
+
+[[case]]
+id = "attrs-105"
+input = "<p><s data-k=\"v\">x</s></p>"
+
+[[case]]
+id = "attrs-106"
+input = "<p><s dir=\"rtl\">x</s></p>"
+
+[[case]]
+id = "attrs-107"
+input = "<p><s id=\"i\" class=\"c d\" title=\"t\">x</s></p>"
+
+[[case]]
+id = "attrs-108"
+input = "<p><s style=\"color:red\">x</s></p>"
+
+[[case]]
+id = "attrs-109"
+input = "<p><s role=\"note\">x</s></p>"
+
+[[case]]
+id = "attrs-110"
+input = "<p><s hidden>x</s></p>"
+
+[[case]]
+id = "attrs-111"
+input = "<p><del id=\"i\">x</del></p>"
+
+[[case]]
+id = "attrs-112"
+input = "<p><del class=\"c\">x</del></p>"
+
+[[case]]
+id = "attrs-113"
+input = "<p><del title=\"t\">x</del></p>"
+
+[[case]]
+id = "attrs-114"
+input = "<p><del lang=\"en\">x</del></p>"
+
+[[case]]
+id = "attrs-115"
+input = "<p><del data-k=\"v\">x</del></p>"
+
+[[case]]
+id = "attrs-116"
+input = "<p><del dir=\"rtl\">x</del></p>"
+
+[[case]]
+id = "attrs-117"
+input = "<p><del id=\"i\" class=\"c d\" title=\"t\">x</del></p>"
+
+[[case]]
+id = "attrs-118"
+input = "<p><del style=\"color:red\">x</del></p>"
+
+[[case]]
+id = "attrs-119"
+input = "<p><del role=\"note\">x</del></p>"
+
+[[case]]
+id = "attrs-120"
+input = "<p><del hidden>x</del></p>"
+
+[[case]]
+id = "attrs-121"
+input = "<p><ins id=\"i\">x</ins></p>"
+
+[[case]]
+id = "attrs-122"
+input = "<p><ins class=\"c\">x</ins></p>"
+
+[[case]]
+id = "attrs-123"
+input = "<p><ins title=\"t\">x</ins></p>"
+
+[[case]]
+id = "attrs-124"
+input = "<p><ins lang=\"en\">x</ins></p>"
+
+[[case]]
+id = "attrs-125"
+input = "<p><ins data-k=\"v\">x</ins></p>"
+
+[[case]]
+id = "attrs-126"
+input = "<p><ins dir=\"rtl\">x</ins></p>"
+
+[[case]]
+id = "attrs-127"
+input = "<p><ins id=\"i\" class=\"c d\" title=\"t\">x</ins></p>"
+
+[[case]]
+id = "attrs-128"
+input = "<p><ins style=\"color:red\">x</ins></p>"
+
+[[case]]
+id = "attrs-129"
+input = "<p><ins role=\"note\">x</ins></p>"
+
+[[case]]
+id = "attrs-130"
+input = "<p><ins hidden>x</ins></p>"
+
+[[case]]
+id = "attrs-131"
+input = "<p><strike id=\"i\">x</strike></p>"
+
+[[case]]
+id = "attrs-132"
+input = "<p><strike class=\"c\">x</strike></p>"
+
+[[case]]
+id = "attrs-133"
+input = "<p><strike title=\"t\">x</strike></p>"
+
+[[case]]
+id = "attrs-134"
+input = "<p><strike lang=\"en\">x</strike></p>"
+
+[[case]]
+id = "attrs-135"
+input = "<p><strike data-k=\"v\">x</strike></p>"
+
+[[case]]
+id = "attrs-136"
+input = "<p><strike dir=\"rtl\">x</strike></p>"
+
+[[case]]
+id = "attrs-137"
+input = "<p><strike id=\"i\" class=\"c d\" title=\"t\">x</strike></p>"
+
+[[case]]
+id = "attrs-138"
+input = "<p><strike style=\"color:red\">x</strike></p>"
+
+[[case]]
+id = "attrs-139"
+input = "<p><strike role=\"note\">x</strike></p>"
+
+[[case]]
+id = "attrs-140"
+input = "<p><strike hidden>x</strike></p>"
+
+[[case]]
+id = "attrs-141"
+input = "<p><sub id=\"i\">x</sub></p>"
+
+[[case]]
+id = "attrs-142"
+input = "<p><sub class=\"c\">x</sub></p>"
+
+[[case]]
+id = "attrs-143"
+input = "<p><sub title=\"t\">x</sub></p>"
+
+[[case]]
+id = "attrs-144"
+input = "<p><sub lang=\"en\">x</sub></p>"
+
+[[case]]
+id = "attrs-145"
+input = "<p><sub data-k=\"v\">x</sub></p>"
+
+[[case]]
+id = "attrs-146"
+input = "<p><sub dir=\"rtl\">x</sub></p>"
+
+[[case]]
+id = "attrs-147"
+input = "<p><sub id=\"i\" class=\"c d\" title=\"t\">x</sub></p>"
+
+[[case]]
+id = "attrs-148"
+input = "<p><sub style=\"color:red\">x</sub></p>"
+
+[[case]]
+id = "attrs-149"
+input = "<p><sub role=\"note\">x</sub></p>"
+
+[[case]]
+id = "attrs-150"
+input = "<p><sub hidden>x</sub></p>"
+
+[[case]]
+id = "attrs-151"
+input = "<p><sup id=\"i\">x</sup></p>"
+
+[[case]]
+id = "attrs-152"
+input = "<p><sup class=\"c\">x</sup></p>"
+
+[[case]]
+id = "attrs-153"
+input = "<p><sup title=\"t\">x</sup></p>"
+
+[[case]]
+id = "attrs-154"
+input = "<p><sup lang=\"en\">x</sup></p>"
+
+[[case]]
+id = "attrs-155"
+input = "<p><sup data-k=\"v\">x</sup></p>"
+
+[[case]]
+id = "attrs-156"
+input = "<p><sup dir=\"rtl\">x</sup></p>"
+
+[[case]]
+id = "attrs-157"
+input = "<p><sup id=\"i\" class=\"c d\" title=\"t\">x</sup></p>"
+
+[[case]]
+id = "attrs-158"
+input = "<p><sup style=\"color:red\">x</sup></p>"
+
+[[case]]
+id = "attrs-159"
+input = "<p><sup role=\"note\">x</sup></p>"
+
+[[case]]
+id = "attrs-160"
+input = "<p><sup hidden>x</sup></p>"
+
+[[case]]
+id = "attrs-161"
+input = "<p><cite id=\"i\">x</cite></p>"
+
+[[case]]
+id = "attrs-162"
+input = "<p><cite class=\"c\">x</cite></p>"
+
+[[case]]
+id = "attrs-163"
+input = "<p><cite title=\"t\">x</cite></p>"
+
+[[case]]
+id = "attrs-164"
+input = "<p><cite lang=\"en\">x</cite></p>"
+
+[[case]]
+id = "attrs-165"
+input = "<p><cite data-k=\"v\">x</cite></p>"
+
+[[case]]
+id = "attrs-166"
+input = "<p><cite dir=\"rtl\">x</cite></p>"
+
+[[case]]
+id = "attrs-167"
+input = "<p><cite id=\"i\" class=\"c d\" title=\"t\">x</cite></p>"
+
+[[case]]
+id = "attrs-168"
+input = "<p><cite style=\"color:red\">x</cite></p>"
+
+[[case]]
+id = "attrs-169"
+input = "<p><cite role=\"note\">x</cite></p>"
+
+[[case]]
+id = "attrs-170"
+input = "<p><cite hidden>x</cite></p>"
+
+[[case]]
+id = "attrs-171"
+input = "<p><big id=\"i\">x</big></p>"
+
+[[case]]
+id = "attrs-172"
+input = "<p><big class=\"c\">x</big></p>"
+
+[[case]]
+id = "attrs-173"
+input = "<p><big title=\"t\">x</big></p>"
+
+[[case]]
+id = "attrs-174"
+input = "<p><big lang=\"en\">x</big></p>"
+
+[[case]]
+id = "attrs-175"
+input = "<p><big data-k=\"v\">x</big></p>"
+
+[[case]]
+id = "attrs-176"
+input = "<p><big dir=\"rtl\">x</big></p>"
+
+[[case]]
+id = "attrs-177"
+input = "<p><big id=\"i\" class=\"c d\" title=\"t\">x</big></p>"
+
+[[case]]
+id = "attrs-178"
+input = "<p><big style=\"color:red\">x</big></p>"
+
+[[case]]
+id = "attrs-179"
+input = "<p><big role=\"note\">x</big></p>"
+
+[[case]]
+id = "attrs-180"
+input = "<p><big hidden>x</big></p>"
+
+[[case]]
+id = "attrs-181"
+input = "<p><label id=\"i\">x</label></p>"
+
+[[case]]
+id = "attrs-182"
+input = "<p><label class=\"c\">x</label></p>"
+
+[[case]]
+id = "attrs-183"
+input = "<p><label title=\"t\">x</label></p>"
+
+[[case]]
+id = "attrs-184"
+input = "<p><label lang=\"en\">x</label></p>"
+
+[[case]]
+id = "attrs-185"
+input = "<p><label data-k=\"v\">x</label></p>"
+
+[[case]]
+id = "attrs-186"
+input = "<p><label dir=\"rtl\">x</label></p>"
+
+[[case]]
+id = "attrs-187"
+input = "<p><label id=\"i\" class=\"c d\" title=\"t\">x</label></p>"
+
+[[case]]
+id = "attrs-188"
+input = "<p><label style=\"color:red\">x</label></p>"
+
+[[case]]
+id = "attrs-189"
+input = "<p><label role=\"note\">x</label></p>"
+
+[[case]]
+id = "attrs-190"
+input = "<p><label hidden>x</label></p>"
+
+[[case]]
+id = "attrs-191"
+input = "<p><bdo id=\"i\">x</bdo></p>"
+
+[[case]]
+id = "attrs-192"
+input = "<p><bdo class=\"c\">x</bdo></p>"
+
+[[case]]
+id = "attrs-193"
+input = "<p><bdo title=\"t\">x</bdo></p>"
+
+[[case]]
+id = "attrs-194"
+input = "<p><bdo lang=\"en\">x</bdo></p>"
+
+[[case]]
+id = "attrs-195"
+input = "<p><bdo data-k=\"v\">x</bdo></p>"
+
+[[case]]
+id = "attrs-196"
+input = "<p><bdo dir=\"rtl\">x</bdo></p>"
+
+[[case]]
+id = "attrs-197"
+input = "<p><bdo id=\"i\" class=\"c d\" title=\"t\">x</bdo></p>"
+
+[[case]]
+id = "attrs-198"
+input = "<p><bdo style=\"color:red\">x</bdo></p>"
+
+[[case]]
+id = "attrs-199"
+input = "<p><bdo role=\"note\">x</bdo></p>"
+
+[[case]]
+id = "attrs-200"
+input = "<p><bdo hidden>x</bdo></p>"
+
+[[case]]
+id = "attrs-201"
+input = "<p><font id=\"i\">x</font></p>"
+
+[[case]]
+id = "attrs-202"
+input = "<p><font class=\"c\">x</font></p>"
+
+[[case]]
+id = "attrs-203"
+input = "<p><font title=\"t\">x</font></p>"
+
+[[case]]
+id = "attrs-204"
+input = "<p><font lang=\"en\">x</font></p>"
+
+[[case]]
+id = "attrs-205"
+input = "<p><font data-k=\"v\">x</font></p>"
+
+[[case]]
+id = "attrs-206"
+input = "<p><font dir=\"rtl\">x</font></p>"
+
+[[case]]
+id = "attrs-207"
+input = "<p><font id=\"i\" class=\"c d\" title=\"t\">x</font></p>"
+
+[[case]]
+id = "attrs-208"
+input = "<p><font style=\"color:red\">x</font></p>"
+
+[[case]]
+id = "attrs-209"
+input = "<p><font role=\"note\">x</font></p>"
+
+[[case]]
+id = "attrs-210"
+input = "<p><font hidden>x</font></p>"
+
+[[case]]
+id = "attrs-211"
+input = "<p><code id=\"i\">x</code></p>"
+
+[[case]]
+id = "attrs-212"
+input = "<p><code class=\"c\">x</code></p>"
+
+[[case]]
+id = "attrs-213"
+input = "<p><code title=\"t\">x</code></p>"
+
+[[case]]
+id = "attrs-214"
+input = "<p><code lang=\"en\">x</code></p>"
+
+[[case]]
+id = "attrs-215"
+input = "<p><code data-k=\"v\">x</code></p>"
+
+[[case]]
+id = "attrs-216"
+input = "<p><code dir=\"rtl\">x</code></p>"
+
+[[case]]
+id = "attrs-217"
+input = "<p><code id=\"i\" class=\"c d\" title=\"t\">x</code></p>"
+
+[[case]]
+id = "attrs-218"
+input = "<p><code style=\"color:red\">x</code></p>"
+
+[[case]]
+id = "attrs-219"
+input = "<p><code role=\"note\">x</code></p>"
+
+[[case]]
+id = "attrs-220"
+input = "<p><code hidden>x</code></p>"
+
+[[case]]
+id = "attrs-221"
+input = "<p><tt id=\"i\">x</tt></p>"
+
+[[case]]
+id = "attrs-222"
+input = "<p><tt class=\"c\">x</tt></p>"
+
+[[case]]
+id = "attrs-223"
+input = "<p><tt title=\"t\">x</tt></p>"
+
+[[case]]
+id = "attrs-224"
+input = "<p><tt lang=\"en\">x</tt></p>"
+
+[[case]]
+id = "attrs-225"
+input = "<p><tt data-k=\"v\">x</tt></p>"
+
+[[case]]
+id = "attrs-226"
+input = "<p><tt dir=\"rtl\">x</tt></p>"
+
+[[case]]
+id = "attrs-227"
+input = "<p><tt id=\"i\" class=\"c d\" title=\"t\">x</tt></p>"
+
+[[case]]
+id = "attrs-228"
+input = "<p><tt style=\"color:red\">x</tt></p>"
+
+[[case]]
+id = "attrs-229"
+input = "<p><tt role=\"note\">x</tt></p>"
+
+[[case]]
+id = "attrs-230"
+input = "<p><tt hidden>x</tt></p>"
+
+[[case]]
+id = "attrs-231"
+input = "<p><samp id=\"i\">x</samp></p>"
+
+[[case]]
+id = "attrs-232"
+input = "<p><samp class=\"c\">x</samp></p>"
+
+[[case]]
+id = "attrs-233"
+input = "<p><samp title=\"t\">x</samp></p>"
+
+[[case]]
+id = "attrs-234"
+input = "<p><samp lang=\"en\">x</samp></p>"
+
+[[case]]
+id = "attrs-235"
+input = "<p><samp data-k=\"v\">x</samp></p>"
+
+[[case]]
+id = "attrs-236"
+input = "<p><samp dir=\"rtl\">x</samp></p>"
+
+[[case]]
+id = "attrs-237"
+input = "<p><samp id=\"i\" class=\"c d\" title=\"t\">x</samp></p>"
+
+[[case]]
+id = "attrs-238"
+input = "<p><samp style=\"color:red\">x</samp></p>"
+
+[[case]]
+id = "attrs-239"
+input = "<p><samp role=\"note\">x</samp></p>"
+
+[[case]]
+id = "attrs-240"
+input = "<p><samp hidden>x</samp></p>"
+
+[[case]]
+id = "attrs-241"
+input = "<p><var id=\"i\">x</var></p>"
+
+[[case]]
+id = "attrs-242"
+input = "<p><var class=\"c\">x</var></p>"
+
+[[case]]
+id = "attrs-243"
+input = "<p><var title=\"t\">x</var></p>"
+
+[[case]]
+id = "attrs-244"
+input = "<p><var lang=\"en\">x</var></p>"
+
+[[case]]
+id = "attrs-245"
+input = "<p><var data-k=\"v\">x</var></p>"
+
+[[case]]
+id = "attrs-246"
+input = "<p><var dir=\"rtl\">x</var></p>"
+
+[[case]]
+id = "attrs-247"
+input = "<p><var id=\"i\" class=\"c d\" title=\"t\">x</var></p>"
+
+[[case]]
+id = "attrs-248"
+input = "<p><var style=\"color:red\">x</var></p>"
+
+[[case]]
+id = "attrs-249"
+input = "<p><var role=\"note\">x</var></p>"
+
+[[case]]
+id = "attrs-250"
+input = "<p><var hidden>x</var></p>"
+
+[[case]]
+id = "attrs-251"
+input = "<p><q id=\"i\">x</q></p>"
+
+[[case]]
+id = "attrs-252"
+input = "<p><q class=\"c\">x</q></p>"
+
+[[case]]
+id = "attrs-253"
+input = "<p><q title=\"t\">x</q></p>"
+
+[[case]]
+id = "attrs-254"
+input = "<p><q lang=\"en\">x</q></p>"
+
+[[case]]
+id = "attrs-255"
+input = "<p><q data-k=\"v\">x</q></p>"
+
+[[case]]
+id = "attrs-256"
+input = "<p><q dir=\"rtl\">x</q></p>"
+
+[[case]]
+id = "attrs-257"
+input = "<p><q id=\"i\" class=\"c d\" title=\"t\">x</q></p>"
+
+[[case]]
+id = "attrs-258"
+input = "<p><q style=\"color:red\">x</q></p>"
+
+[[case]]
+id = "attrs-259"
+input = "<p><q role=\"note\">x</q></p>"
+
+[[case]]
+id = "attrs-260"
+input = "<p><q hidden>x</q></p>"
+
+[[case]]
+id = "attrs-261"
+input = "<p><span id=\"i\">x</span></p>"
+
+[[case]]
+id = "attrs-262"
+input = "<p><span class=\"c\">x</span></p>"
+
+[[case]]
+id = "attrs-263"
+input = "<p><span title=\"t\">x</span></p>"
+
+[[case]]
+id = "attrs-264"
+input = "<p><span lang=\"en\">x</span></p>"
+
+[[case]]
+id = "attrs-265"
+input = "<p><span data-k=\"v\">x</span></p>"
+
+[[case]]
+id = "attrs-266"
+input = "<p><span dir=\"rtl\">x</span></p>"
+
+[[case]]
+id = "attrs-267"
+input = "<p><span id=\"i\" class=\"c d\" title=\"t\">x</span></p>"
+
+[[case]]
+id = "attrs-268"
+input = "<p><span style=\"color:red\">x</span></p>"
+
+[[case]]
+id = "attrs-269"
+input = "<p><span role=\"note\">x</span></p>"
+
+[[case]]
+id = "attrs-270"
+input = "<p><span hidden>x</span></p>"
+
+[[case]]
+id = "attrs-271"
+input = "<p><a id=\"i\">x</a></p>"
+
+[[case]]
+id = "attrs-272"
+input = "<p><a class=\"c\">x</a></p>"
+
+[[case]]
+id = "attrs-273"
+input = "<p><a title=\"t\">x</a></p>"
+
+[[case]]
+id = "attrs-274"
+input = "<p><a lang=\"en\">x</a></p>"
+
+[[case]]
+id = "attrs-275"
+input = "<p><a data-k=\"v\">x</a></p>"
+
+[[case]]
+id = "attrs-276"
+input = "<p><a dir=\"rtl\">x</a></p>"
+
+[[case]]
+id = "attrs-277"
+input = "<p><a id=\"i\" class=\"c d\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "attrs-278"
+input = "<p><a style=\"color:red\">x</a></p>"
+
+[[case]]
+id = "attrs-279"
+input = "<p><a role=\"note\">x</a></p>"
+
+[[case]]
+id = "attrs-280"
+input = "<p><a hidden>x</a></p>"
+
+[[case]]
+id = "attrs-281"
+input = "<p><a href=\"u\" id=\"i\">x</a></p>"
+
+[[case]]
+id = "attrs-282"
+input = "<p><a href=\"u\" class=\"c\">x</a></p>"
+
+[[case]]
+id = "attrs-283"
+input = "<p><a href=\"u\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "attrs-284"
+input = "<p><a href=\"u\" lang=\"en\">x</a></p>"
+
+[[case]]
+id = "attrs-285"
+input = "<p><a href=\"u\" data-k=\"v\">x</a></p>"
+
+[[case]]
+id = "attrs-286"
+input = "<p><a href=\"u\" dir=\"rtl\">x</a></p>"
+
+[[case]]
+id = "attrs-287"
+input = "<p><a href=\"u\" id=\"i\" class=\"c d\" title=\"t\">x</a></p>"
+
+[[case]]
+id = "attrs-288"
+input = "<p><a href=\"u\" style=\"color:red\">x</a></p>"
+
+[[case]]
+id = "attrs-289"
+input = "<p><a href=\"u\" role=\"note\">x</a></p>"
+
+[[case]]
+id = "attrs-290"
+input = "<p><a href=\"u\" hidden>x</a></p>"
+
+[[case]]
+id = "attrs-291"
+input = "<p><img src=\"i.png\" id=\"i\">x</img></p>"
+
+[[case]]
+id = "attrs-292"
+input = "<p><img src=\"i.png\" class=\"c\">x</img></p>"
+
+[[case]]
+id = "attrs-293"
+input = "<p><img src=\"i.png\" title=\"t\">x</img></p>"
+
+[[case]]
+id = "attrs-294"
+input = "<p><img src=\"i.png\" lang=\"en\">x</img></p>"
+
+[[case]]
+id = "attrs-295"
+input = "<p><img src=\"i.png\" data-k=\"v\">x</img></p>"
+
+[[case]]
+id = "attrs-296"
+input = "<p><img src=\"i.png\" dir=\"rtl\">x</img></p>"
+
+[[case]]
+id = "attrs-297"
+input = "<p><img src=\"i.png\" id=\"i\" class=\"c d\" title=\"t\">x</img></p>"
+
+[[case]]
+id = "attrs-298"
+input = "<p><img src=\"i.png\" style=\"color:red\">x</img></p>"
+
+[[case]]
+id = "attrs-299"
+input = "<p><img src=\"i.png\" role=\"note\">x</img></p>"
+
+[[case]]
+id = "attrs-300"
+input = "<p><img src=\"i.png\" hidden>x</img></p>"
