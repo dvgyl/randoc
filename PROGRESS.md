@@ -69,11 +69,17 @@ Key points:
    the top section of `env/store/reports/NAME.md`.
 5. Read `docs/PRIOR_ART.md`, `docs/ADR.md` and the section "Commit
    cadence" of `docs/CONTRIBUTING.md`.
-6. The worktrees are in `/Volumes/Extreme Pro/Randoc/wt/NAME`. The
-   worktrees of `highlight`, `latex-writer` and `markdown-writer` were
-   removed to save disk space; their branches exist: make a worktree again
-   with `git worktree add "$RANDOC_WT/NAME" ws/NAME`. Remove the worktree
-   of a workstream that is on `main` and has no open unit.
+6. No worktree exists at the end of this session: each one was removed to
+   save disk space, and each branch `ws/NAME` exists on the drive. For the
+   next unit of a workstream that is on `main`, start a new branch from
+   `main`: `git worktree add -b ws/NAME-2 "$RANDOC_WT/NAME" main`. Do not
+   continue the old branch, because `main` holds it as one squashed
+   commit. For `highlight`, `latex-writer` and `markdown-writer`, which
+   are not on `main`, make the worktree from the old branch
+   (`git worktree add "$RANDOC_WT/NAME" ws/NAME`) and merge `main` first.
+   On GitHub, `wip/latex-writer` and `wip/markdown-writer` hold snapshots
+   of two of them; the `wip` branches of the merged workstreams were
+   removed from GitHub after their merge.
 7. Tools and brief forms of this session, all in `env/bin` and
    `env/store/briefs`:
    - `s3-common.md`: the rules for a worker that continues a workstream.
