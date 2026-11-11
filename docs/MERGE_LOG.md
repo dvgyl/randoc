@@ -424,3 +424,28 @@ different item counts at once. The `Debug` text is the text of `main`.
 Licence scan: no hit. Open findings: none with the level medium or higher.
 Open checks: the mutation sample of the diff `fde1bee..d8fa6c0`; the Codex
 report of round 2. Requests of the worker to the coordinator: none.
+
+## Workstream yaml (branch `ws/yaml`, head 7170169, one squashed commit, batch 1 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-yaml`, a YAML reader for metadata blocks and metadata files with the
+values and the error texts of Pandoc, its replay test against stored oracle
+results, the changed-fixture campaign (`tests/changed.json`) and the tool
+`tools/replay.py`. No program path calls the crate yet.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 7170169 (second run, ended 13:46 UTC; worker report): baseline 2217 units, 0 regressions, 0 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | No harness unit changes (no program path calls the crate). Complete replay: 18,178 cases (17,178 metadata blocks, 1,000 files; 8,901 accepted, 8,631 with a value), 0 differ, 421 known divergences. Changed-fixture test: 654 texts, 0 wrong accepts, 0 wrong rejects (the control with a loose comparison gives 714 wrong accepts). |
+| 3. Tests | `cargo test -p randoc-yaml` (13:12 UTC): 26 unit tests pass (1 ignored), 6 replay tests pass (2 ignored). Mutation sample and coverage of the last unit: not run. |
+| 4. No panics | Fuzzing of the last unit (`parse`, 900 s): not run. |
+| 5. Reviews | 8 rounds. Round 7 on 44a99b9: Opus APPROVE, Codex REQUEST CHANGES (2 medium, corrected in 7170169). Round 8 on 7170169: Opus REQUEST CHANGES (2 medium: yaml-R8-01, yaml-R8-02; 2 low), Codex REQUEST CHANGES (2 medium: yaml-R8-01, the same finding as Opus yaml-R8-02, and yaml-R8-02). No critical finding is open. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Licence scan: no hit. Open findings with the level medium: I-YAML-15
+(Opus yaml-R8-01), I-YAML-16 (Opus yaml-R8-02 and Codex yaml-R8-01),
+I-YAML-17 (Codex yaml-R8-02). The low findings of round 8 (Opus yaml-R8-L01,
+yaml-R8-L02; error texts only) are open. Open checks: fuzzing, the mutation
+sample, coverage and the time table at 50,000 repetitions of the last unit.
+Requests of the worker to the coordinator: none.

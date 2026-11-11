@@ -219,6 +219,7 @@ and the `lua` and `server` modes.
 | reuse | Documents only: a checked licence for each reuse candidate in `docs/PRIOR_ART.md`; ADR 9 (ZIP), ADR 10 (XML) and ADR 11 (Lua) in `docs/ADR.md` |
 | harness-flaky | Tests of `randoc-harness` that do not depend on the speed of the machine (test code only) |
 | layout-perf | `randoc-layout`: the concatenation of documents is constant work |
+| yaml | `randoc-yaml`: the YAML reader for metadata (no program path calls it yet) |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

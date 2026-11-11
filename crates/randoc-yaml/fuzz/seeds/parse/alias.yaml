@@ -1,0 +1,5 @@
+a: &x {k: "\u00e9", l: !!int 0x1F}
+b: *x
+c: >-
+  folded
+  text

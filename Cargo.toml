@@ -10,6 +10,7 @@ members = [
     "crates/randoc",
     "crates/randoc-cli",
     "crates/randoc-harness",
+    "crates/randoc-yaml",
     "crates/randoc-native",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
@@ -24,6 +25,7 @@ exclude = [
     "crates/randoc-markdown/fuzz",
     "crates/randoc-native/fuzz",
     "crates/randoc-templates/fuzz",
+    "crates/randoc-yaml/fuzz",
 ]
 
 [workspace.package]
@@ -43,6 +45,7 @@ randoc-data = { path = "crates/randoc-data", version = "0.1.0" }
 randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
 randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
+randoc-yaml = { path = "crates/randoc-yaml", version = "0.1.0" }
 randoc-native = { path = "crates/randoc-native", version = "0.1.0" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
