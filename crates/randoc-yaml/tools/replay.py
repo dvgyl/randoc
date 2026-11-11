@@ -351,6 +351,77 @@ def block_scalars():
     return out
 
 
+SCALAR_END_CONTEXTS = [("", 0), ("m:\n  ", 2), ("s:\n- ", 0), ("s:\n  - ", 2)]
+
+
+def scalar_end_rows(entrance):
+    """The matrix of the end of a block scalar: each header, context and body, then
+    one next line of each kind at each indentation from 0 to the content indentation
+    plus 1, then a tail."""
+    out = []
+    for kind in "|>":
+        for chomp in ["", "-", "+"]:
+            for ind in ["", "1", "2", "7"]:
+                for prefix, parent in SCALAR_END_CONTEXTS:
+                    head = prefix + "a: " + kind + chomp + ind + "\n"
+                    key = parent + 2 if prefix.endswith("- ") else parent
+                    content = key + int(ind) if ind else key + 2
+                    for body in [" " * content + "x\n", ""]:
+                        for i in range(content + 2):
+                            pad = " " * i
+                            deep = [" " * content + "y\n", " " * (content - 1) + "y\n"]
+                            nexts = {"block": [(pad + "#c\n", ["", "z: 1\n"] + deep),
+                                               (pad + "b: c\n", [""]), (pad + "- y\n", [""]),
+                                               (pad + "\n", ["", "z: 1\n"] + deep)],
+                                     "file": [(pad + "#c\n", ["z: 1\n"]), (pad + "...\n", ["", "z: 1\n"])]}[entrance]
+                            for line, tails in nexts:
+                                out += [head + body + line + tail for tail in tails]
+    return list(dict.fromkeys(out))
+
+
+def scalar_end_cases():
+    return scalar_end_rows("block")
+
+
+# Nested containers, each at two depths: the text before the header and the column of
+# the innermost collection.
+NESTED_CONTEXTS = [("s:\n- - ", 2), ("s:\n  - - ", 4), ("s:\n- - a: ", 4), ("s:\n  - - a: ", 6),
+                   ("s:\n- a:\n  - ", 2), ("s:\n  - a:\n    - ", 4), ("? a\n: - ", 2), ("s:\n  ? a\n  : - ", 4),
+                   ("s:\n- - - ", 4), ("s:\n- ? a\n  : - ", 4)]
+
+
+def nested_end_rows(entrance):
+    """The block scalar end matrix in nested containers: a list item, a key, a comment
+    and a blank line at each indentation from 0 to the content indentation plus 1."""
+    out = []
+    for kind in "|>":
+        for chomp in ["", "-"]:
+            for ind in ["", "1", "2"]:
+                for prefix, inner in NESTED_CONTEXTS:
+                    head = prefix + kind + chomp + ind + "\n"
+                    content = inner + int(ind) if ind else inner + 2
+                    for body in [" " * content + "x\n", ""]:
+                        for i in range(content + 2):
+                            pad = " " * i
+                            deep = [" " * content + "y\n", " " * (content - 1) + "- y\n"]
+                            nexts = {"block": [(pad + "#c\n", ["", "z: 1\n"] + deep), (pad + "b: c\n", [""]),
+                                               (pad + "- y\n", ["", "z: 1\n"]), (pad + "\n", [""] + deep)],
+                                     "file": [(pad + "- y\n", ["z: 1\n"]), (pad + "#c\n", ["- y\n"])]}[entrance]
+                            for line, tails in nexts:
+                                out += [head + body + line + tail for tail in tails]
+    return list(dict.fromkeys(out))
+
+
+# The texts of the review finding Opus yaml-R9-01.
+REVIEW_R9 = ["s:\n  - - |\n      x\n    - y\n", "a:\n  - - >\n      text\n    - other\n",
+             "s:\n  - - - |\n        x\n      - y\n", "? a\n: - |\n     x\n  - y\n", "- - a: |\n        x\n  - y\n",
+             "s:\n  - - |2\n    - y\n", "s:\n  - - |\n      x\n    #c\n    - y\n", "s:\n  - - |\n      x\n\n    - y\n",
+             "s:\n  - - !!str |\n      x\n    - y\n", "s:\n  - - &a |\n      x\n    - y\n", "s:\n  - - |\n      x\n    -\n",
+             "s:\n  - - | #h\n    - y\n     &n y\nz: 1\n", "- - >\n    x\n    x y\n      - y\n  -\n- t\n",
+             "- - |\n     x\n  - y\n", "- - >-\n     x\n  - y\n", "- - a: >-\n        x\n  - y\n",
+             "a:\n  - - |\n       x\n    - y\n", "a:\n  - - >-\n       x\n    - y\n", "? a\n: - >-\n     x\n  - y\n"]
+
+
 def window_cases():
     out = []
     for length in [79, 80, 81, 82, 85, 100, 120, 150, 200]:
@@ -691,6 +762,10 @@ def fixed_cases(base):
               "--- a: b\n", "a: 1e1001\n", "- a\n", "'a'\n", "a: b\n...\n---\nc: d\n"]
     block += REVIEW_R7 + REVIEW_R7_LOW
     files += REVIEW_R7_FILES
+    block += scalar_end_cases() + marker_key_cases()
+    files += scalar_end_rows("file")[::4]
+    block += nested_end_rows("block")[::24] + REVIEW_R9
+    files += nested_end_rows("file")[::48] + REVIEW_R9
     return list(dict.fromkeys(block)), list(dict.fromkeys(files))
 
 
@@ -745,6 +820,86 @@ def changed_texts(rng, text):
     return out
 
 
+MARKER_KEYS = ["---", "...", "---x", "...x", "----", "....", "--- x", "... x"]
+
+
+def marker_key_cases():
+    """Keys that start with a document marker, each with values of several kinds."""
+    out = []
+    for k in MARKER_KEYS:
+        out += [k + ":\n", k + ": x\n", k + ": 0.1\n", k + ": 12\n", "a: b\n" + k + ": [x, y]\n",
+                k + ":\n  - 1\n", "m:\n  " + k + ": x\n", k + ": |\n  t\n", k + ": {c: d}\n"]
+    return out
+
+
+def kind_changes(rng, text):
+    """Changed texts of five kinds: the digits of a number, a key, the value under a
+    key that starts with a document marker, a removed line, the indentation of a line."""
+    out = []
+    for m in re.finditer(r"\d+", text):
+        a, b = m.span()
+        i = rng.randrange(a, b)
+        d = str((int(text[i]) + rng.randrange(1, 10)) % 10)
+        out += [("digits", text[:i] + d + text[i + 1:]), ("digits", text[:b] + d + text[b:]),
+                ("digits", text[:i] + text[i + 1:])]
+        if "." in text[max(0, a - 1):a]:
+            out.append(("digits", text[:b] + "0000000000000001" + text[b:]))
+    lines = text.split("\n")
+    body = [j for j, line in enumerate(lines) if line.strip()]
+    for j in body:
+        line = lines[j]
+        m = re.match(r"(\s*(?:- )?)([^\s:#][^:#]*?)(:(?: |$).*)", line)
+        if m:
+            new = rng.choice(["b", "a1", "A", "a ", "---", "...", "--- x", "aa"])
+            if new != m.group(2):
+                out.append(("key", "\n".join(lines[:j] + [m.group(1) + new + m.group(3)] + lines[j + 1:])))
+            if m.group(2).startswith(("---", "...")):
+                for value in [": q", ": x y", ": 0.10000000000000001", ":", ": [x]", ": ~"]:
+                    if value != m.group(3):
+                        out.append(("marker value", "\n".join(lines[:j] + [m.group(1) + m.group(2) + value]
+                                                               + lines[j + 1:])))
+    if len(body) > 1:
+        j = rng.choice(body)
+        out.append(("line", "\n".join(lines[:j] + lines[j + 1:])))
+    for j in rng.sample(body, min(2, len(body))):
+        out.append(("indentation", "\n".join(lines[:j] + [" " + lines[j]] + lines[j + 1:])))
+        if lines[j].startswith(" "):
+            out.append(("indentation", "\n".join(lines[:j] + [lines[j][1:]] + lines[j + 1:])))
+    return out
+
+
+def kinds_campaign(data_path, out_path, n_block, n_file):
+    """Adds changed texts of the five kinds of `kind_changes` to the campaign file."""
+    with open(data_path) as f:
+        cases = json.load(f)
+    with open(out_path) as f:
+        done = json.load(f)
+    rng = random.Random(9)
+    seen = {(c["entrance"], c["yaml"]) for c in done}
+    pairs = {"block": [], "file": []}
+    for entrance, limit in (("block", n_block), ("file", n_file)):
+        fixtures = [c["yaml"] for c in cases if c["entrance"] == entrance and "ok" in c and c["ok"]["meta"]
+                    and "literal" in c and len(c["yaml"]) < 200]
+        marked = [t for t in fixtures if re.search(r"(^|\n)\s*(- )?(---|\.\.\.)", t)]
+        rng.shuffle(fixtures)
+        for original in marked + fixtures:
+            for kind, t in kind_changes(rng, original):
+                ok = t != original and t.split("\n")[0].strip() != "" and (
+                    entrance == "file" or (safe_for_block(t) and t.endswith("\n")))
+                if ok and (entrance, t) not in seen and len(pairs[entrance]) < limit:
+                    seen.add((entrance, t))
+                    pairs[entrance].append((kind, original, t))
+    out = []
+    texts = [t for _, _, t in pairs["block"]]
+    out += [{"entrance": "block", "kind": k, "from": o, "yaml": t, **r}
+            for (k, o, t), r in zip(pairs["block"], run_blocks(texts))]
+    texts = [t for _, _, t in pairs["file"]]
+    out += [{"entrance": "file", "kind": k, "from": o, "yaml": t, **r}
+            for (k, o, t), r in zip(pairs["file"], run_files(texts))]
+    add_literal(out)
+    write_cases(out_path, done + out)
+
+
 def changed_campaign(data_path, out_path, n_block, n_file):
     """Changed texts of accepted fixtures with their oracle results. Each case names its
     original in `from`."""
@@ -794,6 +949,8 @@ def main():
         return append_fixed(args[1])
     if args[0] == "--changed":
         return changed_campaign(args[1], args[2], int(args[3]), int(args[4]))
+    if args[0] == "--kinds":
+        return kinds_campaign(args[1], args[2], int(args[3]), int(args[4]))
     out_path = args[0]
     seed = int(args[args.index("--seed") + 1]) if "--seed" in args else 1
     n_block = int(args[args.index("--block") + 1]) if "--block" in args else 400

@@ -557,6 +557,10 @@ mod tests {
             ),
             ("a: |\n  \nb: c\n".into(), Value::String("")),
             ("a: |+\n  \nb: c\n".into(), Value::String("\n")),
+            // I-YAML-16: a less indented comment line ends a block scalar.
+            ("a: |\n  x\n # c\n".into(), Value::String("x\n")),
+            ("a: |\n    x\n  # c\nb: c\n".into(), Value::String("x\n")),
+            ("a: >7\n  # c\nb: c\n".into(), Value::String("")),
             ("a: \"x\\\n\n  y\"\n".into(), Value::String("x\ny")),
             ("a: \"x\\\n\n\n  y\"\n".into(), Value::String("x\n\ny")),
             (big, Value::Float("1.0e1001".into())),
@@ -608,6 +612,43 @@ mod tests {
         );
         let e = error("a: &a [x]\nc: {*a : d}\n", Limits::default());
         assert_eq!(e.error.message, "c: expected a scalar key, but got a list");
+    }
+
+    #[test]
+    fn a_minor_version_above_one_million_is_unsupported() {
+        // Opus yaml-R9-L02: Pandoc checks the version before the text after it.
+        for text in ["%YAML 1.2 x\n---\na: b\n", "%YAML 1.3 x y\n---\na: b\n"] {
+            let e = error(text, Limits::default());
+            assert_eq!(
+                e.error.message,
+                "unexpected content after the %YAML version"
+            );
+        }
+        for version in ["1.1000000", "1.0001000000", "00000000000001.2"] {
+            ok(&format!("%YAML {version}\n---\na: b\n"), Limits::default());
+        }
+        for version in [
+            "1.1000001",
+            "1.20000000000000001",
+            "2.9999999",
+            "0.9999999",
+            "1000001.0",
+            "1.1000001 x",
+        ] {
+            let e = error(&format!("%YAML {version}\n---\na: b\n"), Limits::default());
+            assert_eq!(e.error.message, "unsupported YAML version", "{version}");
+        }
+        for (version, shown) in [
+            ("2.0", "2.0"),
+            ("0002.0002", "2.2"),
+            ("00.2", "0.2"),
+            ("018.00", "18.0"),
+            ("1000000.0", "1000000.0"),
+            ("2.0 x", "2.0"),
+        ] {
+            let e = error(&format!("%YAML {version}\n---\na: b\n"), Limits::default());
+            assert_eq!(e.error.message, format!("unsupported YAML version {shown}"));
+        }
     }
 
     #[test]

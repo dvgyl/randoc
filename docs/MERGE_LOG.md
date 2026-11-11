@@ -811,3 +811,42 @@ benchmarks. Requests of the worker to the coordinator: I-CONTRACTS-03
 dependency or `unsafe`), and a fourth string escape in
 `crates/randoc-markdown/src/yaml.rs` (`quote`), which this block did not
 change.
+
+## Workstream yaml (branch `ws/yaml-2`, head 33ed724, one squashed commit, session 4 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: corrections
+of `randoc-yaml` from review rounds 8 and 9. The end rule below a block
+scalar (`after_block_scalar` with `opened_collections`: an item or a key at
+the column of each collection that the header line opens), the exact
+decimal comparison and the document marker rule of the replay test, the
+`%YAML` version limits and texts, and the changed-fixture campaign
+(`tools/replay.py --kinds`, 11,000 texts).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 33ed724 (run ended 23:22 UTC; worker log `env/tmp/yaml-s4/gate2.log`). The earlier pass on 63af78a: baseline 19375 units, 0 regressions, 0 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Replay `tests/replay.json`: 33517 cases, 0 differ, 421 known divergences. Matrix `nested_end_rows`: 17,440 metadata blocks against the oracle, 0 differences in the decision, the shape of the value and the error text. Changed-fixture campaign: 11,000 texts, 0 wrong accepts, 0 wrong rejects, 355 parser differences (error text only, I-YAML-12). |
+| 3. Tests | `cargo test -p randoc-yaml` on the merged tree: unit 27 pass (1 ignored), alias 2 pass, replay 6 pass (2 ignored). `cargo test -p randoc-commonmark` on the merged tree: 42 pass (1 ignored). Mutation on 63af78a: shard 0/6, 7 mutants, 7 caught; shards 1/6 to 5/6 not run. Coverage of the head: not run. |
+| 4. No panics | Fuzz target `parse` on 63af78a: 8,056,542 runs in 901 s, 0 crashes. The head 33ed724 changes the parser again; no fuzz run on the head. |
+| 5. Reviews | 9 rounds. Round 9 on 63af78a: Opus REQUEST CHANGES (1 medium, yaml-R9-01, corrected in 33ed724; 3 low), Codex REQUEST CHANGES (4 medium, 2 low; reports `yaml-opus-r9.md` and `yaml-codex-r9.md`). Codex yaml-R9-04 is the same finding as Opus yaml-R9-01 and is corrected. No review of the head exists. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge. Codex round 9 measured the changed paths at 25,000 and 50,000 repetitions: no growth faster than linear. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. The gate script passed on the branch head (see gate 1). |
+
+Conflicts in the merge: none. Licence scan: no hit.
+
+Identifiers in `docs/ISSUES.md`: the branch added two rows with the
+identifiers I-YAML-18 and I-YAML-19, which `main` already used (batch 2,
+the low findings Opus yaml-R8-L01 and yaml-R8-L02). This commit gives the
+two rows of the branch the free identifiers I-YAML-20 (Opus yaml-R9-01,
+closed) and I-YAML-21 (Opus yaml-R9-L03, the tab lines below a block
+scalar, low, open). The rows of `main` keep their identifiers.
+
+Open findings: three medium rows from Codex round 9, each "Open; first
+item of the next unit": I-YAML-22 (Codex yaml-R9-01, a document marker
+skips all replay value checks; test code), I-YAML-23 (Codex yaml-R9-02, a
+valid blank line with a tab is refused) and I-YAML-24 (Codex yaml-R9-03,
+tab indentation is accepted when a key follows it). I-YAML-23 and
+I-YAML-24 name I-YAML-21. Low: I-YAML-21, Opus yaml-R9-L01 and L02
+(corrected in 33ed724), Codex yaml-R9-05 and yaml-R9-06 (not recorded as
+rows). Open checks: mutation shards 1/6 to 5/6, coverage of the head,
+fuzzing of the head. Requests of the worker to the coordinator: none.

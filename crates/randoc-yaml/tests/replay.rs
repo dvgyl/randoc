@@ -169,6 +169,29 @@ fn a_changed_value_fails_against_stored_fixtures() {
             serde_json::json!({"a": "1.5"}),
             string("1.5"),
         ),
+        // I-YAML-17: a key that starts with `---` does not end the block.
+        (
+            "---:\n",
+            "---: x\n",
+            serde_json::json!({"---": {"s": ""}}),
+            serde_json::json!({"---": null}),
+            serde_json::json!({"---": {"t": "MetaString", "c": ""}}),
+        ),
+        // I-YAML-15: a metadata string keeps each digit of a float.
+        (
+            "a: 0.1\n",
+            "a: 0.10000000000000001\n",
+            serde_json::json!({"a": {"i": "0.1"}}),
+            serde_json::json!({"a": "0.1"}),
+            string("0.1"),
+        ),
+        (
+            "a: 2.5\n",
+            "a: 2.50000000000000000001\n",
+            serde_json::json!({"a": {"i": "2.5"}}),
+            serde_json::json!({"a": "2.5"}),
+            string("2.5"),
+        ),
         (
             "a: 0x1F\n",
             "a: 30\n",
@@ -238,7 +261,7 @@ fn a_fixture_without_exact_data_fails() {
 
 /// The number of changed texts whose result differs from the oracle
 /// (I-YAML-12).
-const CHANGED_PARSER_DIFFERENCES: usize = 304;
+const CHANGED_PARSER_DIFFERENCES: usize = 355;
 
 /// The oracle fields of a case.
 fn reference(case: &Json) -> [&Json; 4] {
@@ -314,7 +337,12 @@ fn changed_fixtures_pass_only_with_an_equal_oracle_result() {
         "changed: {} texts, {equal} with the oracle result of the original, {wrong_accepts} wrong accepts, {wrong_rejects} wrong rejects, {parser_differs} parser differences",
         changed.len()
     );
-    assert!(changed.len() >= 5000);
+    assert!(changed.len() >= 10_000);
+    // The second campaign: digits of a number, a key, a value under a key
+    // that starts with a document marker, a removed line, an indentation.
+    let kinds: std::collections::HashSet<&str> =
+        changed.iter().filter_map(|c| c["kind"].as_str()).collect();
+    assert_eq!(kinds.len(), 5, "{kinds:?}");
     assert_eq!([wrong_accepts, wrong_rejects], [0, 0]);
     // Changed texts whose own result differs from the oracle (I-YAML-12)
     // cannot test the comparison.
@@ -454,11 +482,7 @@ fn check(case: &Json) -> Option<String> {
     let blocks = ok["blocks"].as_u64().unwrap_or(0);
     let meta = &ok["meta"];
     let empty = meta.as_object().is_some_and(serde_json::Map::is_empty);
-    if !file
-        && text
-            .split('\n')
-            .any(|l| l.starts_with("---") || l.starts_with("..."))
-    {
+    if !file && text.split('\n').any(is_document_marker) {
         // The caller rule: such a line can end the metadata block.
         return None;
     }
@@ -539,6 +563,22 @@ fn same_number(variable: &str, ours: &str) -> bool {
             .is_ok_and(|f| decimal(&format!("{f:?}")) == Some(v))
 }
 
+/// `true` when two number texts have the same exact decimal value. A
+/// metadata string keeps each digit, so no rounding is permitted.
+fn same_digits(oracle: &str, ours: &str) -> bool {
+    match decimal(oracle) {
+        Some(v) => decimal(ours) == Some(v),
+        None => oracle == ours,
+    }
+}
+
+/// `true` when the line is a YAML document marker: `---` or `...` with a
+/// space, a tab or nothing after it. A key such as `---:` is not one.
+fn is_document_marker(line: &str) -> bool {
+    (line.starts_with("---") || line.starts_with("..."))
+        && matches!(line.as_bytes().get(3), None | Some(b' ' | b'\t' | b'\r'))
+}
+
 /// The sign, the significant digits and the exponent of a decimal number
 /// text, so that `1.50`, `15e-1` and `0.15e1` are equal. Zero has no sign.
 fn decimal(text: &str) -> Option<(bool, String, i64)> {
@@ -587,10 +627,10 @@ fn strings_match(oracle: &Json, node: &Node) -> bool {
             oracle["t"] == "MetaString"
                 && oracle["c"]
                     .as_str()
-                    .is_some_and(|o| same_number(o, &i.to_string()))
+                    .is_some_and(|o| same_digits(o, &i.to_string()))
         }
         Ok(Value::Float(f)) => {
-            oracle["t"] == "MetaString" && oracle["c"].as_str().is_some_and(|o| same_number(o, &f))
+            oracle["t"] == "MetaString" && oracle["c"].as_str().is_some_and(|o| same_digits(o, &f))
         }
         Err(_) => false,
     }

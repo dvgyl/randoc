@@ -151,17 +151,25 @@ fn directives(text: &str, mut pos: usize, lines: &LineIndex<'_>) -> Result<(usiz
                     if !valid {
                         return Err(lines.error(at, "expected a version such as 1.2 after %YAML"));
                     }
+                    let (major, minor) = number.split_once('.').unwrap_or((number, ""));
+                    let (major, minor) =
+                        (major.trim_start_matches('0'), minor.trim_start_matches('0'));
+                    // Pandoc refuses a version number above 1,000,000 without its text.
+                    let too_big =
+                        |n: &str| n.len() > 7 || n.parse::<u32>().is_ok_and(|m| m > 1_000_000);
+                    if too_big(major) || too_big(minor) {
+                        return Err(lines.error(pos, "unsupported YAML version"));
+                    }
+                    if major != "1" {
+                        let digits = |n: &str| if n.is_empty() { "0" } else { n }.to_string();
+                        let (major, minor) = (digits(major), digits(minor));
+                        return Err(
+                            lines.error(pos, format!("unsupported YAML version {major}.{minor}"))
+                        );
+                    }
                     if let Some(extra) = words.next() {
                         let at = pos + content.rfind(extra).unwrap_or(0);
-                        return Err(lines.error(at, "unexpected text after the directive"));
-                    }
-                    let major = number
-                        .split('.')
-                        .next()
-                        .unwrap_or("")
-                        .trim_start_matches('0');
-                    if major != "1" {
-                        return Err(lines.error(pos, format!("unsupported YAML version {number}")));
+                        return Err(lines.error(at, "unexpected content after the %YAML version"));
                     }
                 }
                 Some("%TAG") => {
@@ -1264,7 +1272,7 @@ impl<'a, 'b> Parser<'a, 'b> {
                 }
                 Ok(Parsed::Node(self.block_sequence(col, false, depth)?, start))
             }
-            Some('|' | '>') => self.block_scalar_content(start, col, parent, context),
+            Some('|' | '>') => Ok(Parsed::Scalar(self.block_scalar(parent)?)),
             Some(open @ ('[' | '{')) => self.flow_content(open, start, parent, depth),
             Some(quote @ ('"' | '\'')) => self.quoted_content(quote, start, col, parent, context, depth),
             Some('*') => {
@@ -1323,27 +1331,6 @@ impl<'a, 'b> Parser<'a, 'b> {
     // The arms of `block_content` that do not start a nested block node are
     // separate functions, so that the frame of `block_content`, which is on
     // the stack once for each nesting level, stays small.
-
-    fn block_scalar_content(
-        &mut self,
-        start: usize,
-        col: usize,
-        parent: isize,
-        context: Context,
-    ) -> Result<Parsed> {
-        // A block scalar that starts its own line is indented from its column.
-        let line_start = self
-            .text
-            .get(..start)
-            .map_or(0, |t| t.rfind('\n').map_or(0, |i| i + 1));
-        let own_line = self.slice(line_start, start).bytes().all(|b| b == b' ');
-        let base = if own_line && context.own_line() {
-            col as isize
-        } else {
-            parent
-        };
-        Ok(Parsed::Scalar(self.block_scalar(parent, base)?))
-    }
 
     fn flow_content(
         &mut self,
@@ -1859,8 +1846,7 @@ impl<'a, 'b> Parser<'a, 'b> {
     }
 
     /// Reads a literal `|` or folded `>` block scalar.
-    /// `base` is the indentation that an indentation indicator adds to.
-    fn block_scalar(&mut self, parent: isize, base: isize) -> Result<Scalar> {
+    fn block_scalar(&mut self, parent: isize) -> Result<Scalar> {
         let start = self.pos;
         let literal = self.bump() == Some('|');
         let mut chomp = None;
@@ -1906,17 +1892,10 @@ impl<'a, 'b> Parser<'a, 'b> {
                 self.pos += skip;
                 continue;
             }
-            if line.as_bytes().get(n) == Some(&b'\t') && n as isize > base {
-                return Err(self.error(self.pos + n, "tabs cannot be used for indentation"));
-            }
-            if n as isize > base {
-                return Err(self.error(
-                    self.pos + n,
-                    "unexpected indentation, the line has less indentation than the block scalar above it",
-                ));
-            }
             break;
         }
+        let has_text = lines.iter().any(|l| l.bytes().any(|b| b != b' '));
+        self.after_block_scalar(start, indent, has_text)?;
         let (text, style) = if literal {
             (literal_text(&lines, chomp), Style::Literal)
         } else {
@@ -1927,6 +1906,38 @@ impl<'a, 'b> Parser<'a, 'b> {
             style,
             pos: start,
         })
+    }
+
+    /// Checks the first line below a block scalar and its comment lines. Pandoc
+    /// refuses it when it is indented more than the line of the header, except
+    /// for an item or a key of a collection that the header line opens at its
+    /// column, and except for a line at the content indentation below a scalar
+    /// with text.
+    fn after_block_scalar(&self, header: usize, indent: usize, has_text: bool) -> Result<()> {
+        let line_start = self.slice(0, header).rfind('\n').map_or(0, |i| i + 1);
+        let header_line = self.slice(line_start, header);
+        let low = header_line.bytes().take_while(|b| *b == b' ').count();
+        let opened = opened_collections(header_line);
+        let mut at = self.pos;
+        for line in self.rest().split('\n') {
+            let n = line.bytes().take_while(|b| *b == b' ').count();
+            match line.as_bytes().get(n) {
+                None | Some(b'#') => {}
+                Some(_) if n <= low || (has_text && n >= indent) => return Ok(()),
+                Some(b'\t') => {
+                    return Err(self.error(at + n, "tabs cannot be used for indentation"));
+                }
+                Some(_) if opened.contains(&(n, starts_item(&line[n..]))) => return Ok(()),
+                Some(_) => {
+                    return Err(self.error(
+                        at + n,
+                        "unexpected indentation, the line has less indentation than the block scalar above it",
+                    ));
+                }
+            }
+            at += line.len() + 1;
+        }
+        Ok(())
     }
 
     fn indent_indicator_error(&self) -> YamlError {
@@ -2642,4 +2653,30 @@ fn folded_text(lines: &[&str], chomp: Chomp) -> String {
         empty_lines = 0;
     }
     chomp_text(body, true, lines.len() - last - 1, chomp)
+}
+
+/// `true` when the text starts with a block sequence item: `-` and then a
+/// space, a tab or the line end.
+fn starts_item(text: &str) -> bool {
+    matches!(text.as_bytes(), [b'-'] | [b'-', b' ' | b'\t', ..])
+}
+
+/// The block collections that a line opens before a block scalar header, each
+/// as its column and `true` for a sequence: one for each `- `, a mapping for
+/// each `? ` or `: `, and a mapping for a key.
+fn opened_collections(line: &str) -> Vec<(usize, bool)> {
+    let mut out = Vec::new();
+    let mut at = line.bytes().take_while(|b| *b == b' ').count();
+    while let Some([c @ (b'-' | b'?' | b':'), b' ' | b'\t', ..]) = line.as_bytes().get(at..) {
+        out.push((at, *c == b'-'));
+        at += 1 + line[at + 1..]
+            .bytes()
+            .take_while(|b| matches!(b, b' ' | b'\t'))
+            .count();
+    }
+    let rest = &line[at..];
+    if rest.split_whitespace().any(|t| !t.starts_with(['&', '!'])) {
+        out.push((at, false));
+    }
+    out
 }
