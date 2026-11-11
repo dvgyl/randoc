@@ -1,265 +1,577 @@
 {
   "extensions": {
     "abbreviations": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "alerts": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
     },
     "all_symbols_escapable": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "amuse": {
       "status": "not_started"
     },
     "angle_brackets_escapable": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "ascii_identifiers": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 12,
+        "total": 12
+      }
     },
     "attributes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 40,
+        "total": 40
+      }
     },
     "auto_identifiers": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
     },
     "autolink_bare_uris": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 7,
+        "total": 8
+      }
     },
     "backtick_code_blocks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "blank_before_blockquote": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "blank_before_header": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "bracketed_spans": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 9,
+        "total": 9
+      }
     },
     "citations": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 1,
+        "total": 3
+      }
     },
     "definition_lists": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 17,
+        "total": 17
+      }
     },
     "east_asian_line_breaks": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 9,
+        "total": 11
+      }
     },
     "element_citations": {
       "status": "not_started"
     },
     "emoji": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 9,
+        "total": 9
+      }
     },
     "empty_paragraphs": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
     },
     "epub_html_exts": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 19,
+        "total": 19
+      }
     },
     "escaped_line_breaks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "example_lists": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "fancy_lists": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 30,
+        "total": 30
+      }
     },
     "fenced_code_attributes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "fenced_code_blocks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "fenced_divs": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 19,
+        "total": 19
+      }
     },
     "footnotes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 16,
+        "total": 16
+      }
     },
     "four_space_rule": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "gfm_auto_identifiers": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 25,
+        "total": 25
+      }
     },
     "grid_tables": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "gutenberg": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 1,
+        "total": 1
+      }
     },
     "hard_line_breaks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "header_attributes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "ignore_line_breaks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "implicit_figures": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 13,
+        "total": 13
+      }
     },
     "implicit_header_references": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "inline_code_attributes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "inline_notes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "intraword_underscores": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "latex_macros": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 2,
+        "total": 3
+      }
     },
     "line_blocks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 232,
+        "total": 232
+      }
     },
     "link_attributes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "lists_without_preceding_blankline": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "literate_haskell": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 2,
+        "total": 4
+      }
     },
     "mark": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "markdown_attribute": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 1,
+        "total": 3
+      }
     },
     "markdown_in_html_blocks": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "mmd_header_identifiers": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 2,
+        "total": 3
+      }
     },
     "mmd_link_attributes": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 1,
+        "total": 3
+      }
     },
     "mmd_title_block": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "multiline_tables": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "native_divs": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 309,
+        "total": 309
+      }
     },
     "native_numbering": {
       "status": "not_started"
     },
     "native_spans": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 79,
+        "total": 79
+      }
     },
     "ntb": {
       "status": "not_started"
     },
     "old_dashes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "pandoc_title_block": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "pipe_tables": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
     },
     "raw_attribute": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 7,
+        "total": 7
+      }
     },
     "raw_html": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 456,
+        "total": 457
+      }
     },
     "raw_markdown": {
       "status": "not_started"
     },
     "raw_tex": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 178,
+        "total": 178
+      }
     },
     "rebase_relative_paths": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 1,
+        "total": 1
+      }
     },
     "short_subsuperscripts": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "shortcut_reference_links": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "simple_tables": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "smart": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 1719,
+        "total": 1719
+      }
     },
     "smart_quotes": {
       "status": "not_started"
     },
     "sourcepos": {
-      "status": "not_started"
+      "status": "failing",
+      "units": {
+        "passing": 0,
+        "total": 16
+      }
     },
     "space_in_atx_header": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "spaced_reference_links": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "special_strings": {
       "status": "not_started"
     },
     "startnum": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "strikeout": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "styles": {
       "status": "not_started"
     },
     "subscript": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "superscript": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "table_attributes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "table_captions": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "tagging": {
       "status": "not_started"
     },
     "task_lists": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "tex_math_dollars": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 181,
+        "total": 181
+      }
     },
     "tex_math_double_backslash": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 59,
+        "total": 59
+      }
     },
     "tex_math_gfm": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "tex_math_single_backslash": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 109,
+        "total": 109
+      }
     },
     "wikilinks_title_after_pipe": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 12,
+        "total": 12
+      }
     },
     "wikilinks_title_before_pipe": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "xrefs_name": {
       "status": "not_started"
@@ -268,7 +580,11 @@
       "status": "not_started"
     },
     "yaml_metadata_block": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 22,
+        "total": 22
+      }
     }
   },
   "generated_by": "randoc-harness run --matrix",
@@ -286,10 +602,18 @@
       "status": "not_started"
     },
     "commonmark": {
-      "status": "not_started"
+      "read": {
+        "passing": 708,
+        "total": 720
+      },
+      "status": "partial"
     },
     "commonmark_x": {
-      "status": "not_started"
+      "read": {
+        "passing": 613,
+        "total": 614
+      },
+      "status": "partial"
     },
     "creole": {
       "status": "not_started"
@@ -333,13 +657,21 @@
       "status": "not_started"
     },
     "gfm": {
-      "status": "not_started"
+      "read": {
+        "passing": 352,
+        "total": 355
+      },
+      "status": "partial"
     },
     "haddock": {
       "status": "not_started"
     },
     "html": {
-      "status": "not_started"
+      "read": {
+        "passing": 7020,
+        "total": 7023
+      },
+      "status": "partial"
     },
     "ipynb": {
       "status": "not_started"
@@ -352,12 +684,12 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 692,
-        "total": 921
+        "passing": 1198,
+        "total": 1208
       },
       "read": {
-        "passing": 692,
-        "total": 921
+        "passing": 1085,
+        "total": 1088
       },
       "status": "partial"
     },
@@ -369,26 +701,42 @@
     },
     "markdown": {
       "end_to_end": {
-        "passing": 0,
-        "total": 143
+        "passing": 783,
+        "total": 799
       },
       "read": {
-        "passing": 0,
-        "total": 143
+        "passing": 1720,
+        "total": 1779
       },
-      "status": "failing"
+      "status": "partial"
     },
     "markdown_github": {
-      "status": "not_started"
+      "read": {
+        "passing": 28,
+        "total": 28
+      },
+      "status": "passing"
     },
     "markdown_mmd": {
-      "status": "not_started"
+      "read": {
+        "passing": 15,
+        "total": 16
+      },
+      "status": "partial"
     },
     "markdown_phpextra": {
-      "status": "not_started"
+      "read": {
+        "passing": 17,
+        "total": 18
+      },
+      "status": "partial"
     },
     "markdown_strict": {
-      "status": "not_started"
+      "read": {
+        "passing": 29,
+        "total": 29
+      },
+      "status": "passing"
     },
     "mdoc": {
       "status": "not_started"
@@ -401,14 +749,14 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 131,
+        "passing": 133,
         "total": 133
       },
       "read": {
-        "passing": 131,
+        "passing": 133,
         "total": 133
       },
-      "status": "partial"
+      "status": "passing"
     },
     "odt": {
       "status": "not_started"
@@ -464,354 +812,766 @@
   },
   "options": {
     "abbreviations": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "ascii": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 7,
+        "total": 7
+      }
     },
     "base-header-level": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "bash-completion": {
-      "status": "not_started"
-    },
-    "biblatex": {
-      "status": "not_started"
-    },
-    "bibliography": {
-      "status": "not_started"
-    },
-    "chunk-template": {
-      "status": "not_started"
-    },
-    "citation-abbreviations": {
-      "status": "not_started"
-    },
-    "citeproc": {
-      "status": "not_started"
-    },
-    "columns": {
       "status": "failing",
       "units": {
         "passing": 0,
-        "total": 667
+        "total": 1
+      }
+    },
+    "biblatex": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "bibliography": {
+      "status": "partial",
+      "units": {
+        "passing": 9,
+        "total": 12
+      }
+    },
+    "chunk-template": {
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
+    },
+    "citation-abbreviations": {
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
+    },
+    "citeproc": {
+      "status": "partial",
+      "units": {
+        "passing": 5,
+        "total": 12
+      }
+    },
+    "columns": {
+      "status": "partial",
+      "units": {
+        "passing": 675,
+        "total": 688
       }
     },
     "completion": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 2,
+        "total": 5
+      }
     },
     "csl": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "css": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "data-dir": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 8,
+        "total": 9
+      }
     },
     "default-image-extension": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "defaults": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "dpi": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
     },
     "dump-args": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "email-obfuscation": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 15,
+        "total": 19
+      }
     },
     "embed-resources": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
     },
     "eol": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 19,
+        "total": 19
+      }
     },
     "epub-chapter-level": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
     },
     "epub-cover-image": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "epub-embed-font": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 2,
+        "total": 3
+      }
     },
     "epub-metadata": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
     },
     "epub-subdirectory": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "epub-title-page": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "extract-media": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "fail-if-warnings": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 6,
+        "total": 7
+      }
     },
     "figure-caption-position": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "file-scope": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
     },
     "filter": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "from": {
       "status": "passing",
       "units": {
-        "passing": 1,
-        "total": 1
+        "passing": 4,
+        "total": 4
       }
     },
     "gladtex": {
-      "status": "not_started"
-    },
-    "help": {
-      "status": "not_started"
-    },
-    "highlight-style": {
-      "status": "not_started"
-    },
-    "html-q-tags": {
-      "status": "not_started"
-    },
-    "id-prefix": {
-      "status": "not_started"
-    },
-    "ignore-args": {
-      "status": "not_started"
-    },
-    "include-after-body": {
-      "status": "not_started"
-    },
-    "include-before-body": {
-      "status": "not_started"
-    },
-    "include-in-header": {
-      "status": "not_started"
-    },
-    "incremental": {
-      "status": "not_started"
-    },
-    "indented-code-classes": {
-      "status": "not_started"
-    },
-    "ipynb-output": {
-      "status": "not_started"
-    },
-    "katex": {
-      "status": "not_started"
-    },
-    "link-images": {
-      "status": "not_started"
-    },
-    "list-extensions": {
-      "status": "not_started"
-    },
-    "list-highlight-languages": {
-      "status": "not_started"
-    },
-    "list-highlight-styles": {
-      "status": "not_started"
-    },
-    "list-input-formats": {
-      "status": "not_started"
-    },
-    "list-output-formats": {
-      "status": "not_started"
-    },
-    "list-tables": {
-      "status": "not_started"
-    },
-    "listings": {
-      "status": "not_started"
-    },
-    "lof": {
-      "status": "not_started"
-    },
-    "log": {
-      "status": "not_started"
-    },
-    "lot": {
-      "status": "not_started"
-    },
-    "lua-filter": {
-      "status": "not_started"
-    },
-    "markdown-headings": {
-      "status": "not_started"
-    },
-    "math-method": {
-      "status": "not_started"
-    },
-    "mathjax": {
-      "status": "not_started"
-    },
-    "mathml": {
-      "status": "not_started"
-    },
-    "metadata": {
-      "status": "not_started"
-    },
-    "metadata-file": {
-      "status": "not_started"
-    },
-    "natbib": {
-      "status": "not_started"
-    },
-    "no-check-certificate": {
-      "status": "not_started"
-    },
-    "no-highlight": {
-      "status": "not_started"
-    },
-    "number-offset": {
-      "status": "not_started"
-    },
-    "number-sections": {
-      "status": "not_started"
-    },
-    "output": {
-      "status": "not_started"
-    },
-    "pdf-engine": {
-      "status": "not_started"
-    },
-    "pdf-engine-opt": {
-      "status": "not_started"
-    },
-    "preserve-tabs": {
-      "status": "not_started"
-    },
-    "print-default-data-file": {
-      "status": "not_started"
-    },
-    "print-default-template": {
-      "status": "not_started"
-    },
-    "print-highlight-style": {
-      "status": "not_started"
-    },
-    "quiet": {
-      "status": "not_started"
-    },
-    "reference-doc": {
-      "status": "not_started"
-    },
-    "reference-links": {
-      "status": "not_started"
-    },
-    "reference-location": {
-      "status": "not_started"
-    },
-    "request-header": {
-      "status": "not_started"
-    },
-    "resource-path": {
-      "status": "not_started"
-    },
-    "sandbox": {
-      "status": "not_started"
-    },
-    "section-divs": {
-      "status": "not_started"
-    },
-    "self-contained": {
-      "status": "not_started"
-    },
-    "shift-heading-level-by": {
-      "status": "not_started"
-    },
-    "slide-level": {
-      "status": "not_started"
-    },
-    "split-level": {
-      "status": "not_started"
-    },
-    "standalone": {
-      "status": "not_started"
-    },
-    "strip-comments": {
-      "status": "not_started"
-    },
-    "syntax-definition": {
-      "status": "not_started"
-    },
-    "syntax-highlighting": {
-      "status": "not_started"
-    },
-    "tab-stop": {
-      "status": "not_started"
-    },
-    "table-caption-position": {
-      "status": "not_started"
-    },
-    "template": {
-      "status": "failing",
+      "status": "passing",
       "units": {
-        "passing": 0,
-        "total": 765
+        "passing": 5,
+        "total": 5
       }
     },
-    "title-prefix": {
-      "status": "not_started"
+    "help": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
     },
-    "to": {
+    "highlight-style": {
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
+    },
+    "html-q-tags": {
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
+    },
+    "id-prefix": {
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
+    },
+    "ignore-args": {
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
+    },
+    "include-after-body": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "include-before-body": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "include-in-header": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "incremental": {
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
+    },
+    "indented-code-classes": {
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
+    },
+    "ipynb-output": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "katex": {
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
+    },
+    "link-images": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "list-extensions": {
+      "status": "passing",
+      "units": {
+        "passing": 97,
+        "total": 97
+      }
+    },
+    "list-highlight-languages": {
       "status": "passing",
       "units": {
         "passing": 1,
         "total": 1
       }
     },
-    "toc": {
-      "status": "failing",
+    "list-highlight-styles": {
+      "status": "passing",
       "units": {
-        "passing": 0,
-        "total": 69
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "list-input-formats": {
+      "status": "passing",
+      "units": {
+        "passing": 9,
+        "total": 9
+      }
+    },
+    "list-output-formats": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "list-tables": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "listings": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "lof": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "log": {
+      "status": "partial",
+      "units": {
+        "passing": 5,
+        "total": 8
+      }
+    },
+    "lot": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "lua-filter": {
+      "status": "partial",
+      "units": {
+        "passing": 1,
+        "total": 8
+      }
+    },
+    "markdown-headings": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "math-method": {
+      "status": "partial",
+      "units": {
+        "passing": 12,
+        "total": 14
+      }
+    },
+    "mathjax": {
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
+    },
+    "mathml": {
+      "status": "partial",
+      "units": {
+        "passing": 3,
+        "total": 5
+      }
+    },
+    "metadata": {
+      "status": "passing",
+      "units": {
+        "passing": 21,
+        "total": 21
+      }
+    },
+    "metadata-file": {
+      "status": "partial",
+      "units": {
+        "passing": 45,
+        "total": 46
+      }
+    },
+    "natbib": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "no-check-certificate": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "no-highlight": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "number-offset": {
+      "status": "passing",
+      "units": {
+        "passing": 14,
+        "total": 14
+      }
+    },
+    "number-sections": {
+      "status": "passing",
+      "units": {
+        "passing": 23,
+        "total": 23
+      }
+    },
+    "output": {
+      "status": "partial",
+      "units": {
+        "passing": 14,
+        "total": 18
+      }
+    },
+    "pdf-engine": {
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
+    },
+    "pdf-engine-opt": {
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
+    },
+    "preserve-tabs": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "print-default-data-file": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "print-default-template": {
+      "status": "passing",
+      "units": {
+        "passing": 39,
+        "total": 39
+      }
+    },
+    "print-highlight-style": {
+      "status": "partial",
+      "units": {
+        "passing": 14,
+        "total": 15
+      }
+    },
+    "quiet": {
+      "status": "partial",
+      "units": {
+        "passing": 8,
+        "total": 9
+      }
+    },
+    "reference-doc": {
+      "status": "partial",
+      "units": {
+        "passing": 9,
+        "total": 10
+      }
+    },
+    "reference-links": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "reference-location": {
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
+    },
+    "request-header": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "resource-path": {
+      "status": "passing",
+      "units": {
+        "passing": 93,
+        "total": 93
+      }
+    },
+    "sandbox": {
+      "status": "partial",
+      "units": {
+        "passing": 77,
+        "total": 81
+      }
+    },
+    "section-divs": {
+      "status": "passing",
+      "units": {
+        "passing": 16,
+        "total": 16
+      }
+    },
+    "self-contained": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "shift-heading-level-by": {
+      "status": "passing",
+      "units": {
+        "passing": 20,
+        "total": 20
+      }
+    },
+    "slide-level": {
+      "status": "passing",
+      "units": {
+        "passing": 10,
+        "total": 10
+      }
+    },
+    "split-level": {
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
+    },
+    "standalone": {
+      "status": "passing",
+      "units": {
+        "passing": 46,
+        "total": 46
+      }
+    },
+    "strip-comments": {
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
+    },
+    "syntax-definition": {
+      "status": "partial",
+      "units": {
+        "passing": 1,
+        "total": 3
+      }
+    },
+    "syntax-highlighting": {
+      "status": "passing",
+      "units": {
+        "passing": 35,
+        "total": 35
+      }
+    },
+    "tab-stop": {
+      "status": "passing",
+      "units": {
+        "passing": 9,
+        "total": 9
+      }
+    },
+    "table-caption-position": {
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
+    },
+    "template": {
+      "status": "partial",
+      "units": {
+        "passing": 28,
+        "total": 794
+      }
+    },
+    "title-prefix": {
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
+    },
+    "to": {
+      "status": "passing",
+      "units": {
+        "passing": 9,
+        "total": 9
+      }
+    },
+    "toc": {
+      "status": "partial",
+      "units": {
+        "passing": 19,
+        "total": 88
       }
     },
     "toc-depth": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 16,
+        "total": 16
+      }
     },
     "top-level-division": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
     },
     "trace": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "track-changes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "typst-input": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 3,
+        "total": 3
+      }
     },
     "variable": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "variable-json": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 5,
+        "total": 5
+      }
     },
     "verbose": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 6,
+        "total": 6
+      }
     },
     "version": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "webtex": {
-      "status": "not_started"
+      "status": "partial",
+      "units": {
+        "passing": 3,
+        "total": 5
+      }
     },
     "wrap": {
-      "status": "failing",
+      "status": "passing",
       "units": {
-        "passing": 0,
-        "total": 18
+        "passing": 35,
+        "total": 35
       }
     }
   },
@@ -922,13 +1682,37 @@
       "status": "not_started"
     },
     "html": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 506,
+        "total": 520
+      },
+      "status": "partial",
+      "write": {
+        "passing": 509,
+        "total": 520
+      }
     },
     "html4": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 415,
+        "total": 422
+      },
+      "status": "partial",
+      "write": {
+        "passing": 416,
+        "total": 422
+      }
     },
     "html5": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 1,
+        "total": 1
+      },
+      "status": "passing",
+      "write": {
+        "passing": 1,
+        "total": 1
+      }
     },
     "icml": {
       "status": "not_started"
@@ -997,12 +1781,12 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 301,
+        "passing": 670,
         "total": 672
       },
       "status": "partial",
       "write": {
-        "passing": 397,
+        "passing": 636,
         "total": 636
       }
     },
@@ -1082,27 +1866,29 @@
   ],
   "summary": {
     "extensions": {
-      "not_started": 90
+      "failing": 1,
+      "not_started": 11,
+      "partial": 9,
+      "passing": 69
     },
     "input_formats": {
-      "failing": 1,
-      "not_started": 48,
-      "partial": 2,
-      "passing": 1
+      "not_started": 40,
+      "partial": 8,
+      "passing": 4
     },
     "options": {
-      "failing": 4,
-      "not_started": 103,
-      "passing": 2
+      "failing": 1,
+      "partial": 22,
+      "passing": 86
     },
     "output_formats": {
-      "not_started": 74,
-      "partial": 2,
-      "passing": 1
+      "not_started": 71,
+      "partial": 4,
+      "passing": 2
     },
     "units": {
-      "passing": 2506,
-      "total": 4465
+      "passing": 19375,
+      "total": 20536
     }
   }
 }

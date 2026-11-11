@@ -741,3 +741,38 @@ removes a second copy of row I-002 with older text, which the squash of
 Open findings: the low rows I-CLI-28, I-CLI-29, I-CLI-30 and the other low
 rows and scope gaps of the branch. Open checks: mutation, coverage.
 Requests of the worker to the coordinator: none.
+
+## Batch 2 of 2026-11-11
+
+Branches and commits, in the real merge order: `html-writer` fb6c151
+(4d4373f), `html-reader` a40e1e5 (6eed2df), the `yaml` test file of
+8612488 (4bce317), `markdown-reader` 0b983bf (d5386de),
+`commonmark-reader` 22266f3 (6ba44b5), `cli` cb85d5f (6089e1f). The order
+changed from the list because `commonmark-reader` and `cli` waited for
+their fuzz results (both 0 crashes). No branch was left out or undone.
+
+`merge-ws check` on the final tree (6089e1f) passed on its first run
+(19:46 to 19:58 UTC): `record` 0 new units, 0 oracle errors;
+`verify-oracle` 20536 units, 0 stored results are not current;
+`scripts/gate.sh` passed (format, lints, documentation, tests, harness).
+
+- Harness before the batch: 4867 units, 2506 pass, 1959 fail, 0 no
+  result, 0 not recorded, 402 skipped.
+- Harness after the batch: 20938 units, 19375 pass, 1161 fail, 0 no
+  result, 0 not recorded, 402 skipped; baseline 2506 units, 0 regressions,
+  16869 new passes. `spec/baseline.json` now has 19375 units.
+- Capability summary: `{"extensions": {"failing": 1, "not_started": 11,
+  "partial": 9, "passing": 69}, "input_formats": {"not_started": 40,
+  "partial": 8, "passing": 4}, "options": {"failing": 1, "partial": 22,
+  "passing": 86}, "output_formats": {"not_started": 71, "partial": 4,
+  "passing": 2}, "units": {"passing": 19375, "total": 20536}}`.
+- Checks on the `yaml` head 7170169 that ran after its merge in batch 1
+  (`yaml` report, section "Checks on 7170169"): fuzzing 901 s with
+  10,812,449 runs and 0 crashes; coverage 96.35 % of lines; the mutation
+  sample of the last diff, all 63 mutants: 42 caught, 11 unviable, 10
+  missed, of which 2 are killed by the test file of 8612488 and 8 are
+  equivalent with the reason of each in the report.
+- `layout-perf` round 2, Codex (`layout-perf-codex-r2.md`): APPROVE at
+  d8fa6c0; no finding with the level medium or higher; one low finding
+  (layout-perf-R2-01, `Debug` formatter flags), recorded as I-LAYOUT-06 in
+  this commit.
