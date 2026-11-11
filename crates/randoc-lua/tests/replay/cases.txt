@@ -1,0 +1,1302 @@
+# The replay cases of randoc-lua. `tools/record-replay.py` describes the format.
+# The documents come from texts of the Randoc project, converted with
+# `pandoc -f markdown -t json`. Each filter is a text of the Randoc project.
+@@@ doc plain
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"One"},{"t":"Space"},{"t":"Str","c":"small"},{"t":"Space"},{"t":"Str","c":"paragraph"},{"t":"Space"},{"t":"Str","c":"with"},{"t":"Space"},{"t":"Str","c":"five"},{"t":"Space"},{"t":"Str","c":"words."}]}]}
+@@@ doc rich
+{"pandoc-api-version":[1,23,1,2],"meta":{"abstract":{"t":"MetaBlocks","c":[{"t":"Para","c":[{"t":"Str","c":"A"},{"t":"Space"},{"t":"Str","c":"short"},{"t":"Space"},{"t":"Emph","c":[{"t":"Str","c":"summary"}]},{"t":"Space"},{"t":"Str","c":"of"},{"t":"Space"},{"t":"Str","c":"the"},{"t":"Space"},{"t":"Str","c":"survey."}]},{"t":"Para","c":[{"t":"Str","c":"It"},{"t":"Space"},{"t":"Str","c":"has"},{"t":"Space"},{"t":"Str","c":"two"},{"t":"Space"},{"t":"Str","c":"paragraphs."}]}]},"author":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"Mira"},{"t":"Space"},{"t":"Str","c":"Okafor"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"Jun"},{"t":"Space"},{"t":"Str","c":"Sato"}]}]},"draft":{"t":"MetaBool","c":true},"tags":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"coast"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"survey"}]}]},"title":{"t":"MetaInlines","c":[{"t":"Str","c":"Field"},{"t":"Space"},{"t":"Str","c":"notes"},{"t":"Space"},{"t":"Str","c":"on"},{"t":"Space"},{"t":"Str","c":"tide"},{"t":"Space"},{"t":"Str","c":"pools"}]}},"blocks":[{"t":"Header","c":[1,["method",["unnumbered"],[]],[{"t":"Str","c":"Method"}]]},{"t":"Para","c":[{"t":"Str","c":"We"},{"t":"Space"},{"t":"Str","c":"walked"},{"t":"Space"},{"t":"Str","c":"the"},{"t":"Space"},{"t":"Strong","c":[{"t":"Str","c":"north"},{"t":"Space"},{"t":"Str","c":"shore"}]},{"t":"Space"},{"t":"Str","c":"at"},{"t":"Space"},{"t":"Str","c":"low"},{"t":"Space"},{"t":"Str","c":"tide"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"wrote"},{"t":"Space"},{"t":"Str","c":"down"},{"t":"Space"},{"t":"Str","c":"each"},{"t":"Space"},{"t":"Str","c":"animal."},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"Each"},{"t":"Space"},{"t":"Str","c":"count"},{"t":"Space"},{"t":"Str","c":"took"},{"t":"Space"},{"t":"Str","c":"ten"},{"t":"Space"},{"t":"Str","c":"minutes."}]}]},{"t":"SoftBreak"},{"t":"Str","c":"The"},{"t":"Space"},{"t":"Str","c":"route"},{"t":"Space"},{"t":"Str","c":"is"},{"t":"Space"},{"t":"Str","c":"on"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"the"},{"t":"Space"},{"t":"Str","c":"map"}],["https://example.org/map","Route map"]]},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"in"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Str","c":"sketch"}],["sketch.png","Sketch"]]},{"t":"Str","c":"."}]},{"t":"Header","c":[2,["counts",[],[]],[{"t":"Str","c":"Counts"}]]},{"t":"Para","c":[{"t":"Str","c":"Use"},{"t":"Space"},{"t":"Code","c":[["",[],[]],"count(x)"]},{"t":"Space"},{"t":"Str","c":"for"},{"t":"Space"},{"t":"Str","c":"one"},{"t":"Space"},{"t":"Str","c":"pool,"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"},"n = \\sum x_i"]},{"t":"Space"},{"t":"Str","c":"for"},{"t":"Space"},{"t":"Str","c":"the"},{"t":"Space"},{"t":"Str","c":"shore."}]},{"t":"CodeBlock","c":[["",["python"],[]],"total = sum(pools)"]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"limpets"}]}],[{"t":"Plain","c":[{"t":"Str","c":"crabs"}]},{"t":"OrderedList","c":[[1,{"t":"Decimal"},{"t":"Period"}],[[{"t":"Plain","c":[{"t":"Str","c":"shore"},{"t":"Space"},{"t":"Str","c":"crab"}]}],[{"t":"Plain","c":[{"t":"Str","c":"hermit"},{"t":"Space"},{"t":"Str","c":"crab"}]}]]]}]]},{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"The"},{"t":"Space"},{"t":"Str","c":"water"},{"t":"Space"},{"t":"Str","c":"was"},{"t":"Space"},{"t":"Str","c":"cold."},{"t":"SoftBreak"},{"t":"Str","c":"It"},{"t":"Space"},{"t":"Str","c":"was"},{"t":"Space"},{"t":"Str","c":"also"},{"t":"Space"},{"t":"Str","c":"clear."}]}]},{"t":"DefinitionList","c":[[[{"t":"Str","c":"Term"},{"t":"Space"},{"t":"Str","c":"one"}],[[{"t":"Plain","c":[{"t":"Str","c":"First"},{"t":"Space"},{"t":"Str","c":"meaning."}]}]]],[[{"t":"Str","c":"Term"},{"t":"Space"},{"t":"Str","c":"two"}],[[{"t":"Plain","c":[{"t":"Str","c":"Second"},{"t":"Space"},{"t":"Str","c":"meaning."}]}]]]]},{"t":"Table","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Crabs"},{"t":"Space"},{"t":"Str","c":"in"},{"t":"Space"},{"t":"Str","c":"each"},{"t":"Space"},{"t":"Str","c":"pool"}]}]],[[{"t":"AlignLeft"},{"t":"ColWidthDefault"}],[{"t":"AlignRight"},{"t":"ColWidthDefault"}]],[["",[],[]],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"Pool"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"Crabs"}]}]]]]]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"A"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"3"}]}]]]],[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"B"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"5"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Div","c":[["warn",["note"],[]],[{"t":"Para","c":[{"t":"Str","c":"Wear"},{"t":"Space"},{"t":"Span","c":[["",["gear"],[]],[{"t":"Str","c":"boots"}]]},{"t":"Str","c":"."}]}]]},{"t":"Div","c":[["",["raw"],[]],[{"t":"Plain","c":[{"t":"Str","c":"kept"}]}]]},{"t":"Para","c":[{"t":"Str","c":"Plain"},{"t":"Space"},{"t":"Str","c":"H"},{"t":"Subscript","c":[{"t":"Str","c":"2"}]},{"t":"Str","c":"O"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"x"},{"t":"Superscript","c":[{"t":"Str","c":"2"}]},{"t":"Str","c":","},{"t":"Space"},{"t":"Strikeout","c":[{"t":"Str","c":"gone"}]},{"t":"Str","c":","},{"t":"Space"},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"quoted"}]]},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Quoted","c":[{"t":"SingleQuote"},[{"t":"Str","c":"single"}]]},{"t":"Str","c":"."}]}]}
+@@@ doc meta
+{"pandoc-api-version":[1,23,1,2],"meta":{"authors":{"t":"MetaList","c":[{"t":"MetaMap","c":{"name":{"t":"MetaInlines","c":[{"t":"Str","c":"Ada"},{"t":"Space"},{"t":"Str","c":"Voss"}]},"role":{"t":"MetaInlines","c":[{"t":"Str","c":"lead"}]}}},{"t":"MetaMap","c":{"name":{"t":"MetaInlines","c":[{"t":"Str","c":"Bo"},{"t":"Space"},{"t":"Str","c":"Lind"}]},"role":{"t":"MetaInlines","c":[{"t":"Str","c":"review"}]}}}]},"date":{"t":"MetaInlines","c":[{"t":"Str","c":"2031-04-09"}]},"keywords":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"rent"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"food"}]}]},"lang":{"t":"MetaInlines","c":[{"t":"Str","c":"en"}]},"level":{"t":"MetaInlines","c":[{"t":"Str","c":"3"}]},"nested":{"t":"MetaMap","c":{"inner":{"t":"MetaMap","c":{"deep":{"t":"MetaInlines","c":[{"t":"Str","c":"value"}]}}}}},"numbered":{"t":"MetaBool","c":false},"subtitle":{"t":"MetaInlines","c":[{"t":"Str","c":"Draft"},{"t":"Space"},{"t":"Str","c":"two"}]},"title":{"t":"MetaInlines","c":[{"t":"Str","c":"Budget"},{"t":"Space"},{"t":"Emph","c":[{"t":"Str","c":"plan"}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text"},{"t":"Space"},{"t":"Str","c":"for"},{"t":"Space"},{"t":"Str","c":"the"},{"t":"Space"},{"t":"Str","c":"plan."}]},{"t":"Para","c":[{"t":"Str","c":"Second"},{"t":"Space"},{"t":"Str","c":"paragraph."}]}]}
+@@@ doc nested
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Div","c":[["",["outer"],[]],[{"t":"Div","c":[["",["inner"],[]],[{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"Quote"},{"t":"Space"},{"t":"Str","c":"with"},{"t":"Space"},{"t":"Emph","c":[{"t":"Str","c":"emphasis"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Strong","c":[{"t":"Str","c":"strong"}]},{"t":"Space"},{"t":"Str","c":"text"}]},{"t":"Str","c":"."}]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"item"},{"t":"Space"},{"t":"Str","c":"one"}]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"sub"},{"t":"Space"},{"t":"Str","c":"item"}]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"sub"},{"t":"Space"},{"t":"Str","c":"sub"},{"t":"Space"},{"t":"Str","c":"item"}]}]]}]]}],[{"t":"Plain","c":[{"t":"Str","c":"item"},{"t":"Space"},{"t":"Str","c":"two"}]}]]}]}]]}]]},{"t":"Header","c":[1,["top",[],[]],[{"t":"Str","c":"Top"}]]},{"t":"Header","c":[2,["middle",[],[]],[{"t":"Str","c":"Middle"}]]},{"t":"Header","c":[3,["low",[],[]],[{"t":"Str","c":"Low"}]]},{"t":"Para","c":[{"t":"Str","c":"Text"},{"t":"Space"},{"t":"Str","c":"with"},{"t":"Space"},{"t":"Str","c":"a"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"link"},{"t":"Space"},{"t":"Emph","c":[{"t":"Str","c":"with"},{"t":"Space"},{"t":"Str","c":"emphasis"}]}],["target.html",""]]},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"a"},{"t":"Space"},{"t":"Span","c":[["s1",["k"],[]],[{"t":"Str","c":"span"},{"t":"Space"},{"t":"Str","c":"with"},{"t":"Space"},{"t":"Code","c":[["",[],[]],"code"]}]]},{"t":"Str","c":"."}]}]}
+@@@ doc cite
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"As"},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"smith2020","citationPrefix":[],"citationSuffix":[{"t":"Str","c":"p. 3"}],"citationMode":{"t":"AuthorInText"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"@smith2020"},{"t":"Space"},{"t":"Str","c":"[p."},{"t":"Space"},{"t":"Str","c":"3]"}]]},{"t":"Space"},{"t":"Str","c":"says,"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"others"},{"t":"Space"},{"t":"Str","c":"agree"},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"jones2019","citationPrefix":[{"t":"Str","c":"see"}],"citationSuffix":[{"t":"Str","c":","},{"t":"Space"},{"t":"Str","c":"ch. 2"}],"citationMode":{"t":"NormalCitation"},"citationNoteNum":2,"citationHash":0},{"citationId":"lee2021","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"SuppressAuthor"},"citationNoteNum":2,"citationHash":0}],[{"t":"Str","c":"[see"},{"t":"Space"},{"t":"Str","c":"@jones2019,"},{"t":"Space"},{"t":"Str","c":"ch."},{"t":"Space"},{"t":"Str","c":"2;"},{"t":"Space"},{"t":"Str","c":"-@lee2021]"}]]},{"t":"Str","c":"."}]},{"t":"LineBlock","c":[[{"t":"Str","c":"First"},{"t":"Space"},{"t":"Str","c":"line"},{"t":"Space"},{"t":"Str","c":"of"},{"t":"Space"},{"t":"Str","c":"a"},{"t":"Space"},{"t":"Str","c":"poem"}],[{"t":"Str","c":"Second"},{"t":"Space"},{"t":"Str","c":"line"},{"t":"Space"},{"t":"Str","c":"indented"}]]},{"t":"Figure","c":[["fig1",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"A"},{"t":"Space"},{"t":"Str","c":"figure"},{"t":"Space"},{"t":"Str","c":"caption"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[["width","50%"]]],[{"t":"Str","c":"A"},{"t":"Space"},{"t":"Str","c":"figure"},{"t":"Space"},{"t":"Str","c":"caption"}],["plot.png",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Hard"},{"t":"LineBreak"},{"t":"Str","c":"break"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"soft"},{"t":"SoftBreak"},{"t":"Str","c":"break."},{"t":"Space"},{"t":"Str","c":"Raw"},{"t":"Space"},{"t":"RawInline","c":["html","<br>"]},{"t":"Space"},{"t":"Str","c":"inline."}]},{"t":"RawBlock","c":["latex","\\newpage"]},{"t":"OrderedList","c":[[1,{"t":"Decimal"},{"t":"Period"}],[[{"t":"Plain","c":[{"t":"Str","c":"one"}]}],[{"t":"Plain","c":[{"t":"Str","c":"two"}]}]]]},{"t":"OrderedList","c":[[1,{"t":"LowerAlpha"},{"t":"TwoParens"}],[[{"t":"Plain","c":[{"t":"Str","c":"alpha"}]}],[{"t":"Plain","c":[{"t":"Str","c":"beta"}]}]]]},{"t":"HorizontalRule"},{"t":"Para","c":[{"t":"Str","c":"Last"},{"t":"Space"},{"t":"Str","c":"paragraph."}]}]}
+@@@ doc table
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Table","c":[["tbl:sizes",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Sizes"},{"t":"Space"},{"t":"Str","c":"by"},{"t":"Space"},{"t":"Str","c":"name"}]}]],[[{"t":"AlignLeft"},{"t":"ColWidth","c":0.16666666666666666}],[{"t":"AlignRight"},{"t":"ColWidth","c":0.16666666666666666}],[{"t":"AlignCenter"},{"t":"ColWidth","c":0.16666666666666666}]],[["",[],[]],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"Name"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"Size"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"Notes"}]}]]]]]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"Alpha"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"1"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"first"}]}]]]],[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"Beta"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"22"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Str","c":"list"}]}],[{"t":"Plain","c":[{"t":"Str","c":"in"},{"t":"Space"},{"t":"Str","c":"cell"}]}]]}]]]],[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,2,[{"t":"Para","c":[{"t":"Str","c":"Gamma"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"spans"},{"t":"Space"},{"t":"Str","c":"two"}]}]]]],[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"Total"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Para","c":[{"t":"Str","c":"23"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[]]]]]]],[["",[],[]],[]]]}]}
+@@@ doc empty
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}
+@@@ filter str-upper plain rich
+function Str(el)
+  return pandoc.Str(el.text:upper())
+end
+@@@ filter str-set-text plain rich
+function Str(el)
+  el.text = el.text .. "!"
+  return el
+end
+@@@ filter str-nil-keeps plain rich
+function Str(el)
+  el.text = "changed but not returned"
+end
+@@@ filter str-delete plain cite
+function Str(el)
+  if #el.text > 4 then return {} end
+end
+@@@ filter str-to-list plain rich
+function Str(el)
+  return {pandoc.Str(el.text), pandoc.Str("+")}
+end
+@@@ filter str-to-string plain rich
+function Str(el)
+  return el.text .. " x"
+end
+@@@ filter str-return-false plain empty
+function Str(el)
+  return false
+end
+@@@ filter str-return-number plain empty
+function Str(el)
+  return 7
+end
+@@@ filter str-return-block plain empty
+function Str(el)
+  return pandoc.Para "wrong kind"
+end
+@@@ filter space-to-str plain rich
+function Space()
+  return pandoc.Str "_"
+end
+@@@ filter softbreak-linebreak cite rich
+function SoftBreak()
+  return pandoc.Space()
+end
+function LineBreak()
+  return {pandoc.Str "<br>", pandoc.SoftBreak()}
+end
+@@@ filter emph-to-strong rich nested
+function Emph(el)
+  return pandoc.Strong(el.content)
+end
+@@@ filter strong-content-edit rich nested
+function Strong(el)
+  el.content:insert(1, pandoc.Str "[")
+  el.content:insert(pandoc.Str "]")
+  return el
+end
+@@@ filter strikeout-unwrap rich plain
+function Strikeout(el)
+  return el.content
+end
+@@@ filter sub-super-swap rich plain
+function Subscript(el)
+  return pandoc.Superscript(el.content)
+end
+function Superscript(el)
+  return pandoc.Subscript(el.content)
+end
+@@@ filter smallcaps-underline rich nested
+function Strong(el)
+  return pandoc.SmallCaps(el.content)
+end
+function Emph(el)
+  return pandoc.Underline(el.content)
+end
+@@@ filter quoted-fields rich plain
+function Quoted(el)
+  if el.quotetype == "DoubleQuote" then
+    el.quotetype = "SingleQuote"
+  else
+    el.quotetype = pandoc.DoubleQuote
+  end
+  el.content = {pandoc.Str(el.quotetype), pandoc.Space(), table.unpack(el.content)}
+  return el
+end
+@@@ filter cite-fields cite plain
+function Cite(el)
+  local parts = {}
+  for i, c in ipairs(el.citations) do
+    parts[#parts + 1] = pandoc.Str(i .. ":" .. c.id .. ":" .. c.mode .. ":" .. c.note_num .. ":" .. c.hash)
+    parts[#parts + 1] = pandoc.Space()
+    parts[#parts + 1] = pandoc.Emph(c.prefix)
+    parts[#parts + 1] = pandoc.Strong(c.suffix)
+  end
+  return pandoc.Span(parts, {class = "cite"})
+end
+@@@ filter cite-edit-citations cite plain
+function Cite(el)
+  for _, c in ipairs(el.citations) do
+    c.id = c.id:upper()
+    c.mode = "SuppressAuthor"
+    c.prefix = "see"
+    c.suffix = {pandoc.Str "end"}
+    c.note_num = c.note_num + 5
+    c.hash = 9
+  end
+  el.citations = el.citations
+  return el
+end
+@@@ filter code-fields rich cite
+function Code(el)
+  return pandoc.Code(el.text:reverse(), pandoc.Attr("c" .. #el.text, {"x"}, {{"len", tostring(#el.text)}}))
+end
+@@@ filter code-attr-set rich plain
+function Code(el)
+  el.attr = pandoc.Attr("id1", {"k1", "k2"})
+  el.text = el.text .. ";"
+  return el
+end
+@@@ filter math-fields rich plain
+function Math(el)
+  if el.mathtype == "InlineMath" then
+    el.mathtype = "DisplayMath"
+  end
+  el.text = "(" .. el.text .. ")"
+  return el
+end
+@@@ filter math-to-code rich plain
+function Math(el)
+  return pandoc.Code(el.mathtype .. " " .. el.text)
+end
+@@@ filter rawinline-fields cite rich
+function RawInline(el)
+  return pandoc.Str(el.format .. "|" .. el.text)
+end
+@@@ filter rawinline-set cite rich
+function RawInline(el)
+  el.format = "tex"
+  el.text = "\\relax"
+  return el
+end
+@@@ filter link-fields rich nested
+function Link(el)
+  return pandoc.Span({pandoc.Str(el.target), pandoc.Str("|" .. el.title .. "|"), pandoc.Str(el.identifier), pandoc.Emph(el.content)})
+end
+@@@ filter link-rewrite rich nested
+function Link(el)
+  el.target = "https://mirror.example/" .. el.target:gsub("^https?://", "")
+  el.title = el.title == "" and "untitled" or el.title:lower()
+  el.attributes.rel = "nofollow"
+  el.classes:insert("external")
+  return el
+end
+@@@ filter image-fields rich cite
+function Image(el)
+  return pandoc.Span({pandoc.Str(el.src), pandoc.Str("|" .. el.title .. "|"), pandoc.Str("#" .. el.identifier), pandoc.Strong(el.caption)})
+end
+@@@ filter image-set rich cite
+function Image(el)
+  el.src = "img/" .. el.src
+  el.title = "T"
+  el.caption = "new caption text"
+  el.attr = {id = "pic"}
+  return el
+end
+@@@ filter note-content rich plain
+function Note(el)
+  return pandoc.Span(pandoc.utils.blocks_to_inlines and {pandoc.Str("note:" .. #el.content)} or {})
+end
+@@@ filter note-edit rich plain
+function Note(el)
+  el.content:insert(pandoc.Para "Added to the note.")
+  return el
+end
+@@@ filter span-fields rich nested
+function Span(el)
+  el.identifier = el.identifier .. "x"
+  el.classes = {"only"}
+  el.attributes = {{"data-n", tostring(#el.content)}}
+  return el
+end
+@@@ filter span-unwrap rich nested
+function Span(el)
+  return el.content
+end
+@@@ filter inline-generic plain nested
+function Inline(el)
+  return pandoc.Span({el}, {class = el.t})
+end
+@@@ filter inline-specific-wins plain nested
+function Inline(el)
+  return pandoc.Str "generic"
+end
+function Str(el)
+  return pandoc.Str "specific"
+end
+@@@ filter inline-tag-count rich cite
+local counts = {}
+function Inline(el)
+  counts[el.tag] = (counts[el.tag] or 0) + 1
+end
+function Pandoc(doc)
+  local names = {}
+  for name in pairs(counts) do names[#names + 1] = name end
+  table.sort(names)
+  local lines = {}
+  for _, name in ipairs(names) do lines[#lines + 1] = name .. " " .. counts[name] end
+  return pandoc.Pandoc({pandoc.CodeBlock(table.concat(lines, "\n"))}, doc.meta)
+end
+@@@ filter para-to-plain plain rich
+function Para(el)
+  return pandoc.Plain(el.content)
+end
+@@@ filter para-split plain nested
+function Para(el)
+  return {pandoc.Para(el.content), pandoc.HorizontalRule()}
+end
+@@@ filter para-delete rich nested
+function Para(el)
+  return {}
+end
+@@@ filter para-string-result plain rich
+function Para(el)
+  return "replaced by text"
+end
+@@@ filter para-return-inline plain rich
+function Para(el)
+  return pandoc.Emph(el.content)
+end
+@@@ filter para-return-number plain empty
+function Para(el)
+  return 3.5
+end
+@@@ filter plain-to-para rich table
+function Plain(el)
+  return pandoc.Para(el.content)
+end
+@@@ filter header-shift rich nested
+function Header(el)
+  el.level = el.level + 1
+  return el
+end
+@@@ filter header-fields rich nested
+function Header(el)
+  return pandoc.Para({pandoc.Str(el.level .. "|" .. el.identifier .. "|" .. table.concat(el.classes, ",")), pandoc.Space(), pandoc.Emph(el.content)})
+end
+@@@ filter header-set-attr rich nested
+function Header(el)
+  el.attr = pandoc.Attr("h-" .. el.level, {"lvl" .. el.level}, {{"data-level", tostring(el.level)}})
+  el.content = pandoc.utils.stringify(el.content):upper()
+  return el
+end
+@@@ filter codeblock-fields rich cite
+function CodeBlock(el)
+  return pandoc.Para(pandoc.Str(el.text:gsub("\n", "/") .. "|" .. el.identifier .. "|" .. table.concat(el.classes, ",")))
+end
+@@@ filter codeblock-set rich cite
+function CodeBlock(el)
+  el.text = el.text .. "\n-- end"
+  el.classes = {"lua", "numberLines"}
+  el.attributes.startFrom = "10"
+  return el
+end
+@@@ filter rawblock-fields rich cite
+function RawBlock(el)
+  return pandoc.CodeBlock(el.text, {class = el.format})
+end
+@@@ filter rawblock-set rich cite
+function RawBlock(el)
+  el.format = "html5"
+  el.text = "<!-- " .. el.text .. " -->"
+  return el
+end
+@@@ filter blockquote-to-div rich nested
+function BlockQuote(el)
+  return pandoc.Div(el.content, {class = "quote"})
+end
+@@@ filter blockquote-content rich nested
+function BlockQuote(el)
+  el.content = {pandoc.Para("Blocks: " .. #el.content)}
+  return el
+end
+@@@ filter bulletlist-items rich nested
+function BulletList(el)
+  local out = {}
+  for i, item in ipairs(el.content) do
+    out[#out + 1] = {pandoc.Plain("item " .. i .. " has " .. #item .. " blocks")}
+  end
+  return pandoc.BulletList(out)
+end
+@@@ filter bulletlist-to-ordered rich nested
+function BulletList(el)
+  return pandoc.OrderedList(el.content, pandoc.ListAttributes(3, "LowerRoman", "TwoParens"))
+end
+@@@ filter orderedlist-fields rich cite
+function OrderedList(el)
+  local la = el.listAttributes
+  return pandoc.Para(el.start .. " " .. el.style .. " " .. el.delimiter .. " " .. la.start .. " " .. la.style .. " " .. la.delimiter .. " " .. #el.content)
+end
+@@@ filter orderedlist-set rich cite
+function OrderedList(el)
+  el.start = 7
+  el.style = "UpperAlpha"
+  el.delimiter = "OneParen"
+  return el
+end
+@@@ filter orderedlist-set-attributes rich cite
+function OrderedList(el)
+  el.listAttributes = pandoc.ListAttributes(2, pandoc.Decimal, pandoc.Period)
+  el.content = {pandoc.Para "only item"}
+  return el
+end
+@@@ filter definitionlist-fields rich plain
+function DefinitionList(el)
+  local out = {}
+  for _, item in ipairs(el.content) do
+    out[#out + 1] = pandoc.Para({pandoc.Strong(item[1]), pandoc.Str(": " .. #item[2])})
+  end
+  return out
+end
+@@@ filter definitionlist-set rich plain
+function DefinitionList(el)
+  el.content = {{"new term", {{pandoc.Para "first"}, {pandoc.Para "second"}}}}
+  return el
+end
+@@@ filter lineblock-fields cite plain
+function LineBlock(el)
+  local out = {}
+  for _, line in ipairs(el.content) do
+    out[#out + 1] = pandoc.Plain(line)
+  end
+  return pandoc.BulletList(out)
+end
+@@@ filter lineblock-set cite plain
+function LineBlock(el)
+  el.content = {"first new line", {pandoc.Str "second"}}
+  return el
+end
+@@@ filter horizontalrule-replace cite plain
+function HorizontalRule()
+  return pandoc.Para "* * *"
+end
+@@@ filter div-fields rich nested
+function Div(el)
+  return pandoc.BlockQuote({pandoc.Para(el.identifier .. "|" .. table.concat(el.classes, ",") .. "|" .. #el.content), table.unpack(el.content)})
+end
+@@@ filter div-set rich nested
+function Div(el)
+  el.identifier = "d"
+  el.classes:insert("extra")
+  el.attributes["data-x"] = "1"
+  el.content:insert(1, pandoc.Para "first")
+  return el
+end
+@@@ filter div-unwrap rich nested
+function Div(el)
+  return el.content
+end
+@@@ filter figure-fields cite plain
+function Figure(el)
+  return pandoc.Div({pandoc.Para(el.identifier .. "|" .. #el.content .. "|" .. tostring(el.caption.short == nil)), pandoc.Div(el.caption.long)})
+end
+@@@ filter figure-set cite plain
+function Figure(el)
+  el.caption = {long = {pandoc.Plain "New long caption"}, short = "Short"}
+  el.content = pandoc.Para "replaced content"
+  el.identifier = "newfig"
+  return el
+end
+@@@ filter block-generic plain nested
+function Block(el)
+  return pandoc.Div({el}, {class = el.t})
+end
+@@@ filter block-specific-wins plain rich
+function Block(el)
+  return pandoc.Para "generic"
+end
+function Para(el)
+  return pandoc.Para "specific"
+end
+@@@ filter block-tag-count rich cite
+local counts = {}
+function Block(el)
+  counts[el.tag] = (counts[el.tag] or 0) + 1
+end
+function Pandoc(doc)
+  local names = {}
+  for name in pairs(counts) do names[#names + 1] = name end
+  table.sort(names)
+  local lines = {}
+  for _, name in ipairs(names) do lines[#lines + 1] = name .. " " .. counts[name] end
+  return pandoc.Pandoc({pandoc.CodeBlock(table.concat(lines, "\n"))}, doc.meta)
+end
+@@@ filter inlines-function plain rich
+function Inlines(list)
+  if #list > 0 then
+    list:insert(1, pandoc.Str(tostring(#list)))
+    list:insert(2, pandoc.Space())
+  end
+  return list
+end
+@@@ filter inlines-return-string plain cite
+function Inlines(list)
+  return pandoc.utils.stringify(list):upper()
+end
+@@@ filter inlines-return-inline plain nested
+function Inlines(list)
+  return pandoc.Emph(list)
+end
+@@@ filter inlines-return-bad plain empty
+function Inlines(list)
+  return pandoc.Para "x"
+end
+@@@ filter inlines-merge-strs plain rich
+function Inlines(list)
+  local out = pandoc.Inlines{}
+  for _, el in ipairs(list) do
+    local last = out[#out]
+    if el.t == "Str" and last and last.t == "Str" then
+      last.text = last.text .. el.text
+    elseif el.t == "Space" and last and last.t == "Str" then
+      last.text = last.text .. "_"
+    else
+      out:insert(el)
+    end
+  end
+  return out
+end
+@@@ filter blocks-function plain rich
+function Blocks(list)
+  list:insert(pandoc.Para("count " .. #list))
+  return list
+end
+@@@ filter blocks-return-block plain nested
+function Blocks(list)
+  return pandoc.Div(list)
+end
+@@@ filter blocks-return-string plain rich
+function Blocks(list)
+  return "all gone"
+end
+@@@ filter blocks-return-bad plain empty
+function Blocks(list)
+  return true
+end
+@@@ filter blocks-reverse rich nested
+function Blocks(list)
+  local out = pandoc.Blocks{}
+  for i = #list, 1, -1 do out:insert(list[i]) end
+  return out
+end
+@@@ filter meta-add-field plain meta
+function Meta(meta)
+  meta.added = "by filter"
+  meta.flag = true
+  meta.number = 12
+  return meta
+end
+@@@ filter meta-remove-field meta rich
+function Meta(meta)
+  meta.title = nil
+  meta.author = nil
+  return meta
+end
+@@@ filter meta-read-types meta rich
+function Meta(meta)
+  local names = {}
+  for name in pairs(meta) do names[#names + 1] = name end
+  table.sort(names)
+  local lines = {}
+  for _, name in ipairs(names) do
+    lines[#lines + 1] = name .. "=" .. pandoc.utils.type(meta[name]) .. ":" .. pandoc.utils.stringify(meta[name])
+  end
+  return {summary = pandoc.MetaBlocks{pandoc.CodeBlock(table.concat(lines, "\n"))}}
+end
+@@@ filter meta-nil-keeps meta plain
+function Meta(meta)
+  meta.title = "not kept"
+end
+@@@ filter meta-return-number meta empty
+function Meta(meta)
+  return 1
+end
+@@@ filter meta-return-list meta plain
+function Meta(meta)
+  return {"a", "b"}
+end
+@@@ filter meta-values-forms meta plain
+function Meta(meta)
+  return {
+    s = "plain string",
+    b = false,
+    i = 42,
+    f = 2.5,
+    big = 1e100,
+    inl = pandoc.Inlines "two words",
+    blk = pandoc.Blocks{pandoc.Para "a block"},
+    one_inline = pandoc.Emph "single",
+    one_block = pandoc.HorizontalRule(),
+    list = {"x", true, 3},
+    plist = pandoc.List{"p"},
+    inline_list = {pandoc.Str "a", pandoc.Space()},
+    block_list = {pandoc.Para "a", pandoc.Para "b"},
+    empty = {},
+    map = {k = {deep = "v"}},
+  }
+end
+@@@ filter meta-constructors meta plain
+function Meta(meta)
+  return pandoc.Meta{
+    a = pandoc.MetaString "str",
+    b = pandoc.MetaBool(true),
+    c = pandoc.MetaInlines{pandoc.Str "x"},
+    d = pandoc.MetaBlocks{pandoc.Plain "y"},
+    e = pandoc.MetaList{"1", pandoc.MetaBool(false)},
+    f = pandoc.MetaMap{k = "v"},
+    g = pandoc.MetaInlines "from a string",
+    h = pandoc.MetaBlocks "from a string",
+  }
+end
+@@@ filter meta-nested-edit meta plain
+function Meta(meta)
+  if meta.authors then
+    for i, author in ipairs(meta.authors) do
+      author.index = tostring(i)
+      author.name = pandoc.utils.stringify(author.name):upper()
+    end
+    meta.nested.inner.deep = {pandoc.Str "changed"}
+  end
+  return meta
+end
+@@@ filter meta-inlines-walked meta rich
+function Str(el)
+  return pandoc.Str("<" .. el.text .. ">")
+end
+@@@ filter pandoc-function plain rich
+function Pandoc(doc)
+  doc.blocks:insert(1, pandoc.Header(1, "Inserted"))
+  doc.meta.blockcount = tostring(#doc.blocks)
+  return doc
+end
+@@@ filter pandoc-new-doc plain meta
+function Pandoc(doc)
+  return pandoc.Pandoc({pandoc.Para(pandoc.utils.stringify(doc.meta.title or "no title"))}, {from = "filter"})
+end
+@@@ filter pandoc-nil-keeps plain rich
+function Pandoc(doc)
+  doc.blocks = {}
+end
+@@@ filter pandoc-return-blocks plain empty
+function Pandoc(doc)
+  return doc.blocks
+end
+@@@ filter pandoc-set-blocks-fuzzy plain meta
+function Pandoc(doc)
+  doc.blocks = "just a string"
+  return doc
+end
+@@@ filter pandoc-set-meta-bad plain meta
+function Pandoc(doc)
+  doc.meta = 5
+  return doc
+end
+@@@ filter pandoc-concat plain meta
+function Pandoc(doc)
+  return doc .. pandoc.Pandoc({pandoc.Para "appended"}, {title = "second wins", extra = "e"})
+end
+@@@ filter order-typewise rich nested
+local log = {}
+local function note(name) return function(el) log[#log + 1] = name end end
+return {{
+  Inline = function(el) log[#log + 1] = el.t end,
+  Inlines = function(l) log[#log + 1] = "Inlines" .. #l end,
+  Block = function(el) log[#log + 1] = el.t end,
+  Blocks = function(l) log[#log + 1] = "Blocks" .. #l end,
+  Meta = note "Meta",
+  Pandoc = function(doc)
+    log[#log + 1] = "Pandoc"
+    return pandoc.Pandoc{pandoc.CodeBlock(table.concat(log, " "))}
+  end,
+}}
+@@@ filter order-topdown rich nested
+local log = {}
+return {{
+  traverse = "topdown",
+  Inline = function(el) log[#log + 1] = el.t end,
+  Inlines = function(l) log[#log + 1] = "Inlines" .. #l end,
+  Block = function(el) log[#log + 1] = el.t end,
+  Blocks = function(l) log[#log + 1] = "Blocks" .. #l end,
+  Meta = function() log[#log + 1] = "Meta" end,
+  Pandoc = function(doc) log[#log + 1] = "Pandoc" end,
+}, {
+  Pandoc = function(doc)
+    return pandoc.Pandoc{pandoc.CodeBlock(table.concat(log, " "))}
+  end,
+}}
+@@@ filter order-table-parts table cite
+local log = {}
+return {{
+  Str = function(el) log[#log + 1] = el.text end,
+  Plain = function(el) log[#log + 1] = "Plain" end,
+  Para = function(el) log[#log + 1] = "Para" end,
+  Table = function(el) log[#log + 1] = "Table" end,
+  Figure = function(el) log[#log + 1] = "Figure" end,
+  Pandoc = function(doc)
+    return pandoc.Pandoc{pandoc.CodeBlock(table.concat(log, " "))}
+  end,
+}}
+@@@ filter order-meta-then-blocks meta rich
+local log = {}
+return {{
+  Str = function(el) log[#log + 1] = el.text end,
+  Pandoc = function(doc)
+    return pandoc.Pandoc{pandoc.CodeBlock(table.concat(log, " "))}
+  end,
+}}
+@@@ filter topdown-stop rich nested
+return {{
+  traverse = "topdown",
+  Div = function(el) return el, false end,
+  BlockQuote = function(el) return nil, false end,
+  Str = function(el) return pandoc.Str(el.text:upper()) end,
+}}
+@@@ filter topdown-replace-then-descend rich nested
+return {{
+  traverse = "topdown",
+  Emph = function(el) return pandoc.Strong(el.content) end,
+  Strong = function(el) return pandoc.Emph(el.content) end,
+  Str = function(el) return pandoc.Str("(" .. el.text .. ")") end,
+}}
+@@@ filter topdown-lists-stop rich nested
+return {{
+  traverse = "topdown",
+  Blocks = function(list)
+    if #list > 3 then return list, false end
+  end,
+  Inlines = function(list)
+    if #list > 5 then return {pandoc.Str "long"}, false end
+  end,
+  Str = function(el) return pandoc.Str "s" end,
+}}
+@@@ filter topdown-true-continues rich nested
+return {{
+  traverse = "topdown",
+  Para = function(el) return el, true end,
+  Str = function(el) return pandoc.Str(el.text:lower()) end,
+}}
+@@@ filter traverse-typewise-explicit plain nested
+return {{
+  traverse = "typewise",
+  Str = function(el) return pandoc.Str(el.text .. "1") end,
+  Para = function(el) return pandoc.Plain(el.content) end,
+}}
+@@@ filter traverse-unknown-value plain nested
+return {{
+  traverse = "sideways",
+  Str = function(el) return pandoc.Str(el.text .. "?") end,
+}}
+@@@ filter filters-in-sequence plain rich
+return {
+  {Str = function(el) return pandoc.Str(el.text .. "a") end},
+  {Str = function(el) return pandoc.Str(el.text .. "b") end},
+  {Para = function(el) return pandoc.Plain(el.content) end},
+}
+@@@ filter single-filter-table plain rich
+return {Str = function(el) return pandoc.Str(el.text:rep(2)) end}
+@@@ filter empty-filter-list plain rich
+return {}
+@@@ filter global-functions-only plain rich
+local function hidden(el) return pandoc.Str "never" end
+function Str(el) return pandoc.Str(el.text:sub(1, 1)) end
+@@@ filter global-traverse-topdown plain nested
+traverse = "topdown"
+function Para(el) return pandoc.Plain(el.content), false end
+function Str(el) return pandoc.Str "unreached" end
+@@@ filter return-number plain empty
+return 5
+@@@ filter return-string plain empty
+return "a string"
+@@@ filter return-true plain empty
+return true
+@@@ filter return-list-with-number plain empty
+return {{Str = function(el) return pandoc.Str "x" end}, 7}
+@@@ filter non-function-fields plain rich
+return {{Str = "not a function", Para = 5, Emph = function(el) return el.content end}}
+@@@ filter attr-read rich nested
+local out = {}
+local function show(el)
+  local a = el.attr
+  local kv = {}
+  for k, v in pairs(a.attributes) do kv[#kv + 1] = k .. "=" .. v end
+  out[#out + 1] = el.t .. " id=" .. a.identifier .. " classes=" .. table.concat(a.classes, ",") .. " kv=" .. table.concat(kv, ";") .. " n=" .. #a.attributes
+end
+return {{Header = show, Div = show, Span = show, Link = show, Image = show, Code = show, CodeBlock = show,
+  Pandoc = function(doc) return pandoc.Pandoc{pandoc.CodeBlock(table.concat(out, "\n"))} end}}
+@@@ filter attr-constructor-forms plain rich
+function Pandoc(doc)
+  local forms = {
+    pandoc.Attr(),
+    pandoc.Attr("id"),
+    pandoc.Attr("id", {"a", "b"}),
+    pandoc.Attr("id", {"a"}, {{"k", "v"}, {"k2", "v2"}}),
+    pandoc.Attr("id", {}, {only = "one"}),
+    pandoc.Attr{id = "html", class = "x y  z"},
+    pandoc.Attr{"lst", {"c"}, {{"p", "q"}}},
+    pandoc.Attr(pandoc.Attr("copy", {"c"})),
+    pandoc.Attr(nil, {"ignored"}),
+    pandoc.Attr("", nil, {{"a", "1"}}),
+  }
+  local lines = {}
+  for i, a in ipairs(forms) do lines[i] = tostring(a) end
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter attr-as-argument-forms plain rich
+function Pandoc(doc)
+  return pandoc.Pandoc{
+    pandoc.Div({}, "just-id"),
+    pandoc.Div({}, {"id2", {"cls"}}),
+    pandoc.Div({}, {class = "html like"}),
+    pandoc.Div({}, pandoc.Attr("obj")),
+    pandoc.CodeBlock("x", {"cb", {"lua"}, {{"n", "1"}}}),
+    pandoc.Header(2, "h", {id = "hid"}),
+    pandoc.Para{pandoc.Span("s", "sid"), pandoc.Code("c", {class = "k"}), pandoc.Link("l", "u", "t", "lid"), pandoc.Image("i", "s.png", "", {"iid"})},
+  }
+end
+@@@ filter attr-bad-argument plain empty
+function Pandoc(doc)
+  return pandoc.Pandoc{pandoc.Div({}, 12)}
+end
+@@@ filter attr-modify-in-place rich nested
+function Div(el)
+  local a = el.attr
+  a.identifier = "changed"
+  a.classes:insert("added")
+  a.attributes.key = "value"
+  return el
+end
+@@@ filter attr-fields-replace rich nested
+function Span(el)
+  local a = pandoc.Attr()
+  a.identifier = "i"
+  a.classes = {"c1", "c2"}
+  a.attributes = {{"k", "v"}}
+  el.attr = a
+  return el
+end
+@@@ filter attributes-list-api plain rich
+function Pandoc(doc)
+  local a = pandoc.Attr("", {}, {{"one", "1"}, {"two", "2"}, {"three", "3"}})
+  local at = a.attributes
+  local lines = {}
+  local function add(...) lines[#lines + 1] = table.concat({...}, " ") end
+  add("len", #at, "one", at.one, "missing", tostring(at.missing), "first", at[1][1], at[1][2], "fourth", tostring(at[4]))
+  at.two = nil
+  add("after delete", tostring(at))
+  at.four = "4"
+  add("after add", tostring(at))
+  at.one = "uno"
+  add("after replace", tostring(at))
+  at[1] = {"eins", "1"}
+  add("after pair", tostring(at))
+  at[2] = "drei"
+  add("after value by index", tostring(at))
+  at[1] = nil
+  add("after remove by index", tostring(at))
+  at[3] = {"new", "pair"}
+  add("after append", tostring(at))
+  local seen = {}
+  for k, v in pairs(at) do seen[#seen + 1] = k .. "=" .. v end
+  add("pairs", table.concat(seen, ","))
+  add("eq", tostring(at == pandoc.AttributeList{{"three", "drei"}, {"four", "4"}, {"new", "pair"}}), tostring(at == a.attributes), pandoc.utils.type(at))
+  add("attr", tostring(a))
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter attributes-list-errors plain rich
+function Pandoc(doc)
+  local at = pandoc.Attr("", {}, {{"k", "v"}}).attributes
+  local lines = {}
+  local function try(name, f) local ok, err = pcall(f) lines[#lines + 1] = name .. ": " .. tostring(ok) .. " " .. tostring(err) end
+  try("string at new index", function() at[5] = "x" end)
+  try("pair for string key", function() at.k = {"a", "b"} end)
+  try("boolean key", function() at[true] = "x" end)
+  try("number value", function() at.n = 5 end)
+  try("table value for new key", function() at.q = {"a", "b"} end)
+  try("read boolean key", function() return at[true] end)
+  lines[#lines + 1] = tostring(at)
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter alias-reads rich nested
+local lines = {}
+local function show(el)
+  lines[#lines + 1] = el.t .. "|" .. tostring(el.identifier) .. "|" .. tostring(el.classes and #el.classes) .. "|" .. tostring(el.attributes and #el.attributes) .. "|" .. tostring(el.t == el.tag) .. "|" .. tostring(el.c == el.content)
+end
+return {{Inline = show, Block = show, Pandoc = function() return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))} end}}
+@@@ filter alias-write-no-attr plain empty
+function Str(el)
+  el.identifier = "x"
+  return el
+end
+@@@ filter property-errors plain rich
+function Pandoc(doc)
+  local lines = {}
+  local function try(name, f) local ok, err = pcall(f) lines[#lines + 1] = name .. ": " .. tostring(ok) .. " " .. tostring(err) end
+  local s, p = pandoc.Str "a", pandoc.Para "b"
+  try("unknown property", function() s.nothing = 1 end)
+  try("set tag", function() s.tag = "Emph" end)
+  try("set t", function() p.t = "Plain" end)
+  try("read unknown", function() return s.nothing end)
+  try("read absent", function() return s.content, p.text, p.level end)
+  try("numeric index", function() return s[1], p[2] end)
+  try("set numeric", function() s[1] = 2 end)
+  try("attr tag", function() pandoc.Attr().tag = "x" end)
+  try("citation unknown", function() pandoc.Citation("k", "NormalCitation").nope = 1 end)
+  try("doc unknown", function() doc.title = "x" end)
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter lazy-property-errors plain rich
+function Pandoc(doc)
+  local lines = {}
+  local function try(name, f) local ok, err = pcall(f) lines[#lines + 1] = name .. ": " .. tostring(ok) .. " " .. tostring(err) end
+  local p = pandoc.Para "b"
+  p.content = 3
+  try("read back", function() return p.content end)
+  try("tostring", function() return tostring(p) end)
+  try("clone", function() return p:clone() end)
+  try("use", function() return pandoc.Div{p} end)
+  try("equals", function() return p == pandoc.Para "b" end)
+  p.content = nil
+  try("after reset", function() return tostring(p) end)
+  local s = pandoc.Str "a"
+  s.content = "not for Str"
+  try("unavailable", function() return tostring(s) end)
+  try("other property", function() return s.text end)
+  local h = pandoc.Header(1, "t")
+  h.level = "2"
+  try("level string", function() return tostring(h) end)
+  h.level = "two"
+  try("level bad", function() return tostring(h) end)
+  h.level = 2.5
+  try("level float", function() return tostring(h) end)
+  h.level = 3.0
+  try("level float int", function() return tostring(h) end)
+  local m = pandoc.Math("InlineMath", "x")
+  m.mathtype = "Wrong"
+  try("mathtype", function() return tostring(m) end)
+  local q = pandoc.Quoted("SingleQuote", "x")
+  q.quotetype = 5
+  try("quotetype", function() return tostring(q) end)
+  local l = pandoc.Link("a", "b")
+  l.target = {}
+  try("target", function() return tostring(l) end)
+  l.target = 12
+  try("target number", function() return tostring(l) end)
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter content-forms plain rich
+function Pandoc(doc)
+  local lines = {}
+  local function try(name, f) local ok, err = pcall(f) lines[#lines + 1] = name .. ": " .. tostring(ok) .. " " .. tostring(err) end
+  local function set(el, value) el.content = value; return tostring(el) end
+  try("para string", function() return set(pandoc.Para{}, "a b") end)
+  try("para inline", function() return set(pandoc.Para{}, pandoc.Str "x") end)
+  try("para blocks", function() return set(pandoc.Para{}, {pandoc.Para "x"}) end)
+  try("para lines", function() return set(pandoc.Para{}, {{pandoc.Str "x"}}) end)
+  try("div string", function() return set(pandoc.Div{}, "a b") end)
+  try("div empty", function() return set(pandoc.Div{}, {}) end)
+  try("div block", function() return set(pandoc.Div{}, pandoc.Para "x") end)
+  try("div lines", function() return set(pandoc.Div{}, {{pandoc.Str "x"}, {pandoc.Str "y"}}) end)
+  try("bq inlines", function() return set(pandoc.BlockQuote{}, {pandoc.Str "x", pandoc.Space()}) end)
+  try("list blocks", function() return set(pandoc.BulletList{}, {pandoc.Para "x", pandoc.Para "y"}) end)
+  try("list strings", function() return set(pandoc.BulletList{}, {"x", "y"}) end)
+  try("list items", function() return set(pandoc.BulletList{}, {{pandoc.Para "x", pandoc.Para "y"}}) end)
+  try("list inlines", function() return set(pandoc.BulletList{}, "one string") end)
+  try("olist items", function() return set(pandoc.OrderedList{}, {{pandoc.Para "x"}, {pandoc.Para "y"}}) end)
+  try("lineblock lines", function() return set(pandoc.LineBlock{}, {"a b", "c"}) end)
+  try("lineblock inlines", function() return set(pandoc.LineBlock{}, "a b") end)
+  try("deflist items", function() return set(pandoc.DefinitionList{}, {{"t", {{pandoc.Para "d"}}}}) end)
+  try("deflist blocks", function() return set(pandoc.DefinitionList{}, {pandoc.Para "d"}) end)
+  try("note string", function() return set(pandoc.Note{}, "a") end)
+  try("note empty", function() return set(pandoc.Note{pandoc.Para "x"}, {}) end)
+  try("note blocks", function() return set(pandoc.Note{}, {pandoc.Para "x"}) end)
+  try("emph blocks", function() return set(pandoc.Emph{}, {pandoc.Para "x"}) end)
+  try("header number", function() return set(pandoc.Header(1, {}), 5) end)
+  try("figure string", function() return set(pandoc.Figure{}, "fig text") end)
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter constructors-inline plain rich
+function Pandoc(doc)
+  local c = pandoc.Citation("key", "AuthorInText", "pre fix", {pandoc.Str "suf"}, 3, 4)
+  return pandoc.Pandoc{pandoc.Para{
+    pandoc.Str "s", pandoc.Space(), pandoc.SoftBreak(), pandoc.LineBreak(),
+    pandoc.Emph "e", pandoc.Strong{pandoc.Str "st"}, pandoc.Underline(pandoc.Str "u"), pandoc.Strikeout "x y",
+    pandoc.Superscript "sup", pandoc.Subscript "sub", pandoc.SmallCaps "sc",
+    pandoc.Quoted("DoubleQuote", "q"), pandoc.Quoted(pandoc.SingleQuote, {pandoc.Str "r"}),
+    pandoc.Cite("cited", {c, pandoc.Citation("k2", pandoc.NormalCitation)}),
+    pandoc.Code "code", pandoc.Code("code2", {class = "lang"}),
+    pandoc.Math("InlineMath", "a+b"), pandoc.Math(pandoc.DisplayMath, "c"),
+    pandoc.RawInline("html", "<i>"), pandoc.Link("text", "url"), pandoc.Link({pandoc.Str "t"}, "u", "title", {id = "l"}),
+    pandoc.Image("alt", "src"), pandoc.Image({}, "s", "t", "imgid"),
+    pandoc.Note "note text", pandoc.Note{pandoc.Para "p", pandoc.CodeBlock "c"},
+    pandoc.Span "sp", pandoc.Span({pandoc.Str "x"}, {class = "c"}),
+  }}
+end
+@@@ filter constructors-block plain rich
+function Pandoc(doc)
+  return pandoc.Pandoc{
+    pandoc.Plain "plain text", pandoc.Para{pandoc.Str "p"},
+    pandoc.LineBlock{"line one", {pandoc.Str "two"}},
+    pandoc.CodeBlock "code", pandoc.CodeBlock("c2", {id = "cb"}),
+    pandoc.RawBlock("latex", "\\x"),
+    pandoc.BlockQuote "quoted", pandoc.BlockQuote{pandoc.Para "a", pandoc.Para "b"},
+    pandoc.OrderedList{"a", "b"}, pandoc.OrderedList({{pandoc.Para "x"}}, {5, "LowerAlpha", "OneParen"}),
+    pandoc.OrderedList({}, pandoc.ListAttributes()),
+    pandoc.BulletList "single", pandoc.BulletList{pandoc.Para "p1", {pandoc.Para "p2", pandoc.Para "p3"}},
+    pandoc.DefinitionList{{"term", {"def one", {pandoc.Para "def two"}}}},
+    pandoc.DefinitionList{{{pandoc.Emph "t"}, {{pandoc.Plain "d"}}}, {"t2", "d2"}},
+    pandoc.Header(1, "h1"), pandoc.Header(3, {pandoc.Str "h3"}, {id = "x"}), pandoc.Header("2", "numeric string"),
+    pandoc.HorizontalRule(),
+    pandoc.Div "div text", pandoc.Div({pandoc.Para "d"}, {class = "c"}), pandoc.Div(pandoc.Para "single block"),
+    pandoc.Figure "fig", pandoc.Figure({pandoc.Para "f"}, {pandoc.Plain "cap"}, "figid"),
+    pandoc.Figure({}, pandoc.Caption({pandoc.Plain "long"}, "short")),
+  }
+end
+@@@ filter constructors-table plain rich
+function Pandoc(doc)
+  local cell = pandoc.Cell
+  local head = pandoc.TableHead({pandoc.Row({cell "h1", cell("h2", "AlignCenter")})}, {id = "head"})
+  local body = pandoc.TableBody({pandoc.Row{cell("a", pandoc.AlignLeft, 2, 1), cell({pandoc.Para "b"}, nil, nil, 2, {class = "c"})}}, {pandoc.Row{cell "ih"}}, 1, "bodyid")
+  local foot = pandoc.TableFoot({pandoc.Row({cell "f"}, "rowid")})
+  local t1 = pandoc.Table({long = "Caption text", short = "Short"}, {{"AlignLeft", 0.25}, {pandoc.AlignRight, nil}, {"AlignDefault"}}, head, {body}, foot, {id = "t"})
+  local t2 = pandoc.Table({}, {}, pandoc.TableHead(), {}, pandoc.TableFoot())
+  local t3 = pandoc.Table(pandoc.Caption "plain", {{"AlignCenter", 1}}, pandoc.TableHead{}, {{attr = {}, body = {{{}, {{attr = {}, alignment = "AlignDefault", row_span = 1, col_span = 1, contents = "tbl cell"}}}}, head = {}, row_head_columns = 0}}, pandoc.TableFoot{})
+  return pandoc.Pandoc{t1, t2, t3}
+end
+@@@ filter constructors-errors plain rich
+function Pandoc(doc)
+  local lines = {}
+  local function try(name, f, ...) local ok, err = pcall(f, ...) lines[#lines + 1] = name .. ": " .. tostring(ok) .. " " .. tostring(err) end
+  try("Str none", pandoc.Str)
+  try("Str table", pandoc.Str, {})
+  try("Str number", pandoc.Str, 5)
+  try("Str bool", pandoc.Str, true)
+  try("Emph number", pandoc.Emph, 5)
+  try("Emph none", pandoc.Emph)
+  try("Emph block", pandoc.Emph, pandoc.Para "x")
+  try("Emph mixed", pandoc.Emph, {pandoc.Str "a", 5})
+  try("Emph nested table", pandoc.Emph, {{pandoc.Str "a"}})
+  try("Para nil", pandoc.Para, nil)
+  try("Header no level", pandoc.Header, "x", "y")
+  try("Header float", pandoc.Header, 1.5, "y")
+  try("Header no content", pandoc.Header, 1)
+  try("Code attr", pandoc.Code, "c", 5)
+  try("Code attr bool", pandoc.Code, "c", true)
+  try("Math type", pandoc.Math, "Inline", "x")
+  try("Math text", pandoc.Math, "InlineMath", {})
+  try("Quoted type", pandoc.Quoted, 1, "x")
+  try("Link target", pandoc.Link, "x", {})
+  try("Link title", pandoc.Link, "x", "y", {})
+  try("Image src", pandoc.Image, "x")
+  try("RawInline", pandoc.RawInline, {}, "x")
+  try("Cite citations", pandoc.Cite, "x", "y")
+  try("Cite citation item", pandoc.Cite, "x", {"y"})
+  try("Citation mode", pandoc.Citation, "k", "Normal")
+  try("Citation id", pandoc.Citation, {}, "NormalCitation")
+  try("Citation note", pandoc.Citation, "k", "NormalCitation", nil, nil, "n")
+  try("Div number", pandoc.Div, 5)
+  try("Div list of numbers", pandoc.Div, {1, 2})
+  try("BulletList number", pandoc.BulletList, 5)
+  try("OrderedList attributes", pandoc.OrderedList, {}, 5)
+  try("OrderedList style", pandoc.OrderedList, {}, {1, "Wrong", "Period"})
+  try("ListAttributes start", pandoc.ListAttributes, "x")
+  try("ListAttributes style", pandoc.ListAttributes, 1, "x")
+  try("ListAttributes delimiter", pandoc.ListAttributes, 1, "Decimal", "x")
+  try("LineBlock", pandoc.LineBlock, "x")
+  try("DefinitionList", pandoc.DefinitionList, {"t", "d"})
+  try("DefinitionList number", pandoc.DefinitionList, 5)
+  try("CodeBlock", pandoc.CodeBlock, {})
+  try("RawBlock", pandoc.RawBlock, "html")
+  try("Figure caption", pandoc.Figure, {}, 5)
+  try("Table caption", pandoc.Table, 1, {}, pandoc.TableHead(), {}, pandoc.TableFoot())
+  try("Table colspecs", pandoc.Table, {}, 5, pandoc.TableHead(), {}, pandoc.TableFoot())
+  try("Table colspec align", pandoc.Table, {}, {{"Left"}}, pandoc.TableHead(), {}, pandoc.TableFoot())
+  try("Table head", pandoc.Table, {}, {}, {}, {}, pandoc.TableFoot())
+  try("Table bodies", pandoc.Table, {}, {}, pandoc.TableHead(), {5}, pandoc.TableFoot())
+  try("Table foot", pandoc.Table, {}, {}, pandoc.TableHead(), {}, nil)
+  try("Cell", pandoc.Cell, 5)
+  try("Cell align", pandoc.Cell, "x", "Left")
+  try("Cell span", pandoc.Cell, "x", nil, "two")
+  try("Row", pandoc.Row, 5)
+  try("Row cell", pandoc.Row, {5})
+  try("TableHead", pandoc.TableHead, 5)
+  try("TableBody", pandoc.TableBody, 5)
+  try("TableFoot", pandoc.TableFoot, {5})
+  try("Caption", pandoc.Caption, 5)
+  try("Attr number", pandoc.Attr, 5)
+  try("Attr function", pandoc.Attr, print)
+  try("AttributeList", pandoc.AttributeList, 5)
+  try("Pandoc", pandoc.Pandoc, 5)
+  try("Pandoc meta", pandoc.Pandoc, {}, 5)
+  try("Meta", pandoc.Meta, 5)
+  try("Meta bad value", pandoc.Meta, {k = print})
+  try("MetaMap", pandoc.MetaMap, 5)
+  try("MetaList", pandoc.MetaList, 5)
+  try("MetaInlines", pandoc.MetaInlines, 5)
+  try("MetaBlocks", pandoc.MetaBlocks, 5)
+  try("MetaString", pandoc.MetaString, {})
+  try("Inlines", pandoc.Inlines, 5)
+  try("Blocks", pandoc.Blocks, 5)
+  return pandoc.Pandoc{pandoc.CodeBlock(table.concat(lines, "\n"))}
+end
+@@@ filter real-heading-shift rich nested
+-- Moves each heading one level down, and turns level 6 into a paragraph.
+function Header(h)
+  if h.level >= 6 then
+    return pandoc.Para(h.content)
+  end
+  h.level = h.level + 1
+  return h
+end
+@@@ filter real-word-count rich nested
+-- Adds the number of words of the body to the metadata field wordcount:
+-- a text element with a character that is not punctuation is one word, and
+-- inline code gives one word for each run without white space.
+local total = 0
+local function add_runs(text)
+  for _ in text:gmatch('%S+') do total = total + 1 end
+end
+function Pandoc(doc)
+  doc.blocks:walk {
+    Inline = function(inline)
+      if inline.t == 'Str' and inline.text:find('%P') then
+        total = total + 1
+      elseif inline.t == 'Code' then
+        add_runs(inline.text)
+      end
+    end,
+  }
+  doc.meta.wordcount = tostring(total)
+  return doc
+end
+@@@ filter real-link-rewrite rich nested
+-- Rewrites links to pages of the site from .html to .md and marks external links.
+function Link(link)
+  if link.target:match('^https?://') then
+    link.classes:insert('external')
+  else
+    link.target = link.target:gsub('%.html$', '.md')
+  end
+  return link
+end
+@@@ filter real-meta-reader meta rich
+-- Puts the title and the authors of the metadata in front of the body.
+function Pandoc(doc)
+  local front = pandoc.Blocks{}
+  if doc.meta.title then
+    front:insert(pandoc.Header(1, doc.meta.title))
+  end
+  local authors = doc.meta.authors or doc.meta.author
+  if authors then
+    local names = pandoc.List{}
+    for _, a in ipairs(authors) do
+      local name = pandoc.utils.type(a) == 'table' and a.name or a
+      names:insert(pandoc.utils.stringify(name))
+    end
+    front:insert(pandoc.Para(table.concat(names, ', ')))
+  end
+  doc.blocks = front .. doc.blocks
+  return doc
+end
+@@@ filter real-table-builder meta plain
+-- Builds a table of the metadata keys and their text.
+function Pandoc(doc)
+  local keys = {}
+  for k in pairs(doc.meta) do keys[#keys + 1] = k end
+  table.sort(keys)
+  local rows = {}
+  for _, k in ipairs(keys) do
+    rows[#rows + 1] = pandoc.Row{
+      pandoc.Cell(pandoc.Plain(k)),
+      pandoc.Cell(pandoc.Plain(pandoc.utils.stringify(doc.meta[k]))),
+    }
+  end
+  local head = pandoc.TableHead{pandoc.Row{pandoc.Cell(pandoc.Plain'Key'), pandoc.Cell(pandoc.Plain'Value')}}
+  local body = {attr = pandoc.Attr(), body = rows, head = {}, row_head_columns = 0}
+  local tbl = pandoc.Table(pandoc.Caption{pandoc.Plain'Metadata'},
+    {{pandoc.AlignLeft, pandoc.ColWidthDefault}, {pandoc.AlignDefault, pandoc.ColWidthDefault}},
+    head, {body}, pandoc.TableFoot())
+  doc.blocks:insert(tbl)
+  return doc
+end
+@@@ filter real-smallcaps-abbrev plain rich
+-- Sets each word of two or more capital letters in small capitals.
+function Str(el)
+  local word, rest = el.text:match('^(%u%u+)(%p*)$')
+  if word then
+    return {pandoc.SmallCaps(word:lower()), pandoc.Str(rest)}
+  end
+end
+@@@ filter real-remove-notes rich nested
+-- Deletes footnotes and the space before them.
+function Inlines(inlines)
+  local result = pandoc.Inlines{}
+  for i, el in ipairs(inlines) do
+    if el.t == 'Note' then
+      if result[#result] and result[#result].t == 'Space' then result:remove() end
+    else
+      result:insert(el)
+    end
+  end
+  return result
+end
+@@@ filter real-code-class rich cite
+-- Gives each code block without a class the class "text".
+function CodeBlock(cb)
+  if #cb.classes == 0 then
+    cb.classes = {'text'}
+    return cb
+  end
+  cb.attributes.lines = tostring(select(2, cb.text:gsub('\n', '')) + 1)
+  return cb
+end
+@@@ filter real-div-to-blockquote rich nested
+-- Turns divs with the class "note" or "warn" into block quotes with a label.
+function Div(div)
+  if div.classes:includes('note') or div.identifier == 'warn' then
+    local label = pandoc.Para{pandoc.Strong{pandoc.Str 'Note:'}}
+    return pandoc.BlockQuote({label} .. div.content)
+  end
+end
+@@@ filter real-image-defaults rich cite
+-- Adds a width to each image that has none, and a title from the description.
+function Image(img)
+  if not img.attributes.width then
+    img.attributes.width = '80%'
+  end
+  if img.title == '' then
+    img.title = pandoc.utils.stringify(img.caption)
+  end
+  return img
+end
+@@@ filter real-toc rich nested
+-- Builds a bullet list of the headings and puts it after the first heading.
+local entries = {}
+local function collect(h)
+  local text = pandoc.utils.stringify(h.content)
+  entries[#entries + 1] = {pandoc.Plain{pandoc.Link(text, '#' .. h.identifier)}}
+end
+return {
+  {Header = function(h) collect(h) end},
+  {Pandoc = function(doc)
+    if #entries == 0 then return nil end
+    doc.blocks:insert(2, pandoc.BulletList(entries))
+    return doc
+  end},
+}
+@@@ filter real-quote-style cite rich
+-- Replaces quoted text with the quotation marks of German typography.
+function Quoted(q)
+  local open, close = '\u{201E}', '\u{201C}'
+  if q.quotetype == 'SingleQuote' then open, close = '\u{201A}', '\u{2018}' end
+  local result = {pandoc.Str(open)}
+  for _, el in ipairs(q.content) do result[#result + 1] = el end
+  result[#result + 1] = pandoc.Str(close)
+  return result
+end
+@@@ filter real-cite-list cite plain
+-- Lists the citation keys of the document in the metadata field "keys".
+local keys = pandoc.List{}
+function Cite(c)
+  for _, citation in ipairs(c.citations) do
+    if not keys:includes(citation.id) then keys:insert(citation.id) end
+  end
+end
+function Meta(meta)
+  meta.keys = keys:map(function(k) return pandoc.MetaString(k) end)
+  return meta
+end
+@@@ filter real-ordered-style cite rich
+-- Uses lower roman numbers with one parenthesis for each ordered list.
+function OrderedList(list)
+  list.style = 'LowerRoman'
+  list.delimiter = 'OneParen'
+  list.start = list.start + 1
+  return list
+end
+@@@ filter real-draft-banner rich meta
+-- Puts a banner at the start when the metadata field "draft" is true.
+function Pandoc(doc)
+  if doc.meta.draft == true then
+    doc.blocks:insert(1, pandoc.Div({pandoc.Para 'DRAFT'}, {class = 'banner'}))
+  end
+  doc.meta.draft = nil
+  return doc
+end
+@@@ filter real-strip-raw cite rich
+-- Removes raw content for other formats and keeps raw content for HTML.
+local function keep(format) return format == 'html' or format == 'html5' end
+function RawBlock(el) if not keep(el.format) then return {} end end
+function RawInline(el) if not keep(el.format) then return {} end end
+@@@ filter real-number-figures cite table
+-- Numbers the figures and the tables and writes the number into each caption.
+local figures, tables = 0, 0
+local function prefix(caption, label)
+  local first = caption.long[1]
+  if first then
+    first.content = {pandoc.Str(label), pandoc.Space()} .. first.content
+  end
+  return caption
+end
+function Figure(fig)
+  figures = figures + 1
+  fig.caption = prefix(fig.caption, 'Figure ' .. figures .. ':')
+  return fig
+end
+function Table(tbl)
+  tables = tables + 1
+  tbl.caption = prefix(tbl.caption, 'Table ' .. tables .. ':')
+  return tbl
+end
+@@@ filter real-lang-spans meta plain
+-- Wraps the body in a div with the language of the metadata.
+function Pandoc(doc)
+  local lang = doc.meta.lang and pandoc.utils.stringify(doc.meta.lang) or 'und'
+  doc.blocks = {pandoc.Div(doc.blocks, pandoc.Attr('', {}, {lang = lang}))}
+  return doc
+end
+@@@ filter real-emph-to-strong nested rich
+-- Turns nested emphasis into strong text, from the outside to the inside.
+return {{
+  traverse = 'topdown',
+  Emph = function(el)
+    return pandoc.Strong(el.content)
+  end,
+  Code = function(el) return el, false end,
+}}
+@@@ filter real-cell-align table rich
+-- Aligns the cells of the first column to the right, and counts the cells.
+local cells = 0
+function Table(tbl)
+  for _, body in ipairs(tbl.bodies) do
+    for _, row in ipairs(body.body) do
+      for i, cell in ipairs(row.cells) do
+        cells = cells + 1
+        if i == 1 then cell.alignment = pandoc.AlignRight end
+      end
+    end
+  end
+  tbl.attributes.cells = tostring(cells)
+  return tbl
+end
+@@@ filter real-linebreaks cite rich
+-- Replaces soft line breaks with hard line breaks inside line blocks and quotes.
+function BlockQuote(bq)
+  return bq:walk {SoftBreak = function() return pandoc.LineBreak() end}
+end
+@@@ filter tostring-each-kind rich cite table
+-- Writes the text form of each element and each part of an element.
+local seen = pandoc.List{}
+-- An address in the text differs from run to run, so it is replaced.
+local function note(x)
+  if x ~= nil then seen:insert(pandoc.MetaString((tostring(x):gsub('0x%x+', 'ADDR')))) end
+end
+local function show(el)
+  note(el)
+  if el.attr then note(el.attr) end
+  if el.t == 'Cite' then note(el.citations[1]) end
+  if el.t == 'OrderedList' then note(el.listAttributes) end
+  if el.t == 'Table' then
+    note(el.caption); note(el.head); note(el.foot)
+    note(el.head.rows[1]); note(el.head.rows[1] and el.head.rows[1].cells[1])
+    note(el.colspecs[1] and pandoc.List(el.colspecs[1]))
+  end
+  if el.t == 'Figure' then note(el.caption) end
+  if el.content and el.t ~= 'Table' then note(el.content) end
+end
+return {
+  {Inline = show, Block = show},
+  {Pandoc = function(d)
+    note(d.meta)
+    note(d)
+    d.meta.shown = seen
+    return d
+  end},
+}

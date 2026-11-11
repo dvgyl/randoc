@@ -422,6 +422,48 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   `probe.py table` again. A command that KaTeX does not know and that the
   oracle accepts is found only by a hand-written probe.
 
+## ADR 16: The Lua document types are a port of `pandoc-lua-marshal` 0.3.2.1 without its GPL files (2026-11-11)
+
+- **Context.** `pandoc-lua-marshal` 0.3.2.1 defines the Pandoc document
+  types in Lua for Pandoc 3.13. The `LICENSE` file of the package is MIT.
+  Three of its files have the header "License: GNU GPL, version 2 or
+  above": `src/Text/Pandoc/Lua/Walk.hs`, `SpliceList.hs` and `Topdown.hs`.
+  They hold the tree walk of a filter. A worker of session 2 printed them
+  before it saw the header.
+- **Decision.** `randoc-lua` ports the files of the package whose header
+  is MIT or that have no header: the peekers, pushers, properties and
+  constructors of `Marshal/*.hs`, among them `Marshal/Filter.hs` (the
+  filter names, the field `traverse`, the lookup of a function by
+  constructor name and then by type name) and `Marshal/Shared.hs` (the
+  four passes of a typewise walk and the topdown dispatch). The three GPL
+  files are not used. The coordinator removed the earlier `walk.rs` with
+  `git rm`, unread, on 2026-11-11. The new `crates/randoc-lua/src/walk.rs`
+  comes from `doc/lua-filters.md`, the two MIT files above and the oracle
+  matrix, which also gives the node order,
+  `crates/randoc-lua/tests/replay/walk.txt` (82 filters, 164 runs; the tool
+  `crates/randoc-lua/tools/walk-matrix.py` writes it).
+- **Why.** The walk is a small part of the package, and the oracle shows
+  each detail of it: the order of the calls, the splice of a list, the
+  effect of `false` in a topdown walk. A rewrite from observation keeps the
+  crate free of GPL material.
+- **Also ported (MIT, by the `LICENSE` file of each release):**
+  `hslua-objectorientation` 2.5.0, `hslua-marshalling` 2.3.2,
+  `hslua-core` 2.3.2.1 and `hslua-list` 1.1.4. The licence texts are in
+  `third_party/licences/hslua.txt` and `crates/randoc-lua/NOTICE.md`.
+- **Extension (unit 2, 2026-11-11).** `pandoc.path` is a port of
+  `hslua-module-path` 1.2.0 (MIT) and of the POSIX rules of
+  `System.FilePath` in `filepath` 1.5.4.0 (BSD-3-Clause). `pandoc.text` is
+  a port of `hslua-module-text` 1.2.0 (MIT); `subscript`, `superscript` and
+  the functions of `pandoc.utils` come from the oracle matrix
+  `crates/randoc-lua/tests/replay/modules.txt` (the tool
+  `crates/randoc-lua/tools/module-matrix.py` writes it). The merge of two
+  inline lists and the table normalization are ports of
+  `Text.Pandoc.Builder` of `pandoc-types` 1.23.1 (BSD-3-Clause), and
+  `Pandoc:normalize` follows `Marshal/Pandoc.hs` (MIT). The archives and
+  their SHA-256 are in `env/research/hslua/`. Each file header was read
+  before its code. The code of Pandoc for these modules (GPL) was not
+  opened.
+
 ## ADR 17: The CSL processor is a port of `citeproc` 0.14.1.1 (2026-11-11)
 
 - **Context.** `--citeproc` must give the bytes of Pandoc 3.13, which uses

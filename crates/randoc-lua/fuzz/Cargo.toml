@@ -1,0 +1,31 @@
+[package]
+name = "randoc-lua-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+randoc-ast = { path = "../../randoc-ast" }
+randoc-core = { path = "../../randoc-core" }
+randoc-lua = { path = ".." }
+
+[[bin]]
+name = "lua_roundtrip"
+path = "fuzz_targets/lua_roundtrip.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "lua_modules"
+path = "fuzz_targets/lua_modules.rs"
+test = false
+doc = false
+bench = false
+
+# The fuzz crate is not a member of the main workspace.
+[workspace]

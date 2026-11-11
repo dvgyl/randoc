@@ -14,6 +14,7 @@ members = [
     "crates/randoc-native",
     "crates/randoc-citeproc",
     "crates/randoc-math",
+    "crates/randoc-lua",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
 # Cargo has no glob for this list. A path that does not exist yet does no harm.
@@ -30,6 +31,7 @@ exclude = [
     "crates/randoc-native/fuzz",
     "crates/randoc-templates/fuzz",
     "crates/randoc-yaml/fuzz",
+    "crates/randoc-lua/fuzz",
 ]
 
 [workspace.package]
@@ -58,6 +60,11 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 toml = "1"
 zip = { version = "9", default-features = false, features = ["deflate"] }
+randoc-lua = { path = "crates/randoc-lua", version = "0.1.0" }
+# ADR 11: Lua 5.4.8 comes from the build script of `randoc-lua`, not from `lua-src`.
+mlua = { version = "=0.12.2", default-features = false, features = ["lua54"] }
+mlua-sys = { version = "=0.13.0", default-features = false, features = ["lua54", "external"] }
+cc = "=1.11.1"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

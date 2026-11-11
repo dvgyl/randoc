@@ -41,6 +41,11 @@ Material that Randoc cannot reuse:
 - **`pandoc-lua-engine`, `pandoc-server`, `skylighting`** (the package with
   all syntax definitions; GPL-2.0-or-later). `skylighting-core` is
   BSD-3-Clause and is permitted.
+- **`pandoc-lua-marshal` 0.3.2.1: the files `src/Text/Pandoc/Lua/Walk.hs`,
+  `SpliceList.hs` and `Topdown.hs`.** Each one has the header "License: GNU
+  GPL, version 2 or above", although the `LICENSE` file of the package is
+  MIT. The other files of the package have an MIT header or no header and
+  are permitted (ADR 16).
 - Each file with a copyleft licence or with no licence grant
   (`docs/DATA_FILES_LICENCES.md`, decisions D1 to D5 in `PROGRESS.md`).
 
@@ -124,6 +129,7 @@ snapshot `lts-24.51`, inside the bounds of `pandoc.cabal`:
 | Jupyter notebooks | `ipynb` 0.2 | BSD-3-Clause, with a second BSD-3-Clause notice of the Jupyter Development Team (https://hackage.haskell.org/package/ipynb-0.2/src/LICENSE) | Yes | |
 | Containers of `docx`, `odt`, `epub` | `zip-archive` 0.5 | BSD-3-Clause (https://hackage.haskell.org/package/zip-archive-0.5/src/LICENSE) | Yes | For the byte layout of the archives that the oracle writes. The `.cabal` file says `BSD3`; the third clause of the text is "The names of its contributors may not be used to endorse". |
 | Lua interface | `hslua` 2.5.0, `hslua-core` 2.3.2.1, `hslua-marshalling` 2.3.2, `hslua-objectorientation` 2.5.0, `hslua-packaging` 2.4.1, `hslua-typing` 0.2.0, `hslua-module-doclayout` 1.2.1.1, `-path` 1.2.0, `-system` 1.3.0, `-text` 1.2.0, `-version` 1.2.0.1, `-zip` 1.2.1, `lua` 2.3.4 | MIT (https://hackage.haskell.org/package/hslua-2.5.0/src/LICENSE and the same path for each package) | Yes | The Lua API of Pandoc itself is in GPL code: implement that part from the manual and from oracle behaviour. `lua` 2.3.4 bundles Lua 5.4.8 (`cbits/lua-5.4.8`, MIT, notice in `lua.h`), the same patch version as the oracle (ADR 11). |
+| Lua `pandoc.path`, inline merge and table normalization | `filepath` 1.5.4.0 (POSIX rules of `System.FilePath`), `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`) | BSD-3-Clause (https://hackage.haskell.org/package/filepath-1.5.4.0/src/LICENSE, https://hackage.haskell.org/package/pandoc-types-1.23.1/src/LICENSE) | Yes | Ported in `randoc-lua` (`path.rs`, `utils.rs`, `normalize.rs`); ADR 16. |
 
 Rust crates for infrastructure (pin the exact version). "Dependencies"
 names each direct dependency of the release whose licence is outside the

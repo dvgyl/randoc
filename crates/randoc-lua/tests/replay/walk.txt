@@ -1,0 +1,4803 @@
+# The oracle matrix of the tree walk. `tools/walk-matrix.py` writes this file;
+# do not edit it by hand.
+@@@ doc walk-allkinds
+{"pandoc-api-version":[1,23,1,2],"meta":{"mb":{"t":"MetaBool","c":true},"mbl":{"t":"MetaBlocks","c":[{"t":"Para","c":[{"t":"Str","c":"mb"}]}]},"mi":{"t":"MetaInlines","c":[{"t":"Str","c":"mi"}]},"ml":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"ml"}]},{"t":"MetaBlocks","c":[{"t":"Plain","c":[{"t":"Str","c":"ml2"}]}]}]},"mm":{"t":"MetaMap","c":{"j":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"mj"}]}]},"k":{"t":"MetaInlines","c":[{"t":"Str","c":"mm"}]}}},"ms":{"t":"MetaString","c":"z"}},"blocks":[{"t":"Header","c":[1,["h",[],[]],[{"t":"Str","c":"Head"},{"t":"Space"},{"t":"Emph","c":[{"t":"Str","c":"em"}]}]]},{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Strong","c":[{"t":"Str","c":"b"}]},{"t":"SoftBreak"},{"t":"Strikeout","c":[{"t":"Str","c":"c"}]},{"t":"LineBreak"},{"t":"Superscript","c":[{"t":"Str","c":"d"}]},{"t":"Subscript","c":[{"t":"Str","c":"e"}]},{"t":"SmallCaps","c":[{"t":"Str","c":"f"}]},{"t":"Underline","c":[{"t":"Str","c":"g"}]},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"h"}]]},{"t":"Code","c":[["",[],[]],"i"]},{"t":"Math","c":[{"t":"InlineMath"},"j"]},{"t":"RawInline","c":["html","<k>"]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"l"}],["u",""]]},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"m"}],["v",""]]},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]},{"t":"Span","c":[["",[],[]],[{"t":"Str","c":"o"}]]},{"t":"Cite","c":[[{"citationId":"key","citationPrefix":[{"t":"Str","c":"pre"}],"citationSuffix":[{"t":"Str","c":"suf"}],"citationMode":{"t":"NormalCitation"},"citationNoteNum":0,"citationHash":0}],[{"t":"Str","c":"p"}]]}]},{"t":"Plain","c":[{"t":"Str","c":"q"}]},{"t":"LineBlock","c":[[{"t":"Str","c":"r1"}],[{"t":"Str","c":"r2"}]]},{"t":"CodeBlock","c":[["",[],[]],"code"]},{"t":"RawBlock","c":["tex","\\x"]},{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"s"}]}]},{"t":"OrderedList","c":[[1,{"t":"DefaultStyle"},{"t":"DefaultDelim"}],[[{"t":"Plain","c":[{"t":"Str","c":"o1"}]}],[{"t":"Plain","c":[{"t":"Str","c":"o2"}]}]]]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"u1"}]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"u2"}]}]]}]]},{"t":"DefinitionList","c":[[[{"t":"Str","c":"term"}],[[{"t":"Plain","c":[{"t":"Str","c":"def"}]}]]]]},{"t":"HorizontalRule"},{"t":"Table","c":[["",[],[]],[[{"t":"Str","c":"short"}],[{"t":"Plain","c":[{"t":"Str","c":"cap"}]}]],[[{"t":"AlignLeft"},{"t":"ColWidth","c":0.5}],[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"h1"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"h2"}]}]]]]]],[[["",[],[]],1,[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"i1"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"i2"}]}]]]]],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"b1"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"b2"}]}]]]]]]],[["",[],[]],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"f1"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"f2"}]}]]]]]]]},{"t":"Figure","c":[["",[],[]],[[{"t":"Str","c":"fs"}],[{"t":"Plain","c":[{"t":"Str","c":"fc"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"w"}],["x",""]]}]}]]},{"t":"Div","c":[["",[],[]],[{"t":"Para","c":[{"t":"Str","c":"y"}]}]]}]}
+@@@ doc walk-deep
+{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Emph","c":[{"t":"Str","c":"seven"}]}]}},"blocks":[{"t":"Div","c":[["",[],[]],[{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"one"},{"t":"Emph","c":[{"t":"Str","c":"x"},{"t":"Strong","c":[{"t":"Str","c":"y"},{"t":"Span","c":[["",[],[]],[{"t":"Str","c":"z"}]]}]},{"t":"Str","c":"w"}]}]},{"t":"Div","c":[["",[],[]],[{"t":"Plain","c":[{"t":"Str","c":"two"}]}]]}]},{"t":"Para","c":[{"t":"Str","c":"three"}]}]]},{"t":"Para","c":[{"t":"Note","c":[{"t":"Para","c":[{"t":"Emph","c":[{"t":"Str","c":"four"}]}]},{"t":"BlockQuote","c":[{"t":"Plain","c":[{"t":"Str","c":"five"}]}]}]},{"t":"Str","c":"six"}]}]}
+@@@ filter walk-typewise-nil-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nil'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-nil-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nil'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-nil-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nil'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-same-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-same-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-same-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-edit-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'edit'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-edit-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'edit'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-edit-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'edit'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-list-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-list-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-list-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-empty-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'empty'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-empty-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'empty'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-typewise-empty-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'empty'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-nil-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nil'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-nil-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nil'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-nil-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nil'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-same-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-same-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-same-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-edit-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'edit'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-edit-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'edit'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-edit-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'edit'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-list-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-list-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-list-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-empty-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'empty'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-empty-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'empty'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-empty-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'empty'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-stop-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-stop-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-stop-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-nilstop-all walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nilstop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-nilstop-base walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nilstop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-topdown-nilstop-mix walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'nilstop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Str = element('Str', 'inline')
+L.Inline = element('Inline', 'inline')
+L.Para = element('Para', 'block')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+return {L, {Pandoc = save}}
+@@@ filter walk-method-doc-typewise-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc = doc:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-blocks-typewise-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc.blocks = doc.blocks:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-block-typewise-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for i, b in ipairs(doc.blocks) do doc.blocks[i] = b:walk(L) end
+return save(doc)
+end
+@@@ filter walk-method-inlines-typewise-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then b.content = b.content:walk(L) end
+end
+return save(doc)
+end
+@@@ filter walk-method-inline-typewise-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then
+    for i, x in ipairs(b.content) do b.content[i] = x:walk(L) end
+  end
+end
+return save(doc)
+end
+@@@ filter walk-method-doc-typewise-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc = doc:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-blocks-typewise-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc.blocks = doc.blocks:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-block-typewise-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for i, b in ipairs(doc.blocks) do doc.blocks[i] = b:walk(L) end
+return save(doc)
+end
+@@@ filter walk-method-inlines-typewise-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then b.content = b.content:walk(L) end
+end
+return save(doc)
+end
+@@@ filter walk-method-inline-typewise-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'typewise'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then
+    for i, x in ipairs(b.content) do b.content[i] = x:walk(L) end
+  end
+end
+return save(doc)
+end
+@@@ filter walk-method-doc-topdown-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc = doc:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-blocks-topdown-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc.blocks = doc.blocks:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-block-topdown-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for i, b in ipairs(doc.blocks) do doc.blocks[i] = b:walk(L) end
+return save(doc)
+end
+@@@ filter walk-method-inlines-topdown-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then b.content = b.content:walk(L) end
+end
+return save(doc)
+end
+@@@ filter walk-method-inline-topdown-same walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'same'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then
+    for i, x in ipairs(b.content) do b.content[i] = x:walk(L) end
+  end
+end
+return save(doc)
+end
+@@@ filter walk-method-doc-topdown-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc = doc:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-blocks-topdown-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc.blocks = doc.blocks:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-block-topdown-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for i, b in ipairs(doc.blocks) do doc.blocks[i] = b:walk(L) end
+return save(doc)
+end
+@@@ filter walk-method-inlines-topdown-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then b.content = b.content:walk(L) end
+end
+return save(doc)
+end
+@@@ filter walk-method-inline-topdown-list walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'list'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then
+    for i, x in ipairs(b.content) do b.content[i] = x:walk(L) end
+  end
+end
+return save(doc)
+end
+@@@ filter walk-method-doc-topdown-stop walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+L.Meta = function(m) note('Meta')
+  if MODE == 'edit' then m.edited = true end
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return m, false end
+  return m end
+L.Pandoc = function(d) note('Pandoc#' .. #d.blocks)
+  if MODE == 'nil' or MODE == 'empty' then return nil end
+  if MODE == 'stop' then return d, false end
+  return d end
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc = doc:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-blocks-topdown-stop walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+doc.blocks = doc.blocks:walk(L)
+return save(doc)
+end
+@@@ filter walk-method-block-topdown-stop walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for i, b in ipairs(doc.blocks) do doc.blocks[i] = b:walk(L) end
+return save(doc)
+end
+@@@ filter walk-method-inlines-topdown-stop walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then b.content = b.content:walk(L) end
+end
+return save(doc)
+end
+@@@ filter walk-method-inline-topdown-stop walk-allkinds walk-deep
+
+local LOG = {}
+local MODE = 'stop'
+local function note(s) LOG[#LOG + 1] = s end
+local function id(el)
+  if el.t == 'Str' then return 'Str:' .. el.text end
+  return el.t
+end
+local function element(name, kind)
+  return function(el)
+    note(name .. '>' .. id(el))
+    if MODE == 'same' then return el end
+    if MODE == 'edit' then
+      if el.t == 'Str' then return pandoc.Str(el.text .. '!') end
+      if el.t == 'Header' then el.level = el.level + 1 end
+      return el
+    end
+    if MODE == 'list' then
+      if kind == 'inline' then return {el, pandoc.Str('+')} end
+      return {el, pandoc.HorizontalRule()}
+    end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return el, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local function list(name)
+  return function(xs)
+    note(name .. '#' .. #xs)
+    if MODE == 'same' or MODE == 'edit' or MODE == 'list' then return xs end
+    if MODE == 'empty' then return {} end
+    if MODE == 'stop' then return xs, false end
+    if MODE == 'nilstop' then return nil, false end
+  end
+end
+local L = {traverse = 'topdown'}
+L.Cite = element('Cite', 'inline')
+L.Code = element('Code', 'inline')
+L.Emph = element('Emph', 'inline')
+L.Image = element('Image', 'inline')
+L.LineBreak = element('LineBreak', 'inline')
+L.Link = element('Link', 'inline')
+L.Math = element('Math', 'inline')
+L.Note = element('Note', 'inline')
+L.Quoted = element('Quoted', 'inline')
+L.RawInline = element('RawInline', 'inline')
+L.SmallCaps = element('SmallCaps', 'inline')
+L.SoftBreak = element('SoftBreak', 'inline')
+L.Space = element('Space', 'inline')
+L.Span = element('Span', 'inline')
+L.Str = element('Str', 'inline')
+L.Strikeout = element('Strikeout', 'inline')
+L.Strong = element('Strong', 'inline')
+L.Subscript = element('Subscript', 'inline')
+L.Superscript = element('Superscript', 'inline')
+L.Underline = element('Underline', 'inline')
+L.BlockQuote = element('BlockQuote', 'block')
+L.BulletList = element('BulletList', 'block')
+L.CodeBlock = element('CodeBlock', 'block')
+L.DefinitionList = element('DefinitionList', 'block')
+L.Div = element('Div', 'block')
+L.Figure = element('Figure', 'block')
+L.Header = element('Header', 'block')
+L.HorizontalRule = element('HorizontalRule', 'block')
+L.LineBlock = element('LineBlock', 'block')
+L.OrderedList = element('OrderedList', 'block')
+L.Para = element('Para', 'block')
+L.Plain = element('Plain', 'block')
+L.RawBlock = element('RawBlock', 'block')
+L.Table = element('Table', 'block')
+L.Inline = element('Inline', 'inline')
+L.Block = element('Block', 'block')
+L.Inlines = list('Inlines')
+L.Blocks = list('Blocks')
+
+local function save(doc)
+  local items = {}
+  for i, s in ipairs(LOG) do items[i] = pandoc.MetaString(s) end
+  doc.meta.log = pandoc.MetaList(items)
+  return doc
+end
+function Pandoc(doc)
+for _, b in ipairs(doc.blocks) do
+  if b.t == 'Para' or b.t == 'Plain' or b.t == 'Header' then
+    for i, x in ipairs(b.content) do b.content[i] = x:walk(L) end
+  end
+end
+return save(doc)
+end
+@@@ filter walk-error-inline-gives-block walk-allkinds walk-deep
+function Str(s) return pandoc.Para{s} end
+@@@ filter walk-error-block-gives-inline walk-allkinds walk-deep
+function Para(p) return pandoc.Str'x' end
+@@@ filter walk-error-inline-list-with-block walk-allkinds walk-deep
+function Str(s) return {s, pandoc.Para{}} end
+@@@ filter walk-error-inlines-gives-element walk-allkinds walk-deep
+function Inlines(xs) return pandoc.Str'x' end
+@@@ filter walk-error-blocks-gives-element walk-allkinds walk-deep
+function Blocks(xs) return pandoc.Para{} end
+@@@ filter walk-error-inlines-gives-strings walk-allkinds walk-deep
+function Inlines(xs) return {'a', 'b'} end
+@@@ filter walk-error-blocks-gives-string walk-allkinds walk-deep
+function Blocks(xs) return 'text' end
+@@@ filter walk-error-inline-gives-string walk-allkinds walk-deep
+function Emph(e) return 'two words' end
+@@@ filter walk-error-meta-gives-string walk-allkinds walk-deep
+function Meta(m) return 'x' end
+@@@ filter walk-error-pandoc-gives-number walk-allkinds walk-deep
+function Pandoc(d) return 5 end
+@@@ filter walk-error-pandoc-gives-meta walk-allkinds walk-deep
+function Pandoc(d) return d.meta end
+@@@ filter walk-error-not-functions walk-allkinds walk-deep
+return {{Str = 5, Para = 'x', Inline = {}, traverse = 'topdown', Space = function() return pandoc.Str'_' end}}
+@@@ filter walk-error-traverse-unknown walk-allkinds walk-deep
+return {{traverse = 'bottomup', Str = function(s) return pandoc.Str(s.text .. '.') end}}
+@@@ filter walk-error-traverse-number walk-allkinds walk-deep
+return {{traverse = 7, Emph = function(e) return e.content end}}
+@@@ filter walk-error-typewise-false walk-allkinds walk-deep
+function Str(s) return pandoc.Str'k', false end
+@@@ filter walk-error-topdown-true walk-allkinds walk-deep
+return {{traverse = 'topdown', Emph = function(e) return pandoc.Strong(e.content), true end, Str = function(s) return pandoc.Str(s.text .. '?') end}}
+@@@ filter walk-error-topdown-meta-stop walk-allkinds walk-deep
+return {{traverse = 'topdown', Meta = function(m) m.x = true; return m, false end, Str = function(s) return pandoc.Str(s.text .. '?') end}}
+@@@ filter walk-error-topdown-pandoc-stop walk-allkinds walk-deep
+return {{traverse = 'topdown', Pandoc = function(d) return d, false end, Str = function(s) return pandoc.Str(s.text .. '?') end}}
+@@@ filter walk-error-error-in-walk walk-allkinds walk-deep
+function Pandoc(d)
+  return d:walk{Str = function(s) error('stop here') end}
+end
+@@@ filter walk-error-inline-walk-self walk-allkinds walk-deep
+function Pandoc(d)
+  local e = pandoc.Emph{pandoc.Str'a'}
+  d.blocks:insert(pandoc.Para{e:walk{Emph = function() return pandoc.Str'gone' end, Str = function() return pandoc.Str'b' end}})
+  return d
+end
+@@@ filter walk-error-block-walk-self walk-allkinds walk-deep
+function Pandoc(d)
+  local q = pandoc.BlockQuote{pandoc.Para{'a'}}
+  d.blocks:insert(q:walk{BlockQuote = function() return {} end, Para = function() return pandoc.Plain'b' end})
+  return d
+end

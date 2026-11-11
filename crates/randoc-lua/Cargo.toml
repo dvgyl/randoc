@@ -1,0 +1,38 @@
+[package]
+name = "randoc-lua"
+description = "Lua 5.4 for Randoc: the Pandoc document types in Lua and Lua filters"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+build = "build.rs"
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-native = { workspace = true }
+
+# Lua is left out of a WebAssembly build (ADR 11).
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+mlua = { workspace = true }
+mlua-sys = { workspace = true }
+
+[build-dependencies]
+cc = { workspace = true }
+
+# The same lints as the workspace, but `unsafe_code` is `deny` in place of
+# `forbid`: ADR 11 permits one `unsafe` call, and `forbid` cannot have an
+# exception.
+[lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+todo = "warn"
+unimplemented = "warn"
+panic = "warn"
+dbg_macro = "warn"

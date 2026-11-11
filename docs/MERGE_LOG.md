@@ -505,3 +505,39 @@ Licence scan: no hit. Open findings: I-MATH-06 (low); no review of the head
 exists, so no finding of the head is known. Open checks: the mutation
 sample; the step test at 12,500 and 50,000 repetitions. Requests of the
 worker to the coordinator: none.
+
+## Workstream lua (branch `ws/lua`, head dab508e, one squashed commit, batch 1 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-lua` with the 59 unchanged Lua 5.4.8 source files (built by the
+build script with `cc`; ADR 11), the binding `mlua` `=0.12.2` and
+`mlua-sys` `=0.13.0`, one `unsafe` call (ADR 11), the document types as a
+port of `pandoc-lua-marshal` 0.3.2.1 without its GPL files (ADR 16), Lua
+filters, the restricted and the full mode, and the modules `pandoc.path`,
+`pandoc.text`, `pandoc.json`, `pandoc.format`, parts of `pandoc.utils`,
+`pandoc.system` and `pandoc.structure`. No program option calls the crate
+yet.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 9228da6 (run ended 18:41 UTC; worker report): harness 4546 units, 2217 pass; baseline 2217 units, 0 regressions. The decision log names a passed gate on the head dab508e (18:45 UTC); dab508e changes only the test data file `tests/replay/cases.txt`. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | No harness unit changes (no program option calls the crate). Module matrix `tests/replay/modules.txt`: 21 filters, 1945 probes, 42 runs, 0 differences. Replay of `cases` (313 runs) and `walk` (164 runs): equal. |
+| 3. Tests | 30 unit tests (2 ignored), 3 replay tests and 1 documentation test pass (worker report). Line coverage 92.20 % of 5065 lines (at 52d5ea7); `show.rs` 81.5 %, below 85 %, not measured again after its matrix group. Mutation sample: not run. |
+| 4. No panics | Fuzzing, 0 crashes: `lua_roundtrip` 901 s, 5,997,589 runs, peak 558 MB; `lua_modules` 901 s, 196,303 runs, peak 471 MB. Depth tests on a 2 MB stack in both modes at 24 to 100,000 levels. |
+| 5. Reviews | Round 1 on 9f39537: Opus REQUEST CHANGES (1 critical lua-R1-01, a binary chunk in restricted mode; 1 high lua-R1-02, the depth check; 3 medium; 4 low). The Codex run was stopped by its service and has only a partial report (no verdict). The worker reports lua-R1-01 and lua-R1-02 as closed with tests (71042e4, e504406), lua-R1-03 and lua-R1-04 as closed; lua-R1-05 is open (I-LUA-11). No review of the head exists. No known critical finding is open. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before. |
+| 7. Clean build | The gate script passed on the branch (see gate 1). `cargo build` needs a C compiler. The merged tree is checked at the end of the batch. |
+
+Conflicts in the merge: `Cargo.toml` (members and fuzz excludes: both
+kept), `docs/ADR.md` (ADR 16 of the branch: kept, in number order between
+ADR 14 and ADR 17), `Cargo.lock` (the version of `main`; the build wrote it
+again), `THIRD_PARTY_NOTICES.md` and `docs/ISSUES.md` (`resolve-tables`: 6
+and 14 rows of the branch added).
+
+Licence scan: licence texts, lists of function names and format names,
+oracle output (all permitted). Open findings with the level medium:
+I-LUA-11 (walk time, lua-R1-05) and I-LUA-13 (the C locale of the Lua
+state). Open checks: the mutation sample; coverage of `show.rs`. Requests of
+the worker to the coordinator: host methods for `pandoc.system` and
+`path.exists` that `randoc_core::Host` does not have; a decision on the
+locale of the Lua state (I-LUA-13).
