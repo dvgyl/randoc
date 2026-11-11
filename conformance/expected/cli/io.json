@@ -1,0 +1,329 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bad-json-stdin#cmd": {
+      "key": "09a1043a24bdcc8f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "bom-file#cmd": {
+      "key": "3a4ade33e0776543",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "bom-stdin#cmd": {
+      "key": "4fc24685607c0555",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "crlf-stdin#cmd": {
+      "key": "2436cb38051cda46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "directory-as-input#cmd": {
+      "key": "d2c504a2ac1f127e",
+      "exit": 1,
+      "stdout": "",
+      "stderr": ".: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "empty-file#cmd": {
+      "key": "e76c6ea741d48f01",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "empty-stdin#cmd": {
+      "key": "efe596a62708321f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "eol-bad#cmd": {
+      "key": "5acdde90fc991a02",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --eol must be crlf, lf, or native\n"
+    },
+    "eol-crlf#cmd": {
+      "key": "297f03232c76d9e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\r\n",
+      "stderr": ""
+    },
+    "eol-lf#cmd": {
+      "key": "391a6a9e0ca0d9fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "eol-native#cmd": {
+      "key": "7713097d269c60b1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "file-and-stdin#cmd": {
+      "key": "1dfdb3d6fd38e23b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"fromdoc\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Doc\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "file-in-subdirectory#cmd": {
+      "key": "31708ac11ccc9e23",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "file-with-space#cmd": {
+      "key": "8c4cc019bb3728c9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "guess-input-json#cmd": {
+      "key": "0d8c178b48be1358",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "guess-input-json-upper#cmd": {
+      "key": "97290a15acacfb58",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "guess-input-md#cmd": {
+      "key": "5958bea66130f07a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"pandoc-api-version\"}]]},{\"t\":\"Str\",\"c\":\":[1,23,1,2],\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"meta\"}]]},{\"t\":\"Str\",\"c\":\":{},\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"blocks\"}]]},{\"t\":\"Str\",\"c\":\":[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Header\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[1,[\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"intro\"}]]},{\"t\":\"Str\",\"c\":\",[],[]],[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Str\",\"c\":\"}]]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Para\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Hello\"}]]},{\"t\":\"Str\",\"c\":\"},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Space\"}]]},{\"t\":\"Str\",\"c\":\"},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"world.\"}]]},{\"t\":\"Str\",\"c\":\"}]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Header\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[2,[\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"sub\"}]]},{\"t\":\"Str\",\"c\":\",[],[]],[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Str\",\"c\":\"}]]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"CodeBlock\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[[““,[],[]],\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\tb\"]}]]},{\"t\":\"Str\",\"c\":\"]}]}\"}]}]}\n",
+      "stderr": ""
+    },
+    "guess-input-mixed-extensions#cmd": {
+      "key": "a6c5c9ac7219afc2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected \"hi\\n\\n\", expecting JSON value\n"
+    },
+    "guess-input-native#cmd": {
+      "key": "963a2fb03af766f2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "couldn't read native\n"
+    },
+    "guess-input-none#cmd": {
+      "key": "b87de3f20bb4f730",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"pandoc-api-version\"}]]},{\"t\":\"Str\",\"c\":\":[1,23,1,2],\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"meta\"}]]},{\"t\":\"Str\",\"c\":\":{},\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"blocks\"}]]},{\"t\":\"Str\",\"c\":\":[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Header\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[1,[\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"intro\"}]]},{\"t\":\"Str\",\"c\":\",[],[]],[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Str\",\"c\":\"}]]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Para\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Hello\"}]]},{\"t\":\"Str\",\"c\":\"},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Space\"}]]},{\"t\":\"Str\",\"c\":\"},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"world.\"}]]},{\"t\":\"Str\",\"c\":\"}]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Header\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[2,[\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"sub\"}]]},{\"t\":\"Str\",\"c\":\",[],[]],[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Str\",\"c\":\"}]]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"CodeBlock\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[[““,[],[]],\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\tb\"]}]]},{\"t\":\"Str\",\"c\":\"]}]}\"}]}]}\n",
+      "stderr": "[WARNING] Could not deduce format from file extension \n  Defaulting to markdown\n"
+    },
+    "guess-input-xyz#cmd": {
+      "key": "dd32bab665addae8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"pandoc-api-version\"}]]},{\"t\":\"Str\",\"c\":\":[1,23,1,2],\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"meta\"}]]},{\"t\":\"Str\",\"c\":\":{},\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"blocks\"}]]},{\"t\":\"Str\",\"c\":\":[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Header\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[1,[\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"intro\"}]]},{\"t\":\"Str\",\"c\":\",[],[]],[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Str\",\"c\":\"}]]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Para\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Hello\"}]]},{\"t\":\"Str\",\"c\":\"},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Space\"}]]},{\"t\":\"Str\",\"c\":\"},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"world.\"}]]},{\"t\":\"Str\",\"c\":\"}]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Header\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[2,[\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"sub\"}]]},{\"t\":\"Str\",\"c\":\",[],[]],[{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Str\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"Str\",\"c\":\"}]]},{\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"t\"}]]},{\"t\":\"Str\",\"c\":\":\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"CodeBlock\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"c\"}]]},{\"t\":\"Str\",\"c\":\":[[““,[],[]],\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\tb\"]}]]},{\"t\":\"Str\",\"c\":\"]}]}\"}]}]}\n",
+      "stderr": "[WARNING] Could not deduce format from file extension .xyz\n  Defaulting to markdown\n"
+    },
+    "guess-output-1#cmd": {
+      "key": "bb020d9ae58915b0",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-csv#cmd": {
+      "key": "439e03ee098e9acf",
+      "exit": 22,
+      "stdout": "",
+      "stderr": "Unknown output format 'csv'\n"
+    },
+    "guess-output-docx#cmd": {
+      "key": "77b37a0df28894da",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-explicit-to-wins#cmd": {
+      "key": "a8338b33ddab3f36",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-html#cmd": {
+      "key": "7d04dbb437a38613",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-json#cmd": {
+      "key": "cdfb0938f1d9966a",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-json-upper#cmd": {
+      "key": "02d5b6fbe612992a",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-md#cmd": {
+      "key": "9871dc8bc4718685",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "guess-output-md-gz#cmd": {
+      "key": "f2de11da6c6ae84d",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "[WARNING] Could not deduce format from file extension .gz\n  Defaulting to html\n"
+    },
+    "guess-output-none#cmd": {
+      "key": "40d128429c8014ad",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "[WARNING] Could not deduce format from file extension \n  Defaulting to html\n"
+    },
+    "guess-output-pdf#cmd": {
+      "key": "9a32dec3bd44b7ad",
+      "exit": 47,
+      "stdout": "",
+      "stderr": "'pdflatex' not found. Please select a different --pdf-engine or install 'pdflatex'\n"
+    },
+    "guess-output-ris#cmd": {
+      "key": "8828448d8719809d",
+      "exit": 22,
+      "stdout": "",
+      "stderr": "Unknown output format 'ris'\n"
+    },
+    "guess-output-stdout-default#cmd": {
+      "key": "df42657d30c9e88c",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "guess-output-tsv#cmd": {
+      "key": "782d5cada3f0bfa4",
+      "exit": 22,
+      "stdout": "",
+      "stderr": "Unknown output format 'tsv'\n"
+    },
+    "guess-output-xlsx#cmd": {
+      "key": "58fc2cbcfebf3839",
+      "exit": 22,
+      "stdout": "",
+      "stderr": "Unknown output format 'xlsx'\n"
+    },
+    "guess-output-xyz#cmd": {
+      "key": "d0c9960939abdc5a",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "[WARNING] Could not deduce format from file extension .xyz\n  Defaulting to html\n"
+    },
+    "missing-file#cmd": {
+      "key": "26634fac2cf3daa6",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "missing-second-file#cmd": {
+      "key": "dc44a6f70ae1b63a",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "one-file#cmd": {
+      "key": "7d544ed3d90dc051",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "output-below-a-file#cmd": {
+      "key": "24f2fe5398cd6706",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: a.json: createDirectory: already exists (File exists)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "output-dash#cmd": {
+      "key": "771cfb24b3eaf7d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "output-missing-directory#cmd": {
+      "key": "61a4aa969dd45b97",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "stdin#cmd": {
+      "key": "a29e5ad074a96407",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "stdin-dash#cmd": {
+      "key": "92cae426b50163cd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "stdin-dash-twice#cmd": {
+      "key": "b6c42dd038849527",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "<stdin>: hGetBuf: illegal operation (handle is closed)\n"
+    },
+    "tab-in-json-string#cmd": {
+      "key": "44dbf431c03a3d46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a b\"}]}]}\n",
+      "stderr": ""
+    },
+    "tab-in-json-string-preserved#cmd": {
+      "key": "a59a01e614d6e52c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unespected control character while parsing string literal\n"
+    },
+    "tab-in-json-tab-stop-8#cmd": {
+      "key": "c046169531244de9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"ab c\"}]}]}\n",
+      "stderr": ""
+    },
+    "tab-in-native#cmd": {
+      "key": "e437f8e4389f1ef5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a   b\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"x    y\"]}]}\n",
+      "stderr": ""
+    },
+    "tab-in-native-preserved#cmd": {
+      "key": "f5706531246811e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\tb\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"x\\ty\"]}]}\n",
+      "stderr": ""
+    },
+    "two-files#cmd": {
+      "key": "19edbf7097e45a37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"fromdoc\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Doc\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "two-files-file-scope#cmd": {
+      "key": "2ca43c239ab015d6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"fromdoc\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Doc\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrong-api-version#cmd": {
+      "key": "f0dcc9f5758c7d71",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Error in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    }
+  }
+}

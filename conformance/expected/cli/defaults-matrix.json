@@ -1,0 +1,1133 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "combination-eol-cli-first#cmd": {
+      "key": "4387604437de73c8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\r\n",
+      "stderr": ""
+    },
+    "combination-eol-cli-last#cmd": {
+      "key": "822092a37c4a2348",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\r\n",
+      "stderr": ""
+    },
+    "combination-eol-two-files#cmd": {
+      "key": "a43e71a6f2884c49",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-eol-two-files-reverse#cmd": {
+      "key": "55dbb2011059e739",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\r\n",
+      "stderr": ""
+    },
+    "combination-from-cli-first#cmd": {
+      "key": "4a51efbe92094b21",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"from\"\n  |\n3 | from: native\n  | ^\np.yaml:1:1: the first key \"from\"\n  |\n1 | from: json\n  | ^\n"
+    },
+    "combination-from-cli-last#cmd": {
+      "key": "079e5579d31cbd49",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"from\"\n  |\n3 | from: native\n  | ^\np.yaml:1:1: the first key \"from\"\n  |\n1 | from: json\n  | ^\n"
+    },
+    "combination-from-two-files#cmd": {
+      "key": "ec75f45327f67b06",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"from\"\n  |\n3 | from: native\n  | ^\np.yaml:1:1: the first key \"from\"\n  |\n1 | from: json\n  | ^\n"
+    },
+    "combination-from-two-files-reverse#cmd": {
+      "key": "592b5db0e773fb76",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"from\"\n  |\n3 | from: native\n  | ^\np.yaml:1:1: the first key \"from\"\n  |\n1 | from: json\n  | ^\n"
+    },
+    "combination-include-cli-first#cmd": {
+      "key": "a845f77525a61844",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-include-cli-last#cmd": {
+      "key": "c04e242ddbb4754c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-include-two-files#cmd": {
+      "key": "5199f57513c41970",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "combination-include-two-files-reverse#cmd": {
+      "key": "447d2322ce926ce0",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "combination-metadata-cli-first#cmd": {
+      "key": "13359bfb469e59e8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-cli-last#cmd": {
+      "key": "8cbaa837380bfe98",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"1\"},{\"t\":\"MetaString\",\"c\":\"3\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-files-cli-first#cmd": {
+      "key": "9a844598435abe4f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-files-cli-last#cmd": {
+      "key": "a8878a758d08b69f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-files-two-files#cmd": {
+      "key": "17924a1dc6979243",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]},\"y\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-files-two-files-reverse#cmd": {
+      "key": "5c4738be197058d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]},\"y\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-two-files#cmd": {
+      "key": "45fd20733fe96021",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"2\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-metadata-two-files-reverse#cmd": {
+      "key": "11e7756ec26a74b1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-output-cli-first#cmd": {
+      "key": "7b01f226dd5f4503",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "combination-output-cli-last#cmd": {
+      "key": "0015001e72eab577",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "combination-output-two-files#cmd": {
+      "key": "6b249ff8956c9a68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-output-two-files-reverse#cmd": {
+      "key": "9158c6e522330738",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "combination-shift-cli-first#cmd": {
+      "key": "6fad0e8faf609b74",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[3,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-shift-cli-last#cmd": {
+      "key": "7836d3ff916a1a9c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[4,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-shift-two-files#cmd": {
+      "key": "74531fff0d018bfc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-shift-two-files-reverse#cmd": {
+      "key": "de7b1711495153ac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[3,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-standalone-cli-first#cmd": {
+      "key": "dd983ff7197c018d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-standalone-cli-last#cmd": {
+      "key": "af62df8bf54964d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-standalone-two-files#cmd": {
+      "key": "94310fb6a26cdfc4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-standalone-two-files-reverse#cmd": {
+      "key": "397e6616b1228fb4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-syntax-highlighting-cli-first#cmd": {
+      "key": "3b5513e90f5c8a24",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style nosuchstyle\n"
+    },
+    "combination-syntax-highlighting-cli-last#cmd": {
+      "key": "d99bcc05a38f9f88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-syntax-highlighting-two-files#cmd": {
+      "key": "9772391036b7b00d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-syntax-highlighting-two-files-reverse#cmd": {
+      "key": "be4eace643436efd",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style nosuchstyle\n"
+    },
+    "combination-tab-stop-cli-first#cmd": {
+      "key": "3d53e18f35b2abe4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-tab-stop-cli-last#cmd": {
+      "key": "94fbc4086ba489ec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-tab-stop-two-files#cmd": {
+      "key": "6dfa317ec9201570",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-tab-stop-two-files-reverse#cmd": {
+      "key": "8663f4fa82f9f8a0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-template-cli-first#cmd": {
+      "key": "641fc7d5fa804364",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-template-cli-last#cmd": {
+      "key": "37e8d0cc7e17de30",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-template-two-files#cmd": {
+      "key": "2d77029265c427eb",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.json'\n"
+    },
+    "combination-template-two-files-reverse#cmd": {
+      "key": "16b1ff07b70b593b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}",
+      "stderr": ""
+    },
+    "combination-to-cli-first#cmd": {
+      "key": "237eb71a49d4ef48",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"to\"\n  |\n3 | to: native\n  | ^\np.yaml:2:1: the first key \"to\"\n  |\n2 | to: json\n  | ^\n"
+    },
+    "combination-to-cli-last#cmd": {
+      "key": "9f857723a7c63c2c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"to\"\n  |\n3 | to: native\n  | ^\np.yaml:2:1: the first key \"to\"\n  |\n2 | to: json\n  | ^\n"
+    },
+    "combination-to-two-files#cmd": {
+      "key": "7bd1887818e89367",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"to\"\n  |\n3 | to: native\n  | ^\np.yaml:2:1: the first key \"to\"\n  |\n2 | to: json\n  | ^\n"
+    },
+    "combination-to-two-files-reverse#cmd": {
+      "key": "4c5bc18cfddc0097",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"to\"\n  |\n3 | to: native\n  | ^\np.yaml:2:1: the first key \"to\"\n  |\n2 | to: json\n  | ^\n"
+    },
+    "combination-toc-depth-cli-first#cmd": {
+      "key": "8f3ab8b9dd2f0eca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-toc-depth-cli-last#cmd": {
+      "key": "9405e37531afe742",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-toc-depth-two-files#cmd": {
+      "key": "47979c63482c85c6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing q.yaml:\nq.yaml:1:12: toc-depth: parsing Int failed, expected Number, but encountered String\n  |\n1 | toc-depth: x\n  |            ^\n"
+    },
+    "combination-toc-depth-two-files-reverse#cmd": {
+      "key": "1fd36b38523fc5f6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing q.yaml:\nq.yaml:1:12: toc-depth: parsing Int failed, expected Number, but encountered String\n  |\n1 | toc-depth: x\n  |            ^\n"
+    },
+    "combination-verbosity-cli-first#cmd": {
+      "key": "69b2538e9117ebd1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-verbosity-cli-last#cmd": {
+      "key": "dc9db8d91610dbb9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-verbosity-two-files#cmd": {
+      "key": "cd935612cd1bdef9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "combination-verbosity-two-files-reverse#cmd": {
+      "key": "1166c2c093278849",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-bool-then-bad-json#cmd": {
+      "key": "17d40d9ee7376fb7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-bool-then-bad-yaml#cmd": {
+      "key": "964620cf5d57530a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:4:1: duplicate key \"toc\"\n  |\n4 | toc: x\n  | ^\nd.cfg:3:1: the first key \"toc\"\n  |\n3 | toc: true\n  | ^\n"
+    },
+    "duplicate-defaults-json#cmd": {
+      "key": "74483185dbb90e6b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuchd: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "duplicate-defaults-yaml#cmd": {
+      "key": "e9f266a259b037d0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:4:1: duplicate key \"defaults\"\n  |\n4 | defaults: e.yaml\n  | ^\nd.cfg:3:1: the first key \"defaults\"\n  |\n3 | defaults: nosuchd\n  | ^\n"
+    },
+    "duplicate-filter-map-key-json#cmd": {
+      "key": "dde2927509bf6058",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'x':\nCould not find executable x\n"
+    },
+    "duplicate-filter-map-key-yaml#cmd": {
+      "key": "ee2cac259733af92",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:5:3: filters[0]: duplicate key \"type\"\n  |\n5 |   type: lua\n  |   ^\nd.cfg:4:3: filters[0]: the first key \"type\"\n  |\n4 | - type: json\n  |   ^\n"
+    },
+    "duplicate-int-json#cmd": {
+      "key": "b10a0b8c1818ffd0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[3,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-int-yaml#cmd": {
+      "key": "c936fb04ff5e5599",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:4:1: duplicate key \"shift-heading-level-by\"\n  |\n4 | shift-heading-level-by: -1\n  | ^\nd.cfg:3:1: the first key \"shift-heading-level-by\"\n  |\n3 | shift-heading-level-by: 1\n  | ^\n"
+    },
+    "duplicate-math-map-key-json#cmd": {
+      "key": "29b83801c893828b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-math-map-key-yaml#cmd": {
+      "key": "70b94ed5f697f544",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:3:35: html-math-method: duplicate key \"method\"\n  |\n3 | html-math-method: {method: plain, method: x}\n  |                                   ^\nd.cfg:3:20: html-math-method: the first key \"method\"\n  |\n3 | html-math-method: {method: plain, method: x}\n  |                    ^\n"
+    },
+    "duplicate-metadata-key-json#cmd": {
+      "key": "1835ade6cce345d7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-metadata-key-yaml#cmd": {
+      "key": "29698614681bf18b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:5:3: metadata: duplicate key \"a\"\n  |\n5 |   a: 2\n  |   ^\nd.cfg:4:3: metadata: the first key \"a\"\n  |\n4 |   a: 1\n  |   ^\n"
+    },
+    "duplicate-metadata-twice-json#cmd": {
+      "key": "5169e18e219f52f2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-metadata-twice-yaml#cmd": {
+      "key": "f9dfd43e9c8d072b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:4:1: duplicate key \"metadata\"\n  |\n4 | metadata: {b: 2}\n  | ^\nd.cfg:3:1: the first key \"metadata\"\n  |\n3 | metadata: {a: 1}\n  | ^\n"
+    },
+    "duplicate-top-bad-first-json#cmd": {
+      "key": "5db51db4456f2c9a",
+      "exit": 21,
+      "stdout": "",
+      "stderr": "Unknown input format 'bad'\n"
+    },
+    "duplicate-top-bad-first-yaml#cmd": {
+      "key": "4bb0782bbf1243c8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:2:1: duplicate key \"from\"\n  |\n2 | from: json\n  | ^\nd.cfg:1:1: the first key \"from\"\n  |\n1 | from: bad\n  | ^\n"
+    },
+    "duplicate-top-json#cmd": {
+      "key": "c4711f4165f8d4c8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-top-reverse-json#cmd": {
+      "key": "a812b51dd9fb7a7c",
+      "exit": 0,
+      "stdout": "[ Header 2 ( \"\" , [] , [] ) [] ]\n",
+      "stderr": ""
+    },
+    "duplicate-top-reverse-yaml#cmd": {
+      "key": "ea9ff2f729819878",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:3:1: duplicate key \"to\"\n  |\n3 | to: json\n  | ^\nd.cfg:2:1: the first key \"to\"\n  |\n2 | to: native\n  | ^\n"
+    },
+    "duplicate-top-yaml#cmd": {
+      "key": "b373085cb17b1c9a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:3:1: duplicate key \"to\"\n  |\n3 | to: native\n  | ^\nd.cfg:2:1: the first key \"to\"\n  |\n2 | to: json\n  | ^\n"
+    },
+    "duplicate-unknown-sorted-json#cmd": {
+      "key": "e96b7d7d7feed26d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nError in $.bar: Unknown option \"bar\"\n"
+    },
+    "duplicate-unknown-sorted-yaml#cmd": {
+      "key": "e6cc9aaab1212c7a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:2:6: bar: Unknown option \"bar\"\n  |\n2 | bar: 2\n  |      ^\n"
+    },
+    "duplicate-variables-key-json#cmd": {
+      "key": "5215905b716ba506",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[]]}]}\n",
+      "stderr": ""
+    },
+    "duplicate-variables-key-yaml#cmd": {
+      "key": "aad34bc55683a248",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.cfg:\nd.cfg:5:3: variables: duplicate key \"a\"\n  |\n5 |   a: 2\n  |   ^\nd.cfg:4:3: variables: the first key \"a\"\n  |\n4 |   a: 1\n  |   ^\n"
+    },
+    "path-abbreviations-dot#cmd": {
+      "key": "d6beef185c145564",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-dot-dot-part#cmd": {
+      "key": "ecb452666c45d7bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-dot-double-slash#cmd": {
+      "key": "9be18ff4e9bdbf46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-dot-parent#cmd": {
+      "key": "4fdf7aaeace2e5d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-home#cmd": {
+      "key": "97e6d360a4dba148",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-missing#cmd": {
+      "key": "c65eadc0927e2f5d",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-abbreviations-missing-dot-part#cmd": {
+      "key": "1e0404ad7378db5b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub/./nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-abbreviations-missing-parent#cmd": {
+      "key": "b47f39a0e39c90e6",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub/../nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-abbreviations-relative#cmd": {
+      "key": "d7d20a3efce61e6a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-relative-dot#cmd": {
+      "key": "d870e7630388b953",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-relative-double-slash#cmd": {
+      "key": "dcfd38bd536417e9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-relative-parent#cmd": {
+      "key": "3531b2c5750b45bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-abbreviations-undefined-variable#cmd": {
+      "key": "e54c15f86038a1c3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-abbreviations-userdata#cmd": {
+      "key": "9e1e731df9a968cc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-dot#cmd": {
+      "key": "be40fae0a261ab8e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-dot-dot-part#cmd": {
+      "key": "e5e23561d62fa2eb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-dot-double-slash#cmd": {
+      "key": "42f95f1c36a7bd60",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-dot-parent#cmd": {
+      "key": "4866d9aa5fd9f085",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-home#cmd": {
+      "key": "8d1ef4354a29f702",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-missing#cmd": {
+      "key": "b11b65be0610a88b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-defaults-missing-dot-part#cmd": {
+      "key": "77510f589bb72941",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub/./nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-defaults-missing-parent#cmd": {
+      "key": "feddfdca761d32e4",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub/../nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-defaults-relative#cmd": {
+      "key": "27e9495883d26b20",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-relative-dot#cmd": {
+      "key": "fe85ed9797e05bed",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-relative-double-slash#cmd": {
+      "key": "fe7caf5486515f8f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-relative-parent#cmd": {
+      "key": "abd18bc34b0169d1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-defaults-undefined-variable#cmd": {
+      "key": "dffca68926ddb85d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-defaults-userdata#cmd": {
+      "key": "98656584c0cafa62",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-include-in-header-dot#cmd": {
+      "key": "0832074a561d8877",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-dot-dot-part#cmd": {
+      "key": "f552c3b9bf9ae19e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-dot-double-slash#cmd": {
+      "key": "9ed6cc1e6283945f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-dot-parent#cmd": {
+      "key": "2087544a0f878e82",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-home#cmd": {
+      "key": "30ebbfe75e93de21",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-missing#cmd": {
+      "key": "5bc00378c9f7cf3e",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "path-include-in-header-missing-dot-part#cmd": {
+      "key": "419b001b6329f988",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'sub/./nosuch.txt' not found in resource path\n"
+    },
+    "path-include-in-header-missing-parent#cmd": {
+      "key": "da1379e050c0b4f3",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'sub/../nosuch.txt' not found in resource path\n"
+    },
+    "path-include-in-header-relative#cmd": {
+      "key": "121cbf8a604b62ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-relative-dot#cmd": {
+      "key": "59da0ea61f84760e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-relative-double-slash#cmd": {
+      "key": "b7bf958dc87a13fe",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-relative-parent#cmd": {
+      "key": "ac1c8f72d4c808b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-include-in-header-undefined-variable#cmd": {
+      "key": "51730aef16ccb252",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-include-in-header-userdata#cmd": {
+      "key": "32ccc78806d48fc5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-input-file-dot#cmd": {
+      "key": "9edd2f8362ba5545",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-dot-dot-part#cmd": {
+      "key": "a0894c3cc31183c8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-dot-double-slash#cmd": {
+      "key": "adb0a632216ddb39",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-dot-parent#cmd": {
+      "key": "0099d31dac76d864",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-home#cmd": {
+      "key": "cfc6ccf44fa4535b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-missing#cmd": {
+      "key": "6da9c0716fb52db8",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-input-file-missing-dot-part#cmd": {
+      "key": "e0908080f5881462",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub/./nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-input-file-missing-parent#cmd": {
+      "key": "d24dfa02c9554759",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub/../nosuch.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "path-input-file-relative#cmd": {
+      "key": "0727d528de7f7af5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-relative-dot#cmd": {
+      "key": "a0bdf8880991ec70",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-relative-double-slash#cmd": {
+      "key": "7dca9e098c801868",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-relative-parent#cmd": {
+      "key": "771c0c7a2f2726b6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-input-file-undefined-variable#cmd": {
+      "key": "7345fad2b2db46ac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-input-file-userdata#cmd": {
+      "key": "8fd05718780ff3fb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-dot#cmd": {
+      "key": "539d6a37ea16ab34",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-dot-dot-part#cmd": {
+      "key": "7f9e756616a78869",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-dot-double-slash#cmd": {
+      "key": "c2a1130d960b589a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-dot-parent#cmd": {
+      "key": "aea548d7e15b03d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-missing#cmd": {
+      "key": "84e056c51be881dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-missing-dot-part#cmd": {
+      "key": "5023d8e2d03e5d6f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-missing-parent#cmd": {
+      "key": "962f016f709edca6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-relative#cmd": {
+      "key": "e2d42909f3aebf0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-relative-dot#cmd": {
+      "key": "23439b3525fa8e7f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-relative-double-slash#cmd": {
+      "key": "72b2168966eeedb9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-relative-parent#cmd": {
+      "key": "ac5db9ea40760073",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-log-file-undefined-variable#cmd": {
+      "key": "4411e42194b0bfc3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-metadata-file-dot#cmd": {
+      "key": "0568c825ea547c05",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-dot-dot-part#cmd": {
+      "key": "3b25aed96f7b98e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-dot-double-slash#cmd": {
+      "key": "c8a6e2dbd1a420fd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-dot-parent#cmd": {
+      "key": "0f49d053874ab74c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-home#cmd": {
+      "key": "5caf9770d899fb13",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-missing#cmd": {
+      "key": "af081a6b27a96618",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'nosuch.txt'\n"
+    },
+    "path-metadata-file-missing-dot-part#cmd": {
+      "key": "96da40d6cbd869a6",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'sub/./nosuch.txt'\n"
+    },
+    "path-metadata-file-missing-parent#cmd": {
+      "key": "a77ae1a3e6a82971",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'sub/../nosuch.txt'\n"
+    },
+    "path-metadata-file-relative#cmd": {
+      "key": "d1b23cc6658fb6bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-relative-dot#cmd": {
+      "key": "7c059c3fa7ddff0c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-relative-double-slash#cmd": {
+      "key": "4732ad81a8b086a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-relative-parent#cmd": {
+      "key": "b064467c9476820a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-metadata-file-undefined-variable#cmd": {
+      "key": "3aae6ebc24901784",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-metadata-file-userdata#cmd": {
+      "key": "e885b2dd09d94613",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "path-output-file-dot#cmd": {
+      "key": "3df24a18d8663eda",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-dot-dot-part#cmd": {
+      "key": "e82245e8f350988f",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-dot-double-slash#cmd": {
+      "key": "68e7779f3d8ea814",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-dot-parent#cmd": {
+      "key": "dd76d1b43315cab9",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-missing#cmd": {
+      "key": "a8c319fef0d3ed8f",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-missing-dot-part#cmd": {
+      "key": "f84913ea4fc7e8ad",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-missing-parent#cmd": {
+      "key": "dc21abb829584180",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-relative#cmd": {
+      "key": "c9ba36a1107efaec",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-relative-dot#cmd": {
+      "key": "7456e43a05dedc59",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-relative-double-slash#cmd": {
+      "key": "25e93887cf337653",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-relative-parent#cmd": {
+      "key": "ca145f48ca999ffd",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "path-output-file-undefined-variable#cmd": {
+      "key": "be5a4702a794d3d9",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-template-dot#cmd": {
+      "key": "5ef2e179f535a76e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-dot-dot-part#cmd": {
+      "key": "d4d25006f95f8493",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-dot-double-slash#cmd": {
+      "key": "a2eeaf486dc5975c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-dot-parent#cmd": {
+      "key": "67e60ba7a8305ca1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-home#cmd": {
+      "key": "dec421eac4e1409e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-missing#cmd": {
+      "key": "94fe93b887232a03",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.txt'\n"
+    },
+    "path-template-missing-dot-part#cmd": {
+      "key": "739562677abb9959",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.txt'\n"
+    },
+    "path-template-missing-parent#cmd": {
+      "key": "4de51c3e55add650",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.txt'\n"
+    },
+    "path-template-relative#cmd": {
+      "key": "30ac82b7122f827c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-relative-dot#cmd": {
+      "key": "83405eb4e5d6e169",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-relative-double-slash#cmd": {
+      "key": "440fac6be1e39eef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-relative-parent#cmd": {
+      "key": "55d286c96c7439d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "path-template-undefined-variable#cmd": {
+      "key": "1aa6efe8d60c6df1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+    },
+    "path-template-userdata#cmd": {
+      "key": "465280dad109bace",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    }
+  }
+}

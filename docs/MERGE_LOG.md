@@ -703,3 +703,41 @@ punctuation runs remain. Open findings: low rows (I-CM-10, I-CM-11,
 I-CM-16, I-CM-17) and the scope gap I-CM-01 (`sourcepos`). Open checks:
 half of the mutation sample, a coverage number. Requests of the worker to
 the coordinator: none.
+
+## Workstream cli (branch `ws/cli`, head cb85d5f, one squashed commit, batch 2 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the command
+line of `randoc-cli` with the options of Pandoc 3.13, defaults files, the
+resource search and the user data folder, input preparation (tab
+expansion with `--tab-stop` and `--preserve-tabs`), the program suite
+`cli/`, and one approved change in `randoc-core` (`Error::Utf8Decoding`
+prints the byte with a space pad).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head cb85d5f (18:59 to 19:05 UTC; worker report): 8074 units, 6362 pass, 1342 fail, 370 skipped; baseline 2217 units, 0 regressions. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `cli/`: 3535 units, 3457 pass, 78 fail. Replay `tests/resources.rs`: 2732 of 2732 resource cases and 236 of 236 UTF-8 cases equal. Differential tool `cli_diff.py` on 9d62b55: 3,548 command lines, 3,189 equal, 359 differ in 22 signatures (two medium classes corrected in 0eb932b). |
+| 3. Tests | `cargo test -p randoc-cli`: all pass (64 unit tests, replay tests included). Mutation sample and coverage: not run. |
+| 4. No panics | Fuzz targets on cb85d5f (`checks-fuzz-a.md`, check 2): `args` 901 s, 2,854,115 runs, 0 crashes, 0 timeouts, peak memory 722 MB; `defaults` 901 s, 13,796,134 runs, 0 crashes, 0 timeouts, peak memory 1124 MB. |
+| 5. Reviews | 7 rounds. Round 7 on 5895561: Codex and Opus REQUEST CHANGES (3 high, 4 medium in all). The worker reports each one as closed in a46ec01. No review of the head exists. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes code of a path that existed on `main` before: the program that each conversion and each conformance unit runs. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Conflicts in the merge: `Cargo.lock` (the version of `main`; the build
+wrote it again) and `THIRD_PARTY_NOTICES.md` (`resolve-tables`: 3 rows of
+the branch added). No source file of `crates/randoc` changed.
+
+Licence scan: 8 cases that stored the text of Pandoc data files were
+removed in cb85d5f (row I-CLI-31, scope gap); the remaining hits are the
+program interface (completion scripts, error messages, the version text).
+
+Rows closed by this merge: I-002 (the first command line; the branch
+replaces it, and each remaining difference is a row I-CLI-NN) and
+I-NATIVE-04 (tab expansion before the reader: the 3 units
+`native/read/literal-tab` pass with the merged program). The same commit
+removes a second copy of row I-002 with older text, which the squash of
+`markdown-reader` (d5386de) had added to `docs/ISSUES.md`.
+
+Open findings: the low rows I-CLI-28, I-CLI-29, I-CLI-30 and the other low
+rows and scope gaps of the branch. Open checks: mutation, coverage.
+Requests of the worker to the coordinator: none.

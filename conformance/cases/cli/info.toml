@@ -1,0 +1,1112 @@
+# Information commands: help, lists, default templates, data files and styles.
+
+[[case]]
+id = "help-long"
+cmd = ["--help"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:help"]
+
+[[case]]
+id = "help-short"
+cmd = ["-h"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:help"]
+
+[[case]]
+id = "help-with-other-options"
+cmd = ["-f", "json", "--help", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:help"]
+
+[[case]]
+id = "help-with-argument"
+cmd = ["--help=yes"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:help"]
+
+[[case]]
+id = "help-with-unknown-option"
+cmd = ["-h", "--nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:help"]
+
+[[case]]
+id = "help-then-list-input-formats"
+cmd = ["--help", "--list-input-formats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "version-with-argument"
+cmd = ["--version=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:version"]
+
+[[case]]
+id = "list-input-formats"
+cmd = ["--list-input-formats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-input-formats"]
+
+[[case]]
+id = "list-output-formats"
+cmd = ["--list-output-formats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-output-formats"]
+
+[[case]]
+id = "list-input-formats-with-argument"
+cmd = ["--list-input-formats=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-input-formats"]
+
+[[case]]
+id = "list-input-and-output-formats"
+cmd = ["--list-input-formats", "--list-output-formats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-output-then-input-formats"
+cmd = ["--list-output-formats", "--list-input-formats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-input-formats-with-input-file"
+cmd = ["--list-input-formats", "nosuch.md"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-highlight-languages"
+cmd = ["--list-highlight-languages"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-highlight-languages"]
+
+[[case]]
+id = "list-highlight-styles"
+cmd = ["--list-highlight-styles"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-highlight-styles"]
+
+[[case]]
+id = "list-highlight-styles-after-from"
+cmd = ["-f", "nosuch", "--list-highlight-styles"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-extensions-default"
+cmd = ["--list-extensions"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-ansi"
+cmd = ["--list-extensions=ansi"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-asciidoc"
+cmd = ["--list-extensions=asciidoc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-asciidoc-legacy"
+cmd = ["--list-extensions=asciidoc_legacy"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-asciidoctor"
+cmd = ["--list-extensions=asciidoctor"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bbcode"
+cmd = ["--list-extensions=bbcode"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bbcode-fluxbb"
+cmd = ["--list-extensions=bbcode_fluxbb"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bbcode-hubzilla"
+cmd = ["--list-extensions=bbcode_hubzilla"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bbcode-phpbb"
+cmd = ["--list-extensions=bbcode_phpbb"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bbcode-steam"
+cmd = ["--list-extensions=bbcode_steam"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bbcode-xenforo"
+cmd = ["--list-extensions=bbcode_xenforo"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-beamer"
+cmd = ["--list-extensions=beamer"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-biblatex"
+cmd = ["--list-extensions=biblatex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bibtex"
+cmd = ["--list-extensions=bibtex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-bits"
+cmd = ["--list-extensions=bits"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-chunkedhtml"
+cmd = ["--list-extensions=chunkedhtml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-commonmark"
+cmd = ["--list-extensions=commonmark"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-commonmark-x"
+cmd = ["--list-extensions=commonmark_x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-context"
+cmd = ["--list-extensions=context"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-creole"
+cmd = ["--list-extensions=creole"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-csljson"
+cmd = ["--list-extensions=csljson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-csv"
+cmd = ["--list-extensions=csv"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-djot"
+cmd = ["--list-extensions=djot"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-docbook"
+cmd = ["--list-extensions=docbook"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-docbook4"
+cmd = ["--list-extensions=docbook4"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-docbook5"
+cmd = ["--list-extensions=docbook5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-docx"
+cmd = ["--list-extensions=docx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-dokuwiki"
+cmd = ["--list-extensions=dokuwiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-dzslides"
+cmd = ["--list-extensions=dzslides"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-endnotexml"
+cmd = ["--list-extensions=endnotexml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-epub"
+cmd = ["--list-extensions=epub"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-epub2"
+cmd = ["--list-extensions=epub2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-epub3"
+cmd = ["--list-extensions=epub3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-fb2"
+cmd = ["--list-extensions=fb2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-fodt"
+cmd = ["--list-extensions=fodt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-gfm"
+cmd = ["--list-extensions=gfm"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-haddock"
+cmd = ["--list-extensions=haddock"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-html"
+cmd = ["--list-extensions=html"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-html4"
+cmd = ["--list-extensions=html4"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-html5"
+cmd = ["--list-extensions=html5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-icml"
+cmd = ["--list-extensions=icml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-ipynb"
+cmd = ["--list-extensions=ipynb"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-jats"
+cmd = ["--list-extensions=jats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-jats-archiving"
+cmd = ["--list-extensions=jats_archiving"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-jats-articleauthoring"
+cmd = ["--list-extensions=jats_articleauthoring"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-jats-publishing"
+cmd = ["--list-extensions=jats_publishing"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-jira"
+cmd = ["--list-extensions=jira"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-json"
+cmd = ["--list-extensions=json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-latex"
+cmd = ["--list-extensions=latex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-man"
+cmd = ["--list-extensions=man"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-markdown"
+cmd = ["--list-extensions=markdown"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-markdown-github"
+cmd = ["--list-extensions=markdown_github"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-markdown-mmd"
+cmd = ["--list-extensions=markdown_mmd"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-markdown-phpextra"
+cmd = ["--list-extensions=markdown_phpextra"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-markdown-strict"
+cmd = ["--list-extensions=markdown_strict"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-markua"
+cmd = ["--list-extensions=markua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-mdoc"
+cmd = ["--list-extensions=mdoc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-mediawiki"
+cmd = ["--list-extensions=mediawiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-ms"
+cmd = ["--list-extensions=ms"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-muse"
+cmd = ["--list-extensions=muse"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-native"
+cmd = ["--list-extensions=native"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-odt"
+cmd = ["--list-extensions=odt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-opendocument"
+cmd = ["--list-extensions=opendocument"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-opml"
+cmd = ["--list-extensions=opml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-org"
+cmd = ["--list-extensions=org"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-pdf"
+cmd = ["--list-extensions=pdf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-plain"
+cmd = ["--list-extensions=plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-pod"
+cmd = ["--list-extensions=pod"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-pptx"
+cmd = ["--list-extensions=pptx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-revealjs"
+cmd = ["--list-extensions=revealjs"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-ris"
+cmd = ["--list-extensions=ris"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-rst"
+cmd = ["--list-extensions=rst"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-rtf"
+cmd = ["--list-extensions=rtf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-s5"
+cmd = ["--list-extensions=s5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-slideous"
+cmd = ["--list-extensions=slideous"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-slidy"
+cmd = ["--list-extensions=slidy"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-t2t"
+cmd = ["--list-extensions=t2t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-tei"
+cmd = ["--list-extensions=tei"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-texinfo"
+cmd = ["--list-extensions=texinfo"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-textile"
+cmd = ["--list-extensions=textile"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-tikiwiki"
+cmd = ["--list-extensions=tikiwiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-tsv"
+cmd = ["--list-extensions=tsv"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-twiki"
+cmd = ["--list-extensions=twiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-typst"
+cmd = ["--list-extensions=typst"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-vimdoc"
+cmd = ["--list-extensions=vimdoc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-vimwiki"
+cmd = ["--list-extensions=vimwiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-xlsx"
+cmd = ["--list-extensions=xlsx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-xml"
+cmd = ["--list-extensions=xml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-xwiki"
+cmd = ["--list-extensions=xwiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-zimwiki"
+cmd = ["--list-extensions=zimwiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-separate-argument"
+cmd = ["--list-extensions", "markdown"]
+
+[[case]]
+id = "list-extensions-unknown"
+cmd = ["--list-extensions=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-extensions"]
+
+[[case]]
+id = "list-extensions-with-plus-ext"
+cmd = ["--list-extensions=markdown+smart"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-extensions-with-minus-ext"
+cmd = ["--list-extensions=markdown-smart"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-extensions-empty"
+cmd = ["--list-extensions="]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-extensions-uppercase"
+cmd = ["--list-extensions=Markdown"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "list-extensions-docx-plus-styles"
+cmd = ["--list-extensions=docx+styles"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bash-completion"
+cmd = ["--bash-completion"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:bash-completion"]
+
+[[case]]
+id = "completion-bash"
+cmd = ["--completion=bash"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:completion"]
+
+[[case]]
+id = "completion-zsh"
+cmd = ["--completion=zsh"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:completion"]
+
+[[case]]
+id = "completion-fish"
+cmd = ["--completion=fish"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:completion"]
+
+[[case]]
+id = "completion-unknown"
+cmd = ["--completion=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:completion"]
+
+[[case]]
+id = "completion-missing-argument"
+cmd = ["--completion"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:completion"]
+
+[[case]]
+id = "print-default-template-html"
+cmd = ["--print-default-template=html"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-html5"
+cmd = ["--print-default-template=html5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-html4"
+cmd = ["--print-default-template=html4"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-latex"
+cmd = ["--print-default-template=latex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-markdown"
+cmd = ["--print-default-template=markdown"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-plain"
+cmd = ["--print-default-template=plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-rst"
+cmd = ["--print-default-template=rst"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-org"
+cmd = ["--print-default-template=org"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-man"
+cmd = ["--print-default-template=man"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-context"
+cmd = ["--print-default-template=context"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-docbook"
+cmd = ["--print-default-template=docbook"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-jats"
+cmd = ["--print-default-template=jats"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-typst"
+cmd = ["--print-default-template=typst"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-asciidoc"
+cmd = ["--print-default-template=asciidoc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-commonmark"
+cmd = ["--print-default-template=commonmark"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-gfm"
+cmd = ["--print-default-template=gfm"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-textile"
+cmd = ["--print-default-template=textile"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-mediawiki"
+cmd = ["--print-default-template=mediawiki"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-revealjs"
+cmd = ["--print-default-template=revealjs"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-beamer"
+cmd = ["--print-default-template=beamer"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-texinfo"
+cmd = ["--print-default-template=texinfo"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-ms"
+cmd = ["--print-default-template=ms"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-rtf"
+cmd = ["--print-default-template=rtf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-opendocument"
+cmd = ["--print-default-template=opendocument"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-icml"
+cmd = ["--print-default-template=icml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-epub"
+cmd = ["--print-default-template=epub"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-epub3"
+cmd = ["--print-default-template=epub3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-djot"
+cmd = ["--print-default-template=djot"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-markua"
+cmd = ["--print-default-template=markua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-json"
+cmd = ["--print-default-template=json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-native"
+cmd = ["--print-default-template=native"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-docx"
+cmd = ["--print-default-template=docx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-pptx"
+cmd = ["--print-default-template=pptx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-short"
+cmd = ["-D", "plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-template"]
+
+[[case]]
+id = "print-default-template-short-attached"
+cmd = ["-Dplain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-default-template-unknown"
+cmd = ["--print-default-template=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-default-template-with-ext"
+cmd = ["--print-default-template=markdown+smart"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-default-template-missing-argument"
+cmd = ["--print-default-template"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-default-template-with-data-dir"
+cmd = ["--data-dir=dd", "--print-default-template=plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dd/templates/default.plain" = "custom $body$\n" }
+
+[[case]]
+id = "print-default-template-user-data-dir"
+cmd = ["--print-default-template=plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { ".home/.local/share/pandoc/templates/default.plain" = "user $body$\n" }
+
+[[case]]
+id = "print-default-data-file-templates-styles-html"
+cmd = ["--print-default-data-file=templates/styles.html"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-data-file"]
+
+[[case]]
+id = "print-default-data-file-templates-default-plain"
+cmd = ["--print-default-data-file=templates/default.plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-default-data-file"]
+
+[[case]]
+id = "print-default-data-file-missing"
+cmd = ["--print-default-data-file=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-default-data-file-dotdot"
+cmd = ["--print-default-data-file=../MANUAL.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-highlight-style-pygments"
+cmd = ["--print-highlight-style=pygments"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-tango"
+cmd = ["--print-highlight-style=tango"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-espresso"
+cmd = ["--print-highlight-style=espresso"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-zenburn"
+cmd = ["--print-highlight-style=zenburn"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-kate"
+cmd = ["--print-highlight-style=kate"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-monochrome"
+cmd = ["--print-highlight-style=monochrome"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-breezedark"
+cmd = ["--print-highlight-style=breezedark"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-haddock"
+cmd = ["--print-highlight-style=haddock"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:print-highlight-style"]
+
+[[case]]
+id = "print-highlight-style-unknown"
+cmd = ["--print-highlight-style=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-highlight-style-uppercase"
+cmd = ["--print-highlight-style=Tango"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-highlight-style-theme-file"
+cmd = ["--print-highlight-style=my.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "my.theme" = "{\"text-color\": \"#111111\", \"background-color\": \"#eeeeee\", \"line-number-color\": null, \"line-number-background-color\": null, \"text-styles\": {\"Keyword\": {\"text-color\": \"#0000ff\", \"background-color\": null, \"bold\": true, \"italic\": false, \"underline\": false}}}" }
+
+[[case]]
+id = "print-highlight-style-missing-theme-file"
+cmd = ["--print-highlight-style=nosuch.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "print-highlight-style-bad-theme-file"
+cmd = ["--print-highlight-style=bad.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "bad.theme" = "{not json" }
+
+[[case]]
+id = "print-highlight-style-missing-argument"
+cmd = ["--print-highlight-style"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "info-command-first-wins"
+cmd = ["--list-input-formats", "--print-highlight-style=tango"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "info-command-with-input-file"
+cmd = ["-f", "json", "--list-highlight-styles", "in.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "info-command-with-bad-option-after"
+cmd = ["--list-input-formats", "--toc-depth=9"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "info-command-with-unknown-option"
+cmd = ["--list-input-formats", "--nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dump-args"
+cmd = ["-f", "json", "-t", "json", "--dump-args"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dump-args"]
+
+[[case]]
+id = "dump-args-with-files"
+cmd = ["-f", "json", "-t", "json", "-o", "out.json", "--dump-args", "a.json", "b.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dump-args-false"
+cmd = ["-f", "json", "-t", "json", "--dump-args=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dump-args"]
+
+[[case]]
+id = "dump-args-bad-value"
+cmd = ["-f", "json", "-t", "json", "--dump-args=maybe"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dump-args"]
+
+[[case]]
+id = "ignore-args"
+cmd = ["-f", "json", "-t", "json", "--ignore-args", "nosuch.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ignore-args"]
+
+[[case]]
+id = "ignore-args-bad-value"
+cmd = ["-f", "json", "-t", "json", "--ignore-args=maybe"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ignore-args"]
+
+[[case]]
+id = "print-default-data-file-dot-dot"
+cmd = ["--print-default-data-file=templates/../templates/default.latex"]
+input = ""
+
+[[case]]
+id = "print-default-data-file-double-slash"
+cmd = ["--print-default-data-file=templates//default.latex"]
+input = ""
+
+[[case]]
+id = "print-default-template-empty"
+cmd = ["-D", ""]
+input = ""

@@ -1,0 +1,383 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "m-00-foo#cmd": {
+      "key": "deb7b6ebab6df712",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-01-foo-bar#cmd": {
+      "key": "07db10db52849bae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"bar\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-02-foo-true#cmd": {
+      "key": "5f40e6445ed5e032",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-03-foo-false#cmd": {
+      "key": "1de9c867103f5292",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaBool\",\"c\":false}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-04-foo-True#cmd": {
+      "key": "8b85d4177524f252",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaBool\",\"c\":true}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-05-foo-yes#cmd": {
+      "key": "4df7d06bd4624848",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"yes\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-06-foo-42#cmd": {
+      "key": "aa7f5a6655c0e206",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"42\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-07-foo-3-5#cmd": {
+      "key": "5d880f09355528e5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"3.5\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-08-foo#cmd": {
+      "key": "249d40c5d70662fe",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-09-foo-a-b#cmd": {
+      "key": "b296fff9db991921",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"a=b\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-10-foo--1-2#cmd": {
+      "key": "5d2eb7847d336708",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"[1,2]\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-11-foo--emph#cmd": {
+      "key": "bc7a8db818d306c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"*emph*\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-12-foo--a--1#cmd": {
+      "key": "8189d9a5cf12b178",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"{a: 1}\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-13-foo--spaced#cmd": {
+      "key": "2eda110c849d5770",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\" spaced \"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-14-foo-bar#cmd": {
+      "key": "f9fc66c283defc6b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"bar\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-15-foo-null#cmd": {
+      "key": "375bd93dc88649cd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"null\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-16-bar#cmd": {
+      "key": "2ca4a0c07da824df",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"\":{\"t\":\"MetaString\",\"c\":\"bar\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-17-foo#cmd": {
+      "key": "6d39fed565eb60cd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"~\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-18-foo--quoted#cmd": {
+      "key": "0beced6b87e5c21e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"\\\"quoted\\\"\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "m-19-Foo-caps#cmd": {
+      "key": "69d241ba99a25a39",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"Foo\":{\"t\":\"MetaString\",\"c\":\"caps\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-all-three#cmd": {
+      "key": "e2fd26b0b22edf1e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"flag\":{\"t\":\"MetaBool\",\"c\":true},\"foo\":{\"t\":\"MetaString\",\"c\":\"cli\"},\"list\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]},\"num\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]},\"text\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Doc\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "metadata-attached-short#cmd": {
+      "key": "f8a24656d89f3e52",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"bar\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-alias-limit#cmd": {
+      "key": "fa11f6f75c00a1bf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing YAML metadata at \"al.yaml\" (line 1, column 1):\nal.yaml:16:12: x14[0]: the aliases add more than 100000 nodes and characters\n   |\n16 | x14: &x14 [*x13, *x13]\n   |            ^\n"
+    },
+    "metadata-file-alias-small#cmd": {
+      "key": "86ce7a88d9c9c797",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]},\"b\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-alias-two-scalars#cmd": {
+      "key": "98aa0f00442a72f1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing YAML metadata at \"al.yaml\" (line 1, column 1):\nal.yaml:3:4: c: the aliases add more than 100000 nodes and characters\n  |\n3 | c: *a\n  |    ^\n"
+    },
+    "metadata-file-bad-yaml#cmd": {
+      "key": "41eb4c16d543e95a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing YAML metadata at \"bad.yaml\" (line 1, column 1):\nbad.yaml:1:4: unterminated flow sequence\n  |\n1 | a: [b\n  |    ^\n"
+    },
+    "metadata-file-duplicate-key#cmd": {
+      "key": "a8ea5e3e143f512d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing YAML metadata at \"d.yaml\" (line 1, column 1):\nd.yaml:2:1: duplicate key \"a\"\n  |\n2 | a: 2\n  | ^\nd.yaml:1:1: the first key \"a\"\n  |\n1 | a: 1\n  | ^\n"
+    },
+    "metadata-file-empty#cmd": {
+      "key": "1ac1964fb71dc752",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-from-data-dir#cmd": {
+      "key": "956abc9408318e0d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"datadir\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-from-user-data-dir#cmd": {
+      "key": "698198deb8171d12",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"userdata\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-json#cmd": {
+      "key": "c1a42c8e123ff4d0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"b\":{\"t\":\"MetaBool\",\"c\":false},\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"fromjson\"}]},\"n\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-json-content-yaml-ext#cmd": {
+      "key": "6f2a56e198483067",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-list-key#cmd": {
+      "key": "bc609ad06f586444",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing YAML metadata at \"d.yaml\" (line 1, column 1):\nd.yaml:1:3: expected a scalar key, but got a list\n  |\n1 | ? [a]\n  |   ^\n"
+    },
+    "metadata-file-markdown-values#cmd": {
+      "key": "3bfb37b8f70738a4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bar\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"link\"}],[\"u\",\"\"]]}]},\"foo\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"}]}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-missing#cmd": {
+      "key": "f396c58acb0f8566",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'nosuch.yaml'\n"
+    },
+    "metadata-file-not-mapping#cmd": {
+      "key": "6fecd31716bd71ff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at \"l.yaml\" (line 1, column 1):\nexpected YAML object\n"
+    },
+    "metadata-file-number-big-exponent#cmd": {
+      "key": "3022594300a8b5b9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1.0e20\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-exponent#cmd": {
+      "key": "dca898519cdf3f47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1000\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-float#cmd": {
+      "key": "64621d5036c32d28",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1.5\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-float-one#cmd": {
+      "key": "6457df5036ba6f49",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-hex#cmd": {
+      "key": "264e98237e978a32",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"16\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-inf#cmd": {
+      "key": "07c65de983c4209a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"+inf\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-leading-zero#cmd": {
+      "key": "bc8d4847dc55997d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"10\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-nan#cmd": {
+      "key": "10c25124d03a24d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-null#cmd": {
+      "key": "5eb1b23c320f5382",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-octal#cmd": {
+      "key": "99d7af61f3ac441a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"15\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-plus#cmd": {
+      "key": "ded0137161619ee7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"5\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-number-quoted-number#cmd": {
+      "key": "a79f977ab8ebbe58",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"0x10\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-second-document#cmd": {
+      "key": "ba88bb1f69bd99da",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-tab-indentation#cmd": {
+      "key": "c3e4823593bc458d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing YAML metadata at \"d.yaml\" (line 1, column 1):\nd.yaml:1:1: tabs cannot be used for indentation\n  |\n1 | \ta: 1\n  | ^\n"
+    },
+    "metadata-file-two-files#cmd": {
+      "key": "bce7f9f5ec50599a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},\"onlya\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]},\"onlyb\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-vs-cli#cmd": {
+      "key": "71738146ad10f1b4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"flag\":{\"t\":\"MetaBool\",\"c\":true},\"foo\":{\"t\":\"MetaString\",\"c\":\"cli\"},\"list\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]},\"num\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]},\"text\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-vs-cli-reverse-order#cmd": {
+      "key": "3cd65bd8662205b6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"flag\":{\"t\":\"MetaBool\",\"c\":true},\"foo\":{\"t\":\"MetaString\",\"c\":\"cli\"},\"list\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]},\"num\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]},\"text\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-vs-document#cmd": {
+      "key": "17a38a67336c1592",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"flag\":{\"t\":\"MetaBool\",\"c\":true},\"foo\":{\"t\":\"MetaString\",\"c\":\"fromdoc\"},\"list\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]},\"num\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]},\"text\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Doc\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "metadata-file-with-dashes#cmd": {
+      "key": "0e62bfcd348fa866",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"dashed\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-yaml#cmd": {
+      "key": "e0e776b07df889e8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"flag\":{\"t\":\"MetaBool\",\"c\":true},\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"fromfile\"}]},\"list\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]},\"num\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]},\"text\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-long#cmd": {
+      "key": "0af44ff96d45d533",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"bar\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-missing-argument#cmd": {
+      "key": "f3a04d23ff048623",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `-M' requires an argument KEY[=VALUE]\nTry pandoc --help for more information.\n"
+    },
+    "metadata-overrides-document#cmd": {
+      "key": "269df92c87ba5d4d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"cli\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Doc\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "metadata-repeated-becomes-list#cmd": {
+      "key": "b2b54ec9f0ddb656",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"a\"},{\"t\":\"MetaString\",\"c\":\"b\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-repeated-three#cmd": {
+      "key": "af5c377f2fe6e148",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaBool\",\"c\":true},{\"t\":\"MetaString\",\"c\":\"2\"},{\"t\":\"MetaString\",\"c\":\"x\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-title-overrides-document#cmd": {
+      "key": "59c8bc08a9095331",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"fromdoc\"},\"title\":{\"t\":\"MetaString\",\"c\":\"New\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}\n",
+      "stderr": ""
+    },
+    "metadata-two-keys#cmd": {
+      "key": "f5e2203a2c9c2ba3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"b\":{\"t\":\"MetaString\",\"c\":\"2\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    }
+  }
+}

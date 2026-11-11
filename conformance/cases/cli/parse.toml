@@ -1,0 +1,353 @@
+# Option syntax: abbreviations, attached values, clusters, repeats and errors.
+
+[[case]]
+id = "long-equals"
+cmd = ["--from=json", "--to=json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "long-separate"
+cmd = ["--from", "json", "--to", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "short-separate"
+cmd = ["-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "short-attached"
+cmd = ["-fjson", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "read-write-synonyms"
+cmd = ["--read=json", "--write=json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "short-r-w-synonyms"
+cmd = ["-r", "json", "-w", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "cluster-s-then-f"
+cmd = ["-sfjson", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "cluster-s-separate-value"
+cmd = ["-sf", "json", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "cluster-f-swallows-rest"
+cmd = ["-ftjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "cluster-n-s"
+cmd = ["-Ns", "-fjson", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "short-s-attached-true"
+cmd = ["-strue", "-fjson", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "short-s-attached-false"
+cmd = ["-sfalse", "-fjson", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "short-s-attached-bad"
+cmd = ["-sx", "-fjson", "-tjson"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-unique-fro"
+cmd = ["--fro", "json", "--to", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-unique-sta"
+cmd = ["--sta", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-unique-stand-equals"
+cmd = ["--stand=true", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-s"
+cmd = ["--s", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-t"
+cmd = ["--t", "json", "-f", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-to-exact"
+cmd = ["--to", "json", "-f", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-toc-exact"
+cmd = ["--toc", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-toc-d"
+cmd = ["--toc-d=2", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-in"
+cmd = ["--in", "x", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-list"
+cmd = ["--list"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-unique-list-in"
+cmd = ["--list-in"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-unique-meta-equals"
+cmd = ["--metadata-f=nosuch.yaml", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-meta"
+cmd = ["--meta=x", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ambiguous-v"
+cmd = ["--v", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "abbrev-ver"
+cmd = ["--ver"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "double-dash-then-dash-file"
+cmd = ["-f", "json", "-t", "json", "--", "-x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "double-dash-then-existing-dash-file"
+cmd = ["-f", "json", "-t", "json", "--", "-x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "-x" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "double-dash-then-option-text"
+cmd = ["-f", "json", "-t", "json", "--", "--toc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dash-file-without-double-dash"
+cmd = ["-f", "json", "-t", "json", "-x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "missing-argument-long"
+cmd = ["-f", "json", "-t", "json", "--to"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "missing-argument-short"
+cmd = ["-t", "json", "-f"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "missing-argument-template"
+cmd = ["-f", "json", "-t", "json", "--template"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "missing-argument-toc-depth"
+cmd = ["-f", "json", "-t", "json", "--toc-depth"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "next-option-taken-as-argument"
+cmd = ["-f", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-given-argument-standalone"
+cmd = ["--standalone=maybe", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-given-argument-toc"
+cmd = ["--toc=yes", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-given-argument-toc-true"
+cmd = ["--toc=true", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-given-argument-toc-false"
+cmd = ["--toc=false", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-given-argument-toc-uppercase"
+cmd = ["--toc=TRUE", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-given-empty-argument"
+cmd = ["--toc=", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "flag-separate-argument-is-file"
+cmd = ["--toc", "true", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "no-arg-option-given-argument-verbose"
+cmd = ["--verbose=1", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "no-arg-option-given-argument-natbib"
+cmd = ["--natbib=true", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "no-arg-option-given-argument-version"
+cmd = ["--version=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "repeated-to-last-wins"
+cmd = ["--to", "native", "--to", "json", "-f", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "repeated-from-last-wins"
+cmd = ["-f", "nosuch", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "repeated-toc-depth-last-wins"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=9", "--toc-depth=2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "repeated-toc-depth-first-bad"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=2", "--toc-depth=9"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "repeated-standalone-false-then-true"
+cmd = ["-f", "json", "-t", "json", "--standalone=false", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "repeated-standalone-true-then-false"
+cmd = ["-f", "json", "-t", "json", "-s", "--standalone=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-long-option"
+cmd = ["--nosuch-option"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-long-option-with-value"
+cmd = ["--nosuch=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-short-option"
+cmd = ["-x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-short-option-uppercase"
+cmd = ["-Z"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-option-after-valid"
+cmd = ["-f", "json", "-t", "json", "--nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "two-unknown-options"
+cmd = ["--nosuch", "--other"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-and-bad-value"
+cmd = ["--toc-depth=9", "--nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "bad-value-then-unknown"
+cmd = ["--nosuch", "--toc-depth=9"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "unknown-and-missing-argument"
+cmd = ["--nosuch", "--to"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "option-after-input-file"
+cmd = ["in.json", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}" }
+
+[[case]]
+id = "single-dash-is-stdin"
+cmd = ["-f", "json", "-t", "json", "-"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "no-arguments-reads-stdin"
+cmd = []
+input = ""
+
+[[case]]
+id = "deprecated-option-warning"
+cmd = ["-f", "json", "-t", "json", "--base-header-level=2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "triple-dash"
+cmd = ["---", "-f", "json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "lone-double-dash"
+cmd = ["-f", "json", "-t", "json", "--"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "long-option-single-dash"
+cmd = ["-from=json", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "case-sensitive-long-option"
+cmd = ["--TO=json", "-f", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"

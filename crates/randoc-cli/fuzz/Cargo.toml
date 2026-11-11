@@ -1,0 +1,30 @@
+[package]
+name = "randoc-cli-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+randoc-cli = { path = ".." }
+randoc = { path = "../../randoc" }
+
+[[bin]]
+name = "args"
+path = "fuzz_targets/args.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "defaults"
+path = "fuzz_targets/defaults.rs"
+test = false
+doc = false
+bench = false
+
+# The fuzz crate is not a member of the main workspace.
+[workspace]

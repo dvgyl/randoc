@@ -14,6 +14,9 @@ path = "src/main.rs"
 
 [dependencies]
 randoc = { workspace = true }
+saphyr-parser = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
 
 [dev-dependencies]
 randoc-harness = { path = "../randoc-harness" }

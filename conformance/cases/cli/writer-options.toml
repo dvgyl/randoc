@@ -1,0 +1,1299 @@
+# General writer options with JSON input and output: valid and invalid values.
+
+[[case]]
+id = "wrap-auto"
+cmd = ["-f", "json", "-t", "json", "--wrap=auto"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:wrap"]
+
+[[case]]
+id = "wrap-none"
+cmd = ["-f", "json", "-t", "json", "--wrap=none"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:wrap"]
+
+[[case]]
+id = "wrap-preserve"
+cmd = ["-f", "json", "-t", "json", "--wrap=preserve"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:wrap"]
+
+[[case]]
+id = "wrap-bogus"
+cmd = ["-f", "json", "-t", "json", "--wrap=bogus"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:wrap"]
+
+[[case]]
+id = "wrap-Auto"
+cmd = ["-f", "json", "-t", "json", "--wrap=Auto"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:wrap"]
+
+[[case]]
+id = "columns-72"
+cmd = ["-f", "json", "-t", "json", "--columns=72"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:columns"]
+
+[[case]]
+id = "columns-1"
+cmd = ["-f", "json", "-t", "json", "--columns=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:columns"]
+
+[[case]]
+id = "columns-0"
+cmd = ["-f", "json", "-t", "json", "--columns=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:columns"]
+
+[[case]]
+id = "columns--5"
+cmd = ["-f", "json", "-t", "json", "--columns=-5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:columns"]
+
+[[case]]
+id = "columns-abc"
+cmd = ["-f", "json", "-t", "json", "--columns=abc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:columns"]
+
+[[case]]
+id = "columns-1e3"
+cmd = ["-f", "json", "-t", "json", "--columns=1e3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:columns"]
+
+[[case]]
+id = "toc-bare"
+cmd = ["-f", "json", "-t", "json", "--toc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc"]
+
+[[case]]
+id = "toc-true"
+cmd = ["-f", "json", "-t", "json", "--toc=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc"]
+
+[[case]]
+id = "toc-false"
+cmd = ["-f", "json", "-t", "json", "--toc=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc"]
+
+[[case]]
+id = "toc-bad"
+cmd = ["-f", "json", "-t", "json", "--toc=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc"]
+
+[[case]]
+id = "table-of-contents-synonym"
+cmd = ["-f", "json", "-t", "json", "--table-of-contents"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:toc"]
+
+[[case]]
+id = "toc-depth-1"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc-depth"]
+
+[[case]]
+id = "toc-depth-6"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=6"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc-depth"]
+
+[[case]]
+id = "toc-depth-0"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc-depth"]
+
+[[case]]
+id = "toc-depth-7"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=7"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc-depth"]
+
+[[case]]
+id = "toc-depth-x"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:toc-depth"]
+
+[[case]]
+id = "lof-bare"
+cmd = ["-f", "json", "-t", "json", "--lof"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lof"]
+
+[[case]]
+id = "lof-true"
+cmd = ["-f", "json", "-t", "json", "--lof=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lof"]
+
+[[case]]
+id = "lof-false"
+cmd = ["-f", "json", "-t", "json", "--lof=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lof"]
+
+[[case]]
+id = "lof-bad"
+cmd = ["-f", "json", "-t", "json", "--lof=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lof"]
+
+[[case]]
+id = "list-of-figures-synonym"
+cmd = ["-f", "json", "-t", "json", "--list-of-figures"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lof"]
+
+[[case]]
+id = "lot-bare"
+cmd = ["-f", "json", "-t", "json", "--lot"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lot"]
+
+[[case]]
+id = "lot-true"
+cmd = ["-f", "json", "-t", "json", "--lot=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lot"]
+
+[[case]]
+id = "lot-false"
+cmd = ["-f", "json", "-t", "json", "--lot=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lot"]
+
+[[case]]
+id = "lot-bad"
+cmd = ["-f", "json", "-t", "json", "--lot=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lot"]
+
+[[case]]
+id = "list-of-tables-synonym"
+cmd = ["-f", "json", "-t", "json", "--list-of-tables"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lot"]
+
+[[case]]
+id = "dpi-96"
+cmd = ["-f", "json", "-t", "json", "--dpi=96"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dpi"]
+
+[[case]]
+id = "dpi-300"
+cmd = ["-f", "json", "-t", "json", "--dpi=300"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dpi"]
+
+[[case]]
+id = "dpi-0"
+cmd = ["-f", "json", "-t", "json", "--dpi=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dpi"]
+
+[[case]]
+id = "dpi--1"
+cmd = ["-f", "json", "-t", "json", "--dpi=-1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dpi"]
+
+[[case]]
+id = "dpi-x"
+cmd = ["-f", "json", "-t", "json", "--dpi=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:dpi"]
+
+[[case]]
+id = "eol-lf"
+cmd = ["-f", "json", "-t", "json", "--eol=lf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:eol"]
+
+[[case]]
+id = "eol-crlf"
+cmd = ["-f", "json", "-t", "json", "--eol=crlf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:eol"]
+
+[[case]]
+id = "eol-native"
+cmd = ["-f", "json", "-t", "json", "--eol=native"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:eol"]
+
+[[case]]
+id = "eol-bad"
+cmd = ["-f", "json", "-t", "json", "--eol=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:eol"]
+
+[[case]]
+id = "eol-CRLF"
+cmd = ["-f", "json", "-t", "json", "--eol=CRLF"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:eol"]
+
+[[case]]
+id = "variable-key-only"
+cmd = ["-f", "json", "-t", "json", "-V", "foo"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable"]
+
+[[case]]
+id = "variable-key-value"
+cmd = ["-f", "json", "-t", "json", "-V", "foo=bar"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable"]
+
+[[case]]
+id = "variable-long-form"
+cmd = ["-f", "json", "-t", "json", "--variable=foo:bar"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable"]
+
+[[case]]
+id = "variable-repeated"
+cmd = ["-f", "json", "-t", "json", "-V", "foo=a", "-V", "foo=b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable"]
+
+[[case]]
+id = "variable-empty-key"
+cmd = ["-f", "json", "-t", "json", "-V", "=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "variable-missing-argument"
+cmd = ["-f", "json", "-t", "json", "-V"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "variable-json-valid"
+cmd = ["-f", "json", "-t", "json", "--variable-json=foo:[1,2]"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable-json"]
+
+[[case]]
+id = "variable-json-object"
+cmd = ["-f", "json", "-t", "json", "--variable-json=foo:{\"a\":true}"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable-json"]
+
+[[case]]
+id = "variable-json-bad-json"
+cmd = ["-f", "json", "-t", "json", "--variable-json=foo:[1,"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable-json"]
+
+[[case]]
+id = "variable-json-no-colon"
+cmd = ["-f", "json", "-t", "json", "--variable-json=foo"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:variable-json"]
+
+[[case]]
+id = "variable-json-equals"
+cmd = ["-f", "json", "-t", "json", "--variable-json=foo=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "template-existing"
+cmd = ["-f", "json", "-t", "json", "-s", "--template=t.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.txt" = "T $body$\n" }
+covers = ["opt:template"]
+
+[[case]]
+id = "template-existing-not-standalone"
+cmd = ["-f", "json", "-t", "json", "--template=t.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.txt" = "T $body$\n" }
+
+[[case]]
+id = "template-missing"
+cmd = ["-f", "json", "-t", "json", "-s", "--template=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:template"]
+
+[[case]]
+id = "template-missing-with-extension"
+cmd = ["-f", "json", "-t", "json", "-s", "--template=nosuch.tpl"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "template-missing-not-standalone"
+cmd = ["-f", "json", "-t", "json", "--template=nosuch.tpl"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "template-bad-syntax"
+cmd = ["-f", "json", "-t", "json", "-s", "--template=t.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.txt" = "$if(x)$ no end\n" }
+
+[[case]]
+id = "template-from-data-dir"
+cmd = ["-f", "json", "-t", "json", "-s", "--data-dir=dd", "--template=mine"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dd/templates/mine.json" = "$body$\n" }
+
+[[case]]
+id = "standalone-bare"
+cmd = ["-f", "json", "-t", "json", "--standalone"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:standalone"]
+
+[[case]]
+id = "standalone-true"
+cmd = ["-f", "json", "-t", "json", "--standalone=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:standalone"]
+
+[[case]]
+id = "standalone-false"
+cmd = ["-f", "json", "-t", "json", "--standalone=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:standalone"]
+
+[[case]]
+id = "standalone-bad"
+cmd = ["-f", "json", "-t", "json", "--standalone=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:standalone"]
+
+[[case]]
+id = "standalone-short"
+cmd = ["-f", "json", "-t", "json", "-s"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:standalone"]
+
+[[case]]
+id = "ascii-bare"
+cmd = ["-f", "json", "-t", "json", "--ascii"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ascii"]
+
+[[case]]
+id = "ascii-true"
+cmd = ["-f", "json", "-t", "json", "--ascii=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ascii"]
+
+[[case]]
+id = "ascii-false"
+cmd = ["-f", "json", "-t", "json", "--ascii=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ascii"]
+
+[[case]]
+id = "ascii-bad"
+cmd = ["-f", "json", "-t", "json", "--ascii=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ascii"]
+
+[[case]]
+id = "reference-links-bare"
+cmd = ["-f", "json", "-t", "json", "--reference-links"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-links"]
+
+[[case]]
+id = "reference-links-true"
+cmd = ["-f", "json", "-t", "json", "--reference-links=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-links"]
+
+[[case]]
+id = "reference-links-false"
+cmd = ["-f", "json", "-t", "json", "--reference-links=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-links"]
+
+[[case]]
+id = "reference-links-bad"
+cmd = ["-f", "json", "-t", "json", "--reference-links=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-links"]
+
+[[case]]
+id = "reference-location-block"
+cmd = ["-f", "json", "-t", "json", "--reference-location=block"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-location"]
+
+[[case]]
+id = "reference-location-section"
+cmd = ["-f", "json", "-t", "json", "--reference-location=section"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-location"]
+
+[[case]]
+id = "reference-location-document"
+cmd = ["-f", "json", "-t", "json", "--reference-location=document"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-location"]
+
+[[case]]
+id = "reference-location-page"
+cmd = ["-f", "json", "-t", "json", "--reference-location=page"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-location"]
+
+[[case]]
+id = "figure-caption-position-above"
+cmd = ["-f", "json", "-t", "json", "--figure-caption-position=above"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:figure-caption-position"]
+
+[[case]]
+id = "figure-caption-position-below"
+cmd = ["-f", "json", "-t", "json", "--figure-caption-position=below"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:figure-caption-position"]
+
+[[case]]
+id = "figure-caption-position-middle"
+cmd = ["-f", "json", "-t", "json", "--figure-caption-position=middle"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:figure-caption-position"]
+
+[[case]]
+id = "table-caption-position-above"
+cmd = ["-f", "json", "-t", "json", "--table-caption-position=above"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:table-caption-position"]
+
+[[case]]
+id = "table-caption-position-below"
+cmd = ["-f", "json", "-t", "json", "--table-caption-position=below"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:table-caption-position"]
+
+[[case]]
+id = "table-caption-position-middle"
+cmd = ["-f", "json", "-t", "json", "--table-caption-position=middle"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:table-caption-position"]
+
+[[case]]
+id = "markdown-headings-atx"
+cmd = ["-f", "json", "-t", "json", "--markdown-headings=atx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:markdown-headings"]
+
+[[case]]
+id = "markdown-headings-setext"
+cmd = ["-f", "json", "-t", "json", "--markdown-headings=setext"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:markdown-headings"]
+
+[[case]]
+id = "markdown-headings-bad"
+cmd = ["-f", "json", "-t", "json", "--markdown-headings=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:markdown-headings"]
+
+[[case]]
+id = "list-tables-bare"
+cmd = ["-f", "json", "-t", "json", "--list-tables"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-tables"]
+
+[[case]]
+id = "list-tables-true"
+cmd = ["-f", "json", "-t", "json", "--list-tables=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-tables"]
+
+[[case]]
+id = "list-tables-false"
+cmd = ["-f", "json", "-t", "json", "--list-tables=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-tables"]
+
+[[case]]
+id = "list-tables-bad"
+cmd = ["-f", "json", "-t", "json", "--list-tables=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:list-tables"]
+
+[[case]]
+id = "top-level-division-default"
+cmd = ["-f", "json", "-t", "json", "--top-level-division=default"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:top-level-division"]
+
+[[case]]
+id = "top-level-division-section"
+cmd = ["-f", "json", "-t", "json", "--top-level-division=section"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:top-level-division"]
+
+[[case]]
+id = "top-level-division-chapter"
+cmd = ["-f", "json", "-t", "json", "--top-level-division=chapter"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:top-level-division"]
+
+[[case]]
+id = "top-level-division-part"
+cmd = ["-f", "json", "-t", "json", "--top-level-division=part"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:top-level-division"]
+
+[[case]]
+id = "top-level-division-bad"
+cmd = ["-f", "json", "-t", "json", "--top-level-division=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:top-level-division"]
+
+[[case]]
+id = "number-sections-bare"
+cmd = ["-f", "json", "-t", "json", "--number-sections"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:number-sections"]
+
+[[case]]
+id = "number-sections-true"
+cmd = ["-f", "json", "-t", "json", "--number-sections=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:number-sections"]
+
+[[case]]
+id = "number-sections-false"
+cmd = ["-f", "json", "-t", "json", "--number-sections=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:number-sections"]
+
+[[case]]
+id = "number-sections-bad"
+cmd = ["-f", "json", "-t", "json", "--number-sections=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:number-sections"]
+
+[[case]]
+id = "number-sections-short"
+cmd = ["-f", "json", "-t", "json", "-N"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:number-sections"]
+
+[[case]]
+id = "number-offset-1"
+cmd = ["-f", "json", "-t", "json", "--number-offset=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:number-offset"]
+
+[[case]]
+id = "number-offset-1-c-2-c-3"
+cmd = ["-f", "json", "-t", "json", "--number-offset=1,2,3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:number-offset"]
+
+[[case]]
+id = "number-offset-0"
+cmd = ["-f", "json", "-t", "json", "--number-offset=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:number-offset"]
+
+[[case]]
+id = "number-offset-a"
+cmd = ["-f", "json", "-t", "json", "--number-offset=a"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:number-offset"]
+
+[[case]]
+id = "number-offset-1-cc-2"
+cmd = ["-f", "json", "-t", "json", "--number-offset=1,,2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:number-offset"]
+
+[[case]]
+id = "number-offset--1"
+cmd = ["-f", "json", "-t", "json", "--number-offset=-1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:number-offset"]
+
+[[case]]
+id = "listings-bare"
+cmd = ["-f", "json", "-t", "json", "--listings"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:listings"]
+
+[[case]]
+id = "listings-true"
+cmd = ["-f", "json", "-t", "json", "--listings=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:listings"]
+
+[[case]]
+id = "listings-false"
+cmd = ["-f", "json", "-t", "json", "--listings=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:listings"]
+
+[[case]]
+id = "listings-bad"
+cmd = ["-f", "json", "-t", "json", "--listings=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:listings"]
+
+[[case]]
+id = "incremental-bare"
+cmd = ["-f", "json", "-t", "json", "--incremental"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:incremental"]
+
+[[case]]
+id = "incremental-true"
+cmd = ["-f", "json", "-t", "json", "--incremental=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:incremental"]
+
+[[case]]
+id = "incremental-false"
+cmd = ["-f", "json", "-t", "json", "--incremental=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:incremental"]
+
+[[case]]
+id = "incremental-bad"
+cmd = ["-f", "json", "-t", "json", "--incremental=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:incremental"]
+
+[[case]]
+id = "incremental-short"
+cmd = ["-f", "json", "-t", "json", "-i"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:incremental"]
+
+[[case]]
+id = "slide-level-0"
+cmd = ["-f", "json", "-t", "json", "--slide-level=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:slide-level"]
+
+[[case]]
+id = "slide-level-2"
+cmd = ["-f", "json", "-t", "json", "--slide-level=2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:slide-level"]
+
+[[case]]
+id = "slide-level-6"
+cmd = ["-f", "json", "-t", "json", "--slide-level=6"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:slide-level"]
+
+[[case]]
+id = "slide-level-7"
+cmd = ["-f", "json", "-t", "json", "--slide-level=7"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:slide-level"]
+
+[[case]]
+id = "slide-level--1"
+cmd = ["-f", "json", "-t", "json", "--slide-level=-1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:slide-level"]
+
+[[case]]
+id = "slide-level-x"
+cmd = ["-f", "json", "-t", "json", "--slide-level=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:slide-level"]
+
+[[case]]
+id = "section-divs-bare"
+cmd = ["-f", "json", "-t", "json", "--section-divs"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:section-divs"]
+
+[[case]]
+id = "section-divs-true"
+cmd = ["-f", "json", "-t", "json", "--section-divs=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:section-divs"]
+
+[[case]]
+id = "section-divs-false"
+cmd = ["-f", "json", "-t", "json", "--section-divs=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:section-divs"]
+
+[[case]]
+id = "section-divs-bad"
+cmd = ["-f", "json", "-t", "json", "--section-divs=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:section-divs"]
+
+[[case]]
+id = "html-q-tags-bare"
+cmd = ["-f", "json", "-t", "json", "--html-q-tags"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:html-q-tags"]
+
+[[case]]
+id = "html-q-tags-true"
+cmd = ["-f", "json", "-t", "json", "--html-q-tags=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:html-q-tags"]
+
+[[case]]
+id = "html-q-tags-false"
+cmd = ["-f", "json", "-t", "json", "--html-q-tags=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:html-q-tags"]
+
+[[case]]
+id = "html-q-tags-bad"
+cmd = ["-f", "json", "-t", "json", "--html-q-tags=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:html-q-tags"]
+
+[[case]]
+id = "email-obfuscation-none"
+cmd = ["-f", "json", "-t", "json", "--email-obfuscation=none"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:email-obfuscation"]
+
+[[case]]
+id = "email-obfuscation-javascript"
+cmd = ["-f", "json", "-t", "json", "--email-obfuscation=javascript"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:email-obfuscation"]
+
+[[case]]
+id = "email-obfuscation-references"
+cmd = ["-f", "json", "-t", "json", "--email-obfuscation=references"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:email-obfuscation"]
+
+[[case]]
+id = "email-obfuscation-bad"
+cmd = ["-f", "json", "-t", "json", "--email-obfuscation=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:email-obfuscation"]
+
+[[case]]
+id = "id-prefix"
+cmd = ["-f", "json", "-t", "json", "--id-prefix=p-"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:id-prefix"]
+
+[[case]]
+id = "id-prefix-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--id-prefix"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:id-prefix"]
+
+[[case]]
+id = "title-prefix"
+cmd = ["-f", "json", "-t", "json", "--title-prefix=Site"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:title-prefix"]
+
+[[case]]
+id = "title-prefix-short"
+cmd = ["-f", "json", "-t", "json", "-T", "Site"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:title-prefix"]
+
+[[case]]
+id = "title-prefix-missing-argument"
+cmd = ["-f", "json", "-t", "json", "-T"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "css-url"
+cmd = ["-f", "json", "-t", "json", "--css=style.css"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:css"]
+
+[[case]]
+id = "css-short-repeated"
+cmd = ["-f", "json", "-t", "json", "-c", "a.css", "-c", "b.css"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:css"]
+
+[[case]]
+id = "css-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--css"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "include-in-header-existing"
+cmd = ["-f", "json", "-t", "json", "--include-in-header=inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "included\n" }
+covers = ["opt:include-in-header"]
+
+[[case]]
+id = "include-in-header-short"
+cmd = ["-f", "json", "-t", "json", "-H", "inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "included\n" }
+covers = ["opt:include-in-header"]
+
+[[case]]
+id = "include-in-header-missing-file"
+cmd = ["-f", "json", "-t", "json", "--include-in-header=nosuch.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:include-in-header"]
+
+[[case]]
+id = "include-before-body-existing"
+cmd = ["-f", "json", "-t", "json", "--include-before-body=inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "included\n" }
+covers = ["opt:include-before-body"]
+
+[[case]]
+id = "include-before-body-short"
+cmd = ["-f", "json", "-t", "json", "-B", "inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "included\n" }
+covers = ["opt:include-before-body"]
+
+[[case]]
+id = "include-before-body-missing-file"
+cmd = ["-f", "json", "-t", "json", "--include-before-body=nosuch.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:include-before-body"]
+
+[[case]]
+id = "include-after-body-existing"
+cmd = ["-f", "json", "-t", "json", "--include-after-body=inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "included\n" }
+covers = ["opt:include-after-body"]
+
+[[case]]
+id = "include-after-body-short"
+cmd = ["-f", "json", "-t", "json", "-A", "inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "included\n" }
+covers = ["opt:include-after-body"]
+
+[[case]]
+id = "include-after-body-missing-file"
+cmd = ["-f", "json", "-t", "json", "--include-after-body=nosuch.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:include-after-body"]
+
+[[case]]
+id = "resource-path"
+cmd = ["-f", "json", "-t", "json", "--resource-path=.:img"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:resource-path"]
+
+[[case]]
+id = "resource-path-empty"
+cmd = ["-f", "json", "-t", "json", "--resource-path="]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "resource-path-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--resource-path"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "request-header"
+cmd = ["-f", "json", "-t", "json", "--request-header=User-Agent:Test"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:request-header"]
+
+[[case]]
+id = "request-header-equals"
+cmd = ["-f", "json", "-t", "json", "--request-header=X=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:request-header"]
+
+[[case]]
+id = "request-header-no-separator"
+cmd = ["-f", "json", "-t", "json", "--request-header=Bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:request-header"]
+
+[[case]]
+id = "no-check-certificate-bare"
+cmd = ["-f", "json", "-t", "json", "--no-check-certificate"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:no-check-certificate"]
+
+[[case]]
+id = "no-check-certificate-true"
+cmd = ["-f", "json", "-t", "json", "--no-check-certificate=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:no-check-certificate"]
+
+[[case]]
+id = "no-check-certificate-false"
+cmd = ["-f", "json", "-t", "json", "--no-check-certificate=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:no-check-certificate"]
+
+[[case]]
+id = "no-check-certificate-bad"
+cmd = ["-f", "json", "-t", "json", "--no-check-certificate=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:no-check-certificate"]
+
+[[case]]
+id = "self-contained-bare"
+cmd = ["-f", "json", "-t", "json", "--self-contained"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:self-contained"]
+
+[[case]]
+id = "self-contained-true"
+cmd = ["-f", "json", "-t", "json", "--self-contained=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:self-contained"]
+
+[[case]]
+id = "self-contained-false"
+cmd = ["-f", "json", "-t", "json", "--self-contained=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:self-contained"]
+
+[[case]]
+id = "self-contained-bad"
+cmd = ["-f", "json", "-t", "json", "--self-contained=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:self-contained"]
+
+[[case]]
+id = "embed-resources-bare"
+cmd = ["-f", "json", "-t", "json", "--embed-resources"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:embed-resources"]
+
+[[case]]
+id = "embed-resources-true"
+cmd = ["-f", "json", "-t", "json", "--embed-resources=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:embed-resources"]
+
+[[case]]
+id = "embed-resources-false"
+cmd = ["-f", "json", "-t", "json", "--embed-resources=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:embed-resources"]
+
+[[case]]
+id = "embed-resources-bad"
+cmd = ["-f", "json", "-t", "json", "--embed-resources=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:embed-resources"]
+
+[[case]]
+id = "link-images-bare"
+cmd = ["-f", "json", "-t", "json", "--link-images"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:link-images"]
+
+[[case]]
+id = "link-images-true"
+cmd = ["-f", "json", "-t", "json", "--link-images=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:link-images"]
+
+[[case]]
+id = "link-images-false"
+cmd = ["-f", "json", "-t", "json", "--link-images=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:link-images"]
+
+[[case]]
+id = "link-images-bad"
+cmd = ["-f", "json", "-t", "json", "--link-images=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:link-images"]
+
+[[case]]
+id = "no-highlight"
+cmd = ["-f", "json", "-t", "json", "--no-highlight"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:no-highlight"]
+
+[[case]]
+id = "no-highlight-with-argument"
+cmd = ["-f", "json", "-t", "json", "--no-highlight=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:no-highlight"]
+
+[[case]]
+id = "highlight-style-tango"
+cmd = ["-f", "json", "-t", "json", "--highlight-style=tango"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:highlight-style"]
+
+[[case]]
+id = "highlight-style-unknown"
+cmd = ["-f", "json", "-t", "json", "--highlight-style=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:highlight-style"]
+
+[[case]]
+id = "highlight-style-theme-file"
+cmd = ["-f", "json", "-t", "json", "--highlight-style=my.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "my.theme" = "{\"text-color\": \"#111111\", \"background-color\": \"#eeeeee\", \"line-number-color\": null, \"line-number-background-color\": null, \"text-styles\": {\"Keyword\": {\"text-color\": \"#0000ff\", \"background-color\": null, \"bold\": true, \"italic\": false, \"underline\": false}}}" }
+covers = ["opt:highlight-style"]
+
+[[case]]
+id = "highlight-style-missing-theme"
+cmd = ["-f", "json", "-t", "json", "--highlight-style=nosuch.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "syntax-highlighting-none"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=none"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:syntax-highlighting"]
+
+[[case]]
+id = "syntax-highlighting-default"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=default"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:syntax-highlighting"]
+
+[[case]]
+id = "syntax-highlighting-idiomatic"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=idiomatic"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:syntax-highlighting"]
+
+[[case]]
+id = "syntax-highlighting-kate"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=kate"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:syntax-highlighting"]
+
+[[case]]
+id = "syntax-highlighting-nosuch"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:syntax-highlighting"]
+
+[[case]]
+id = "syntax-highlighting-theme-file"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=my.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "my.theme" = "{\"text-color\": \"#111111\", \"background-color\": \"#eeeeee\", \"line-number-color\": null, \"line-number-background-color\": null, \"text-styles\": {\"Keyword\": {\"text-color\": \"#0000ff\", \"background-color\": null, \"bold\": true, \"italic\": false, \"underline\": false}}}" }
+
+[[case]]
+id = "syntax-highlighting-bad-theme"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=bad.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "bad.theme" = "{x" }
+
+[[case]]
+id = "syntax-definition-valid"
+cmd = ["-f", "json", "-t", "json", "--syntax-definition=foo.xml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "foo.xml" = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE language>\n<language name=\"Foo\" version=\"1\" kateversion=\"5.0\" section=\"Sources\" extensions=\"*.foo\">\n  <highlighting>\n    <contexts>\n      <context name=\"Normal\" attribute=\"Normal Text\" lineEndContext=\"#stay\"/>\n    </contexts>\n    <itemDatas>\n      <itemData name=\"Normal Text\" defStyleNum=\"dsNormal\"/>\n    </itemDatas>\n  </highlighting>\n</language>\n" }
+covers = ["opt:syntax-definition"]
+
+[[case]]
+id = "syntax-definition-missing"
+cmd = ["-f", "json", "-t", "json", "--syntax-definition=nosuch.xml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:syntax-definition"]
+
+[[case]]
+id = "syntax-definition-bad-xml"
+cmd = ["-f", "json", "-t", "json", "--syntax-definition=bad.xml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "bad.xml" = "<language" }
+
+[[case]]
+id = "toc-depth-hex"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=0x2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "toc-depth-parens"
+cmd = ["-f", "json", "-t", "json", "--toc-depth=(2)"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "columns-hex"
+cmd = ["-f", "json", "-t", "json", "--columns=0x10"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "columns-octal"
+cmd = ["-f", "json", "-t", "json", "--columns=0o17"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "columns-huge"
+cmd = ["-f", "json", "-t", "json", "--columns=99999999999999999999"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "dpi-wrap"
+cmd = ["-f", "json", "-t", "json", "--dpi=18446744073709551617"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "slide-level-hex"
+cmd = ["-f", "json", "-t", "json", "--slide-level=0x2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "split-level-hex"
+cmd = ["-f", "json", "-t", "json", "--split-level=0x2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "number-offset-empty"
+cmd = ["-f", "json", "-t", "json", "--number-offset="]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "number-offset-forms"
+cmd = ["-f", "json", "-t", "json", "--number-offset=0x1,(2),- 3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "base-header-level-hex"
+cmd = ["-f", "json", "-t", "json", "--base-header-level=0x2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "math-method-uppercase"
+cmd = ["-f", "json", "-t", "json", "--math-method=PLAIN"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "math-method-mixed-case"
+cmd = ["-f", "json", "-t", "json", "--math-method=MathML"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "template-path-in-folder-missing"
+cmd = ["-f", "json", "-t", "json", "--template=sub/missing.tpl"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "template-with-bom-and-crlf"
+cmd = ["-f", "json", "-t", "json", "--template=t.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.txt" = "\ufeff$body$\r\n" }
+
+[[case]]
+id = "template-name-without-extension-exists"
+cmd = ["-f", "json", "-t", "json", "-s", "--template=tplnoext"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "tplnoext" = "T" }
+
+[[case]]
+id = "template-name-with-format-and-bare"
+cmd = ["-f", "json", "-t", "json", "--template=t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t" = "T", "t.json" = "U" }
+
+[[case]]
+id = "template-dev-null"
+cmd = ["-f", "json", "-t", "json", "--template=/dev/null"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "theme-text-styles-list"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"text-styles\":[]}" }
+
+[[case]]
+id = "theme-text-color-number"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"text-color\":3,\"text-styles\":{}}" }
+
+[[case]]
+id = "theme-background-list"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"background-color\":[],\"text-styles\":{}}" }
+
+[[case]]
+id = "theme-token-number"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"text-styles\":{\"Keyword\":3}}" }
+
+[[case]]
+id = "theme-bold-string"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"text-styles\":{\"Keyword\":{\"bold\":\"x\"}}}" }
+
+[[case]]
+id = "theme-short-color"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"text-styles\":{\"Keyword\":{\"text-color\":\"#fff\"}}}" }
+
+[[case]]
+id = "theme-empty-object"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{}" }
+
+[[case]]
+id = "theme-valid"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=t.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.theme" = "{\"text-color\":\"#ff0000\",\"text-styles\":{\"Keyword\":{\"bold\":true}}}" }
+
+[[case]]
+id = "theme-color-eight-digits"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=th.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "th.theme" = "{\"text-color\":\"#ff00ff00\",\"text-styles\":{}}" }
+
+[[case]]
+id = "theme-duplicate-first-valid"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=th.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "th.theme" = "{\"text-styles\":{},\"text-styles\":[]}" }
+
+[[case]]
+id = "theme-duplicate-first-invalid"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=th.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "th.theme" = "{\"text-styles\":[],\"text-styles\":{}}" }
+
+[[case]]
+id = "theme-duplicate-color"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=th.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "th.theme" = "{\"text-styles\":{},\"text-color\":3,\"text-color\":null}" }
+
+[[case]]
+id = "theme-duplicate-bold"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=th.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "th.theme" = "{\"text-styles\":{\"Keyword\":{\"bold\":\"bad\",\"bold\":true}}}" }
+
+[[case]]
+id = "theme-color-nine-digits"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=th.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "th.theme" = "{\"text-color\":\"#123456789\",\"text-styles\":{}}" }

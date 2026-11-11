@@ -1,0 +1,521 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "biblatex#cmd": {
+      "key": "09cdd3cd74aee82a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "biblatex-with-argument#cmd": {
+      "key": "9955327c5b9a0548",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--biblatex' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "bibliography-missing-file#cmd": {
+      "key": "714173ed4e8f0e21",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.json' not found in resource path\n"
+    },
+    "bibliography-unknown-extension#cmd": {
+      "key": "7a9f9ed4a943ac73",
+      "exit": 4,
+      "stdout": "",
+      "stderr": "Could not determine bibliography format for refs.xyz\n"
+    },
+    "bibliography-without-citeproc#cmd": {
+      "key": "dde8371579dbdd97",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"refs.json\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "chunk-template#cmd": {
+      "key": "b1611001642c6fd3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "chunk-template-missing-argument#cmd": {
+      "key": "c93a165c13036573",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--chunk-template' requires an argument PATHTEMPLATE\nTry pandoc --help for more information.\n"
+    },
+    "citation-abbreviations-existing#cmd": {
+      "key": "5b9e35d7d43f1b45",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"citation-abbreviations\":{\"t\":\"MetaString\",\"c\":\"abbr.json\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "citation-abbreviations-missing#cmd": {
+      "key": "e221253981893530",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.json' not found in resource path\n"
+    },
+    "citeproc-bibliography#cmd": {
+      "key": "289640c4780c41d0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"refs.json\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"(Doe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2020)\"}]]}]},{\"t\":\"Div\",\"c\":[[\"refs\",[\"references\",\"csl-bib-body\",\"hanging-indent\"],[]],[{\"t\":\"Div\",\"c\":[[\"ref-item1\",[\"csl-entry\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Doe,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Jane.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2020.\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Book\"}]},{\"t\":\"Str\",\"c\":\".\"}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "citeproc-csl-before-bibliography#cmd": {
+      "key": "5350a346257d81da",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuchc.csl' not found in resource path\n"
+    },
+    "citeproc-missing-reference#cmd": {
+      "key": "4ca209032dfe1d66",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"(\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"item1?\"}]},{\"t\":\"Str\",\"c\":\")\"}]]}]}]}\n",
+      "stderr": "[WARNING] Citeproc: citation item1 not found\n"
+    },
+    "citeproc-no-citations#cmd": {
+      "key": "affa9e763570224a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "citeproc-short#cmd": {
+      "key": "5ed23e03ab56cc2d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "citeproc-with-argument#cmd": {
+      "key": "967c707aab06e552",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--citeproc' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "csl-missing-file#cmd": {
+      "key": "cbb84bab696b0cb3",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.csl' not found in resource path\n"
+    },
+    "csl-without-citeproc#cmd": {
+      "key": "57ca30ccf90831e6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"csl\":{\"t\":\"MetaString\",\"c\":\"nosuch.csl\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-chapter-level--1#cmd": {
+      "key": "3188fbf1695486ee",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "[WARNING] Deprecated: --epub-chapter-level. Use --split-level instead.\nArgument of --epub-chapter-level must be a number between 1 and 6\n"
+    },
+    "epub-chapter-level-0#cmd": {
+      "key": "0951972bd9167d0b",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "[WARNING] Deprecated: --epub-chapter-level. Use --split-level instead.\nArgument of --epub-chapter-level must be a number between 1 and 6\n"
+    },
+    "epub-chapter-level-1#cmd": {
+      "key": "d21c2638473f04d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --epub-chapter-level. Use --split-level instead.\n"
+    },
+    "epub-chapter-level-3#cmd": {
+      "key": "3bb9cb703b2aaf08",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --epub-chapter-level. Use --split-level instead.\n"
+    },
+    "epub-chapter-level-x#cmd": {
+      "key": "f1e74965cae38c13",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "[WARNING] Deprecated: --epub-chapter-level. Use --split-level instead.\nArgument of --epub-chapter-level must be a number between 1 and 6\n"
+    },
+    "epub-cover-image-existing#cmd": {
+      "key": "c34483f501d8c74c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-cover-image-missing#cmd": {
+      "key": "bec36996dc64e410",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-embed-font-existing#cmd": {
+      "key": "c75f9f0bf8ea6e51",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-embed-font-missing#cmd": {
+      "key": "25f56c06db4355ac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-metadata-existing#cmd": {
+      "key": "f4f05ef11682bd76",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-metadata-missing#cmd": {
+      "key": "1e50ac28aed36df3",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.xml: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "epub-subdirectory#cmd": {
+      "key": "c6e1dd283f298990",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-subdirectory-empty#cmd": {
+      "key": "4ee58d9a509b4e44",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-subdirectory-missing-argument#cmd": {
+      "key": "23ccd8ae7ec91bdc",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--epub-subdirectory' requires an argument DIRNAME\nTry pandoc --help for more information.\n"
+    },
+    "epub-title-page-bad#cmd": {
+      "key": "b0940db9b0190a01",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --epub-title-page must be either true or false\n"
+    },
+    "epub-title-page-bare#cmd": {
+      "key": "52965743abb790e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-title-page-false#cmd": {
+      "key": "a614196e4e26ee3f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-title-page-true#cmd": {
+      "key": "13dbb1891bdbe675",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "filter-missing#cmd": {
+      "key": "f1ee971bfc8973d7",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch':\nCould not find executable nosuch\n"
+    },
+    "filter-missing-argument#cmd": {
+      "key": "573a7f9a696b080f",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--filter' requires an argument PROGRAM\nTry pandoc --help for more information.\n"
+    },
+    "filter-missing-lua-name#cmd": {
+      "key": "ca0b890842dece87",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch.lua':\nCould not find executable nosuch.lua\n"
+    },
+    "filter-order-with-citeproc#cmd": {
+      "key": "27a0e4e09f22d239",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"refs.json\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"(Doe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2020)\"}]]}]},{\"t\":\"Div\",\"c\":[[\"refs\",[\"references\",\"csl-bib-body\",\"hanging-indent\"],[]],[{\"t\":\"Div\",\"c\":[[\"ref-item1\",[\"csl-entry\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Doe,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Jane.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2020.\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Book\"}]},{\"t\":\"Str\",\"c\":\".\"}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "filter-short-missing#cmd": {
+      "key": "dae570e9cc0744ea",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch':\nCould not find executable nosuch\n"
+    },
+    "gladtex#cmd": {
+      "key": "cc16c156a7abdd5e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --gladtex. Use --math-method=gladtex[:URL] instead.\n"
+    },
+    "gladtex-with-argument#cmd": {
+      "key": "205353f3172e84de",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--gladtex' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "include-directory#cmd": {
+      "key": "0b74b5b4a84ceef6",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "ipynb-output-all#cmd": {
+      "key": "21d5f4c70b4c8f3b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "ipynb-output-bad#cmd": {
+      "key": "bd84af2fa2eb6203",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --ipynb-output must be all, none, or best\n"
+    },
+    "ipynb-output-best#cmd": {
+      "key": "c8ed32068a4b907d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "ipynb-output-none#cmd": {
+      "key": "25da90bbcc441ecd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "katex#cmd": {
+      "key": "7a90a3f91cb87f76",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --katex. Use --math-method=katex[:URL] instead.\n"
+    },
+    "katex-url#cmd": {
+      "key": "a38521ff4db308ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --katex. Use --math-method=katex[:URL] instead.\n"
+    },
+    "lua-filter#cmd": {
+      "key": "a87d0a120293268c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"INTRO\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"HELLO\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"WORLD.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"SUB\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "lua-filter-from-data-dir#cmd": {
+      "key": "75046434394eb768",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"INTRO\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"HELLO\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"WORLD.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"SUB\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "lua-filter-missing#cmd": {
+      "key": "61719c80f548ae16",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
+    },
+    "lua-filter-runtime-error#cmd": {
+      "key": "a92386c130c9fe6e",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'err.lua':\nerr.lua:1: boom\nstack traceback:\n\terr.lua:1: in function 'Str'\n"
+    },
+    "lua-filter-short#cmd": {
+      "key": "b2b29f3db81b73d6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"INTRO\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"HELLO\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"WORLD.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"SUB\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "lua-filter-syntax-error#cmd": {
+      "key": "0f856b8b0e5ddce3",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'bad.lua':\nbad.lua:1: <name> expected near '('\n"
+    },
+    "math-method-empty#cmd": {
+      "key": "e8344b48d65c9bf3",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown math-method ''.  Expected one of: plain, mathml, webtex, mathjax, katex, gladtex.\n"
+    },
+    "math-method-gladtex#cmd": {
+      "key": "72ca0bd7edd0f575",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-method-katex#cmd": {
+      "key": "1750dcb22702c5dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-method-mathjax#cmd": {
+      "key": "10a6501af97880fb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-method-mathjax-url#cmd": {
+      "key": "bfae1e43a05028bb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-method-mathml#cmd": {
+      "key": "8842b6d72fb3f188",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-method-nosuch#cmd": {
+      "key": "1b39aefd14cde491",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown math-method 'nosuch'.  Expected one of: plain, mathml, webtex, mathjax, katex, gladtex.\n"
+    },
+    "math-method-plain#cmd": {
+      "key": "73a76cad4ee9ecea",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-method-webtex#cmd": {
+      "key": "6c0b8fd920f15fbc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathjax#cmd": {
+      "key": "14d3b6699718e8b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --mathjax. Use --math-method=mathjax[:URL] instead.\n"
+    },
+    "mathjax-url#cmd": {
+      "key": "2ee4588c02fb29c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --mathjax. Use --math-method=mathjax[:URL] instead.\n"
+    },
+    "mathml#cmd": {
+      "key": "8730f9e0e670d769",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --mathml. Use --math-method=mathml instead.\n"
+    },
+    "mathml-with-argument#cmd": {
+      "key": "458daf3511c4d2e1",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--mathml' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "natbib#cmd": {
+      "key": "68184f0cc6824b41",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "natbib-and-biblatex#cmd": {
+      "key": "bb8938ee9530c714",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pdf-engine-known#cmd": {
+      "key": "148db6c52efe71b6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pdf-engine-missing-argument#cmd": {
+      "key": "5fe9064ea5dbcb60",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--pdf-engine' requires an argument PROGRAM\nTry pandoc --help for more information.\n"
+    },
+    "pdf-engine-opt#cmd": {
+      "key": "9437d1a9b6ad6f5a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pdf-engine-opt-missing-argument#cmd": {
+      "key": "f251b6d9791231dc",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--pdf-engine-opt' requires an argument STRING\nTry pandoc --help for more information.\n"
+    },
+    "pdf-engine-path#cmd": {
+      "key": "fb217c2ee46b2251",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pdf-engine-typst#cmd": {
+      "key": "431fe5443b72da87",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "pdf-engine-unknown#cmd": {
+      "key": "b17f6f7d6157ea4a",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --pdf-engine must be one of\n\tweasyprint\n\twkhtmltopdf\n\tpagedjs-cli\n\tprince\n\tpdflatex\n\tlualatex\n\txelatex\n\tlatexmk\n\ttectonic\n\tpdflatex-dev\n\tlualatex-dev\n\tgroff\n\tpdfroff\n\ttypst\n\tcontext\n\n"
+    },
+    "reference-doc-existing#cmd": {
+      "key": "7ba08a77758f8f0b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "reference-doc-missing#cmd": {
+      "key": "ad60807705b9fead",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "split-level--1#cmd": {
+      "key": "050888b021fe2e95",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --split-level must be a number between 1 and 6\n"
+    },
+    "split-level-0#cmd": {
+      "key": "e2e90414c2c839ba",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --split-level must be a number between 1 and 6\n"
+    },
+    "split-level-1#cmd": {
+      "key": "dcbb03c3ba029353",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "split-level-3#cmd": {
+      "key": "2686fd6e79cab5c9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "split-level-x#cmd": {
+      "key": "5be2635dcf488b92",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --split-level must be a number between 1 and 6\n"
+    },
+    "webtex#cmd": {
+      "key": "7f4a5644a28a28a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --webtex. Use --math-method=webtex[:URL] instead.\n"
+    },
+    "webtex-url#cmd": {
+      "key": "896fe66b3dd1c338",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": "[WARNING] Deprecated: --webtex. Use --math-method=webtex[:URL] instead.\n"
+    }
+  }
+}

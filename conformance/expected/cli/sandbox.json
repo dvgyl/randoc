@@ -1,0 +1,1211 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "abbreviations-dev-null#cmd": {
+      "key": "af82e6a9e03cc86c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbreviations-dev-stdin#cmd": {
+      "key": "e57495cc8fc35687",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbreviations-directory#cmd": {
+      "key": "7e885d5049fd70a3",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "dir: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "abbreviations-file#cmd": {
+      "key": "db2e21c057e80458",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbreviations-file-no-extension#cmd": {
+      "key": "7fa573fd714bdcf0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbreviations-missing#cmd": {
+      "key": "bd58d7307108a0d6",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.theme: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "bibliography-dev-null#cmd": {
+      "key": "2cf243e93372f908",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"/dev/null\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "bibliography-dev-stdin#cmd": {
+      "key": "6ef19cd9a04d1561",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"/dev/stdin\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "bibliography-directory#cmd": {
+      "key": "14e7002747a66563",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"dir\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "bibliography-file#cmd": {
+      "key": "8baeaab38f8132e6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"f.theme\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "bibliography-file-no-extension#cmd": {
+      "key": "cb8bff2dfbbbb51a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bibliography\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"fnoext\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "bibliography-missing#cmd": {
+      "key": "d82d65ef25a6f3fe",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: nosuch.theme: withBinaryFile: does not exist (No such file or directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "css-dev-null#cmd": {
+      "key": "7420cb88f3a5c9e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "css-dev-stdin#cmd": {
+      "key": "465ea6ed8fd46c46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "css-directory#cmd": {
+      "key": "26e8de46dbed59e7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "css-file#cmd": {
+      "key": "9ea36682ee95dcbb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "css-file-no-extension#cmd": {
+      "key": "0dad71a85264c8f3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "css-missing#cmd": {
+      "key": "084a939406763e3a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-dev-null#cmd": {
+      "key": "55c16292478674ed",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing /dev/null:\n/dev/null:1:1: Expected a mapping\n  |\n1 | \n  | ^\n"
+    },
+    "defaults-dev-stdin#cmd": {
+      "key": "2d9329ecd063977f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-directory#cmd": {
+      "key": "94fa1ee484d58ed6",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "dir: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "defaults-file#cmd": {
+      "key": "cb0acf64c5a64556",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-file-no-extension#cmd": {
+      "key": "e272900787fc958a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-missing#cmd": {
+      "key": "d9ebe2bd09407811",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.theme: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "epub-metadata-dev-null#cmd": {
+      "key": "5c4d23352b49f36b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-metadata-dev-stdin#cmd": {
+      "key": "ff85d27680ee099d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-metadata-directory#cmd": {
+      "key": "007f8501bc848658",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "dir: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "epub-metadata-file#cmd": {
+      "key": "3d1ff533ac795be4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-metadata-file-no-extension#cmd": {
+      "key": "13058f46d9ee1e10",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "epub-metadata-missing#cmd": {
+      "key": "f9447bd2c3608637",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.theme: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-in-header-dev-null#cmd": {
+      "key": "9ba480d495f1c449",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-in-header-dev-stdin#cmd": {
+      "key": "5355a5a0ddbdcd79",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-in-header-directory#cmd": {
+      "key": "e70a8a5f554ab392",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-in-header-file#cmd": {
+      "key": "325a0b62e194bdc4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-in-header-file-no-extension#cmd": {
+      "key": "6288ede83dfdd930",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-in-header-missing#cmd": {
+      "key": "9960822a3229a365",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.theme' not found in resource path\n"
+    },
+    "include-include-after-body-key-absolute-existing#cmd": {
+      "key": "d9fd8e6a72bd848b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-absolute-existing-resource-path#cmd": {
+      "key": "0dcba50dc3e198bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-absolute-existing-two-paths#cmd": {
+      "key": "b42f63f614ee93ef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-absolute-missing#cmd": {
+      "key": "5a2f39ac6519052b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-after-body-key-absolute-missing-resource-path#cmd": {
+      "key": "190d27d01aa07599",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-after-body-key-absolute-missing-two-paths#cmd": {
+      "key": "e5924030604b134f",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-after-body-key-directory#cmd": {
+      "key": "d212dcd4acab3cfc",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-after-body-key-directory-resource-path#cmd": {
+      "key": "efe645c97697283e",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-after-body-key-directory-two-paths#cmd": {
+      "key": "c3abcae584ebc498",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-after-body-key-expanded-existing#cmd": {
+      "key": "d4ccabad723d4e67",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-expanded-existing-resource-path#cmd": {
+      "key": "b9129e227ac9596d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-expanded-existing-two-paths#cmd": {
+      "key": "25f4825356824203",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative#cmd": {
+      "key": "64a557ca1f9f7589",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-dot#cmd": {
+      "key": "952f0252583f46ac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-dot-resource-path#cmd": {
+      "key": "731b137991bdf5ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-dot-two-paths#cmd": {
+      "key": "e9a20fe32d15f610",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-in-sub#cmd": {
+      "key": "4c87415082aa9d70",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'y.txt' not found in resource path\n"
+    },
+    "include-include-after-body-key-relative-in-sub-resource-path#cmd": {
+      "key": "8e2d641b0f94800e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-in-sub-two-paths#cmd": {
+      "key": "5082790287c7f6dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-missing#cmd": {
+      "key": "d77e3aa2e24d54de",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-after-body-key-relative-missing-resource-path#cmd": {
+      "key": "a2957604301a9a28",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-after-body-key-relative-missing-two-paths#cmd": {
+      "key": "b623dc119c8610b2",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-after-body-key-relative-resource-path#cmd": {
+      "key": "ef53cdebdc7d02a7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-key-relative-two-paths#cmd": {
+      "key": "26de2db2efbdffd5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-absolute-existing#cmd": {
+      "key": "6354d2585a1c4143",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-absolute-existing-resource-path#cmd": {
+      "key": "20c3e372dbb08295",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-absolute-existing-two-paths#cmd": {
+      "key": "3ea83d45071b733f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-absolute-missing#cmd": {
+      "key": "329db7c2521ac41b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-after-body-option-absolute-missing-resource-path#cmd": {
+      "key": "1037766e3ebee301",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-after-body-option-absolute-missing-two-paths#cmd": {
+      "key": "2468b58ac292a2a7",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-after-body-option-directory#cmd": {
+      "key": "2307ef5793e6c608",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-after-body-option-directory-resource-path#cmd": {
+      "key": "750599deca415c22",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-after-body-option-directory-two-paths#cmd": {
+      "key": "ee2be6b87b720234",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-after-body-option-relative#cmd": {
+      "key": "15b5b26026b72631",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-dot#cmd": {
+      "key": "004aeeb05d4ba318",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-dot-resource-path#cmd": {
+      "key": "74267bf5cef94d4a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-dot-two-paths#cmd": {
+      "key": "42c21eb0dc428adc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-in-sub#cmd": {
+      "key": "230900afb99823ac",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'y.txt' not found in resource path\n"
+    },
+    "include-include-after-body-option-relative-in-sub-resource-path#cmd": {
+      "key": "88f1a473ae00c87a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-in-sub-two-paths#cmd": {
+      "key": "e7815b1359d48d10",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-missing#cmd": {
+      "key": "7825a480787a24b4",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-after-body-option-relative-missing-resource-path#cmd": {
+      "key": "0b6f804f5623d80a",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-after-body-option-relative-missing-two-paths#cmd": {
+      "key": "922beb2fb94d7310",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-after-body-option-relative-resource-path#cmd": {
+      "key": "4f04daa2542e7007",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-after-body-option-relative-two-paths#cmd": {
+      "key": "da7971fdf6455785",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-absolute-existing#cmd": {
+      "key": "82bbf6d7aae276ed",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-absolute-existing-resource-path#cmd": {
+      "key": "822596324de8e64b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-absolute-existing-two-paths#cmd": {
+      "key": "a65c04319eab40f1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-absolute-missing#cmd": {
+      "key": "f068c5e7fea15841",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-before-body-key-absolute-missing-resource-path#cmd": {
+      "key": "a13c16a8a9892b13",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-before-body-key-absolute-missing-two-paths#cmd": {
+      "key": "bcb16ec61802c945",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-before-body-key-directory#cmd": {
+      "key": "4ce1bc484d37dade",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-before-body-key-directory-resource-path#cmd": {
+      "key": "9ff8f0b1469c982c",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-before-body-key-directory-two-paths#cmd": {
+      "key": "ec7022b56cfb49aa",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-before-body-key-expanded-existing#cmd": {
+      "key": "4a63687b0a78cb61",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-expanded-existing-resource-path#cmd": {
+      "key": "17852f46880b1cc7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-expanded-existing-two-paths#cmd": {
+      "key": "7c964968292883c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative#cmd": {
+      "key": "1bcb10c44355eedf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-dot#cmd": {
+      "key": "0b8547f58fa65766",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-dot-resource-path#cmd": {
+      "key": "be5891af81354b64",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-dot-two-paths#cmd": {
+      "key": "8b6a89982ef0476a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-in-sub#cmd": {
+      "key": "43322db058184026",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'y.txt' not found in resource path\n"
+    },
+    "include-include-before-body-key-relative-in-sub-resource-path#cmd": {
+      "key": "efa5e6a8557bd868",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-in-sub-two-paths#cmd": {
+      "key": "a91d471392f40622",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-missing#cmd": {
+      "key": "f580cc3c89b962a4",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-before-body-key-relative-missing-resource-path#cmd": {
+      "key": "2bd3c3fd5328343e",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-before-body-key-relative-missing-two-paths#cmd": {
+      "key": "2d275dbef043c100",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-before-body-key-relative-resource-path#cmd": {
+      "key": "5e03c77802f355c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-key-relative-two-paths#cmd": {
+      "key": "6af60bf302c3680b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-absolute-existing#cmd": {
+      "key": "259acb61ec318096",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-absolute-existing-resource-path#cmd": {
+      "key": "c837917ab6d88bd4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-absolute-existing-two-paths#cmd": {
+      "key": "66a4e0b17a934e42",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-absolute-missing#cmd": {
+      "key": "fb793b5b72da5ef6",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-before-body-option-absolute-missing-resource-path#cmd": {
+      "key": "d1ff775f01be84e8",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-before-body-option-absolute-missing-two-paths#cmd": {
+      "key": "00c11acd61bf2502",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-before-body-option-directory#cmd": {
+      "key": "93c8e05e702b9c59",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-before-body-option-directory-resource-path#cmd": {
+      "key": "bf41a043ea0c374f",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-before-body-option-directory-two-paths#cmd": {
+      "key": "d41bb2ad49eac6e5",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-before-body-option-relative#cmd": {
+      "key": "f3b1a3acb085ba88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-dot#cmd": {
+      "key": "33af2197740079f1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-dot-resource-path#cmd": {
+      "key": "16886280536f37f7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-dot-two-paths#cmd": {
+      "key": "11a27404a185d115",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-in-sub#cmd": {
+      "key": "d17015811810fd1d",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'y.txt' not found in resource path\n"
+    },
+    "include-include-before-body-option-relative-in-sub-resource-path#cmd": {
+      "key": "7e8f95a6445d672f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-in-sub-two-paths#cmd": {
+      "key": "7d0d987580a58561",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-missing#cmd": {
+      "key": "defa54d6500aafd7",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-before-body-option-relative-missing-resource-path#cmd": {
+      "key": "c6d07eec89cfa711",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-before-body-option-relative-missing-two-paths#cmd": {
+      "key": "ea833eb515cb34d3",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-before-body-option-relative-resource-path#cmd": {
+      "key": "e7a493a317a17f22",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-before-body-option-relative-two-paths#cmd": {
+      "key": "8d5f731f80c954dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-absolute-existing#cmd": {
+      "key": "28d03f62efeb0622",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-absolute-existing-resource-path#cmd": {
+      "key": "cf72c3dc1a05b564",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-absolute-existing-two-paths#cmd": {
+      "key": "c4bcd65c3fb60806",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-absolute-missing#cmd": {
+      "key": "ff54df1f292c9b32",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-in-header-key-absolute-missing-resource-path#cmd": {
+      "key": "390329a47595f4b0",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-in-header-key-absolute-missing-two-paths#cmd": {
+      "key": "926fa5164c7396b6",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-in-header-key-directory#cmd": {
+      "key": "d34f5b23d7843d2d",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-in-header-key-directory-resource-path#cmd": {
+      "key": "ee0b90c1a64e1bc7",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-in-header-key-directory-two-paths#cmd": {
+      "key": "909c60e8d4c60a71",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-in-header-key-expanded-existing#cmd": {
+      "key": "ca1481860ce9d170",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-expanded-existing-resource-path#cmd": {
+      "key": "ed6cd2c7bbed715a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-expanded-existing-two-paths#cmd": {
+      "key": "14f16d1eeaa4e2fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative#cmd": {
+      "key": "a8949ef1b9a2f434",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-dot#cmd": {
+      "key": "d0e95f4a5e07eafd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-dot-resource-path#cmd": {
+      "key": "ca96f3412a0f21f7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-dot-two-paths#cmd": {
+      "key": "346f38d99d96a5f9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-in-sub#cmd": {
+      "key": "e8cc275986b7ca8d",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'y.txt' not found in resource path\n"
+    },
+    "include-include-in-header-key-relative-in-sub-resource-path#cmd": {
+      "key": "31df524ba69d7a9b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-in-sub-two-paths#cmd": {
+      "key": "ecb3edaf6393d0d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-missing#cmd": {
+      "key": "79873ed91906f10d",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-in-header-key-relative-missing-resource-path#cmd": {
+      "key": "1e4e973766b1d93b",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-in-header-key-relative-missing-two-paths#cmd": {
+      "key": "81ff124184e32fc1",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-in-header-key-relative-resource-path#cmd": {
+      "key": "25616c1496b469f2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-key-relative-two-paths#cmd": {
+      "key": "9733052faf77c400",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-absolute-existing#cmd": {
+      "key": "d6718a2a9f11ac4c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-absolute-existing-resource-path#cmd": {
+      "key": "0fc5b8f5b1b08ece",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-absolute-existing-two-paths#cmd": {
+      "key": "6d48f3b2bc96f958",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-absolute-missing#cmd": {
+      "key": "6b5adfa51c8ae210",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-in-header-option-absolute-missing-resource-path#cmd": {
+      "key": "dbd0c08306b6c55e",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-in-header-option-absolute-missing-two-paths#cmd": {
+      "key": "fe093018a447016c",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/nosuch/x.txt: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "include-include-in-header-option-directory#cmd": {
+      "key": "0d3ca2d3913d1f77",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-in-header-option-directory-resource-path#cmd": {
+      "key": "e95506b49b618ea1",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-in-header-option-directory-two-paths#cmd": {
+      "key": "4d1edc937d15f503",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'dir' not found in resource path\n"
+    },
+    "include-include-in-header-option-relative#cmd": {
+      "key": "9268efab4843db4a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-dot#cmd": {
+      "key": "162d173b1db23adf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-dot-resource-path#cmd": {
+      "key": "36529b9192a18ed9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-dot-two-paths#cmd": {
+      "key": "b21048729abe62e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-in-sub#cmd": {
+      "key": "1ba47fbe1d484d57",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'y.txt' not found in resource path\n"
+    },
+    "include-include-in-header-option-relative-in-sub-resource-path#cmd": {
+      "key": "9d22a3681a6b1ba5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-in-sub-two-paths#cmd": {
+      "key": "c0a77fe693ee061b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-missing#cmd": {
+      "key": "9264d11334275a39",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-in-header-option-relative-missing-resource-path#cmd": {
+      "key": "4d00ff17b29129ff",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-in-header-option-relative-missing-two-paths#cmd": {
+      "key": "075d871311cd24e5",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "File 'nosuch.txt' not found in resource path\n"
+    },
+    "include-include-in-header-option-relative-resource-path#cmd": {
+      "key": "a19f1672f21e0eb0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "include-include-in-header-option-relative-two-paths#cmd": {
+      "key": "047eba57b8d9f12e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "input-dev-null#cmd": {
+      "key": "dc861b19a0e73683",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "JSON parse error: Unexpected end-of-input, expecting JSON value\n"
+    },
+    "input-dev-stdin#cmd": {
+      "key": "3d20a75e1693b6bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "input-directory#cmd": {
+      "key": "49087cb117c8e6a4",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "dir: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "input-file#cmd": {
+      "key": "efb172fe8b29f2dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "input-file-no-extension#cmd": {
+      "key": "bdff3a0355cf78da",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "input-missing#cmd": {
+      "key": "fda301ffe3637abd",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.theme: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "metadata-file-dev-null#cmd": {
+      "key": "82155b5b1a681145",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-dev-stdin#cmd": {
+      "key": "e58dd5aece9f433a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-directory#cmd": {
+      "key": "7c1d7e8352002dde",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'dir'\n"
+    },
+    "metadata-file-file#cmd": {
+      "key": "d1d3cdecde2bee35",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-file-no-extension#cmd": {
+      "key": "461acb2b5b8d552d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"m\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "metadata-file-missing#cmd": {
+      "key": "bea33164c759874d",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'nosuch.theme'\n"
+    },
+    "reference-doc-dev-null#cmd": {
+      "key": "aa68f036265876f5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "reference-doc-dev-stdin#cmd": {
+      "key": "17a1c9b1a1d47a15",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "reference-doc-directory#cmd": {
+      "key": "2e274a6651328cd6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "reference-doc-file#cmd": {
+      "key": "a2fe19e1d8cad508",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "reference-doc-file-no-extension#cmd": {
+      "key": "65bc0dfe5192baac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "reference-doc-missing#cmd": {
+      "key": "791d1ced86a46c79",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: nosuch.theme: withBinaryFile: does not exist (No such file or directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "template-dev-null#cmd": {
+      "key": "1e66671d0239360e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "template-dev-stdin#cmd": {
+      "key": "4d8832748a8b25a0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "template-directory#cmd": {
+      "key": "a6141fbb9194bae1",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/dir.json'\n"
+    },
+    "template-file#cmd": {
+      "key": "fc22f5b529f0b025",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "template-file-no-extension#cmd": {
+      "key": "a47eab84b0863ccd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "template-missing#cmd": {
+      "key": "72149ee2fd5f8db8",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.theme'\n"
+    },
+    "theme-dev-null#cmd": {
+      "key": "deccd36a5d6234b7",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style /dev/null\n"
+    },
+    "theme-dev-stdin#cmd": {
+      "key": "f3d38097abff3bc7",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style /dev/stdin\n"
+    },
+    "theme-directory#cmd": {
+      "key": "dc056367e9ac1f80",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style dir\n"
+    },
+    "theme-file#cmd": {
+      "key": "6bb995e05cf69ba2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "theme-file-no-extension#cmd": {
+      "key": "569b4f44378ddee6",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style fnoext\n"
+    },
+    "theme-missing#cmd": {
+      "key": "393ab039d9521093",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.theme: openBinaryFile: does not exist (No such file or directory)\n"
+    }
+  }
+}

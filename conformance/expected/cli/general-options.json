@@ -1,0 +1,347 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "data-dir-existing#cmd": {
+      "key": "354024ece5388037",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "data-dir-missing#cmd": {
+      "key": "9bcff96b1020e579",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "data-dir-missing-argument#cmd": {
+      "key": "d35254fa050fec11",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--data-dir' requires an argument DIRECTORY\nTry pandoc --help for more information.\n"
+    },
+    "fail-if-warnings-bad#cmd": {
+      "key": "bcfb624456fe51d3",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --fail-if-warnings must be either true or false\n"
+    },
+    "fail-if-warnings-bare#cmd": {
+      "key": "d835f5738a5f8459",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "fail-if-warnings-citeproc-warning#cmd": {
+      "key": "04f5a1e3e43e9f34",
+      "exit": 3,
+      "stdout": "",
+      "stderr": "[WARNING] Citeproc: citation item1 not found\nFailing because there were warnings.\n"
+    },
+    "fail-if-warnings-false#cmd": {
+      "key": "b14708d48c920509",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "fail-if-warnings-true#cmd": {
+      "key": "3a8886ea1e03b103",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "fail-if-warnings-with-warning#cmd": {
+      "key": "7f801554c6224b9b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --base-header-level. Use --shift-heading-level-by instead.\n"
+    },
+    "fail-if-warnings-with-warning-quiet#cmd": {
+      "key": "46eb923925fbb172",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --base-header-level. Use --shift-heading-level-by instead.\n"
+    },
+    "highlight-bad-value-replaced#cmd": {
+      "key": "303b517a1ddb25f5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "highlight-bad-value-then-defaults#cmd": {
+      "key": "d7651af74d72ef85",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "highlight-bad-value-then-no-highlight#cmd": {
+      "key": "4d38498dc1bf0761",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.\n[WARNING] Deprecated: --no-highlight. Use --syntax-highlighting=none instead.\n"
+    },
+    "loaded-resource-verbose#cmd": {
+      "key": "910469e48ccf6d51",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": "[INFO] Loaded t.json from t.json\n[INFO] Loaded inc.txt from inc.txt\n"
+    },
+    "log-file#cmd": {
+      "key": "2998989d23b41a92",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "log-file-empty-name#cmd": {
+      "key": "ea0b940eca801420",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: : withBinaryFile: does not exist (No such file or directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "log-file-missing-argument#cmd": {
+      "key": "6520e0a8636c12e0",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--log' requires an argument FILE\nTry pandoc --help for more information.\n"
+    },
+    "log-in-missing-folder#cmd": {
+      "key": "b5df1c24419b0551",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: missing/log.json: withBinaryFile: does not exist (No such file or directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "log-is-a-directory#cmd": {
+      "key": "ed592ef4e2b72bf4",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: dir: withBinaryFile: inappropriate type (Is a directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "log-names-input#cmd": {
+      "key": "a69a7700784fd849",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "log-names-metadata-file#cmd": {
+      "key": "74a942d61fba52c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "log-not-written-template-missing#cmd": {
+      "key": "2dbbfff4de44b488",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/missing.json'\n"
+    },
+    "order-template-before-theme#cmd": {
+      "key": "ef712410b8365690",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.json'\n"
+    },
+    "order-theme-before-include#cmd": {
+      "key": "7f8065092f5b9af5",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "[INFO] Loaded t.json from t.json\nno.theme: openBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "output-file#cmd": {
+      "key": "07a7a171ef4103a5",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "output-long#cmd": {
+      "key": "7a585a9c89e26cd0",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "output-missing-argument#cmd": {
+      "key": "2cdc33e865bc8e79",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `-o' requires an argument FILE\nTry pandoc --help for more information.\n"
+    },
+    "output-repeated-last-wins#cmd": {
+      "key": "0f6f5d3c7f9b6770",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "output-stdout-dash#cmd": {
+      "key": "771cfb24b3eaf7d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "output-to-existing-directory#cmd": {
+      "key": "6ba112e79e3ba859",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: dir: withFile: inappropriate type (Is a directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "output-to-missing-directory#cmd": {
+      "key": "61a4aa969dd45b97",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "quiet#cmd": {
+      "key": "c2c0ab111febc1e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "quiet-hides-citeproc-warning#cmd": {
+      "key": "aa8f019ad1c8c929",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"(\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"item1?\"}]},{\"t\":\"Str\",\"c\":\")\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "quiet-hides-warning#cmd": {
+      "key": "2dd308f3bf28227c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --base-header-level. Use --shift-heading-level-by instead.\n"
+    },
+    "quiet-then-verbose#cmd": {
+      "key": "2b6c2215866f7119",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "quiet-with-argument#cmd": {
+      "key": "6e4b5e10cc7dd794",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--quiet' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "sandbox-allows-input-file#cmd": {
+      "key": "3c55c4cf8680bd8b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "sandbox-bad#cmd": {
+      "key": "e56a3e87de3d65fd",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --sandbox must be either true or false\n"
+    },
+    "sandbox-bare#cmd": {
+      "key": "db129c1a3f075157",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "sandbox-blocks-include#cmd": {
+      "key": "f1823c1f44235bda",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "sandbox-blocks-metadata-file#cmd": {
+      "key": "cdabeb2ec326126f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "sandbox-css-not-read#cmd": {
+      "key": "29ce0a279df64158",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "sandbox-epub-font-not-read#cmd": {
+      "key": "9a6b363b57bd48b0",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "pandoc: nosuch.ttf: withBinaryFile: does not exist (No such file or directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
+    },
+    "sandbox-false#cmd": {
+      "key": "c96b06909a33bfbb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "sandbox-input-dev-stdin#cmd": {
+      "key": "aa95e7583e3e14ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "sandbox-input-directory#cmd": {
+      "key": "829c5a448b746c1b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "sub: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "sandbox-lua-filter#cmd": {
+      "key": "9466a651b55e9430",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"INTRO\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"HELLO\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"WORLD.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"SUB\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "sandbox-metadata-file-dev-stdin#cmd": {
+      "key": "54172de507f9b559",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"x\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "sandbox-template-in-data-dir#cmd": {
+      "key": "0c9cbb371b7058e2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "sandbox-template-without-extension#cmd": {
+      "key": "8fdb5687194484e6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "sandbox-true#cmd": {
+      "key": "c461e05a0a5cf5d5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "trace-bad#cmd": {
+      "key": "2c0f5b687a0f79cd",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --trace must be either true or false\n"
+    },
+    "trace-bare#cmd": {
+      "key": "e0d58946b4c281ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "trace-false#cmd": {
+      "key": "42008231ae57b51b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "trace-true#cmd": {
+      "key": "b23058de22c356b5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "verbose#cmd": {
+      "key": "9e795b6e8edf6cc2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "verbose-then-quiet#cmd": {
+      "key": "c89b72d2e1b3f7d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    }
+  }
+}

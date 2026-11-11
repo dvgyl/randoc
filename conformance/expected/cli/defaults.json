@@ -1,0 +1,737 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "defaults-after-cli#cmd": {
+      "key": "5039cca2d91352f7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-alias-limit#cmd": {
+      "key": "336507ec82816468",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:17:14: metadata.x14[0]: the aliases add more than 100000 nodes and characters\n   |\n17 |   x14: &x14 [*x13, *x13]\n   |              ^\n"
+    },
+    "defaults-attached-short#cmd": {
+      "key": "c20a1948bcbf9e69",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-bad-cli-after#cmd": {
+      "key": "f88ac1ad79ca2784",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --toc-depth must be a number 1-6\n"
+    },
+    "defaults-bad-enum#cmd": {
+      "key": "12d5df7688f2bf47",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:3:7: wrap: Unknown wrap method \"bogus\"\n  |\n3 | wrap: bogus\n  |       ^\n"
+    },
+    "defaults-bad-json#cmd": {
+      "key": "a60bca26f51d688f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing bad.json:\nUnexpected end-of-input, expecting JSON value\n"
+    },
+    "defaults-bad-verbosity#cmd": {
+      "key": "0a869ddb228d1698",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:3:12: verbosity: mzero\n  |\n3 | verbosity: LOUD\n  |            ^\n"
+    },
+    "defaults-bad-yaml#cmd": {
+      "key": "61c2565e9b42560e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing bad.yaml:\nbad.yaml:1:5: unterminated flow sequence\n  |\n1 | to: [json\n  |     ^\n"
+    },
+    "defaults-caption-position-bad#cmd": {
+      "key": "dca9bd278c008535",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:26: figure-caption-position: Unknown caption position \"foo\"\n  |\n3 | figure-caption-position: foo\n  |                          ^\n"
+    },
+    "defaults-cite-method-bad#cmd": {
+      "key": "f689fcc1abfc8ffb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:14: cite-method: Unknown citation method: \"foo\"\n  |\n3 | cite-method: foo\n  |              ^\n"
+    },
+    "defaults-columns-float#cmd": {
+      "key": "0eeb4e4051c2ce05",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:10: columns: parsing Int failed, value is either floating or will cause over or underflow 1.5\n  |\n3 | columns: 1.5\n  |          ^\n"
+    },
+    "defaults-columns-huge#cmd": {
+      "key": "3bf7e7df87b07ada",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:6: dpi: parsing Int failed, value is either floating or will cause over or underflow 9.9999999999999999999e19\n  |\n3 | dpi: 99999999999999999999\n  |      ^\n"
+    },
+    "defaults-css-list-of-maps#cmd": {
+      "key": "5aa082309724f7d4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:6: css: parsing Text failed, expected String, but encountered Array\n  |\n1 | css: [{a: b}]\n  |      ^\n"
+    },
+    "defaults-data-dir-key#cmd": {
+      "key": "c63ae20fc477d463",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"dd\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-data-dir-name-before-yaml#cmd": {
+      "key": "b7ec0c2f120f6921",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-data-dir-option#cmd": {
+      "key": "2e04f5bd6240c947",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-dev-stdin#cmd": {
+      "key": "3b075254e50d337c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-directory#cmd": {
+      "key": "1f5421e112d2673a",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "dir: withBinaryFile: inappropriate type (is a directory)\n"
+    },
+    "defaults-dot-expansion#cmd": {
+      "key": "5f148dff2a73b22e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"dot\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-duplicate-key#cmd": {
+      "key": "d583b42a096e720c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:1: duplicate key \"from\"\n  |\n3 | from: json\n  | ^\np.yaml:1:1: the first key \"from\"\n  |\n1 | from: json\n  | ^\n"
+    },
+    "defaults-email-obfuscation-bad#cmd": {
+      "key": "bc676b92c9849bf4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:20: email-obfuscation: Unknown obfuscation method \"foo\"\n  |\n3 | email-obfuscation: foo\n  |                    ^\n"
+    },
+    "defaults-empty-file#cmd": {
+      "key": "4c9ee494740d3226",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing e.yaml:\ne.yaml:1:1: Expected a mapping\n  |\n1 | \n  | ^\n"
+    },
+    "defaults-eol-uppercase#cmd": {
+      "key": "56011d87a1672906",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:6: eol: When parsing Text.Pandoc.App.Opt.LineEnding expected a String with the tag of a constructor but got CRLF.\n  |\n3 | eol: CRLF\n  |      ^\n"
+    },
+    "defaults-expansion-in-non-path#cmd": {
+      "key": "e52b48cd9b4ad8e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"${HOME}\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-filter-type-list#cmd": {
+      "key": "82a53d594bfda550",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:11: filters[0]: parsing Filter failed, expected String, but encountered Object\n  |\n1 | filters: [{type: [lua], path: x.lua}]\n  |           ^\n"
+    },
+    "defaults-filters-lua#cmd": {
+      "key": "9e340ef9564e19ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"INTRO\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"HELLO\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"WORLD.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"SUB\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-filters-missing#cmd": {
+      "key": "c983d376c8029041",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
+    },
+    "defaults-filters-string#cmd": {
+      "key": "e2a6001c30c3cd21",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:10: filters: parsing [] failed, expected Array, but encountered String\n  |\n3 | filters: x.lua\n  |          ^\n"
+    },
+    "defaults-filters-typed#cmd": {
+      "key": "992b68d66cd79852",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"INTRO\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"HELLO\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"WORLD.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"SUB\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-filters-unknown-type#cmd": {
+      "key": "8151e580742fb8f3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:4:3: filters[0]: parsing Filter failed, expected String, but encountered Object\n  |\n4 | - type: foo\n  |   ^\n"
+    },
+    "defaults-home-expansion#cmd": {
+      "key": "f4a29df9ea9bdb1a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"home\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-html-math-method-bad#cmd": {
+      "key": "7772ef1103c7c23b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:19: html-math-method: Unknown HTML math method \"foo\"\n  |\n3 | html-math-method: foo\n  |                   ^\n"
+    },
+    "defaults-html-math-method-unknown-map#cmd": {
+      "key": "449d0874a9be1ce3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:19: html-math-method: Unknown HTML math method {\"method\":\"foo\"}\n  |\n1 | html-math-method: {method: foo}\n  |                   ^\n"
+    },
+    "defaults-html-math-method-url-only#cmd": {
+      "key": "3542bc9140427d70",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:19: html-math-method: Unknown HTML math method {\"url\":\"x\"}\n  |\n1 | html-math-method: {url: x}\n  |                   ^\n"
+    },
+    "defaults-identifier-prefix#cmd": {
+      "key": "c1e1d46e8ad3f99c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-input-file#cmd": {
+      "key": "90f5e6848b4a9061",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-input-file-and-input-files#cmd": {
+      "key": "824842c0d27a633e",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch1.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-input-file-dot-expansion#cmd": {
+      "key": "5fa334d8047cbdf5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-input-files#cmd": {
+      "key": "fe2ae2a673e854fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-input-files-and-cli-file#cmd": {
+      "key": "af840c1d8f2f15ac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-input-files-before-cli#cmd": {
+      "key": "ac3ed3d4336d9544",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-input-files-missing#cmd": {
+      "key": "d569b89c607ee379",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-input-files-of-two-files-are-joined#cmd": {
+      "key": "62a5d9457ecac1f3",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch1.json: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-input-files-string#cmd": {
+      "key": "ae3b7b25639db628",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:14: input-files: parsing [] failed, expected Array, but encountered String\n  |\n3 | input-files: a.json\n  |              ^\n"
+    },
+    "defaults-ipynb-output-best#cmd": {
+      "key": "ea4c6bcd259fe6ec",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:3:15: ipynb-output: When parsing Text.Pandoc.App.Opt.IpynbOutput expected a String with the tag of a constructor but got best.\n  |\n3 | ipynb-output: best\n  |               ^\n"
+    },
+    "defaults-ipynb-output-constructor#cmd": {
+      "key": "183558bbdd5526ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-json-content-in-yaml-name#cmd": {
+      "key": "f830647dac96ee47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-json-document#cmd": {
+      "key": "83335cff839fb4a2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing a.json:\nError in $.blocks: Unknown option \"blocks\"\n"
+    },
+    "defaults-json-file#cmd": {
+      "key": "52f8d7f6f8d7bc6c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-json-full#cmd": {
+      "key": "5ff47df78478aed7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"bar\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[3,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-json-item-error#cmd": {
+      "key": "8972bb0ddf8eb881",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\nError in $['number-offset'][1]: parsing Int failed, expected Number, but encountered String\n"
+    },
+    "defaults-json-metadata-file-map#cmd": {
+      "key": "e7a11d8ed6487930",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.json:\nError in $['metadata-file']: parsing Text failed, expected String, but encountered Array\n"
+    },
+    "defaults-json-request-headers-nested#cmd": {
+      "key": "cb9e8878e2ab560f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.json:\nError in $['request-headers'][0][1]: parsing Text failed, expected String, but encountered Number\n"
+    },
+    "defaults-json-type-error#cmd": {
+      "key": "6c733a9efa4edd35",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\nError in $.columns: parsing Int failed, value is either floating or will cause over or underflow 1.5\n"
+    },
+    "defaults-json-without-extension#cmd": {
+      "key": "c1a68d3faa9ea969",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "x: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-legacy-dot-pandoc#cmd": {
+      "key": "c3068fcf9c5a2f73",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-list-key#cmd": {
+      "key": "ab9a8af657ebca2e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:4:5: metadata: expected a scalar key, but got a list\n  |\n4 |   ? [a]\n  |     ^\n"
+    },
+    "defaults-local-before-user-data-dir#cmd": {
+      "key": "949504b8a039e94b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-long#cmd": {
+      "key": "2d1dccda15a0ff64",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-many-keys#cmd": {
+      "key": "950fd47a38aaeafa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}",
+      "stderr": ""
+    },
+    "defaults-markdown-headings-other#cmd": {
+      "key": "6751947875d13ac9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-math-url-map#cmd": {
+      "key": "46df70617f975697",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:19: html-math-method: Unknown HTML math method {\"method\":\"mathjax\",\"url\":{\"a\":\"b\"}}\n  |\n1 | html-math-method: {method: mathjax, url: {a: b}}\n  |                   ^\n"
+    },
+    "defaults-metadata#cmd": {
+      "key": "96da2338b037a2f2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaString\",\"c\":\"bar\"},\"n\":{\"t\":\"MetaString\",\"c\":\"1\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-and-cli#cmd": {
+      "key": "cc56cb82dc8417a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"bar\"},{\"t\":\"MetaString\",\"c\":\"cli\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-file#cmd": {
+      "key": "5ee36e46703abfd3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"file\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-file-missing#cmd": {
+      "key": "54ebd8f69feefabb",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'nosuch.yaml'\n"
+    },
+    "defaults-metadata-files-list#cmd": {
+      "key": "5582de42c39131c9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"bar\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-later-cli-adds#cmd": {
+      "key": "ac81f223f62b1475",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"dflt\"},{\"t\":\"MetaString\",\"c\":\"cli2\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-not-mapping#cmd": {
+      "key": "bb6cb26409a695b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-null-key#cmd": {
+      "key": "2dd974c15f3d0976",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"~\":{\"t\":\"MetaString\",\"c\":\"z\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-numbers#cmd": {
+      "key": "208ac94b21a92c5c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"1\"},\"b\":{\"t\":\"MetaString\",\"c\":\"+inf\"},\"c\":{\"t\":\"MetaString\",\"c\":\"16\"},\"d\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"1\"},{\"t\":\"MetaString\",\"c\":\"\"}]},\"e\":{\"t\":\"MetaString\",\"c\":\"1000\"},\"f\":{\"t\":\"MetaString\",\"c\":\"\"},\"g\":{\"t\":\"MetaString\",\"c\":\"10\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-replaces-earlier-cli-value#cmd": {
+      "key": "1024a0b27747e0e1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"dflt\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-metadata-second-file-replaces#cmd": {
+      "key": "d04aa52d0450b72f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaString\",\"c\":\"e\"},\"b\":{\"t\":\"MetaString\",\"c\":\"e\"}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-missing#cmd": {
+      "key": "5a692870099d547b",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-missing-argument#cmd": {
+      "key": "2000b670ec74200c",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `-d' requires an argument FILE\nTry pandoc --help for more information.\n"
+    },
+    "defaults-missing-with-extension#cmd": {
+      "key": "8f129113253742c3",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch.yaml: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-name-without-extension-exists#cmd": {
+      "key": "ad183a9de8757564",
+      "exit": 21,
+      "stdout": "",
+      "stderr": "Unknown input format 'nosuchfmt'\n"
+    },
+    "defaults-name-without-extension-only#cmd": {
+      "key": "d16456a0cea360e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-nested#cmd": {
+      "key": "21883444b5a81c9a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-nested-cycle#cmd": {
+      "key": "424237707580b0f7",
+      "exit": 63,
+      "stdout": "",
+      "stderr": "Error: Circular defaults file reference in 'b.yaml'\n"
+    },
+    "defaults-nested-missing#cmd": {
+      "key": "9fe2e1d4e87d8f48",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "nosuch: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-nested-relative-to-file#cmd": {
+      "key": "a2a6be81af742cad",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "inner.yaml: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "defaults-nested-string#cmd": {
+      "key": "dc6be92a363e9e6e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-not-mapping#cmd": {
+      "key": "24a643dbced48fce",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:1:1: Expected a mapping\n  |\n1 | - a\n  | ^\n"
+    },
+    "defaults-number-offset-item#cmd": {
+      "key": "d9b12c023817dfe0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:20: number-offset[1]: parsing Int failed, expected Number, but encountered String\n  |\n3 | number-offset: [1, a]\n  |                    ^\n"
+    },
+    "defaults-output-file#cmd": {
+      "key": "95e9d8b82d25fd2d",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "defaults-output-file-empty#cmd": {
+      "key": "9e1a287820e22b42",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-reader-writer-keys#cmd": {
+      "key": "65446ad74e698d6e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-reference-location-bad#cmd": {
+      "key": "8a3ade66e284cf32",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:21: reference-location: Unknown reference location \"foo\"\n  |\n3 | reference-location: foo\n  |                     ^\n"
+    },
+    "defaults-request-headers-long-pair#cmd": {
+      "key": "b8897fe57423fc31",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:19: request-headers[0]: cannot unpack array of length 3 into a tuple of length 2\n  |\n1 | request-headers: [[a, b, c]]\n  |                   ^\n"
+    },
+    "defaults-request-headers-nested#cmd": {
+      "key": "c17ae1d58c9efff1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:23: request-headers[0][1]: parsing Text failed, expected String, but encountered Array\n  |\n1 | request-headers: [[a, [b]]]\n  |                       ^\n"
+    },
+    "defaults-request-headers-short-pair#cmd": {
+      "key": "3a96fb7de7823ed2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:19: request-headers[0]: cannot unpack array of length 1 into a tuple of length 2\n  |\n1 | request-headers: [[a]]\n  |                   ^\n"
+    },
+    "defaults-resource-path-string#cmd": {
+      "key": "a2f673669d4bba44",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:16: resource-path: parsing [] failed, expected Array, but encountered String\n  |\n3 | resource-path: x\n  |                ^\n"
+    },
+    "defaults-second-document#cmd": {
+      "key": "1b12977218003691",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:5:1: expected a single document, but got a second one\n  |\n5 | to: json\n  | ^\n"
+    },
+    "defaults-shift-heading-level-by#cmd": {
+      "key": "2f9dbda7faad5230",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[3,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-standalone#cmd": {
+      "key": "d19374b08ac76b11",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "defaults-syntax-highlighting-unknown#cmd": {
+      "key": "af45a59b0312de6a",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown highlight-style foo\n"
+    },
+    "defaults-tab-indentation#cmd": {
+      "key": "b0c74d386a99d2e9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:1:1: tabs cannot be used for indentation\n  |\n1 | \tfrom: json\n  | ^\n"
+    },
+    "defaults-template-dot-dot-path#cmd": {
+      "key": "3a1ba30364859034",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/t.tpl'\n"
+    },
+    "defaults-template-dot-path#cmd": {
+      "key": "29783c50b94d0589",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/t.tpl'\n"
+    },
+    "defaults-then-cli-override#cmd": {
+      "key": "786bee2daa9e6ff3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-toc-depth-hex#cmd": {
+      "key": "c019e61ac2781b06",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-toc-depth-out-of-range#cmd": {
+      "key": "337abe472b9798f5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-top-level-division-bad#cmd": {
+      "key": "e97ce2ea2ab08249",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:21: top-level-division: Unknown top level division \"foo\"\n  |\n3 | top-level-division: foo\n  |                     ^\n"
+    },
+    "defaults-track-changes-bad#cmd": {
+      "key": "ee41e116f26a1779",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:3:16: track-changes: Unknown track changes method \"foo\"\n  |\n3 | track-changes: foo\n  |                ^\n"
+    },
+    "defaults-two-files-combined#cmd": {
+      "key": "0d386b713abb1819",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-two-unknown-keys#cmd": {
+      "key": "cb6bce0a166a8686",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:2:6: bar: Unknown option \"bar\"\n  |\n2 | bar: 2\n  |      ^\n"
+    },
+    "defaults-typst-inputs-unknown#cmd": {
+      "key": "d5181ee3a87648d3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing p.yaml:\np.yaml:4:3: typst-inputs: Unknown option \"typst-inputs\"\n  |\n4 |   k: v\n  |   ^\n"
+    },
+    "defaults-unknown-format#cmd": {
+      "key": "0d67160554a9065f",
+      "exit": 21,
+      "stdout": "",
+      "stderr": "Unknown input format 'nosuch'\n"
+    },
+    "defaults-unknown-key#cmd": {
+      "key": "ad8eba71d83af764",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing u.yaml:\nu.yaml:3:12: nosuchkey: Unknown option \"nosuchkey\"\n  |\n3 | nosuchkey: 1\n  |            ^\n"
+    },
+    "defaults-unknown-var-expansion#cmd": {
+      "key": "30cb2ec7cc7498c6",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\nCould not find metadata file '/m.yaml'\n"
+    },
+    "defaults-user-data-dir#cmd": {
+      "key": "b4cf234ec8af7007",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-userdata-expansion#cmd": {
+      "key": "fa6467eba80cd8d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"userdata\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-variables#cmd": {
+      "key": "3f6510709abeba1b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-verbosity-info#cmd": {
+      "key": "7c0b58a647e3cfa2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "defaults-without-extension#cmd": {
+      "key": "d3d29862a34c8749",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-wrong-type-bool#cmd": {
+      "key": "d49a048dacfee832",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:3:13: standalone: expected Bool, but encountered String\n  |\n3 | standalone: maybe\n  |             ^\n"
+    },
+    "defaults-wrong-type-int#cmd": {
+      "key": "08b16222fc06bcae",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:3:12: toc-depth: parsing Int failed, expected Number, but encountered String\n  |\n3 | toc-depth: abc\n  |            ^\n"
+    },
+    "defaults-wrong-type-list#cmd": {
+      "key": "77c5db927764627c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing w.yaml:\nw.yaml:3:12: variables: Expecting MapVal\n  |\n3 | variables: [a]\n  |            ^\n"
+    },
+    "defaults-xdg-wins-over-dot-pandoc#cmd": {
+      "key": "b16e3c25f71ce58b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-yaml#cmd": {
+      "key": "76792289e61bbf65",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "defaults-yml-extension#cmd": {
+      "key": "fc838c5acc80e9cb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    }
+  }
+}

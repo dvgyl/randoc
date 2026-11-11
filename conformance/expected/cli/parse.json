@@ -1,0 +1,425 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "abbrev-ambiguous-in#cmd": {
+      "key": "fee9d8a6036b7c95",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--in' is ambiguous; could be one of:\n  -H FILE         --include-in-header=FILE        \n  -B FILE         --include-before-body=FILE      \n  -A FILE         --include-after-body=FILE       \n                  --indented-code-classes=STRING  \n  -i[true|false]  --incremental[=true|false]      \nTry pandoc --help for more information.\n"
+    },
+    "abbrev-ambiguous-list#cmd": {
+      "key": "f740173d7bf31395",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--list' is ambiguous; could be one of:\n    --lof[=true|false], --list-of-figures[=true|false]  \n    --lot[=true|false], --list-of-tables[=true|false]   \n    --list-tables[=true|false]                          \n    --listings[=true|false]                             \n    --list-input-formats                                \n    --list-output-formats                               \n    --list-extensions[=FORMAT]                          \n    --list-highlight-languages                          \n    --list-highlight-styles                             \nTry pandoc --help for more information.\n"
+    },
+    "abbrev-ambiguous-meta#cmd": {
+      "key": "4e53c1fbb377d531",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--meta' is ambiguous; could be one of:\n  -M KEY[=VALUE]  --metadata=KEY[=VALUE]  \n                  --metadata-file=FILE    \nTry pandoc --help for more information.\n"
+    },
+    "abbrev-ambiguous-s#cmd": {
+      "key": "0e5eb7ddccc8b62b",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--s' is ambiguous; could be one of:\n                  --sandbox[=true|false]                                                \n  -s[true|false]  --standalone[=true|false]                                             \n                  --syntax-definition=FILE                                              \n                  --syntax-highlighting=none|default|idiomatic|<stylename>|<themepath>  \n                  --self-contained[=true|false]                                         \n                  --shift-heading-level-by=NUMBER                                       \n                  --strip-comments[=true|false]                                         \n                  --slide-level=NUMBER                                                  \n                  --section-divs[=true|false]                                           \n                  --split-level=NUMBER                                                  \nTry pandoc --help for more information.\n"
+    },
+    "abbrev-ambiguous-t#cmd": {
+      "key": "137af00887a24f25",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--t' is ambiguous; could be one of:\n  -t FORMAT, -w FORMAT  --to=FORMAT, --write=FORMAT                           \n                        --template=FILE                                       \n                        --toc[=true|false], --table-of-contents[=true|false]  \n                        --toc-depth=NUMBER                                    \n                        --top-level-division=section|chapter|part             \n                        --tab-stop=NUMBER                                     \n                        --typst-input=KEY=VALUE                               \n                        --track-changes=accept|reject|all                     \n                        --table-caption-position=above|below                  \n  -T STRING             --title-prefix=STRING                                 \n                        --trace[=true|false]                                  \nTry pandoc --help for more information.\n"
+    },
+    "abbrev-ambiguous-to-exact#cmd": {
+      "key": "e682dc57aab47143",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbrev-ambiguous-toc-d#cmd": {
+      "key": "1c959be0df019406",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbrev-ambiguous-v#cmd": {
+      "key": "d0892732d10b9526",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--v' is ambiguous; could be one of:\n  -V KEY[=VALUE]  --variable=KEY[=VALUE]      \n                  --variable-json=KEY[:JSON]  \n                  --verbose                   \n  -v              --version                   \nTry pandoc --help for more information.\n"
+    },
+    "abbrev-toc-exact#cmd": {
+      "key": "e8e94cbb913c0a64",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbrev-unique-fro#cmd": {
+      "key": "c17ede3f9eae55b2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "abbrev-unique-list-in#cmd": {
+      "key": "ec5e86c8ca78e538",
+      "exit": 0,
+      "stdout": "asciidoc\nbiblatex\nbibtex\nbits\ncommonmark\ncommonmark_x\ncreole\ncsljson\ncsv\ndjot\ndocbook\ndocx\ndokuwiki\nendnotexml\nepub\nfb2\nfodt\ngfm\nhaddock\nhtml\nipynb\njats\njira\njson\nlatex\nman\nmarkdown\nmarkdown_github\nmarkdown_mmd\nmarkdown_phpextra\nmarkdown_strict\nmdoc\nmediawiki\nmuse\nnative\nodt\nopml\norg\npod\npptx\nris\nrst\nrtf\nt2t\ntextile\ntikiwiki\ntsv\ntwiki\ntypst\nvimwiki\nxlsx\nxml\n",
+      "stderr": ""
+    },
+    "abbrev-unique-meta-equals#cmd": {
+      "key": "68b0f2481347969b",
+      "exit": 98,
+      "stdout": "",
+      "stderr": "Could not find metadata file 'nosuch.yaml'\n"
+    },
+    "abbrev-unique-sta#cmd": {
+      "key": "d633fa6f2f3fc1dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "abbrev-unique-stand-equals#cmd": {
+      "key": "431674f296a77bdc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "abbrev-ver#cmd": {
+      "key": "9fa4b346e5f05d4b",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--ver' is ambiguous; could be one of:\n      --verbose  \n  -v  --version  \nTry pandoc --help for more information.\n"
+    },
+    "bad-value-then-unknown#cmd": {
+      "key": "634da4b3b7372fca",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch.\nTry pandoc --help for more information.\n"
+    },
+    "case-sensitive-long-option#cmd": {
+      "key": "f0aeaf2e8ffa2a57",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --TO.\nTry pandoc --help for more information.\n"
+    },
+    "cluster-f-swallows-rest#cmd": {
+      "key": "fb002911b7073739",
+      "exit": 21,
+      "stdout": "",
+      "stderr": "Unknown input format 'tjson'\n"
+    },
+    "cluster-n-s#cmd": {
+      "key": "6ed97ab6cc11bd42",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "cluster-s-separate-value#cmd": {
+      "key": "0ea619bad00077b3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "cluster-s-then-f#cmd": {
+      "key": "e443fdfdfea826b3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "dash-file-without-double-dash#cmd": {
+      "key": "e1704fe03f095ab6",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option -x.\nTry pandoc --help for more information.\n"
+    },
+    "deprecated-option-warning#cmd": {
+      "key": "99e6dfe69d829575",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": "[WARNING] Deprecated: --base-header-level. Use --shift-heading-level-by instead.\n"
+    },
+    "double-dash-then-dash-file#cmd": {
+      "key": "57387f9c48ad39ee",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "-x: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "double-dash-then-existing-dash-file#cmd": {
+      "key": "7257e96b3da39541",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "double-dash-then-option-text#cmd": {
+      "key": "797d0abe40ba2d4c",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "--toc: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "flag-given-argument-standalone#cmd": {
+      "key": "d76558effdf2cb45",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --standalone/-s must be either true or false\n"
+    },
+    "flag-given-argument-toc#cmd": {
+      "key": "1a979b41fc88065e",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --toc/--table-of-contents must be either true or false\n"
+    },
+    "flag-given-argument-toc-false#cmd": {
+      "key": "74f49124ae425094",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "flag-given-argument-toc-true#cmd": {
+      "key": "eefb9d409ef3fe88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "flag-given-argument-toc-uppercase#cmd": {
+      "key": "d3a731d21a4f3c48",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "flag-given-empty-argument#cmd": {
+      "key": "7f9adb3511ebbe6c",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --toc/--table-of-contents must be either true or false\n"
+    },
+    "flag-separate-argument-is-file#cmd": {
+      "key": "f93b1c7816c92870",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "true: withBinaryFile: does not exist (No such file or directory)\n"
+    },
+    "lone-double-dash#cmd": {
+      "key": "7f7dca7aa9f69283",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "long-equals#cmd": {
+      "key": "5278932c8a7bc93a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "long-option-single-dash#cmd": {
+      "key": "c120db927839325c",
+      "exit": 21,
+      "stdout": "",
+      "stderr": "Unknown input format 'rom=json'\n"
+    },
+    "long-separate#cmd": {
+      "key": "88f00abb6bc11680",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "missing-argument-long#cmd": {
+      "key": "115719898c088892",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--to' requires an argument FORMAT\nTry pandoc --help for more information.\n"
+    },
+    "missing-argument-short#cmd": {
+      "key": "af180fae9adf96f1",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `-f' requires an argument FORMAT\nTry pandoc --help for more information.\n"
+    },
+    "missing-argument-template#cmd": {
+      "key": "f54cbd64c3c9f9c9",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--template' requires an argument FILE\nTry pandoc --help for more information.\n"
+    },
+    "missing-argument-toc-depth#cmd": {
+      "key": "c0105ae3084c75f2",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--toc-depth' requires an argument NUMBER\nTry pandoc --help for more information.\n"
+    },
+    "next-option-taken-as-argument#cmd": {
+      "key": "961bf343b24be771",
+      "exit": 20,
+      "stdout": "",
+      "stderr": "Error parsing format '-t': (line 1, column 1):\nunexpected '-'\n"
+    },
+    "no-arg-option-given-argument-natbib#cmd": {
+      "key": "8c4974c00a515deb",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--natbib' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "no-arg-option-given-argument-verbose#cmd": {
+      "key": "d5fdf1cf2c3a23d8",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--verbose' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "no-arg-option-given-argument-version#cmd": {
+      "key": "a86ad5bd1b115548",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--version' doesn't allow an argument\nTry pandoc --help for more information.\n"
+    },
+    "no-arguments-reads-stdin#cmd": {
+      "key": "5c1f0932f4684ab1",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "option-after-input-file#cmd": {
+      "key": "740981554ce17323",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}\n",
+      "stderr": ""
+    },
+    "read-write-synonyms#cmd": {
+      "key": "a05b76bdbabb756b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "repeated-from-last-wins#cmd": {
+      "key": "5eabe1c9fefc69e6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "repeated-standalone-false-then-true#cmd": {
+      "key": "729ef15b1a1cb3be",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "repeated-standalone-true-then-false#cmd": {
+      "key": "17b91af7600fe5a2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "repeated-to-last-wins#cmd": {
+      "key": "d21ee0688e6a0da5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "repeated-toc-depth-first-bad#cmd": {
+      "key": "24f7c682dc9235f4",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --toc-depth must be a number 1-6\n"
+    },
+    "repeated-toc-depth-last-wins#cmd": {
+      "key": "f0bd82c2c5bfed76",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --toc-depth must be a number 1-6\n"
+    },
+    "short-attached#cmd": {
+      "key": "3ba7f1f00cc109d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "short-r-w-synonyms#cmd": {
+      "key": "7ec48d6ab0ac7b54",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "short-s-attached-bad#cmd": {
+      "key": "5532e2d70c6bf4a2",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Argument of --standalone/-s must be either true or false\n"
+    },
+    "short-s-attached-false#cmd": {
+      "key": "ed467eb317b1a5e7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "short-s-attached-true#cmd": {
+      "key": "934ded4707dba0a9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "short-separate#cmd": {
+      "key": "11e913e5d3eba70b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "single-dash-is-stdin#cmd": {
+      "key": "c2139025a511a22d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "triple-dash#cmd": {
+      "key": "e89e559bc279032d",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option ---.\nTry pandoc --help for more information.\n"
+    },
+    "two-unknown-options#cmd": {
+      "key": "4bf891e904d1b9e6",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch.\nUnknown option --other.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-and-bad-value#cmd": {
+      "key": "08b3824f81c3358e",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-and-missing-argument#cmd": {
+      "key": "0ff0b8869a6878de",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "option `--to' requires an argument FORMAT\nUnknown option --nosuch.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-long-option#cmd": {
+      "key": "0b693a6b346b49d8",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch-option.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-long-option-with-value#cmd": {
+      "key": "82537be338f11867",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-option-after-valid#cmd": {
+      "key": "5a770c2cd81e83e1",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option --nosuch.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-short-option#cmd": {
+      "key": "71eb8463e72d5e88",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option -x.\nTry pandoc --help for more information.\n"
+    },
+    "unknown-short-option-uppercase#cmd": {
+      "key": "e6421ac36bdf02f2",
+      "exit": 6,
+      "stdout": "",
+      "stderr": "Unknown option -Z.\nTry pandoc --help for more information.\n"
+    }
+  }
+}

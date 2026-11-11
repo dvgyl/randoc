@@ -1,0 +1,325 @@
+# General options: verbosity, logging, sandbox, data directory and output file.
+
+[[case]]
+id = "verbose"
+cmd = ["-f", "json", "-t", "json", "--verbose"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:verbose"]
+
+[[case]]
+id = "quiet"
+cmd = ["-f", "json", "-t", "json", "--quiet"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:quiet"]
+
+[[case]]
+id = "quiet-hides-warning"
+cmd = ["-f", "json", "-t", "json", "--quiet", "--base-header-level=2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:quiet"]
+
+[[case]]
+id = "quiet-hides-citeproc-warning"
+cmd = ["-f", "json", "-t", "json", "--quiet", "--citeproc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+covers = ["opt:quiet"]
+
+[[case]]
+id = "verbose-then-quiet"
+cmd = ["-f", "json", "-t", "json", "--verbose", "--quiet"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "quiet-then-verbose"
+cmd = ["-f", "json", "-t", "json", "--quiet", "--verbose"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "quiet-with-argument"
+cmd = ["-f", "json", "-t", "json", "--quiet=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "fail-if-warnings-bare"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:fail-if-warnings"]
+
+[[case]]
+id = "sandbox-bare"
+cmd = ["-f", "json", "-t", "json", "--sandbox"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:sandbox"]
+
+[[case]]
+id = "trace-bare"
+cmd = ["-f", "json", "-t", "json", "--trace"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:trace"]
+
+[[case]]
+id = "fail-if-warnings-true"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:fail-if-warnings"]
+
+[[case]]
+id = "sandbox-true"
+cmd = ["-f", "json", "-t", "json", "--sandbox=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:sandbox"]
+
+[[case]]
+id = "trace-true"
+cmd = ["-f", "json", "-t", "json", "--trace=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:trace"]
+
+[[case]]
+id = "fail-if-warnings-false"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:fail-if-warnings"]
+
+[[case]]
+id = "sandbox-false"
+cmd = ["-f", "json", "-t", "json", "--sandbox=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:sandbox"]
+
+[[case]]
+id = "trace-false"
+cmd = ["-f", "json", "-t", "json", "--trace=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:trace"]
+
+[[case]]
+id = "fail-if-warnings-bad"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:fail-if-warnings"]
+
+[[case]]
+id = "sandbox-bad"
+cmd = ["-f", "json", "-t", "json", "--sandbox=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:sandbox"]
+
+[[case]]
+id = "trace-bad"
+cmd = ["-f", "json", "-t", "json", "--trace=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:trace"]
+
+[[case]]
+id = "fail-if-warnings-with-warning"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings", "--base-header-level=2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "fail-if-warnings-with-warning-quiet"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings", "--quiet", "--base-header-level=2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "fail-if-warnings-citeproc-warning"
+cmd = ["-f", "json", "-t", "json", "--fail-if-warnings", "--citeproc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+
+[[case]]
+id = "sandbox-blocks-metadata-file"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "--metadata-file=m.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "m.yaml" = "a: 1\n" }
+
+[[case]]
+id = "sandbox-allows-input-file"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "in.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}" }
+
+[[case]]
+id = "sandbox-blocks-include"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "-H", "inc.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "x\n" }
+
+[[case]]
+id = "sandbox-lua-filter"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "--lua-filter=up.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n" }
+
+[[case]]
+id = "log-file"
+cmd = ["-f", "json", "-t", "json", "--log=log.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:log"]
+
+[[case]]
+id = "log-file-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--log"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:log"]
+
+[[case]]
+id = "data-dir-existing"
+cmd = ["-f", "json", "-t", "json", "--data-dir=dd"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dd/x.txt" = "x" }
+covers = ["opt:data-dir"]
+
+[[case]]
+id = "data-dir-missing"
+cmd = ["-f", "json", "-t", "json", "--data-dir=nosuchdir"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:data-dir"]
+
+[[case]]
+id = "data-dir-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--data-dir"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:data-dir"]
+
+[[case]]
+id = "output-stdout-dash"
+cmd = ["-f", "json", "-t", "json", "-o", "-"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:output"]
+
+[[case]]
+id = "output-file"
+cmd = ["-f", "json", "-t", "json", "-o", "out.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:output"]
+
+[[case]]
+id = "output-long"
+cmd = ["-f", "json", "-t", "json", "--output=out.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+covers = ["opt:output"]
+
+[[case]]
+id = "output-missing-argument"
+cmd = ["-f", "json", "-t", "json", "-o"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:output"]
+
+[[case]]
+id = "output-repeated-last-wins"
+cmd = ["-f", "json", "-t", "json", "-o", "a.json", "-o", "-"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+
+[[case]]
+id = "output-to-missing-directory"
+cmd = ["-f", "json", "-t", "json", "-o", "nosuchdir/out.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "output-to-existing-directory"
+cmd = ["-f", "json", "-t", "json", "-o", "dir"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dir/keep.txt" = "x" }
+
+[[case]]
+id = "sandbox-css-not-read"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "--css=nosuch.css"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "sandbox-epub-font-not-read"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "--epub-embed-font=nosuch.ttf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "sandbox-input-dev-stdin"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "/dev/stdin"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "sandbox-input-directory"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "sub"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "sub/x.txt" = "x" }
+
+[[case]]
+id = "sandbox-metadata-file-dev-stdin"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "--metadata-file=/dev/stdin", "a.json"]
+input = "x: y\n"
+files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "sandbox-template-without-extension"
+cmd = ["-f", "json", "-t", "json", "--sandbox", "--template=custom"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "custom.json" = "custom template" }
+
+[[case]]
+id = "log-file-empty-name"
+cmd = ["-f", "json", "-t", "json", "--log="]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "log-names-input"
+cmd = ["-f", "json", "-t", "json", "--log=a.json", "a.json"]
+files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "log-names-metadata-file"
+cmd = ["-f", "json", "-t", "json", "--log=m.yaml", "--metadata-file=m.yaml", "a.json"]
+files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}", "m.yaml" = "a: 1\n" }
+
+[[case]]
+id = "sandbox-template-in-data-dir"
+cmd = ["-f", "json", "-t", "json", "--data-dir=.", "--template=user", "--sandbox"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "templates/user.json" = "custom" }
+
+[[case]]
+id = "highlight-bad-value-replaced"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=nosuchB", "--syntax-highlighting=pygments"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "highlight-bad-value-then-no-highlight"
+cmd = ["-f", "json", "-t", "json", "--highlight-style=nosuchB", "--no-highlight"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "highlight-bad-value-then-defaults"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=nosuchB", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "d.yaml" = "syntax-highlighting: pygments\n" }
+
+[[case]]
+id = "log-not-written-template-missing"
+cmd = ["-f", "json", "-t", "json", "--template=missing", "--log=missing/log.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "log-in-missing-folder"
+cmd = ["-f", "json", "-t", "json", "--log=missing/log.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "log-is-a-directory"
+cmd = ["-f", "json", "-t", "json", "--log=dir"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dir/x" = "x" }
+
+[[case]]
+id = "loaded-resource-verbose"
+cmd = ["-f", "json", "-t", "json", "-H", "inc.txt", "--template=t.json", "--verbose"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "inc.txt" = "x", "t.json" = "T" }
+
+[[case]]
+id = "order-template-before-theme"
+cmd = ["-f", "json", "-t", "json", "--syntax-highlighting=no.theme", "--template=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "order-theme-before-include"
+cmd = ["-f", "json", "-t", "json", "--verbose", "--template=t", "-H", "missing.txt", "--syntax-highlighting=no.theme"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.json" = "t" }

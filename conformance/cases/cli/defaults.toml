@@ -1,0 +1,717 @@
+# Defaults files: search, expansion, keys, errors and combination with options.
+
+[[case]]
+id = "defaults-yaml"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\n" }
+covers = ["opt:defaults"]
+
+[[case]]
+id = "defaults-without-extension"
+cmd = ["-d", "x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-long"
+cmd = ["--defaults=x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-attached-short"
+cmd = ["-dx.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-json-file"
+cmd = ["-d", "x.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.json" = "{\"from\":\"json\",\"to\":\"json\"}" }
+
+[[case]]
+id = "defaults-json-without-extension"
+cmd = ["-d", "x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.json" = "{\"from\":\"json\",\"to\":\"json\"}" }
+
+[[case]]
+id = "defaults-yml-extension"
+cmd = ["-d", "x.yml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-missing"
+cmd = ["-f", "json", "-d", "nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "defaults-missing-with-extension"
+cmd = ["-f", "json", "-d", "nosuch.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "defaults-missing-argument"
+cmd = ["-d"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "defaults-user-data-dir"
+cmd = ["-d", "u"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { ".home/.local/share/pandoc/defaults/u.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-legacy-dot-pandoc"
+cmd = ["-d", "u"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { ".home/.pandoc/defaults/u.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-xdg-wins-over-dot-pandoc"
+cmd = ["-d", "u"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { ".home/.local/share/pandoc/defaults/u.yaml" = "from: json\nto: json\n", ".home/.pandoc/defaults/u.yaml" = "from: json\nto: native\n" }
+
+[[case]]
+id = "defaults-local-before-user-data-dir"
+cmd = ["-d", "u"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "u.yaml" = "from: json\nto: json\n", ".home/.local/share/pandoc/defaults/u.yaml" = "from: json\nto: native\n" }
+
+[[case]]
+id = "defaults-data-dir-option"
+cmd = ["--data-dir=dd", "-d", "u"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dd/defaults/u.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-bad-yaml"
+cmd = ["-d", "bad.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "bad.yaml" = "to: [json\n" }
+
+[[case]]
+id = "defaults-bad-json"
+cmd = ["-d", "bad.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "bad.json" = "{\"to\": " }
+
+[[case]]
+id = "defaults-unknown-key"
+cmd = ["-d", "u.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "u.yaml" = "from: json\nto: json\nnosuchkey: 1\n" }
+
+[[case]]
+id = "defaults-wrong-type-int"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\ntoc-depth: abc\n" }
+
+[[case]]
+id = "defaults-wrong-type-bool"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\nstandalone: maybe\n" }
+
+[[case]]
+id = "defaults-wrong-type-list"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\nvariables: [a]\n" }
+
+[[case]]
+id = "defaults-not-mapping"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "- a\n" }
+
+[[case]]
+id = "defaults-empty-file"
+cmd = ["-f", "json", "-t", "json", "-d", "e.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "e.yaml" = "" }
+
+[[case]]
+id = "defaults-bad-enum"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\nwrap: bogus\n" }
+
+[[case]]
+id = "defaults-bad-verbosity"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\nverbosity: LOUD\n" }
+
+[[case]]
+id = "defaults-unknown-format"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: nosuch\nto: json\n" }
+
+[[case]]
+id = "defaults-toc-depth-out-of-range"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\ntoc-depth: 9\n" }
+
+[[case]]
+id = "defaults-ipynb-output-best"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\nipynb-output: best\n" }
+
+[[case]]
+id = "defaults-ipynb-output-constructor"
+cmd = ["-d", "w.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "w.yaml" = "from: json\nto: json\nipynb-output: IpynbOutputBest\n" }
+
+[[case]]
+id = "defaults-reader-writer-keys"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "reader: json\nwriter: json\n" }
+
+[[case]]
+id = "defaults-metadata"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata:\n  foo: bar\n  n: 1\n" }
+
+[[case]]
+id = "defaults-metadata-and-cli"
+cmd = ["-d", "x.yaml", "-M", "foo=cli"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata:\n  foo: bar\n" }
+
+[[case]]
+id = "defaults-metadata-file"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata-file: m.yaml\n", "m.yaml" = "foo: file\n" }
+
+[[case]]
+id = "defaults-metadata-files-list"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata-files:\n  - a.yaml\n  - b.yaml\n", "a.yaml" = "foo: a\n", "b.yaml" = "foo: b\nbar: b\n" }
+
+[[case]]
+id = "defaults-metadata-file-missing"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata-file: nosuch.yaml\n" }
+
+[[case]]
+id = "defaults-shift-heading-level-by"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.yaml" = "from: json\nto: json\nshift-heading-level-by: 1\n" }
+
+[[case]]
+id = "defaults-input-file"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\ninput-file: in.json\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}" }
+
+[[case]]
+id = "defaults-input-files"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\ninput-files:\n  - in.json\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}" }
+
+[[case]]
+id = "defaults-input-files-missing"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\ninput-files:\n  - nosuch.json\n" }
+
+[[case]]
+id = "defaults-input-files-and-cli-file"
+cmd = ["-d", "x.yaml", "b.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\ninput-files:\n  - a.json\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}", "b.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-output-file-empty"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\noutput-file:\n" }
+
+[[case]]
+id = "defaults-output-file"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\noutput-file: out.json\n" }
+
+[[case]]
+id = "defaults-standalone"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nstandalone: true\n" }
+
+[[case]]
+id = "defaults-variables"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nvariables:\n  a: 1\n  b: [x, y]\n" }
+
+[[case]]
+id = "defaults-verbosity-info"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.yaml" = "from: json\nto: json\nverbosity: INFO\n" }
+
+[[case]]
+id = "defaults-many-keys"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.yaml" = "from: json\nto: json\ntoc: true\ntoc-depth: 2\nnumber-sections: true\nwrap: none\ncolumns: 60\ntab-stop: 2\npreserve-tabs: true\neol: lf\ndpi: 120\nascii: false\nreference-links: true\ntop-level-division: chapter\nslide-level: 2\nsection-divs: true\nemail-obfuscation: none\nidentifier-prefix: p\ntitle-prefix: T\nstrip-comments: true\ntrack-changes: accept\nhtml-q-tags: true\nincremental: true\nlistings: true\nfile-scope: true\nsandbox: false\nfail-if-warnings: false\ncite-method: citeproc\nhtml-math-method: mathml\nreference-location: block\nmarkdown-headings: atx\n" }
+
+[[case]]
+id = "defaults-identifier-prefix"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.yaml" = "from: json\nto: json\nidentifier-prefix: p-\n" }
+
+[[case]]
+id = "defaults-filters-lua"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.yaml" = "from: json\nto: json\nfilters:\n  - up.lua\n", "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n" }
+
+[[case]]
+id = "defaults-filters-typed"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.yaml" = "from: json\nto: json\nfilters:\n  - type: lua\n    path: up.lua\n", "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n" }
+
+[[case]]
+id = "defaults-filters-missing"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nfilters:\n  - nosuch.lua\n" }
+
+[[case]]
+id = "defaults-nested"
+cmd = ["-d", "outer.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "outer.yaml" = "defaults:\n  - inner.yaml\nto: json\n", "inner.yaml" = "from: json\nto: native\n" }
+
+[[case]]
+id = "defaults-nested-string"
+cmd = ["-d", "outer.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "outer.yaml" = "defaults: inner.yaml\n", "inner.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-nested-missing"
+cmd = ["-d", "outer.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "outer.yaml" = "from: json\nto: json\ndefaults: nosuch\n" }
+
+[[case]]
+id = "defaults-nested-cycle"
+cmd = ["-d", "a.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "a.yaml" = "defaults: b.yaml\nfrom: json\n", "b.yaml" = "defaults: a.yaml\nto: json\n" }
+
+[[case]]
+id = "defaults-nested-relative-to-file"
+cmd = ["-d", "sub/outer.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "sub/outer.yaml" = "defaults: inner.yaml\n", "sub/inner.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-two-files-combined"
+cmd = ["-d", "a.yaml", "-d", "b.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "a.yaml" = "from: json\nto: native\n", "b.yaml" = "to: json\n" }
+
+[[case]]
+id = "defaults-then-cli-override"
+cmd = ["-d", "x.yaml", "-t", "json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: native\n" }
+
+[[case]]
+id = "defaults-after-cli"
+cmd = ["-t", "native", "-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-bad-cli-after"
+cmd = ["-d", "x.yaml", "--toc-depth=9"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\n" }
+
+[[case]]
+id = "defaults-userdata-expansion"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata-file: ${USERDATA}/m.yaml\n", ".home/.local/share/pandoc/m.yaml" = "foo: userdata\n" }
+
+[[case]]
+id = "defaults-dot-expansion"
+cmd = ["-d", "sub/x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "sub/x.yaml" = "from: json\nto: json\nmetadata-file: ${.}/m.yaml\n", "sub/m.yaml" = "foo: dot\n" }
+
+[[case]]
+id = "defaults-home-expansion"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata-file: ${HOME}/m.yaml\n", ".home/m.yaml" = "foo: home\n" }
+
+[[case]]
+id = "defaults-unknown-var-expansion"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata-file: ${NOSUCHVAR}/m.yaml\n" }
+
+[[case]]
+id = "defaults-expansion-in-non-path"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\nmetadata:\n  foo: ${HOME}\n" }
+
+[[case]]
+id = "defaults-input-file-dot-expansion"
+cmd = ["-d", "sub/x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "sub/x.yaml" = "from: json\nto: json\ninput-files:\n  - ${.}/in.json\n", "sub/in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}" }
+
+[[case]]
+id = "defaults-data-dir-key"
+cmd = ["-d", "x.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "x.yaml" = "from: json\nto: json\ndata-dir: dd\nmetadata-file: m.yaml\n", "dd/metadata/m.yaml" = "foo: dd\n" }
+
+[[case]]
+id = "defaults-json-full"
+cmd = ["-d", "x.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "x.json" = "{\"from\":\"json\",\"to\":\"json\",\"metadata\":{\"foo\":\"bar\"},\"shift-heading-level-by\":1}" }
+
+[[case]]
+id = "defaults-alias-limit"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "metadata:\n  a: &a x\n  x0: &x0 [*a, *a]\n  x1: &x1 [*x0, *x0]\n  x2: &x2 [*x1, *x1]\n  x3: &x3 [*x2, *x2]\n  x4: &x4 [*x3, *x3]\n  x5: &x5 [*x4, *x4]\n  x6: &x6 [*x5, *x5]\n  x7: &x7 [*x6, *x6]\n  x8: &x8 [*x7, *x7]\n  x9: &x9 [*x8, *x8]\n  x10: &x10 [*x9, *x9]\n  x11: &x11 [*x10, *x10]\n  x12: &x12 [*x11, *x11]\n  x13: &x13 [*x12, *x12]\n  x14: &x14 [*x13, *x13]\n  x15: &x15 [*x14, *x14]\n  " }
+
+[[case]]
+id = "defaults-duplicate-key"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nfrom: json\n" }
+
+[[case]]
+id = "defaults-second-document"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "---\nfrom: json\nto: json\n---\nto: json\n" }
+
+[[case]]
+id = "defaults-tab-indentation"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "\tfrom: json\nto: json\n" }
+
+[[case]]
+id = "defaults-list-key"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nmetadata:\n  ? [a]\n  : b\n" }
+
+[[case]]
+id = "defaults-input-files-string"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ninput-files: a.json\n" }
+
+[[case]]
+id = "defaults-resource-path-string"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nresource-path: x\n" }
+
+[[case]]
+id = "defaults-number-offset-item"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nnumber-offset: [1, a]\n" }
+
+[[case]]
+id = "defaults-metadata-not-mapping"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nmetadata: x\n" }
+
+[[case]]
+id = "defaults-filters-unknown-type"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nfilters:\n- type: foo\n  path: x\n" }
+
+[[case]]
+id = "defaults-filters-string"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nfilters: x.lua\n" }
+
+[[case]]
+id = "defaults-syntax-highlighting-unknown"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nsyntax-highlighting: foo\n" }
+
+[[case]]
+id = "defaults-metadata-numbers"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nmetadata:\n  a: 1.0\n  b: .inf\n  c: 0x10\n  d: [1, null]\n  e: 1e3\n  f: .nan\n  g: 010\n" }
+
+[[case]]
+id = "defaults-columns-float"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ncolumns: 1.5\n" }
+
+[[case]]
+id = "defaults-columns-huge"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ndpi: 99999999999999999999\n" }
+
+[[case]]
+id = "defaults-toc-depth-hex"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ntoc-depth: 0x2\n" }
+
+[[case]]
+id = "defaults-eol-uppercase"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\neol: CRLF\n" }
+
+[[case]]
+id = "defaults-track-changes-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ntrack-changes: foo\n" }
+
+[[case]]
+id = "defaults-cite-method-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ncite-method: foo\n" }
+
+[[case]]
+id = "defaults-html-math-method-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nhtml-math-method: foo\n" }
+
+[[case]]
+id = "defaults-top-level-division-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ntop-level-division: foo\n" }
+
+[[case]]
+id = "defaults-reference-location-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nreference-location: foo\n" }
+
+[[case]]
+id = "defaults-email-obfuscation-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nemail-obfuscation: foo\n" }
+
+[[case]]
+id = "defaults-caption-position-bad"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nfigure-caption-position: foo\n" }
+
+[[case]]
+id = "defaults-markdown-headings-other"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\nmarkdown-headings: foo\n" }
+
+[[case]]
+id = "defaults-typst-inputs-unknown"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ntypst-inputs:\n  k: v\n" }
+
+[[case]]
+id = "defaults-template-dot-path"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ntemplate: ${.}/t.tpl\n" }
+
+[[case]]
+id = "defaults-json-type-error"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "{\"from\":\"json\",\"columns\":1.5}\n" }
+
+[[case]]
+id = "defaults-json-item-error"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "{\"from\":\"json\",\"number-offset\":[1,\"a\"]}\n" }
+
+[[case]]
+id = "defaults-json-content-in-yaml-name"
+cmd = ["-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "{\"from\":\"json\",\"to\":\"json\"}\n" }
+
+[[case]]
+id = "defaults-input-files-before-cli"
+cmd = ["-d", "p.yaml", "a.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "from: json\nto: json\ninput-files: [nosuch.json]\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-name-without-extension-exists"
+cmd = ["-d", "dd", "a.json"]
+files = { "dd" = "from: nosuchfmt\n", "dd.yaml" = "from: json\nto: json\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-name-without-extension-only"
+cmd = ["-d", "dd", "a.json"]
+files = { "dd" = "from: json\nto: json\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-dev-stdin"
+cmd = ["-d", "/dev/stdin", "a.json"]
+input = "from: json\nto: json\n"
+files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-data-dir-name-before-yaml"
+cmd = ["-d", "dd", "a.json"]
+files = { ".home/.local/share/pandoc/defaults/dd" = "from: json\nto: json\n", ".home/.local/share/pandoc/defaults/dd.yaml" = "from: json\nto: native\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-metadata-replaces-earlier-cli-value"
+cmd = ["-f", "json", "-t", "json", "-M", "a=1", "-M", "a=2", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "metadata:\n  a: dflt\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-metadata-second-file-replaces"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "-d", "q.yaml", "a.json"]
+files = { "p.yaml" = "metadata:\n  a: dflt\n", "q.yaml" = "metadata:\n  a: e\n  b: e\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-metadata-later-cli-adds"
+cmd = ["-f", "json", "-t", "json", "-M", "a=cli", "-d", "p.yaml", "-M", "a=cli2", "a.json"]
+files = { "p.yaml" = "metadata:\n  a: dflt\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-input-files-of-two-files-are-joined"
+cmd = ["-d", "p.yaml", "-d", "q.yaml"]
+files = { "p.yaml" = "from: json\nto: json\ninput-files: [nosuch1.json]\n", "q.yaml" = "input-files: [a.json]\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-input-file-and-input-files"
+cmd = ["-d", "p.yaml"]
+files = { "p.yaml" = "from: json\nto: json\ninput-file: nosuch1.json\ninput-files: [a.json]\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-request-headers-short-pair"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "request-headers: [[a]]\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-request-headers-long-pair"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "request-headers: [[a, b, c]]\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-html-math-method-url-only"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "html-math-method: {url: x}\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-html-math-method-unknown-map"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "html-math-method: {method: foo}\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-two-unknown-keys"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "foo: 1\nbar: 2\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-template-dot-dot-path"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml", "a.json"]
+files = { "p.yaml" = "template: ${.}/./x/../t.tpl\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+[[case]]
+id = "defaults-directory"
+cmd = ["-f", "json", "-t", "json", "-d", "dir"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dir/x" = "x" }
+
+[[case]]
+id = "defaults-css-list-of-maps"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "css: [{a: b}]\n" }
+
+[[case]]
+id = "defaults-request-headers-nested"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "request-headers: [[a, [b]]]\n" }
+
+[[case]]
+id = "defaults-math-url-map"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "html-math-method: {method: mathjax, url: {a: b}}\n" }
+
+[[case]]
+id = "defaults-filter-type-list"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "filters: [{type: [lua], path: x.lua}]\n" }
+
+[[case]]
+id = "defaults-metadata-null-key"
+cmd = ["-f", "json", "-t", "json", "-d", "p.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.yaml" = "metadata: {~: z}\n" }
+
+[[case]]
+id = "defaults-json-request-headers-nested"
+cmd = ["-f", "json", "-t", "json", "-d", "p.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.json" = "{\"request-headers\":[[\"a\",3]]}" }
+
+[[case]]
+id = "defaults-json-metadata-file-map"
+cmd = ["-f", "json", "-t", "json", "-d", "p.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "p.json" = "{\"metadata-file\":[{}]}" }
+
+[[case]]
+id = "defaults-json-document"
+cmd = ["-f", "json", "-t", "json", "-d", "a.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }

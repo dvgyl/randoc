@@ -1,0 +1,10 @@
+from: json
+to: json
+toc: true
+metadata:
+  a: [1, {b: c}]
+filters:
+  - x.lua
+  - {type: json, path: y}
+css: ${HOME}/a
+html-math-method: {method: mathjax, url: u}

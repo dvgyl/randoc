@@ -320,6 +320,9 @@ version = "0.1.0"
 dependencies = [
  "randoc",
  "randoc-harness",
+ "saphyr-parser",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

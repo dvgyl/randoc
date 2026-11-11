@@ -1,0 +1,517 @@
+# EPUB, PDF, document, citation, math, filter and notebook options with JSON output.
+
+[[case]]
+id = "epub-subdirectory"
+cmd = ["-f", "json", "-t", "json", "--epub-subdirectory=OEBPS"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-subdirectory"]
+
+[[case]]
+id = "epub-subdirectory-empty"
+cmd = ["-f", "json", "-t", "json", "--epub-subdirectory="]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub-subdirectory-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--epub-subdirectory"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "epub-cover-image-existing"
+cmd = ["-f", "json", "-t", "json", "--epub-cover-image=c.png"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "c.png" = "x" }
+covers = ["opt:epub-cover-image"]
+
+[[case]]
+id = "epub-cover-image-missing"
+cmd = ["-f", "json", "-t", "json", "--epub-cover-image=nosuch.png"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-cover-image"]
+
+[[case]]
+id = "epub-title-page-bare"
+cmd = ["-f", "json", "-t", "json", "--epub-title-page"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-title-page"]
+
+[[case]]
+id = "epub-title-page-true"
+cmd = ["-f", "json", "-t", "json", "--epub-title-page=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-title-page"]
+
+[[case]]
+id = "epub-title-page-false"
+cmd = ["-f", "json", "-t", "json", "--epub-title-page=false"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-title-page"]
+
+[[case]]
+id = "epub-title-page-bad"
+cmd = ["-f", "json", "-t", "json", "--epub-title-page=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-title-page"]
+
+[[case]]
+id = "epub-metadata-existing"
+cmd = ["-f", "json", "-t", "json", "--epub-metadata=m.xml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "m.xml" = "<dc:rights>x</dc:rights>\n" }
+covers = ["opt:epub-metadata"]
+
+[[case]]
+id = "epub-metadata-missing"
+cmd = ["-f", "json", "-t", "json", "--epub-metadata=nosuch.xml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-metadata"]
+
+[[case]]
+id = "epub-embed-font-missing"
+cmd = ["-f", "json", "-t", "json", "--epub-embed-font=nosuch.ttf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-embed-font"]
+
+[[case]]
+id = "epub-embed-font-existing"
+cmd = ["-f", "json", "-t", "json", "--epub-embed-font=f.ttf"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "f.ttf" = "x" }
+covers = ["opt:epub-embed-font"]
+
+[[case]]
+id = "split-level-1"
+cmd = ["-f", "json", "-t", "json", "--split-level=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:split-level"]
+
+[[case]]
+id = "epub-chapter-level-1"
+cmd = ["-f", "json", "-t", "json", "--epub-chapter-level=1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-chapter-level"]
+
+[[case]]
+id = "split-level-3"
+cmd = ["-f", "json", "-t", "json", "--split-level=3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:split-level"]
+
+[[case]]
+id = "epub-chapter-level-3"
+cmd = ["-f", "json", "-t", "json", "--epub-chapter-level=3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-chapter-level"]
+
+[[case]]
+id = "split-level-0"
+cmd = ["-f", "json", "-t", "json", "--split-level=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:split-level"]
+
+[[case]]
+id = "epub-chapter-level-0"
+cmd = ["-f", "json", "-t", "json", "--epub-chapter-level=0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-chapter-level"]
+
+[[case]]
+id = "split-level--1"
+cmd = ["-f", "json", "-t", "json", "--split-level=-1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:split-level"]
+
+[[case]]
+id = "epub-chapter-level--1"
+cmd = ["-f", "json", "-t", "json", "--epub-chapter-level=-1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-chapter-level"]
+
+[[case]]
+id = "split-level-x"
+cmd = ["-f", "json", "-t", "json", "--split-level=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:split-level"]
+
+[[case]]
+id = "epub-chapter-level-x"
+cmd = ["-f", "json", "-t", "json", "--epub-chapter-level=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:epub-chapter-level"]
+
+[[case]]
+id = "chunk-template"
+cmd = ["-f", "json", "-t", "json", "--chunk-template=%i.html"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:chunk-template"]
+
+[[case]]
+id = "chunk-template-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--chunk-template"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "pdf-engine-known"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine=pdflatex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:pdf-engine"]
+
+[[case]]
+id = "pdf-engine-typst"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine=typst"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:pdf-engine"]
+
+[[case]]
+id = "pdf-engine-unknown"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:pdf-engine"]
+
+[[case]]
+id = "pdf-engine-path"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine=/usr/local/bin/xelatex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "pdf-engine-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "pdf-engine-opt"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine-opt=-shell-escape"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:pdf-engine-opt"]
+
+[[case]]
+id = "pdf-engine-opt-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--pdf-engine-opt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:pdf-engine-opt"]
+
+[[case]]
+id = "reference-doc-existing"
+cmd = ["-f", "json", "-t", "json", "--reference-doc=ref.docx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "ref.docx" = "x" }
+covers = ["opt:reference-doc"]
+
+[[case]]
+id = "reference-doc-missing"
+cmd = ["-f", "json", "-t", "json", "--reference-doc=nosuch.docx"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:reference-doc"]
+
+[[case]]
+id = "citeproc-no-citations"
+cmd = ["-f", "json", "-t", "json", "--citeproc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:citeproc"]
+
+[[case]]
+id = "citeproc-short"
+cmd = ["-f", "json", "-t", "json", "-C"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:citeproc"]
+
+[[case]]
+id = "citeproc-with-argument"
+cmd = ["-f", "json", "-t", "json", "--citeproc=true"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:citeproc"]
+
+[[case]]
+id = "citeproc-bibliography"
+cmd = ["-f", "json", "-t", "json", "--citeproc", "--bibliography=refs.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+files = { "refs.json" = "[{\"id\":\"item1\",\"type\":\"book\",\"title\":\"A Book\",\"author\":[{\"family\":\"Doe\",\"given\":\"Jane\"}],\"issued\":{\"date-parts\":[[2020]]}}]\n" }
+covers = ["opt:citeproc", "opt:bibliography"]
+
+[[case]]
+id = "citeproc-missing-reference"
+cmd = ["-f", "json", "-t", "json", "--citeproc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+
+[[case]]
+id = "bibliography-without-citeproc"
+cmd = ["-f", "json", "-t", "json", "--bibliography=refs.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+files = { "refs.json" = "[{\"id\":\"item1\",\"type\":\"book\",\"title\":\"A Book\",\"author\":[{\"family\":\"Doe\",\"given\":\"Jane\"}],\"issued\":{\"date-parts\":[[2020]]}}]\n" }
+covers = ["opt:bibliography"]
+
+[[case]]
+id = "bibliography-missing-file"
+cmd = ["-f", "json", "-t", "json", "--citeproc", "--bibliography=nosuch.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+covers = ["opt:bibliography"]
+
+[[case]]
+id = "bibliography-unknown-extension"
+cmd = ["-f", "json", "-t", "json", "--citeproc", "--bibliography=refs.xyz"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+files = { "refs.xyz" = "x" }
+
+[[case]]
+id = "csl-missing-file"
+cmd = ["-f", "json", "-t", "json", "--citeproc", "--csl=nosuch.csl"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+covers = ["opt:csl"]
+
+[[case]]
+id = "csl-without-citeproc"
+cmd = ["-f", "json", "-t", "json", "--csl=nosuch.csl"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:csl"]
+
+[[case]]
+id = "citation-abbreviations-missing"
+cmd = ["-f", "json", "-t", "json", "--citeproc", "--citation-abbreviations=nosuch.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+covers = ["opt:citation-abbreviations"]
+
+[[case]]
+id = "citation-abbreviations-existing"
+cmd = ["-f", "json", "-t", "json", "--citation-abbreviations=abbr.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "abbr.json" = "{\"default\":{}}" }
+covers = ["opt:citation-abbreviations"]
+
+[[case]]
+id = "natbib"
+cmd = ["-f", "json", "-t", "json", "--natbib"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:natbib"]
+
+[[case]]
+id = "biblatex"
+cmd = ["-f", "json", "-t", "json", "--biblatex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:biblatex"]
+
+[[case]]
+id = "biblatex-with-argument"
+cmd = ["-f", "json", "-t", "json", "--biblatex=yes"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:biblatex"]
+
+[[case]]
+id = "natbib-and-biblatex"
+cmd = ["-f", "json", "-t", "json", "--natbib", "--biblatex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "math-method-plain"
+cmd = ["-f", "json", "-t", "json", "--math-method=plain"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-mathml"
+cmd = ["-f", "json", "-t", "json", "--math-method=mathml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-mathjax"
+cmd = ["-f", "json", "-t", "json", "--math-method=mathjax"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-katex"
+cmd = ["-f", "json", "-t", "json", "--math-method=katex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-webtex"
+cmd = ["-f", "json", "-t", "json", "--math-method=webtex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-gladtex"
+cmd = ["-f", "json", "-t", "json", "--math-method=gladtex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-mathjax-url"
+cmd = ["-f", "json", "-t", "json", "--math-method=mathjax:https://example.org/mj.js"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-nosuch"
+cmd = ["-f", "json", "-t", "json", "--math-method=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "math-method-empty"
+cmd = ["-f", "json", "-t", "json", "--math-method="]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:math-method"]
+
+[[case]]
+id = "mathml"
+cmd = ["-f", "json", "-t", "json", "--mathml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:mathml"]
+
+[[case]]
+id = "mathml-with-argument"
+cmd = ["-f", "json", "-t", "json", "--mathml=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:mathml"]
+
+[[case]]
+id = "gladtex"
+cmd = ["-f", "json", "-t", "json", "--gladtex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:gladtex"]
+
+[[case]]
+id = "gladtex-with-argument"
+cmd = ["-f", "json", "-t", "json", "--gladtex=x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:gladtex"]
+
+[[case]]
+id = "mathjax"
+cmd = ["-f", "json", "-t", "json", "--mathjax"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:mathjax"]
+
+[[case]]
+id = "mathjax-url"
+cmd = ["-f", "json", "-t", "json", "--mathjax=https://example.org/x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:mathjax"]
+
+[[case]]
+id = "katex"
+cmd = ["-f", "json", "-t", "json", "--katex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:katex"]
+
+[[case]]
+id = "katex-url"
+cmd = ["-f", "json", "-t", "json", "--katex=https://example.org/x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:katex"]
+
+[[case]]
+id = "webtex"
+cmd = ["-f", "json", "-t", "json", "--webtex"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:webtex"]
+
+[[case]]
+id = "webtex-url"
+cmd = ["-f", "json", "-t", "json", "--webtex=https://example.org/x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}"
+covers = ["opt:webtex"]
+
+[[case]]
+id = "lua-filter"
+cmd = ["-f", "json", "-t", "json", "--lua-filter=up.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n" }
+covers = ["opt:lua-filter"]
+
+[[case]]
+id = "lua-filter-short"
+cmd = ["-f", "json", "-t", "json", "-L", "up.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n" }
+covers = ["opt:lua-filter"]
+
+[[case]]
+id = "lua-filter-missing"
+cmd = ["-f", "json", "-t", "json", "--lua-filter=nosuch.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:lua-filter"]
+
+[[case]]
+id = "lua-filter-syntax-error"
+cmd = ["-f", "json", "-t", "json", "--lua-filter=bad.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "bad.lua" = "function (\n" }
+
+[[case]]
+id = "lua-filter-runtime-error"
+cmd = ["-f", "json", "-t", "json", "--lua-filter=err.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "err.lua" = "function Str() error(\"boom\") end\n" }
+
+[[case]]
+id = "lua-filter-from-data-dir"
+cmd = ["-f", "json", "-t", "json", "--data-dir=dd", "--lua-filter=up.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
+files = { "dd/filters/up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n" }
+
+[[case]]
+id = "filter-missing-lua-name"
+cmd = ["-f", "json", "-t", "json", "--filter=nosuch.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+
+[[case]]
+id = "filter-short-missing"
+cmd = ["-f", "json", "-t", "json", "-F", "nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+
+[[case]]
+id = "filter-missing"
+cmd = ["-f", "json", "-t", "json", "--filter=nosuch"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+
+[[case]]
+id = "filter-missing-argument"
+cmd = ["-f", "json", "-t", "json", "--filter"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "filter-order-with-citeproc"
+cmd = ["-f", "json", "-t", "json", "--lua-filter=up.lua", "--citeproc", "--bibliography=refs.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"item1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@item1]\"}]]}]}]}"
+files = { "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el\nend\n", "refs.json" = "[{\"id\":\"item1\",\"type\":\"book\",\"title\":\"A Book\",\"author\":[{\"family\":\"Doe\",\"given\":\"Jane\"}],\"issued\":{\"date-parts\":[[2020]]}}]\n" }
+
+[[case]]
+id = "ipynb-output-all"
+cmd = ["-f", "json", "-t", "json", "--ipynb-output=all"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ipynb-output"]
+
+[[case]]
+id = "ipynb-output-none"
+cmd = ["-f", "json", "-t", "json", "--ipynb-output=none"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ipynb-output"]
+
+[[case]]
+id = "ipynb-output-best"
+cmd = ["-f", "json", "-t", "json", "--ipynb-output=best"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ipynb-output"]
+
+[[case]]
+id = "ipynb-output-bad"
+cmd = ["-f", "json", "-t", "json", "--ipynb-output=bad"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:ipynb-output"]
+
+[[case]]
+id = "citeproc-csl-before-bibliography"
+cmd = ["-f", "json", "-t", "json", "-C", "--bibliography=nosuchb.bib", "--csl=nosuchc.csl"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+
+[[case]]
+id = "include-directory"
+cmd = ["-f", "json", "-t", "json", "-H", "dir"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "dir/x" = "x" }

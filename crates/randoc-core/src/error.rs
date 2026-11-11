@@ -213,7 +213,7 @@ impl fmt::Display for Error {
                 byte,
             } => write!(
                 f,
-                "UTF-8 decoding error in {source} at byte offset {offset} ({byte:02x}).\n\
+                "UTF-8 decoding error in {source} at byte offset {offset} ({byte:2x}).\n\
                  The input must be a UTF-8 encoded text."
             ),
             Error::IpynbDecoding(message) => write!(f, "ipynb decoding error: {message}"),
@@ -277,6 +277,32 @@ mod tests {
             "The extension 'smart' is not supported for json.\n\
              Use --list-extensions=json to list supported extensions."
         );
+    }
+
+    #[test]
+    fn a_utf8_error_pads_the_byte_with_a_space() {
+        // Each byte text is the standard error output of Pandoc 3.13 for an
+        // include file with that byte after a lead byte.
+        for (byte, text) in [
+            (0x00, "( 0)"),
+            (0x09, "( 9)"),
+            (0x0f, "( f)"),
+            (0x10, "(10)"),
+            (0xff, "(ff)"),
+        ] {
+            assert_eq!(
+                Error::Utf8Decoding {
+                    source: "'bad.txt'".into(),
+                    offset: 3,
+                    byte,
+                }
+                .to_string(),
+                format!(
+                    "UTF-8 decoding error in 'bad.txt' at byte offset 3 {text}.\n\
+                     The input must be a UTF-8 encoded text."
+                )
+            );
+        }
     }
 
     #[test]
