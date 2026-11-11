@@ -119,6 +119,19 @@ completely. Its main rules:
     passes `scripts/gate.sh`, and the records in `docs/` are pushed after
     each change.)
 
+17. "please save this You dont have to run reviews before every commit.
+    That will be exhautive given that i am asking you to commit to github
+    more frequently. So run the reviews after every major block of work and
+    commit at small blocks as well." (Given in the third session at about
+    18:40 UTC on 2026-11-11. It replaces the part of the task text that asks
+    for two approvals before each merge. How the coordinator applies it: a
+    small block goes to `main` when `scripts/gate.sh` passes, the licence
+    scan `env/bin/licence-scan` shows no copied copyleft text, and no known
+    finding with the level critical is open; each open finding of an
+    earlier review is a row of `docs/ISSUES.md`; the two reviews run after
+    each major block of a workstream, and their findings are corrected in
+    the next commits.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,

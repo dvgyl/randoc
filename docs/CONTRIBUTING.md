@@ -42,6 +42,25 @@ Read [`ARCHITECTURE.md`](ARCHITECTURE.md) first.
 A gate that cannot apply to a change is recorded with its reason in
 `PROGRESS.md`. The bar is never lowered without a record.
 
+## Commit cadence (rule of the owner, 2026-11-11)
+
+The owner changed gate 5 on 2026-11-11 (`OWNER_INSTRUCTIONS.md`,
+instruction 17): the two reviews run after each major block of work, not
+before each commit. A small block merges into `main` when all of these
+hold: `scripts/gate.sh` passes on the merged tree (gates 1 and 7 and the
+tests); the licence scan (`env/bin/licence-scan` on the coordinator
+machine) shows no text that is copied from a copyleft source; no known
+finding with the level critical is open. Each finding of an earlier
+review that is still open is a row of `docs/ISSUES.md` with its level.
+The record of the merge in `docs/MERGE_LOG.md` says which review rounds
+exist for the block and which checks did not run (mutation tests,
+coverage, fuzzing, benchmarks). A major block is a unit of a workstream
+that adds a format, a subsystem or a large rule set. After a major
+block, both reviewers review the state of `main` or of the branch, and
+each finding with the level medium or higher is corrected in the next
+commits. Gates 2, 3, 4 and 6 keep their text; their evidence is
+collected for each major block.
+
 ## Reuse of open source
 
 Rule of the owner (2026-11-10): do not build each part from zero. Study the
