@@ -474,3 +474,34 @@ mutation sample (9 of 660 mutants ran); the time table at 50,000
 repetitions on the final code. Requests of the worker to the coordinator:
 one shared Haskell `show` of a string in `randoc_core::shared` (Opus
 citeproc-R1-04); a public JSON value parser in `randoc-ast` (I-CITE-09).
+
+## Workstream math (branch `ws/math`, head 63cd0e6, one squashed commit, batch 1 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the crate
+`randoc-math`: a TeX math parser with macros, and two writers with the
+output of `texmath` as Pandoc 3.13 uses it: MathML text and a list of inline
+elements. The tables of `src/symbols.rs` hold oracle results for 1,013
+candidate command names from KaTeX 0.16.11 (ADR 14). No program path calls
+the crate yet.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 63cd0e6 (18:26 to 18:41 UTC; worker report): baseline 2217 units, 0 regressions, 0 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | No harness unit changes (no program path calls the crate). Replay `tests/oracle.tsv`: 35,904 formulas; MathML equal 35,068, inline equal 35,307, warnings equal 21,214 of 25,031; 118 formulas convert differently (I-MATH-06 (a) to (e), I-MATH-03 (a)); each other difference is a Randoc error with a message. Pair run of 237,006 formulas: 0 wrong conversions. |
+| 3. Tests | Line coverage of `randoc-math` 97.89 % (2,279 of 2,328 lines; check on 63cd0e6 at 19:01 UTC). Step test `a_flat_formula_takes_a_linear_number_of_steps` at 1,000 and 4,000 repetitions passes; the 50,000 variant did not run. Mutation sample: not run. |
+| 4. No panics | Fuzz target `convert` on 63cd0e6: 901 s, 2,122,308 runs, 0 crashes, peak memory 854 MB (check at 19:01 UTC). |
+| 5. Reviews | Round 1 on c6dac3f and round 2 on baae821: Codex and Opus REQUEST CHANGES each time (round 2: Codex 3 high, 4 medium; Opus 2 high, 2 medium). The worker reports each finding as corrected or recorded in 63cd0e6. No review of 63cd0e6 exists. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes no code of a path that existed on `main` before. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Conflicts in the merge: `Cargo.toml` (members and dependency lines of
+`randoc-citeproc` and `randoc-math`: both kept), `docs/ADR.md` (ADR 14 of
+the branch and ADR 17 of `main`: both kept, in number order),
+`docs/PRIOR_ART.md` (the citeproc rows and the KaTeX row: both kept),
+`THIRD_PARTY_NOTICES.md` and `docs/ISSUES.md` (`resolve-tables`: 1 and 6
+rows of the branch added).
+
+Licence scan: no hit. Open findings: I-MATH-06 (low); no review of the head
+exists, so no finding of the head is known. Open checks: the mutation
+sample; the step test at 12,500 and 50,000 repetitions. Requests of the
+worker to the coordinator: none.

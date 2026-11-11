@@ -98,6 +98,7 @@ replaces it.
 | CSL processor: types, style parser, locale parser, locale merge (later units: evaluation, output) | `citeproc` 0.14.1.1 (Hackage, SHA-256 `e5a353f975c32169979b4c9e158d3edb9e57a5f653fab8ff0505a2067e2b1b4b`) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
 | BCP 47 language tag (`Lang`, `parseLang`, `renderLang`) | `unicode-collation` 0.1.3.7 `src/Text/Collate/Lang.hs` (code only; no data file) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
 | XML events for CSL styles and locales | `quick-xml` 0.42.0 (`=0.42.0`, `default-features = false`), with `memchr` 2 | MIT; Unlicense OR MIT | Dependency (ADR 10) | `ws/citeproc` |
+| Candidate command names for the TeX math probes (names only, 1,013 names) | KaTeX 0.16.11, `dist/katex.js` of the npm package | MIT | Data: `crates/randoc-math/tools/katex-names.txt`; the tables of `src/symbols.rs` hold oracle results for these names (ADR 14) | `ws/math` |
 
 ## Candidates to study
 

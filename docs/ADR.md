@@ -400,6 +400,28 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   - Tests: the library set of full mode against the oracle; the removals
     of restricted mode; a binary chunk; a loop inside `pcall`.
 
+## ADR 14: TeX math probes take candidate command names from KaTeX 0.16.11 (2026-11-11)
+
+- **Context.** `randoc-math` must write the exact MathML text and inline
+  list of Pandoc (ADR 8). The oracle accepts many TeX commands. A
+  hand-written list of command names finds only a part of them.
+- **Decision.** `crates/randoc-math/tools/probe.py` reads 1,013 candidate
+  command names from KaTeX 0.16.11 (`tools/katex-names.txt`) and records
+  the oracle result for each name. The tables of `src/symbols.rs` hold
+  these oracle results. The parser and the two writers are our own code.
+  No crate is a dependency, and no KaTeX code or symbol data is copied.
+- **Why.** The output must be equal to `texmath` byte for byte. The
+  permissive converters (KaTeX, Temml, `pulldown-latex`, `latex2mathml`)
+  follow their own MathML rules, so their trees do not give the oracle
+  text. A list of names is a larger candidate space than a hand-written
+  list, and the oracle stays the judge for each name. The `unicode-math`
+  table (LPPL) is not used.
+- **Licence.** MIT. The text is in `third_party/licences/KaTeX.txt` and in
+  `crates/randoc-math/NOTICE.md`; the row is in `THIRD_PARTY_NOTICES.md`.
+- **Consequences.** A new KaTeX release needs `probe.py generate` and
+  `probe.py table` again. A command that KaTeX does not know and that the
+  oracle accepts is found only by a hand-written probe.
+
 ## ADR 17: The CSL processor is a port of `citeproc` 0.14.1.1 (2026-11-11)
 
 - **Context.** `--citeproc` must give the bytes of Pandoc 3.13, which uses

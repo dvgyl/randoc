@@ -229,6 +229,13 @@ name = "randoc-layout"
 version = "0.1.0"
 
 [[package]]
+name = "randoc-math"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+]
+
+[[package]]
 name = "randoc-native"
 version = "0.1.0"
 dependencies = [

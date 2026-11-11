@@ -1,0 +1,23 @@
+[package]
+name = "randoc-math-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+randoc-ast = { path = "../../randoc-ast" }
+randoc-math = { path = ".." }
+
+[[bin]]
+name = "convert"
+path = "fuzz_targets/convert.rs"
+test = false
+doc = false
+bench = false
+
+# The fuzz crate is not a member of the main workspace.
+[workspace]

@@ -221,6 +221,7 @@ and the `lua` and `server` modes.
 | layout-perf | `randoc-layout`: the concatenation of documents is constant work |
 | yaml | `randoc-yaml`: the YAML reader for metadata (no program path calls it yet) |
 | citeproc | `randoc-citeproc`: the CSL style and locale parser, the reference model and the `csljson` reader and writer |
+| math | `randoc-math`: TeX math to MathML and to inline elements (no program path calls it yet) |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).
