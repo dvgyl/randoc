@@ -154,6 +154,7 @@ fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
     let mut levels: Vec<Vec<Flat<'_>>> = vec![Vec::new()];
     let mut work = vec![Work::Doc(doc)];
     while let Some(step) = work.pop() {
+        crate::steps::count(1);
         match step {
             Work::Emit(item) => push_flat(&mut levels, item),
             Work::Close(kind) => {
@@ -179,12 +180,12 @@ fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
                     work.push(Work::Close(Open::Prefixed(prefix)));
                     work.push(Work::Doc(inner));
                 }
-                Node::BeforeNonBlank(inner) => {
+                Node::BeforeNonBlank(_, inner) => {
                     levels.push(Vec::new());
                     work.push(Work::Close(Open::BeforeNonBlank));
                     work.push(Work::Doc(inner));
                 }
-                Node::Flush(inner) => {
+                Node::Flush(_, inner) => {
                     levels.push(Vec::new());
                     work.push(Work::Close(Open::Flush));
                     work.push(Work::Doc(inner));
@@ -200,7 +201,7 @@ fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
                         push_flat(&mut levels, Flat::AfterBreak(items));
                     }
                 }
-                Node::Concat(docs) => work.extend(docs.iter().rev().map(Work::Doc)),
+                Node::Concat(items, _) => work.extend(items.iter().rev().map(Work::Doc)),
                 Node::Styled(style, inner) => {
                     push_flat(&mut levels, Flat::StyleOpen(*style));
                     work.push(Work::Emit(Flat::StyleClose));

@@ -18,9 +18,10 @@
 //! | `a $$ b` | `a.above(b)` |
 //! | `a $+$ b` | `a.above_blank(b)` |
 //!
-//! The layout engine, the queries, `clone`, `==` and drop use explicit
-//! stacks, so the stack cost does not grow with the nesting depth of a
-//! document. Only `Debug` output recurses. The engine uses wrapping
+//! A concatenation is a list of items, and an item can be a concatenation,
+//! so `+` costs amortized constant work. The layout engine, the queries, `clone`, `==`,
+//! `Debug` and drop use explicit stacks, so the stack cost does not grow
+//! with the nesting depth of a document. The engine uses wrapping
 //! integer arithmetic, as Haskell `Int` does. Each level of a non-empty
 //! indent or prefix adds to the prefix of each line below it, so deep
 //! nesting of such levels takes quadratic time, as in `doclayout`.
@@ -51,15 +52,15 @@ use width::str_length;
 
 /// A document that can be rendered at a given line width.
 ///
-/// Each operation on a document, including `clone`, `==` and drop, works
-/// without recursion that grows with the nesting depth of the document.
-/// `Debug` output is the exception.
-#[derive(Debug, Default)]
+/// Each operation on a document, including `clone`, `==`, `Debug` and
+/// drop, works without recursion that grows with the nesting depth of the
+/// document. `+` costs amortized constant work. `==` and `Debug` see the sequence of concatenated
+/// items, so `(a + b) + c == a + (b + c)`.
+#[derive(Default)]
 pub struct Doc(Node);
 
-/// The node of a document. Only `Doc` clones and compares nodes with
-/// children, so the derived `Clone` and `PartialEq` impls here run on one
-/// level.
+/// The node of a document. Only `Doc` clones, compares and formats nodes
+/// with children, so the derived impls here run on one level.
 #[derive(Debug, Clone, PartialEq, Default)]
 enum Node {
     #[default]
@@ -72,21 +73,34 @@ enum Node {
     VFill(isize, String),
     /// Content with each line prefixed by the text.
     Prefixed(String, Box<Doc>),
-    /// Content that is rendered only before non-blank content.
-    BeforeNonBlank(Box<Doc>),
-    /// Content laid out without the current prefix.
-    Flush(Box<Doc>),
+    /// Content that is rendered only before non-blank content. The flag is
+    /// `is_non_blank` of the content.
+    BeforeNonBlank(bool, Box<Doc>),
+    /// Content laid out without the current prefix. The flag is
+    /// `is_non_blank` of the content.
+    Flush(bool, Box<Doc>),
     BreakingSpace,
     /// Text that is rendered only at the start of a line.
     AfterBreak(String),
     CarriageReturn,
     NewLine,
     BlankLines(usize),
-    /// Two or more documents. No item is empty or a concatenation, so a
-    /// long chain of concatenations does not nest.
-    Concat(Vec<Doc>),
+    /// Two or more documents, none of them empty. An item can be a
+    /// concatenation, so `+` never copies the items of its right operand.
+    Concat(Vec<Doc>, Summary),
     Styled(StyleReq, Box<Doc>),
     Linked(String, Box<Doc>),
+}
+
+/// What the queries need to know about a concatenation without a walk of
+/// its items. An append updates it in constant time.
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct Summary {
+    /// The number of items: the nodes below the concatenation that are not
+    /// concatenations.
+    items: usize,
+    /// `is_non_blank` of the first item.
+    non_blank: bool,
 }
 
 /// A wrapper node without its child.
@@ -102,8 +116,8 @@ impl Shell {
     fn of(node: &Node) -> Option<(Shell, &Doc)> {
         Some(match node {
             Node::Prefixed(prefix, inner) => (Shell::Prefixed(prefix.clone()), inner),
-            Node::BeforeNonBlank(inner) => (Shell::BeforeNonBlank, inner),
-            Node::Flush(inner) => (Shell::Flush, inner),
+            Node::BeforeNonBlank(_, inner) => (Shell::BeforeNonBlank, inner),
+            Node::Flush(_, inner) => (Shell::Flush, inner),
             Node::Styled(style, inner) => (Shell::Styled(*style), inner),
             Node::Linked(target, inner) => (Shell::Linked(target.clone()), inner),
             _ => return None,
@@ -111,14 +125,52 @@ impl Shell {
     }
 
     fn wrap(self, doc: Doc) -> Doc {
+        let non_blank = is_non_blank(&doc);
         let inner = Box::new(doc);
         Doc(match self {
             Shell::Prefixed(prefix) => Node::Prefixed(prefix, inner),
-            Shell::BeforeNonBlank => Node::BeforeNonBlank(inner),
-            Shell::Flush => Node::Flush(inner),
+            Shell::BeforeNonBlank => Node::BeforeNonBlank(non_blank, inner),
+            Shell::Flush => Node::Flush(non_blank, inner),
             Shell::Styled(style) => Node::Styled(style, inner),
             Shell::Linked(target) => Node::Linked(target, inner),
         })
+    }
+}
+
+/// Joins two non-empty documents. A concatenation on the left gets
+/// `second` as a new item, so the cost is amortized constant.
+fn join(first: Doc, second: Doc) -> Doc {
+    let added = item_count(&second);
+    match first.into_node() {
+        Node::Concat(mut items, mut summary) => {
+            items.push(second);
+            summary.items += added;
+            Doc(Node::Concat(items, summary))
+        }
+        node => {
+            let first = Doc(node);
+            let summary = Summary {
+                items: item_count(&first) + added,
+                non_blank: is_non_blank(&first),
+            };
+            Doc(Node::Concat(vec![first, second], summary))
+        }
+    }
+}
+
+/// Makes a concatenation of two or more non-empty documents.
+fn concat(items: Vec<Doc>) -> Doc {
+    let summary = Summary {
+        items: items.iter().map(item_count).sum(),
+        non_blank: items.first().is_some_and(is_non_blank),
+    };
+    Doc(Node::Concat(items, summary))
+}
+
+fn item_count(doc: &Doc) -> usize {
+    match &doc.0 {
+        Node::Concat(_, summary) => summary.items,
+        _ => 1,
     }
 }
 
@@ -133,9 +185,10 @@ fn rebuild(doc: &Doc, leaf: &dyn Fn(&Node) -> Node) -> Doc {
     let mut steps = vec![Step::Visit(doc)];
     let mut done: Vec<Doc> = Vec::new();
     while let Some(step) = steps.pop() {
+        steps::count(1);
         match step {
             Step::Visit(d) => {
-                if let Node::Concat(items) = &d.0 {
+                if let Node::Concat(items, _) = &d.0 {
                     steps.push(Step::Join(items.len()));
                     steps.extend(items.iter().rev().map(Step::Visit));
                 } else if let Some((shell, inner)) = Shell::of(&d.0) {
@@ -151,7 +204,7 @@ fn rebuild(doc: &Doc, leaf: &dyn Fn(&Node) -> Node) -> Doc {
             }
             Step::Join(count) => {
                 let items = done.split_off(done.len().saturating_sub(count));
-                done.push(Doc(Node::Concat(items)));
+                done.push(concat(items));
             }
         }
     }
@@ -160,9 +213,24 @@ fn rebuild(doc: &Doc, leaf: &dyn Fn(&Node) -> Node) -> Doc {
 
 fn children(node: &Node) -> &[Doc] {
     match node {
-        Node::Concat(items) => items,
+        Node::Concat(items, _) => items,
         _ => Shell::of(node).map_or(&[], |(_, inner)| std::slice::from_ref(inner)),
     }
+}
+
+/// Returns the items of `doc` in order: `doc` itself, or the nodes below a
+/// concatenation that are not concatenations.
+fn items(doc: &Doc) -> Vec<&Doc> {
+    let mut out = Vec::with_capacity(item_count(doc));
+    let mut pending = vec![doc];
+    while let Some(d) = pending.pop() {
+        steps::count(1);
+        match &d.0 {
+            Node::Concat(items, _) => pending.extend(items.iter().rev()),
+            _ => out.push(d),
+        }
+    }
+    out
 }
 
 impl Clone for Doc {
@@ -171,27 +239,137 @@ impl Clone for Doc {
     }
 }
 
+/// Compares the sequences of items, so `(a + b) + c == a + (b + c)`. Two
+/// concatenations with different item counts differ at once.
 impl PartialEq for Doc {
     fn eq(&self, other: &Doc) -> bool {
         let mut pairs = vec![(self, other)];
         while let Some((a, b)) = pairs.pop() {
-            let (ca, cb) = (children(&a.0), children(&b.0));
+            steps::count(1);
             let same_shell = match (&a.0, &b.0) {
-                (Node::Concat(_), Node::Concat(_)) => true,
+                (Node::Concat(_, x), Node::Concat(_, y)) => {
+                    if x.items != y.items {
+                        return false;
+                    }
+                    pairs.extend(items(a).into_iter().zip(items(b)));
+                    continue;
+                }
                 (Node::Prefixed(x, _), Node::Prefixed(y, _))
                 | (Node::Linked(x, _), Node::Linked(y, _)) => x == y,
                 (Node::Styled(x, _), Node::Styled(y, _)) => x == y,
-                (Node::BeforeNonBlank(_), Node::BeforeNonBlank(_))
-                | (Node::Flush(_), Node::Flush(_)) => true,
-                (x, y) if ca.is_empty() && cb.is_empty() => x == y,
-                _ => false,
+                (Node::BeforeNonBlank(..), Node::BeforeNonBlank(..))
+                | (Node::Flush(..), Node::Flush(..)) => true,
+                (x, y) => children(x).is_empty() && children(y).is_empty() && x == y,
             };
-            if !same_shell || ca.len() != cb.len() {
+            if !same_shell {
                 return false;
             }
-            pairs.extend(ca.iter().zip(cb));
+            pairs.extend(children(&a.0).iter().zip(children(&b.0)));
         }
         true
+    }
+}
+
+/// Gives the text that `#[derive(Debug)]` gives for the flat list of items
+/// of a concatenation, `Doc(Concat([Doc(..), ..]))`, in both the plain and
+/// the alternate form, without recursion.
+impl std::fmt::Debug for Doc {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        enum Out<'a> {
+            Doc(&'a Doc),
+            Value(&'a dyn std::fmt::Debug),
+            Open(&'static str),
+            Close(&'static str),
+            Start,
+            End { last: bool },
+        }
+        let alternate = f.alternate();
+        let mut depth = 0usize;
+        let mut work = vec![Out::Doc(self)];
+        while let Some(out) = work.pop() {
+            steps::count(1);
+            match out {
+                Out::Doc(doc) => {
+                    let mut plan = vec![Out::Open("Doc("), Out::Start];
+                    match &doc.0 {
+                        Node::Concat(..) => {
+                            plan.extend([Out::Open("Concat("), Out::Start, Out::Open("[")]);
+                            let all = items(doc);
+                            let count = all.len();
+                            for (index, item) in all.into_iter().enumerate() {
+                                let last = index + 1 == count;
+                                plan.extend([Out::Start, Out::Doc(item), Out::End { last }]);
+                            }
+                            plan.extend([Out::Close("]"), Out::End { last: true }]);
+                            plan.push(Out::Close(")"));
+                        }
+                        Node::Prefixed(text, d) | Node::Linked(text, d) => {
+                            let name = if matches!(doc.0, Node::Prefixed(..)) {
+                                "Prefixed("
+                            } else {
+                                "Linked("
+                            };
+                            plan.extend([Out::Open(name), Out::Start, Out::Value(text)]);
+                            plan.extend([Out::End { last: false }, Out::Start, Out::Doc(d)]);
+                            plan.extend([Out::End { last: true }, Out::Close(")")]);
+                        }
+                        Node::Styled(style, d) => {
+                            plan.extend([Out::Open("Styled("), Out::Start, Out::Value(style)]);
+                            plan.extend([Out::End { last: false }, Out::Start, Out::Doc(d)]);
+                            plan.extend([Out::End { last: true }, Out::Close(")")]);
+                        }
+                        Node::BeforeNonBlank(_, d) | Node::Flush(_, d) => {
+                            let name = if matches!(doc.0, Node::Flush(..)) {
+                                "Flush("
+                            } else {
+                                "BeforeNonBlank("
+                            };
+                            plan.extend([Out::Open(name), Out::Start, Out::Doc(d)]);
+                            plan.extend([Out::End { last: true }, Out::Close(")")]);
+                        }
+                        leaf => plan.push(Out::Value(leaf)),
+                    }
+                    plan.extend([Out::End { last: true }, Out::Close(")")]);
+                    work.extend(plan.into_iter().rev());
+                }
+                Out::Value(value) => {
+                    if alternate {
+                        let text = format!("{value:#?}");
+                        let indent = format!("\n{}", "    ".repeat(depth));
+                        f.write_str(&text.replace('\n', &indent))?;
+                    } else {
+                        write!(f, "{value:?}")?;
+                    }
+                }
+                Out::Open(name) => {
+                    f.write_str(name)?;
+                    depth += 1;
+                    if alternate {
+                        f.write_str("\n")?;
+                    }
+                }
+                Out::Close(bracket) => {
+                    depth -= 1;
+                    if alternate {
+                        f.write_str(&"    ".repeat(depth))?;
+                    }
+                    f.write_str(bracket)?;
+                }
+                Out::Start => {
+                    if alternate {
+                        f.write_str(&"    ".repeat(depth))?;
+                    }
+                }
+                Out::End { last } => {
+                    if alternate {
+                        f.write_str(",\n")?;
+                    } else if !last {
+                        f.write_str(", ")?;
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 }
 
@@ -202,16 +380,42 @@ impl Drop for Doc {
         }
         let mut nodes = vec![std::mem::take(&mut self.0)];
         while let Some(mut node) = nodes.pop() {
+            steps::count(1);
             match &mut node {
-                Node::Concat(items) => nodes.extend(items.iter_mut().map(Doc::take_node)),
+                Node::Concat(items, _) => nodes.extend(items.iter_mut().map(Doc::take_node)),
                 Node::Prefixed(_, inner)
-                | Node::BeforeNonBlank(inner)
-                | Node::Flush(inner)
+                | Node::BeforeNonBlank(_, inner)
+                | Node::Flush(_, inner)
                 | Node::Styled(_, inner)
                 | Node::Linked(_, inner) => nodes.push(inner.take_node()),
                 _ => {}
             }
         }
+    }
+}
+
+/// Counts the documents that a concatenation moves or copies, so that a
+/// test can check that the cost is linear without a clock.
+mod steps {
+    #[cfg(test)]
+    thread_local! {
+        static STEPS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    }
+
+    #[cfg(test)]
+    pub(crate) fn count(n: usize) {
+        STEPS.with(|s| s.set(s.get() + n));
+    }
+
+    #[cfg(not(test))]
+    pub(crate) fn count(_: usize) {}
+
+    /// Returns the count of `f`.
+    #[cfg(test)]
+    pub(crate) fn of(f: impl FnOnce()) -> usize {
+        let before = STEPS.with(std::cell::Cell::get);
+        f();
+        STEPS.with(std::cell::Cell::get) - before
     }
 }
 
@@ -395,23 +599,13 @@ impl Add for Doc {
     type Output = Doc;
 
     fn add(self, other: Doc) -> Doc {
-        match (self.into_node(), other.into_node()) {
-            (Node::Empty, node) | (node, Node::Empty) => Doc(node),
-            (Node::Concat(mut first), Node::Concat(second)) => {
-                first.extend(second);
-                Doc(Node::Concat(first))
-            }
-            (Node::Concat(mut first), node) => {
-                first.push(Doc(node));
-                Doc(Node::Concat(first))
-            }
-            (node, Node::Concat(second)) => {
-                let mut items = Vec::with_capacity(second.len() + 1);
-                items.push(Doc(node));
-                items.extend(second);
-                Doc(Node::Concat(items))
-            }
-            (first, second) => Doc(Node::Concat(vec![Doc(first), Doc(second)])),
+        if self.is_empty() {
+            other
+        } else if other.is_empty() {
+            self
+        } else {
+            steps::count(1);
+            join(self, other)
         }
     }
 }
@@ -442,6 +636,7 @@ fn get_offset(
     let mut chains = 0;
     let mut stack = vec![(doc, 0, chains)];
     while let Some((d, prefix, chain)) = stack.pop() {
+        steps::count(1);
         match &d.0 {
             Node::Text(n, _) | Node::Block(n, _) | Node::VFill(n, _) => {
                 column = column.wrapping_add(*n);
@@ -463,7 +658,7 @@ fn get_offset(
                 chains += 1;
                 stack.push((inner, inner_prefix, chains));
             }
-            Node::BeforeNonBlank(inner) => {
+            Node::BeforeNonBlank(_, inner) => {
                 let followed = stack
                     .last()
                     .is_some_and(|&(next, _, c)| c == chain && is_non_blank(next));
@@ -471,7 +666,7 @@ fn get_offset(
                     stack.push((inner, prefix, chain));
                 }
             }
-            Node::Flush(inner) => {
+            Node::Flush(_, inner) => {
                 chains += 1;
                 stack.push((inner, 0, chains));
             }
@@ -488,24 +683,21 @@ fn get_offset(
                     column = column.wrapping_add(str_length(text));
                 }
             }
-            Node::Concat(items) => stack.extend(items.iter().rev().map(|i| (i, prefix, chain))),
+            Node::Concat(items, _) => stack.extend(items.iter().rev().map(|i| (i, prefix, chain))),
         }
     }
     (longest, column)
 }
 
+/// Tells whether the first item of `doc` is text, through `flush` and
+/// `before_non_blank` wrappers. The nodes keep the answer, so this is
+/// constant work.
 fn is_non_blank(doc: &Doc) -> bool {
-    let mut doc = doc;
-    loop {
-        match &doc.0 {
-            Node::Text(..) => return true,
-            Node::BeforeNonBlank(inner) | Node::Flush(inner) => doc = inner,
-            Node::Concat(items) => match items.first() {
-                Some(first) => doc = first,
-                None => return false,
-            },
-            _ => return false,
-        }
+    match &doc.0 {
+        Node::Text(..) => true,
+        Node::BeforeNonBlank(non_blank, _) | Node::Flush(non_blank, _) => *non_blank,
+        Node::Concat(_, summary) => summary.non_blank,
+        _ => false,
     }
 }
 
@@ -604,7 +796,7 @@ pub fn flush(doc: Doc) -> Doc {
     if doc.is_empty() {
         doc
     } else {
-        Doc(Node::Flush(Box::new(doc)))
+        Shell::Flush.wrap(doc)
     }
 }
 
@@ -624,7 +816,7 @@ pub fn hang(indent: usize, start: Doc, doc: Doc) -> Doc {
 
 /// Includes `doc` only when the content that follows it is not blank.
 pub fn before_non_blank(doc: Doc) -> Doc {
-    Doc(Node::BeforeNonBlank(Box::new(doc)))
+    Shell::BeforeNonBlank.wrap(doc)
 }
 
 /// Makes each breakable space in `doc` a normal space.
@@ -641,77 +833,113 @@ pub fn after_break(text: &str) -> Doc {
     Doc(Node::AfterBreak(text.to_owned()))
 }
 
+/// Takes the right edge of `doc` apart: returns its last item and pushes
+/// the documents before it on `before`, the nearest one last. The cost is
+/// the depth of that edge.
+fn split_last(mut doc: Doc, before: &mut Vec<Doc>) -> Doc {
+    loop {
+        steps::count(1);
+        match doc.into_node() {
+            Node::Concat(mut items, mut summary) => {
+                let last = items.pop().unwrap_or_default();
+                summary.items -= item_count(&last);
+                before.push(match <[Doc; 1]>::try_from(items) {
+                    Ok([single]) => single,
+                    Err(items) => Doc(Node::Concat(items, summary)),
+                });
+                doc = last;
+            }
+            node => return Doc(node),
+        }
+    }
+}
+
+/// The mirror of [`split_last`] for the left edge. It pushes the items
+/// after the first one by one, as `nestle` of `main` did, so the cost is
+/// the number of items on that edge.
+fn split_first(mut doc: Doc, after: &mut Vec<Doc>) -> Doc {
+    loop {
+        steps::count(1);
+        match doc.into_node() {
+            Node::Concat(mut items, _) => {
+                steps::count(items.len());
+                let rest = items.split_off(1.min(items.len()));
+                after.extend(rest.into_iter().rev());
+                doc = items.pop().unwrap_or_default();
+            }
+            node => return Doc(node),
+        }
+    }
+}
+
+/// Joins the documents that [`split_last`] took off in front of `last`.
+fn join_before(mut before: Vec<Doc>, mut last: Doc) -> Doc {
+    while let Some(doc) = before.pop() {
+        last = doc + last;
+    }
+    last
+}
+
+/// Joins the documents that [`split_first`] took off after `first`.
+fn join_after(mut first: Doc, mut after: Vec<Doc>) -> Doc {
+    while let Some(doc) = after.pop() {
+        first += doc;
+    }
+    first
+}
+
 /// Removes trailing spaces, line breaks and blank lines from `doc`.
 pub fn chomp(doc: Doc) -> Doc {
     enum Context {
         Prefixed(String),
         Before(Vec<Doc>),
     }
-    let is_break = |node: &Node| {
-        matches!(
-            node,
-            Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn | Node::BreakingSpace
-        )
-    };
     let mut contexts = Vec::new();
+    let mut before = Vec::new();
     let mut current = doc;
-    let mut result = 'outer: loop {
-        match current.into_node() {
-            node if is_break(&node) => break empty(),
+    let mut result = loop {
+        match split_last(current, &mut before).into_node() {
+            Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn | Node::BreakingSpace => {
+                match before.pop() {
+                    Some(previous) => current = previous,
+                    None => break empty(),
+                }
+            }
             Node::Prefixed(prefix, mut inner) => {
+                contexts.push(Context::Before(std::mem::take(&mut before)));
                 contexts.push(Context::Prefixed(prefix));
                 current = Doc(inner.take_node());
             }
-            Node::Concat(mut items) => {
-                while let Some(last) = items.pop() {
-                    if is_break(&last.0) {
-                        continue;
-                    }
-                    if matches!(last.0, Node::Prefixed(..)) {
-                        contexts.push(Context::Before(items));
-                        current = last;
-                        continue 'outer;
-                    }
-                    items.push(last);
-                    break 'outer hcat(items);
-                }
-                break empty();
-            }
-            other => break Doc(other),
+            other => break join_before(std::mem::take(&mut before), Doc(other)),
         }
     };
     while let Some(context) = contexts.pop() {
         result = match context {
             Context::Prefixed(prefix) => Doc(Node::Prefixed(prefix, Box::new(result))),
-            Context::Before(items) => hcat(items) + result,
+            Context::Before(before) => join_before(before, result),
         };
     }
     result
 }
 
-/// Removes leading line breaks and blank lines from `doc`.
+/// Removes leading line breaks and blank lines from `doc`. A carriage
+/// return stays when it is the last item, as in `doclayout`.
 pub fn nestle(doc: Doc) -> Doc {
-    match doc.into_node() {
-        Node::BlankLines(_) | Node::NewLine => empty(),
-        Node::Concat(items) => {
-            let mut rest = items.into_iter().peekable();
-            while let Some(first) = rest.next_if(|d| {
-                matches!(
-                    d.0,
-                    Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn
-                )
-            }) {
-                if rest.peek().is_none() {
-                    return nestle(first);
-                }
-            }
-            let items: Vec<Doc> = rest.collect();
-            match <[Doc; 1]>::try_from(items) {
-                Ok([single]) => nestle(single),
-                Err(items) => Doc(Node::Concat(items)),
-            }
+    let mut after = Vec::new();
+    let mut current = doc;
+    loop {
+        let first = split_first(current, &mut after);
+        if !matches!(
+            first.0,
+            Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn
+        ) {
+            return join_after(first, after);
         }
-        other => Doc(other),
+        match after.pop() {
+            Some(next) => current = next,
+            None if matches!(first.0, Node::CarriageReturn) => return first,
+            None => return empty(),
+        }
     }
 }
 
@@ -862,18 +1090,12 @@ pub fn link(target: &str, doc: Doc) -> Doc {
 /// assert_eq!(remove_final_newline(literal("ab\n")).render(None), "ab");
 /// ```
 pub fn remove_final_newline(doc: Doc) -> Doc {
-    match doc.into_node() {
-        Node::NewLine | Node::CarriageReturn => empty(),
-        Node::Concat(mut items) => {
-            if items
-                .last()
-                .is_some_and(|d| matches!(d.0, Node::NewLine | Node::CarriageReturn))
-            {
-                items.pop();
-            }
-            hcat(items)
-        }
-        other => Doc(other),
+    let mut before = Vec::new();
+    let last = split_last(doc, &mut before);
+    if matches!(last.0, Node::NewLine | Node::CarriageReturn) {
+        join_before(before, empty())
+    } else {
+        join_before(before, last)
     }
 }
 
@@ -1627,5 +1849,321 @@ mod tests {
         assert_eq!((joined.offset(), joined.update_column(0)), (4, 4));
         let broken = before_non_blank(literal("xx")) + flush(cr() + literal("b"));
         assert_eq!(broken.offset(), 1);
+    }
+
+    /// Review finding P03 (row I-HTML-28). Each builder makes a document
+    /// with `n` levels or items and returns the step count of its
+    /// concatenations. With 4 times the levels, a linear cost gives 4 times
+    /// the steps and a quadratic cost gives 16 times the steps.
+    fn assert_linear(name: &str, build: fn(usize) -> Doc) {
+        let mut counts = [0; 2];
+        for (count, n) in counts.iter_mut().zip([4_000, 16_000]) {
+            *count = steps::of(|| drop(build(n)));
+        }
+        assert!(counts[0] > 0, "{name}: no steps");
+        assert!(
+            counts[1] <= counts[0] * 5,
+            "{name}: {} steps at 4,000 and {} steps at 16,000",
+            counts[0],
+            counts[1]
+        );
+    }
+
+    #[test]
+    fn concatenation_steps_are_linear() {
+        assert_linear("wrap with +", |n| {
+            let mut doc = literal("x");
+            for _ in 0..n {
+                doc = literal("<div>") + literal("\n") + doc + literal("\n</div>");
+            }
+            doc
+        });
+        assert_linear("wrap with +=", |n| {
+            let mut doc = literal("x");
+            for _ in 0..n {
+                let mut outer = literal("<div>");
+                outer += literal("\n");
+                outer += doc;
+                outer += literal("\n</div>");
+                doc = outer;
+            }
+            doc
+        });
+        assert_linear("grow on the left", |n| {
+            let mut doc = literal("x");
+            for _ in 0..n {
+                doc = literal("a") + space() + doc;
+            }
+            doc
+        });
+        assert_linear("grow on the right", |n| {
+            let mut doc = literal("x");
+            for _ in 0..n {
+                doc = doc + space() + literal("a");
+            }
+            doc
+        });
+    }
+
+    #[test]
+    fn concatenation_of_two_large_documents_is_constant() {
+        let large = |n: usize| hsep((0..n).map(|_| literal("a")));
+        let join = |n: usize| {
+            let (a, b) = (large(n), large(n));
+            let mut joined = empty();
+            steps::of(|| joined = a + b)
+        };
+        assert_eq!(join(4_000), join(16_000));
+        let mut a = large(16_000);
+        let (b, c) = (large(16_000), large(1));
+        assert_eq!(steps::of(|| a += b), steps::of(|| a += c));
+        assert_eq!(a.render(None).len(), 63_999);
+    }
+
+    /// Runs `f` on a thread with a 2 MB stack.
+    fn on_small_stack(f: impl FnOnce() + Send + 'static) {
+        let thread = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(f)
+            .unwrap_or_else(|e| panic!("spawn: {e}"));
+        assert!(thread.join().is_ok(), "the thread failed");
+    }
+
+    /// Rule 21b: 100,000 appends on each side. Each operation of the crate
+    /// runs on a 2 MB stack, and the drop at the end too.
+    #[test]
+    fn long_chains_use_no_call_stack() {
+        for left in [false, true] {
+            on_small_stack(move || {
+                let mut doc = literal("x");
+                for _ in 0..100_000 {
+                    doc = if left {
+                        literal("a") + space() + doc
+                    } else {
+                        doc + space() + literal("a")
+                    };
+                }
+                let (first, last) = if left { ("a a", "a x") } else { ("x a", "a a") };
+                let rendered = doc.render(None);
+                assert!(rendered.starts_with(first) && rendered.ends_with(last));
+                assert!(doc.render_ansi(Some(10)).starts_with(&first[..2]));
+                assert_eq!((doc.offset(), doc.min_offset()), (200_001, 1));
+                assert_eq!((doc.update_column(2), doc.height()), (200_003, 1));
+                assert!(!doc.is_empty());
+                let copy = doc.clone();
+                assert!(copy == doc);
+                let debug = format!("{doc:?}");
+                let end = format!("Doc(BreakingSpace), Doc(Text(1, {:?}))]))", &last[2..]);
+                assert!(debug.ends_with(&end));
+                assert_eq!(doc.map_text(&str::to_uppercase).offset(), 200_001);
+                assert_eq!(nowrap(copy).render(Some(1)).len(), 200_001);
+                assert_eq!(chomp(doc.clone() + cr()).offset(), 200_001);
+                assert_eq!(nestle(cr() + doc.clone()).offset(), 200_001);
+                assert_eq!(remove_final_newline(doc.clone() + cr()).offset(), 200_001);
+                let wrapped = (0..100_000).fold(literal("x"), |d, _| {
+                    before_non_blank(literal("<")) + d + flush(literal(">"))
+                });
+                assert_eq!(wrapped.offset(), 200_001);
+                assert!(wrapped.clone() == wrapped);
+            });
+        }
+    }
+
+    /// `==` and `Debug` see the sequence of items, not the shape of the
+    /// tree, as the flat concatenation of the earlier version did.
+    #[test]
+    fn equality_and_debug_ignore_the_grouping() {
+        let (a, b, c) = (|| literal("a"), || space(), || prefixed("> ", literal("c")));
+        assert_eq!((a() + b()) + c(), a() + (b() + c()));
+        assert_eq!(
+            format!("{:?}", (a() + b()) + c()),
+            format!("{:?}", a() + (b() + c()))
+        );
+        assert_eq!(empty(), empty());
+        assert_ne!(a(), empty());
+        assert_ne!(empty(), a());
+        assert_ne!(a() + b(), a());
+        assert_ne!(a(), a() + b());
+        assert_ne!(a(), b());
+        assert_ne!(prefixed("> ", a()), prefixed(">", a()));
+        assert_ne!(link("x", a()), link("y", a()));
+        assert_ne!(bold(a()), italic(a()));
+        assert_ne!(flush(a()), before_non_blank(a()));
+        assert_ne!(flush(a()) + b(), flush(a() + b()));
+        assert_eq!(flush(a()), flush(a()));
+        assert_eq!(before_non_blank(a()), before_non_blank(a()));
+        assert_ne!(bold(a()), a());
+    }
+
+    /// `Debug` gives the text of the flat list that `main` gave. The
+    /// expected text was recorded from the crate on `main` (`8b43988`).
+    #[test]
+    fn debug_text_matches_main() {
+        let cases = [
+            (empty(), "Doc(Empty)", "Doc(\n    Empty,\n)"),
+            (
+                literal("a"),
+                "Doc(Text(1, \"a\"))",
+                "Doc(\n    Text(\n        1,\n        \"a\",\n    ),\n)",
+            ),
+            (
+                literal("a") + space(),
+                "Doc(Concat([Doc(Text(1, \"a\")), Doc(BreakingSpace)]))",
+                "Doc(\n    Concat(\n        [\n            Doc(\n                Text(\n                    1,\n                    \"a\",\n                ),\n            ),\n            Doc(\n                BreakingSpace,\n            ),\n        ],\n    ),\n)",
+            ),
+            (
+                prefixed("> ", literal("q") + cr() + literal("r")),
+                "Doc(Prefixed(\"> \", Doc(Concat([Doc(Text(1, \"q\")), Doc(CarriageReturn), Doc(Text(1, \"r\"))]))))",
+                "Doc(\n    Prefixed(\n        \"> \",\n        Doc(\n            Concat(\n                [\n                    Doc(\n                        Text(\n                            1,\n                            \"q\",\n                        ),\n                    ),\n                    Doc(\n                        CarriageReturn,\n                    ),\n                    Doc(\n                        Text(\n                            1,\n                            \"r\",\n                        ),\n                    ),\n                ],\n            ),\n        ),\n    ),\n)",
+            ),
+            (
+                before_non_blank(literal("x")) + flush(literal("a") + literal("b")),
+                "Doc(Concat([Doc(BeforeNonBlank(Doc(Text(1, \"x\")))), Doc(Flush(Doc(Concat([Doc(Text(1, \"a\")), Doc(Text(1, \"b\"))]))))]))",
+                "Doc(\n    Concat(\n        [\n            Doc(\n                BeforeNonBlank(\n                    Doc(\n                        Text(\n                            1,\n                            \"x\",\n                        ),\n                    ),\n                ),\n            ),\n            Doc(\n                Flush(\n                    Doc(\n                        Concat(\n                            [\n                                Doc(\n                                    Text(\n                                        1,\n                                        \"a\",\n                                    ),\n                                ),\n                                Doc(\n                                    Text(\n                                        1,\n                                        \"b\",\n                                    ),\n                                ),\n                            ],\n                        ),\n                    ),\n                ),\n            ),\n        ],\n    ),\n)",
+            ),
+            (
+                bold(literal("b")) + fg(Color::Red, italic(literal("i") + space())),
+                "Doc(Concat([Doc(Styled(Bold, Doc(Text(1, \"b\")))), Doc(Styled(Foreground(Red), Doc(Styled(Italic, Doc(Concat([Doc(Text(1, \"i\")), Doc(BreakingSpace)]))))))]))",
+                "Doc(\n    Concat(\n        [\n            Doc(\n                Styled(\n                    Bold,\n                    Doc(\n                        Text(\n                            1,\n                            \"b\",\n                        ),\n                    ),\n                ),\n            ),\n            Doc(\n                Styled(\n                    Foreground(\n                        Red,\n                    ),\n                    Doc(\n                        Styled(\n                            Italic,\n                            Doc(\n                                Concat(\n                                    [\n                                        Doc(\n                                            Text(\n                                                1,\n                                                \"i\",\n                                            ),\n                                        ),\n                                        Doc(\n                                            BreakingSpace,\n                                        ),\n                                    ],\n                                ),\n                            ),\n                        ),\n                    ),\n                ),\n            ),\n        ],\n    ),\n)",
+            ),
+            (
+                link("t", empty()) + link("u", literal("v") + after_break(".")),
+                "Doc(Concat([Doc(Linked(\"t\", Doc(Empty))), Doc(Linked(\"u\", Doc(Concat([Doc(Text(1, \"v\")), Doc(AfterBreak(\".\"))]))))]))",
+                "Doc(\n    Concat(\n        [\n            Doc(\n                Linked(\n                    \"t\",\n                    Doc(\n                        Empty,\n                    ),\n                ),\n            ),\n            Doc(\n                Linked(\n                    \"u\",\n                    Doc(\n                        Concat(\n                            [\n                                Doc(\n                                    Text(\n                                        1,\n                                        \"v\",\n                                    ),\n                                ),\n                                Doc(\n                                    AfterBreak(\n                                        \".\",\n                                    ),\n                                ),\n                            ],\n                        ),\n                    ),\n                ),\n            ),\n        ],\n    ),\n)",
+            ),
+            (
+                blanklines(3) + char('é') + text("t"),
+                "Doc(Concat([Doc(BlankLines(3)), Doc(Text(1, \"é\")), Doc(Text(1, \"t\"))]))",
+                "Doc(\n    Concat(\n        [\n            Doc(\n                BlankLines(\n                    3,\n                ),\n            ),\n            Doc(\n                Text(\n                    1,\n                    \"é\",\n                ),\n            ),\n            Doc(\n                Text(\n                    1,\n                    \"t\",\n                ),\n            ),\n        ],\n    ),\n)",
+            ),
+        ];
+        for (doc, plain, alternate) in cases {
+            assert_eq!(format!("{doc:?}"), plain);
+            assert_eq!(format!("{doc:#?}"), alternate);
+        }
+        let (a, b, c) = (|| literal("a"), || space(), || prefixed("> ", literal("c")));
+        assert_eq!(
+            format!("{:#?}", (a() + b()) + c()),
+            format!("{:#?}", a() + (b() + c()))
+        );
+    }
+
+    /// One step of a growing loop for each document shape of item 3 of the
+    /// brief `layout-perf-b`.
+    fn grow(shape: &str, i: usize, doc: Doc) -> Doc {
+        let a = || literal("a");
+        match shape {
+            "left" => a() + space() + doc,
+            "right" => doc + space() + a(),
+            "wrap" => literal("<div>") + literal("\n") + doc + literal("\n</div>"),
+            "before_non_blank" => before_non_blank(literal("x") + doc),
+            "prefixed" => prefixed(">", a() + doc),
+            "nest" => nest(2, a() + space() + doc),
+            _ => match i % 5 {
+                0 => bold(doc + a()),
+                1 => flush(a() + doc),
+                2 => link("t", doc) + a(),
+                3 => before_non_blank(doc) + a(),
+                _ => fg(Color::Red, cr() + doc),
+            },
+        }
+    }
+
+    /// Grows a document of each shape for `n` steps. Each step also runs
+    /// the operations that were constant work on `main`. At the end each
+    /// other operation runs one time.
+    fn exercise(shape: &str, n: usize) {
+        let mut doc = literal("x");
+        let other = literal("p") + literal("q") + literal("r");
+        for i in 0..n {
+            doc = grow(shape, i, doc);
+            assert!(doc != empty() && empty() != doc && !doc.is_empty());
+            assert!(doc != literal("z") && literal("z") != doc);
+            assert!(i < 2 || doc != other);
+        }
+        let ends = before_non_blank(literal("<")) + doc + flush(literal(">"));
+        let doc = ends;
+        assert!(!doc.render(Some(20)).is_empty());
+        assert!(!doc.render_ansi(None).is_empty());
+        assert!(doc.offset() >= doc.min_offset() && doc.update_column(3) > 0);
+        assert!(doc.height() > 0);
+        let copy = doc.clone();
+        assert!(copy == doc);
+        assert!(!format!("{doc:?}").is_empty());
+        assert!(!doc.map_text(&str::to_uppercase).is_empty());
+        assert!(!nowrap(copy).is_empty());
+        assert!(!chomp(doc.clone() + cr()).is_empty());
+        assert!(!nestle(blankline() + doc.clone()).is_empty());
+        assert!(!remove_final_newline(doc.clone() + cr()).is_empty());
+        assert!(!lblock(10, doc.clone()).is_empty());
+        assert!(!hsep([doc.clone(), doc.clone()]).is_empty());
+        drop(doc);
+    }
+
+    /// Review findings Codex R1-01 and Opus R1-01. Each operation runs on
+    /// each shape; 4 times the steps of the loop must give at most 5 times
+    /// the count.
+    #[test]
+    fn each_operation_is_linear_on_each_shape() {
+        let shapes = [
+            "left",
+            "right",
+            "wrap",
+            "before_non_blank",
+            "prefixed",
+            "nest",
+            "wrappers",
+        ];
+        for shape in shapes {
+            let counts = [1_000, 4_000].map(|n| steps::of(|| exercise(shape, n)));
+            assert!(counts[0] > 1_000, "{shape}: {counts:?}");
+            assert!(counts[1] <= counts[0] * 5, "{shape}: {counts:?}");
+        }
+    }
+
+    /// The inputs of the two findings. Codex R1-01: `d == empty()` in an
+    /// append loop. Opus R1-01: nested `before_non_blank` in front of a long
+    /// concatenation, then `offset`, `min_offset` and `update_column`.
+    #[test]
+    fn findings_of_round_one_are_linear() {
+        let equality = |n: usize| {
+            steps::of(|| {
+                let mut d = literal("x");
+                for _ in 0..n {
+                    d += literal("a");
+                    assert!(d != empty());
+                }
+            })
+        };
+        let nested = |n: usize| {
+            steps::of(|| {
+                let mut front = literal("<");
+                let mut trail = literal("<");
+                for _ in 0..n {
+                    front = before_non_blank(front);
+                    trail = before_non_blank(literal("x") + trail);
+                }
+                for d in [front, trail] {
+                    let d = d + hcat((0..n).map(|_| literal("a")));
+                    assert!(d.offset() >= n && d.min_offset() >= 1 && d.update_column(0) >= n);
+                }
+            })
+        };
+        for (name, count) in [
+            ("equality", &equality as &dyn Fn(usize) -> usize),
+            ("nested", &nested),
+        ] {
+            let counts = [4_000, 16_000].map(count);
+            assert!(counts[1] <= counts[0] * 5, "{name}: {counts:?}");
+        }
+    }
+
+    /// Rule 21b for the new code: 100,000 levels of each shape on a 2 MB
+    /// stack.
+    #[test]
+    fn each_shape_uses_no_call_stack() {
+        for shape in ["before_non_blank", "wrappers", "wrap", "left"] {
+            on_small_stack(move || exercise(shape, 100_000));
+        }
     }
 }

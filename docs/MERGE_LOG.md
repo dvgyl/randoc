@@ -400,3 +400,27 @@ assertion failure) and H-004 (Opus R1-01, folders and child processes stay
 after a stop by a signal), both low, and H-005 (a wall-clock limit that
 stays in a test of the shared helper). Requests of the worker to the
 coordinator: none.
+
+## Workstream layout-perf (branch `ws/layout-perf`, head d8fa6c0, one squashed commit, batch 1 of 2026-11-11)
+
+Merged as a small block under owner instruction 17 (`docs/CONTRIBUTING.md`,
+section "Commit cadence"). Content: in `randoc-layout`, a concatenation of
+documents is one node `Node::Concat(Vec<Doc>, Summary)`. `+` appends to a
+left concatenation in amortized constant time and never copies a right one.
+`Summary` keeps the item count and `is_non_blank` of the first item, so
+`offset`, `min_offset` and `update_column` are linear and `==` rejects
+different item counts at once. The `Debug` text is the text of `main`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head d8fa6c0 at 18:24 UTC (worker report): baseline 2217 units, 0 regressions, 0 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | No harness unit changes (a performance change). Tests `findings_of_round_one_are_linear` and `each_operation_is_linear_on_each_shape` count traversal steps: each ratio for 4 times the input is 4.0. |
+| 3. Tests | 27 crate tests and 5 documentation tests pass. Line coverage 98.15 % (`lib.rs` 97.88 %, `render.rs` 98.38 %). Mutation sample of the diff `fde1bee..d8fa6c0`: not done (time limit of the worker). |
+| 4. No panics | No parser changes. Stack tests `long_chains_use_no_call_stack` and `each_shape_uses_no_call_stack` pass with 100,000 steps on a 2 MB stack. |
+| 5. Reviews | Round 1 on fde1bee: Codex REQUEST CHANGES (1 high, 1 low), Opus REQUEST CHANGES (1 medium, 3 low); the worker corrected each one in d8fa6c0. Round 2 by the resumed reviewers: Opus APPROVE at d8fa6c0 (each round 1 finding closed, no new finding); Codex in progress at the merge (`layout-perf-codex-r2.md` does not exist). Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Not measured at the merge; due at the review of the major block. The merge changes code of a path that existed on `main` before (the layout engine of the writers). Worker bench on a 997,475-byte document, CPU time, minimum of 7 runs, `main` / head: build and render 1.019, render at width 72 0.983, at width 20 0.968, no wrap 0.953. |
+| 7. Clean build | The gate script passed on the branch head (see gate 1). The merged tree is checked at the end of the batch. |
+
+Licence scan: no hit. Open findings: none with the level medium or higher.
+Open checks: the mutation sample of the diff `fde1bee..d8fa6c0`; the Codex
+report of round 2. Requests of the worker to the coordinator: none.
