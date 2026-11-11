@@ -355,8 +355,8 @@ The exFAT file system has effects that a new session must know:
 
 The licence research (`docs/DATA_FILES_LICENCES.md`, "Decisions for the owner")
 found four decisions (D1 to D4). D5 came up in the review of the CommonMark
-reader. The coordinator uses a working rule for each one until the owner
-decides.
+reader. D6 came up in review round 8 of the command line. The coordinator
+uses a working rule for each one until the owner decides.
 
 | Decision | Working rule now |
 | --- | --- |
@@ -365,6 +365,7 @@ decides.
 | D3. The abbreviation list and the DocBook entity list | Randoc does not copy the Pandoc files. The abbreviation list of `randoc_core::shared` has 76 entries that black-box tests of the oracle confirmed, from 3,926,072 candidates that a script made mechanically. The list can be incomplete (I-SHARED-03). The DocBook entity list is not started. |
 | D4. 34 syntax definitions with no licence grant (C, Python, JavaScript, Lua, SQL and others) | In no package. Load them at run time from a Pandoc, skylighting or KDE installation of the user. Byte-identical highlighting for these languages is a gap until a grant exists or new definitions are written. |
 | D5. Test inputs from documents with a copyleft licence: the examples of the CommonMark specification (CC-BY-SA-4.0) and example text of the Pandoc manual (GPL) | Not in this repository. Workers write their own inputs. A tool under `tools/` downloads a public test suite at a pinned version, runs it outside the repository and stores only numbers in `spec/`. Each workstream merges as one squashed commit, so that an early commit with such a file does not reach `main`. Many CommonMark projects with a permissive licence keep the specification file in their repository as test data; the owner can decide to do the same. |
+| D6. The history of `main` holds the completion scripts of Pandoc (GPL) | The four stored results were on `main` from commit `6089e1f` (2026-11-11 19:59 UTC) until the removal commit of 2026-11-11. The files of the head do not hold them. The old commits still do. A removal from the history needs a rewrite of the published history and a forced push, which the owner forbids. The owner decides. |
 
 ## Merge gate records
 

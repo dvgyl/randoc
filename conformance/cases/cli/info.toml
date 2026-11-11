@@ -667,30 +667,6 @@ cmd = ["--list-extensions=docx+styles"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
-id = "bash-completion"
-cmd = ["--bash-completion"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-covers = ["opt:bash-completion"]
-
-[[case]]
-id = "completion-bash"
-cmd = ["--completion=bash"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-covers = ["opt:completion"]
-
-[[case]]
-id = "completion-zsh"
-cmd = ["--completion=zsh"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-covers = ["opt:completion"]
-
-[[case]]
-id = "completion-fish"
-cmd = ["--completion=fish"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-covers = ["opt:completion"]
-
-[[case]]
 id = "completion-unknown"
 cmd = ["--completion=nosuch"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
