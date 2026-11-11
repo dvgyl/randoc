@@ -289,6 +289,7 @@ dependencies = [
  "randoc-core",
  "randoc-html",
  "randoc-html-reader",
+ "randoc-latex-reader",
  "randoc-markdown",
  "randoc-native",
 ]
@@ -370,6 +371,14 @@ dependencies = [
  "randoc-core",
  "serde_json",
  "toml",
+]
+
+[[package]]
+name = "randoc-latex-reader"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
 ]
 
 [[package]]

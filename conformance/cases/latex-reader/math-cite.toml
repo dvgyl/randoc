@@ -1,0 +1,179 @@
+# Math in each delimiter form and environment, and the citation commands.
+from = "latex"
+to = []
+
+[[case]]
+id = "math-cite-001"
+input = "$a+b$\n"
+
+[[case]]
+id = "math-cite-002"
+input = "$ a $\n"
+
+[[case]]
+id = "math-cite-003"
+input = "$$a$$\n"
+
+[[case]]
+id = "math-cite-004"
+input = "\\(a\\)\n"
+
+[[case]]
+id = "math-cite-005"
+input = "\\[a\\]\n"
+
+[[case]]
+id = "math-cite-006"
+input = "text $x$ text\n"
+
+[[case]]
+id = "math-cite-007"
+input = "$a$$b$\n"
+
+[[case]]
+id = "math-cite-008"
+input = "\\begin{equation}\na=b\n\\end{equation}\n"
+
+[[case]]
+id = "math-cite-009"
+input = "\\begin{equation*}\na\n\\end{equation*}\n"
+
+[[case]]
+id = "math-cite-010"
+input = "\\begin{align}\na&=b\\\\\nc&=d\n\\end{align}\n"
+
+[[case]]
+id = "math-cite-011"
+input = "\\begin{align*}\na\n\\end{align*}\n"
+
+[[case]]
+id = "math-cite-012"
+input = "\\begin{gather}\na\n\\end{gather}\n"
+
+[[case]]
+id = "math-cite-013"
+input = "\\begin{multline}\na\n\\end{multline}\n"
+
+[[case]]
+id = "math-cite-014"
+input = "\\begin{eqnarray}\na&=&b\n\\end{eqnarray}\n"
+
+[[case]]
+id = "math-cite-015"
+input = "\\begin{displaymath}\nd\n\\end{displaymath}\n"
+
+[[case]]
+id = "math-cite-016"
+input = "\\begin{math}m\\end{math}\n"
+
+[[case]]
+id = "math-cite-017"
+input = "a \\begin{equation}x\\end{equation} b\n"
+
+[[case]]
+id = "math-cite-018"
+input = "$\\frac{1}{2}$\n"
+
+[[case]]
+id = "math-cite-019"
+input = "$\\alpha \\beta$\n"
+
+[[case]]
+id = "math-cite-020"
+input = "$a % comment\nb$\n"
+
+[[case]]
+id = "math-cite-021"
+input = "\\cite{k}\n"
+
+[[case]]
+id = "math-cite-022"
+input = "\\cite{a,b}\n"
+
+[[case]]
+id = "math-cite-023"
+input = "\\cite{ a , b }\n"
+
+[[case]]
+id = "math-cite-024"
+input = "\\cite[p.~5]{k}\n"
+
+[[case]]
+id = "math-cite-025"
+input = "\\cite[see][ch. 2]{k}\n"
+
+[[case]]
+id = "math-cite-026"
+input = "\\citep{k}\n"
+
+[[case]]
+id = "math-cite-027"
+input = "\\citet{k}\n"
+
+[[case]]
+id = "math-cite-028"
+input = "\\citealp{k}\n"
+
+[[case]]
+id = "math-cite-029"
+input = "\\citealt{k}\n"
+
+[[case]]
+id = "math-cite-030"
+input = "\\citeauthor{k}\n"
+
+[[case]]
+id = "math-cite-031"
+input = "\\citeyear{k}\n"
+
+[[case]]
+id = "math-cite-032"
+input = "\\citeyearpar{k}\n"
+
+[[case]]
+id = "math-cite-033"
+input = "\\parencite{k}\n"
+
+[[case]]
+id = "math-cite-034"
+input = "\\textcite{k}\n"
+
+[[case]]
+id = "math-cite-035"
+input = "\\autocite{k}\n"
+
+[[case]]
+id = "math-cite-036"
+input = "\\Textcite{k}\n"
+
+[[case]]
+id = "math-cite-037"
+input = "\\Parencite{k}\n"
+
+[[case]]
+id = "math-cite-038"
+input = "\\footcite{k}\n"
+
+[[case]]
+id = "math-cite-039"
+input = "\\nocite{k}\n"
+
+[[case]]
+id = "math-cite-040"
+input = "\\cites{a}{b}\n"
+
+[[case]]
+id = "math-cite-041"
+input = "\\citep*{k}\n"
+
+[[case]]
+id = "math-cite-042"
+input = "a \\cite{k}. b\n"
+
+[[case]]
+id = "math-cite-043"
+input = "\\cite[][p. 1]{k}\n"
+
+[[case]]
+id = "math-cite-044"
+input = "\\cite[\\emph{e}]{k}\n"

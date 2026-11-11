@@ -1,0 +1,234 @@
+# Probes of `latex_diff.py probe`: one command or environment in each context.
+from = "latex"
+to = []
+
+[[case]]
+id = "cmd-emph-para"
+input = "Before \\emph{word} after.\n"
+
+[[case]]
+id = "cmd-emph-alone"
+input = "\\emph{word}\n"
+
+[[case]]
+id = "cmd-emph-item"
+input = "\\begin{itemize}\n\\item \\emph{word}\n\\end{itemize}\n"
+
+[[case]]
+id = "cmd-emph-cell"
+input = "\\begin{tabular}{ll}\n\\emph{word} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "cmd-emph-argument"
+input = "\\emph{\\emph{word}}\n"
+
+[[case]]
+id = "cmd-emph-optional"
+input = "\\emph[opt]{word}\n"
+
+[[case]]
+id = "cmd-emph-star"
+input = "\\emph*{word}\n"
+
+[[case]]
+id = "cmd-emph-rawtex"
+input = "Before \\emph{word} after.\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "cmd-textbf-para"
+input = "Before \\textbf{word} after.\n"
+
+[[case]]
+id = "cmd-textbf-alone"
+input = "\\textbf{word}\n"
+
+[[case]]
+id = "cmd-textbf-item"
+input = "\\begin{itemize}\n\\item \\textbf{word}\n\\end{itemize}\n"
+
+[[case]]
+id = "cmd-textbf-cell"
+input = "\\begin{tabular}{ll}\n\\textbf{word} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "cmd-textbf-argument"
+input = "\\emph{\\textbf{word}}\n"
+
+[[case]]
+id = "cmd-textbf-optional"
+input = "\\textbf[opt]{word}\n"
+
+[[case]]
+id = "cmd-textbf-star"
+input = "\\textbf*{word}\n"
+
+[[case]]
+id = "cmd-textbf-rawtex"
+input = "Before \\textbf{word} after.\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "cmd-texttt-para"
+input = "Before \\texttt{word} after.\n"
+
+[[case]]
+id = "cmd-texttt-alone"
+input = "\\texttt{word}\n"
+
+[[case]]
+id = "cmd-texttt-item"
+input = "\\begin{itemize}\n\\item \\texttt{word}\n\\end{itemize}\n"
+
+[[case]]
+id = "cmd-texttt-cell"
+input = "\\begin{tabular}{ll}\n\\texttt{word} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "cmd-texttt-argument"
+input = "\\emph{\\texttt{word}}\n"
+
+[[case]]
+id = "cmd-texttt-optional"
+input = "\\texttt[opt]{word}\n"
+
+[[case]]
+id = "cmd-texttt-star"
+input = "\\texttt*{word}\n"
+
+[[case]]
+id = "cmd-texttt-rawtex"
+input = "Before \\texttt{word} after.\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "cmd-footnote-para"
+input = "Before \\footnote{word} after.\n"
+
+[[case]]
+id = "cmd-footnote-alone"
+input = "\\footnote{word}\n"
+
+[[case]]
+id = "cmd-footnote-item"
+input = "\\begin{itemize}\n\\item \\footnote{word}\n\\end{itemize}\n"
+
+[[case]]
+id = "cmd-footnote-cell"
+input = "\\begin{tabular}{ll}\n\\footnote{word} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "cmd-footnote-argument"
+input = "\\emph{\\footnote{word}}\n"
+
+[[case]]
+id = "cmd-footnote-optional"
+input = "\\footnote[opt]{word}\n"
+
+[[case]]
+id = "cmd-footnote-star"
+input = "\\footnote*{word}\n"
+
+[[case]]
+id = "cmd-footnote-rawtex"
+input = "Before \\footnote{word} after.\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "cmd-mbox-para"
+input = "Before \\mbox{word} after.\n"
+
+[[case]]
+id = "cmd-mbox-alone"
+input = "\\mbox{word}\n"
+
+[[case]]
+id = "cmd-mbox-item"
+input = "\\begin{itemize}\n\\item \\mbox{word}\n\\end{itemize}\n"
+
+[[case]]
+id = "cmd-mbox-cell"
+input = "\\begin{tabular}{ll}\n\\mbox{word} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "cmd-mbox-argument"
+input = "\\emph{\\mbox{word}}\n"
+
+[[case]]
+id = "cmd-mbox-optional"
+input = "\\mbox[opt]{word}\n"
+
+[[case]]
+id = "cmd-mbox-star"
+input = "\\mbox*{word}\n"
+
+[[case]]
+id = "cmd-mbox-rawtex"
+input = "Before \\mbox{word} after.\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "cmd-textsc-para"
+input = "Before \\textsc{word} after.\n"
+
+[[case]]
+id = "cmd-textsc-alone"
+input = "\\textsc{word}\n"
+
+[[case]]
+id = "cmd-textsc-item"
+input = "\\begin{itemize}\n\\item \\textsc{word}\n\\end{itemize}\n"
+
+[[case]]
+id = "cmd-textsc-cell"
+input = "\\begin{tabular}{ll}\n\\textsc{word} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "cmd-textsc-argument"
+input = "\\emph{\\textsc{word}}\n"
+
+[[case]]
+id = "cmd-textsc-optional"
+input = "\\textsc[opt]{word}\n"
+
+[[case]]
+id = "cmd-textsc-star"
+input = "\\textsc*{word}\n"
+
+[[case]]
+id = "cmd-textsc-rawtex"
+input = "Before \\textsc{word} after.\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "env-quote-para"
+input = "Before \\begin{quote}\nbody text\n\\end{quote} after.\n"
+
+[[case]]
+id = "env-quote-alone"
+input = "\\begin{quote}\nbody text\n\\end{quote}\n"
+
+[[case]]
+id = "env-quote-item"
+input = "\\begin{itemize}\n\\item \\begin{quote}\nbody text\n\\end{quote}\n\\end{itemize}\n"
+
+[[case]]
+id = "env-quote-cell"
+input = "\\begin{tabular}{ll}\n\\begin{quote}\nbody text\n\\end{quote} & x\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "env-quote-argument"
+input = "\\emph{\\begin{quote}\nbody text\n\\end{quote}}\n"
+
+[[case]]
+id = "env-quote-optional"
+input = "\\begin{quote}[opt]\nb\n\\end{quote}\n"
+
+[[case]]
+id = "env-quote-star"
+input = "\\begin{quote*}\nbody text\n\\end{quote*}\n"
+
+[[case]]
+id = "env-quote-rawtex"
+input = "Before \\begin{quote}\nbody text\n\\end{quote} after.\n"
+from = "latex+raw_tex"

@@ -19,6 +19,7 @@ members = [
     "crates/randoc-lua",
     "crates/randoc-html-reader",
     "crates/randoc-commonmark",
+    "crates/randoc-latex-reader",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
 # Cargo has no glob for this list. A path that does not exist yet does no harm.
@@ -37,6 +38,7 @@ exclude = [
     "crates/randoc-templates/fuzz",
     "crates/randoc-yaml/fuzz",
     "crates/randoc-lua/fuzz",
+    "crates/randoc-latex-reader/fuzz",
 ]
 
 [workspace.package]
@@ -65,6 +67,7 @@ quick-xml = { version = "=0.42.0", default-features = false }
 randoc-math = { path = "crates/randoc-math", version = "0.1.0" }
 randoc-html-reader = { path = "crates/randoc-html-reader", version = "0.1.0" }
 randoc-commonmark = { path = "crates/randoc-commonmark", version = "0.1.0" }
+randoc-latex-reader = { path = "crates/randoc-latex-reader", version = "0.1.0" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 saphyr-parser = "0.3.3"

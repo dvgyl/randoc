@@ -1,0 +1,305 @@
+# Text, special characters, accents, quotes, dashes and font commands.
+from = "latex"
+to = []
+
+[[case]]
+id = "text-001"
+input = "Plain words here.\n"
+
+[[case]]
+id = "text-002"
+input = "a\nb\n"
+
+[[case]]
+id = "text-003"
+input = "a\n\nb\n"
+
+[[case]]
+id = "text-004"
+input = "a\n  \n\n  b\n"
+
+[[case]]
+id = "text-005"
+input = "a  b\tc\n"
+
+[[case]]
+id = "text-006"
+input = "a % comment\nb\n"
+
+[[case]]
+id = "text-007"
+input = "a%\nb\n"
+
+[[case]]
+id = "text-008"
+input = "x -- y --- z - w\n"
+
+[[case]]
+id = "text-009"
+input = "a--b---c----d\n"
+
+[[case]]
+id = "text-010"
+input = "``double'' and `single'\n"
+
+[[case]]
+id = "text-011"
+input = "it's here\n"
+
+[[case]]
+id = "text-012"
+input = "``open only\n"
+
+[[case]]
+id = "text-013"
+input = "`open only\n"
+
+[[case]]
+id = "text-014"
+input = "close only''\n"
+
+[[case]]
+id = "text-015"
+input = "\"plain\" marks\n"
+
+[[case]]
+id = "text-016"
+input = "``d'' `s'\n"
+from = "latex-smart"
+
+[[case]]
+id = "text-017"
+input = "a -- b\n"
+from = "latex-smart"
+
+[[case]]
+id = "text-018"
+input = "nested ``a `b' c''\n"
+
+[[case]]
+id = "text-019"
+input = "\\% \\& \\$ \\# \\_ \\{ \\}\n"
+
+[[case]]
+id = "text-020"
+input = "a~b\n"
+
+[[case]]
+id = "text-021"
+input = "a\\,b\n"
+
+[[case]]
+id = "text-022"
+input = "a\\ b\n"
+
+[[case]]
+id = "text-023"
+input = "a \\\\ b\n"
+
+[[case]]
+id = "text-024"
+input = "a\\\\[2pt] b\n"
+
+[[case]]
+id = "text-025"
+input = "a \\\\* b\n"
+
+[[case]]
+id = "text-026"
+input = "a\\\\\nb\n"
+
+[[case]]
+id = "text-027"
+input = "\\'e \\`e \\^e \\\"e \\~n \\=a \\.z\n"
+
+[[case]]
+id = "text-028"
+input = "\\'{e} \\`{a} \\^{o}\n"
+
+[[case]]
+id = "text-029"
+input = "\\c c \\c{c} \\v s \\v{z} \\u g \\H o \\r a \\k a \\d s \\b b\n"
+
+[[case]]
+id = "text-030"
+input = "\\'eabc\n"
+
+[[case]]
+id = "text-031"
+input = "\\^\\i \\'\\i\n"
+
+[[case]]
+id = "text-032"
+input = "\\ss{} \\o{} \\O{} \\ae{} \\AE{} \\oe{} \\OE{} \\aa{} \\AA{} \\l{} \\L{} \\i{} \\j{}\n"
+
+[[case]]
+id = "text-033"
+input = "\\ss x \\o y\n"
+
+[[case]]
+id = "text-034"
+input = "\\LaTeX{} and \\TeX{} x\n"
+
+[[case]]
+id = "text-035"
+input = "\\LaTeX x \\TeX y\n"
+
+[[case]]
+id = "text-036"
+input = "\\ldots \\dots x\n"
+
+[[case]]
+id = "text-037"
+input = "\\textbackslash x\n"
+
+[[case]]
+id = "text-038"
+input = "a {b} c\n"
+
+[[case]]
+id = "text-039"
+input = "a {} c\n"
+
+[[case]]
+id = "text-040"
+input = "{a {b {c}}}\n"
+
+[[case]]
+id = "text-041"
+input = "a } b\n"
+
+[[case]]
+id = "text-042"
+input = "\\emph{a}\\emph{b}\n"
+
+[[case]]
+id = "text-043"
+input = "\\textbf{a} \\textbf{b}\n"
+
+[[case]]
+id = "text-044"
+input = "\\emph{a \\emph{b} c}\n"
+
+[[case]]
+id = "text-045"
+input = "\\textit{i} \\textsl{s} \\textbf{b} \\underline{u} \\uline{v} \\sout{w}\n"
+
+[[case]]
+id = "text-046"
+input = "\\textsc{Small Caps}\n"
+
+[[case]]
+id = "text-047"
+input = "\\textsuperscript{up} \\textsubscript{down}\n"
+
+[[case]]
+id = "text-048"
+input = "\\textsf{sans} \\textrm{roman}\n"
+
+[[case]]
+id = "text-049"
+input = "\\texttt{code  here}\n"
+
+[[case]]
+id = "text-050"
+input = "\\texttt{a \\textbf{b} c}\n"
+
+[[case]]
+id = "text-051"
+input = "\\texttt{x~y}\n"
+
+[[case]]
+id = "text-052"
+input = "{\\bf bold words}\n"
+
+[[case]]
+id = "text-053"
+input = "{\\em emph words}\n"
+
+[[case]]
+id = "text-054"
+input = "{\\it it} {\\sl sl} {\\itshape is} {\\bfseries bs}\n"
+
+[[case]]
+id = "text-055"
+input = "{a \\bf b c}\n"
+
+[[case]]
+id = "text-056"
+input = "\\bf rest of para\n\nnext\n"
+
+[[case]]
+id = "text-057"
+input = "{\\em a {\\em b}}\n"
+
+[[case]]
+id = "text-058"
+input = "\\mbox{a b c}\n"
+
+[[case]]
+id = "text-059"
+input = "\\hbox{x y}\n"
+
+[[case]]
+id = "text-060"
+input = "\\verb|a b|\n"
+
+[[case]]
+id = "text-061"
+input = "\\verb+x%y+\n"
+
+[[case]]
+id = "text-062"
+input = "\\verb*|a b|\n"
+
+[[case]]
+id = "text-063"
+input = "a \\verb!{}! b\n"
+
+[[case]]
+id = "text-064"
+input = "Unicode é ü 中文\n"
+
+[[case]]
+id = "text-065"
+input = "tab\there\n"
+
+[[case]]
+id = "text-066"
+input = "a\\@ b\n"
+
+[[case]]
+id = "text-067"
+input = "a\\/b\n"
+
+[[case]]
+id = "text-068"
+input = "a\\-b\n"
+
+[[case]]
+id = "text-069"
+input = "x^y_z\n"
+
+[[case]]
+id = "text-070"
+input = "a & b\n"
+
+[[case]]
+id = "text-071"
+input = "a # b\n"
+
+[[case]]
+id = "text-072"
+input = "line one\nline two\nline three\n"
+
+[[case]]
+id = "text-073"
+input = "trailing  \n"
+
+[[case]]
+id = "text-074"
+input = "  leading\n"
+
+[[case]]
+id = "text-075"
+input = "\n\n\nafter blanks\n"

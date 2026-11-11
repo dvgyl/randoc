@@ -1,0 +1,16 @@
+[package]
+name = "randoc-latex-reader"
+description = "The LaTeX reader of Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+
+[lints]
+workspace = true

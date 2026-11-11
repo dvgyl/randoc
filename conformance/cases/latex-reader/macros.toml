@@ -1,0 +1,123 @@
+# Macro definitions of the extension latex_macros.
+from = "latex"
+to = []
+
+[[case]]
+id = "macros-001"
+input = "\\newcommand{\\x}{y}\\x\n"
+
+[[case]]
+id = "macros-002"
+input = "\\newcommand\\x{y}\\x z\n"
+
+[[case]]
+id = "macros-003"
+input = "\\newcommand{\\x}[1]{<#1>}\\x{a}\n"
+
+[[case]]
+id = "macros-004"
+input = "\\newcommand{\\x}[2]{#2-#1}\\x{a}{b}\n"
+
+[[case]]
+id = "macros-005"
+input = "\\newcommand{\\x}[2][d]{#1-#2}\\x{a} \\x[o]{b}\n"
+
+[[case]]
+id = "macros-006"
+input = "\\newcommand{\\x}{1}\\newcommand{\\x}{2}\\x\n"
+
+[[case]]
+id = "macros-007"
+input = "\\newcommand{\\x}{1}\\renewcommand{\\x}{2}\\x\n"
+
+[[case]]
+id = "macros-008"
+input = "\\providecommand{\\x}{1}\\x\n"
+
+[[case]]
+id = "macros-009"
+input = "\\newcommand{\\x}{1}\\providecommand{\\x}{2}\\x\n"
+
+[[case]]
+id = "macros-010"
+input = "\\renewcommand{\\x}{r}\\x\n"
+
+[[case]]
+id = "macros-011"
+input = "\\newcommand*{\\x}{s}\\x\n"
+
+[[case]]
+id = "macros-012"
+input = "\\def\\x{d}\\x\n"
+
+[[case]]
+id = "macros-013"
+input = "\\def\\x#1{[#1]}\\x{a}\n"
+
+[[case]]
+id = "macros-014"
+input = "\\def\\x#1#2{#2#1}\\x ab\n"
+
+[[case]]
+id = "macros-015"
+input = "\\let\\x\\emph \\x{a}\n"
+
+[[case]]
+id = "macros-016"
+input = "\\let\\x=\\textbf \\x{a}\n"
+
+[[case]]
+id = "macros-017"
+input = "\\newcommand{\\x}{\\emph{e}}\\x\n"
+
+[[case]]
+id = "macros-018"
+input = "\\newcommand{\\x}{a}\\newcommand{\\y}{\\x\\x}\\y\n"
+
+[[case]]
+id = "macros-019"
+input = "\\newcommand{\\x}{\\x}\\x\n"
+
+[[case]]
+id = "macros-020"
+input = "\\def\\x{a\\x}\\x\n"
+
+[[case]]
+id = "macros-021"
+input = "\\newcommand{\\x}[1]{#1#1}\\x{\\x{b}}\n"
+
+[[case]]
+id = "macros-022"
+input = "\\newcommand{\\m}{x^2}$\\m$\n"
+
+[[case]]
+id = "macros-023"
+input = "\\newenvironment{e}{<}{>}\\begin{e}body\\end{e}\n"
+
+[[case]]
+id = "macros-024"
+input = "\\newenvironment{e}[1]{(#1}{)}\\begin{e}{a}body\\end{e}\n"
+
+[[case]]
+id = "macros-025"
+input = "\\newenvironment{e}[1][d]{(#1}{)}\\begin{e}body\\end{e} \\begin{e}[o]body\\end{e}\n"
+
+[[case]]
+id = "macros-026"
+input = "\\newenvironment{e}{\\begin{quote}}{\\end{quote}}\n\\begin{e}\nq\n\\end{e}\n"
+
+[[case]]
+id = "macros-027"
+input = "\\renewenvironment{e}{a}{b}\\begin{e}x\\end{e}\n"
+
+[[case]]
+id = "macros-028"
+input = "text \\newcommand{\\x}{y} more \\x\n"
+
+[[case]]
+id = "macros-029"
+input = "\\newcommand{\\x}{y}\n\nPara \\x.\n"
+
+[[case]]
+id = "macros-030"
+input = "\\newcommand{\\bold}[1]{\\textbf{#1}}\n\\bold{b} \\bold c\n"

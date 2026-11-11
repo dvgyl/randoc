@@ -1,0 +1,143 @@
+# Unknown commands and environments with raw_tex, and the other extensions.
+from = "latex"
+to = []
+
+[[case]]
+id = "raw-001"
+input = "a \\foo{x}{y} b\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-002"
+input = "\\foo{z}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-003"
+input = "\\foo\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-004"
+input = "a \\foo b\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-005"
+input = "\\foo{z} text\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-006"
+input = "a \\label{x} b\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-007"
+input = "\\begin{zz}\nbody\n\\end{zz}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-008"
+input = "\\begin{zz}[o]{p}\nbody\n\\end{zz}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-009"
+input = "\\vspace{1cm}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-010"
+input = "a \\hspace{2em} b\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-011"
+input = "\\centering\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-012"
+input = "\\noindent text\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-013"
+input = "\\maketitle\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-014"
+input = "\\newpage\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-015"
+input = "\\clearpage\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-016"
+input = "\\tableofcontents\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-017"
+input = "\\usepackage{x}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-018"
+input = "\\documentclass{article}\nbody\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-019"
+input = "\\begin{center}\nc\n\\end{center}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-020"
+input = "\\begin{itemize}\n\\item \\foo{a}\n\\end{itemize}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-021"
+input = "\\emph{\\foo{x}}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-022"
+input = "\\cite{k}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-023"
+input = "\\newcommand{\\x}{y}\\x\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-024"
+input = "\\section{\\foo{x}}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-025"
+input = "\\begin{tikzpicture}\n\\draw (0,0);\n\\end{tikzpicture}\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "raw-026"
+input = "\\newcommand{\\x}{y}\\x\n"
+from = "latex-latex_macros"
+
+[[case]]
+id = "raw-027"
+input = "\\def\\x{y}\\x\n"
+from = "latex-latex_macros"
+
+[[case]]
+id = "raw-028"
+input = "\\section{No id}\n"
+from = "latex-auto_identifiers"

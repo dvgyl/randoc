@@ -1,0 +1,173 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "raw-001#read": {
+      "key": "f2250307ffbd11ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\foo{x}{y}\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-002#read": {
+      "key": "07e20859b0055c6b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\foo{z}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-003#read": {
+      "key": "c5a1279bc6093976",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\foo\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-004#read": {
+      "key": "7ebb642552da0673",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\foo \"]},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-005#read": {
+      "key": "d2c96b2eac382283",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\foo{z}\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-006#read": {
+      "key": "af2e43011c36767e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\label{x}\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-007#read": {
+      "key": "481ee894bedce122",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\begin{zz}\\nbody\\n\\\\end{zz}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-008#read": {
+      "key": "1e9048bd2090a937",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\begin{zz}[o]{p}\\nbody\\n\\\\end{zz}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-009#read": {
+      "key": "8b45924140365aff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\vspace{1cm}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-010#read": {
+      "key": "59870eafb69dd71b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\hspace{2em}\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-011#read": {
+      "key": "c1df148e6f6f46a9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\centering\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-012#read": {
+      "key": "e90d2df8a8caa3c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\noindent \"]},{\"t\":\"Str\",\"c\":\"text\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-013#read": {
+      "key": "002937a39118f7b4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\maketitle\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-014#read": {
+      "key": "945e2b93a0177599",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\newpage\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-015#read": {
+      "key": "15dce3b055516f26",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\clearpage\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-016#read": {
+      "key": "30cb148f59b3ff8f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\tableofcontents\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-017#read": {
+      "key": "ade4e28e8e33fb13",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\usepackage{x}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-018#read": {
+      "key": "181de5063b0e6a25",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "raw-019#read": {
+      "key": "7137d5ae2545d9dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"center\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "raw-020#read": {
+      "key": "ebb350e594f6da5b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\foo{a}\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "raw-021#read": {
+      "key": "c371c45751465d4a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\foo{x}\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-022#read": {
+      "key": "0dfb36b50043ca96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"k\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\cite{k}\"]}]]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-023#read": {
+      "key": "0deb6f08c2b55708",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-024#read": {
+      "key": "40e718ad4b35a8ea",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"section\",[],[]],[{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\foo{x}\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "raw-025#read": {
+      "key": "85c88b7c844d7c40",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\begin{tikzpicture}\\n\\\\draw (0,0);\\n\\\\end{tikzpicture}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-026#read": {
+      "key": "7ad16b15581fc39b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\newcommand{\\\\x}{y}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-027#read": {
+      "key": "073ed7473e7ffd6c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"latex\",\"\\\\def\\\\x{y}\"]}]}\n",
+      "stderr": ""
+    },
+    "raw-028#read": {
+      "key": "fbab7cb6edf52e0b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"No\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"id\"}]]}]}\n",
+      "stderr": ""
+    }
+  }
+}

@@ -287,6 +287,7 @@ through an engine, and the `lua` and `server` modes.
 | lua | `randoc-lua`: the Lua runtime with Lua 5.4.8, the document types, Lua filters and the first modules (no program option calls it yet) |
 | html-writer | `randoc-html`: the writers `html` and `html4` |
 | contracts | Shared contracts for the next units: two new `Limits`, 15 new `Host` methods, one Haskell `show`, the public JSON value parser, the `zip` pin (ADR 18) |
+| latex-reader | `randoc-latex-reader`: the reader `latex`, unit 1 (tokenizer, macro definitions, the most frequent constructs) |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

@@ -1,0 +1,803 @@
+# Documents of the grammar of `latex_diff.py cases`. Do not edit: run the tool.
+from = "latex"
+to = []
+
+[[case]]
+id = "generated-001"
+input = "\\section{\\url{http://e.org/y2}}\n\n{\\bf x x} \\citep[p.~1]{beta} \\emph{delta}\n\n{\\bf x x} \\citep[p.~1]{beta} \\emph{delta}\n"
+
+[[case]]
+id = "generated-002"
+input = "\\(alpha^2\\) \\LaTeX `x'\n\n\\(alpha^2\\) \\LaTeX `x'\n"
+
+[[case]]
+id = "generated-003"
+input = "\\subsection*{\\emph{gamma}}\n"
+
+[[case]]
+id = "generated-004"
+input = "\\_ \\textsubscript{beta} {\\bf gamma}\n\n\\_ \\textsubscript{beta} {\\bf gamma}\n\n\\begin{equation}\nalpha=1\n\\end{equation}\n\n\\begin{center}\n\\includegraphics{beta.png}\n\\end{center}\n"
+
+[[case]]
+id = "generated-005"
+input = "\\begin{quote}\n\\{ \\TeX{}\n\\end{quote}\n\n\\paragraph{\\%}\n\n\\begin{equation}\nend.=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-006"
+input = "\\_ \\cite{gamma} \\verb|gamma gamma|\n\n\\_ \\cite{gamma} \\verb|gamma gamma|\n"
+
+[[case]]
+id = "generated-007"
+input = "$beta+1$ \\} \\cite{delta}\n\n$beta+1$ \\} \\cite{delta}\n"
+
+[[case]]
+id = "generated-008"
+input = "\\LaTeX \\{ \\mbox{x x}\n\n\\LaTeX \\{ \\mbox{x x}\n\n\\[delta\\]\n\n\\$\n\n\\$\n"
+
+[[case]]
+id = "generated-009"
+input = "\\mbox{y2 y2}\n\n\\mbox{y2 y2}\n\n\\begin{tabular}{lc}\ndelta & delta \\\\\n\\hline\ndelta & delta\n\\end{tabular}\n\n\\paragraph{\\href{http://e.org/delta}{alpha alpha}}\n"
+
+[[case]]
+id = "generated-010"
+input = "\\begin{center}\n\\cite{alpha}\n\\end{center}\n"
+
+[[case]]
+id = "generated-011"
+input = "\\section{\\%}\n\n\\newcommand{\\mac}[1]{#1 end.}\n\\mac{end.}\n"
+
+[[case]]
+id = "generated-012"
+input = "\\verb|delta delta|\n\n\\verb|delta delta|\n\n\\paragraph{\\underline{end. end.}}\n"
+
+[[case]]
+id = "generated-013"
+input = "\\begin{enumerate}\n\\item \\textsubscript{delta} `alpha'\n\\end{enumerate}\n\n\\subsection*{\\textsuperscript{beta}}\n\n\\begin{description}\n\\item[x] gamma -- gamma \\# \\textsc{x x}\n\\end{description}\n"
+
+[[case]]
+id = "generated-014"
+input = "\\begin{itemize}\n\\item \\mbox{delta}\n\\item \\mbox{delta}\n\\end{itemize}\n\n\\begin{tabular}{lc}\ny2 & y2 \\\\\n\\hline\ny2 & y2\n\\end{tabular}\n\n\\[x\\]\n"
+
+[[case]]
+id = "generated-015"
+input = "\\begin{enumerate}\n\\item \\url{http://e.org/alpha} \\ref{y2}\n\\end{enumerate}\n\n\\textit{delta}\n"
+
+[[case]]
+id = "generated-016"
+input = "\\begin{center}\n{\\bf x}\n\\end{center}\n\n\\includegraphics{alpha.png} \\textit{x}\n\n\\includegraphics{alpha.png} \\textit{x}\n"
+
+[[case]]
+id = "generated-017"
+input = "\\paragraph{x\\\\x}\n\n\\begin{description}\n\\item[delta] {\\em delta delta}\n\\end{description}\n\n\\paragraph{\\texttt{beta}}\n"
+
+[[case]]
+id = "generated-018"
+input = "\\begin{itemize}\n\\item \\& \\mbox{x} ``beta beta''\n\\item \\& \\mbox{x} ``beta beta''\n\\end{itemize}\n\n\\newcommand{\\mac}[1]{#1 alpha}\n\\mac{alpha}\n\n\\[x\\]\n"
+
+[[case]]
+id = "generated-019"
+input = "\\begin{verbatim}\nend. end.\n\\end{verbatim}\n\n\\& \\footnote{gamma} `y2 y2'\n\n\\& \\footnote{gamma} `y2 y2'\n"
+
+[[case]]
+id = "generated-020"
+input = "\\[beta\\]\n"
+
+[[case]]
+id = "generated-021"
+input = "\\begin{equation}\nend.=1\n\\end{equation}\n\n\\subsection*{x---x}\n"
+
+[[case]]
+id = "generated-022"
+input = "\\begin{equation}\nalpha=1\n\\end{equation}\n\n\\ref{gamma} y2---y2\n"
+
+[[case]]
+id = "generated-023"
+input = "\\begin{description}\n\\item[gamma] gamma\\\\gamma \\texttt{beta} {\\bf delta}\n\\end{description}\n\n\\subsection*{\\ref{x}}\n"
+
+[[case]]
+id = "generated-024"
+input = "\\begin{description}\n\\item[end.] end.\\\\end. {end.} {\\em end. end.}\n\\end{description}\n"
+
+[[case]]
+id = "generated-025"
+input = "\\begin{description}\n\\item[y2] \\(end.^2\\)\n\\end{description}\n"
+
+[[case]]
+id = "generated-026"
+input = "\\url{http://e.org/delta} \\url{http://e.org/y2} \\texttt{y2}\n\n\\url{http://e.org/delta} \\url{http://e.org/y2} \\texttt{y2}\n\n\\section{\\underline{beta}}\n"
+
+[[case]]
+id = "generated-027"
+input = "\\section{\\includegraphics{end..png}}\n\n\\begin{description}\n\\item[y2] beta\\\\beta \\ldots \\underline{alpha}\n\\end{description}\n\n\\begin{verbatim}\nalpha alpha\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-028"
+input = "\\begin{equation}\nbeta=1\n\\end{equation}\n\n\\begin{enumerate}\n\\item ``gamma''\n\\end{enumerate}\n\n\\begin{quote}\n\\TeX{}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-029"
+input = "\\begin{enumerate}\n\\item \\textbf{delta delta}\n\\end{enumerate}\n\n\\begin{tabular}{lc}\nx & x \\\\\n\\hline\nx & x\n\\end{tabular}\n\n\\begin{enumerate}\n\\item \\underline{x} end. end. \\verb|end. end.|\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-030"
+input = "beta -- beta\n\n\\begin{center}\n{\\em gamma} \\'e \\ldots\n\\end{center}\n\n\\[alpha\\]\n"
+
+[[case]]
+id = "generated-031"
+input = "gamma---gamma\n\n\\[alpha\\]\n\n\\begin{quote}\n\\ldots \\textit{gamma gamma}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-032"
+input = "\\begin{quote}\n\\mbox{delta delta}\n\\end{quote}\n\n\\[delta\\]\n\n\\begin{quote}\n\\mbox{x x}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-033"
+input = "\\section{$alpha+1$}\n\n\\begin{description}\n\\item[end.] \\textit{delta} ``end. end.''\n\\end{description}\n"
+
+[[case]]
+id = "generated-034"
+input = "\\begin{equation}\ny2=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-035"
+input = "\\begin{itemize}\n\\item \\&\n\\item \\&\n\\end{itemize}\n\n\\subsection*{{\\bf delta delta}}\n\n\\begin{tabular}{lc}\nbeta & beta \\\\\n\\hline\nbeta & beta\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-036"
+input = "\\begin{equation}\ndelta=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-037"
+input = "\\begin{enumerate}\n\\item $beta+1$ gamma\\\\gamma\n\\end{enumerate}\n\n\\begin{equation}\ngamma=1\n\\end{equation}\n\n\\ldots \\verb|y2 y2|\n"
+
+[[case]]
+id = "generated-038"
+input = "\\begin{itemize}\n\\item \\includegraphics{gamma.png} \\citep[p.~1]{alpha} {\\em alpha}\n\\item \\includegraphics{gamma.png} \\citep[p.~1]{alpha} {\\em alpha}\n\\end{itemize}\n\n\\paragraph{\\emph{gamma}}\n"
+
+[[case]]
+id = "generated-039"
+input = "\\begin{tabular}{lc}\ny2 & y2 \\\\\n\\hline\ny2 & y2\n\\end{tabular}\n\n\\begin{tabular}{lc}\ngamma & gamma \\\\\n\\hline\ngamma & gamma\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-040"
+input = "\\section{\\\"o}\n\n\\begin{description}\n\\item[gamma] \\{ \\$ \\mbox{delta}\n\\end{description}\n"
+
+[[case]]
+id = "generated-041"
+input = "\\begin{verbatim}\nalpha alpha\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-042"
+input = "`gamma' {\\em alpha alpha} \\ldots\n\n`gamma' {\\em alpha alpha} \\ldots\n\n\\begin{center}\n\\emph{alpha}\n\\end{center}\n"
+
+[[case]]
+id = "generated-043"
+input = "\\section{gamma---gamma}\n"
+
+[[case]]
+id = "generated-044"
+input = "\\begin{quote}\n\\#\n\\end{quote}\n\n\\begin{verbatim}\nbeta beta\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-045"
+input = "\\begin{itemize}\n\\item \\&\n\\item \\&\n\\end{itemize}\n\n\\citep[p.~1]{x} x---x \\ref{beta}\n"
+
+[[case]]
+id = "generated-046"
+input = "\\begin{verbatim}\nend. end.\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-047"
+input = "\\begin{enumerate}\n\\item \\cite{x} \\url{http://e.org/x} \\_\n\\end{enumerate}\n\n\\subsection*{\\}}\n\n\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n"
+
+[[case]]
+id = "generated-048"
+input = "\\begin{verbatim}\nbeta beta\n\\end{verbatim}\n\n\\begin{enumerate}\n\\item \\textbf{alpha} \\unknown{y2}\n\\end{enumerate}\n\n\\begin{enumerate}\n\\item \\textbf{y2}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-049"
+input = "\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n\n\\begin{center}\n\\mbox{alpha alpha}\n\\end{center}\n\n\\section{\\$}\n"
+
+[[case]]
+id = "generated-050"
+input = "\\begin{itemize}\n\\item \\ldots \\%\n\\item \\ldots \\%\n\\end{itemize}\n\n\\subsection*{beta\\\\beta}\n"
+
+[[case]]
+id = "generated-051"
+input = "\\begin{enumerate}\n\\item \\ref{gamma}\n\\end{enumerate}\n\n\\begin{verbatim}\nbeta beta\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-052"
+input = "\\begin{quote}\n\\texttt{gamma}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-053"
+input = "\\section{\\url{http://e.org/x}}\n"
+
+[[case]]
+id = "generated-054"
+input = "\\_ `x'\n\n\\[beta\\]\n"
+
+[[case]]
+id = "generated-055"
+input = "\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n\n\\[x\\]\n\n\\begin{enumerate}\n\\item \\cite{beta} \\#\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-056"
+input = "\\section{\\emph{y2 y2}}\n\n\\begin{quote}\n\\'e\n\\end{quote}\n\n\\begin{center}\n\\textsubscript{x}\n\\end{center}\n"
+
+[[case]]
+id = "generated-057"
+input = "\\begin{verbatim}\ny2 y2\n\\end{verbatim}\n\n\\begin{verbatim}\nbeta beta\n\\end{verbatim}\n\n\\emph{y2}\n\n\\emph{y2}\n"
+
+[[case]]
+id = "generated-058"
+input = "\\begin{tabular}{lc}\ndelta & delta \\\\\n\\hline\ndelta & delta\n\\end{tabular}\n\n\\begin{quote}\n\\unknown{alpha}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-059"
+input = "\\begin{verbatim}\nbeta beta\n\\end{verbatim}\n\n\\begin{description}\n\\item[alpha] delta \\textit{y2}\n\\end{description}\n\n\\begin{equation}\ny2=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-060"
+input = "\\paragraph{\\textit{beta beta}}\n\n\\subsection*{`delta delta'}\n"
+
+[[case]]
+id = "generated-061"
+input = "\\begin{description}\n\\item[y2] \\# \\emph{alpha} \\textsc{gamma gamma}\n\\end{description}\n"
+
+[[case]]
+id = "generated-062"
+input = "\\paragraph{\\includegraphics{x.png}}\n\n\\textbf{gamma gamma} {\\bf y2}\n\n\\begin{equation}\nx=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-063"
+input = "\\begin{description}\n\\item[delta] \\label{end.} {\\em gamma}\n\\end{description}\n\n\\label{alpha} \\citep[p.~1]{delta}\n"
+
+[[case]]
+id = "generated-064"
+input = "\\subsection*{``x''}\n\n\\begin{equation}\nx=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-065"
+input = "\\begin{itemize}\n\\item end.%comment\nend.\n\\item end.%comment\nend.\n\\end{itemize}\n\n\\begin{quote}\n{\\em beta beta} \\cite{delta}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-066"
+input = "\\textsubscript{delta} \\url{http://e.org/gamma}\n"
+
+[[case]]
+id = "generated-067"
+input = "\\begin{enumerate}\n\\item \\href{http://e.org/end.}{alpha alpha} \\}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-068"
+input = "\\begin{tabular}{lc}\ndelta & delta \\\\\n\\hline\ndelta & delta\n\\end{tabular}\n\ny2\n\ny2\n"
+
+[[case]]
+id = "generated-069"
+input = "\\begin{itemize}\n\\item \\url{http://e.org/delta}\n\\item \\url{http://e.org/delta}\n\\end{itemize}\n\n\\begin{center}\n\\footnote{end. end.}\n\\end{center}\n"
+
+[[case]]
+id = "generated-070"
+input = "\\paragraph{{\\bf end.}}\n"
+
+[[case]]
+id = "generated-071"
+input = "\\newcommand{\\mac}[1]{#1 beta}\n\\mac{beta}\n\n\\subsection*{\\$}\n\n\\begin{itemize}\n\\item \\footnote{alpha alpha}\n\\item \\footnote{alpha alpha}\n\\end{itemize}\n"
+
+[[case]]
+id = "generated-072"
+input = "\\begin{enumerate}\n\\item \\ldots \\texttt{alpha} $delta+1$\n\\end{enumerate}\n\n\\[beta\\]\n\n\\begin{verbatim}\nend. end.\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-073"
+input = "\\begin{description}\n\\item[beta] \\ldots\n\\end{description}\n\n\\begin{description}\n\\item[y2] \\} \\_\n\\end{description}\n"
+
+[[case]]
+id = "generated-074"
+input = "\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n\n\\begin{enumerate}\n\\item \\% \\ref{x} \\textsuperscript{delta}\n\\end{enumerate}\n\n\\section{{alpha}}\n"
+
+[[case]]
+id = "generated-075"
+input = "\\begin{quote}\n\\verb|gamma gamma|\n\\end{quote}\n\n\\begin{description}\n\\item[x] \\underline{beta} gamma -- gamma\n\\end{description}\n"
+
+[[case]]
+id = "generated-076"
+input = "\\begin{itemize}\n\\item \\footnote{end. end.}\n\\item \\footnote{end. end.}\n\\end{itemize}\n"
+
+[[case]]
+id = "generated-077"
+input = "\\begin{equation}\nend.=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-078"
+input = "\\begin{enumerate}\n\\item \\'e \\href{http://e.org/end.}{gamma gamma}\n\\end{enumerate}\n\n\\begin{description}\n\\item[beta] \\LaTeX \\underline{alpha}\n\\end{description}\n"
+
+[[case]]
+id = "generated-079"
+input = "\\begin{enumerate}\n\\item \\verb|delta delta| \\_ beta beta\n\\end{enumerate}\n\n\\begin{enumerate}\n\\item \\ref{x} \\cite{alpha} \\textit{end. end.}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-080"
+input = "\\begin{description}\n\\item[x] {\\bf beta}\n\\end{description}\n\n\\begin{verbatim}\nalpha alpha\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-081"
+input = "\\begin{equation}\ny2=1\n\\end{equation}\n\n\\begin{tabular}{lc}\nend. & end. \\\\\n\\hline\nend. & end.\n\\end{tabular}\n\n\\newcommand{\\mac}[1]{#1 delta}\n\\mac{delta}\n"
+
+[[case]]
+id = "generated-082"
+input = "\\begin{quote}\nend.\n\\end{quote}\n"
+
+[[case]]
+id = "generated-083"
+input = "\\begin{center}\n{beta beta}\n\\end{center}\n"
+
+[[case]]
+id = "generated-084"
+input = "\\begin{verbatim}\ndelta delta\n\\end{verbatim}\n\n\\begin{equation}\nend.=1\n\\end{equation}\n\n\\textit{x x}\n\n\\textit{x x}\n"
+
+[[case]]
+id = "generated-085"
+input = "\\paragraph{`alpha'}\n\n\\begin{description}\n\\item[x] \\{ \\%\n\\end{description}\n"
+
+[[case]]
+id = "generated-086"
+input = "\\begin{quote}\ndelta delta\n\\end{quote}\n"
+
+[[case]]
+id = "generated-087"
+input = "\\paragraph{\\textbf{beta}}\n\n\\begin{verbatim}\ndelta delta\n\\end{verbatim}\n\n`gamma gamma' \\cite{alpha}\n\n`gamma gamma' \\cite{alpha}\n"
+
+[[case]]
+id = "generated-088"
+input = "\\begin{equation}\ndelta=1\n\\end{equation}\n\n\\begin{itemize}\n\\item \\url{http://e.org/beta} end. \\#\n\\item \\url{http://e.org/beta} end. \\#\n\\end{itemize}\n"
+
+[[case]]
+id = "generated-089"
+input = "\\cite{beta}\n\n\\cite{beta}\n\n\\[end.\\]\n\n\\subsection*{`beta beta'}\n"
+
+[[case]]
+id = "generated-090"
+input = "\\cite{x} beta -- beta \\cite{delta}\n\n\\cite{x} beta -- beta \\cite{delta}\n\n\\textsc{alpha alpha} x x \\textsc{alpha alpha}\n"
+
+[[case]]
+id = "generated-091"
+input = "\\begin{enumerate}\n\\item \\{ {\\em beta}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-092"
+input = "\\begin{verbatim}\nx x\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-093"
+input = "\\begin{description}\n\\item[y2] \\_\n\\end{description}\n\n\\begin{enumerate}\n\\item \\} alpha~alpha\n\\end{enumerate}\n\n\\texttt{gamma} $alpha+1$\n\n\\texttt{gamma} $alpha+1$\n"
+
+[[case]]
+id = "generated-094"
+input = "\\begin{enumerate}\n\\item \\_ \\(alpha^2\\)\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-095"
+input = "\\begin{description}\n\\item[gamma] \\footnote{beta beta}\n\\end{description}\n\n\\begin{equation}\ndelta=1\n\\end{equation}\n\n$beta+1$ \\unknown{end.} \\url{http://e.org/alpha}\n"
+
+[[case]]
+id = "generated-096"
+input = "\\begin{description}\n\\item[alpha] \\textbf{beta beta}\n\\end{description}\n"
+
+[[case]]
+id = "generated-097"
+input = "\\begin{itemize}\n\\item \\$ \\includegraphics{alpha.png}\n\\item \\$ \\includegraphics{alpha.png}\n\\end{itemize}\n\n\\begin{equation}\ny2=1\n\\end{equation}\n\n\\begin{equation}\ngamma=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-098"
+input = "\\paragraph{y2}\n\n\\begin{center}\n\\textit{end.} {\\bf y2 y2} \\href{http://e.org/end.}{delta delta}\n\\end{center}\n"
+
+[[case]]
+id = "generated-099"
+input = "\\newcommand{\\mac}[1]{#1 delta}\n\\mac{delta}\n"
+
+[[case]]
+id = "generated-100"
+input = "\\_ \\mbox{x} \\{\n"
+
+[[case]]
+id = "generated-101"
+input = "\\begin{itemize}\n\\item \\texttt{x} delta---delta beta~beta\n\\item \\texttt{x} delta---delta beta~beta\n\\end{itemize}\n\n\\emph{x x} \\{ \\(alpha^2\\)\n\n\\emph{x x} \\{ \\(alpha^2\\)\n"
+
+[[case]]
+id = "generated-102"
+input = "\\begin{center}\n``delta''\n\\end{center}\n\n\\begin{description}\n\\item[x] `delta'\n\\end{description}\n"
+
+[[case]]
+id = "generated-103"
+input = "\\subsection*{\\\"o}\n\n\\begin{verbatim}\nend. end.\n\\end{verbatim}\n\n\\# \\LaTeX\n\n\\# \\LaTeX\n"
+
+[[case]]
+id = "generated-104"
+input = "\\begin{equation}\ngamma=1\n\\end{equation}\n\n\\subsection*{\\verb|beta beta|}\n"
+
+[[case]]
+id = "generated-105"
+input = "\\subsection*{\\textsc{x x}}\n"
+
+[[case]]
+id = "generated-106"
+input = "\\begin{enumerate}\n\\item \\% \\'e\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-107"
+input = "\\begin{verbatim}\ndelta delta\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-108"
+input = "\\ref{end.}\n\n\\ref{end.}\n"
+
+[[case]]
+id = "generated-109"
+input = "\\newcommand{\\mac}[1]{#1 gamma}\n\\mac{gamma}\n\n`alpha' end.%comment\nend.\n"
+
+[[case]]
+id = "generated-110"
+input = "\\newcommand{\\mac}[1]{#1 alpha}\n\\mac{alpha}\n"
+
+[[case]]
+id = "generated-111"
+input = "\\begin{quote}\n\\verb|x x|\n\\end{quote}\n\n\\[end.\\]\n"
+
+[[case]]
+id = "generated-112"
+input = "\\unknown{x}\n\n\\begin{center}\n``gamma'' \\textsc{beta}\n\\end{center}\n\n\\begin{center}\n{end.} \\{ \\textsubscript{gamma}\n\\end{center}\n"
+
+[[case]]
+id = "generated-113"
+input = "\\paragraph{\\textit{alpha}}\n\n\\begin{quote}\n\\textit{alpha alpha} \\url{http://e.org/y2}\n\\end{quote}\n\n\\section{\\unknown{x}}\n"
+
+[[case]]
+id = "generated-114"
+input = "\\section{\\url{http://e.org/y2}}\n\n\\begin{enumerate}\n\\item \\textsuperscript{gamma} $alpha+1$\n\\end{enumerate}\n\n\\begin{equation}\nx=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-115"
+input = "\\begin{enumerate}\n\\item end. end. \\footnote{delta}\n\\end{enumerate}\n\n\\subsection*{delta}\n"
+
+[[case]]
+id = "generated-116"
+input = "\\url{http://e.org/x}\n\n\\url{http://e.org/x}\n\n\\begin{description}\n\\item[beta] \\underline{alpha}\n\\end{description}\n"
+
+[[case]]
+id = "generated-117"
+input = "\\[delta\\]\n\n\\includegraphics{gamma.png} \\citep[p.~1]{beta} \\textsc{gamma gamma}\n\n\\includegraphics{gamma.png} \\citep[p.~1]{beta} \\textsc{gamma gamma}\n\n\\section{\\textit{delta}}\n"
+
+[[case]]
+id = "generated-118"
+input = "\\paragraph{\\underline{delta}}\n"
+
+[[case]]
+id = "generated-119"
+input = "\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n\n\\begin{enumerate}\n\\item \\includegraphics{y2.png}\n\\end{enumerate}\n\n\\newcommand{\\mac}[1]{#1 beta}\n\\mac{beta}\n"
+
+[[case]]
+id = "generated-120"
+input = "\\[end.\\]\n\n\\subsection*{\\includegraphics{delta.png}}\n\n\\begin{tabular}{lc}\nbeta & beta \\\\\n\\hline\nbeta & beta\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-121"
+input = "\\section{\\LaTeX}\n\n\\begin{enumerate}\n\\item delta~delta alpha\\\\alpha \\textsc{y2}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-122"
+input = "\\newcommand{\\mac}[1]{#1 x}\n\\mac{x}\n"
+
+[[case]]
+id = "generated-123"
+input = "\\{ \\href{http://e.org/end.}{x x} \\unknown{end.}\n\n\\begin{verbatim}\ndelta delta\n\\end{verbatim}\n\n\\paragraph{\\TeX{}}\n"
+
+[[case]]
+id = "generated-124"
+input = "\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n\n\\begin{description}\n\\item[delta] \\verb|beta beta| alpha alpha \\includegraphics{delta.png}\n\\end{description}\n"
+
+[[case]]
+id = "generated-125"
+input = "\\begin{description}\n\\item[alpha] \\label{end.} end. -- end. \\ref{delta}\n\\end{description}\n"
+
+[[case]]
+id = "generated-126"
+input = "\\section{delta\\\\delta}\n"
+
+[[case]]
+id = "generated-127"
+input = "\\[delta\\]\n"
+
+[[case]]
+id = "generated-128"
+input = "\\begin{quote}\n\\emph{y2} \\texttt{y2} \\{\n\\end{quote}\n\n\\begin{quote}\n\\textbf{y2 y2}\n\\end{quote}\n\n\\includegraphics{y2.png}\n"
+
+[[case]]
+id = "generated-129"
+input = "\\subsection*{\\underline{gamma gamma}}\n"
+
+[[case]]
+id = "generated-130"
+input = "\\begin{verbatim}\nend. end.\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-131"
+input = "\\newcommand{\\mac}[1]{#1 beta}\n\\mac{beta}\n\n\\includegraphics{end..png} \\&\n\n\\includegraphics{end..png} \\&\n\n\\newcommand{\\mac}[1]{#1 x}\n\\mac{x}\n"
+
+[[case]]
+id = "generated-132"
+input = "\\newcommand{\\mac}[1]{#1 end.}\n\\mac{end.}\n\n\\begin{description}\n\\item[delta] \\&\n\\end{description}\n"
+
+[[case]]
+id = "generated-133"
+input = "\\begin{center}\n\\includegraphics{x.png} \\%\n\\end{center}\n"
+
+[[case]]
+id = "generated-134"
+input = "\\subsection*{delta -- delta}\n"
+
+[[case]]
+id = "generated-135"
+input = "\\newcommand{\\mac}[1]{#1 gamma}\n\\mac{gamma}\n\n\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n\n\\newcommand{\\mac}[1]{#1 delta}\n\\mac{delta}\n"
+
+[[case]]
+id = "generated-136"
+input = "\\[end.\\]\n"
+
+[[case]]
+id = "generated-137"
+input = "\\textbf{end. end.} \\ldots \\TeX{}\n\n\\textbf{end. end.} \\ldots \\TeX{}\n\n\\paragraph{\\\"o}\n"
+
+[[case]]
+id = "generated-138"
+input = "\\begin{equation}\nend.=1\n\\end{equation}\n\n\\begin{itemize}\n\\item \\href{http://e.org/beta}{x x} \\footnote{end. end.}\n\\item \\href{http://e.org/beta}{x x} \\footnote{end. end.}\n\\end{itemize}\n"
+
+[[case]]
+id = "generated-139"
+input = "\\section{\\includegraphics{y2.png}}\n"
+
+[[case]]
+id = "generated-140"
+input = "\\begin{tabular}{lc}\nx & x \\\\\n\\hline\nx & x\n\\end{tabular}\n\n\\paragraph{\\_}\n"
+
+[[case]]
+id = "generated-141"
+input = "\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n\n\\newcommand{\\mac}[1]{#1 gamma}\n\\mac{gamma}\n\n\\begin{equation}\nalpha=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-142"
+input = "\\textsc{x x}\n\n\\begin{enumerate}\n\\item \\footnote{beta} `alpha' x\n\\end{enumerate}\n\n\\paragraph{{\\bf x x}}\n"
+
+[[case]]
+id = "generated-143"
+input = "\\paragraph{\\TeX{}}\n\n\\begin{itemize}\n\\item \\ref{beta} \\underline{end.} \\textsc{alpha alpha}\n\\item \\ref{beta} \\underline{end.} \\textsc{alpha alpha}\n\\end{itemize}\n\n\\section{\\textsuperscript{end.}}\n"
+
+[[case]]
+id = "generated-144"
+input = "\\[gamma\\]\n\n{x x}\n"
+
+[[case]]
+id = "generated-145"
+input = "\\begin{center}\n\\cite{beta} alpha~alpha \\emph{x}\n\\end{center}\n\n\\section{\\%}\n"
+
+[[case]]
+id = "generated-146"
+input = "\\ldots beta---beta $beta+1$\n"
+
+[[case]]
+id = "generated-147"
+input = "\\begin{verbatim}\nx x\n\\end{verbatim}\n\n\\begin{verbatim}\ny2 y2\n\\end{verbatim}\n\n\\begin{enumerate}\n\\item x -- x \\_ \\_\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-148"
+input = "\\[delta\\]\n\n\\begin{equation}\nx=1\n\\end{equation}\n\n\\(y2^2\\) \\label{alpha}\n"
+
+[[case]]
+id = "generated-149"
+input = "\\begin{description}\n\\item[y2] `gamma'\n\\end{description}\n\n\\}\n\n\\begin{tabular}{lc}\ngamma & gamma \\\\\n\\hline\ngamma & gamma\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-150"
+input = "\\unknown{x} \\textsubscript{delta}\n\n\\[x\\]\n\n\\paragraph{\\#}\n"
+
+[[case]]
+id = "generated-151"
+input = "\\newcommand{\\mac}[1]{#1 x}\n\\mac{x}\n"
+
+[[case]]
+id = "generated-152"
+input = "\\section{\\&}\n"
+
+[[case]]
+id = "generated-153"
+input = "\\subsection*{y2~y2}\n\n\\subsection*{\\href{http://e.org/beta}{x x}}\n\n\\newcommand{\\mac}[1]{#1 end.}\n\\mac{end.}\n"
+
+[[case]]
+id = "generated-154"
+input = "\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n\n\\begin{verbatim}\nend. end.\n\\end{verbatim}\n\n\\begin{quote}\n\\ref{end.} \\'e\n\\end{quote}\n"
+
+[[case]]
+id = "generated-155"
+input = "\\begin{enumerate}\n\\item `end. end.' \\url{http://e.org/x} \\TeX{}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-156"
+input = "\\section{\\emph{alpha}}\n"
+
+[[case]]
+id = "generated-157"
+input = "\\begin{itemize}\n\\item \\mbox{alpha}\n\\item \\mbox{alpha}\n\\end{itemize}\n"
+
+[[case]]
+id = "generated-158"
+input = "\\begin{verbatim}\ny2 y2\n\\end{verbatim}\n\n\\textit{alpha} \\TeX{} \\footnote{end.}\n\n\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n"
+
+[[case]]
+id = "generated-159"
+input = "\\newcommand{\\mac}[1]{#1 end.}\n\\mac{end.}\n"
+
+[[case]]
+id = "generated-160"
+input = "\\begin{enumerate}\n\\item \\%\n\\end{enumerate}\n\n\\emph{end.}\n\n\\emph{end.}\n\n\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-161"
+input = "{\\bf gamma}\n\n{\\bf gamma}\n\n\\begin{enumerate}\n\\item gamma gamma \\&\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-162"
+input = "\\[gamma\\]\n\n\\newcommand{\\mac}[1]{#1 gamma}\n\\mac{gamma}\n\n\\[x\\]\n"
+
+[[case]]
+id = "generated-163"
+input = "\\begin{description}\n\\item[delta] \\includegraphics{y2.png} end. end.\n\\end{description}\n\n\\'e {\\bf delta delta}\n\n\\begin{quote}\n``x'' \\# \\(alpha^2\\)\n\\end{quote}\n"
+
+[[case]]
+id = "generated-164"
+input = "\\paragraph{\\textbf{gamma}}\n"
+
+[[case]]
+id = "generated-165"
+input = "\\begin{equation}\nend.=1\n\\end{equation}\n\n\\begin{tabular}{lc}\nbeta & beta \\\\\n\\hline\nbeta & beta\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-166"
+input = "\\begin{center}\n\\citep[p.~1]{gamma} \\LaTeX\n\\end{center}\n\n\\begin{tabular}{lc}\nbeta & beta \\\\\n\\hline\nbeta & beta\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-167"
+input = "\\subsection*{\\cite{beta}}\n\n\\begin{verbatim}\nend. end.\n\\end{verbatim}\n\n\\mbox{y2} alpha\\\\alpha\n\n\\mbox{y2} alpha\\\\alpha\n"
+
+[[case]]
+id = "generated-168"
+input = "\\newcommand{\\mac}[1]{#1 y2}\n\\mac{y2}\n\n{gamma} \\_\n\n{gamma} \\_\n"
+
+[[case]]
+id = "generated-169"
+input = "\\begin{quote}\n\\href{http://e.org/beta}{delta}\n\\end{quote}\n\n\\begin{center}\ny2%comment\ny2 \\emph{x x} \\'e\n\\end{center}\n\n\\begin{tabular}{lc}\ndelta & delta \\\\\n\\hline\ndelta & delta\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-170"
+input = "\\begin{quote}\n\\{ \\label{delta} \\mbox{x x}\n\\end{quote}\n\n\\begin{itemize}\n\\item {x} \\$\n\\item {x} \\$\n\\end{itemize}\n\n\\begin{equation}\nend.=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-171"
+input = "\\section{\\textsc{y2}}\n\n\\begin{quote}\nbeta~beta \\{\n\\end{quote}\n\n\\begin{equation}\nalpha=1\n\\end{equation}\n"
+
+[[case]]
+id = "generated-172"
+input = "\\begin{verbatim}\nalpha alpha\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-173"
+input = "\\begin{enumerate}\n\\item \\textsc{y2 y2}\n\\end{enumerate}\n"
+
+[[case]]
+id = "generated-174"
+input = "\\subsection*{{\\bf gamma}}\n\n\\begin{description}\n\\item[end.] delta\n\\end{description}\n"
+
+[[case]]
+id = "generated-175"
+input = "\\begin{equation}\nbeta=1\n\\end{equation}\n\n\\begin{quote}\n\\# beta beta \\&\n\\end{quote}\n"
+
+[[case]]
+id = "generated-176"
+input = "\\% \\(y2^2\\) \\LaTeX\n\n\\begin{verbatim}\ndelta delta\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-177"
+input = "\\begin{verbatim}\ny2 y2\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-178"
+input = "\\newcommand{\\mac}[1]{#1 end.}\n\\mac{end.}\n\n\\begin{verbatim}\ny2 y2\n\\end{verbatim}\n\n\\begin{center}\n\\textsubscript{beta}\n\\end{center}\n"
+
+[[case]]
+id = "generated-179"
+input = "\\begin{description}\n\\item[alpha] \\{ \\unknown{y2}\n\\end{description}\n"
+
+[[case]]
+id = "generated-180"
+input = "\\subsection*{\\url{http://e.org/y2}}\n\n\\begin{verbatim}\nbeta beta\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-181"
+input = "\\begin{tabular}{lc}\ndelta & delta \\\\\n\\hline\ndelta & delta\n\\end{tabular}\n\n\\begin{description}\n\\item[y2] x x $x+1$\n\\end{description}\n"
+
+[[case]]
+id = "generated-182"
+input = "\\newcommand{\\mac}[1]{#1 end.}\n\\mac{end.}\n\n\\section{{end. end.}}\n\n\\begin{tabular}{lc}\ndelta & delta \\\\\n\\hline\ndelta & delta\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-183"
+input = "\\\"o y2~y2\n"
+
+[[case]]
+id = "generated-184"
+input = "\\begin{quote}\n{\\bf x x} \\ref{x}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-185"
+input = "\\[end.\\]\n\n\\begin{itemize}\n\\item \\} \\label{beta} \\textsubscript{beta}\n\\item \\} \\label{beta} \\textsubscript{beta}\n\\end{itemize}\n\n\\begin{quote}\n\\includegraphics{gamma.png}\n\\end{quote}\n"
+
+[[case]]
+id = "generated-186"
+input = "\\paragraph{\\$}\n"
+
+[[case]]
+id = "generated-187"
+input = "$delta+1$\n"
+
+[[case]]
+id = "generated-188"
+input = "\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n\n\\begin{center}\n{\\bf gamma} \\url{http://e.org/x}\n\\end{center}\n\n\\[delta\\]\n"
+
+[[case]]
+id = "generated-189"
+input = "\\subsection*{beta~beta}\n\ndelta---delta {end.} y2\\\\y2\n\ndelta---delta {end.} y2\\\\y2\n"
+
+[[case]]
+id = "generated-190"
+input = "\\begin{description}\n\\item[end.] \\ldots \\underline{gamma gamma}\n\\end{description}\n\n\\subsection*{\\$}\n"
+
+[[case]]
+id = "generated-191"
+input = "\\paragraph{\\(y2^2\\)}\n\n\\begin{description}\n\\item[beta] \\$\n\\end{description}\n\n\\begin{verbatim}\ngamma gamma\n\\end{verbatim}\n"
+
+[[case]]
+id = "generated-192"
+input = "\\begin{description}\n\\item[y2] \\(x^2\\) \\unknown{alpha}\n\\end{description}\n\n\\newcommand{\\mac}[1]{#1 gamma}\n\\mac{gamma}\n"
+
+[[case]]
+id = "generated-193"
+input = "\\newcommand{\\mac}[1]{#1 gamma}\n\\mac{gamma}\n"
+
+[[case]]
+id = "generated-194"
+input = "\\LaTeX\n\n\\section{\\'e}\n"
+
+[[case]]
+id = "generated-195"
+input = "\\begin{center}\n\\textsuperscript{alpha}\n\\end{center}\n\n\\# alpha%comment\nalpha \\TeX{}\n\n\\# alpha%comment\nalpha \\TeX{}\n\n\\subsection*{end. -- end.}\n"
+
+[[case]]
+id = "generated-196"
+input = "\\[beta\\]\n\n\\subsection*{\\url{http://e.org/end.}}\n"
+
+[[case]]
+id = "generated-197"
+input = "\\begin{center}\nend.%comment\nend. \\texttt{y2} \\ldots\n\\end{center}\n"
+
+[[case]]
+id = "generated-198"
+input = "\\subsection*{\\cite{y2}}\n\n\\begin{quote}\n\\verb|y2 y2|\n\\end{quote}\n"
+
+[[case]]
+id = "generated-199"
+input = "$beta+1$ \\underline{delta delta}\n\n$beta+1$ \\underline{delta delta}\n\n\\begin{description}\n\\item[x] \\textsc{beta beta} x~x\n\\end{description}\n\n\\begin{tabular}{lc}\ny2 & y2 \\\\\n\\hline\ny2 & y2\n\\end{tabular}\n"
+
+[[case]]
+id = "generated-200"
+input = "\\section{\\{}\n"

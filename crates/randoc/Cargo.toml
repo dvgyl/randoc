@@ -17,6 +17,7 @@ randoc-native = { workspace = true }
 randoc-citeproc = { workspace = true }
 randoc-html-reader = { workspace = true }
 randoc-commonmark = { workspace = true }
+randoc-latex-reader = { workspace = true }
 
 [lints]
 workspace = true

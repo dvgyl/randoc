@@ -889,3 +889,43 @@ Requests of the worker to the coordinator: `abbreviations()` in
 `randoc_core::shared::default_abbreviations()` when the data folder has no
 `abbreviations` file (I-MD-08, 15 units); the alias limit error text of
 `randoc-yaml` (I-MD-53).
+
+## Workstream latex-reader (branch `ws/latex-reader`, head af83697, one squashed commit, session 4 of 2026-11-11)
+
+Merged as a small block under owner instruction 17. Content: the new crate
+`randoc-latex-reader` with the reader `latex`, unit 1: the tokenizer, macro
+definitions (`\newcommand`, `\renewcommand`, `\providecommand`, `\def`,
+`\let`, `\newenvironment`) with a depth limit and a token budget, raw TeX,
+and the most frequent constructs (text, accents, fonts, sections, lists,
+verbatim, footnotes, links, figures, tables, math, references, citations,
+title data, `\input` and `\include`). The tool `tools/latex_diff.py`, a fuzz
+target `latex_read`, 523 conformance cases in 7 files, and five rows in
+`docs/PRIOR_ART.md` (no reuse, so no ADR). It is registered in
+`crates/randoc/src/formats.rs`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head af83697 (run ended 23:15:57 UTC; worker report): baseline 19,375 units, 0 regressions, 497 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `latex-reader/`: 523 units, 497 pass, 26 fail. Differential run (`latex_diff.py diff`, 200 documents of the grammar, seed 11): 189 equal, 11 different in 4 classes. |
+| 3. Tests | `cargo test -p randoc-latex-reader` on the merged tree: 11 pass, 1 ignored (the wall-time test). `cargo test -p randoc`: 6 pass. Coverage and mutation tests: not run. |
+| 4. No panics | Depth tests, loop and budget tests and a step test for 17 repeated constructs pass. The fuzz target `latex_read` exists; the 900 seconds of fuzzing did not run. |
+| 5. Reviews | No review round. This is unit 1 of a new workstream; the review of the major block is due after unit 2. Two approvals are not necessary under instruction 17. |
+| 6. No slowdowns | Time table (debug program, 25,000 and 50,000 repetitions of 12 constructs) in the worker report. The merge changes no code of a path that existed on `main` before; it adds the reader to the format table. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. The gate script passed on the branch head (see gate 1). |
+
+Conflicts in the merge: none. The registration lines of the root
+`Cargo.toml` (member, workspace dependency, fuzz exclude),
+`crates/randoc/Cargo.toml` and `crates/randoc/src/formats.rs` merged
+without a conflict, and each line of both sides stays. Licence scan: no
+hit.
+
+Open findings: the rows I-LTXR-01 to I-LTXR-06 of `docs/ISSUES.md`.
+I-LTXR-02 has the level medium; it is recorded and it is the first item of
+unit 2. The worker reports more known differences without a row (`\today`
+in the harness, a space after `\i` in an accent, `\emph*{x}`, `\cites`,
+and an unclosed ``` `` ``` repeated beyond the depth limit gives exit 64
+where Pandoc gives text). Open checks: the 900 seconds of fuzzing,
+coverage, mutation tests, the corpus run. Requests of the worker to the
+coordinator: the text of `LogMessage::MacroAlreadyDefined` in
+`randoc-core` (I-LTXR-04); a shared module for the `Inlines` join rules
+(two copies, in `randoc-html-reader` and `randoc-latex-reader`).

@@ -21,6 +21,7 @@ const READERS: &[ReaderLookup] = &[
     randoc_citeproc::csljson::reader,
     randoc_html_reader::reader,
     randoc_commonmark::reader,
+    randoc_latex_reader::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.

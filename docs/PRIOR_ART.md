@@ -166,6 +166,17 @@ TeX math (the workstream `math`; `texmath` is not permitted):
 | TeX math to MathML in Rust | `pulldown-latex` 0.8.0, `latex2mathml` 0.2.3 (released 2020-04-27) | MIT (https://docs.rs/crate/pulldown-latex/0.8.0/source/LICENSE, https://docs.rs/crate/latex2mathml/0.2.3/source/LICENSE) | Yes | The MathML text must be equal to the oracle text, so use these as a base for the parser and check each rule with the oracle. |
 | Symbol names | `unicode-math` 0.8r, file `unicode-math-table.tex` | LPPL-1.3c or later (https://github.com/latex3/unicode-math/blob/v0.8r/LICENSE and `COPYRIGHT`) | No, by project policy | Policy: the repository holds no table made from this file under `MIT OR Apache-2.0`. A different decision needs the owner. Reasons: LPPL covers each Derived Work, which it defines as a work that is derived from the Work under applicable law. Clause 10a permits a different licence only if that licence honours clause 6. The section "Derived Works That Are Not Replacements" says that clauses 6b and 6d do not apply to a work that does not replace the Work. Whether a generated table is a Derived Work depends on the extraction, and nobody assessed that. Prefer the Temml or KaTeX tables (MIT), or Unicode data (Unicode-3.0). |
 
+LaTeX reader (the workstream `latex-reader`; checked 2026-11-11; the Pandoc
+LaTeX reader is GPL and is not permitted):
+
+| Need | Candidate and checked release | Licence (licence file) | Compatible | Note |
+| --- | --- | --- | --- | --- |
+| LaTeX tokenizer and node walker | `pylatexenc` 2.10 (Python) | MIT (https://raw.githubusercontent.com/phfaist/pylatexenc/v2.10/LICENSE.txt) | Yes | Not used. Its node tree is not the tree of the oracle, and its token rules (catcodes, comments, paragraph breaks) are simple. The reader has its own tokenizer of about 300 lines. |
+| LaTeX parse tree | `TexSoup` (Python, branch `master`) | BSD-2-Clause (https://raw.githubusercontent.com/alvinwan/TexSoup/master/LICENSE) | Yes | Not used. Same reason; no tagged release. |
+| LaTeX syntax tree in Rust | `texlab` 5.21.0, crate `syntax` | GPL-3.0 (https://raw.githubusercontent.com/latex-lsp/texlab/v5.21.0/LICENSE) | No | Not opened. |
+| TeX engine in Rust | `tectonic` 0.15.0 | MIT (https://raw.githubusercontent.com/tectonic-typesetting/tectonic/tectonic%400.15.0/LICENSE) | Yes | Not used. A full TeX engine typesets; the reader needs the token level and the rules of the oracle. |
+| TeX math | `pulldown-latex` 0.8.0 (see the table above) | MIT | Yes | Not used. The reader keeps math as TeX source, as the oracle does. |
+
 Parsers that are useful for differential tests and for study, but whose
 trees differ from the oracle: `pulldown-cmark` (MIT), `comrak`
 (BSD-2-Clause), `markdown-rs` (MIT), `html5ever` (MIT OR Apache-2.0),

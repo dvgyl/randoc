@@ -1,0 +1,363 @@
+# Sections, lists, quotations, verbatim, metadata, links, figures, tables, includes.
+from = "latex"
+to = []
+
+[[case]]
+id = "structure-001"
+input = "\\section{One}\n"
+
+[[case]]
+id = "structure-002"
+input = "\\section{One}\\label{l1}\n"
+
+[[case]]
+id = "structure-003"
+input = "\\section{One}\n\\label{l2}\n"
+
+[[case]]
+id = "structure-004"
+input = "\\section*{Star}\n"
+
+[[case]]
+id = "structure-005"
+input = "\\section[Short]{Long title}\n"
+
+[[case]]
+id = "structure-006"
+input = "\\subsection{Two}\n\\subsubsection{Three}\n\\paragraph{Four}\n\\subparagraph{Five}\n"
+
+[[case]]
+id = "structure-007"
+input = "\\chapter{C}\n\\section{S}\n"
+
+[[case]]
+id = "structure-008"
+input = "\\part{P}\n\\chapter{C}\n\\section{S}\n"
+
+[[case]]
+id = "structure-009"
+input = "\\section{Same}\n\\section{Same}\n"
+
+[[case]]
+id = "structure-010"
+input = "\\section{A \\emph{b} c}\n"
+
+[[case]]
+id = "structure-011"
+input = "\\section{Ünïcode Title}\n"
+
+[[case]]
+id = "structure-012"
+input = "\\section{123 Numbers}\n"
+
+[[case]]
+id = "structure-013"
+input = "\\section{}\n"
+
+[[case]]
+id = "structure-014"
+input = "text\n\\section{S}\nmore\n"
+
+[[case]]
+id = "structure-015"
+input = "\\section {spaced}\n"
+
+[[case]]
+id = "structure-016"
+input = "\\begin{itemize}\n\\item a\n\\item b\n\\end{itemize}\n"
+
+[[case]]
+id = "structure-017"
+input = "\\begin{itemize}\\item a\\item b\\end{itemize}\n"
+
+[[case]]
+id = "structure-018"
+input = "\\begin{itemize}\n\\item a\n\n  second para\n\\item b\n\\end{itemize}\n"
+
+[[case]]
+id = "structure-019"
+input = "\\begin{itemize}\n\\item a\n\\begin{itemize}\n\\item nested\n\\end{itemize}\n\\item b\n\\end{itemize}\n"
+
+[[case]]
+id = "structure-020"
+input = "\\begin{itemize}\n\\item[*] starred\n\\end{itemize}\n"
+
+[[case]]
+id = "structure-021"
+input = "\\begin{itemize}\n\\end{itemize}\n"
+
+[[case]]
+id = "structure-022"
+input = "\\begin{enumerate}\n\\item one\n\\item two\n\\end{enumerate}\n"
+
+[[case]]
+id = "structure-023"
+input = "\\begin{enumerate}\n\\item one\n\\begin{enumerate}\n\\item inner\n\\end{enumerate}\n\\end{enumerate}\n"
+
+[[case]]
+id = "structure-024"
+input = "\\begin{enumerate}[a)]\n\\item one\n\\end{enumerate}\n"
+
+[[case]]
+id = "structure-025"
+input = "\\begin{enumerate}[(i)]\n\\item one\n\\end{enumerate}\n"
+
+[[case]]
+id = "structure-026"
+input = "\\begin{description}\n\\item[Term] Def\n\\item[Other] More\n\\end{description}\n"
+
+[[case]]
+id = "structure-027"
+input = "\\begin{description}\n\\item[\\emph{T}] d\n\\end{description}\n"
+
+[[case]]
+id = "structure-028"
+input = "\\begin{description}\n\\item no term\n\\end{description}\n"
+
+[[case]]
+id = "structure-029"
+input = "\\begin{quote}\nq\n\\end{quote}\n"
+
+[[case]]
+id = "structure-030"
+input = "\\begin{quote}\na\n\nb\n\\end{quote}\n"
+
+[[case]]
+id = "structure-031"
+input = "\\begin{quotation}\nq\n\\end{quotation}\n"
+
+[[case]]
+id = "structure-032"
+input = "\\begin{verse}\nline\\\\\nline\n\\end{verse}\n"
+
+[[case]]
+id = "structure-033"
+input = "\\begin{center}\nc\n\\end{center}\n"
+
+[[case]]
+id = "structure-034"
+input = "\\begin{flushleft}\nf\n\\end{flushleft}\n"
+
+[[case]]
+id = "structure-035"
+input = "\\begin{flushright}\nf\n\\end{flushright}\n"
+
+[[case]]
+id = "structure-036"
+input = "\\begin{minipage}{0.5\\textwidth}\nm\n\\end{minipage}\n"
+
+[[case]]
+id = "structure-037"
+input = "\\begin{unknownenv}\nu\n\\end{unknownenv}\n"
+
+[[case]]
+id = "structure-038"
+input = "\\begin{unknownenv}[opt]{arg}\nu\n\\end{unknownenv}\n"
+
+[[case]]
+id = "structure-039"
+input = "\\begin{verbatim}\ncode\n  indented\n\\end{verbatim}\n"
+
+[[case]]
+id = "structure-040"
+input = "\\begin{verbatim}\n\\emph{x} % y\n\\end{verbatim}\n"
+
+[[case]]
+id = "structure-041"
+input = "\\begin{verbatim*}\na b\n\\end{verbatim*}\n"
+
+[[case]]
+id = "structure-042"
+input = "\\begin{verbatim}x\\end{verbatim}\n"
+
+[[case]]
+id = "structure-043"
+input = "\\begin{lstlisting}\nint x;\n\\end{lstlisting}\n"
+
+[[case]]
+id = "structure-044"
+input = "\\begin{lstlisting}[language=C]\nint x;\n\\end{lstlisting}\n"
+
+[[case]]
+id = "structure-045"
+input = "\\begin{minted}{python}\nprint(1)\n\\end{minted}\n"
+
+[[case]]
+id = "structure-046"
+input = "\\begin{comment}\nhidden\n\\end{comment}\nshown\n"
+
+[[case]]
+id = "structure-047"
+input = "\\begin{document}\nin\n\\end{document}\nafter\n"
+
+[[case]]
+id = "structure-048"
+input = "pre\n\\begin{document}\nin\n\\end{document}\n"
+
+[[case]]
+id = "structure-049"
+input = "\\title{T}\n\\begin{document}\nx\n\\end{document}\n"
+
+[[case]]
+id = "structure-050"
+input = "\\title{T}\\author{A \\and B}\\date{D}\n\\maketitle\nx\n"
+
+[[case]]
+id = "structure-051"
+input = "\\author{Only One}\n"
+
+[[case]]
+id = "structure-052"
+input = "\\date{\\today}\n"
+
+[[case]]
+id = "structure-053"
+input = "\\begin{abstract}\nAbs \\emph{x}.\n\\end{abstract}\nbody\n"
+
+[[case]]
+id = "structure-054"
+input = "\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\nx\n\\end{document}\n"
+
+[[case]]
+id = "structure-055"
+input = "\\documentclass[12pt]{report}\n\\usepackage[utf8]{inputenc}\nbody\n"
+
+[[case]]
+id = "structure-056"
+input = "a\\footnote{note} b\n"
+
+[[case]]
+id = "structure-057"
+input = "a\\footnote{one\n\ntwo} b\n"
+
+[[case]]
+id = "structure-058"
+input = "a\\footnote{\\emph{e}}\n"
+
+[[case]]
+id = "structure-059"
+input = "\\url{http://example.org/a_b}\n"
+
+[[case]]
+id = "structure-060"
+input = "\\url{http://example.org/%7E}\n"
+
+[[case]]
+id = "structure-061"
+input = "\\href{http://example.org}{the \\emph{site}}\n"
+
+[[case]]
+id = "structure-062"
+input = "\\href{mailto:a@b.c}{mail}\n"
+
+[[case]]
+id = "structure-063"
+input = "a \\label{lab} b\n"
+
+[[case]]
+id = "structure-064"
+input = "\\ref{lab} \\eqref{e} \\autoref{a} \\cref{c} \\Cref{C} \\pageref{p}\n"
+
+[[case]]
+id = "structure-065"
+input = "\\includegraphics{a.png}\n"
+
+[[case]]
+id = "structure-066"
+input = "\\includegraphics[width=3cm]{a.png}\n"
+
+[[case]]
+id = "structure-067"
+input = "\\includegraphics[width=\\textwidth]{a.png}\n"
+
+[[case]]
+id = "structure-068"
+input = "\\includegraphics[width=0.75\\linewidth,height=2in]{a.png}\n"
+
+[[case]]
+id = "structure-069"
+input = "\\includegraphics[scale=0.5]{a}\n"
+
+[[case]]
+id = "structure-070"
+input = "\\begin{figure}\n\\includegraphics{f.png}\n\\caption{Cap}\n\\end{figure}\n"
+
+[[case]]
+id = "structure-071"
+input = "\\begin{figure}[htbp]\n\\centering\n\\includegraphics{f.png}\n\\caption{Cap}\\label{fig:x}\n\\end{figure}\n"
+
+[[case]]
+id = "structure-072"
+input = "\\begin{figure}\n\\includegraphics{f.png}\n\\end{figure}\n"
+
+[[case]]
+id = "structure-073"
+input = "\\begin{figure*}\n\\includegraphics{f.png}\n\\caption[S]{Long}\n\\end{figure*}\n"
+
+[[case]]
+id = "structure-074"
+input = "\\begin{tabular}{lcr}\na & b & c\\\\\nd & e & f\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-075"
+input = "\\begin{tabular}{|l|l|}\n\\hline\na & b\\\\\n\\hline\nc & d\\\\\n\\hline\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-076"
+input = "\\begin{tabular}{ll}\n\\toprule\nH1 & H2\\\\\n\\midrule\na & b\\\\\n\\bottomrule\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-077"
+input = "\\begin{tabular}{lll}\n\\multicolumn{2}{c}{wide} & x\\\\\na & b & c\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-078"
+input = "\\begin{tabular}{p{2cm}l}\nlong & short\\\\\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-079"
+input = "\\begin{tabular}{@{}ll@{}}\na & b\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-080"
+input = "\\begin{tabular}{ll}\na & \\\\\n & b\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-081"
+input = "\\begin{tabular}{c}\n\\emph{e}\n\\end{tabular}\n"
+
+[[case]]
+id = "structure-082"
+input = "\\begin{table}\n\\centering\n\\begin{tabular}{ll}\na & b\n\\end{tabular}\n\\caption{T}\\label{tab:x}\n\\end{table}\n"
+
+[[case]]
+id = "structure-083"
+input = "\\begin{table}[h]\n\\caption{Above}\n\\begin{tabular}{l}\nx\n\\end{tabular}\n\\end{table}\n"
+
+[[case]]
+id = "structure-084"
+input = "\\input{missing}\n"
+
+[[case]]
+id = "structure-085"
+input = "\\include{missing}\n"
+
+[[case]]
+id = "structure-086"
+input = "a \\input{missing.tex} b\n"
+
+[[case]]
+id = "structure-087"
+input = "\\unknown\n"
+
+[[case]]
+id = "structure-088"
+input = "\\unknown{a}{b}\n"
+
+[[case]]
+id = "structure-089"
+input = "x \\unknown[o]{a} y\n"
+
+[[case]]
+id = "structure-090"
+input = "\\unknown*{a}\n"
