@@ -132,6 +132,31 @@ completely. Its main rules:
     each major block of a workstream, and their findings are corrected in
     the next commits.)
 
+18. The start message of the fourth session (2026-11-11, 20:34 UTC): the
+    start text of instruction 9 again with a longer list of files to read
+    (this file, `ORIGINAL_SPEC.md`, the handoff, `CONTRIBUTING.md` with the
+    section "Commit cadence", `PRIOR_ART.md`, `ADR.md`, the standing
+    orders, the decision rows of 2026-11-11 and `units.tsv`), and then:
+    "Then do the start steps of the handoff (env.sh, init.sh, the watchdog,
+    the memory limits, the free space of the drive) and continue with its
+    "Next three tasks", in order. Rules: - Work autonomously and do not ask
+    me questions. Keep everything on the external drive. - Use
+    /pstack:poteto-mode for all code. Apply the reuse rule: study and reuse
+    open source before you write new code. - Delegate: you (Fable 5.2)
+    think, decide and write briefs; Opus 5.5 agents are the workers; Sonnet
+    5.5 agents do small record tasks and single checks; GPT-6.1 Sol through
+    Codex and an Opus 5.5 agent review. - Commit to GitHub often. Merge
+    each small block into main when scripts/gate.sh passes on the merged
+    tree, the licence scan (env/bin/licence-scan) is clean and no critical
+    finding is open. Run the two reviews after each major block, not before
+    each commit. Push work that does not pass yet as a wip/NAME branch
+    after the same scan. - No co-author line and no AI attribution in any
+    commit. - The computer has 16 GB and stopped one time in the last
+    session: keep the watchdog running, keep 3 build slots, and give each
+    agent the memory rule (start each large input small)." (This message
+    confirms the way in which the coordinator applied instructions 14, 16
+    and 17. No time limit for the handoff was given.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,

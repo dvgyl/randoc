@@ -45,7 +45,7 @@ Key points:
 
 ### How to start the next session
 
-0. Read `docs/OWNER_INSTRUCTIONS.md` first (17 instructions, in the words
+0. Read `docs/OWNER_INSTRUCTIONS.md` first (18 instructions, in the words
    of the owner) and `docs/ORIGINAL_SPEC.md`, the full task text.
 1. Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command, then
    `./init.sh` in `/Volumes/Extreme Pro/Randoc/randoc`. The build folder of
