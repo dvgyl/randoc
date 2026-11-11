@@ -84,6 +84,24 @@ completely. Its main rules:
     fable limit is at 96%" (Given in the second session at about 12:20 UTC.
     It replaces instruction 10. The coordinator told each worker to commit
     its state and to stop, and wrote the handoff.)
+13. The start message of the third session (2026-11-11, 08:47 UTC): the
+    start text of instruction 9 again, and then: "Don't handoff before 9 PM
+    UTC and keep working in the same thread. Keep committing regularly to
+    github and don't use GPT 6 Astra till 3 PM UTC (you can use GPT 6.1 sol,
+    but not astra). Don't ask me for anything since I'll be AFK. All the
+    best!" (The times are 21:00 UTC and 15:00 UTC on 2026-11-11. How the
+    coordinator applies it: each Codex call names the model `gpt-6.1-sol`,
+    and no tool that can select GPT-6 Astra runs before 15:00 UTC.)
+14. "Note - Delegate aggressively. This is just my observation but there are
+    many tasks that you (Fable 5.2) do yourself which can be done by Opus
+    5.5 or even Sonnet 5.5. So use this delegation, feel free to alter it
+    if you feel like it: Fable 5.2 - Main thinking and abstraction,
+    delegation, main decisions, main architecture etc. Opus 5.5 - Main
+    worker Sonnet 5.5 - Very menial or minute tasks GPT 6.1 sol - Deep code
+    review" (Given in the third session at about 09:15 UTC. It replaces
+    instruction 11: a worker is an Opus 5.5 agent again, a Sonnet 5.5 agent
+    does small record tasks, and the coordinator on Fable 5.2 writes briefs
+    and decides.)
 
 ## 3. Writing style
 
