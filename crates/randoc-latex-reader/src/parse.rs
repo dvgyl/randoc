@@ -23,6 +23,9 @@ pub(crate) enum Stop {
     Unexpected(Text),
     /// A macro expands without an end. The text is the macro name.
     Loop(Text),
+    /// A parser loop made no progress, or the parser used its step budget.
+    /// Both are defects of the reader. The text is the message.
+    Stuck(Text),
 }
 
 type R<T> = Result<T, Stop>;
@@ -33,6 +36,11 @@ pub(crate) const MAX_EXPANSION_DEPTH: u32 = 100;
 const MAX_OPTION_TOKENS: usize = 256;
 /// The largest number of tokens that all macro expansions together can make.
 pub(crate) const MAX_EXPANDED_TOKENS: usize = 1_000_000;
+/// The step budget: the rounds of all parser loops together stay below
+/// `ROUNDS_PER_TOKEN` rounds for each token of the input and of the
+/// expansions, plus `BASE_ROUNDS`.
+pub(crate) const ROUNDS_PER_TOKEN: usize = 64;
+pub(crate) const BASE_ROUNDS: usize = 100_000;
 
 #[derive(Debug, Clone)]
 struct Macro {
@@ -73,6 +81,11 @@ enum Until {
     Cell,
 }
 
+/// The state of the guard of one parser loop: the consumed count at the
+/// start of its last round.
+#[derive(Default)]
+struct Rounds(Option<usize>);
+
 /// The state of a figure or a table environment.
 #[derive(Debug, Default)]
 struct Float {
@@ -100,8 +113,15 @@ pub(crate) struct Parser<'c> {
     pub(crate) context: &'c mut Context,
     finished: bool,
     input: Text,
-    /// The number of tokens consumed. A loop checks it for progress.
+    /// The number of tokens consumed, a measure of the work.
     bumps: usize,
+    /// The number of consumed tokens that a rule put back into the input.
+    /// `bumps - unread` grows in each round of a loop that makes progress.
+    unread: usize,
+    /// The rounds of all parser loops, for the step budget.
+    rounds: usize,
+    /// The number of tokens of the input.
+    input_tokens: usize,
     /// The flags of `\newif`, without the `if`.
     flags: HashMap<Text, bool>,
     /// For each word of the input that starts with `if`: the index of its
@@ -131,6 +151,7 @@ impl<'c> Parser<'c> {
             0
         };
         Parser {
+            input_tokens: tokens.len(),
             tokens,
             position: 0,
             pending: Vec::new(),
@@ -149,6 +170,8 @@ impl<'c> Parser<'c> {
             finished: false,
             input: input.to_owned(),
             bumps: 0,
+            unread: 0,
+            rounds: 0,
             scanned: std::cell::Cell::new(0),
             quote_kinds: Vec::new(),
             flags: HashMap::new(),
@@ -198,10 +221,56 @@ impl<'c> Parser<'c> {
         Some(tok)
     }
 
+    /// Puts consumed tokens back into the input: the first one is next.
+    fn unread(&mut self, tokens: Vec<Tok>) {
+        self.unread += tokens.len();
+        self.pending.extend(tokens.into_iter().rev());
+    }
+
+    /// The guard of each parser loop that calls other rules: call it at the
+    /// start of each round. It stops the parser when the last round of the
+    /// loop consumed no token, or when all rounds together pass the step
+    /// budget, so that no loop can run without an end.
+    fn round(&mut self, rounds: &mut Rounds) -> R<()> {
+        let consumed = self.bumps - self.unread;
+        if rounds.0 == Some(consumed) {
+            return Err(self.stuck("made no progress"));
+        }
+        rounds.0 = Some(consumed);
+        self.rounds += 1;
+        let budget = ROUNDS_PER_TOKEN * (self.input_tokens + self.expanded) + BASE_ROUNDS;
+        if self.rounds > budget {
+            return Err(self.stuck("used its step budget"));
+        }
+        Ok(())
+    }
+
+    /// Runs `count` rounds of one loop that consumes nothing.
+    #[cfg(test)]
+    pub(crate) fn rounds_of_one_loop(&mut self, count: usize) -> R<()> {
+        let mut rounds = Rounds::default();
+        (0..count).try_for_each(|_| self.round(&mut rounds))
+    }
+
+    /// Runs `count` loops of one round each.
+    #[cfg(test)]
+    pub(crate) fn loops_of_one_round(&mut self, count: usize) -> R<()> {
+        (0..count).try_for_each(|_| self.round(&mut Rounds::default()))
+    }
+
+    fn stuck(&self, what: &str) -> Stop {
+        let SourcePos { line, column, .. } = self.position_of_next();
+        Stop::Stuck(format!(
+            "the latex reader {what} at line {line}, column {column}"
+        ))
+    }
+
     /// Expands macros until the next token is not a macro.
     fn expand(&mut self) -> R<()> {
         let macros = self.extensions.contains(Extension::LatexMacros);
+        let mut rounds = Rounds::default();
         loop {
+            self.round(&mut rounds)?;
             let Some(Tok {
                 kind: Kind::Word(name),
                 depth,
@@ -460,7 +529,7 @@ impl<'c> Parser<'c> {
         }
         self.bump();
         self.skip_word_spaces();
-        self.pending.extend(chosen.into_iter().rev());
+        self.unread(chosen);
         Ok(true)
     }
 
@@ -809,7 +878,9 @@ impl<'c> Parser<'c> {
 
     fn blocks(&mut self, end: End) -> R<Vec<Block>> {
         let mut blocks = Vec::new();
+        let mut rounds = Rounds::default();
         while let Some(kind) = self.peek_kind()? {
+            self.round(&mut rounds)?;
             match kind {
                 Kind::Par | Kind::Space | Kind::Newline | Kind::Comment => {
                     self.bump();
@@ -927,7 +998,7 @@ impl<'c> Parser<'c> {
                     blocks.push(Block::RawBlock(Format::new("latex"), raw));
                     return Ok(true);
                 }
-                self.pending.extend(consumed.into_iter().rev());
+                self.unread(consumed);
                 Ok(false)
             }
             _ => Ok(false),
@@ -1173,7 +1244,9 @@ impl<'c> Parser<'c> {
         let mut terms = Vec::new();
         let mut lead = Vec::new();
         let mut valid = true;
+        let mut rounds = Rounds::default();
         loop {
+            self.round(&mut rounds)?;
             self.skip_blank();
             let Some(kind) = self.peek_kind()? else {
                 break;
@@ -1300,7 +1373,9 @@ impl<'c> Parser<'c> {
         let aligns = column_alignments(&spec);
         let mut rows = Vec::new();
         let mut head_rows = None;
+        let mut rows_rounds = Rounds::default();
         loop {
+            self.round(&mut rows_rounds)?;
             if self.skip_rules()? && !rows.is_empty() && head_rows.is_none() {
                 head_rows = Some(rows.len());
             }
@@ -1309,7 +1384,9 @@ impl<'c> Parser<'c> {
             }
             let before = self.bumps;
             let mut cells = Vec::new();
+            let mut cell_rounds = Rounds::default();
             loop {
+                self.round(&mut cell_rounds)?;
                 cells.push(self.cell()?);
                 match self.peek_raw().map(|tok| &tok.kind) {
                     Some(Kind::Tab) => {
@@ -1363,7 +1440,9 @@ impl<'c> Parser<'c> {
     /// rule was there.
     fn skip_rules(&mut self) -> R<bool> {
         let mut rule = false;
+        let mut rounds = Rounds::default();
         loop {
+            self.round(&mut rounds)?;
             self.skip_blank();
             let Some(Kind::Word(word)) = self.peek_kind()? else {
                 return Ok(rule);
@@ -1411,7 +1490,9 @@ impl<'c> Parser<'c> {
 
     fn inlines(&mut self, until: Until) -> R<Inlines> {
         let mut out = Inlines::default();
+        let mut rounds = Rounds::default();
         while let Some(kind) = self.peek_kind()? {
+            self.round(&mut rounds)?;
             match (until, &kind) {
                 (Until::Close | Until::Quote(_) | Until::Bracket | Until::Cell, Kind::Close) => {
                     break;
@@ -1596,7 +1677,9 @@ impl<'c> Parser<'c> {
     /// The source text up to a closing token, which it consumes.
     fn math_until(&mut self, closes: impl Fn(&Kind) -> bool) -> R<Text> {
         let mut text = Text::new();
+        let mut rounds = Rounds::default();
         loop {
+            self.round(&mut rounds)?;
             self.expand()?;
             let Some(tok) = self.bump() else {
                 break;
@@ -1727,7 +1810,9 @@ impl<'c> Parser<'c> {
     /// The preamble after `\documentclass`: definitions and metadata count,
     /// other content does not.
     fn preamble(&mut self) -> R<()> {
+        let mut rounds = Rounds::default();
         loop {
+            self.round(&mut rounds)?;
             let Some(kind) = self.peek_kind()? else {
                 return Ok(());
             };
@@ -2069,7 +2154,9 @@ impl<'c> Parser<'c> {
         self.start_record();
         self.skip_word_spaces();
         self.star();
+        let mut rounds = Rounds::default();
         loop {
+            self.round(&mut rounds)?;
             match self.peek_raw().map(|tok| &tok.kind) {
                 Some(Kind::Other('[')) => {
                     self.bracket_tokens();
@@ -2193,7 +2280,9 @@ impl<'c> Parser<'c> {
             _ => (None, None),
         };
         let mut citations: Vec<Citation> = Vec::new();
+        let mut rounds = Rounds::default();
         while self.key_group_ahead() {
+            self.round(&mut rounds)?;
             self.skip_spaces();
             let options = self.bracket_inlines()?;
             self.skip_spaces();
@@ -2735,55 +2824,60 @@ fn is_tabular(name: &str) -> bool {
     matches!(name, "tabular" | "tabular*" | "tabularx" | "longtable")
 }
 
+/// The math environments. Pandoc reads them as inline math.
+pub(crate) const INLINE_ENVIRONMENTS: &[&str] = &[
+    "math",
+    "displaymath",
+    "equation",
+    "equation*",
+    "align",
+    "align*",
+    "gather",
+    "gather*",
+    "multline",
+    "multline*",
+    "eqnarray",
+    "eqnarray*",
+    "flalign",
+    "flalign*",
+    "alignat",
+    "alignat*",
+];
+
+/// The block environments that the reader knows. With `raw_tex`, each
+/// other environment is raw TeX.
+pub(crate) const BLOCK_ENVIRONMENTS: &[&str] = &[
+    "document",
+    "abstract",
+    "itemize",
+    "enumerate",
+    "description",
+    "quote",
+    "quotation",
+    "verse",
+    "center",
+    "minipage",
+    "verbatim",
+    "Verbatim",
+    "lstlisting",
+    "minted",
+    "comment",
+    "figure",
+    "figure*",
+    "table",
+    "table*",
+    "tabular",
+    "tabular*",
+    "tabularx",
+    "longtable",
+];
+
 fn is_inline_environment(name: &str) -> bool {
-    matches!(
-        name,
-        "math"
-            | "displaymath"
-            | "equation"
-            | "equation*"
-            | "align"
-            | "align*"
-            | "gather"
-            | "gather*"
-            | "multline"
-            | "multline*"
-            | "eqnarray"
-            | "eqnarray*"
-            | "flalign"
-            | "flalign*"
-            | "alignat"
-            | "alignat*"
-    )
+    INLINE_ENVIRONMENTS.contains(&name)
 }
 
 fn is_known_environment(name: &str) -> bool {
-    matches!(
-        name,
-        "document"
-            | "abstract"
-            | "itemize"
-            | "enumerate"
-            | "description"
-            | "quote"
-            | "quotation"
-            | "verse"
-            | "center"
-            | "minipage"
-            | "verbatim"
-            | "Verbatim"
-            | "lstlisting"
-            | "minted"
-            | "comment"
-            | "figure"
-            | "figure*"
-            | "table"
-            | "table*"
-            | "tabular"
-            | "tabular*"
-            | "tabularx"
-            | "longtable"
-    ) || is_inline_environment(name)
+    BLOCK_ENVIRONMENTS.contains(&name) || is_inline_environment(name)
 }
 
 /// A command that the reader does not know. With `raw_tex`, it is raw TeX.

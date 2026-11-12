@@ -8,6 +8,8 @@
 
 mod inlines;
 mod parse;
+#[cfg(test)]
+mod stress;
 mod tokens;
 
 use std::sync::Arc;
@@ -29,6 +31,7 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
         Stop::TooDeep => Error::Parse(Text::from("the document is nested too deeply")),
         Stop::Loop(name) => Error::MacroLoop(name),
         Stop::Unexpected(message) => Error::Parse(message),
+        Stop::Stuck(message) => Error::ShouldNeverHappen(message),
     })?;
     Ok(Pandoc {
         meta: std::mem::take(&mut parser.meta),

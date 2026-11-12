@@ -1337,3 +1337,40 @@ Open findings: I-MD-56 (high, Codex R3-03: superlinear time on many HTML
 elements on one line), I-MD-57 (high: the other 15 high and 7 medium
 findings of round 3), I-MD-54 and I-MD-55 (low). Open checks: fuzzing,
 coverage, the mutation sample.
+
+## Workstream latex-reader (commit 9dea9a8 of the branch `ws/latex-reader`, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: one shared
+guard for each parser loop of the LaTeX reader (`Parser::round`). Each
+loop that calls other rules stops with an error when a round consumes no
+token, and all rounds together have a step budget of 64 rounds for each
+input or expansion token plus 100,000. Rules that put consumed tokens
+back count them. New module `src/stress.rs` with the stress test of 109
+opening forms without a closer, with 23 stray closers and at the end of
+the input, in 6 containers. This closes the class of the critical row
+I-LTXR-13 for each loop of the reader. The worker continues on the same
+branch, so this commit (not the branch head) is merged.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 9dea9a8 (worker statement in the launch message; the top section of the worker report is for 176adbb). The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Stress test `stress::each_unclosed_or_stray_form_ends_without_the_loop_guard`: 31,392 inputs in each of 2 extension sets end; with the row loop of before 176adbb it reports 963 inputs. |
+| 3. Tests | `cargo test -p randoc-latex-reader` on the merged tree: 14 pass, 0 fail, 1 ignored. New tests `stress::each_unclosed_or_stray_form_ends_without_the_loop_guard`, `stress::the_guard_stops_a_round_without_progress_and_at_the_budget`. Coverage and the mutation tests: not run. |
+| 4. No panics | The fuzz run of 900 s: not run (unit 3 does it). |
+| 5. Reviews | No review round for this workstream yet; due after unit 3. |
+| 6. No slowdowns | CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: `crates/randoc-latex-reader/src/parse.rs` (the
+new fields of the guard; the version of the commit is taken, because the
+crate on `main` is equal to 176adbb, an ancestor of 9dea9a8) and
+`docs/ISSUES.md` (`resolve-tables`; the row I-LTXR-13 takes the text of
+the commit; `resolve-tables` put back the row I-CM-17, which `main`
+removed when it closed the row, so the row is removed again). Licence
+scan: 7 hits in `crates/randoc-core/src/logging.rs`, in the `lang`
+warning texts that are on `main` already (message texts of the
+reference).
+
+Open findings: I-LTXR-07 (medium), I-LTXR-08 (medium), I-LTXR-09 (low),
+I-LTXR-10 (low), I-LTXR-11 (high). Open checks: the fuzz run of 900 s,
+coverage, the mutation tests.
