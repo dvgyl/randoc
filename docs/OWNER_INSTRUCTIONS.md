@@ -166,6 +166,43 @@ completely. Its main rules:
     licence scan; then the coordinator measured `main` and wrote the
     handoff.)
 
+20. The start message of the fifth session (2026-11-12, 05:20 UTC): the
+    start text of instruction 9 again with the list of files to read (this
+    file with "each instruction that I gave, 1 to 19", the task text, the
+    handoff, `CONTRIBUTING.md`, `PRIOR_ART.md`, `ADR.md`, the standing
+    orders, the decision rows from 2026-11-11T20:34, `units.tsv`, and the
+    briefs `s4-common.md` and `merge-s4.md`), and then: "First check: in the
+    main checkout, `git status --short` must show nothing, and `git
+    rev-parse main` must be equal to `git rev-parse origin/main` after `git
+    fetch origin`. If the local main is ahead, a merge batch of the last
+    session did not end: run `env/bin/merge-ws check`, and push only when it
+    passes. Then do the start steps of the handoff (env.sh, init.sh, the
+    watchdog, the memory limits, the free space of the drive) and continue
+    with its "Next three tasks", in order. Rules: - Work autonomously and do
+    not ask me questions. Keep everything on the external drive. - Use
+    /pstack:poteto-mode for all code. Apply the reuse rule: study and reuse
+    open source before you write new code. - Delegate: you (Fable 5.2)
+    think, decide and write briefs; Opus 5.5 agents are the workers; Sonnet
+    5.5 agents do small record tasks, single checks and measurements;
+    GPT-6.1 Sol through Codex and an Opus 5.5 agent review. - Commit to
+    GitHub often. Merge each small block into main when scripts/gate.sh
+    passes on the merged tree, the licence scan (env/bin/licence-scan) is
+    clean and no critical finding is open. Batch several blocks into one
+    merge check. Run the two reviews after each major block, not before each
+    commit. Push work that does not pass yet as a wip/NAME branch after the
+    same scan. - No co-author line and no AI attribution in any commit. Tell
+    this to each agent that commits. - Licence: no text of Pandoc in the
+    repository (source, tests, manual, data files, generated scripts), also
+    not in stored test results. Decision D6 in PROGRESS.md waits for me. -
+    The computer has 16 GB: keep the watchdog running, keep 3 build slots,
+    use at most 5 code workers at the same time, and give each agent the
+    memory rule (start each large input small; run each fuzz artifact and
+    each stress input through env/bin/limit-run)." (New in this message: the
+    first check; the batch rule for merge checks; the limit of 5 code
+    workers; stored test results in the licence rule; the `limit-run` rule;
+    measurements as a task of a Sonnet agent. No time limit for the handoff
+    was given.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,
