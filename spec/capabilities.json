@@ -352,8 +352,8 @@
     "native_divs": {
       "status": "passing",
       "units": {
-        "passing": 309,
-        "total": 309
+        "passing": 367,
+        "total": 367
       }
     },
     "native_numbering": {
@@ -400,8 +400,8 @@
     "raw_html": {
       "status": "partial",
       "units": {
-        "passing": 456,
-        "total": 457
+        "passing": 596,
+        "total": 597
       }
     },
     "raw_markdown": {
@@ -445,8 +445,8 @@
     "smart": {
       "status": "passing",
       "units": {
-        "passing": 1721,
-        "total": 1721
+        "passing": 1950,
+        "total": 1950
       }
     },
     "smart_quotes": {
@@ -668,8 +668,8 @@
     },
     "html": {
       "read": {
-        "passing": 7289,
-        "total": 7293
+        "passing": 8115,
+        "total": 8119
       },
       "status": "partial"
     },
@@ -1887,8 +1887,8 @@
       "passing": 3
     },
     "units": {
-      "passing": 20243,
-      "total": 21390
+      "passing": 21069,
+      "total": 22216
     }
   }
 }
