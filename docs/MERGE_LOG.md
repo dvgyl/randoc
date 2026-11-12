@@ -1276,3 +1276,30 @@ rules); 28 option units fail (I-MDW-05 `--ascii`, I-MDW-06 a reference
 form; `-s` is not connected for these writers); `plain` passes 1163 of
 1174 units; the other open rows I-MDW-01, -02, -04, -07, -08, -09, -12,
 -13. Open checks: fuzzing, coverage, mutation tests.
+
+## Session 4 of 2026-11-12, batch of three items
+
+Items and commits, in the merge order: `latex-reader` 176adbb (97d69d8),
+`commonmark-reader` cc9b6f3 (6e8fcd9), `markdown-writer` 0d455dc
+(c0a90c0). No item was left out and no item was undone. No conflict.
+
+`merge-ws check` on the final tree (c0a90c0) passed on its first run
+(02:27 to 03:01 UTC): `record` 0 new units, 0 oracle errors;
+`verify-oracle` 42480 units, 0 stored results are not current;
+`scripts/gate.sh` passed (format, lints, documentation, tests, harness).
+After the check, `conformance/cases/cli/info.toml` has no completion case
+and `conformance/cases/templates/defaults.toml` has no `fodt-` case.
+
+- Harness before the batch: baseline 21069 units (`spec/baseline.json`).
+- Harness after the batch: 42882 units, 40768 pass, 1712 fail, 0 no
+  result, 0 not recorded, 402 skipped; baseline 21069 units, 0
+  regressions, 19699 new passes. `spec/baseline.json` now has 40768 units.
+- Capability summary: `{"extensions": {"failing": 1, "not_started": 11,
+  "partial": 23, "passing": 55}, "input_formats": {"not_started": 39,
+  "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 25,
+  "passing": 83}, "output_formats": {"failing": 1, "not_started": 61,
+  "partial": 9, "passing": 6}, "units": {"passing": 40768, "total":
+  42480}}`. The output formats `markdown`, `gfm`, `commonmark`,
+  `commonmark_x`, `plain` and `markdown_strict` are partial;
+  `markdown_github`, `markdown_mmd` and `markdown_phpextra` pass; `markua`
+  fails (0 of 1 unit).
