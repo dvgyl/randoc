@@ -81,8 +81,19 @@ fn read_steps(text: &str) -> u64 {
 
 /// Returns the work count of one read with the depth limit `limit`.
 fn read_steps_limited(text: &str, limit: usize) -> u64 {
+    read_steps_in("markdown", text, limit)
+}
+
+/// Returns the work count of one read of `format` with the depth limit `limit`.
+fn read_steps_in(format: &str, text: &str, limit: usize) -> u64 {
     let mut options = ReaderOptions::default();
-    options.extensions = default_extensions("markdown");
+    let mut parts = format.split('+');
+    options.extensions = default_extensions(parts.next().unwrap_or("markdown"));
+    for name in parts {
+        if let Some(extension) = randoc_core::Extension::from_name(name) {
+            options.extensions.enable(extension);
+        }
+    }
     let mut context = Context::pure();
     context.limits.max_nesting_depth = limit;
     crate::STEPS.with(|s| s.set(0));
@@ -159,8 +170,70 @@ fn compare(small_text: &str, large_text: &str) -> Option<String> {
     (large > small.saturating_mul(6)).then(|| format!("{small} steps then {large} steps"))
 }
 
+/// The inputs of review round 3 that grew faster than linear: a name, the
+/// format, and the input for a number of repetitions.
+type Round3Form = (&'static str, &'static str, fn(usize) -> String);
+
+const ROUND_3_FORMS: &[Round3Form] = &[
+    ("bare URI parentheses", "markdown+autolink_bare_uris", |n| {
+        format!("https://x/{}", ")".repeat(n))
+    }),
+    (
+        "unclosed backslash math",
+        "markdown+tex_math_single_backslash",
+        |n| format!("p {}x", "\\(".repeat(n)),
+    ),
+    ("simple table columns", "markdown", |n| {
+        format!(
+            "{}\n{}\n{}\n\n",
+            "a ".repeat(n),
+            "- ".repeat(n),
+            "b ".repeat(n)
+        )
+    }),
+    ("environment end names", "markdown", |n| {
+        format!("p \\begin{{x}}{}}}", "\\end{".repeat(n))
+    }),
+    ("TeX command arguments without closers", "markdown", |n| {
+        format!("p {}}}", "\\end{".repeat(n))
+    }),
+    ("reference groups without closers", "markdown", |n| {
+        format!("[x]: u {}\n\n[x]\n", "(x ".repeat(n))
+    }),
+    (
+        "reference attribute groups without closers",
+        "markdown",
+        |n| format!("[x]: u {}\n\n[x]\n", "{x ".repeat(n)),
+    ),
+    ("comments on one line", "markdown", |n| "<!--x-->".repeat(n)),
+    ("processing instructions on one line", "markdown", |n| {
+        "<?x>".repeat(n)
+    }),
+    ("closing tags on one line", "markdown", |n| "</p>".repeat(n)),
+    ("unclosed comments in html divs", "markdown", |n| {
+        "<div>\n<!--\n".repeat(n)
+    }),
+    ("comments before text on many lines", "markdown", |n| {
+        "<!--x-->x\n\n".repeat(n)
+    }),
+    ("fenced divs in metadata", "markdown", |n| {
+        format!(
+            "---\nkey: \"{}x\\n{}\"\n---\n",
+            "::: d\\n".repeat(n),
+            ":::\\n".repeat(n)
+        )
+    }),
+];
+
 fn check_all() -> Vec<String> {
     let mut slow = Vec::new();
+    for (name, format, make) in ROUND_3_FORMS {
+        let small = read_steps_in(format, &make(250), 16384);
+        let large = read_steps_in(format, &make(1000), 16384);
+        if large > small.saturating_mul(6) {
+            slow.push(format!("{name}: {small} steps then {large} steps"));
+        }
+    }
     for (name, pattern) in PATTERNS {
         let small = format!("{}x\n", pattern.repeat(1000));
         let large = format!("{}x\n", pattern.repeat(4000));

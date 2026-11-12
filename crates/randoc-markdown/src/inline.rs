@@ -15,6 +15,12 @@ use crate::block::{Parser, escape_uri, html_attr, html_tag_len, normalize_key};
 /// The format of a marker inline that the parser removes after merging.
 const NOTHING: &str = "\u{0}nothing";
 
+/// Comes before an escaped period in a `Str`, so that the word before it
+/// is no abbreviation: Pandoc joins only a word that holds its period.
+/// The end of the read removes it. A noncharacter, so that input text
+/// holds it only by a rare mistake.
+pub(crate) const ESCAPED_PERIOD: char = '\u{fdd0}';
+
 /// What ends a sequence of inlines.
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Stop {
@@ -187,6 +193,8 @@ struct Tables {
     env_ends: Option<HashMap<Text, Vec<usize>>>,
     /// For each `(`, the index of its `)`, or `u32::MAX`.
     parens: Option<Vec<u32>>,
+    /// For each `{`, the index of its `}`, or `u32::MAX`.
+    braces: Option<Vec<u32>>,
     /// For each `<span>` tag, the start of its closing tag.
     spans: Option<HashMap<usize, usize>>,
 }
@@ -959,6 +967,10 @@ impl Inl<'_> {
                 self.i += 2;
                 vec![Inline::Str("\u{a0}".into())]
             }
+            Some('.') if self.ext(Extension::Smart) => {
+                self.i += 2;
+                vec![Inline::Str(format!("{ESCAPED_PERIOD}."))]
+            }
             Some(c) if self.escapable(c) => {
                 self.i += 2;
                 vec![Inline::Str(c.to_string())]
@@ -998,29 +1010,10 @@ impl Inl<'_> {
         }
         loop {
             match self.s.get(k) {
-                Some('{') => {
-                    let mut depth = 0usize;
-                    let mut j = k;
-                    let mut ok = false;
-                    while let Some(&c) = self.s.get(j) {
-                        if c == '{' {
-                            depth += 1;
-                        } else if c == '}' {
-                            depth -= 1;
-                            if depth == 0 {
-                                ok = true;
-                                break;
-                            }
-                        } else if c == '\\' {
-                            j += 1;
-                        }
-                        j += 1;
-                    }
-                    if !ok {
-                        break;
-                    }
-                    k = j + 1;
-                }
+                Some('{') => match self.brace_close(k) {
+                    Some(j) => k = j + 1,
+                    None => break,
+                },
                 Some('[') if self.s.get(k + 1) != Some(&']') => {
                     let mut j = k;
                     while self.s.get(j).is_some_and(|c| *c != ']' && *c != '\n') {
@@ -1050,10 +1043,9 @@ impl Inl<'_> {
         };
         let closer: Text = format!("{}{close}", "\\".repeat(slashes));
         let start = self.i + slashes + 1;
-        let rest = self.text(start, self.s.len());
-        let pos = rest.find(&closer)?;
-        let body = rest.get(..pos)?.to_string();
-        self.i = start + body.chars().count() + closer.chars().count();
+        let pos = self.find_pattern(&closer, start)?;
+        let body = self.text(start, pos);
+        self.i = pos + closer.chars().count();
         Some(vec![Inline::Math(
             kind,
             body.trim_matches(SPACE).to_string(),
@@ -1405,7 +1397,12 @@ impl Inl<'_> {
             while let Some(pos) = self.find_pattern("\\end{", k) {
                 let name_start = pos + 5;
                 let close = self.find(Find::Char('}'), name_start);
-                if let Some(close) = close {
+                // A name that holds the next `\end{` names no environment,
+                // so names do not overlap.
+                let next = self.find_pattern("\\end{", name_start);
+                if let Some(close) = close
+                    && next.is_none_or(|next| next > close)
+                {
                     ends.entry(self.text(name_start, close))
                         .or_default()
                         .push(pos);
@@ -1427,16 +1424,33 @@ impl Inl<'_> {
         self.inside(close)
     }
 
+    /// Returns the `}` that matches the `{` at `open`; a backslash escapes
+    /// the next character.
+    fn brace_close(&mut self, open: usize) -> Option<usize> {
+        if self.ix.tables.borrow().braces.is_none() {
+            let braces = self.widened(|inl| inl.pair_matches('{', '}'));
+            self.ix.tables.borrow_mut().braces = Some(braces);
+        }
+        let close = *self.ix.tables.borrow().braces.as_ref()?.get(open)?;
+        self.inside(close)
+    }
+
     fn paren_matches(&mut self) -> Vec<u32> {
+        self.pair_matches('(', ')')
+    }
+
+    /// Matches each `open` with its `close` in one pass with a stack.
+    fn pair_matches(&mut self, open: char, close: char) -> Vec<u32> {
         {
             let mut matches = vec![u32::MAX; self.s.len()];
             let mut stack: Vec<usize> = Vec::new();
             let mut k = 0;
             while let Some(&c) = self.s.get(k) {
+                crate::step(1);
                 match c {
                     '\\' => k += 1,
-                    '(' => stack.push(k),
-                    ')' => {
+                    c if c == open => stack.push(k),
+                    c if c == close => {
                         if let Some(o) = stack.pop()
                             && let Some(slot) = matches.get_mut(o)
                         {
@@ -2351,8 +2365,11 @@ impl Inl<'_> {
             .unwrap_or(rest.len());
         let url_part = rest.get(..end)?;
         let mut trimmed = url_part.trim_end_matches(['.', ',', ';', ':', '!', '?', '"', '\'']);
-        while trimmed.ends_with(')') && trimmed.matches(')').count() > trimmed.matches('(').count()
-        {
+        // Trimming removes no `(`, so one count of each serves each step.
+        let opens = trimmed.matches('(').count();
+        let mut closes = trimmed.matches(')').count();
+        while trimmed.ends_with(')') && closes > opens {
+            closes -= 1;
             trimmed = trimmed.get(..trimmed.len() - 1).unwrap_or("");
             trimmed = trimmed.trim_end_matches(['.', ',', ';', ':', '!', '?', '"', '\'']);
         }

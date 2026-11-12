@@ -1446,3 +1446,48 @@ done. Requests of the worker to the coordinator: remove the
 `saphyr-parser` lines of `THIRD_PARTY_NOTICES.md` and `docs/PRIOR_ART.md`
 and `third_party/licences/saphyr-parser.txt`. Open checks: coverage, the
 mutation sample.
+
+## Workstream markdown-reader (branch `ws/markdown-reader-3`, head ef9dae7, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. The first commit of
+the branch (dc2b736) is on `main` as 8508188. Content: the complete
+correction of the two CRITICAL cache findings of review round 3 (Codex
+markdown-reader-R3-01 and R3-02): the HTML closer cache, the div closer
+cache and the span index keep the slice length and keep no nested answer
+after an indented line, and `cache_tests.rs` compares each cache with the
+plain scan on 24,000 generated inputs. Six time findings, each with a
+step-count form in `time_grows_about_linearly` (Codex R3-04, R3-05,
+R3-06, R3-13, R3-16, Opus R3-04); Codex R3-07 (nested-list line
+shortcut); the abbreviation rule after an escaped period (finding of the
+coordinator); a part of row I-MD-56 (the text after a comment, a
+processing instruction or a tag on its line is read in a loop). Rows:
+I-MD-56 changed, I-MD-57 (Codex R3-12) and I-MD-58 (Codex R3-18) new;
+the summary row of `main` that had the identifier I-MD-57 is now I-MD-59.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on ef9dae7 (end 04:41 UTC; worker report): baseline 20243 units, 0 regressions, 45 new passes. It also passed on bfb1790 (03:27 to 04:02 UTC). The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Cache test: 0 differences in 24,000 inputs (92 with the old key). Matrix `differ.py matrix closer`: 302 of 1,004 inputs differ on 3d61cbb, 108 on dc2b736, 0 new. Abbreviation matrix: 6 of 280 differ before, 0 after. CPU s at 1,000, before then after: `<div><!-- c --> ` 2.20 / 0.25; `<div>\n<!--\n` 0.41 / 0.18. Suite `markdown/`: 1443 units, 1406 pass, 37 fail (bfb1790). |
+| 3. Tests | `cargo test -p randoc-markdown` on the merged tree: 40 pass, 0 fail, 3 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 3 on main a0b9535: Codex REQUEST CHANGES (2 critical, 15 high, 3 medium), Opus REQUEST CHANGES (1 high, 4 medium, 8 low). Closed: both critical findings, Codex R3-04, R3-05, R3-06, R3-07, R3-13, R3-16, Opus R3-04. |
+| 6. No slowdowns | The step-count test passes; CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: `crates/randoc-markdown` (`src/block.rs`,
+`src/cache_tests.rs`, `tools/differ.py`) and
+`conformance/cases/markdown/review.toml`,
+`conformance/expected/markdown/review.json`: the version of the branch is
+taken (the newer one; these paths on `main` are equal to dc2b736).
+`docs/ISSUES.md`: the rows I-MD-56 to I-MD-58 of the branch are taken,
+and the summary row of `main` gets the identifier I-MD-59 with the list
+of what is still open. Licence scan: hits only in the HTML tag list and
+generic character tests of `src/block.rs` and `src/inline.rs`, and in
+minimal table forms of `src/tables.rs` (code fragments and format facts,
+not copied text).
+
+Open findings: I-MD-56 (high, the rest of Codex R3-03), I-MD-57 (high,
+Codex R3-12), I-MD-58 (high, Codex R3-18), I-MD-59 (high: Codex R3-08,
+R3-09, R3-10, R3-11, R3-14, R3-15, R3-20 and Opus R3-01 high; Codex
+R3-17, R3-19 and Opus R3-02, R3-03, R3-05 medium), I-MD-54 and I-MD-55
+(low). Open checks: fuzzing, coverage, the mutation tests.

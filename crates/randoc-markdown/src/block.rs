@@ -159,16 +159,26 @@ pub(crate) struct Parser {
     /// Pandoc discards truncates it.
     pub used_notes: Vec<Text>,
     end_blank: bool,
-    /// For the opening fence of a div (line number and offset), the number
-    /// of lines to its closing fence, or `None` when it has no closer.
-    div_close: HashMap<(u32, usize), Option<usize>>,
+    /// For the opening fence of a div (`Ln::src_id` and `Ln::text_start`),
+    /// the number of lines to its closing fence, or `None` when it has no
+    /// closer.
+    /// The second number is the number of lines from the opening fence to
+    /// the end of the slice that the scan read.
+    div_close: HashMap<(usize, usize), (Option<usize>, usize)>,
     /// For an HTML element (`Ln::src_id` and the position of its opening
     /// tag in that text, tag name): the line distance to its closing tag,
     /// the `Ln::src_id` of that line and the byte position of the tag in
     /// its shared text, or `None` when it has no closer.
-    html_close: HashMap<HtmlOpener, Option<HtmlCloser>>,
-    /// The texts that the keys of `html_close` name.
+    /// The second number is the number of lines from the opening tag to the
+    /// end of the slice that the scan read.
+    html_close: HashMap<HtmlOpener, (Option<HtmlCloser>, usize)>,
+    /// The texts that the keys of `html_close` and `no_raw_end` name.
     kept_sources: Vec<Rc<str>>,
+    /// For a line (`Ln::src_id`, `Ln::text_start`) and a comment (`true`) or
+    /// a processing instruction: the last line of a slice (the same names)
+    /// such that no line from this one to it ends the token.
+    no_raw_end: HashMap<(usize, usize, bool), (usize, usize)>,
+    rest: RestHandoff,
     idset: IdentifierSet,
     pub examples: HashMap<Text, i64>,
     example_count: i64,
@@ -668,6 +678,23 @@ pub(crate) fn html_tag_len(s: &str) -> Option<usize> {
 /// position of the tag in that text, and the tag name.
 type HtmlOpener = (usize, usize, Text);
 
+/// The rest of a line after an HTML element is read in a loop, not by a
+/// new level of recursion for each element of the line.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum RestHandoff {
+    Off,
+    /// `rest_as_lines` calls `block_at` for the rest of a line.
+    Armed,
+    /// That `block_at` calls `html_block` for its first line.
+    Html,
+    /// That element ends before more text of line `line` of the slice: the
+    /// last `len` bytes of its text.
+    Deferred {
+        line: usize,
+        len: usize,
+    },
+}
+
 /// The closing tag of an HTML element: the line distance from the opening
 /// tag, the `Ln::src_id` of its line, and its position in that text.
 type HtmlCloser = (usize, usize, usize);
@@ -711,7 +738,7 @@ impl<'a> CloserScan<'a> {
     /// Returns the closer of the element that opens in `lines[0]`, as the
     /// line index and the byte position in its text. `found` gets the
     /// position of each opening tag and its closer, or `None` when it has
-    /// no closer.
+    /// no closer, unless an indented line follows a nested tag.
     fn run(
         self,
         lines: &[Ln],
@@ -723,10 +750,17 @@ impl<'a> CloserScan<'a> {
         let mut comment_until: Option<usize> = None;
         let mut no_comment_end_from: Option<usize> = None;
         let mut code_may_start = false;
+        // The last line with four spaces or more. The indentation inside a
+        // container differs, so an element that opens before such a line
+        // has an answer only for this scan.
+        let mut last_indented = 0;
         for (j, line) in lines.iter().enumerate() {
             let t = line.t();
             crate::step(t.len() + 1);
             let mut i = 0;
+            if j > 0 && line.indent() >= 4 {
+                last_indented = j;
+            }
             let code_line = (code_may_start || self.first_line == Some(j))
                 && !line.is_blank()
                 && line.indent() >= 4 + self.content_indent;
@@ -797,7 +831,9 @@ impl<'a> CloserScan<'a> {
                         match self.tag_at(rest) {
                             Some(Tag::Close) => {
                                 if let Some(open) = stack.pop() {
-                                    found(open, Some((j, i)));
+                                    if open.0 == 0 || last_indented <= open.0 {
+                                        found(open, Some((j, i)));
+                                    }
                                     if stack.is_empty() {
                                         return Some((j, i));
                                     }
@@ -846,7 +882,9 @@ impl<'a> CloserScan<'a> {
             code_may_start |= bare_open;
         }
         for open in stack {
-            found(open, None);
+            if open.0 == 0 || last_indented <= open.0 {
+                found(open, None);
+            }
         }
         None
     }
@@ -913,6 +951,43 @@ fn rest_line(lines: &[Ln], at: usize, rest: &str, n: u32) -> Ln {
         .map_or_else(|| Ln::new(rest, n), |line| line.tail(rest, n))
 }
 
+/// Returns the index of the fence that closes the div whose opening fence
+/// is `lines[0]`. One pass with a stack of open fences gives `found` the
+/// closer of each opener in it, or `None` for one with no closer.
+fn div_closer_scan(lines: &[Ln], mut found: impl FnMut(usize, Option<usize>)) -> Option<usize> {
+    let mut stack: Vec<usize> = vec![0];
+    let mut in_fence: Option<(char, usize)> = None;
+    let mut j = 1;
+    while let Some(line) = lines.get(j) {
+        crate::step(1);
+        if let Some((c, n)) = in_fence {
+            let tt = line.t().trim_matches(SPACE);
+            if tt.len() - tt.trim_start_matches(c).len() >= n && tt.trim_start_matches(c).is_empty()
+            {
+                in_fence = None;
+            }
+        } else if let Some((c, n, _, _)) = fence_open(line.t()) {
+            in_fence = Some((c, n));
+        } else if let Some((_, rest)) = div_fence(line.t()) {
+            if rest.trim_end_matches(':').trim_matches(SPACE).is_empty() {
+                if let Some(open) = stack.pop() {
+                    found(open, Some(j));
+                }
+                if stack.is_empty() {
+                    return Some(j);
+                }
+            } else {
+                stack.push(j);
+            }
+        }
+        j += 1;
+    }
+    for open in stack {
+        found(open, None);
+    }
+    None
+}
+
 /// Returns the text of a line after its block quote and list markers.
 fn container_content(t: &str) -> &str {
     let mut s = t;
@@ -964,6 +1039,8 @@ impl Parser {
             div_close: HashMap::new(),
             html_close: HashMap::new(),
             kept_sources: Vec::new(),
+            no_raw_end: HashMap::new(),
+            rest: RestHandoff::Off,
             idset: IdentifierSet::new(),
             examples: HashMap::new(),
             example_count: 0,
@@ -1032,7 +1109,18 @@ impl Parser {
             let value = self.resolve_meta(value);
             meta.insert(key, value);
         }
-        Ok(Pandoc { meta, blocks })
+        let mut doc = Pandoc { meta, blocks };
+        if self.ext(Extension::Smart) {
+            let mark = format!("{}.", crate::inline::ESCAPED_PERIOD);
+            randoc_ast::walk::walk_inlines_mut(&mut doc, |x| {
+                if let Inline::Str(s) = x
+                    && s.contains(&mark)
+                {
+                    *s = s.replace(&mark, ".");
+                }
+            });
+        }
+        Ok(doc)
     }
 
     fn title_block(&mut self, lines: &[Ln]) -> usize {
@@ -1193,6 +1281,7 @@ impl Parser {
         fences: &mut FenceMemo,
         out: &mut Vec<Block>,
     ) -> Result<usize> {
+        let armed = std::mem::replace(&mut self.rest, RestHandoff::Off) == RestHandoff::Armed;
         let rest = lines.get(i..).unwrap_or(&[]);
         let Some(line) = rest.first() else {
             return Ok(1);
@@ -1210,7 +1299,14 @@ impl Parser {
         if let Some(n) = self.list(rest, true, out)? {
             return Ok(n);
         }
-        if let Some(n) = self.html_block(rest, out)? {
+        if armed {
+            self.rest = RestHandoff::Html;
+        }
+        let html = self.html_block(rest, out);
+        if self.rest == RestHandoff::Html {
+            self.rest = RestHandoff::Off;
+        }
+        if let Some(n) = html? {
             return Ok(n);
         }
         if let Some(n) = self.fenced_div(rest, out)? {
@@ -2255,7 +2351,11 @@ impl Parser {
         let Some(first) = lines.first() else {
             return Ok(None);
         };
+        // The line must hold the whole list: after the blank lines, a line
+        // with spaces or a marker can continue an item or start a sibling.
+        let next = lines.iter().skip(1).find(|l| !l.is_blank());
         if lines.get(1).is_some_and(|l| !l.is_blank())
+            || next.is_some_and(|l| l.indent() > 0 || self.marker(l.t(), None).is_some())
             || self.ext(Extension::TaskLists) && first.t().contains('[')
         {
             return Ok(None);
@@ -2587,49 +2687,36 @@ impl Parser {
     /// is `lines[0]`. One pass with a stack of open fences finds the closer of
     /// each opener in it, so a nested div does not search again.
     fn div_closer(&mut self, lines: &[Ln]) -> Option<usize> {
-        let key = |line: &Ln| (line.n != 0).then_some((line.n, line.text_start()));
         let first = lines.first()?;
-        if let Some(k) = key(first)
-            && let Some(distance) = self.div_close.get(&k)
-        {
-            return *distance;
-        }
-        let mut stack: Vec<usize> = vec![0];
-        let mut in_fence: Option<(char, usize)> = None;
-        let mut j = 1;
-        while let Some(line) = lines.get(j) {
-            crate::step(1);
-            if let Some((c, n)) = in_fence {
-                let tt = line.t().trim_matches(SPACE);
-                if tt.len() - tt.trim_start_matches(c).len() >= n
-                    && tt.trim_start_matches(c).is_empty()
-                {
-                    in_fence = None;
-                }
-            } else if let Some((c, n, _, _)) = fence_open(line.t()) {
-                in_fence = Some((c, n));
-            } else if let Some((_, rest)) = div_fence(line.t()) {
-                if rest.trim_end_matches(':').trim_matches(SPACE).is_empty() {
-                    if let Some(open) = stack.pop()
-                        && let Some(k) = lines.get(open).and_then(key)
-                    {
-                        self.div_close.insert(k, Some(j - open));
+        let key = |line: &Ln| (line.src_id(), line.text_start());
+        // An answer holds for a slice that ends at the same line or before
+        // it: a closer inside the slice, or no closer up to its end.
+        let cached = self
+            .div_close
+            .get(&key(first))
+            .and_then(|&(distance, rest)| match distance {
+                Some(d) => (d < lines.len()).then_some(Some(d)),
+                None => (lines.len() <= rest).then_some(None),
+            });
+        let found = match cached {
+            Some(distance) => distance,
+            None => {
+                let mut results = Vec::new();
+                let found = div_closer_scan(lines, |open, close| results.push((open, close)));
+                for (open, close) in results {
+                    if let Some(line) = lines.get(open) {
+                        self.kept_sources.push(Rc::clone(&line.src));
+                        let rest = lines.len() - open;
+                        self.div_close
+                            .insert(key(line), (close.map(|c| c - open), rest));
                     }
-                    if stack.is_empty() {
-                        return Some(j);
-                    }
-                } else {
-                    stack.push(j);
                 }
+                found
             }
-            j += 1;
-        }
-        for open in stack {
-            if let Some(k) = lines.get(open).and_then(key) {
-                self.div_close.insert(k, None);
-            }
-        }
-        None
+        };
+        #[cfg(test)]
+        crate::check_cache(&found, || div_closer_scan(lines, |_, _| {}));
+        found
     }
 
     /// Finds the closing tag of the element `name` that opens at the start of
@@ -2643,8 +2730,9 @@ impl Parser {
         let cached = self
             .html_close
             .get(&key(first))
-            .and_then(|found| match found {
-                None => Some(None),
+            .and_then(|(found, rest)| match found {
+                // No closer up to the end of the slice that the scan read.
+                None => (lines.len() <= *rest).then_some(None),
                 // The position is in the shared text of the closing line: a line
                 // can lose leading spaces after the pass that found its tag.
                 Some((distance, src, position)) => {
@@ -2676,7 +2764,7 @@ impl Parser {
                         opener.off.get() + open_pos,
                         name.to_string(),
                     );
-                    self.html_close.insert(k, value);
+                    self.html_close.insert(k, (value, lines.len() - open));
                 }
                 found
             }
@@ -2695,6 +2783,7 @@ impl Parser {
 
     /// Parses an HTML block at the first line, at any indentation.
     fn html_block_at(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Result<Option<usize>> {
+        let defer = std::mem::replace(&mut self.rest, RestHandoff::Off) == RestHandoff::Html;
         if !self.ext(Extension::RawHtml) && !self.ext(Extension::NativeDivs) {
             return Ok(None);
         }
@@ -2705,17 +2794,18 @@ impl Parser {
         if !s.starts_with('<') {
             return Ok(None);
         }
-        // Join the lines so that a tag can span lines. A comment and a raw
-        // element can contain blank lines, so they use all lines; a tag ends
-        // at the first blank line.
         // A comment or a processing instruction is a block only at the start
         // of the line.
-        let raw_token = first.t().starts_with('<') && starts_comment_or_pi(s);
-        let needs_all = raw_token
-            || html_tag_name(s).is_some_and(|(name, _)| {
-                matches!(name.as_str(), "pre" | "script" | "style" | "textarea")
-                    || !self.ext(Extension::MarkdownInHtmlBlocks)
-            });
+        if first.t().starts_with('<') && starts_comment_or_pi(s) {
+            return self.raw_token_block(lines, defer, out);
+        }
+        // Join the lines so that a tag can span lines. A raw element can
+        // contain blank lines, so it uses all lines; a tag ends at the first
+        // blank line.
+        let needs_all = html_tag_name(s).is_some_and(|(name, _)| {
+            matches!(name.as_str(), "pre" | "script" | "style" | "textarea")
+                || !self.ext(Extension::MarkdownInHtmlBlocks)
+        });
         let block_end = if needs_all {
             lines.len()
         } else {
@@ -2748,32 +2838,16 @@ impl Parser {
         };
         let start = joined.len() - joined.trim_start_matches(' ').len();
         let text = joined.get(start..).unwrap_or("");
-        if raw_token {
-            if !self.ext(Extension::RawHtml) {
-                return Ok(None);
+        // The length of the text after the element on its last line. Only a
+        // joined text has a line break, so one long line is not searched
+        // again for each of its elements.
+        let line_len = |after: &str| {
+            if block_end <= 1 {
+                after.len()
+            } else {
+                after.find('\n').unwrap_or(after.len())
             }
-            let Some(end) = html_comment_or_pi_len(text) else {
-                return Ok(None);
-            };
-            let raw = text.get(..end).unwrap_or("");
-            let after = text
-                .get(end..)
-                .unwrap_or("")
-                .split('\n')
-                .next()
-                .unwrap_or("");
-            let used = raw.matches('\n').count() + 1;
-            // A setext underline on the next line makes the line a heading.
-            if used == 1 && lines.get(1).is_some_and(|l| is_setext_underline(l.t())) {
-                return Ok(None);
-            }
-            out.push(Block::RawBlock(Format::new("html"), raw.to_string()));
-            if !blank(after) {
-                let after = after.to_string();
-                return Ok(Some(self.rest_as_lines(lines, used - 1, &after, out)?));
-            }
-            return Ok(Some(used));
-        }
+        };
         let Some((name, closing)) = html_tag_name(s) else {
             return Ok(None);
         };
@@ -2792,7 +2866,13 @@ impl Parser {
         }
         if closing {
             out.push(Block::RawBlock(Format::new("html"), tag.to_string()));
-            return Ok(Some(self.rest_as_lines(lines, tag_lines, after_tag, out)?));
+            return Ok(Some(self.rest_after(
+                lines,
+                tag_lines,
+                line_len(after_tag),
+                defer,
+                out,
+            )?));
         }
         let verbatim = matches!(name.as_str(), "pre" | "script" | "style" | "textarea");
         let in_markdown = self.ext(Extension::MarkdownInHtmlBlocks) || native_div;
@@ -2830,16 +2910,28 @@ impl Parser {
                     || MID_LINE_INLINE_TAGS.contains(&name.as_str()));
             let Some(end) = end.filter(|_| !inline_element) else {
                 out.push(Block::RawBlock(Format::new("html"), tag.to_string()));
-                return Ok(Some(self.rest_as_lines(lines, tag_lines, after_tag, out)?));
+                return Ok(Some(self.rest_after(
+                    lines,
+                    tag_lines,
+                    line_len(after_tag),
+                    defer,
+                    out,
+                )?));
             };
             let raw = text.get(..end).unwrap_or("");
             let used_lines = raw.matches('\n').count();
             let after = text.get(end..).unwrap_or("");
             out.push(Block::RawBlock(Format::new("html"), raw.to_string()));
-            return Ok(Some(self.rest_as_lines(lines, used_lines, after, out)?));
+            return Ok(Some(self.rest_after(
+                lines,
+                used_lines,
+                line_len(after),
+                defer,
+                out,
+            )?));
         }
         // Markdown inside the element: find the matching closing tag.
-        let first_rest = after_tag.split('\n').next().unwrap_or("");
+        let first_rest = after_tag.get(..line_len(after_tag)).unwrap_or("");
         // The line after the tag gives the indentation of the content of a
         // raw element. Each block of the content can start after that many
         // spaces, so indented content is not a code block.
@@ -3020,30 +3112,158 @@ impl Parser {
         Ok(Some(j))
     }
 
-    /// Parses the rest of a line after a raw tag as blocks and returns the number of lines used.
+    /// Reads the last `len` bytes of `lines[at]`, the text after an element,
+    /// as blocks and returns the number of lines used. With `defer`, the
+    /// loop of `rest_as_lines` that reads this element reads the text.
+    fn rest_after(
+        &mut self,
+        lines: &[Ln],
+        at: usize,
+        len: usize,
+        defer: bool,
+        out: &mut Vec<Block>,
+    ) -> Result<usize> {
+        let t = lines.get(at).map_or("", Ln::t);
+        let rest = t.get(t.len().saturating_sub(len)..).unwrap_or("");
+        if blank(rest) {
+            return Ok(at + 1);
+        }
+        let len = rest.trim_start_matches(SPACE).len();
+        if defer {
+            self.rest = RestHandoff::Deferred { line: at, len };
+            return Ok(at + 1);
+        }
+        self.rest_as_lines(lines, at, len, out)
+    }
+
+    /// Reads the last `len` bytes of `lines[at]` and the lines after it as
+    /// one block and returns the number of lines used. The line starts
+    /// there in place, so the lines are not copied. An element in that
+    /// block with more text after it on its line hands the text back to
+    /// this loop, so many elements on one line use no recursion.
     fn rest_as_lines(
         &mut self,
         lines: &[Ln],
-        tag_lines: usize,
-        after: &str,
+        mut at: usize,
+        mut len: usize,
         out: &mut Vec<Block>,
     ) -> Result<usize> {
-        let rest = after.split('\n').next().unwrap_or("");
-        if blank(rest) {
-            return Ok(tag_lines + 1);
+        loop {
+            let Some(line) = lines.get(at) else {
+                return Ok(at + 1);
+            };
+            let saved = line.skip_to(line.t().len().saturating_sub(len));
+            self.rest = RestHandoff::Armed;
+            let rest = lines.get(at..).unwrap_or(&[]);
+            let used = self.block_at(rest, 0, false, &mut FenceMemo::default(), out);
+            line.restore(saved);
+            let handoff = std::mem::replace(&mut self.rest, RestHandoff::Off);
+            let used = used?;
+            match handoff {
+                RestHandoff::Deferred {
+                    line,
+                    len: rest_len,
+                } => {
+                    at += line;
+                    len = rest_len;
+                }
+                _ => return Ok(at + used.max(1)),
+            }
         }
-        let n = lines.get(tag_lines).map_or(0, |l| l.n);
-        let mut more = vec![rest_line(
+    }
+
+    /// Reads a comment or a processing instruction at the start of
+    /// `lines[0]` as a raw block.
+    fn raw_token_block(
+        &mut self,
+        lines: &[Ln],
+        defer: bool,
+        out: &mut Vec<Block>,
+    ) -> Result<Option<usize>> {
+        let Some(first) = lines.first().filter(|_| self.ext(Extension::RawHtml)) else {
+            return Ok(None);
+        };
+        let comment = first.t().starts_with("<!--");
+        let found = match html_comment_or_pi_len(first.t()) {
+            Some(end) => Some((0, end)),
+            None => self.raw_end_below(lines, comment),
+        };
+        let Some((end_line, end)) = found else {
+            return Ok(None);
+        };
+        // A setext underline on the next line makes the line a heading.
+        if end_line == 0 && lines.get(1).is_some_and(|l| is_setext_underline(l.t())) {
+            return Ok(None);
+        }
+        let mut raw = String::new();
+        for (k, line) in lines.iter().take(end_line + 1).enumerate() {
+            if k > 0 {
+                raw.push('\n');
+            }
+            let t = line.t();
+            raw.push_str(if k == end_line {
+                t.get(..end).unwrap_or(t)
+            } else {
+                t
+            });
+        }
+        crate::step(raw.len());
+        out.push(Block::RawBlock(Format::new("html"), raw));
+        let last = lines.get(end_line).map_or(0, |l| l.t().len());
+        Ok(Some(self.rest_after(
             lines,
-            tag_lines,
-            rest.trim_start_matches(SPACE),
-            n,
-        )];
-        more.extend(lines.get(tag_lines + 1..).unwrap_or(&[]).iter().cloned());
-        let mut sub = Vec::new();
-        let used = self.block_at(&more, 0, false, &mut FenceMemo::default(), &mut sub)?;
-        out.extend(sub);
-        Ok(tag_lines + used.max(1))
+            end_line,
+            last.saturating_sub(end),
+            defer,
+            out,
+        )?))
+    }
+
+    /// Finds the end of a comment (`-->`) or a processing instruction (`>`)
+    /// that starts in `lines[0]` and does not end there: the line and the
+    /// byte position after the end. A search that finds no end marks each
+    /// line that it read, so a later token there does not search again.
+    fn raw_end_below(&mut self, lines: &[Ln], comment: bool) -> Option<(usize, usize)> {
+        let last = lines.last()?;
+        let end_key = (last.src_id(), last.text_start());
+        let key = |line: &Ln| (line.src_id(), line.text_start(), comment);
+        let token_end = |t: &str| {
+            if comment {
+                t.find("-->").map(|i| i + 3)
+            } else {
+                t.find('>').map(|i| i + 1)
+            }
+        };
+        let mut found = None;
+        for (k, line) in lines.iter().enumerate().skip(1) {
+            crate::step(1);
+            if self.no_raw_end.get(&key(line)) == Some(&end_key) {
+                break;
+            }
+            crate::step(line.t().len());
+            if let Some(end) = token_end(line.t()) {
+                found = Some((k, end));
+                break;
+            }
+        }
+        #[cfg(test)]
+        crate::check_cache(&found, || {
+            lines
+                .iter()
+                .enumerate()
+                .skip(1)
+                .find_map(|(k, line)| token_end(line.t()).map(|end| (k, end)))
+        });
+        if found.is_none() {
+            for line in lines.iter().skip(1) {
+                if self.no_raw_end.insert(key(line), end_key) == Some(end_key) {
+                    break;
+                }
+                self.kept_sources.push(Rc::clone(&line.src));
+            }
+            self.kept_sources.push(Rc::clone(&last.src));
+        }
+        found
     }
 
     fn raw_tex_block(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
@@ -3381,6 +3601,10 @@ impl Parser {
     /// start after white space in `text`, not after `end`, and more text
     /// follows them. Such a line is no reference definition.
     fn has_inner_title(&self, text: &str, end: usize) -> bool {
+        // For each closing character: the start of the last search and the
+        // closer that it found. A later search finds the same closer while
+        // it does not start past it.
+        let mut searches: HashMap<char, (usize, Option<usize>)> = HashMap::new();
         text.char_indices()
             .take_while(|(i, _)| *i <= end)
             .any(|(i, open)| {
@@ -3397,10 +3621,24 @@ impl Parser {
                 {
                     return false;
                 }
-                let Some(k) = text.get(i + 1..).and_then(|rest| rest.find(close)) else {
+                let from = i + 1;
+                let found = match searches.get(&close) {
+                    Some(&(start, found)) if from >= start && found.is_none_or(|k| k >= from) => {
+                        found
+                    }
+                    _ => {
+                        let found = text
+                            .get(from..)
+                            .and_then(|rest| rest.find(close))
+                            .map(|k| from + k);
+                        searches.insert(close, (from, found));
+                        found
+                    }
+                };
+                let Some(k) = found else {
                     return false;
                 };
-                let group_end = i + 1 + k + 1;
+                let group_end = k + 1;
                 let after = text.get(group_end..).unwrap_or("");
                 after.starts_with(char::is_whitespace)
                     && !after.trim_matches(SPACE).is_empty()

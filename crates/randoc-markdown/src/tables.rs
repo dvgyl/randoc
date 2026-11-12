@@ -272,19 +272,6 @@ fn text_width(text: &str) -> usize {
     text.chars().map(char_width).sum()
 }
 
-/// Returns the characters of `line` that start at a display column in `start..end` (no end when `end` is None).
-fn slice_columns(line: &str, start: usize, end: Option<usize>) -> String {
-    let mut column = 0;
-    let mut out = String::new();
-    for c in line.chars() {
-        if column >= start && end.is_none_or(|end| column < end) {
-            out.push(c);
-        }
-        column += char_width(c);
-    }
-    out
-}
-
 /// One column of a simple or multiline table, from its run of dashes.
 #[derive(Clone, Copy)]
 struct DashColumn {
@@ -341,13 +328,29 @@ fn column_ends(columns: &[DashColumn]) -> Vec<Option<usize>> {
     ends
 }
 
-/// Splits a line into the raw text of each column.
+/// Splits a line into the raw text of each column, in one pass over the line.
 fn split_columns(line: &str, columns: &[DashColumn]) -> Vec<String> {
-    columns
-        .iter()
-        .zip(column_ends(columns))
-        .map(|(column, end)| slice_columns(line, column.start, end))
-        .collect()
+    let ends = column_ends(columns);
+    let mut out = vec![String::new(); columns.len()];
+    let mut k = 0;
+    let mut column = 0;
+    for c in line.chars() {
+        while ends
+            .get(k)
+            .copied()
+            .flatten()
+            .is_some_and(|end| column >= end)
+        {
+            k += 1;
+        }
+        if let Some(cell) = out.get_mut(k)
+            && columns.get(k).is_some_and(|dash| column >= dash.start)
+        {
+            cell.push(c);
+        }
+        column += char_width(c);
+    }
+    out
 }
 
 /// Finds the alignment of a column from its raw text lines and its dash count.

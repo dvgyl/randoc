@@ -2,7 +2,7 @@
 """Differential runs of the Markdown reader against the oracle.
 
 Usage:
-  differ.py matrix raw|blocktag|lazy|closer OUT_DIR
+  differ.py matrix raw|blocktag|lazy|closer|abbrev OUT_DIR
   differ.py random COUNT SEED OUT_DIR [wide]
   differ.py rerun OUT_DIR
 
@@ -254,6 +254,22 @@ def closer_matrix():
                 cases.append(
                     {"id": f"adj-{a}-{b}-{sid}", "from": "markdown", "input": shape.format(a=a, b=b)}
                 )
+    return cases
+
+
+def abbrev_matrix():
+    """Words of the default abbreviation list and other words before a period."""
+    words = ["Dr", "Mr", "e.g", "Fig", "St", "Zq", "Word"]
+    forms = {
+        "period": "See {w}. Next", "escaped": "See {w}\\. Next", "two-spaces": "See {w}.  Next",
+        "line-end": "See {w}.\nNext", "emph": "See *{w}.* Next", "bracket": "See [{w}.] Next",
+        "strong": "See **{w}.** Next", "comma": "See {w}., Next",
+    }
+    cases = []
+    for w in words:
+        for fid, form in forms.items():
+            for ext in ["markdown", "markdown_strict", "markdown-smart", "markdown_phpextra"]:
+                cases.append({"id": f"ab-{w}-{fid}-{ext}", "from": ext, "input": form.format(w=w) + "\n"})
     return cases
 
 
@@ -555,6 +571,7 @@ def main():
             "blocktag": blocktag_matrix,
             "lazy": lazy_matrix,
             "closer": closer_matrix,
+            "abbrev": abbrev_matrix,
         }[sys.argv[2]]()
         run(cases, sys.argv[3])
     elif cmd == "random":

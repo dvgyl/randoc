@@ -2395,6 +2395,30 @@
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Run\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"this:\"},{\"t\":\"SoftBreak\"},{\"t\":\"Subscript\",\"c\":[]},{\"t\":\"Str\",\"c\":\"~\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"make\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"all\"},{\"t\":\"SoftBreak\"},{\"t\":\"Subscript\",\"c\":[]},{\"t\":\"Str\",\"c\":\"~\"}]}]}]}\n",
       "stderr": ""
     },
+    "s4b-abbreviation-escaped-period#read": {
+      "key": "c47a579dc9639468",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Dr.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Lee\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"e.g.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"this,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"St.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ives.\"}]}]}\n",
+      "stderr": ""
+    },
+    "s4b-abbreviation-escaped-period-in-emphasis#read": {
+      "key": "99d8f882a01ea432",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Dr.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Lee\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"Mr.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Smith\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "s4b-abbreviation-escaped-period-strict#read": {
+      "key": "fcc02b0499e59913",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Dr.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Lee\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Dr.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Who.\"}]}]}\n",
+      "stderr": ""
+    },
+    "s4b-abbreviation-period-forms#read": {
+      "key": "8c879250b2fe0945",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Dr. Lee,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Mr. Smith,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Fig.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Two,\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Dr.\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Who,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[St.]\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Ives,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Dr.,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x.\"}]}]}\n",
+      "stderr": ""
+    },
     "s4b-adjacent-div-then-p-lines#read": {
       "key": "bb46fced32baa967",
       "exit": 0,
@@ -2417,6 +2441,18 @@
       "key": "7e962084cf75145b",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<section>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"One\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</section>\"]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"<section>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Two\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</section>\"]}]}\n",
+      "stderr": ""
+    },
+    "s4b-backslash-math-unclosed-then-closed#read": {
+      "key": "d08357dbf772dc66",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\\\\( x\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "s4b-bare-uri-closing-parentheses#read": {
+      "key": "4ed1395a5b709337",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[\"uri\"],[]],[{\"t\":\"Str\",\"c\":\"https://example.org/a_(b)\"}],[\"https://example.org/a_(b)\",\"\"]]},{\"t\":\"Str\",\"c\":\"))\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[\"uri\"],[]],[{\"t\":\"Str\",\"c\":\"https://example.org/c\"}],[\"https://example.org/c\",\"\"]]},{\"t\":\"Str\",\"c\":\").\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"now\"}]}]}\n",
       "stderr": ""
     },
     "s4b-div-closer-after-open-backtick#read": {
@@ -2515,16 +2551,64 @@
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[],[]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"}]}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"after\"}]}]}\n",
       "stderr": ""
     },
+    "s4b-environment-end-names-overlap#read": {
+      "key": "ab279116847e5ee8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]},{\"t\":\"RawBlock\",\"c\":[\"tex\",\"\\\\begin{x} a \\\\end{\\\\end{x}\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "s4b-metadata-nested-divs#read": {
+      "key": "c13e3630c1397e0d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"key\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Div\",\"c\":[[\"\",[\"d\"],[]],[{\"t\":\"Div\",\"c\":[[\"\",[\"e\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]]}]]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}\n",
+      "stderr": ""
+    },
     "s4b-nested-div-closer-in-indented-code#read": {
       "key": "8cbc458c5da54aeb",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[],[]],[{\"t\":\"Div\",\"c\":[[\"\",[],[]],[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"</div>\"]}]]}]]}]}\n",
       "stderr": ""
     },
+    "s4b-nested-list-line-then-continuation#read": {
+      "key": "d0ccc361e3c28125",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]}]]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"more\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "s4b-nested-list-line-then-paragraph#read": {
+      "key": "1c7efbc6dba85129",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]}]]}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"after\"}]}]}\n",
+      "stderr": ""
+    },
+    "s4b-nested-list-line-then-sibling#read": {
+      "key": "39f799c34454ebeb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"second\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "s4b-nested-list-line-two-blanks-then-sibling#read": {
+      "key": "a3117052d72b7b16",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"second\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "s4b-ordered-nested-list-line-then-sibling#read": {
+      "key": "1353208d5deb5ada",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"second\"}]}]]]}]}\n",
+      "stderr": ""
+    },
     "s4b-p-closer-in-code-span#read": {
       "key": "bf39ccc1f6365c49",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<p>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"</p>\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</p>\"]}]}\n",
+      "stderr": ""
+    },
+    "s4b-reference-groups-without-closers#read": {
+      "key": "bef8b87a12a09eb6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"}],[\"http://u%20(a%20%7Bb%20%22c\",\"\"]]}]}]}\n",
       "stderr": ""
     },
     "s4b-section-closer-in-fence#read": {
@@ -2543,6 +2627,12 @@
       "key": "f82dca2b6b27e852",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<section>\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</section>\"]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</section>\"]}]}\n",
+      "stderr": ""
+    },
+    "s4b-simple-table-many-columns#read": {
+      "key": "5baf3902fa6c96e7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"e\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"f\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"5\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"6\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
       "stderr": ""
     },
     "s4b-span-closer-after-open-backtick#read": {

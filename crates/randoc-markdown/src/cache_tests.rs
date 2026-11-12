@@ -29,6 +29,9 @@ const PARTS: &[&str] = &[
     "<!-- </div> -->",
     "<!--",
     "-->",
+    "<!--x-->",
+    "<?p",
+    ">",
     "x",
     "y z",
     " ",
@@ -45,6 +48,8 @@ const PARTS: &[&str] = &[
     "\n:::\n",
     "<div>x</div>",
     "<p></p>",
+    "\n---\nk: |\n  ::: c\n  ::: d\n  x\n  :::\n---\n",
+    "\n::: c\n```\n:::\n```\n",
 ];
 
 /// The formats of the runs: each one reads raw HTML in a different way.
@@ -93,6 +98,6 @@ fn caches_agree_with_the_plain_scans() {
         "{} of {} inputs: {:?}",
         mismatches.len(),
         cases.len(),
-        mismatches.get(..5)
+        mismatches.iter().take(5).collect::<Vec<_>>()
     );
 }

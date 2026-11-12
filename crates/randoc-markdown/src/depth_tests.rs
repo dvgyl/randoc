@@ -21,6 +21,18 @@ fn deep_inputs(n: usize) -> Vec<(&'static str, String)> {
         ),
         ("html divs", format!("{}x\n", "<div>".repeat(n))),
         (
+            "comments on one line",
+            format!("{}x\n", "<!--x-->".repeat(n)),
+        ),
+        (
+            "processing instructions on one line",
+            format!("{}x\n", "<?x>".repeat(n)),
+        ),
+        (
+            "closing tags on one line",
+            format!("{}x\n", "</p>".repeat(n)),
+        ),
+        (
             "html div lines",
             format!("{}x\n{}", "<div>\n".repeat(n), "</div>\n".repeat(n)),
         ),

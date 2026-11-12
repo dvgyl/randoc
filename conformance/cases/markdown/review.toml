@@ -1852,3 +1852,66 @@ input = "<div>\ntext\n    </div>\nafter\n"
 [[case]]
 id = "s4b-nested-div-closer-in-indented-code"
 input = "<div>\n<div>\n    </div>\n</div>\n</div>\n"
+
+[[case]]
+id = "s4b-nested-list-line-then-sibling"
+input = "- - first\n\n- second\n"
+
+[[case]]
+id = "s4b-nested-list-line-then-continuation"
+input = "- - first\n\n  more\n"
+
+[[case]]
+id = "s4b-nested-list-line-then-paragraph"
+input = "- - first\n\nafter\n"
+
+[[case]]
+id = "s4b-ordered-nested-list-line-then-sibling"
+input = "1. - first\n\n2. second\n"
+
+[[case]]
+id = "s4b-nested-list-line-two-blanks-then-sibling"
+input = "- - first\n\n\n- second\n"
+
+[[case]]
+id = "s4b-bare-uri-closing-parentheses"
+from = "markdown+autolink_bare_uris"
+input = "See https://example.org/a_(b))) and https://example.org/c). now\n"
+
+[[case]]
+id = "s4b-simple-table-many-columns"
+input = "a b c d e f\n- - - - - -\n1 2 3 4 5 6\n\n"
+
+[[case]]
+id = "s4b-backslash-math-unclosed-then-closed"
+from = "markdown+tex_math_single_backslash"
+input = "p \\( \\( x \\) y\n"
+
+[[case]]
+id = "s4b-environment-end-names-overlap"
+input = "p \\begin{x} a \\end{\\end{x} b\n"
+
+[[case]]
+id = "s4b-metadata-nested-divs"
+input = "---\nkey: |\n  ::: d\n  ::: e\n  x\n  :::\n  :::\n---\n\nBody\n"
+
+[[case]]
+id = "s4b-reference-groups-without-closers"
+input = "[x]: http://u (a {b \"c\n\n[x]\n"
+
+[[case]]
+id = "s4b-abbreviation-escaped-period"
+input = "See Dr\\. Lee and e.g\\. this, St\\. Ives.\n"
+
+[[case]]
+id = "s4b-abbreviation-period-forms"
+input = "See Dr. Lee, Mr.  Smith, Fig.\nTwo, *Dr.* Who, [St.] Ives, Dr., x.\n"
+
+[[case]]
+id = "s4b-abbreviation-escaped-period-strict"
+from = "markdown_strict"
+input = "See Dr\\. Lee and Dr. Who.\n"
+
+[[case]]
+id = "s4b-abbreviation-escaped-period-in-emphasis"
+input = "*See Dr\\. Lee* and **Mr\\. Smith**\n"
