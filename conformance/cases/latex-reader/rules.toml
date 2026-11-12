@@ -1,0 +1,1403 @@
+# Rule matrices of `latex_diff.py matrix`. Do not edit: run the tool.
+from = "latex"
+to = []
+
+[[case]]
+id = "group-01-01"
+input = "{\\begin{quote}q\\end{quote}}\n"
+
+[[case]]
+id = "group-01-02"
+input = "a {\\begin{quote}q\\end{quote}} b\n"
+
+[[case]]
+id = "group-01-03"
+input = "a {y {\\begin{quote}q\\end{quote}} z} w\n"
+
+[[case]]
+id = "group-01-04"
+input = "{\\bf \\begin{quote}q\\end{quote}}\n"
+
+[[case]]
+id = "group-01-05"
+input = "\\begin{itemize}\\item {\\begin{quote}q\\end{quote}} x\\end{itemize}\n"
+
+[[case]]
+id = "group-01-06"
+input = "``a {\\begin{quote}q\\end{quote}} b''\n"
+
+[[case]]
+id = "group-02-01"
+input = "{\\begin{itemize}\\item i\\end{itemize}}\n"
+
+[[case]]
+id = "group-02-02"
+input = "a {\\begin{itemize}\\item i\\end{itemize}} b\n"
+
+[[case]]
+id = "group-02-03"
+input = "a {y {\\begin{itemize}\\item i\\end{itemize}} z} w\n"
+
+[[case]]
+id = "group-02-04"
+input = "{\\bf \\begin{itemize}\\item i\\end{itemize}}\n"
+
+[[case]]
+id = "group-02-05"
+input = "\\begin{itemize}\\item {\\begin{itemize}\\item i\\end{itemize}} x\\end{itemize}\n"
+
+[[case]]
+id = "group-02-06"
+input = "``a {\\begin{itemize}\\item i\\end{itemize}} b''\n"
+
+[[case]]
+id = "group-03-01"
+input = "{\\section{s}}\n"
+
+[[case]]
+id = "group-03-02"
+input = "a {\\section{s}} b\n"
+
+[[case]]
+id = "group-03-03"
+input = "a {y {\\section{s}} z} w\n"
+
+[[case]]
+id = "group-03-04"
+input = "{\\bf \\section{s}}\n"
+
+[[case]]
+id = "group-03-05"
+input = "\\begin{itemize}\\item {\\section{s}} x\\end{itemize}\n"
+
+[[case]]
+id = "group-03-06"
+input = "``a {\\section{s}} b''\n"
+
+[[case]]
+id = "group-04-01"
+input = "{p\n\np2}\n"
+
+[[case]]
+id = "group-04-02"
+input = "a {p\n\np2} b\n"
+
+[[case]]
+id = "group-04-03"
+input = "a {y {p\n\np2} z} w\n"
+
+[[case]]
+id = "group-04-04"
+input = "{\\bf p\n\np2}\n"
+
+[[case]]
+id = "group-04-05"
+input = "\\begin{itemize}\\item {p\n\np2} x\\end{itemize}\n"
+
+[[case]]
+id = "group-04-06"
+input = "``a {p\n\np2} b''\n"
+
+[[case]]
+id = "group-05-01"
+input = "{x y}\n"
+
+[[case]]
+id = "group-05-02"
+input = "a {x y} b\n"
+
+[[case]]
+id = "group-05-03"
+input = "a {y {x y} z} w\n"
+
+[[case]]
+id = "group-05-04"
+input = "{\\bf x y}\n"
+
+[[case]]
+id = "group-05-05"
+input = "\\begin{itemize}\\item {x y} x\\end{itemize}\n"
+
+[[case]]
+id = "group-05-06"
+input = "``a {x y} b''\n"
+
+[[case]]
+id = "group-06-01"
+input = "{\\begin{equation}e\\end{equation}}\n"
+
+[[case]]
+id = "group-06-02"
+input = "a {\\begin{equation}e\\end{equation}} b\n"
+
+[[case]]
+id = "group-06-03"
+input = "a {y {\\begin{equation}e\\end{equation}} z} w\n"
+
+[[case]]
+id = "group-06-04"
+input = "{\\bf \\begin{equation}e\\end{equation}}\n"
+
+[[case]]
+id = "group-06-05"
+input = "\\begin{itemize}\\item {\\begin{equation}e\\end{equation}} x\\end{itemize}\n"
+
+[[case]]
+id = "group-06-06"
+input = "``a {\\begin{equation}e\\end{equation}} b''\n"
+
+[[case]]
+id = "group-07-01"
+input = "{\\begin{verbatim}\nv\n\\end{verbatim}}\n"
+
+[[case]]
+id = "group-07-02"
+input = "a {\\begin{verbatim}\nv\n\\end{verbatim}} b\n"
+
+[[case]]
+id = "group-07-03"
+input = "a {y {\\begin{verbatim}\nv\n\\end{verbatim}} z} w\n"
+
+[[case]]
+id = "group-07-04"
+input = "{\\bf \\begin{verbatim}\nv\n\\end{verbatim}}\n"
+
+[[case]]
+id = "group-07-05"
+input = "\\begin{itemize}\\item {\\begin{verbatim}\nv\n\\end{verbatim}} x\\end{itemize}\n"
+
+[[case]]
+id = "group-07-06"
+input = "``a {\\begin{verbatim}\nv\n\\end{verbatim}} b''\n"
+
+[[case]]
+id = "whole-01-01"
+input = "\\emph{{x}}\n"
+
+[[case]]
+id = "whole-01-02"
+input = "\\textbf{{x}}\n"
+
+[[case]]
+id = "whole-01-03"
+input = "\\section{{x}}\n"
+
+[[case]]
+id = "whole-01-04"
+input = "\\subsection*{{x}}\n"
+
+[[case]]
+id = "whole-01-05"
+input = "\\footnote{{x}}\n"
+
+[[case]]
+id = "whole-01-06"
+input = "\\href{u}{{x}}\n"
+
+[[case]]
+id = "whole-01-07"
+input = "\\textsc{{x}}\n"
+
+[[case]]
+id = "whole-01-08"
+input = "\\texttt{{x}}\n"
+
+[[case]]
+id = "whole-02-01"
+input = "\\emph{ {x}}\n"
+
+[[case]]
+id = "whole-02-02"
+input = "\\textbf{ {x}}\n"
+
+[[case]]
+id = "whole-02-03"
+input = "\\section{ {x}}\n"
+
+[[case]]
+id = "whole-02-04"
+input = "\\subsection*{ {x}}\n"
+
+[[case]]
+id = "whole-02-05"
+input = "\\footnote{ {x}}\n"
+
+[[case]]
+id = "whole-02-06"
+input = "\\href{u}{ {x}}\n"
+
+[[case]]
+id = "whole-02-07"
+input = "\\textsc{ {x}}\n"
+
+[[case]]
+id = "whole-02-08"
+input = "\\texttt{ {x}}\n"
+
+[[case]]
+id = "whole-03-01"
+input = "\\emph{{x} }\n"
+
+[[case]]
+id = "whole-03-02"
+input = "\\textbf{{x} }\n"
+
+[[case]]
+id = "whole-03-03"
+input = "\\section{{x} }\n"
+
+[[case]]
+id = "whole-03-04"
+input = "\\subsection*{{x} }\n"
+
+[[case]]
+id = "whole-03-05"
+input = "\\footnote{{x} }\n"
+
+[[case]]
+id = "whole-03-06"
+input = "\\href{u}{{x} }\n"
+
+[[case]]
+id = "whole-03-07"
+input = "\\textsc{{x} }\n"
+
+[[case]]
+id = "whole-03-08"
+input = "\\texttt{{x} }\n"
+
+[[case]]
+id = "whole-04-01"
+input = "\\emph{{{x}}}\n"
+
+[[case]]
+id = "whole-04-02"
+input = "\\textbf{{{x}}}\n"
+
+[[case]]
+id = "whole-04-03"
+input = "\\section{{{x}}}\n"
+
+[[case]]
+id = "whole-04-04"
+input = "\\subsection*{{{x}}}\n"
+
+[[case]]
+id = "whole-04-05"
+input = "\\footnote{{{x}}}\n"
+
+[[case]]
+id = "whole-04-06"
+input = "\\href{u}{{{x}}}\n"
+
+[[case]]
+id = "whole-04-07"
+input = "\\textsc{{{x}}}\n"
+
+[[case]]
+id = "whole-04-08"
+input = "\\texttt{{{x}}}\n"
+
+[[case]]
+id = "whole-05-01"
+input = "\\emph{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-02"
+input = "\\textbf{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-03"
+input = "\\section{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-04"
+input = "\\subsection*{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-05"
+input = "\\footnote{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-06"
+input = "\\href{u}{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-07"
+input = "\\textsc{{x}{y}}\n"
+
+[[case]]
+id = "whole-05-08"
+input = "\\texttt{{x}{y}}\n"
+
+[[case]]
+id = "whole-06-01"
+input = "\\emph{ x }\n"
+
+[[case]]
+id = "whole-06-02"
+input = "\\textbf{ x }\n"
+
+[[case]]
+id = "whole-06-03"
+input = "\\section{ x }\n"
+
+[[case]]
+id = "whole-06-04"
+input = "\\subsection*{ x }\n"
+
+[[case]]
+id = "whole-06-05"
+input = "\\footnote{ x }\n"
+
+[[case]]
+id = "whole-06-06"
+input = "\\href{u}{ x }\n"
+
+[[case]]
+id = "whole-06-07"
+input = "\\textsc{ x }\n"
+
+[[case]]
+id = "whole-06-08"
+input = "\\texttt{ x }\n"
+
+[[case]]
+id = "whole-07-01"
+input = "\\emph{x }\n"
+
+[[case]]
+id = "whole-07-02"
+input = "\\textbf{x }\n"
+
+[[case]]
+id = "whole-07-03"
+input = "\\section{x }\n"
+
+[[case]]
+id = "whole-07-04"
+input = "\\subsection*{x }\n"
+
+[[case]]
+id = "whole-07-05"
+input = "\\footnote{x }\n"
+
+[[case]]
+id = "whole-07-06"
+input = "\\href{u}{x }\n"
+
+[[case]]
+id = "whole-07-07"
+input = "\\textsc{x }\n"
+
+[[case]]
+id = "whole-07-08"
+input = "\\texttt{x }\n"
+
+[[case]]
+id = "whole-08-01"
+input = "\\emph{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-02"
+input = "\\textbf{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-03"
+input = "\\section{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-04"
+input = "\\subsection*{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-05"
+input = "\\footnote{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-06"
+input = "\\href{u}{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-07"
+input = "\\textsc{{\\bf x}}\n"
+
+[[case]]
+id = "whole-08-08"
+input = "\\texttt{{\\bf x}}\n"
+
+[[case]]
+id = "star-01-01"
+input = "\\emph*{x} y\n"
+
+[[case]]
+id = "star-01-02"
+input = "a \\emph* {x}\n"
+
+[[case]]
+id = "star-02-01"
+input = "\\textbf*{x} y\n"
+
+[[case]]
+id = "star-02-02"
+input = "a \\textbf* {x}\n"
+
+[[case]]
+id = "star-03-01"
+input = "\\textit*{x} y\n"
+
+[[case]]
+id = "star-03-02"
+input = "a \\textit* {x}\n"
+
+[[case]]
+id = "star-04-01"
+input = "\\texttt*{x} y\n"
+
+[[case]]
+id = "star-04-02"
+input = "a \\texttt* {x}\n"
+
+[[case]]
+id = "star-05-01"
+input = "\\textsc*{x} y\n"
+
+[[case]]
+id = "star-05-02"
+input = "a \\textsc* {x}\n"
+
+[[case]]
+id = "star-06-01"
+input = "\\underline*{x} y\n"
+
+[[case]]
+id = "star-06-02"
+input = "a \\underline* {x}\n"
+
+[[case]]
+id = "star-07-01"
+input = "\\footnote*{x} y\n"
+
+[[case]]
+id = "star-07-02"
+input = "a \\footnote* {x}\n"
+
+[[case]]
+id = "star-08-01"
+input = "\\url*{x} y\n"
+
+[[case]]
+id = "star-08-02"
+input = "a \\url* {x}\n"
+
+[[case]]
+id = "star-09-01"
+input = "\\mbox*{x} y\n"
+
+[[case]]
+id = "star-09-02"
+input = "a \\mbox* {x}\n"
+
+[[case]]
+id = "star-10-01"
+input = "\\label*{x} y\n"
+
+[[case]]
+id = "star-10-02"
+input = "a \\label* {x}\n"
+
+[[case]]
+id = "star-11-01"
+input = "\\ref*{x} y\n"
+
+[[case]]
+id = "star-11-02"
+input = "a \\ref* {x}\n"
+
+[[case]]
+id = "star-12-01"
+input = "\\eqref*{x} y\n"
+
+[[case]]
+id = "star-12-02"
+input = "a \\eqref* {x}\n"
+
+[[case]]
+id = "star-13-01"
+input = "\\cite*{x} y\n"
+
+[[case]]
+id = "star-13-02"
+input = "a \\cite* {x}\n"
+
+[[case]]
+id = "star-14-01"
+input = "\\citep*{x} y\n"
+
+[[case]]
+id = "star-14-02"
+input = "a \\citep* {x}\n"
+
+[[case]]
+id = "star-15-01"
+input = "\\citet*{x} y\n"
+
+[[case]]
+id = "star-15-02"
+input = "a \\citet* {x}\n"
+
+[[case]]
+id = "star-16-01"
+input = "\\LaTeX*{x} y\n"
+
+[[case]]
+id = "star-16-02"
+input = "a \\LaTeX* {x}\n"
+
+[[case]]
+id = "star-17-01"
+input = "\\ldots*{x} y\n"
+
+[[case]]
+id = "star-17-02"
+input = "a \\ldots* {x}\n"
+
+[[case]]
+id = "star-18-01"
+input = "\\includegraphics*{x} y\n"
+
+[[case]]
+id = "star-18-02"
+input = "a \\includegraphics* {x}\n"
+
+[[case]]
+id = "star-19-01"
+input = "\\parencite*{x} y\n"
+
+[[case]]
+id = "star-19-02"
+input = "a \\parencite* {x}\n"
+
+[[case]]
+id = "star-20-01"
+input = "\\Parencite*{x} y\n"
+
+[[case]]
+id = "star-20-02"
+input = "a \\Parencite* {x}\n"
+
+[[case]]
+id = "star-21-01"
+input = "\\autocite*{x} y\n"
+
+[[case]]
+id = "star-21-02"
+input = "a \\autocite* {x}\n"
+
+[[case]]
+id = "star-22-01"
+input = "\\Autocite*{x} y\n"
+
+[[case]]
+id = "star-22-02"
+input = "a \\Autocite* {x}\n"
+
+[[case]]
+id = "star-23-01"
+input = "\\textcite*{x} y\n"
+
+[[case]]
+id = "star-23-02"
+input = "a \\textcite* {x}\n"
+
+[[case]]
+id = "star-24-01"
+input = "\\Textcite*{x} y\n"
+
+[[case]]
+id = "star-24-02"
+input = "a \\Textcite* {x}\n"
+
+[[case]]
+id = "star-25-01"
+input = "\\citeauthor*{x} y\n"
+
+[[case]]
+id = "star-25-02"
+input = "a \\citeauthor* {x}\n"
+
+[[case]]
+id = "star-26-01"
+input = "\\citeyear*{x} y\n"
+
+[[case]]
+id = "star-26-02"
+input = "a \\citeyear* {x}\n"
+
+[[case]]
+id = "star-27-01"
+input = "\\citealp*{x} y\n"
+
+[[case]]
+id = "star-27-02"
+input = "a \\citealp* {x}\n"
+
+[[case]]
+id = "star-28-01"
+input = "\\citealt*{x} y\n"
+
+[[case]]
+id = "star-28-02"
+input = "a \\citealt* {x}\n"
+
+[[case]]
+id = "star-29-01"
+input = "\\footcite*{x} y\n"
+
+[[case]]
+id = "star-29-02"
+input = "a \\footcite* {x}\n"
+
+[[case]]
+id = "star-30-01"
+input = "\\Cite*{x} y\n"
+
+[[case]]
+id = "star-30-02"
+input = "a \\Cite* {x}\n"
+
+[[case]]
+id = "mbox-01-01"
+input = "\\mbox{x y}\n"
+
+[[case]]
+id = "mbox-01-02"
+input = "a \\hbox{x y} b\n"
+
+[[case]]
+id = "mbox-02-01"
+input = "\\mbox{\\emph{x y}}\n"
+
+[[case]]
+id = "mbox-02-02"
+input = "a \\hbox{\\emph{x y}} b\n"
+
+[[case]]
+id = "mbox-03-01"
+input = "\\mbox{a\\\\b}\n"
+
+[[case]]
+id = "mbox-03-02"
+input = "a \\hbox{a\\\\b} b\n"
+
+[[case]]
+id = "mbox-04-01"
+input = "\\mbox{x~y}\n"
+
+[[case]]
+id = "mbox-04-02"
+input = "a \\hbox{x~y} b\n"
+
+[[case]]
+id = "mbox-05-01"
+input = "\\mbox{\\textbf{a \\emph{b c}}}\n"
+
+[[case]]
+id = "mbox-05-02"
+input = "a \\hbox{\\textbf{a \\emph{b c}}} b\n"
+
+[[case]]
+id = "cites-01-01"
+input = "\\cites{a}{b}\n"
+
+[[case]]
+id = "cites-01-02"
+input = "\\Cites{a}{b}\n"
+
+[[case]]
+id = "cites-01-03"
+input = "\\textcites{a}{b}\n"
+
+[[case]]
+id = "cites-01-04"
+input = "\\Textcites{a}{b}\n"
+
+[[case]]
+id = "cites-01-05"
+input = "\\parencites{a}{b}\n"
+
+[[case]]
+id = "cites-01-06"
+input = "\\autocites{a}{b}\n"
+
+[[case]]
+id = "cites-01-07"
+input = "\\footcites{a}{b}\n"
+
+[[case]]
+id = "cites-01-08"
+input = "\\supercites{a}{b}\n"
+
+[[case]]
+id = "cites-02-01"
+input = "\\cites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-02"
+input = "\\Cites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-03"
+input = "\\textcites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-04"
+input = "\\Textcites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-05"
+input = "\\parencites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-06"
+input = "\\autocites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-07"
+input = "\\footcites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-02-08"
+input = "\\supercites[p][s]{a}[q]{b} x\n"
+
+[[case]]
+id = "cites-03-01"
+input = "\\cites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-02"
+input = "\\Cites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-03"
+input = "\\textcites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-04"
+input = "\\Textcites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-05"
+input = "\\parencites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-06"
+input = "\\autocites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-07"
+input = "\\footcites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-03-08"
+input = "\\supercites(pre)(post)[p][s]{a}[q][r]{b}\n"
+
+[[case]]
+id = "cites-04-01"
+input = "\\cites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-02"
+input = "\\Cites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-03"
+input = "\\textcites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-04"
+input = "\\Textcites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-05"
+input = "\\parencites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-06"
+input = "\\autocites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-07"
+input = "\\footcites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-04-08"
+input = "\\supercites(pre){a}{b}\n"
+
+[[case]]
+id = "cites-05-01"
+input = "\\cites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-02"
+input = "\\Cites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-03"
+input = "\\textcites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-04"
+input = "\\Textcites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-05"
+input = "\\parencites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-06"
+input = "\\autocites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-07"
+input = "\\footcites{a} {b} x\n"
+
+[[case]]
+id = "cites-05-08"
+input = "\\supercites{a} {b} x\n"
+
+[[case]]
+id = "cites-06-01"
+input = "\\cites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-02"
+input = "\\Cites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-03"
+input = "\\textcites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-04"
+input = "\\Textcites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-05"
+input = "\\parencites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-06"
+input = "\\autocites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-07"
+input = "\\footcites{a}\n{b}\n"
+
+[[case]]
+id = "cites-06-08"
+input = "\\supercites{a}\n{b}\n"
+
+[[case]]
+id = "cites-07-01"
+input = "\\cites{a}[x]\n"
+
+[[case]]
+id = "cites-07-02"
+input = "\\Cites{a}[x]\n"
+
+[[case]]
+id = "cites-07-03"
+input = "\\textcites{a}[x]\n"
+
+[[case]]
+id = "cites-07-04"
+input = "\\Textcites{a}[x]\n"
+
+[[case]]
+id = "cites-07-05"
+input = "\\parencites{a}[x]\n"
+
+[[case]]
+id = "cites-07-06"
+input = "\\autocites{a}[x]\n"
+
+[[case]]
+id = "cites-07-07"
+input = "\\footcites{a}[x]\n"
+
+[[case]]
+id = "cites-07-08"
+input = "\\supercites{a}[x]\n"
+
+[[case]]
+id = "cites-08-01"
+input = "\\cites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-02"
+input = "\\Cites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-03"
+input = "\\textcites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-04"
+input = "\\Textcites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-05"
+input = "\\parencites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-06"
+input = "\\autocites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-07"
+input = "\\footcites{a,b}{c}\n"
+
+[[case]]
+id = "cites-08-08"
+input = "\\supercites{a,b}{c}\n"
+
+[[case]]
+id = "cites-09-01"
+input = "\\cites[p]{a}\n"
+
+[[case]]
+id = "cites-09-02"
+input = "\\Cites[p]{a}\n"
+
+[[case]]
+id = "cites-09-03"
+input = "\\textcites[p]{a}\n"
+
+[[case]]
+id = "cites-09-04"
+input = "\\Textcites[p]{a}\n"
+
+[[case]]
+id = "cites-09-05"
+input = "\\parencites[p]{a}\n"
+
+[[case]]
+id = "cites-09-06"
+input = "\\autocites[p]{a}\n"
+
+[[case]]
+id = "cites-09-07"
+input = "\\footcites[p]{a}\n"
+
+[[case]]
+id = "cites-09-08"
+input = "\\supercites[p]{a}\n"
+
+[[case]]
+id = "accent-01-01"
+input = "\\^\\i x\n"
+
+[[case]]
+id = "accent-01-02"
+input = "a \\^\\i x b\n"
+
+[[case]]
+id = "accent-02-01"
+input = "\\'\\i  x\n"
+
+[[case]]
+id = "accent-02-02"
+input = "a \\'\\i  x b\n"
+
+[[case]]
+id = "accent-03-01"
+input = "\\\"\\i{}x\n"
+
+[[case]]
+id = "accent-03-02"
+input = "a \\\"\\i{}x b\n"
+
+[[case]]
+id = "accent-04-01"
+input = "\\'{\\i} x\n"
+
+[[case]]
+id = "accent-04-02"
+input = "a \\'{\\i} x b\n"
+
+[[case]]
+id = "accent-05-01"
+input = "\\`\\j x\n"
+
+[[case]]
+id = "accent-05-02"
+input = "a \\`\\j x b\n"
+
+[[case]]
+id = "accent-06-01"
+input = "\\~\\o x\n"
+
+[[case]]
+id = "accent-06-02"
+input = "a \\~\\o x b\n"
+
+[[case]]
+id = "accent-07-01"
+input = "\\c\\i x\n"
+
+[[case]]
+id = "accent-07-02"
+input = "a \\c\\i x b\n"
+
+[[case]]
+id = "accent-08-01"
+input = "\\'e x\n"
+
+[[case]]
+id = "accent-08-02"
+input = "a \\'e x b\n"
+
+[[case]]
+id = "url-01-01"
+input = "\\url{x}\n"
+
+[[case]]
+id = "url-01-02"
+input = "\\href{x} {t}\n"
+
+[[case]]
+id = "url-02-01"
+input = "\\url{{x}y}\n"
+
+[[case]]
+id = "url-02-02"
+input = "\\href{{x}y} {t}\n"
+
+[[case]]
+id = "url-03-01"
+input = "\\url{a{b}c}\n"
+
+[[case]]
+id = "url-03-02"
+input = "\\href{a{b}c} {t}\n"
+
+[[case]]
+id = "today-01-01"
+input = "\\today\n"
+
+[[case]]
+id = "today-01-02"
+input = "\\date{\\today}\n"
+
+[[case]]
+id = "today-02-01"
+input = "\\today x\n"
+
+[[case]]
+id = "today-02-02"
+input = "\\date{\\today x}\n"
+
+[[case]]
+id = "cond-01-01"
+input = "\\iftrue a\\else b\\fi\n"
+
+[[case]]
+id = "cond-01-02"
+input = "p \\iftrue a\\else b\\fi q\n"
+
+[[case]]
+id = "cond-01-03"
+input = "\\emph{\\iftrue a\\else b\\fi}\n"
+
+[[case]]
+id = "cond-02-01"
+input = "\\iffalse a\\else b\\fi\n"
+
+[[case]]
+id = "cond-02-02"
+input = "p \\iffalse a\\else b\\fi q\n"
+
+[[case]]
+id = "cond-02-03"
+input = "\\emph{\\iffalse a\\else b\\fi}\n"
+
+[[case]]
+id = "cond-03-01"
+input = "\\iftrue a\\iffalse b\\fi c\\fi\n"
+
+[[case]]
+id = "cond-03-02"
+input = "p \\iftrue a\\iffalse b\\fi c\\fi q\n"
+
+[[case]]
+id = "cond-03-03"
+input = "\\emph{\\iftrue a\\iffalse b\\fi c\\fi}\n"
+
+[[case]]
+id = "cond-04-01"
+input = "\\iffalse a\\ifx b\\else q\\fi c\\else d\\fi\n"
+
+[[case]]
+id = "cond-04-02"
+input = "p \\iffalse a\\ifx b\\else q\\fi c\\else d\\fi q\n"
+
+[[case]]
+id = "cond-04-03"
+input = "\\emph{\\iffalse a\\ifx b\\else q\\fi c\\else d\\fi}\n"
+
+[[case]]
+id = "cond-05-01"
+input = "\\iffalse a\\else b\n"
+
+[[case]]
+id = "cond-05-02"
+input = "p \\iffalse a\\else b q\n"
+
+[[case]]
+id = "cond-05-03"
+input = "\\emph{\\iffalse a\\else b}\n"
+
+[[case]]
+id = "cond-06-01"
+input = "\\newif\\iffoo \\footrue\\iffoo yes\\else no\\fi\n"
+
+[[case]]
+id = "cond-06-02"
+input = "p \\newif\\iffoo \\footrue\\iffoo yes\\else no\\fi q\n"
+
+[[case]]
+id = "cond-06-03"
+input = "\\emph{\\newif\\iffoo \\footrue\\iffoo yes\\else no\\fi}\n"
+
+[[case]]
+id = "cond-07-01"
+input = "\\newif\\iffoo \\iffoo yes\\else no\\fi\n"
+
+[[case]]
+id = "cond-07-02"
+input = "p \\newif\\iffoo \\iffoo yes\\else no\\fi q\n"
+
+[[case]]
+id = "cond-07-03"
+input = "\\emph{\\newif\\iffoo \\iffoo yes\\else no\\fi}\n"
+
+[[case]]
+id = "cond-08-01"
+input = "\\iftrue a\n\nb\\else c\\fi\n"
+
+[[case]]
+id = "cond-08-02"
+input = "p \\iftrue a\n\nb\\else c\\fi q\n"
+
+[[case]]
+id = "cond-08-03"
+input = "\\emph{\\iftrue a\n\nb\\else c\\fi}\n"
+
+[[case]]
+id = "cond-09-01"
+input = "\\fi x \\else y\n"
+
+[[case]]
+id = "cond-09-02"
+input = "p \\fi x \\else y q\n"
+
+[[case]]
+id = "cond-09-03"
+input = "\\emph{\\fi x \\else y}\n"
+
+[[case]]
+id = "enquote-01-01"
+input = "\\enquote{x}\n"
+
+[[case]]
+id = "enquote-01-02"
+input = "p \\enquote{x} q\n"
+
+[[case]]
+id = "enquote-02-01"
+input = "\\enquote*{x}\n"
+
+[[case]]
+id = "enquote-02-02"
+input = "p \\enquote*{x} q\n"
+
+[[case]]
+id = "enquote-03-01"
+input = "\\enquote{a \\enquote{b} c}\n"
+
+[[case]]
+id = "enquote-03-02"
+input = "p \\enquote{a \\enquote{b} c} q\n"
+
+[[case]]
+id = "enquote-04-01"
+input = "\\enquote*{a \\enquote{b}}\n"
+
+[[case]]
+id = "enquote-04-02"
+input = "p \\enquote*{a \\enquote{b}} q\n"
+
+[[case]]
+id = "enquote-05-01"
+input = "\\enquote{ x }\n"
+
+[[case]]
+id = "enquote-05-02"
+input = "p \\enquote{ x } q\n"
+
+[[case]]
+id = "misc-01-01"
+input = "\\texorpdfstring{\\emph{a}}{b}\n"
+
+[[case]]
+id = "misc-01-02"
+input = "p \\texorpdfstring{\\emph{a}}{b} q\n"
+
+[[case]]
+id = "misc-01-03"
+input = "p\n\n\\texorpdfstring{\\emph{a}}{b}\n\nq\n"
+
+[[case]]
+id = "misc-02-01"
+input = "\\char65 b\n"
+
+[[case]]
+id = "misc-02-02"
+input = "p \\char65 b q\n"
+
+[[case]]
+id = "misc-02-03"
+input = "p\n\n\\char65 b\n\nq\n"
+
+[[case]]
+id = "misc-03-01"
+input = "\\char65x\n"
+
+[[case]]
+id = "misc-03-02"
+input = "p \\char65x q\n"
+
+[[case]]
+id = "misc-03-03"
+input = "p\n\n\\char65x\n\nq\n"
+
+[[case]]
+id = "misc-04-01"
+input = "\\noindent{x} y\n"
+
+[[case]]
+id = "misc-04-02"
+input = "p \\noindent{x} y q\n"
+
+[[case]]
+id = "misc-04-03"
+input = "p\n\n\\noindent{x} y\n\nq\n"
+
+[[case]]
+id = "misc-05-01"
+input = "\\centering {x} y\n"
+
+[[case]]
+id = "misc-05-02"
+input = "p \\centering {x} y q\n"
+
+[[case]]
+id = "misc-05-03"
+input = "p\n\n\\centering {x} y\n\nq\n"
+
+[[case]]
+id = "misc-06-01"
+input = "\\maketitle\n"
+
+[[case]]
+id = "misc-06-02"
+input = "p \\maketitle q\n"
+
+[[case]]
+id = "misc-06-03"
+input = "p\n\n\\maketitle\n\nq\n"
+
+[[case]]
+id = "misc-07-01"
+input = "\\maketitle{x} y\n"
+
+[[case]]
+id = "misc-07-02"
+input = "p \\maketitle{x} y q\n"
+
+[[case]]
+id = "misc-07-03"
+input = "p\n\n\\maketitle{x} y\n\nq\n"
+
+[[case]]
+id = "headlabel-01-01"
+input = "\\section{a}\n\n\\label{b} x\n"
+
+[[case]]
+id = "headlabel-01-02"
+input = "\\section{a}\n\n%c\n\n\\label{b}\n"
+
+[[case]]
+id = "headlabel-01-03"
+input = "\\section{a}\n\nx \\label{b}\n"
+
+[[case]]
+id = "headlabel-01-04"
+input = "\\section{a}\n\\label{b}\n"
+
+[[case]]
+id = "headlabel-02-01"
+input = "\\section{\\}}\n\n\\label{b} x\n"
+
+[[case]]
+id = "headlabel-02-02"
+input = "\\section{\\}}\n\n%c\n\n\\label{b}\n"
+
+[[case]]
+id = "headlabel-02-03"
+input = "\\section{\\}}\n\nx \\label{b}\n"
+
+[[case]]
+id = "headlabel-02-04"
+input = "\\section{\\}}\n\\label{b}\n"
+
+[[case]]
+id = "headlabel-03-01"
+input = "\\subsection*{a}\n\n\\label{b} x\n"
+
+[[case]]
+id = "headlabel-03-02"
+input = "\\subsection*{a}\n\n%c\n\n\\label{b}\n"
+
+[[case]]
+id = "headlabel-03-03"
+input = "\\subsection*{a}\n\nx \\label{b}\n"
+
+[[case]]
+id = "headlabel-03-04"
+input = "\\subsection*{a}\n\\label{b}\n"
+
+[[case]]
+id = "lead-01-01"
+input = "\\begin{itemize}\nlead\n\\end{itemize}\n"
+
+[[case]]
+id = "lead-01-02"
+input = "\\begin{itemize}\nlead\n\\item a\n\\end{itemize}\n"
+
+[[case]]
+id = "lead-02-01"
+input = "\\begin{enumerate}\nlead\n\\end{enumerate}\n"
+
+[[case]]
+id = "lead-02-02"
+input = "\\begin{enumerate}\nlead\n\\item a\n\\end{enumerate}\n"
+
+[[case]]
+id = "lead-03-01"
+input = "\\begin{description}\nlead\n\\end{description}\n"
+
+[[case]]
+id = "lead-03-02"
+input = "\\begin{description}\nlead\n\\item a\n\\end{description}\n"

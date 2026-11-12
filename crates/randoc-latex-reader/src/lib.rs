@@ -83,6 +83,13 @@ mod tests {
         ("\\href{u}{", "}"),
         ("\\cite[", "]{k}"),
         ("\\mbox{", "}"),
+        ("\\emph{{", "}}"),
+        ("{\\begin{quote}", "\\end{quote}}"),
+        ("{a\n\n", "}"),
+        ("\\cites{k}[", "]{k}"),
+        ("\\texttt{{", "}}"),
+        ("\\iftrue ", "\\fi"),
+        ("\\enquote{", "}"),
     ];
 
     fn nested(open: &str, close: &str, levels: usize) -> String {
@@ -119,6 +126,19 @@ mod tests {
                 );
             }
         });
+    }
+
+    /// Found by the fuzzer: the row loop did not move past a stray `}`
+    /// and used memory without a bound.
+    #[test]
+    fn a_stray_brace_in_a_table_ends() {
+        for input in [
+            "\\begin{tabular}{l}a}b\\end{tabular}",
+            "\\begin{tabular}{ll}a & }b\\\\ c\\end{tabular}",
+            "\\begin{tabular}{lc}a & \\multicof}\\caption{c}\\end{figure}",
+        ] {
+            assert!(convert(input, "latex").is_ok(), "{input}");
+        }
     }
 
     #[test]
@@ -205,6 +225,20 @@ mod tests {
         "\\foo{a}[b] ",
         "\\begin{verbatim}",
         "x\n\n",
+        "{\\begin{quote}x\\end{quote}} y ",
+        "{a\n\n",
+        "{x ",
+        "\\emph{{x}} ",
+        "\\cites{a}[p]{b} ",
+        "\\cites[",
+        "\\cites{a}[",
+        "\\mbox{x y} ",
+        "\\iffalse ",
+        "\\iftrue a\\fi ",
+        "\\iffalse a\\else b\\fi ",
+        "\\newif\\iffoo \\footrue\\iffoo y\\fi ",
+        "\\enquote{x} ",
+        "\\char65 ",
     ];
 
     fn wrap_unit(unit: &str, n: usize) -> String {

@@ -2,6 +2,7 @@
 
 use std::collections::HashMap;
 
+use randoc_ast::walk::walk_inlines_mut;
 use randoc_ast::{
     Alignment, Attr, Block, Caption, Cell, Citation, CitationMode, ColSpec, ColWidth, Format,
     Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MathType, Meta, MetaValue, QuoteType,
@@ -28,6 +29,8 @@ type R<T> = Result<T, Stop>;
 
 /// The expansion depth at which Randoc stops a macro as a loop.
 pub(crate) const MAX_EXPANSION_DEPTH: u32 = 100;
+/// The longest optional argument of `\cites` that the lookahead accepts.
+const MAX_OPTION_TOKENS: usize = 256;
 /// The largest number of tokens that all macro expansions together can make.
 pub(crate) const MAX_EXPANDED_TOKENS: usize = 1_000_000;
 
@@ -99,6 +102,18 @@ pub(crate) struct Parser<'c> {
     input: Text,
     /// The number of tokens consumed. A loop checks it for progress.
     bumps: usize,
+    /// The flags of `\newif`, without the `if`.
+    flags: HashMap<Text, bool>,
+    /// For each word of the input that starts with `if`: the index of its
+    /// `\else` and of its `\fi`, when it has a `\fi`.
+    conditionals: HashMap<usize, (Option<usize>, usize)>,
+    /// Jumps over the branches of conditionals that are not chosen: from a
+    /// position of the input to the position after the `\fi`.
+    skips: HashMap<usize, usize>,
+    /// The kinds of the `\enquote` commands around the current position.
+    quote_kinds: Vec<QuoteType>,
+    /// The number of tokens that the lookahead rules examined.
+    scanned: std::cell::Cell<usize>,
 }
 
 const NBSP: &str = "\u{a0}";
@@ -106,6 +121,7 @@ const NBSP: &str = "\u{a0}";
 impl<'c> Parser<'c> {
     pub(crate) fn new(input: &str, extensions: Extensions, context: &'c mut Context) -> Self {
         let tokens = tokenize(input);
+        let conditionals = match_conditionals(&tokens);
         let has = |name: &str| tokens.iter().any(|tok| tok.is_word(name));
         let level_offset = if has("part") {
             2
@@ -133,13 +149,18 @@ impl<'c> Parser<'c> {
             finished: false,
             input: input.to_owned(),
             bumps: 0,
+            scanned: std::cell::Cell::new(0),
+            quote_kinds: Vec::new(),
+            flags: HashMap::new(),
+            skips: HashMap::new(),
+            conditionals,
         }
     }
 
     /// The number of tokens that the parser consumed, a measure of its work.
     #[cfg(test)]
     pub(crate) fn steps(&self) -> usize {
-        self.bumps
+        self.bumps + self.scanned.get()
     }
 
     pub(crate) fn document(&mut self) -> R<Vec<Block>> {
@@ -154,7 +175,7 @@ impl<'c> Parser<'c> {
         }
         self.pending
             .last()
-            .or_else(|| self.tokens.get(self.position))
+            .or_else(|| self.tokens.get(self.raw_position()))
     }
 
     fn bump(&mut self) -> Option<Tok> {
@@ -164,6 +185,7 @@ impl<'c> Parser<'c> {
         let tok = match self.pending.pop() {
             Some(tok) => tok,
             None => {
+                self.position = self.raw_position();
                 let tok = self.tokens.get(self.position)?.clone();
                 self.position += 1;
                 tok
@@ -178,9 +200,7 @@ impl<'c> Parser<'c> {
 
     /// Expands macros until the next token is not a macro.
     fn expand(&mut self) -> R<()> {
-        if !self.extensions.contains(Extension::LatexMacros) {
-            return Ok(());
-        }
+        let macros = self.extensions.contains(Extension::LatexMacros);
         loop {
             let Some(Tok {
                 kind: Kind::Word(name),
@@ -191,6 +211,18 @@ impl<'c> Parser<'c> {
                 return Ok(());
             };
             let (name, depth) = (name.clone(), *depth);
+            if let Some(value) = self.condition_value(&name, macros) {
+                if !self.conditional(value, depth)? {
+                    return Ok(());
+                }
+                continue;
+            }
+            if !macros {
+                return Ok(());
+            }
+            if self.flag_command(&name) {
+                continue;
+            }
             if name == "begin" {
                 if !self.expand_environment()? {
                     return Ok(());
@@ -284,9 +316,220 @@ impl<'c> Parser<'c> {
     }
 
     /// The tokens from the next one on, without macro expansion.
-    fn ahead(&self) -> impl Iterator<Item = &Tok> + '_ {
-        let rest = self.tokens.get(self.position..).unwrap_or_default();
+    fn ahead(&self) -> impl Iterator<Item = &Tok> + Clone + '_ {
+        let rest = self.tokens.get(self.raw_position()..).unwrap_or_default();
         self.pending.iter().rev().chain(rest)
+    }
+
+    /// True when the group that the next token opens holds a paragraph
+    /// break or a block at any depth. Pandoc reads such a group as blocks.
+    /// The scan stops at the first block, so a run of such groups is linear.
+    fn group_holds_block(&self) -> bool {
+        let mut nesting = 0usize;
+        let mut tokens = self.scan();
+        while let Some(tok) = tokens.next() {
+            match &tok.kind {
+                Kind::Open => nesting += 1,
+                Kind::Close => {
+                    nesting = nesting.saturating_sub(1);
+                    if nesting == 0 {
+                        return false;
+                    }
+                }
+                Kind::Par => return true,
+                Kind::Word(name) if name == "begin" => {
+                    let environment = name_in(tokens.clone().take(64));
+                    if environment.is_some_and(|name| !is_inline_environment(&name)) {
+                        return true;
+                    }
+                }
+                Kind::Word(name) if sectioning_level(name).is_some() => return true,
+                _ => {}
+            }
+        }
+        false
+    }
+
+    /// True when the group that the next token opens holds one group and
+    /// spaces before it, nothing else. Pandoc reads the inner group as the
+    /// argument: `\emph{{x}}` is `\emph{x}`, `\emph{{x} }` keeps a group.
+    fn whole_group_ahead(&self) -> bool {
+        let mut tokens = self
+            .scan()
+            .skip(1)
+            .skip_while(|tok| matches!(tok.kind, Kind::Space | Kind::Newline));
+        if tokens.next().is_none_or(|tok| tok.kind != Kind::Open) {
+            return false;
+        }
+        let mut nesting = 1usize;
+        for tok in tokens.by_ref() {
+            match tok.kind {
+                Kind::Open => nesting += 1,
+                Kind::Close => {
+                    nesting -= 1;
+                    if nesting == 0 {
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+        nesting == 0 && tokens.next().is_some_and(|tok| tok.kind == Kind::Close)
+    }
+
+    /// The value of a TeX conditional: `\iftrue`, `\iffalse`, and with
+    /// `latex_macros` a conditional of `\newif`. Other `\if` words are not
+    /// conditionals for Pandoc.
+    fn condition_value(&self, name: &str, macros: bool) -> Option<bool> {
+        match name {
+            "iftrue" => Some(true),
+            "iffalse" => Some(false),
+            _ if macros => name
+                .strip_prefix("if")
+                .and_then(|flag| self.flags.get(flag).copied()),
+            _ => None,
+        }
+    }
+
+    /// `\newif\ifNAME`, `\NAMEtrue` and `\NAMEfalse`. Returns false for
+    /// other words.
+    fn flag_command(&mut self, name: &str) -> bool {
+        if name == "newif" {
+            let flag = self
+                .ahead()
+                .skip(1)
+                .find(|tok| tok.kind != Kind::Space)
+                .and_then(|tok| match &tok.kind {
+                    Kind::Word(word) => word.strip_prefix("if").map(Text::from),
+                    _ => None,
+                });
+            let Some(flag) = flag else {
+                return false;
+            };
+            self.bump();
+            self.skip_word_spaces();
+            self.bump();
+            self.flags.insert(flag, false);
+            return true;
+        }
+        let setting = [("true", true), ("false", false)]
+            .into_iter()
+            .find_map(|(suffix, value)| Some((name.strip_suffix(suffix)?, value)));
+        match setting {
+            Some((flag, value)) if self.flags.contains_key(flag) => {
+                self.flags.insert(flag.to_owned(), value);
+                self.bump();
+                true
+            }
+            _ => false,
+        }
+    }
+
+    /// Replaces the conditional at the next token with the branch that
+    /// `value` selects. Returns false, and consumes nothing, when the
+    /// conditional has no `\fi`: Pandoc then reads its words as unknown.
+    /// The branch counts as an expansion: a conditional nested deeper than
+    /// `MAX_EXPANSION_DEPTH` stops with the depth error.
+    fn conditional(&mut self, value: bool, depth: u32) -> R<bool> {
+        if self.pending.is_empty() {
+            return Ok(self.conditional_in_input(value));
+        }
+        let Some((else_at, fi_at)) = self.branches_ahead() else {
+            return Ok(false);
+        };
+        if depth + 1 > MAX_EXPANSION_DEPTH {
+            return Err(Stop::TooDeep);
+        }
+        self.bump();
+        let mut chosen = Vec::new();
+        let mut after_word = true;
+        for offset in 1..fi_at {
+            let Some(tok) = self.bump() else {
+                break;
+            };
+            let in_true = else_at.is_none_or(|at| offset < at);
+            let in_false = else_at.is_some_and(|at| offset > at);
+            let skipped = after_word && tok.kind == Kind::Space;
+            after_word = Some(offset) == else_at || skipped;
+            if !skipped && ((value && in_true) || (!value && in_false)) {
+                chosen.push(Tok {
+                    depth: depth + 1,
+                    ..tok
+                });
+            }
+        }
+        self.bump();
+        self.skip_word_spaces();
+        self.pending.extend(chosen.into_iter().rev());
+        Ok(true)
+    }
+
+    /// A conditional of the input itself: the branches stay in place, and a
+    /// jump in `skips` passes over the branch that is not chosen. So nested
+    /// conditionals copy no tokens.
+    fn conditional_in_input(&mut self, value: bool) -> bool {
+        let at = self.raw_position();
+        let Some(&(else_at, fi_at)) = self.conditionals.get(&at) else {
+            return false;
+        };
+        let mut after_fi = fi_at + 1;
+        while self
+            .tokens
+            .get(after_fi)
+            .is_some_and(|tok| tok.kind == Kind::Space)
+        {
+            after_fi += 1;
+        }
+        self.bump();
+        match (value, else_at) {
+            (true, _) => {
+                self.skips.insert(else_at.unwrap_or(fi_at), after_fi);
+            }
+            (false, Some(else_at)) => {
+                self.position = else_at + 1;
+                self.skips.insert(fi_at, after_fi);
+            }
+            (false, None) => self.position = after_fi,
+        }
+        self.skip_word_spaces();
+        true
+    }
+
+    /// The position of the next input token after the jumps of `skips`.
+    fn raw_position(&self) -> usize {
+        let mut position = self.position;
+        while let Some(&to) = self.skips.get(&position) {
+            position = to;
+        }
+        position
+    }
+
+    /// The offsets of the `\else` and the `\fi` of the conditional at the
+    /// next token, counted from it, inside the expanded tokens. Each word
+    /// that starts with `if` nests.
+    fn branches_ahead(&self) -> Option<(Option<usize>, usize)> {
+        let mut nesting = 0usize;
+        let mut else_at = None;
+        let expanded = self.pending.len();
+        for (offset, tok) in self.scan().enumerate().take(expanded).skip(1) {
+            let Kind::Word(word) = &tok.kind else {
+                continue;
+            };
+            match word.as_str() {
+                "fi" if nesting == 0 => return Some((else_at, offset)),
+                "fi" => nesting -= 1,
+                "else" if nesting == 0 && else_at.is_none() => else_at = Some(offset),
+                _ if word.starts_with("if") => nesting += 1,
+                _ => {}
+            }
+        }
+        None
+    }
+
+    /// The tokens from the next one on, counted as the work of a lookahead rule.
+    fn scan(&self) -> impl Iterator<Item = &Tok> + Clone + '_ {
+        self.ahead()
+            .inspect(|_| self.scanned.set(self.scanned.get() + 1))
     }
 
     /// The name of `\begin{NAME}` when the next token is `\begin`.
@@ -451,7 +694,12 @@ impl<'c> Parser<'c> {
             let saved_position = std::mem::replace(&mut parser.position, 0);
             let saved_pending = std::mem::take(&mut parser.pending);
             let saved_finished = std::mem::replace(&mut parser.finished, false);
+            let saved_conditionals =
+                std::mem::replace(&mut parser.conditionals, match_conditionals(&parser.tokens));
+            let saved_skips = std::mem::take(&mut parser.skips);
             let result = run(parser);
+            parser.conditionals = saved_conditionals;
+            parser.skips = saved_skips;
             parser.tokens = saved_tokens;
             parser.position = saved_position;
             parser.pending = saved_pending;
@@ -468,16 +716,25 @@ impl<'c> Parser<'c> {
         self.with_tokens(tokens, |parser| parser.blocks(End::Input))
     }
 
-    /// The inlines of a required argument.
+    /// The inlines of a required argument, without the spaces at the ends.
+    fn argument_inlines(&mut self) -> R<Vec<Inline>> {
+        Ok(Inlines(self.argument_inlines_untrimmed()?).trimmed())
+    }
+
     /// The inlines of a required argument. A group is read in place, so
     /// that nested arguments are not copied.
-    fn argument_inlines(&mut self) -> R<Vec<Inline>> {
+    fn argument_inlines_untrimmed(&mut self) -> R<Vec<Inline>> {
         self.skip_spaces();
         if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+            let whole = self.whole_group_ahead();
             self.bump();
-            let inlines = self.nested(|parser| parser.inlines(Until::Close))?;
+            let inlines = if whole {
+                self.nested(Self::argument_inlines_untrimmed)?
+            } else {
+                self.nested(|parser| parser.inlines(Until::Close))?.0
+            };
             self.close_group();
-            return Ok(inlines.trimmed());
+            return Ok(inlines);
         }
         let tokens = self.argument_tokens().unwrap_or_default();
         self.inlines_of(tokens)
@@ -506,13 +763,28 @@ impl<'c> Parser<'c> {
     fn argument_blocks(&mut self) -> R<Vec<Block>> {
         self.skip_spaces();
         if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+            let whole = self.whole_group_ahead();
             self.bump();
-            let blocks = self.nested(|parser| parser.blocks(End::Close))?;
+            let blocks = if whole {
+                self.nested(Self::argument_blocks)?
+            } else {
+                self.nested(|parser| parser.blocks(End::Close))?
+            };
             self.close_group();
             return Ok(blocks);
         }
         let tokens = self.argument_tokens().unwrap_or_default();
         self.blocks_of(tokens)
+    }
+
+    /// Skips spaces and one `{...}` group after them, as Pandoc does after
+    /// `\noindent` and `\maketitle`.
+    fn skip_group(&mut self) {
+        self.skip_spaces();
+        if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+            self.bump();
+            self.tokens_until_close();
+        }
     }
 
     fn close_group(&mut self) {
@@ -566,6 +838,12 @@ impl<'c> Parser<'c> {
                     }
                 }
                 Kind::Word(name) if self.block_command(&name, &mut blocks)? => {}
+                Kind::Open if self.group_holds_block() => {
+                    self.bump();
+                    let inner = self.nested(|parser| parser.blocks(End::Close))?;
+                    self.close_group();
+                    blocks.extend(inner);
+                }
                 _ => self.paragraph(&mut blocks)?,
             }
         }
@@ -586,22 +864,12 @@ impl<'c> Parser<'c> {
 
     /// Handles a command that makes a block. Returns false for other commands.
     fn block_command(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<bool> {
-        let base_level = match name {
-            "part" => Some(-1),
-            "chapter" => Some(0),
-            "section" => Some(1),
-            "subsection" => Some(2),
-            "subsubsection" => Some(3),
-            "paragraph" => Some(4),
-            "subparagraph" => Some(5),
-            _ => None,
-        };
-        if let Some(base) = base_level {
+        if let Some(base) = sectioning_level(name) {
             self.bump();
             self.skip_word_spaces();
             let star = self.star();
             let _short = self.bracket_tokens();
-            let title = self.argument_inlines()?;
+            let title = self.argument_inlines_untrimmed()?;
             self.heading(base + self.level_offset, star, title, blocks);
             return Ok(true);
         }
@@ -619,6 +887,21 @@ impl<'c> Parser<'c> {
                     MetaValue::MetaInlines(self.inlines_of(tokens)?)
                 };
                 self.meta.insert(name.to_owned(), value);
+                Ok(true)
+            }
+            "maketitle" => {
+                self.start_record();
+                self.bump();
+                let raw = self.stop_record();
+                let alone = matches!(
+                    self.peek_raw().map(|tok| &tok.kind),
+                    None | Some(Kind::Par | Kind::Newline)
+                );
+                if self.raw_tex() && alone {
+                    blocks.push(Block::RawBlock(Format::new("latex"), raw));
+                } else {
+                    self.skip_group();
+                }
                 Ok(true)
             }
             "documentclass" => {
@@ -656,7 +939,7 @@ impl<'c> Parser<'c> {
         if star {
             attr.classes.push("unnumbered".into());
         }
-        self.skip_spaces();
+        self.skip_blank();
         if self.peek_raw().is_some_and(|tok| tok.is_word("label")) {
             self.bump();
             attr.id = self.argument_text();
@@ -888,6 +1171,7 @@ impl<'c> Parser<'c> {
     fn list(&mut self, name: &str, attributes: ListAttributes) -> R<Block> {
         let mut items = Vec::new();
         let mut terms = Vec::new();
+        let mut lead = Vec::new();
         let mut valid = true;
         loop {
             self.skip_blank();
@@ -899,7 +1183,10 @@ impl<'c> Parser<'c> {
                     break;
                 }
                 let before = self.bumps;
-                self.blocks(End::Item(name))?;
+                let blocks = self.blocks(End::Item(name))?;
+                if items.is_empty() {
+                    lead.extend(blocks);
+                }
                 if self.bumps == before {
                     self.bump();
                 }
@@ -921,7 +1208,8 @@ impl<'c> Parser<'c> {
             items.push(content);
         }
         if items.is_empty() || !valid {
-            let content = items.into_iter().flatten().collect();
+            let mut content = lead;
+            content.extend(items.into_iter().flatten());
             return Ok(Block::Div(
                 Attr::new("", vec![name.to_owned()], vec![]),
                 content,
@@ -1019,6 +1307,7 @@ impl<'c> Parser<'c> {
             if self.peek_raw().is_none_or(|tok| tok.is_word("end")) {
                 break;
             }
+            let before = self.bumps;
             let mut cells = Vec::new();
             loop {
                 cells.push(self.cell()?);
@@ -1034,6 +1323,11 @@ impl<'c> Parser<'c> {
                     }
                     _ => break,
                 }
+            }
+            if self.bumps == before {
+                // A token that ends a cell but no row, such as a stray `}`.
+                self.bump();
+                continue;
             }
             rows.push(Row {
                 attr: Attr::default(),
@@ -1140,6 +1434,9 @@ impl<'c> Parser<'c> {
                     break;
                 }
                 (Until::Paragraph | Until::Quote(_), Kind::Par) => break,
+                (Until::Paragraph | Until::Quote(_), Kind::Open) if self.group_holds_block() => {
+                    break;
+                }
                 (Until::Paragraph | Until::Quote(_), Kind::Word(name))
                     if self.starts_block(name) =>
                 {
@@ -1164,7 +1461,7 @@ impl<'c> Parser<'c> {
                 .environment_name_ahead()
                 .is_none_or(|environment| !is_inline_environment(&environment)),
             "end" | "item" | "part" | "chapter" | "section" | "subsection" | "subsubsection"
-            | "paragraph" | "subparagraph" | "title" | "author" | "date" => true,
+            | "paragraph" | "subparagraph" | "title" | "author" | "date" | "maketitle" => true,
             _ => false,
         }
     }
@@ -1330,10 +1627,22 @@ impl<'c> Parser<'c> {
             'd' => '\u{323}',
             _ => '\u{331}',
         };
-        let text = self.argument_text();
-        let text = match text.strip_prefix("\\i") {
-            Some(rest) => format!("\u{131}{}", rest.trim_start()),
-            None => text,
+        self.skip_spaces();
+        let grouped = self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open);
+        let tokens = self.argument_tokens().unwrap_or_default();
+        let text = match tokens.as_slice() {
+            [
+                Tok {
+                    kind: Kind::Word(word),
+                    ..
+                },
+            ] => {
+                if !grouped {
+                    self.skip_word_spaces();
+                }
+                letter_symbol(word).map_or_else(|| tokens_text(&tokens), Text::from)
+            }
+            _ => tokens_text(&tokens),
         };
         let mut chars = text.chars();
         let Some(base) = chars.next() else {
@@ -1462,6 +1771,12 @@ impl<'c> Parser<'c> {
         out: &mut Inlines,
         until: Until,
     ) -> R<()> {
+        let star_is_a_mode = citation_mode(name).is_some()
+            || multi_citation_mode(name).is_some()
+            || name == "enquote";
+        if !is_unknown_command(name) && !star_is_a_mode && name != "verb" && self.star() {
+            self.skip_word_spaces();
+        }
         let wrapper: Option<fn(Vec<Inline>) -> Inline> = match name {
             "emph" | "textit" | "textsl" => Some(Inline::Emph),
             "textbf" => Some(Inline::Strong),
@@ -1479,8 +1794,12 @@ impl<'c> Parser<'c> {
             _ => None,
         };
         if let Some(wrap) = wrapper {
-            let content = self.argument_inlines()?;
-            out.push(wrap(content));
+            let content = self.argument_inlines_untrimmed()?;
+            if matches!(name, "underline" | "uline") {
+                out.push(wrap(content));
+            } else {
+                push_extracting_spaces(out, content, wrap);
+            }
             return Ok(());
         }
         let declaration: Option<fn(Vec<Inline>) -> Inline> = match name {
@@ -1493,17 +1812,18 @@ impl<'c> Parser<'c> {
         }
         match name {
             "texttt" => {
-                let content = self.argument_inlines()?;
+                let content = self.argument_inlines_untrimmed()?;
                 out.append(code_inlines(content));
             }
+            "mbox" | "hbox" if self.raw_tex() => self.unknown_inline(source, out)?,
             "mbox" | "hbox" => {
-                let content = self.argument_inlines()?;
-                for inline in content {
-                    match inline {
-                        Inline::Space | Inline::SoftBreak => out.0.push(Inline::Str(NBSP.into())),
-                        inline => out.0.push(inline),
-                    }
-                }
+                let mut content = self.argument_inlines_untrimmed()?;
+                walk_inlines_mut(&mut content, |inline| match inline {
+                    Inline::Space | Inline::SoftBreak => *inline = Inline::Str(NBSP.into()),
+                    Inline::LineBreak => *inline = Inline::Str(Text::new()),
+                    _ => {}
+                });
+                out.append(Inlines(content));
             }
             "LaTeX" => {
                 self.skip_word_spaces();
@@ -1518,6 +1838,7 @@ impl<'c> Parser<'c> {
                 out.push_str("\u{2026}");
             }
             "footnote" => {
+                self.bracket_tokens();
                 let content = self.argument_blocks()?;
                 out.push(Inline::Note(content));
             }
@@ -1531,7 +1852,7 @@ impl<'c> Parser<'c> {
             }
             "href" => {
                 let url = unescape(&self.argument_text());
-                let text = self.argument_inlines()?;
+                let text = self.argument_inlines_untrimmed()?;
                 out.push(Inline::Link(Attr::default(), text, Target::new(url, "")));
             }
             "label" => {
@@ -1599,7 +1920,8 @@ impl<'c> Parser<'c> {
                 };
                 out.push(Inline::Image(attr, alt, Target::new(path, "")));
             }
-            "maketitle" | "centering" | "noindent" | "par" if !self.raw_tex() => {
+            "centering" | "noindent" if !self.raw_tex() => self.skip_group(),
+            "par" if !self.raw_tex() => {
                 self.skip_word_spaces();
             }
             "c" | "v" | "u" | "H" | "r" | "k" | "d" | "b" => {
@@ -1610,14 +1932,20 @@ impl<'c> Parser<'c> {
             "input" | "include" => self.include(depth)?,
             "today" => {
                 self.skip_word_spaces();
-                let time = self.context.host().current_time();
-                out.push_str(&iso_date(
-                    time.unix_seconds + i64::from(time.utc_offset_minutes) * 60,
-                ));
+                let fixed = self
+                    .context
+                    .host()
+                    .environment_variable("SOURCE_DATE_EPOCH")
+                    .and_then(|text| text.trim().parse::<i64>().ok());
+                let seconds = fixed.unwrap_or_else(|| {
+                    let time = self.context.host().current_time();
+                    time.unix_seconds + i64::from(time.utc_offset_minutes) * 60
+                });
+                out.push_str(&iso_date(seconds));
             }
             "nocite" => {
                 let mut cite = Inlines::default();
-                self.citation(source, CitationMode::NormalCitation, &mut cite)?;
+                self.citation(source, CitationMode::NormalCitation, false, &mut cite)?;
                 let mut inlines = match self.meta.0.remove("nocite") {
                     Some(MetaValue::MetaInlines(inlines)) => Inlines(inlines),
                     _ => Inlines::default(),
@@ -1626,9 +1954,37 @@ impl<'c> Parser<'c> {
                 self.meta
                     .insert(Text::from("nocite"), MetaValue::MetaInlines(inlines.0));
             }
+            "enquote" => {
+                let single =
+                    self.star() != (self.quote_kinds.last() == Some(&QuoteType::DoubleQuote));
+                let kind = if single {
+                    QuoteType::SingleQuote
+                } else {
+                    QuoteType::DoubleQuote
+                };
+                self.quote_kinds.push(kind);
+                let content = self.argument_inlines_untrimmed();
+                self.quote_kinds.pop();
+                out.push(Inline::Quoted(kind, content?));
+            }
+            "texorpdfstring" => {
+                let content = self.argument_inlines()?;
+                self.argument_tokens();
+                out.append(Inlines(content));
+            }
+            "char" if self.raw_tex() => {
+                self.start_record();
+                self.char_code();
+                let rest = self.stop_record();
+                out.push(Inline::RawInline(
+                    Format::new("latex"),
+                    format!("{source}{rest}"),
+                ));
+            }
+            "char" => self.char_code(),
             "footcite" => {
                 let mut cite = Inlines::default();
-                self.citation(source, CitationMode::NormalCitation, &mut cite)?;
+                self.citation(source, CitationMode::NormalCitation, true, &mut cite)?;
                 cite.push_str(".");
                 out.push(Inline::Note(vec![Block::Para(cite.0)]));
             }
@@ -1645,13 +2001,39 @@ impl<'c> Parser<'c> {
                     self.skip_word_spaces();
                     out.push_str(text);
                 } else if let Some(mode) = citation_mode(name) {
-                    self.citation(source, mode, out)?;
+                    let starred = self
+                        .peek_raw()
+                        .is_some_and(|tok| tok.kind == Kind::Other('*'));
+                    let star = citation_star(name);
+                    let mode = if starred && star == Star::SuppressAuthor {
+                        CitationMode::SuppressAuthor
+                    } else {
+                        mode
+                    };
+                    self.citation(source, mode, star == Star::NotInRaw, out)?;
+                } else if let Some(first_mode) = multi_citation_mode(name) {
+                    self.multi_citation(source, name, first_mode, out)?;
                 } else {
                     self.unknown_inline(source, out)?;
                 }
             }
         }
         Ok(())
+    }
+
+    /// `\char65` drops the command and its decimal code, as Pandoc does.
+    /// A code with letters after it (`\char65x`) stays text.
+    fn char_code(&mut self) {
+        let Some(Tok {
+            kind: Kind::Letters(text),
+            ..
+        }) = self.peek_raw()
+        else {
+            return;
+        };
+        if text.chars().all(|c| c.is_ascii_digit()) {
+            self.bump();
+        }
     }
 
     fn is_active_definition(&self, name: &str) -> bool {
@@ -1748,10 +2130,32 @@ impl<'c> Parser<'c> {
         Ok(())
     }
 
-    fn citation(&mut self, source: &str, mode: CitationMode, out: &mut Inlines) -> R<()> {
+    /// A citation command. With `star_not_in_raw`, a star is not part of
+    /// the raw text, as in Pandoc for `\textcite*`.
+    fn citation(
+        &mut self,
+        source: &str,
+        mode: CitationMode,
+        star_not_in_raw: bool,
+        out: &mut Inlines,
+    ) -> R<()> {
         self.start_record();
         self.skip_word_spaces();
-        self.star();
+        let recorders = std::mem::take(&mut self.recorders);
+        let starred = self
+            .peek_raw()
+            .is_some_and(|tok| tok.kind == Kind::Other('*'));
+        if starred && !star_not_in_raw {
+            self.recorders = recorders;
+            self.star();
+            let recorders = std::mem::take(&mut self.recorders);
+            self.skip_word_spaces();
+            self.recorders = recorders;
+        } else {
+            self.star();
+            self.skip_word_spaces();
+            self.recorders = recorders;
+        }
         let first = self.bracket_inlines();
         let second = match first {
             Ok(Some(_)) => self.bracket_inlines(),
@@ -1759,43 +2163,238 @@ impl<'c> Parser<'c> {
         };
         let keys = self.argument_text();
         let raw = format!("{source}{}", self.stop_record());
-        let (prefix, suffix) = match (first?, second?) {
-            (Some(prefix), Some(suffix)) => (prefix, suffix),
-            (Some(suffix), None) => (Vec::new(), suffix),
-            _ => (Vec::new(), Vec::new()),
-        };
-        let keys: Vec<Text> = keys
-            .split(',')
-            .map(|key| key.trim().to_owned())
-            .filter(|key| !key.is_empty())
-            .collect();
-        let count = keys.len();
-        let citations = keys
-            .into_iter()
-            .enumerate()
-            .map(|(index, id)| Citation {
-                id,
-                prefix: if index == 0 {
-                    prefix.clone()
-                } else {
-                    Vec::new()
-                },
-                suffix: if index + 1 == count {
-                    suffix.clone()
-                } else {
-                    Vec::new()
-                },
-                mode,
-                note_num: 0,
-                hash: 0,
-            })
-            .collect();
+        let citations = key_group(mode, (first?, second?), &keys);
         out.push(Inline::Cite(
             citations,
             vec![Inline::RawInline(Format::new("latex"), raw)],
         ));
         Ok(())
     }
+
+    /// `\cites(pre)(post)[p][s]{a}[p][s]{b}` and the other biblatex
+    /// commands with several key groups. One `(...)` is the global suffix.
+    fn multi_citation(
+        &mut self,
+        source: &str,
+        name: &str,
+        first_mode: CitationMode,
+        out: &mut Inlines,
+    ) -> R<()> {
+        self.start_record();
+        self.skip_word_spaces();
+        let first = self.paren_inlines()?;
+        let second = match first {
+            Some(_) => self.paren_inlines()?,
+            None => None,
+        };
+        let (global_prefix, global_suffix) = match (first, second) {
+            (Some(prefix), Some(suffix)) => (Some(prefix), Some(suffix)),
+            (Some(suffix), None) => (None, Some(suffix)),
+            _ => (None, None),
+        };
+        let mut citations: Vec<Citation> = Vec::new();
+        while self.key_group_ahead() {
+            self.skip_spaces();
+            let options = self.bracket_inlines()?;
+            self.skip_spaces();
+            let options = match options {
+                Some(first) => (Some(first), self.bracket_inlines()?),
+                None => (None, None),
+            };
+            let keys = self.argument_text();
+            citations.extend(key_group(CitationMode::NormalCitation, options, &keys));
+        }
+        if let Some(first) = citations.first_mut() {
+            first.mode = first_mode;
+        }
+        let raw = format!("{source}{}", self.stop_record());
+        if let (Some(prefix), Some(first)) = (global_prefix, citations.first_mut()) {
+            let mut joined = prefix;
+            if !first.prefix.is_empty() {
+                joined.push(Inline::Space);
+            }
+            joined.append(&mut first.prefix);
+            first.prefix = joined;
+        }
+        if let (Some(suffix), Some(last)) = (global_suffix, citations.last_mut()) {
+            last.suffix.push(Inline::Str(",".into()));
+            last.suffix.push(Inline::Space);
+            last.suffix.extend(suffix);
+        }
+        let cite = Inline::Cite(
+            citations,
+            vec![Inline::RawInline(Format::new("latex"), raw)],
+        );
+        if name == "footcites" {
+            out.push(Inline::Note(vec![Block::Para(vec![
+                cite,
+                Inline::Str(".".into()),
+            ])]));
+        } else {
+            out.push(cite);
+        }
+        Ok(())
+    }
+
+    /// The inlines of a `(...)` argument of `\cites`.
+    fn paren_inlines(&mut self) -> R<Option<Vec<Inline>>> {
+        if !self
+            .peek_raw()
+            .is_some_and(|tok| tok.kind == Kind::Other('('))
+        {
+            return Ok(None);
+        }
+        self.bump();
+        let mut tokens = Vec::new();
+        while let Some(tok) = self.bump() {
+            if tok.kind == Kind::Other(')') {
+                break;
+            }
+            tokens.push(tok);
+        }
+        let recorders = std::mem::take(&mut self.recorders);
+        let inlines = self.inlines_of(tokens);
+        self.recorders = recorders;
+        Ok(Some(inlines?))
+    }
+
+    /// True when spaces, at most two `[...]` and a `{` come next. An option
+    /// longer than `MAX_OPTION_TOKENS` ends the command, so that a run of
+    /// unclosed options is linear.
+    fn key_group_ahead(&self) -> bool {
+        let mut tokens = self
+            .scan()
+            .skip_while(|tok| matches!(tok.kind, Kind::Space | Kind::Newline | Kind::Comment));
+        for _ in 0..3 {
+            match tokens.next().map(|tok| &tok.kind) {
+                Some(Kind::Open) => return true,
+                Some(Kind::Other('[')) => {
+                    let mut nesting = 0usize;
+                    let closed =
+                        tokens
+                            .by_ref()
+                            .take(MAX_OPTION_TOKENS)
+                            .any(|tok| match tok.kind {
+                                Kind::Open => {
+                                    nesting += 1;
+                                    false
+                                }
+                                Kind::Close => {
+                                    nesting = nesting.saturating_sub(1);
+                                    false
+                                }
+                                Kind::Other(']') => nesting == 0,
+                                _ => false,
+                            });
+                    if !closed {
+                        return false;
+                    }
+                    let mut rest = tokens.clone().peekable();
+                    while rest
+                        .peek()
+                        .is_some_and(|tok| matches!(tok.kind, Kind::Space | Kind::Newline))
+                    {
+                        rest.next();
+                        tokens.next();
+                    }
+                }
+                _ => return false,
+            }
+        }
+        false
+    }
+}
+
+/// The citations of one key group: `[prefix][suffix]{keys}`. One optional
+/// argument is the suffix.
+fn key_group(
+    mode: CitationMode,
+    options: (Option<Vec<Inline>>, Option<Vec<Inline>>),
+    keys: &str,
+) -> Vec<Citation> {
+    let (prefix, suffix) = match options {
+        (Some(prefix), Some(suffix)) => (prefix, suffix),
+        (Some(suffix), None) => (Vec::new(), suffix),
+        _ => (Vec::new(), Vec::new()),
+    };
+    let keys: Vec<Text> = keys
+        .split(',')
+        .map(|key| key.trim().to_owned())
+        .filter(|key| !key.is_empty())
+        .collect();
+    let count = keys.len();
+    keys.into_iter()
+        .enumerate()
+        .map(|(index, id)| Citation {
+            id,
+            prefix: if index == 0 {
+                prefix.clone()
+            } else {
+                Vec::new()
+            },
+            suffix: if index + 1 == count {
+                suffix.clone()
+            } else {
+                Vec::new()
+            },
+            mode,
+            note_num: 0,
+            hash: 0,
+        })
+        .collect()
+}
+
+/// Moves the spaces at the ends of `content` out of the element, as the
+/// `extractSpaces` rule of Pandoc does for `\emph{ x }`.
+fn push_extracting_spaces(
+    out: &mut Inlines,
+    mut content: Vec<Inline>,
+    wrap: impl FnOnce(Vec<Inline>) -> Inline,
+) {
+    let is_space = |inline: &Inline| matches!(inline, Inline::Space | Inline::SoftBreak);
+    let lead = content.first().filter(|inline| is_space(inline)).cloned();
+    if lead.is_some() {
+        content.remove(0);
+    }
+    let trail = if content.last().is_some_and(is_space) {
+        content.pop()
+    } else {
+        None
+    };
+    if let Some(space) = lead {
+        out.push(space);
+    }
+    out.push(wrap(content));
+    if let Some(space) = trail {
+        out.push(space);
+    }
+}
+
+/// The `\else` and the `\fi` of each word that starts with `if`, in one
+/// pass with a stack.
+fn match_conditionals(tokens: &[Tok]) -> HashMap<usize, (Option<usize>, usize)> {
+    let mut open: Vec<(usize, Option<usize>)> = Vec::new();
+    let mut matches = HashMap::new();
+    for (index, tok) in tokens.iter().enumerate() {
+        let Kind::Word(word) = &tok.kind else {
+            continue;
+        };
+        match word.as_str() {
+            "fi" => {
+                if let Some((start, else_at)) = open.pop() {
+                    matches.insert(start, (else_at, index));
+                }
+            }
+            "else" => {
+                if let Some((_, else_at @ None)) = open.last_mut() {
+                    *else_at = Some(index);
+                }
+            }
+            _ if word.starts_with("if") => open.push((index, None)),
+            _ => {}
+        }
+    }
+    matches
 }
 
 fn name_in<'a>(mut tokens: impl Iterator<Item = &'a Tok>) -> Option<Text> {
@@ -1959,6 +2558,10 @@ fn code_inlines(content: Vec<Inline>) -> Inlines {
                 flush(&mut code, &mut out);
                 out.push(Inline::Strong(code_inlines(inner).0));
             }
+            Inline::Span(attr, inner) => {
+                flush(&mut code, &mut out);
+                out.push(Inline::Span(attr, code_inlines(inner).0));
+            }
             other => {
                 flush(&mut code, &mut out);
                 out.push(other);
@@ -2056,6 +2659,27 @@ fn list_label(label: &str) -> (ListNumberStyle, ListNumberDelim) {
     }
 }
 
+/// What a star after a citation command does.
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum Star {
+    /// The citation suppresses the author: `\parencite*`.
+    SuppressAuthor,
+    /// The star is not part of the raw text: `\textcite*`.
+    NotInRaw,
+    /// The star stays in the raw text and changes nothing: `\citep*`.
+    Kept,
+}
+
+fn citation_star(name: &str) -> Star {
+    match name {
+        "cite" | "Cite" | "parencite" | "Parencite" | "autocite" | "Autocite" => {
+            Star::SuppressAuthor
+        }
+        "textcite" | "Textcite" | "citeauthor" | "citeyear" => Star::NotInRaw,
+        _ => Star::Kept,
+    }
+}
+
 fn citation_mode(name: &str) -> Option<CitationMode> {
     Some(match name {
         "cite" | "citep" | "citealp" | "parencite" | "autocite" | "Cite" | "Parencite"
@@ -2064,6 +2688,32 @@ fn citation_mode(name: &str) -> Option<CitationMode> {
             CitationMode::AuthorInText
         }
         "citeyear" | "citeyearpar" => CitationMode::SuppressAuthor,
+        _ => return None,
+    })
+}
+
+/// The heading level of a sectioning command before the shift of `\part`
+/// and `\chapter`.
+fn sectioning_level(name: &str) -> Option<i64> {
+    Some(match name {
+        "part" => -1,
+        "chapter" => 0,
+        "section" => 1,
+        "subsection" => 2,
+        "subsubsection" => 3,
+        "paragraph" => 4,
+        "subparagraph" => 5,
+        _ => return None,
+    })
+}
+
+/// The mode of the first citation of a biblatex command with several key
+/// groups, such as `\cites`. The other citations are normal.
+fn multi_citation_mode(name: &str) -> Option<CitationMode> {
+    Some(match name {
+        "cites" | "Cites" | "parencites" | "Parencites" | "autocites" | "Autocites"
+        | "supercites" | "footcites" => CitationMode::NormalCitation,
+        "textcites" | "Textcites" => CitationMode::AuthorInText,
         _ => return None,
     })
 }
@@ -2191,10 +2841,14 @@ fn is_unknown_command(name: &str) -> bool {
             | "include"
             | "today"
             | "nocite"
+            | "enquote"
+            | "texorpdfstring"
+            | "char"
             | "footcite"
             | "begin"
             | "end"
             | "item"
     ) && letter_symbol(name).is_none()
         && citation_mode(name).is_none()
+        && multi_citation_mode(name).is_none()
 }

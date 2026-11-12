@@ -181,7 +181,9 @@ impl LogMessage {
             CouldNotParseIncludeFile(file, pos) => {
                 format!("Parsing error in include file {file} at {pos}")
             }
-            MacroAlreadyDefined(name, pos) => format!("Macro '{name}' already defined at {pos}"),
+            MacroAlreadyDefined(name, pos) => {
+                format!("Macro '{name}' already defined, ignoring at {pos}")
+            }
             InlineNotRendered(shown) | BlockNotRendered(shown) => format!("Not rendering {shown}"),
             DocxParserWarning(detail) => format!("Docx parser warning: {detail}"),
             PowerpointTemplateWarning(detail) => format!("Powerpoint template warning: {detail}"),
@@ -318,6 +320,16 @@ impl LogMessage {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn macro_already_defined_matches_pandoc_3_13() {
+        // Standard error of: printf '\\newcommand{\\a}{x}\\newcommand{\\a}{y}\\a\n' | pandoc -f latex
+        let message = LogMessage::MacroAlreadyDefined("\\a".into(), SourcePos::new("", 1, 19));
+        assert_eq!(
+            message.render(),
+            "[WARNING] Macro '\\a' already defined, ignoring at line 1 column 19\n"
+        );
+    }
 
     #[test]
     fn duplicate_link_reference_matches_pandoc_3_13() {

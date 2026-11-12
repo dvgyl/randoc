@@ -1166,3 +1166,41 @@ Codex R3-10 (I-HTMLR-23) and I-HTMLR-19, all medium and the first item of
 the next unit; the rows for the low findings of round 3 are not written
 yet. Open checks: the fuzz run of 900 s, coverage, the mutation sample,
 the differential sweep on new seeds.
+
+## Workstream latex-reader (commit 176adbb of the branch `ws/latex-reader`, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: unit 2 of
+the LaTeX reader. It corrects a CRITICAL defect that is on `main` since
+unit 1 (6a01107): a `tabular` row loop did not end at a stray `}` and
+allocated memory without a bound (a process of 10 GB on 2026-11-12 at
+01:26 UTC). It also corrects known differences (block groups, the star
+rules, `\cites`, `\iftrue`/`\iffalse`/`\newif`, `\enquote`, `\char`,
+`\mbox`, `\maketitle`), adds the rule cases `latex-reader/rules.toml`,
+the command table `crates/randoc-latex-reader/COMMANDS.md` with
+`tools/names.tsv`, and changes the text of
+`LogMessage::MacroAlreadyDefined` in `crates/randoc-core` to the Pandoc
+3.13 text (decision of the coordinator). The worker continues on the
+same branch, so this commit (not the branch head) is merged. New row
+I-LTXR-13 (critical, closed for the `tabular` row loop).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 176adbb (run ended 01:54 UTC; worker report): baseline 19911 units, 0 regressions, 2188 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Harness suite `latex-reader/` (code of fbfeee5): 3625 units, 2685 pass. Rule matrix: 350 cases, 349 pass. Differential, seed 23: 499 of 500 equal (the one difference is corrected in fbfeee5). Pandoc test suite: 71 new passes, 0 lost. Command table: 162 equal, 68 partial, 4 different, 117 not started. |
+| 3. Tests | `cargo test -p randoc-latex-reader -p randoc-core` on the merged tree: 92 pass, 0 fail, 1 ignored. New test `tests::a_stray_brace_in_a_table_ends`. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzz run on fbfeee5: 135 of 900 s ran, 0 crashes, 1 timeout (the loop defect, corrected by this commit). The full fuzz run of 900 s: not run. |
+| 5. Reviews | No review round for this workstream yet; the review of the major block is due after unit 3. |
+| 6. No slowdowns | CPU through the program at 25,000 and 50,000 repetitions for 10 new constructs (worker report): each ratio 2.0 or less. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan: 7 hits in `crates/randoc-core/src/logging.rs`,
+all in the `lang` warning texts that are on `main` already (message
+texts of the reference, not in the change of this commit).
+
+Open findings: the audit of each other parser loop of the same shape
+(unit 3 does it now; the class of I-LTXR-13 is not closed yet); I-LTXR-07
+(medium), I-LTXR-08 (medium), I-LTXR-09 (low), I-LTXR-10 (low), I-LTXR-11
+(high: for 7 corpus documents the reference stops with a parse error and
+Randoc does not). Open checks: the full fuzz run (900 s), coverage, the
+mutation sample.

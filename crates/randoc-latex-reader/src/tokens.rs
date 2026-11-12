@@ -254,7 +254,19 @@ impl Tokenizer {
         if self.peek(spaces) != Some('{') {
             return;
         }
-        let length = self.count_while_max(spaces + 1, MAX_URL_LENGTH, |c| c != '}' && c != '\n');
+        let nesting = std::cell::Cell::new(0usize);
+        let length = self.count_while_max(spaces + 1, MAX_URL_LENGTH, |c| match c {
+            '{' => {
+                nesting.set(nesting.get() + 1);
+                true
+            }
+            '}' if nesting.get() > 0 => {
+                nesting.set(nesting.get() - 1);
+                true
+            }
+            '}' | '\n' => false,
+            _ => true,
+        });
         if self.peek(spaces + 1 + length) != Some('}') {
             return;
         }
