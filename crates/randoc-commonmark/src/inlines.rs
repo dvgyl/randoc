@@ -246,6 +246,10 @@ struct Parser<'a, 'e> {
     /// `Commonmark/Inlines.hs` handles as a pair. A single quote there cannot open
     /// (`fixSingleQuote`). Link attributes are a separate chunk upstream, so they end no suffix.
     bracket_end: Option<usize>,
+    /// The absolute bottom of `processBs`: the position of the first bracket opener, and
+    /// after a pair that makes nothing and has no chunk between this position and its
+    /// opener, the position after its closer. Openers before it never pair.
+    bracket_bottom: Option<usize>,
     /// For each backtick run length, the start positions of runs, in order.
     backtick_runs: Option<HashMap<usize, Vec<usize>>>,
 }
@@ -269,16 +273,13 @@ pub(crate) fn parse_inlines(text: &str, env: &Env<'_>) -> Vec<Inline> {
         domain_chain: HashMap::new(),
         exhausted: false,
         bracket_end: None,
+        bracket_bottom: None,
         backtick_runs: None,
     };
     parser.run();
     parser.process_emphasis(None);
     let head = parser.head;
-    let mut inlines = parser.emit_seq(head, None, false).0;
-    if env.config.east_asian {
-        remove_east_asian_breaks(&mut inlines);
-    }
-    inlines
+    parser.emit_seq(head, None, false).0
 }
 
 /// Removes the backticks of `tex_math_gfm` math: the same number of backticks at both ends.
@@ -291,55 +292,6 @@ fn strip_math_ticks(content: String) -> String {
             .map_or(content.clone(), str::to_owned)
     } else {
         content
-    }
-}
-
-fn is_wide(c: char) -> bool {
-    matches!(c as u32, 0x1100..=0x115F | 0x2E80..=0x303E | 0x3041..=0x33FF | 0x3400..=0x4DBF
-        | 0x4E00..=0x9FFF | 0xA000..=0xA4CF | 0xAC00..=0xD7A3 | 0xF900..=0xFAFF | 0xFE30..=0xFE4F
-        | 0xFF00..=0xFF60 | 0xFFE0..=0xFFE6 | 0x20000..=0x3FFFD)
-}
-
-/// Removes each soft break between two wide characters, for `east_asian_line_breaks`.
-fn remove_east_asian_breaks(inlines: &mut Vec<Inline>) {
-    let old = std::mem::take(inlines);
-    let mut kept: Vec<Inline> = Vec::with_capacity(old.len());
-    let mut iter = old.into_iter().peekable();
-    while let Some(inline) = iter.next() {
-        crate::steps::add(1);
-        let remove = matches!(inline, Inline::SoftBreak)
-            && kept.last().is_some_and(|x| {
-                crate::convert::plain_text(std::slice::from_ref(x))
-                    .chars()
-                    .next_back()
-                    .is_some_and(is_wide)
-            })
-            && iter.peek().is_some_and(|y| {
-                crate::convert::plain_text(std::slice::from_ref(y))
-                    .chars()
-                    .next()
-                    .is_some_and(is_wide)
-            });
-        if !remove {
-            kept.push(inline);
-        }
-    }
-    *inlines = kept;
-    for inline in inlines.iter_mut() {
-        match inline {
-            Inline::Emph(c)
-            | Inline::Underline(c)
-            | Inline::Strong(c)
-            | Inline::Strikeout(c)
-            | Inline::Superscript(c)
-            | Inline::Subscript(c)
-            | Inline::SmallCaps(c)
-            | Inline::Quoted(_, c)
-            | Inline::Span(_, c)
-            | Inline::Link(_, c, _)
-            | Inline::Image(_, c, _) => remove_east_asian_breaks(c),
-            _ => {}
-        }
     }
 }
 
@@ -1210,6 +1162,7 @@ impl<'a, 'e> Parser<'a, 'e> {
     }
 
     fn push_bracket(&mut self, node: usize, image: bool, start: usize) {
+        self.bracket_bottom.get_or_insert(start.saturating_sub(1));
         if let Some(last) = self.brackets.last_mut() {
             last.bracket_after = true;
         }
@@ -1405,16 +1358,17 @@ impl<'a, 'e> Parser<'a, 'e> {
                 self.pos = after;
                 self.bracket_end = Some(after);
                 self.append_text("]");
-                // A collapsed reference `[]` that matches no definition stays text.
-                // Attributes after it go to the token `]` only. `processBs` handles
-                // the `[]` as a pair only when a chunk comes before the first opener.
-                if self.s.get(after..after + 2) == Some(b"[]") {
-                    self.pos = after + 2;
-                    if opener.start > 1 {
-                        self.bracket_end = Some(after + 2);
+                // With no chunk between the bottom and the opener, `processBs` moves its
+                // bottom after the closer, and a `[]` right after it never pairs: it
+                // stays text, and attributes after it go to the token `]` only.
+                let opener_at = opener.start.saturating_sub(1);
+                if self.bracket_bottom.is_none_or(|bottom| opener_at <= bottom) {
+                    self.bracket_bottom = Some(after);
+                    if self.s.get(after..after + 2) == Some(b"[]") {
+                        self.pos = after + 2;
+                        self.append_text("[");
+                        self.append(Kind::Token("]".into()));
                     }
-                    self.append_text("[");
-                    self.append(Kind::Token("]".into()));
                 }
             }
         }

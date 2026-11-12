@@ -88,7 +88,6 @@ pub(crate) struct Config {
     pub(crate) definition_lists: bool,
     pub(crate) fancy_lists: bool,
     pub(crate) implicit_refs: bool,
-    pub(crate) east_asian: bool,
     /// The reader option `strip_comments`: HTML comments leave raw HTML of the body.
     pub(crate) strip_comments: bool,
     /// For `rebase_relative_paths`: the first line of each source and its directory.
@@ -103,11 +102,13 @@ pub(crate) struct Config {
 impl Config {
     /// Returns the directory to put before relative paths in the block that starts at `line`.
     pub(crate) fn source_dir(&self, line: usize) -> Option<&str> {
-        let (_, dir) = self
-            .sources
-            .iter()
-            .rev()
-            .find(|(start, _)| *start <= line)?;
+        // The starts never decrease, so a binary search finds the last source that starts
+        // at or before `line`.
+        let after = self.sources.partition_point(|(start, _)| {
+            crate::steps::add(1);
+            *start <= line
+        });
+        let (_, dir) = self.sources.get(after.checked_sub(1)?)?;
         (!dir.is_empty() && dir != ".").then_some(dir.as_str())
     }
 
@@ -157,7 +158,6 @@ impl Config {
             definition_lists: on(Extension::DefinitionLists),
             fancy_lists: on(Extension::FancyLists),
             implicit_refs: on(Extension::ImplicitHeaderReferences),
-            east_asian: on(Extension::EastAsianLineBreaks),
             strip_comments: options.strip_comments,
             sources: Vec::new(),
             max_depth: limits.max_nesting_depth.max(4),
@@ -195,9 +195,11 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
             strip_comments: false,
             ..config.clone()
         };
+        // The `commonmark` tokenizer normalizes each decoded metadata string to NFC too.
         let read_value = |value: &str, open_last_line: bool| {
+            let value = randoc_core::shared::nfc(value);
             convert::convert(
-                &blocks::parse_with(value, &value_config, open_last_line),
+                &blocks::parse_with(&value, &value_config, open_last_line),
                 &value_config,
             )
         };
@@ -312,7 +314,7 @@ mod tests {
         assert_eq!(read(3), 2);
     }
 
-    fn image_urls(format: &str, sources: Vec<(&str, &str)>) -> Vec<String> {
+    fn read_sources(format: &str, sources: Vec<(&str, &str)>) -> Pandoc {
         let spec = randoc_core::FormatSpec::parse(format);
         let mut options = ReaderOptions::default();
         options.extensions = spec.extensions().unwrap();
@@ -325,7 +327,32 @@ mod tests {
                 })
                 .collect(),
         );
-        let doc = read(&sources, &options, &mut Context::pure()).unwrap();
+        read(&sources, &options, &mut Context::pure()).unwrap()
+    }
+
+    /// Codex review round 7, R7-05: each block looked for its source with a scan of the
+    /// source list, so the time grew with the square of the number of sources.
+    #[test]
+    fn the_work_grows_linearly_with_the_number_of_sources() {
+        let steps_for = |count: usize| {
+            crate::steps::take();
+            let doc = read_sources(
+                "commonmark+rebase_relative_paths",
+                vec![("sub/b.md", "[a](u)\n"); count],
+            );
+            assert_eq!(doc.blocks.len(), count);
+            crate::steps::take()
+        };
+        let small = steps_for(2000);
+        let large = steps_for(8000);
+        assert!(
+            large < 6 * small,
+            "{small} steps for 2000, {large} for 8000"
+        );
+    }
+
+    fn image_urls(format: &str, sources: Vec<(&str, &str)>) -> Vec<String> {
+        let doc = read_sources(format, sources);
         let mut urls = Vec::new();
         randoc_ast::walk::query_inlines(&doc, |inline| {
             if let Inline::Image(_, _, target) = inline {

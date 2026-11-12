@@ -345,6 +345,117 @@ def quote_after_pair():
             yield {"from": fmt, "input": form + "\n\n[r]: /r\n"}
 
 
+# Task items (review round 7: Opus R7-01, R7-04; Codex R7-03): an item
+# after a paragraph line, white space after the box, the lines after the
+# item, inside a block quote and inside an ordinary list item.
+TASK_PREFIXES = ["", "x\n"]
+TASK_ITEMS = ["- [ ]", "- [x]", "* [X]", "- [ ] b", "- [ ]  ", "- [ ] \u00a0", "1. [ ]"]
+TASK_TAILS = ["", "\n\n- [ ] b", "\n\n\n- b", "\n- [ ]", "\n\n  x", "\nb"]
+TASK_WRAPPERS = ["", "> ", "- ", "> - "]
+
+
+def wrap(text, wrapper):
+    """Puts the text in the containers of the wrapper: the first line gets the
+    wrapper, each other line its continuation (a list marker becomes spaces)."""
+    lines = text.split("\n")
+    more = wrapper.replace("- ", "  ")
+    return "\n".join([wrapper + lines[0]] + [(more + line).rstrip(" ") for line in lines[1:]])
+
+
+def tasks():
+    for prefix in TASK_PREFIXES:
+        for item in TASK_ITEMS:
+            for tail in TASK_TAILS:
+                for wrapper in TASK_WRAPPERS:
+                    for fmt in ("gfm", "commonmark_x"):
+                        yield {"from": fmt, "input": wrap(prefix + item + tail, wrapper) + "\n"}
+
+
+# The bottom of processBs (review round 7: Codex R7-06, R7-07; Opus R7-03,
+# R7-06): a pair that makes nothing, with or without a chunk between the
+# bottom and its opener, before `[]`.
+BOTTOM_PREFIXES = ["", "x", "x ", "[b]x", "[l](u)x", "[x", "\\[", "![b]", "*e*", "`c`", "'", "[r]"]
+BOTTOM_CORES = ["[a][]'b'", "[[][](u)", "[a][]{.c}", "![a][](u)", "[a][][x](u)", "[a][]", "[a][]'b' [r][]'c'"]
+
+
+def bracket_bottom():
+    for prefix in BOTTOM_PREFIXES:
+        for core in BOTTOM_CORES:
+            for fmt in ("commonmark+smart", "commonmark_x", "gfm+smart"):
+                yield {"from": fmt, "input": f"{prefix}{core}\n\n[r]: /r\n"}
+
+
+# Letters of FancyList.hs beyond ASCII (session 4): pLowerAlpha and
+# pUpperAlpha take one letter of the Haskell classes isLower and isUpper.
+FANCY_LETTERS = list("éαＢǅªⓐĸɕÄΩßıİǈʰ中٣ⅳ") + ["e\u0301"]
+FANCY_DELIMS = [". x", ") x", "(c) x", ".  x"]
+FANCY_CONTEXTS = ["", "x\n", "a. y\n", "- y\n"]
+
+
+def fancy_letters():
+    for letter in FANCY_LETTERS:
+        for delim in FANCY_DELIMS:
+            marker = delim.replace("c", letter) if delim.startswith("(") else letter + delim
+            for context in FANCY_CONTEXTS:
+                for fmt in ("commonmark_x", "commonmark+fancy_lists"):
+                    yield {"from": fmt, "input": f"{context}{marker}\n"}
+
+
+# Alert names of Alerts.hs (session 4): the word equals the name after the
+# Unicode upper-case mapping of Data.Text.
+ALERT_NAMES = ["NOTE", "note", "tıp", "cautıon", "ımportant", "WARNİNG", "Tip", "NOTES", "NO TE", "ＮＯＴＥ", "caution"]
+
+
+def alert_names():
+    for name in ALERT_NAMES:
+        for tail in ["\n> x", "", "\nx", " \n> x"]:
+            for fmt in ("gfm+alerts", "commonmark_x+alerts"):
+                yield {"from": fmt, "input": f"> [!{name}]{tail}\n"}
+
+
+# Metadata findings of review round 7: decoded text and NFC (Codex R7-01),
+# later YAML documents (Codex R7-02, Opus R7-02), a block that ends on the
+# open last line of an inline value (Codex R7-04).
+META_R7_VALUES = [
+    '"[e\\u0301]\\n\\n[\u00e9]: u"', '"[\u00e9]\\n\\n[e\\u0301]: u"', '"![e\\u0301]\\n\\n[\u00e9]: u"',
+    '"[e\\u0301]\\n\\n[\u00e9]: u\\n"', '"e\\u0301"', '"<!--\\n-->"', '"<!-- -->"', '"<!--\\n-->x"',
+    '"<!--\\n-->\\nx"', '"x\\n\\n<!--\\n-->"', '"<script>\\nx\\n</script>"', '"<div>\\nx"',
+    '"<pre>\\n</pre>"', '"<?\\n?>"', '"```\\nx\\n```"', '"> ```\\n> x\\n> ```"', '"- ```\\n  x\\n  ```"',
+    '"::: d\\nx\\n:::"', '"<!--\\n--> "', '"> <!--\\n> -->"', '"- <!--\\n  -->"', '"<![CDATA[\\nx]]>"',
+]
+META_R7_STREAMS = [
+    "a: 1\n--- x\n---\n", "a: 1\n--- # c\n---\nbody\n", "a: 1\n--- !x\n---\nb\n", "--- x\n---\nb\n",
+    "--- {a: 1}\n---\nb\n", "a: 1\n--- [1]\n---\nb\n", "a: 1\n--- \nb: 2\n---\nb\n", "- 1\n--- \nb: 2\n---\nb\n",
+    "a: 1\n--- x\n...\nb\n", "a: 1\n--- {b: 2}\n---\n", "a: 1\n--- |\n  x\n---\n", "a: 1\n--- &x y\n---\n",
+    "a: 1\n---\n", "# c\n--- x\n---\nb\n", "~\n--- {a: 1}\n---\nb\n", "a: 1\n--- [\n---\nb\n",
+    "a: 1\n--- x\n--- y\n---\n", "a: &r 1\n--- *r\n---\n", "a: 1\n...\n--- x\n---\n",
+]
+
+
+def metadata_r7():
+    for value in META_R7_VALUES:
+        for fmt in META_FORMATS:
+            yield {"from": fmt, "input": f"---\na: {value}\n---\n"}
+    for stream in META_R7_STREAMS:
+        for fmt in META_FORMATS:
+            yield {"from": fmt, "input": f"---\n{stream}"}
+
+
+# A reference definition as the first block of an item (the differential
+# run of session 4): the paragraph of definitions stays a child upstream,
+# so the item continues after a blank line.
+REF_ITEM_HEADS = ["- [r]: /u", "1. [r]: /u", "- [r]: /u\n  [s]: /v", "* [^n]: <http://a.b>", "- [r]:\n  /u"]
+REF_ITEM_TAILS = ["\n\n  x", "\n  x", "\n\n\n  x", "\n\n- b", "\n\nx", "\n\n  [t]: /w\n\n  x", "\n\n  - c"]
+
+
+def ref_items():
+    for head in REF_ITEM_HEADS:
+        for tail in REF_ITEM_TAILS:
+            for wrapper in ("", "> "):
+                for fmt in ("commonmark", "commonmark_x"):
+                    yield {"from": fmt, "input": wrap(head + tail, wrapper) + "\n\n[r]\n"}
+
+
 MATRICES = {
     "strip-comments": strip_comments,
     "lists": lists,
@@ -358,6 +469,12 @@ MATRICES = {
     "continuation": continuation,
     "tokenizer": tokenizer,
     "quote-after-pair": quote_after_pair,
+    "tasks": tasks,
+    "bracket-bottom": bracket_bottom,
+    "fancy-letters": fancy_letters,
+    "alert-names": alert_names,
+    "metadata-r7": metadata_r7,
+    "ref-items": ref_items,
 }
 
 
@@ -372,7 +489,7 @@ def run(program, entry):
 # Known differences (rows of docs/ISSUES.md): an input that holds the text
 # differs from the oracle. The crate test and --compare require that it
 # still differs, so that a correction removes the row.
-KNOWN = {"\n[[][](u)": "I-CM-17"}
+KNOWN = {}
 
 
 def entries(names):

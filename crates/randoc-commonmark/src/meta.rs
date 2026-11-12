@@ -44,16 +44,22 @@ pub(crate) fn split_metadata(text: &str, max_depth: usize) -> Option<MetadataBlo
                 max_depth,
                 ..Limits::default()
             };
-            // One document that is a mapping or null, or no document, is a
-            // block. A second document (a later line `--- x`) is not.
+            // A first document that is a mapping is a block; later documents (after a
+            // line `--- x`) are ignored. No document, or one null document, is an
+            // empty block. Each other stream is not a block.
             let parsed = match randoc_yaml::parse_all(&yaml_text, limits) {
-                Ok(documents) if documents.len() > 1 => return None,
-                Ok(documents) => match documents.into_iter().next() {
-                    Some(node) if !matches!(node.value(), Ok(Value::Mapping(_) | Value::Null)) => {
+                Ok(documents) => {
+                    let block = match documents.as_slice() {
+                        [] => true,
+                        [first, ..] if matches!(first.value(), Ok(Value::Mapping(_))) => true,
+                        [only] => matches!(only.value(), Ok(Value::Null)),
+                        _ => false,
+                    };
+                    if !block {
                         return None;
                     }
-                    node => Ok(node),
-                },
+                    Ok(documents.into_iter().next())
+                }
                 Err(error) => Err(error),
             };
             return Some(MetadataBlock {

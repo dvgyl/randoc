@@ -1204,3 +1204,39 @@ Open findings: the audit of each other parser loop of the same shape
 (high: for 7 corpus documents the reference stops with a parse error and
 Randoc does not). Open checks: the full fuzz run (900 s), coverage, the
 mutation sample.
+
+## Workstream commonmark-reader (branch `ws/commonmark-reader-2`, head cc9b6f3, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+corrections of review round 7 and two ported extension modules. Source
+lookup by binary search (Codex R7-05, high: linear at 2,000 and 8,000
+sources). Task items as `taskListItemBlockSpec` (Opus R7-01, Codex
+R7-03). Metadata blocks: the first document that is a mapping is the
+block, NFC of each string, HTML blocks in inline values (Codex R7-01,
+R7-02, R7-04, Opus R7-02). The absolute bottom of `processBs` (I-CM-17
+closed). Ports of `Alerts.hs` (Unicode upper case of the name) and
+`FancyList.hs` (letters beyond ASCII). A list item that starts with a
+reference definition. The crate's own handling of
+`east_asian_line_breaks` is removed: the command line does it. New row
+I-CM-18 (low).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on cc9b6f3 (run ended 02:00 UTC; worker report): baseline 20243 units, 0 regressions. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | 18 oracle matrices through the library: 9,389 inputs, 0 different. Differential run (2000 documents, seed 2026, program of 2908ae4): commonmark 1993, gfm 1996, commonmark_x 1965 equal. Harness suite `commonmark/`: 1740 units, 1724 pass (16 fail: `extra/sp-*`, I-CM-01). |
+| 3. Tests | `cargo test -p randoc-commonmark` on the merged tree: 44 pass, 0 fail, 1 ignored. New test `tests::the_work_grows_linearly_with_the_number_of_sources`. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzz `read` on 2908ae4: 901 s, 620,811 runs, 0 crashes. |
+| 5. Reviews | Round 7 on main 98806b9: Codex REQUEST CHANGES (1 high, 4 medium, 3 low), Opus REQUEST CHANGES (2 medium, 6 low). The worker corrected each finding with the level medium or higher; the verification by the reviewers is due. |
+| 6. No slowdowns | CPU table for 8 changed paths at 25,000 and 50,000 (worker report): each ratio 2.04 or less. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` and
+`THIRD_PARTY_NOTICES.md` merged without a conflict). Licence scan: hits
+only in the BSD disclaimer of `crates/randoc-commonmark/NOTICE.md`, the
+HTML block tag list of `src/blocks.rs` and two generic character tests
+of `src/inlines.rs` (code fragments, not copied text).
+
+Open findings: I-CM-01 (scope gap), I-CM-10, I-CM-18. 16 documents of the
+differential run in two classes (`BulletList` with commonmark_x and gfm,
+`Div`) are not reduced yet. Open checks: the specification run, coverage,
+the mutation sample.

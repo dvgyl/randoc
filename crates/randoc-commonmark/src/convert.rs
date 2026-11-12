@@ -154,57 +154,6 @@ fn document_order(tree: &Tree) -> Vec<usize> {
     order
 }
 
-/// The plain text of inlines, as the `stringify` of `commonmark-pandoc` gives it.
-pub(crate) fn plain_text(inlines: &[Inline]) -> String {
-    let mut out = String::new();
-    collect_text(inlines, &mut out);
-    out
-}
-
-fn collect_text(inlines: &[Inline], out: &mut String) {
-    for inline in inlines {
-        match inline {
-            Inline::Str(s) => out.push_str(s),
-            Inline::Space | Inline::SoftBreak | Inline::LineBreak => out.push(' '),
-            Inline::Code(_, s) | Inline::Math(_, s) => out.push_str(s),
-            Inline::RawInline(f, s) if f == "html" && s.starts_with("<br") => out.push(' '),
-            Inline::Span(attr, children)
-                if attr.classes == ["emoji"] && attr.attributes.len() == 1 =>
-            {
-                match attr.get("data-emoji") {
-                    Some(alias) => {
-                        out.push(':');
-                        out.push_str(alias);
-                        out.push(':');
-                    }
-                    None => collect_text(children, out),
-                }
-            }
-            Inline::Quoted(q, children) => {
-                let (open, close) = match q {
-                    randoc_ast::QuoteType::SingleQuote => ('\u{2018}', '\u{2019}'),
-                    randoc_ast::QuoteType::DoubleQuote => ('\u{201C}', '\u{201D}'),
-                };
-                out.push(open);
-                collect_text(children, out);
-                out.push(close);
-            }
-            Inline::Emph(c)
-            | Inline::Underline(c)
-            | Inline::Strong(c)
-            | Inline::Strikeout(c)
-            | Inline::Superscript(c)
-            | Inline::Subscript(c)
-            | Inline::SmallCaps(c)
-            | Inline::Span(_, c)
-            | Inline::Link(_, c, _)
-            | Inline::Image(_, c, _)
-            | Inline::Cite(_, c) => collect_text(c, out),
-            _ => {}
-        }
-    }
-}
-
 impl Converter<'_> {
     /// Gives each heading without an identifier a unique identifier, and adds
     /// the implicit heading references.

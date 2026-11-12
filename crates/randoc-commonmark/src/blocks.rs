@@ -108,6 +108,9 @@ pub(crate) struct Node {
     pub(crate) blank_end: bool,
     /// For a list item: a blank line is inside the item (`listItemBlanksInside`).
     pub(crate) blank_inside: bool,
+    /// Paragraphs of only reference definitions that left the children. Upstream they stay
+    /// children, so that an item with one continues after a blank line.
+    pub(crate) removed_children: usize,
 }
 
 /// The cells of a pipe table.
@@ -235,6 +238,7 @@ pub(crate) fn parse_with(text: &str, config: &Config, open_last_line: bool) -> T
             blanks: Vec::new(),
             blank_end: false,
             blank_inside: false,
+            removed_children: 0,
         }],
         refs: HashMap::new(),
         notes: Vec::new(),
@@ -459,6 +463,7 @@ impl Parser<'_> {
             blanks: Vec::new(),
             blank_end: false,
             blank_inside: false,
+            removed_children: 0,
         });
         if let Some(node) = self.nodes.get_mut(parent) {
             node.children.push(index);
@@ -623,7 +628,15 @@ impl Parser<'_> {
                 if let Kind::HtmlBlock(t @ 1..=5) = kind
                     && html_block_ends(t, self.line.get(skip..).unwrap_or(""))
                 {
+                    let continued = self
+                        .nodes
+                        .get(container)
+                        .is_some_and(|n| n.start_line != self.line_number);
                     self.finalize(container);
+                    // The end on a later line is a continuation, as the close of a fence.
+                    if continued {
+                        self.add_empty_paragraph();
+                    }
                 }
             } else if self.offset < self.line.len() && !self.blank {
                 self.add_child(Kind::Paragraph);
@@ -657,7 +670,7 @@ impl Parser<'_> {
                     let open_last = n.children.last().is_some_and(|&c| self.is_open(c));
                     (
                         !n.blanks.is_empty(),
-                        n.children.len() - usize::from(open_last),
+                        n.children.len() + n.removed_children - usize::from(open_last),
                     )
                 });
                 let no_children =
@@ -1022,7 +1035,7 @@ impl Parser<'_> {
                 && alert_title(name).is_some()
             {
                 if let Some(node) = self.nodes.get_mut(index) {
-                    node.content = name.to_ascii_uppercase();
+                    node.content = name.to_uppercase();
                 }
                 self.consumed = true;
                 self.offset = self.line.len();
@@ -1437,13 +1450,18 @@ impl Parser<'_> {
                 && (checked || inner.iter().all(|&b| b == b' '))
                 && tail.get(close + 1).is_none_or(|&b| is_space_or_tab(b))
             {
-                task = Some(checked);
                 let rest =
                     String::from_utf8_lossy(tail.get(close + 1..).unwrap_or(&[])).into_owned();
-                if rest.trim().is_empty() {
-                    self.offset = self.line.len();
-                    self.skip_blank_line = true;
+                // An item with no text after its box cannot interrupt a paragraph; the
+                // ordinary item rule then reads the box as text.
+                if rest.bytes().all(is_space_or_tab) {
+                    if !in_paragraph {
+                        task = Some(checked);
+                        self.offset = self.line.len();
+                        self.skip_blank_line = true;
+                    }
                 } else {
+                    task = Some(checked);
                     task_text = Some(rest.trim_start_matches([' ', '\t']).to_owned());
                 }
             }
@@ -1569,6 +1587,7 @@ impl Parser<'_> {
                     blanks: Vec::new(),
                     blank_end: false,
                     blank_inside: false,
+                    removed_children: 0,
                 });
                 if let Some(node) = self.nodes.get_mut(parent)
                     && let Some(p) = position
@@ -1689,6 +1708,7 @@ impl Parser<'_> {
                     && p.children.last() == Some(&index)
                 {
                     p.children.pop();
+                    p.removed_children += 1;
                 }
             }
             Kind::CodeBlock { fenced: false, .. } => {
@@ -1729,15 +1749,20 @@ impl Parser<'_> {
         self.line_number + usize::from(self.at_end)
     }
 
-    /// The blank line rule of the finalizer of `listItemSpec` in `Commonmark/Blocks.hs`.
+    /// The blank line rule of the finalizers of `listItemSpec` in `Commonmark/Blocks.hs`
+    /// and `taskListItemBlockSpec` in `Commonmark/Extensions/TaskList.hs`. An ordinary item
+    /// counts the blank lines of its ordinary child lists only; a task item counts those of
+    /// each child list.
     fn finalize_item_blanks(&mut self, item: usize) {
         let Some(node) = self.nodes.get(item) else {
             return;
         };
+        let task_item = matches!(node.kind, Kind::Item(ListData { task: Some(_), .. }));
         let mut all = node.blanks.clone();
         for &child in &node.children {
             if let Some(list) = self.nodes.get(child)
-                && matches!(list.kind, Kind::List(_))
+                && let Kind::List(data) = list.kind
+                && (task_item || data.task.is_none())
             {
                 all.extend_from_slice(&list.blanks);
             }
@@ -1827,12 +1852,13 @@ fn fancy_marker(
         return None;
     }
     let start = usize::from(paren);
-    let word_len = rest
-        .get(start..)?
-        .iter()
-        .take_while(|b| b.is_ascii_alphanumeric())
-        .count();
-    let word = rest.get(start..start + word_len)?;
+    let text = utf8_prefix(rest.get(start..)?);
+    let word_len: usize = text
+        .chars()
+        .take_while(|&c| crate::inlines::is_word_char(c))
+        .map(char::len_utf8)
+        .sum();
+    let word = text.get(..word_len)?;
     let end = start + word_len;
     let (style, number) = match series {
         Some((style, _)) => (style, number_in_style(word, style)?),
@@ -1844,9 +1870,9 @@ fn fancy_marker(
                 NumStyle::LowerRoman,
                 NumStyle::UpperRoman,
             ];
-            if roman_one && word == b"i" {
+            if roman_one && word == "i" {
                 (NumStyle::LowerRoman, 1)
-            } else if roman_one && word == b"I" {
+            } else if roman_one && word == "I" {
                 (NumStyle::UpperRoman, 1)
             } else {
                 candidates
@@ -1873,23 +1899,39 @@ fn fancy_marker(
     Some((style, delim, number, end + 1))
 }
 
-fn number_in_style(word: &[u8], style: NumStyle) -> Option<i64> {
+fn number_in_style(word: &str, style: NumStyle) -> Option<i64> {
     match style {
         NumStyle::Decimal => {
-            (!word.is_empty() && word.len() < 10 && word.iter().all(u8::is_ascii_digit))
-                .then(|| parse_number(word))
+            (!word.is_empty() && word.len() < 10 && word.bytes().all(|b| b.is_ascii_digit()))
+                .then(|| parse_number(word.as_bytes()))
                 .flatten()
         }
-        NumStyle::LowerAlpha => match word {
-            [c] if c.is_ascii_lowercase() => Some(i64::from(c - b'a') + 1),
-            _ => None,
-        },
-        NumStyle::UpperAlpha => match word {
-            [c] if c.is_ascii_uppercase() => Some(i64::from(c - b'A') + 1),
-            _ => None,
-        },
-        NumStyle::LowerRoman => roman(word, false),
-        NumStyle::UpperRoman => roman(word, true),
+        NumStyle::LowerAlpha => letter_number(word, crate::marks::is_lower, 'a'),
+        NumStyle::UpperAlpha => letter_number(word, crate::marks::is_upper, 'A'),
+        NumStyle::LowerRoman => roman(word.as_bytes(), false),
+        NumStyle::UpperRoman => roman(word.as_bytes(), true),
+    }
+}
+
+/// The number of a marker of one letter of the class, `1 + ord c - ord first`, as
+/// `pLowerAlpha` and `pUpperAlpha` of `Commonmark/Extensions/FancyList.hs` give it.
+fn letter_number(word: &str, class: fn(char) -> bool, first: char) -> Option<i64> {
+    let mut chars = word.chars();
+    let letter = chars.next().filter(|&c| class(c))?;
+    chars
+        .next()
+        .is_none()
+        .then(|| 1 + i64::from(u32::from(letter)) - i64::from(u32::from(first)))
+}
+
+/// The longest prefix of the bytes that is UTF-8 text.
+fn utf8_prefix(bytes: &[u8]) -> &str {
+    match std::str::from_utf8(bytes) {
+        Ok(text) => text,
+        Err(error) => bytes
+            .get(..error.valid_up_to())
+            .and_then(|valid| std::str::from_utf8(valid).ok())
+            .unwrap_or(""),
     }
 }
 
@@ -1986,7 +2028,7 @@ fn continues_list(open: ListKind, new: ListKind, start: i64) -> bool {
 
 /// Returns the title of an alert type, for example `Note` for `NOTE`.
 pub(crate) fn alert_title(name: &str) -> Option<&'static str> {
-    match name.to_ascii_uppercase().as_str() {
+    match name.to_uppercase().as_str() {
         "NOTE" => Some("Note"),
         "TIP" => Some("Tip"),
         "IMPORTANT" => Some("Important"),
@@ -2021,6 +2063,8 @@ fn maybe_special(b: u8) -> bool {
             | b'('
             | b'{'
     ) || b.is_ascii_alphanumeric()
+        // A letter beyond ASCII can start a fancy list item.
+        || b >= 0x80
 }
 
 fn atx_level(rest: &str) -> Option<usize> {
