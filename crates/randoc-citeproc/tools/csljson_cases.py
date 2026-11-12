@@ -182,6 +182,117 @@ WRITER = {
 }
 
 
+# Elements: each Block kind in `MetaBlocks` and each Inline kind in
+# `MetaInlines`, one case for each form.
+A = '("",[],[])'
+plain = lambda t: f'Plain [Str "{t}"]'
+para = lambda t: f'Para [Str "{t}"]'
+cell = lambda *blocks: f'Cell {A} AlignDefault (RowSpan 1) (ColSpan 1) [' + ",".join(blocks) + ']'
+row = lambda *texts: f'Row {A} [' + ",".join(cell(plain(t)) for t in texts) + ']'
+COLUMNS = "[(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)]"
+
+
+def table(caption, head, bodies, foot, short="Nothing"):
+    return (f'Table {A} (Caption {short} [{caption}]) {COLUMNS} (TableHead {A} [{head}]) '
+            f'[{bodies}] (TableFoot {A} [{foot}])')
+
+
+def body(rows, heads="", columns=0):
+    return f'TableBody {A} (RowHeadColumns {columns}) [{heads}] [{rows}]'
+
+
+BLOCKS = {
+    "plain": plain("x"),
+    "para": para("x"),
+    "lineblock": 'LineBlock [[Str "l1"],[Str "l2"]]',
+    "codeblock": f'CodeBlock {A} "c1\\nc2"',
+    "rawblock": 'RawBlock (Format "html") "<p>r</p>"',
+    "rawblock-latex": 'RawBlock (Format "latex") "\\\\x"',
+    "blockquote": f'BlockQuote [{para("q1")},{para("q2")}]',
+    "orderedlist": f'OrderedList (1,Decimal,Period) [[{plain("o1")}],[{plain("o2")}]]',
+    "bulletlist": f'BulletList [[{plain("b1")}],[{para("b2")},{para("b3")}]]',
+    "deflist": f'DefinitionList [([Str "T"],[[{plain("D")}]])]',
+    "deflist-many": f'DefinitionList [([Str "T1"],[[{plain("D1")}],[{plain("D2")}]]),'
+                    f'([Str "T2",Space,Emph [Str "u"]],[[{para("E1")},{para("E2")}]])]',
+    "deflist-no-definition": 'DefinitionList [([Str "T"],[])]',
+    "deflist-empty-term": f'DefinitionList [([],[[{plain("D")}]])]',
+    "header": f'Header 2 {A} [Str "h"]',
+    "hr": "HorizontalRule",
+    "table-one-cell": table("", "", body(row("B")), ""),
+    "table": table(plain("cap"), row("h1", "h2"), body(row("a1", "a2") + "," + row("b1", "b2")), row("f1", "f2")),
+    "table-short-caption": table(plain("cap"), "", body(row("x")), "", short='(Just [Str "sh"])'),
+    "table-body-head": table("", "", body(row("r1", "r2"), heads=row("ih1", "ih2"), columns=1), ""),
+    "table-bodies": table("", "", body(row("x1")) + "," + body(row("x2")), ""),
+    "table-cell-blocks": table("", "", body(f'Row {A} [{cell(para("p1"), para("p2"))},{cell()}]'), ""),
+    "table-caption-blocks": table(para("c1") + "," + para("c2"), "", body(row("x")), ""),
+    "table-no-rows": table(plain("cap"), "", "", ""),
+    "table-markup": table("", "", body(f'Row {A} [' + cell('Plain [Emph [Str "e"]]') + ']'), ""),
+    "figure": f'Figure {A} (Caption Nothing [{plain("fc")}]) [{plain("fb")}]',
+    "figure-no-caption": f'Figure {A} (Caption Nothing []) [{plain("fb")}]',
+    "figure-short-caption": f'Figure {A} (Caption (Just [Str "s"]) [{plain("fc")}]) [{plain("fb")}]',
+    "div": f'Div {A} [{para("d1")},{para("d2")}]',
+    "div-csl": f'Div ("",["csl-entry"],[]) [{para("d1")}]',
+    "between-hr": f'{para("a")},HorizontalRule,{para("b")}',
+    "between-raw": f'{para("a")},RawBlock (Format "html") "<p>r</p>",{para("b")}',
+    "between-table": f'{para("a")},' + table("", "", body(row("B")), "") + f',{para("b")}',
+    "between-empty-table": f'{para("a")},' + table("", "", "", "") + f',{para("b")}',
+    "between-empty-div": f'{para("a")},Div {A} [],{para("b")}',
+    "between-empty-list": f'{para("a")},BulletList [],{para("b")}',
+    "between-code": f'{para("a")},CodeBlock {A} "c",{para("b")}',
+    "between-lineblock": f'{para("a")},LineBlock [[Str "l"]],{para("b")}',
+    "between-deflist": f'{para("a")},DefinitionList [([Str "T"],[[{plain("D")}]])],{para("b")}',
+}
+
+INLINES = {
+    "str": 'Str "x"',
+    "emph": 'Emph [Str "x"]',
+    "underline": 'Underline [Str "x"]',
+    "strong": 'Strong [Str "x"]',
+    "strikeout": 'Strikeout [Str "x"]',
+    "superscript": 'Superscript [Str "x"]',
+    "subscript": 'Subscript [Str "x"]',
+    "smallcaps": 'SmallCaps [Str "x"]',
+    "quoted-single": 'Quoted SingleQuote [Str "x"]',
+    "quoted-double": 'Quoted DoubleQuote [Str "x"]',
+    "cite": 'Cite [Citation {citationId = "k", citationPrefix = [], citationSuffix = [], citationMode = NormalCitation, citationNoteNum = 0, citationHash = 0}] [Str "[@k]"]',
+    "code": f'Code {A} "c"',
+    "space": 'Str "a",Space,Str "b"',
+    "softbreak": 'Str "a",SoftBreak,Str "b"',
+    "linebreak": 'Str "a",LineBreak,Str "b"',
+    "math-inline": 'Math InlineMath "m"',
+    "math-display": 'Math DisplayMath "m"',
+    "rawinline": 'Str "a",RawInline (Format "html") "<b>",Str "b"',
+    "rawinline-tex": 'Str "a",RawInline (Format "tex") "\\\\x",Str "b"',
+    "link": f'Link {A} [Str "L"] ("u","t")',
+    "image": f'Image {A} [Str "I"] ("u","t")',
+    "note": f'Str "a",Note [{para("n")}],Str "b"',
+    "span": f'Span {A} [Str "x"]',
+    "span-nocase": 'Span ("",["nocase"],[]) [Str "x"]',
+    "span-nocase-x": 'Span ("",["nocase","x"],[]) [Str "x"]',
+    "span-x-nocase": 'Span ("",["x","nocase"],[]) [Str "x"]',
+    "span-csl": 'Span ("",["csl-a"],[]) [Str "x"]',
+    "span-csl-x": 'Span ("",["csl-a","x"],[]) [Str "x"]',
+    "span-x-csl": 'Span ("",["x","csl-a"],[]) [Str "x"]',
+    "span-csl-csl": 'Span ("",["csl-a","csl-b"],[]) [Str "x"]',
+    "span-csl-nocase": 'Span ("",["csl-a","nocase"],[]) [Str "x"]',
+    "span-csl-id-attribute": 'Span ("i",["csl-a"],[("k","v")]) [Str "x"]',
+    "span-csl-prefix-only": 'Span ("",["csl-"],[]) [Str "x"]',
+    "span-csl-quoted": 'Span ("",["csl-quoted"],[]) [Str "x"]',
+    "span-csl-left-margin": 'Span ("",["csl-left-margin"],[]) [Str "x"]',
+    "span-smallcaps-class": 'Span ("",["smallcaps"],[]) [Str "x"]',
+    "span-nodecoration": 'Span ("",["nodecoration"],[]) [Str "x"]',
+    "span-style": 'Span ("",[],[("style","font-variant:small-caps")]) [Str "x"]',
+}
+
+
+def element_doc(kind, body):
+    return native_doc("MetaList [" + ref(("id", S("a")), ("title", f"Meta{kind} [{body}]")) + "]")
+
+
+ELEMENTS = [(f"block-{k}", element_doc("Blocks", v)) for k, v in BLOCKS.items()] + \
+           [(f"inline-{k}", element_doc("Inlines", v)) for k, v in INLINES.items()]
+
+
 def toml_string(text):
     return json.dumps(text, ensure_ascii=False)
 
@@ -205,6 +316,8 @@ def main():
                 ['from = "csljson"', 'to = ["csljson"]'], list(ERRORS.items()))
     write_cases(out / "writer.toml", "The writer: references metadata of each form.",
                 ['from = "native"', 'to = ["csljson"]'], list(WRITER.items()))
+    write_cases(out / "elements.toml", "The writer: each Block and Inline kind in a metadata field.",
+                ['from = "native"', 'to = ["csljson"]'], ELEMENTS)
 
 
 main()

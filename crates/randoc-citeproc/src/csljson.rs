@@ -565,15 +565,13 @@ fn inlines_to_markup(inlines: &[Inline], depth: usize) -> Result<Vec<Markup>> {
             Inline::Math(MathType::InlineMath, math) => out.push(text(format!("${math}$"))),
             Inline::Math(MathType::DisplayMath, math) => out.push(text(format!("$${math}$$"))),
             Inline::RawInline(..) | Inline::Note(_) => {}
-            Inline::Span(attr, i) => {
-                if attr.has_class("nocase") {
-                    out.push(styled(Style::NoCase, i)?);
-                } else if let Some(class) = attr.classes.iter().find(|c| c.starts_with("csl-")) {
+            Inline::Span(attr, i) => match attr.classes.as_slice() {
+                [class] if class == "nocase" => out.push(styled(Style::NoCase, i)?),
+                [class] if class.starts_with("csl-") => {
                     out.push(Markup::Div(class.clone(), inner(i)?));
-                } else {
-                    out.extend(inner(i)?);
                 }
-            }
+                _ => out.extend(inner(i)?),
+            },
         }
     }
     Ok(out)
@@ -621,11 +619,30 @@ fn block_to_markup(block: &Block, depth: usize) -> Result<Vec<Markup>> {
             let mut out = Vec::new();
             for (term, definitions) in entries {
                 out.extend(inlines_to_markup(term, inner)?);
+                out.push(text(": "));
                 out.extend(items(definitions)?);
             }
             out
         }
-        Block::RawBlock(..) | Block::HorizontalRule | Block::Table(_) => Vec::new(),
+        Block::Table(table) => {
+            let rows = table.head.rows.iter().chain(
+                table
+                    .bodies
+                    .iter()
+                    .flat_map(|body| body.head.iter().chain(&body.body)),
+            );
+            let mut out = Vec::new();
+            for (index, row) in rows.chain(&table.foot.rows).enumerate() {
+                if index > 0 {
+                    out.push(text("\n"));
+                }
+                for cell in &row.cells {
+                    out.extend(blocks_to_markup(&cell.content, inner)?);
+                }
+            }
+            out
+        }
+        Block::RawBlock(..) | Block::HorizontalRule => Vec::new(),
     })
 }
 
@@ -729,6 +746,74 @@ mod tests {
             ..date(&[&[2001]])
         };
         assert_eq!(date_to_text(&circa), "L~");
+    }
+
+    fn blocks_text(blocks: &[Block]) -> String {
+        markup::render(&blocks_to_markup(blocks, 100).unwrap())
+    }
+
+    fn plain(text: &str) -> Block {
+        Block::Plain(vec![Inline::Str(text.into())])
+    }
+
+    #[test]
+    fn tables_definitions_and_spans_have_the_oracle_text() {
+        use randoc_ast::{Attr, Caption, Cell, Row, Table, TableBody, TableFoot, TableHead};
+        let row = |a: &str, b: &str| Row {
+            attr: Attr::default(),
+            cells: [a, b]
+                .iter()
+                .map(|t| Cell {
+                    content: vec![plain(t)],
+                    ..Cell::default()
+                })
+                .collect(),
+        };
+        let table = Block::Table(Box::new(Table {
+            attr: Attr::default(),
+            caption: Caption {
+                short: None,
+                long: vec![plain("cap")],
+            },
+            col_specs: Vec::new(),
+            head: TableHead {
+                attr: Attr::default(),
+                rows: vec![row("h1", "h2")],
+            },
+            bodies: vec![TableBody {
+                attr: Attr::default(),
+                row_head_columns: 0,
+                head: vec![row("i1", "i2")],
+                body: vec![row("r1", "r2")],
+            }],
+            foot: TableFoot {
+                attr: Attr::default(),
+                rows: vec![row("f1", "f2")],
+            },
+        }));
+        assert_eq!(
+            blocks_text(&[plain("a"), table, plain("b")]),
+            "a\nh1h2\ni1i2\nr1r2\nf1f2\nb"
+        );
+        let definitions = Block::DefinitionList(vec![
+            (vec![Inline::Str("T".into())], vec![vec![plain("D")]]),
+            (Vec::new(), Vec::new()),
+        ]);
+        assert_eq!(blocks_text(&[definitions]), "T: D: ");
+        let span = |id: &str, classes: &[&str]| {
+            let attr = Attr {
+                id: id.into(),
+                classes: classes.iter().map(|c| (*c).into()).collect(),
+                attributes: Vec::new(),
+            };
+            markup::render(
+                &inlines_to_markup(&[Inline::Span(attr, vec![Inline::Str("x".into())])], 100)
+                    .unwrap(),
+            )
+        };
+        assert_eq!(span("", &["csl-a", "x"]), "x");
+        assert_eq!(span("", &["x", "csl-a"]), "x");
+        assert_eq!(span("i", &["csl-a"]), "<div class=\"csl-csl-a\">x</div>");
     }
 
     #[test]

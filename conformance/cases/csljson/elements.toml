@@ -1,0 +1,308 @@
+# The writer: each Block and Inline kind in a metadata field.
+from = "native"
+to = ["csljson"]
+
+
+[[case]]
+id = "block-plain"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Plain [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "block-para"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "block-lineblock"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [LineBlock [[Str \"l1\"],[Str \"l2\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-codeblock"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [CodeBlock (\"\",[],[]) \"c1\\nc2\"])])])]}) []\n"
+
+[[case]]
+id = "block-rawblock"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [RawBlock (Format \"html\") \"<p>r</p>\"])])])]}) []\n"
+
+[[case]]
+id = "block-rawblock-latex"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [RawBlock (Format \"latex\") \"\\\\x\"])])])]}) []\n"
+
+[[case]]
+id = "block-blockquote"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [BlockQuote [Para [Str \"q1\"],Para [Str \"q2\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-orderedlist"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [OrderedList (1,Decimal,Period) [[Plain [Str \"o1\"]],[Plain [Str \"o2\"]]]])])])]}) []\n"
+
+[[case]]
+id = "block-bulletlist"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [BulletList [[Plain [Str \"b1\"]],[Para [Str \"b2\"],Para [Str \"b3\"]]]])])])]}) []\n"
+
+[[case]]
+id = "block-deflist"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [DefinitionList [([Str \"T\"],[[Plain [Str \"D\"]]])]])])])]}) []\n"
+
+[[case]]
+id = "block-deflist-many"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [DefinitionList [([Str \"T1\"],[[Plain [Str \"D1\"]],[Plain [Str \"D2\"]]]),([Str \"T2\",Space,Emph [Str \"u\"]],[[Para [Str \"E1\"],Para [Str \"E2\"]]])]])])])]}) []\n"
+
+[[case]]
+id = "block-deflist-no-definition"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [DefinitionList [([Str \"T\"],[])]])])])]}) []\n"
+
+[[case]]
+id = "block-deflist-empty-term"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [DefinitionList [([],[[Plain [Str \"D\"]]])]])])])]}) []\n"
+
+[[case]]
+id = "block-header"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Header 2 (\"\",[],[]) [Str \"h\"]])])])]}) []\n"
+
+[[case]]
+id = "block-hr"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [HorizontalRule])])])]}) []\n"
+
+[[case]]
+id = "block-table-one-cell"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"B\"]]]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing [Plain [Str \"cap\"]]) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"h1\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"h2\"]]]]) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"a1\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"a2\"]]],Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"b1\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"b2\"]]]]] (TableFoot (\"\",[],[]) [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"f1\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"f2\"]]]])])])])]}) []\n"
+
+[[case]]
+id = "block-table-short-caption"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption (Just [Str \"sh\"]) [Plain [Str \"cap\"]]) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"x\"]]]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table-body-head"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 1) [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"ih1\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"ih2\"]]]] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"r1\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"r2\"]]]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table-bodies"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"x1\"]]]],TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"x2\"]]]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table-cell-blocks"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Para [Str \"p1\"],Para [Str \"p2\"]],Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) []]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table-caption-blocks"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing [Para [Str \"c1\"],Para [Str \"c2\"]]) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"x\"]]]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table-no-rows"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing [Plain [Str \"cap\"]]) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-table-markup"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Emph [Str \"e\"]]]]]] (TableFoot (\"\",[],[]) [])])])])]}) []\n"
+
+[[case]]
+id = "block-figure"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Figure (\"\",[],[]) (Caption Nothing [Plain [Str \"fc\"]]) [Plain [Str \"fb\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-figure-no-caption"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Figure (\"\",[],[]) (Caption Nothing []) [Plain [Str \"fb\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-figure-short-caption"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Figure (\"\",[],[]) (Caption (Just [Str \"s\"]) [Plain [Str \"fc\"]]) [Plain [Str \"fb\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-div"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Div (\"\",[],[]) [Para [Str \"d1\"],Para [Str \"d2\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-div-csl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Div (\"\",[\"csl-entry\"],[]) [Para [Str \"d1\"]]])])])]}) []\n"
+
+[[case]]
+id = "block-between-hr"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],HorizontalRule,Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-raw"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],RawBlock (Format \"html\") \"<p>r</p>\",Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-table"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [TableBody (\"\",[],[]) (RowHeadColumns 0) [] [Row (\"\",[],[]) [Cell (\"\",[],[]) AlignDefault (RowSpan 1) (ColSpan 1) [Plain [Str \"B\"]]]]] (TableFoot (\"\",[],[]) []),Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-empty-table"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],Table (\"\",[],[]) (Caption Nothing []) [(AlignDefault,ColWidthDefault),(AlignDefault,ColWidthDefault)] (TableHead (\"\",[],[]) []) [] (TableFoot (\"\",[],[]) []),Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-empty-div"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],Div (\"\",[],[]) [],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-empty-list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],BulletList [],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-code"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],CodeBlock (\"\",[],[]) \"c\",Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-lineblock"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],LineBlock [[Str \"l\"]],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "block-between-deflist"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],DefinitionList [([Str \"T\"],[[Plain [Str \"D\"]]])],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"x\"])])])]}) []\n"
+
+[[case]]
+id = "inline-emph"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Emph [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-underline"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Underline [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-strong"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Strong [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-strikeout"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Strikeout [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-superscript"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Superscript [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-subscript"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Subscript [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-smallcaps"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [SmallCaps [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-quoted-single"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Quoted SingleQuote [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-quoted-double"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Quoted DoubleQuote [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-cite"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Cite [Citation {citationId = \"k\", citationPrefix = [], citationSuffix = [], citationMode = NormalCitation, citationNoteNum = 0, citationHash = 0}] [Str \"[@k]\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-code"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Code (\"\",[],[]) \"c\"])])])]}) []\n"
+
+[[case]]
+id = "inline-space"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",Space,Str \"b\"])])])]}) []\n"
+
+[[case]]
+id = "inline-softbreak"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",SoftBreak,Str \"b\"])])])]}) []\n"
+
+[[case]]
+id = "inline-linebreak"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",LineBreak,Str \"b\"])])])]}) []\n"
+
+[[case]]
+id = "inline-math-inline"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Math InlineMath \"m\"])])])]}) []\n"
+
+[[case]]
+id = "inline-math-display"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Math DisplayMath \"m\"])])])]}) []\n"
+
+[[case]]
+id = "inline-rawinline"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",RawInline (Format \"html\") \"<b>\",Str \"b\"])])])]}) []\n"
+
+[[case]]
+id = "inline-rawinline-tex"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",RawInline (Format \"tex\") \"\\\\x\",Str \"b\"])])])]}) []\n"
+
+[[case]]
+id = "inline-link"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Link (\"\",[],[]) [Str \"L\"] (\"u\",\"t\")])])])]}) []\n"
+
+[[case]]
+id = "inline-image"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Image (\"\",[],[]) [Str \"I\"] (\"u\",\"t\")])])])]}) []\n"
+
+[[case]]
+id = "inline-note"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",Note [Para [Str \"n\"]],Str \"b\"])])])]}) []\n"
+
+[[case]]
+id = "inline-span"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-nocase"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"nocase\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-nocase-x"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"nocase\",\"x\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-x-nocase"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"x\",\"nocase\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-a\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-x"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-a\",\"x\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-x-csl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"x\",\"csl-a\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-csl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-a\",\"csl-b\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-nocase"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-a\",\"nocase\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-id-attribute"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"i\",[\"csl-a\"],[(\"k\",\"v\")]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-prefix-only"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-quoted"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-quoted\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-csl-left-margin"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"csl-left-margin\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-smallcaps-class"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"smallcaps\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-nodecoration"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[\"nodecoration\"],[]) [Str \"x\"]])])])]}) []\n"
+
+[[case]]
+id = "inline-span-style"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Span (\"\",[],[(\"style\",\"font-variant:small-caps\")]) [Str \"x\"]])])])]}) []\n"

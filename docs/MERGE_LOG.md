@@ -1529,3 +1529,36 @@ Open findings: I-LTXR-11 (high: encguide, ltnews, ltnews23), I-LTXR-07
 (medium), I-LTXR-08 (medium), I-LTXR-09, I-LTXR-10, I-LTXR-12, I-LTXR-14
 (low). Open checks: coverage, the mutation tests, the work list of
 `COMMANDS.md` (the command table).
+
+## Workstream citeproc (branch `ws/citeproc-2`, head 4150ed1, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+correction of the CRITICAL finding of review round 2 (Codex
+citeproc-R2-16: a table in a metadata field lost its text without a
+message). Rule from a new oracle matrix (each `Block` kind in
+`MetaBlocks` and each `Inline` kind in `MetaInlines` of a `title` field;
+`tools/csljson_cases.py`, new suite `csljson/elements`, 76 cases, 228
+units): the rows of the table head, the bodies and the foot are joined by
+a newline, the cells of a row with nothing. The same matrix closes Codex
+R2-03 (a definition term is followed by `: `) and R2-04 (a `Span` gives a
+display block only with exactly one class that starts with `csl-`). Row
+I-CITE-11 changed (low); new row I-CITE-14 (high) for the findings of
+round 2 that are open.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 4150ed1 (04:14 to 04:44 UTC; worker report): 43110 units, 40996 pass; baseline 40768 units, 0 regressions, 228 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `csljson/elements`: 76 cases, 0 differences. Harness `--filter csljson/`: 549 units, 517 pass, 0 fail, 32 skipped. |
+| 3. Tests | `cargo test -p randoc-citeproc` on the merged tree: 78 pass, 0 fail, 4 ignored. New test `csljson::tests::tables_definitions_and_spans_have_the_oracle_text`. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 2 on main a0b9535: Codex REQUEST CHANGES (1 critical, 3 high, 9 medium, 5 low), Opus REQUEST CHANGES (2 medium, 6 low). Closed: Codex R2-16 (critical), R2-03, R2-04. |
+| 6. No slowdowns | CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan: no hit.
+
+Open findings: I-CITE-14 (high: Codex R2-07, a 2 MB stack overflows in
+the public render functions; the 9 medium findings of the Codex report
+and the 2 medium findings of the Opus report), the low rows. Open
+checks: fuzzing, coverage, the mutation sample.
