@@ -430,9 +430,46 @@ fn build(
     })
 }
 
+/// The row head of the rows of a body: the header columns of each row, when
+/// that number is the same for each row, clipped to the columns. A row counts
+/// the `colspan` of its leading `th` cells and of each `th` cell of an earlier
+/// row whose `rowspan` reaches it. A cell with a `rowspan` below 1 counts
+/// nothing. Pandoc adds the raw values with 64-bit wrapping.
+fn row_head_columns(rows: &[ReadRow], column_count: usize) -> usize {
+    // `ends[i]` is the sum of the spans that stop at row `i`; the sums
+    // wrap, so a wrapping subtraction removes them exactly.
+    let mut ends = vec![0i64; rows.len()];
+    let mut carried = 0i64;
+    let mut first = None;
+    for (index, (_, cells)) in rows.iter().enumerate() {
+        carried = carried.wrapping_sub(ends.get(index).copied().unwrap_or(0));
+        let count = cells
+            .iter()
+            .take_while(|cell| cell.is_header)
+            .filter(|cell| cell.cell.row_span >= 1)
+            .fold(carried, |sum, cell| sum.wrapping_add(cell.cell.col_span));
+        if *first.get_or_insert(count) != count {
+            return 0;
+        }
+        for cell in cells
+            .iter()
+            .filter(|cell| cell.is_header && cell.cell.row_span > 1)
+        {
+            carried = carried.wrapping_add(cell.cell.col_span);
+            let end = usize::try_from(cell.cell.row_span)
+                .map_or(usize::MAX, |span| index.saturating_add(span));
+            if let Some(slot) = ends.get_mut(end) {
+                *slot = slot.wrapping_add(cell.cell.col_span);
+            }
+        }
+    }
+    first.map_or(0, |count| {
+        usize::try_from(count).unwrap_or(0).min(column_count)
+    })
+}
+
 /// Makes one table body. The first rows that have only `th` cells are the
-/// head of the body. The row head is the number of `th` columns at the start
-/// of each other row, when that number is the same for each row.
+/// head of the body.
 fn body(attr: Attr, rows: Vec<ReadRow>, column_count: usize) -> TableBody {
     let head_count = rows
         .iter()
@@ -440,17 +477,7 @@ fn body(attr: Attr, rows: Vec<ReadRow>, column_count: usize) -> TableBody {
         .count();
     let mut rows = rows;
     let body_rows = rows.split_off(head_count);
-    let leading = |row: &ReadRow| -> i64 {
-        row.1
-            .iter()
-            .take_while(|cell| cell.is_header)
-            .map(|cell| cell.cell.col_span.max(1))
-            .sum()
-    };
-    let first = body_rows.first().map(leading).unwrap_or(0);
-    let same = body_rows.iter().all(|row| leading(row) == first);
-    let row_head = if same { first } else { 0 };
-    let row_head = usize::try_from(row_head).unwrap_or(0).min(column_count);
+    let row_head = row_head_columns(&body_rows, column_count);
     TableBody {
         attr,
         row_head_columns: i64::try_from(row_head).unwrap_or(0),
@@ -593,6 +620,110 @@ mod tests {
         let mut budget = CellBudget { used: 1, max };
         assert!(!budget.take(usize::MAX));
         assert_eq!(budget.used, 1);
+    }
+
+    fn header_cell(row_span: i64, col_span: i64) -> ReadCell {
+        ReadCell {
+            is_header: true,
+            ..plain_cell(row_span, col_span)
+        }
+    }
+
+    fn rows(cells: Vec<Vec<ReadCell>>) -> Vec<ReadRow> {
+        cells
+            .into_iter()
+            .map(|row| (Attr::default(), row))
+            .collect()
+    }
+
+    // Each expected value is the row head that Pandoc 3.13 gives for the
+    // same body rows (the matrix `tables rowhead-*`).
+    #[test]
+    fn the_row_head_counts_carried_and_leading_header_spans() {
+        let row_head = |cells, columns| row_head_columns(&rows(cells), columns);
+        // A `th` with `rowspan` 2 counts in the next row.
+        assert_eq!(
+            row_head(
+                vec![
+                    vec![header_cell(2, 1), plain_cell(1, 1)],
+                    vec![plain_cell(1, 1)]
+                ],
+                2
+            ),
+            1
+        );
+        // A carried `th` counts after a carried `td` too.
+        let carried = vec![
+            vec![header_cell(3, 1), plain_cell(2, 1)],
+            vec![header_cell(1, 1)],
+            vec![plain_cell(1, 1)],
+        ];
+        assert_eq!(row_head(carried, 2), 0);
+        // A `rowspan` below 1 counts nothing and does not end the leading cells.
+        assert_eq!(
+            row_head(vec![vec![header_cell(0, 1), plain_cell(1, 1)]], 2),
+            0
+        );
+        assert_eq!(
+            row_head(
+                vec![
+                    vec![header_cell(1, 1), plain_cell(1, 1)],
+                    vec![header_cell(0, 0), header_cell(1, 1)]
+                ],
+                2
+            ),
+            1
+        );
+        // Raw values, compared before the clip to the columns.
+        assert_eq!(
+            row_head(
+                vec![
+                    vec![header_cell(1, 3), plain_cell(1, -2)],
+                    vec![header_cell(1, 4), plain_cell(1, -3)]
+                ],
+                1
+            ),
+            0
+        );
+        assert_eq!(
+            row_head(
+                vec![
+                    vec![header_cell(1, 3), plain_cell(1, -2)],
+                    vec![header_cell(1, 3), plain_cell(1, -2)]
+                ],
+                1
+            ),
+            1
+        );
+        // The largest values wrap and allocate nothing.
+        assert_eq!(
+            row_head(
+                vec![vec![
+                    header_cell(1, i64::MAX),
+                    header_cell(1, 1),
+                    plain_cell(1, 1)
+                ]],
+                0
+            ),
+            0
+        );
+        assert_eq!(
+            row_head(
+                vec![vec![
+                    header_cell(1, i64::MAX),
+                    header_cell(1, 1),
+                    plain_cell(1, 1)
+                ]],
+                5
+            ),
+            0
+        );
+        let tall = vec![
+            vec![header_cell(i64::MAX, i64::MAX), plain_cell(1, 1)],
+            vec![plain_cell(i64::MIN, 1)],
+        ];
+        assert_eq!(row_head(tall, 7), 7);
+        assert_eq!(row_head(vec![], 3), 0);
     }
 
     #[test]

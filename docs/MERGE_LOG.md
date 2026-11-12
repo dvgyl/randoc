@@ -986,3 +986,30 @@ the templates) in `templates/defaults.json`.
 Open findings: I-TPL-05 (scope gap). Open checks: a check outside the
 repository that stores only a hash of the FODT results; the 6 test names
 of class E in `spec/pandoc-testsuite.json` (the owner decides).
+
+## Workstream html-reader (commit 7824b0d of the branch `ws/html-reader-2`, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+correction of a crash. A table header cell with a very large `colspan`
+caused a panic (an arithmetic overflow) in the computation of the row
+head. The row head of each body row is now the wrapping sum of the
+`colspan` of its leading `th` cells and of each `th` above it that a
+`rowspan` carries down, clipped to the columns. The worker continues on
+the same branch, so this commit (not the branch head) is merged.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 7824b0d (run ended 23:54 UTC; worker report): baseline 19375 units, 0 regressions, 268 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Oracle matrix of 16,321 table inputs (`tools/differential.py cases`): 0 differences after the correction. Replay `tables rowhead-001..270`: 268 pass, 2 known differences (I-HTMLR-20). |
+| 3. Tests | `cargo test -p randoc-html-reader` on the merged tree: 38 pass, 0 fail, 1 ignored. New tests `row_head_sums_of_the_largest_spans_do_not_overflow` and `the_row_head_counts_carried_and_leading_header_spans`. Coverage and mutation tests: not run. |
+| 4. No panics | New fuzz seed `fuzz/seeds/html_read/table-spans.html`. The fuzz run of 300 s did not run. |
+| 5. Reviews | Round 3 on main 98806b9: Opus REQUEST CHANGES (1 critical, 4 high, 7 medium, 5 low); Codex stopped by its service before the final message (its partial report names the same critical finding). This commit closes the critical finding (Codex html-reader-R3-01, Opus html-reader-R3-01). The other findings are in work on the same branch. |
+| 6. No slowdowns | Not measured. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan: no hit.
+
+Open findings: the high, medium and low findings of round 3 (in work on
+the branch); new row I-HTMLR-20 (low). Open checks: the fuzz run, coverage,
+mutation tests.

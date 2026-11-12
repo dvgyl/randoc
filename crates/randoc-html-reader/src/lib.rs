@@ -415,6 +415,27 @@ mod tests {
     // Each expected value below is the result of Pandoc 3.13 for the same input.
 
     #[test]
+    fn row_head_sums_of_the_largest_spans_do_not_overflow() {
+        let empty = r#"[{"t":"Table","c":[["",[],[]],[null,[]],[],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[]]]]],[["",[],[]],[]]]}]"#;
+        assert_eq!(
+            blocks("<table><tr><th colspan=9223372036854775807><th><td></table>"),
+            empty
+        );
+        assert_eq!(
+            blocks(
+                "<table><tr><th colspan=4611686018427387904><th colspan=4611686018427387904><td></table>"
+            ),
+            empty
+        );
+        assert_eq!(
+            blocks(
+                r#"<table><tr><th rowspan="2">h</th><td>a</td></tr><tr><td>b</td></tr></table>"#
+            ),
+            r#"[{"t":"Table","c":[["",[],[]],[null,[]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}],[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],1,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},2,1,[{"t":"Plain","c":[{"t":"Str","c":"h"}]}]],[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"a"}]}]]]],[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"b"}]}]]]]]]],[["",[],[]],[]]]}]"#
+        );
+    }
+
+    #[test]
     fn reads_paragraphs_and_loose_text() {
         assert_eq!(
             blocks("text <i>i</i>\n<p>p</p>\nmore"),
@@ -506,6 +527,8 @@ mod tests {
         "extensions/math-189",
         "extensions/tex-100",
         "inlines/inlines-029",
+        "tables/rowhead-024",
+        "tables/rowhead-028",
     ];
 
     /// Runs the reader as the program does and returns the standard output,
