@@ -709,8 +709,8 @@
         "total": 799
       },
       "read": {
-        "passing": 1768,
-        "total": 1806
+        "passing": 1799,
+        "total": 1836
       },
       "status": "partial"
     },
@@ -877,8 +877,8 @@
     "columns": {
       "status": "partial",
       "units": {
-        "passing": 740,
-        "total": 753
+        "passing": 744,
+        "total": 754
       }
     },
     "completion": {
@@ -905,15 +905,15 @@
     "data-dir": {
       "status": "partial",
       "units": {
-        "passing": 10,
-        "total": 11
+        "passing": 12,
+        "total": 13
       }
     },
     "default-image-extension": {
       "status": "passing",
       "units": {
-        "passing": 3,
-        "total": 3
+        "passing": 4,
+        "total": 4
       }
     },
     "defaults": {
@@ -1031,8 +1031,8 @@
     "filter": {
       "status": "passing",
       "units": {
-        "passing": 4,
-        "total": 4
+        "passing": 7,
+        "total": 7
       }
     },
     "from": {
@@ -1115,8 +1115,8 @@
     "indented-code-classes": {
       "status": "passing",
       "units": {
-        "passing": 2,
-        "total": 2
+        "passing": 3,
+        "total": 3
       }
     },
     "ipynb-output": {
@@ -1253,9 +1253,9 @@
       }
     },
     "metadata-file": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 45,
+        "passing": 46,
         "total": 46
       }
     },
@@ -1388,8 +1388,8 @@
     "sandbox": {
       "status": "partial",
       "units": {
-        "passing": 77,
-        "total": 81
+        "passing": 78,
+        "total": 82
       }
     },
     "section-divs": {
@@ -1409,8 +1409,8 @@
     "shift-heading-level-by": {
       "status": "passing",
       "units": {
-        "passing": 20,
-        "total": 20
+        "passing": 21,
+        "total": 21
       }
     },
     "slide-level": {
@@ -1437,8 +1437,8 @@
     "strip-comments": {
       "status": "passing",
       "units": {
-        "passing": 4,
-        "total": 4
+        "passing": 5,
+        "total": 5
       }
     },
     "syntax-definition": {
@@ -1458,8 +1458,8 @@
     "tab-stop": {
       "status": "passing",
       "units": {
-        "passing": 25,
-        "total": 25
+        "passing": 26,
+        "total": 26
       }
     },
     "table-caption-position": {
@@ -1472,7 +1472,7 @@
     "template": {
       "status": "partial",
       "units": {
-        "passing": 546,
+        "passing": 590,
         "total": 814
       }
     },
@@ -1493,7 +1493,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 27,
+        "passing": 30,
         "total": 101
       }
     },
@@ -1521,8 +1521,8 @@
     "track-changes": {
       "status": "passing",
       "units": {
-        "passing": 4,
-        "total": 4
+        "passing": 5,
+        "total": 5
       }
     },
     "typst-input": {
@@ -1958,8 +1958,8 @@
     },
     "options": {
       "not_started": 1,
-      "partial": 25,
-      "passing": 83
+      "partial": 24,
+      "passing": 84
     },
     "output_formats": {
       "failing": 1,
@@ -1968,8 +1968,8 @@
       "passing": 6
     },
     "units": {
-      "passing": 40768,
-      "total": 42480
+      "passing": 40891,
+      "total": 42535
     }
   }
 }
