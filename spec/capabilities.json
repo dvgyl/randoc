@@ -48,8 +48,8 @@
     "auto_identifiers": {
       "status": "passing",
       "units": {
-        "passing": 5,
-        "total": 5
+        "passing": 6,
+        "total": 6
       }
     },
     "autolink_bare_uris": {
@@ -268,8 +268,8 @@
     "latex_macros": {
       "status": "partial",
       "units": {
-        "passing": 2,
-        "total": 3
+        "passing": 4,
+        "total": 5
       }
     },
     "line_blocks": {
@@ -408,10 +408,10 @@
       "status": "not_started"
     },
     "raw_tex": {
-      "status": "passing",
+      "status": "partial",
       "units": {
-        "passing": 178,
-        "total": 178
+        "passing": 209,
+        "total": 210
       }
     },
     "rebase_relative_paths": {
@@ -445,8 +445,8 @@
     "smart": {
       "status": "passing",
       "units": {
-        "passing": 1719,
-        "total": 1719
+        "passing": 1721,
+        "total": 1721
       }
     },
     "smart_quotes": {
@@ -694,7 +694,11 @@
       "status": "partial"
     },
     "latex": {
-      "status": "not_started"
+      "read": {
+        "passing": 497,
+        "total": 523
+      },
+      "status": "partial"
     },
     "man": {
       "status": "not_started"
@@ -705,15 +709,15 @@
         "total": 799
       },
       "read": {
-        "passing": 1720,
-        "total": 1779
+        "passing": 1748,
+        "total": 1806
       },
       "status": "partial"
     },
     "markdown_github": {
       "read": {
-        "passing": 28,
-        "total": 28
+        "passing": 36,
+        "total": 36
       },
       "status": "passing"
     },
@@ -726,15 +730,15 @@
     },
     "markdown_phpextra": {
       "read": {
-        "passing": 17,
-        "total": 18
+        "passing": 18,
+        "total": 19
       },
       "status": "partial"
     },
     "markdown_strict": {
       "read": {
-        "passing": 29,
-        "total": 29
+        "passing": 31,
+        "total": 31
       },
       "status": "passing"
     },
@@ -833,11 +837,7 @@
       }
     },
     "bash-completion": {
-      "status": "failing",
-      "units": {
-        "passing": 0,
-        "total": 1
-      }
+      "status": "not_started"
     },
     "biblatex": {
       "status": "passing",
@@ -882,10 +882,10 @@
       }
     },
     "completion": {
-      "status": "partial",
+      "status": "passing",
       "units": {
         "passing": 2,
-        "total": 5
+        "total": 2
       }
     },
     "csl": {
@@ -1868,18 +1868,18 @@
     "extensions": {
       "failing": 1,
       "not_started": 11,
-      "partial": 9,
-      "passing": 69
+      "partial": 10,
+      "passing": 68
     },
     "input_formats": {
-      "not_started": 40,
-      "partial": 8,
+      "not_started": 39,
+      "partial": 9,
       "passing": 4
     },
     "options": {
-      "failing": 1,
-      "partial": 22,
-      "passing": 86
+      "not_started": 1,
+      "partial": 21,
+      "passing": 87
     },
     "output_formats": {
       "not_started": 71,
@@ -1887,8 +1887,8 @@
       "passing": 2
     },
     "units": {
-      "passing": 19375,
-      "total": 20536
+      "passing": 19911,
+      "total": 21093
     }
   }
 }

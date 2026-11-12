@@ -929,3 +929,27 @@ coverage, mutation tests, the corpus run. Requests of the worker to the
 coordinator: the text of `LogMessage::MacroAlreadyDefined` in
 `randoc-core` (I-LTXR-04); a shared module for the `Inlines` join rules
 (two copies, in `randoc-html-reader` and `randoc-latex-reader`).
+
+## Session 4 of 2026-11-11, batch of three branches
+
+Branches and commits, in the merge order: `yaml` 33ed724 (2c8e284),
+`markdown-reader` 91b869a (c145443), `latex-reader` af83697 (6a01107). No
+branch was left out or undone.
+
+`merge-ws check` on the final tree (6a01107) passed on its first run
+(23:36 to 00:12 UTC): `record` 0 new units, 0 oracle errors;
+`verify-oracle` 21093 units, 0 stored results are not current;
+`scripts/gate.sh` passed (format, lints, documentation, tests, harness).
+After the check, `conformance/cases/cli/info.toml` has no completion case
+(the four cases that c494dd5 removed did not come back).
+
+- Harness before the batch: baseline 19375 units (`spec/baseline.json`).
+- Harness after the batch: 21495 units, 19911 pass, 1182 fail, 0 no
+  result, 0 not recorded, 402 skipped; baseline 19375 units, 0
+  regressions, 536 new passes. `spec/baseline.json` now has 19911 units.
+- Capability summary: `{"extensions": {"failing": 1, "not_started": 11,
+  "partial": 10, "passing": 68}, "input_formats": {"not_started": 39,
+  "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 21,
+  "passing": 87}, "output_formats": {"not_started": 71, "partial": 4,
+  "passing": 2}, "units": {"passing": 19911, "total": 21093}}`. The input
+  format `latex` is partial (497 of 523 read units pass).
