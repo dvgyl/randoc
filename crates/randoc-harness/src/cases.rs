@@ -409,6 +409,20 @@ impl Outcome {
         self.stderr.bytes()
     }
 
+    /// Returns a hash of the oracle version, the input fingerprint and the result.
+    ///
+    /// `verify-oracle` stores it for each result that the oracle confirmed, and
+    /// runs the oracle again only when the hash changes.
+    pub fn digest(&self, oracle: &str) -> String {
+        let mut hash = Fnv::default();
+        hash.field(oracle.as_bytes());
+        hash.field(self.key.as_bytes());
+        hash.field(&self.exit.to_le_bytes());
+        hash.field(&self.stdout_bytes());
+        hash.field(&self.stderr_bytes());
+        format!("{:016x}", hash.0)
+    }
+
     /// Returns `true` when the exit code and both outputs are equal. The fingerprint does not count.
     pub fn same_result(&self, other: &Outcome) -> bool {
         self.exit == other.exit && self.stdout == other.stdout && self.stderr == other.stderr

@@ -33,14 +33,14 @@ Commands:
 
 Options:
   --filter TEXT       Use only the units whose identifier contains TEXT. Repeat for more.
-  --all               record: run the oracle again for each unit.
+  --all               record and verify-oracle: run the oracle again for each unit.
   --randoc PATH       The Randoc program. Default: target/debug/randoc.
   --oracle PATH       The oracle program. Default: the RANDOC_ORACLE_PANDOC environment variable.
   --baseline FILE     run: fail when a unit in FILE does not pass.
   --update-baseline   run: write the passing units to the baseline file.
   --matrix FILE       run: write the capability matrix to FILE.
   --report FILE       run: write the result of each unit to FILE. Default: target/harness/report.json.
-  --jobs N            The number of programs to run at the same time.
+  --jobs N            The number of programs to run at the same time. The oracle runs at most 2 times.
   --timeout SECONDS   The time limit for one program run. Default: 30.
   --root DIR          The repository root. Default: the current directory.
 
@@ -153,6 +153,9 @@ fn parallel_map<T: Sync, R: Send>(
     results.into_inner().unwrap_or_default()
 }
 
+/// The largest number of oracle processes that run at the same time, because of the memory of the machine.
+const MAX_ORACLE_JOBS: usize = 2;
+
 /// The directories and programs of one harness run.
 struct Session {
     config: Config,
@@ -197,6 +200,10 @@ impl Session {
             expected_dir,
             scratch,
         })
+    }
+
+    fn oracle_jobs(&self) -> usize {
+        self.config.jobs.min(MAX_ORACLE_JOBS)
     }
 
     fn work_dir(&self, worker: usize) -> PathBuf {
@@ -265,8 +272,11 @@ impl Session {
         self.stored(unit)
             .filter(|outcome| outcome.key == unit.fingerprint(stdin))
     }
+}
 
-    fn close(&self) {
+/// The scratch directory goes away also when a command returns early with an error or panics.
+impl Drop for Session {
+    fn drop(&mut self) {
         let _ = fs::remove_dir_all(&self.scratch);
     }
 }
@@ -290,6 +300,8 @@ fn record(mut session: Session) -> Result<bool, String> {
     let all = session.config.all;
     let mut recorded = 0usize;
     let mut errors = 0usize;
+    // Only the expected files that change are written again: a write on exFAT is slow.
+    let mut changed: BTreeSet<String> = BTreeSet::new();
 
     // The write units need the document tree from the read units, so the read units run first.
     for write_phase in [false, true] {
@@ -303,7 +315,7 @@ fn record(mut session: Session) -> Result<bool, String> {
                 None => session.stored(unit).is_some(),
             })
             .collect();
-        let outcomes = parallel_map(&todo, session.config.jobs, |worker, (unit, stdin)| {
+        let outcomes = parallel_map(&todo, session.oracle_jobs(), |worker, (unit, stdin)| {
             let stdin = stdin.as_ref()?;
             let result = oracle.run(&unit.args, stdin, &unit.files, &session.work_dir(worker));
             Some(result.map(|mut outcome| {
@@ -324,21 +336,23 @@ fn record(mut session: Session) -> Result<bool, String> {
             })
             .collect();
         for (id, file_key, local_id, outcome) in updates {
-            let file = session.expected.entry(file_key).or_default();
-            match outcome {
+            let file = session.expected.entry(file_key.clone()).or_default();
+            let change = match outcome {
                 Some(Ok(outcome)) => {
-                    file.units.insert(local_id, outcome);
                     recorded += 1;
+                    file.units.insert(local_id, outcome);
+                    true
                 }
                 Some(Err(error)) => {
                     println!("  ORACLE ERROR {id}: {error}");
-                    file.units.remove(&local_id);
                     errors += 1;
+                    file.units.remove(&local_id).is_some()
                 }
                 // The oracle gives no document tree for this case, so the write unit has no result.
-                None => {
-                    file.units.remove(&local_id);
-                }
+                None => file.units.remove(&local_id).is_some(),
+            };
+            if change {
+                changed.insert(file_key);
             }
         }
     }
@@ -360,14 +374,22 @@ fn record(mut session: Session) -> Result<bool, String> {
             file.units
                 .retain(|id, _| keep.is_some_and(|ids| ids.contains(id.as_str())));
             removed += before - file.units.len();
+            if before != file.units.len() {
+                changed.insert(file_key.clone());
+            }
         }
-        file.oracle = version.clone();
-        cases::save_expected(&session.expected_dir, file_key, file)?;
+        if file.oracle != version {
+            file.oracle = version.clone();
+            changed.insert(file_key.clone());
+        }
+        if changed.contains(file_key) {
+            cases::save_expected(&session.expected_dir, file_key, file)?;
+        }
     }
     println!(
-        "harness: recorded {recorded} units with {version}, removed {removed} results that have no unit, {errors} oracle errors"
+        "harness: recorded {recorded} units with {version}, removed {removed} results that have no unit, {errors} oracle errors, wrote {} expected files",
+        changed.len()
     );
-    session.close();
     Ok(errors == 0)
 }
 
@@ -627,19 +649,52 @@ fn run(session: Session) -> Result<bool, String> {
             );
         }
     }
-    session.close();
     Ok(ok)
+}
+
+/// The digest of each stored result that the oracle confirmed, by unit identifier.
+#[derive(Default, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct VerifiedFile {
+    verified: BTreeMap<String, String>,
 }
 
 fn verify_oracle(session: Session) -> Result<bool, String> {
     let oracle = session.oracle()?;
-    let fresh = parallel_map(&session.units, session.config.jobs, |worker, unit| {
+    let version = oracle_version(&oracle, &session.work_dir(0))?;
+    let cache_path = session
+        .config
+        .root
+        .join("target/harness/verified-oracle.json");
+    // A cache that is missing or not valid only costs time: each unit runs again.
+    let mut cache: VerifiedFile = if session.config.all {
+        VerifiedFile::default()
+    } else {
+        fs::read_to_string(&cache_path)
+            .ok()
+            .and_then(|text| serde_json::from_str(&text).ok())
+            .unwrap_or_default()
+    };
+    let digest = |unit: &Unit| {
+        let stdin = session.stdin(unit)?;
+        session
+            .current(unit, &stdin)
+            .map(|stored| stored.digest(&version))
+    };
+    let todo: Vec<&Unit> = session
+        .units
+        .iter()
+        .filter(|unit| digest(unit).is_none_or(|d| cache.verified.get(&unit.id) != Some(&d)))
+        .collect();
+    let unchanged = session.units.len() - todo.len();
+    let fresh = parallel_map(&todo, session.oracle_jobs(), |worker, unit| {
         let stdin = session.stdin(unit)?;
         Some(oracle.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)))
     });
     let mut different = 0usize;
     let mut checked = 0usize;
-    for (unit, outcome) in session.units.iter().zip(fresh) {
+    for (unit, outcome) in todo.into_iter().zip(fresh) {
+        cache.verified.remove(&unit.id);
         let Some(outcome) = outcome.flatten() else {
             continue;
         };
@@ -648,7 +703,12 @@ fn verify_oracle(session: Session) -> Result<bool, String> {
             .stdin(unit)
             .and_then(|stdin| session.current(unit, &stdin));
         let problem = match (stored, outcome) {
-            (Some(stored), Ok(outcome)) if stored.same_result(&outcome) => continue,
+            (Some(stored), Ok(outcome)) if stored.same_result(&outcome) => {
+                cache
+                    .verified
+                    .insert(unit.id.clone(), stored.digest(&version));
+                continue;
+            }
             (Some(_), Ok(_)) => "the stored result is different from the oracle result".to_owned(),
             (None, Ok(_)) => "no current stored result, run record".to_owned(),
             (_, Err(error)) => format!("no oracle result: {error}"),
@@ -656,10 +716,10 @@ fn verify_oracle(session: Session) -> Result<bool, String> {
         different += 1;
         println!("  STALE {} ({problem})", unit.id);
     }
+    write_json(&cache_path, &cache)?;
     println!(
-        "harness: checked {checked} units against the oracle: {different} stored results are not current"
+        "harness: checked {checked} units against the oracle, {unchanged} confirmed results did not change: {different} stored results are not current"
     );
-    session.close();
     Ok(different == 0)
 }
 
@@ -705,7 +765,6 @@ fn show(session: Session) -> Result<bool, String> {
     if let Some(verdict) = result.verdict {
         println!("verdict: {verdict:?}");
     }
-    session.close();
     Ok(result.status == Status::Pass)
 }
 
@@ -742,7 +801,6 @@ pub fn check_baseline(
     let session = Session::open(config)?;
     let program = session.randoc()?;
     let results = run_units(&session, &program);
-    session.close();
 
     let mut baseline = load_baseline(&root.join("spec/baseline.json"))?;
     let local = root.join("target/harness/local-baseline.json");
@@ -1196,6 +1254,133 @@ mod tests {
         // `record` also applies to its `--version` call, which took at most 0.15 s in 200 runs
         // at a load average of 24. `run` makes no `--version` call.
         assert_no_result_is_never_recorded_and_never_passes("timeout", "kill -STOP $$", "10", "1");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn the_scratch_directory_is_removed_also_after_an_error() {
+        let fixture = Fixture::new("scratch");
+        let oracle = fixture.echo("oracle");
+        let session = fixture.session("record", &[], &oracle, &oracle);
+        let scratch = session.scratch.clone();
+        assert!(record(session).unwrap());
+        assert!(!scratch.exists());
+
+        // The units run, and then the matrix option fails because of the filter.
+        let matrix = fixture.root.join("m.json");
+        let extra = ["--filter", "s/f/a", "--matrix", matrix.to_str().unwrap()];
+        let session = fixture.session("run", &extra, &oracle, &oracle);
+        let scratch = session.scratch.clone();
+        assert!(run(session).is_err());
+        assert!(!scratch.exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn at_most_two_oracle_processes_run_at_the_same_time() {
+        let fixture = Fixture::new("oracle-jobs");
+        let running = fixture.root.join("running");
+        fs::create_dir_all(&running).unwrap();
+        let running = running.to_str().unwrap();
+        let oracle = fixture.program(
+            "oracle",
+            &format!(
+                "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\n\
+                 touch '{running}/'$$\nls '{running}' | grep -vc '^\\._' >> '{running}.log'\n\
+                 sleep 0.3\nrm '{running}/'$$\ncat"
+            ),
+        );
+        // The read phase has four units, so eight jobs without the limit run four oracles together.
+        for command in ["record", "verify-oracle"] {
+            let session = fixture.session(command, &["--jobs", "8"], &oracle, &oracle);
+            let ok = if command == "record" {
+                record(session)
+            } else {
+                verify_oracle(session)
+            };
+            assert!(ok.unwrap(), "{command}");
+        }
+        let log = fs::read_to_string(format!("{running}.log")).unwrap();
+        let counts: Vec<usize> = log.lines().map(|l| l.trim().parse().unwrap()).collect();
+        assert_eq!(counts.len(), 12, "{log}");
+        assert!(counts.iter().all(|&n| (1..=2).contains(&n)), "{log}");
+        assert!(
+            counts.contains(&2),
+            "the oracle never ran two times at once: {log}"
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn verify_oracle_runs_the_oracle_only_for_results_that_it_did_not_confirm() {
+        let fixture = Fixture::new("verify-cache");
+        let calls = fixture.root.join("calls.log");
+        let calls_text = calls.to_str().unwrap().to_owned();
+        let oracle = fixture.program(
+            "oracle",
+            &format!(
+                "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\necho x >> '{calls_text}'\ncat"
+            ),
+        );
+        let count = || {
+            fs::read_to_string(&calls)
+                .map(|text| text.lines().count())
+                .unwrap_or(0)
+        };
+        let verify = |extra: &[&str]| {
+            verify_oracle(fixture.session("verify-oracle", extra, &oracle, &oracle)).unwrap()
+        };
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        assert_eq!(count(), 6);
+
+        // A record with no change starts no conversion and does not write the expected file:
+        // a write would make the compact text of the file pretty again.
+        let expected_file = fixture.root.join("conformance/expected/s/f.json");
+        let value: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&expected_file).unwrap()).unwrap();
+        let compact = value.to_string();
+        fs::write(&expected_file, &compact).unwrap();
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        assert_eq!(count(), 6);
+        assert_eq!(fs::read_to_string(&expected_file).unwrap(), compact);
+
+        assert!(verify(&[]));
+        assert_eq!(count(), 12);
+        assert!(verify(&[]));
+        assert_eq!(
+            count(),
+            12,
+            "a confirmed result that did not change runs again"
+        );
+        assert!(verify(&["--all"]));
+        assert_eq!(count(), 18);
+
+        // A stored result that changed after the check runs again, and the check finds it. The
+        // write unit of the case runs again too, because its input is the changed tree.
+        let expected_dir = fixture.root.join("conformance/expected");
+        let mut stored = cases::load_expected(&expected_dir, "s/f").unwrap();
+        let read = stored.units.get_mut("a#read").unwrap();
+        let mut edited = Outcome::new(read.exit, b"edited\n".to_vec(), Vec::new());
+        edited.key = read.key.clone();
+        *read = edited;
+        cases::save_expected(&expected_dir, "s/f", &stored).unwrap();
+        assert!(!verify(&[]));
+        assert_eq!(count(), 20);
+        assert!(!verify(&[]));
+        assert_eq!(
+            count(),
+            22,
+            "a result that the oracle did not confirm runs again"
+        );
+
+        // A cache file that is not valid costs time and does not change the verdict.
+        fs::write(
+            fixture.root.join("target/harness/verified-oracle.json"),
+            "{",
+        )
+        .unwrap();
+        assert!(!verify(&[]));
+        assert_eq!(count(), 28);
     }
 
     #[cfg(unix)]

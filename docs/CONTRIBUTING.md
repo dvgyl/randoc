@@ -88,8 +88,12 @@ merge gate as your own code.
 Run each command from the root of your worktree.
 
 ```sh
-# The mechanical checks of gates 1 and 7, and the tests.
+# The mechanical checks of gates 1 and 7, and the tests. The conformance suite
+# runs one time, inside `cargo test` (crates/randoc-cli/tests/conformance.rs).
 scripts/gate.sh
+# The merge check of the coordinator: the same checks, and the one suite run also
+# writes spec/baseline.json and spec/capabilities.json.
+scripts/gate.sh --update-spec
 
 # Conformance: record the oracle results for new cases, then compare.
 cargo run -q -p randoc-harness -- record

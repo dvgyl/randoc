@@ -1717,3 +1717,36 @@ documentation, tests, harness). After the check,
   the new `options/standalone-*` units of the markdown writer, which fail
   until the writer renders the template; these are new units, not
   regressions.
+
+## Workstream harness-speed (branch `ws/harness-speed`, commit f56b1d1, one squashed commit, session 5 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit f56b1d1 only. Content: the
+test tool, no code of the product. `scripts/gate.sh` runs the
+conformance suite one time (inside `cargo test`; with `--update-spec`
+the harness program runs it and writes `spec/baseline.json` and
+`spec/capabilities.json`), and prints the time of each step.
+`randoc-harness` does less file work for each unit, uses at most 2
+oracle processes and keeps a cache for `verify-oracle`. New tool
+`tools/harness-verdicts/compare.py` compares the verdicts of two runs.
+
+The worker has not written its report file yet. The gate evidence comes
+from the inbox line of f56b1d1 (`env/store/inbox/harness-speed.log`,
+06:03:52 UTC: gate passed) and from the measurements of the merge agent.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on f56b1d1. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | The verdict of each unit must stay the same: harness on `main` before the merge (8dd0a5a): 49305 units, 46457 pass, 2446 fail, 402 skipped, 0 regressions, 0 new passes. |
+| 3. Tests | `cargo test -p randoc-harness` on the merged tree: 40 pass, 0 fail. Coverage and the mutation tests: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | No review round yet; the two reviews of this block follow when its unit ends. |
+| 6. No slowdowns | The wall time of `merge-ws check` and of its gate part: see the batch record. CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. Licence scan of `ws/harness-speed`
+(head 7d6c7a2): no hit.
+
+Open findings: none known for this block. Open checks: the worker
+report, the two reviews, fuzzing, coverage, the mutation tests, the CPU
+table.

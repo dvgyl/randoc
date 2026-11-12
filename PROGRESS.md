@@ -269,6 +269,7 @@ output through an engine, and the `lua` and `server` modes.
 | latex-reader | `randoc-latex-reader`: the reader `latex`, unit 1 (tokenizer, macro definitions, the most frequent constructs) |
 | markdown-writer | `randoc-markdown-writer`: the writers `markdown`, `gfm`, `commonmark`, `commonmark_x`, `plain` and variants (partial: large generated documents still differ) |
 | latex-writer | `randoc-latex`: the writers `latex` and `beamer` (fragment output; standalone output is not connected yet) |
+| harness-speed | `randoc-harness` and `scripts/gate.sh`: the gate runs the conformance suite one time; less file work for each unit (test tool only) |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

@@ -92,3 +92,14 @@ cargo run -q -p randoc-harness -- run --filter markdown/
   `record` refuses it, and `run` reports the unit as "no result".
 - `run` without `--baseline` exits with 0 also when units fail. Use
   `--baseline spec/baseline.json` to get a failure exit code for a regression.
+- `record` and `verify-oracle` start at most 2 oracle processes at the same
+  time, because of the memory of the machine. `record` runs the oracle only
+  for a unit with no current stored result, and writes only the expected
+  files that change.
+- `verify-oracle` keeps the digest of each stored result that the oracle
+  confirmed in `target/harness/verified-oracle.json`. It runs the oracle again
+  only for a unit whose digest changed: a different oracle version, input or
+  stored result. `verify-oracle --all` runs the oracle for each unit.
+- Each command of the harness uses one scratch folder for each worker thread
+  under `$TMPDIR` and removes the scratch folder at its end, also after an
+  error.

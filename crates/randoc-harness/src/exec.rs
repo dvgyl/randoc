@@ -25,11 +25,28 @@ pub struct Program {
     pub timeout: Duration,
 }
 
+/// Makes `dir` an empty directory.
+///
+/// The work directory of a worker is empty after most runs, so the function
+/// first reads it and makes it only when it is missing: on exFAT each
+/// `mkdir` and `stat` costs more than the run of a small conversion.
 fn clear_dir(dir: &Path) -> std::io::Result<()> {
-    fs::create_dir_all(dir)?;
-    for entry in fs::read_dir(dir)? {
-        let path = entry?.path();
-        let removed = if path.is_dir() {
+    let entries = match fs::read_dir(dir) {
+        Ok(entries) => entries,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return fs::create_dir_all(dir);
+        }
+        Err(error) => return Err(error),
+    };
+    for entry in entries {
+        let entry = entry?;
+        let path = entry.path();
+        let is_dir = match entry.file_type() {
+            Ok(kind) => kind.is_dir(),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => return Err(error),
+        };
+        let removed = if is_dir {
             fs::remove_dir_all(&path)
         } else {
             fs::remove_file(&path)
