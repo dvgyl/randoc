@@ -1,0 +1,486 @@
+# Inline elements.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "inline-0"
+input = '''
+*emph*
+'''
+
+[[case]]
+id = "inline-1"
+input = '''
+**strong**
+'''
+
+[[case]]
+id = "inline-2"
+input = '''
+***both***
+'''
+
+[[case]]
+id = "inline-3"
+input = '''
+~~strike~~
+'''
+
+[[case]]
+id = "inline-4"
+input = '''
+^sup^
+'''
+
+[[case]]
+id = "inline-5"
+input = '''
+~sub~
+'''
+
+[[case]]
+id = "inline-6"
+input = '''
+[sc]{.smallcaps}
+'''
+
+[[case]]
+id = "inline-7"
+input = '''
+[ul]{.underline}
+'''
+
+[[case]]
+id = "inline-8"
+input = '''
+[mark]{.mark}
+'''
+
+[[case]]
+id = "inline-9"
+input = '''
+[plain span]
+'''
+
+[[case]]
+id = "inline-10"
+input = '''
+[span]{.foo}
+'''
+
+[[case]]
+id = "inline-11"
+input = '''
+[id span]{#sid}
+'''
+
+[[case]]
+id = "inline-12"
+input = '''
+[rtl]{dir=rtl}
+'''
+
+[[case]]
+id = "inline-13"
+input = '''
+[ltr]{dir=ltr}
+'''
+
+[[case]]
+id = "inline-14"
+input = '''
+[fr]{lang=fr}
+'''
+
+[[case]]
+id = "inline-15"
+input = '''
+[x]{dir=rtl lang=fr}
+'''
+
+[[case]]
+id = "inline-16"
+input = '''
+[both]{#x .smallcaps}
+'''
+
+[[case]]
+id = "inline-17"
+input = '''
+$x^2$
+'''
+
+[[case]]
+id = "inline-18"
+input = '''
+$$\int_0^1 f$$
+'''
+
+[[case]]
+id = "inline-19"
+input = '''
+$a % comment$
+'''
+
+[[case]]
+id = "inline-20"
+input = '''
+`\foo`{=latex}
+'''
+
+[[case]]
+id = "inline-21"
+input = '''
+`\bar`{=tex}
+'''
+
+[[case]]
+id = "inline-22"
+input = '''
+`<b>`{=html}
+'''
+
+[[case]]
+id = "inline-23"
+input = '''
+\LaTeX{} macro
+'''
+
+[[case]]
+id = "inline-24"
+input = '''
+a\
+b
+'''
+
+[[case]]
+id = "inline-25"
+input = '''
+"quoted *emph*"
+'''
+
+[[case]]
+id = "inline-26"
+input = '''
+'single'
+'''
+
+[[case]]
+id = "inline-27"
+input = '''
+"'nested'"
+'''
+
+[[case]]
+id = "inline-28"
+input = '''
+'"nested"'
+'''
+
+[[case]]
+id = "inline-29"
+input = '''
+"a 'b' c"
+'''
+
+[[case]]
+id = "inline-30"
+input = '''
+*a **b** c*
+'''
+
+[[case]]
+id = "inline-31"
+input = '''
+**a *b* c**
+'''
+
+[[case]]
+id = "inline-32"
+input = '''
+~~*x*~~
+'''
+
+[[case]]
+id = "inline-33"
+input = '''
+^*x*^
+'''
+
+[[case]]
+id = "inline-34"
+input = '''
+H~2~O
+'''
+
+[[case]]
+id = "inline-35"
+input = '''
+[*x*]{.underline}
+'''
+
+[[case]]
+id = "inline-36"
+input = '''
+[`c`]{.mark}
+'''
+
+[[case]]
+id = "inline-37"
+input = '''
+<span>html</span>
+'''
+
+[[case]]
+id = "inline-38"
+input = '''
+[a]{.csl-no-emph}
+'''
+
+[[case]]
+id = "inline-39"
+input = '''
+[a]{.csl-no-strong}
+'''
+
+[[case]]
+id = "inline-40"
+input = '''
+[a]{.csl-no-smallcaps}
+'''
+
+[[case]]
+id = "inline-41"
+input = '''
+@doe99
+'''
+
+[[case]]
+id = "inline-42"
+input = '''
+[@doe99, p. 3]
+'''
+
+[[case]]
+id = "inline-43"
+input = '''
+[see @a; @b]
+'''
+
+[[case]]
+id = "inline-44"
+input = '''
+[-@x]
+'''
+
+[[case]]
+id = "inline-45"
+input = '''
+@x [p. 4]
+'''
+
+[[case]]
+id = "inline-46"
+input = '''
+x^a b^
+'''
+
+[[case]]
+id = "inline-47"
+input = '''
+*emph with `code`*
+'''
+
+[[case]]
+id = "inline-48"
+input = '''
+**[link](http://x)**
+'''
+
+[[case]]
+id = "inline-49"
+input = '''
+[[nested]{.underline}]{.mark}
+'''
+
+[[case]]
+id = "inline-in-heading-0"
+input = '''
+# H *emph*
+'''
+
+[[case]]
+id = "inline-in-heading-1"
+input = '''
+# H **strong**
+'''
+
+[[case]]
+id = "inline-in-heading-2"
+input = '''
+# H ***both***
+'''
+
+[[case]]
+id = "inline-in-heading-3"
+input = '''
+# H ~~strike~~
+'''
+
+[[case]]
+id = "inline-in-heading-4"
+input = '''
+# H ^sup^
+'''
+
+[[case]]
+id = "inline-in-heading-5"
+input = '''
+# H ~sub~
+'''
+
+[[case]]
+id = "inline-in-heading-6"
+input = '''
+# H [sc]{.smallcaps}
+'''
+
+[[case]]
+id = "inline-in-heading-7"
+input = '''
+# H [ul]{.underline}
+'''
+
+[[case]]
+id = "inline-in-heading-8"
+input = '''
+# H [mark]{.mark}
+'''
+
+[[case]]
+id = "inline-in-heading-9"
+input = '''
+# H [plain span]
+'''
+
+[[case]]
+id = "inline-in-heading-10"
+input = '''
+# H [span]{.foo}
+'''
+
+[[case]]
+id = "inline-in-heading-11"
+input = '''
+# H [id span]{#sid}
+'''
+
+[[case]]
+id = "inline-in-heading-12"
+input = '''
+# H [rtl]{dir=rtl}
+'''
+
+[[case]]
+id = "inline-in-heading-13"
+input = '''
+# H [ltr]{dir=ltr}
+'''
+
+[[case]]
+id = "inline-in-heading-14"
+input = '''
+# H [fr]{lang=fr}
+'''
+
+[[case]]
+id = "inline-in-heading-15"
+input = '''
+# H [x]{dir=rtl lang=fr}
+'''
+
+[[case]]
+id = "inline-in-heading-16"
+input = '''
+# H [both]{#x .smallcaps}
+'''
+
+[[case]]
+id = "inline-in-heading-17"
+input = '''
+# H $x^2$
+'''
+
+[[case]]
+id = "inline-in-heading-18"
+input = '''
+# H $$\int_0^1 f$$
+'''
+
+[[case]]
+id = "inline-in-heading-19"
+input = '''
+# H $a % comment$
+'''
+
+[[case]]
+id = "inline-in-heading-20"
+input = '''
+# H `\foo`{=latex}
+'''
+
+[[case]]
+id = "inline-in-heading-21"
+input = '''
+# H `\bar`{=tex}
+'''
+
+[[case]]
+id = "inline-in-heading-22"
+input = '''
+# H `<b>`{=html}
+'''
+
+[[case]]
+id = "inline-in-heading-23"
+input = '''
+# H \LaTeX{} macro
+'''
+
+[[case]]
+id = "inline-in-heading-24"
+input = '''
+# H a\
+b
+'''
+
+[[case]]
+id = "inline-in-heading-25"
+input = '''
+# H "quoted *emph*"
+'''
+
+[[case]]
+id = "inline-in-heading-26"
+input = '''
+# H 'single'
+'''
+
+[[case]]
+id = "inline-in-heading-27"
+input = '''
+# H "'nested'"
+'''
+
+[[case]]
+id = "inline-in-heading-28"
+input = '''
+# H '"nested"'
+'''
+
+[[case]]
+id = "inline-in-heading-29"
+input = '''
+# H "a 'b' c"
+'''

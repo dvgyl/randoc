@@ -1,0 +1,466 @@
+# Document trees that the Markdown reader does not make.
+
+from = "json"
+to = ["latex"]
+
+[[case]]
+id = "ol-default"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[1, {"t": "DefaultStyle"}, {"t": "DefaultDelim"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-default-start"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[5, {"t": "DefaultStyle"}, {"t": "DefaultDelim"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-example"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[1, {"t": "Example"}, {"t": "TwoParens"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-upper-roman-paren"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[3, {"t": "UpperRoman"}, {"t": "OneParen"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-zero"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[0, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-negative"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[-2, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-default-period"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[1, {"t": "DefaultStyle"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-decimal-default-delim"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[1, {"t": "Decimal"}, {"t": "DefaultDelim"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]}]}
+'''
+
+[[case]]
+id = "ol-nested-start-3"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[3, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}, {"t": "OrderedList", "c": [[3, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}, {"t": "OrderedList", "c": [[3, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}, {"t": "OrderedList", "c": [[3, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}, {"t": "OrderedList", "c": [[3, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Plain", "c": [{"t": "Str", "c": "e"}]}]]]}]]]}]]]}]]]}]]]}]}
+'''
+
+[[case]]
+id = "subfigures-two"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["main", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "Main"}]}]], [{"t": "Figure", "c": [["sa", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [{"t": "Plain", "c": [{"t": "Image", "c": [["", [], []], [], ["a.png", ""]]}]}]]}, {"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}]]}]}
+'''
+
+[[case]]
+id = "subfigures-three"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "M"}]}]], [{"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]}, {"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]}, {"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]}]]}]}
+'''
+
+[[case]]
+id = "subfigure-and-loose"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "M2"}]}]], [{"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}, {"t": "Plain", "c": [{"t": "Str", "c": "loose"}]}]]}]}
+'''
+
+[[case]]
+id = "figure-in-figure"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["", [], []], [null, []], [{"t": "Figure", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}]]}]}
+'''
+
+[[case]]
+id = "ol-loose"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "OrderedList", "c": [[1, {"t": "Decimal"}, {"t": "Period"}], [[{"t": "Para", "c": [{"t": "Str", "c": "a"}]}], [{"t": "Para", "c": [{"t": "Str", "c": "b"}]}]]]}]}
+'''
+
+[[case]]
+id = "ul-empty"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "BulletList", "c": []}]}
+'''
+
+[[case]]
+id = "ul-empty-items"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "BulletList", "c": [[], []]}]}
+'''
+
+[[case]]
+id = "underline"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Underline", "c": [{"t": "Str", "c": "u"}]}]}]}
+'''
+
+[[case]]
+id = "strike-code"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Strikeout", "c": [{"t": "Code", "c": [["", [], []], "c"]}]}]}]}
+'''
+
+[[case]]
+id = "underline-math"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Underline", "c": [{"t": "Math", "c": [{"t": "InlineMath"}, "x"]}]}]}]}
+'''
+
+[[case]]
+id = "smallcaps-span"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Span", "c": [["", ["smallcaps"], []], [{"t": "Str", "c": "s"}]]}]}]}
+'''
+
+[[case]]
+id = "empty-str"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": ""}]}]}
+'''
+
+[[case]]
+id = "str-with-space"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "a b"}]}]}
+'''
+
+[[case]]
+id = "str-newline"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "a\nb"}]}]}
+'''
+
+[[case]]
+id = "header-7"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [7, ["h7", [], []], [{"t": "Str", "c": "seven"}]]}]}
+'''
+
+[[case]]
+id = "header-0"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [0, ["h0", [], []], [{"t": "Str", "c": "zero"}]]}]}
+'''
+
+[[case]]
+id = "header-no-id"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [1, ["", [], []], [{"t": "Str", "c": "noid"}]]}]}
+'''
+
+[[case]]
+id = "header-link-id"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [1, ["h", [], []], [{"t": "Link", "c": [["lid", [], []], [{"t": "Str", "c": "l"}], ["http://x", ""]]}]]}]}
+'''
+
+[[case]]
+id = "header-math"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [2, ["m", [], []], [{"t": "Math", "c": [{"t": "InlineMath"}, "x^2"]}]]}]}
+'''
+
+[[case]]
+id = "header-quoted"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [2, ["q", [], []], [{"t": "Quoted", "c": [{"t": "DoubleQuote"}, [{"t": "Str", "c": "q"}]]}]]}]}
+'''
+
+[[case]]
+id = "header-linebreak"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Header", "c": [1, ["lb", [], []], [{"t": "Str", "c": "a"}, {"t": "LineBreak"}, {"t": "Str", "c": "b"}]]}]}
+'''
+
+[[case]]
+id = "linebreaks-double"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "a"}, {"t": "LineBreak"}, {"t": "LineBreak"}, {"t": "Str", "c": "b"}]}]}
+'''
+
+[[case]]
+id = "linebreak-initial"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "LineBreak"}, {"t": "LineBreak"}, {"t": "Str", "c": "b"}]}]}
+'''
+
+[[case]]
+id = "linebreak-end"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "a"}, {"t": "LineBreak"}]}]}
+'''
+
+[[case]]
+id = "nbsp-after-break"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "a"}, {"t": "LineBreak"}, {"t": "Str", "c": "\u00a0\u00a0b"}]}]}
+'''
+
+[[case]]
+id = "quoted-nested"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Quoted", "c": [{"t": "DoubleQuote"}, [{"t": "Quoted", "c": [{"t": "SingleQuote"}, [{"t": "Str", "c": "x"}]]}]]}]}]}
+'''
+
+[[case]]
+id = "quoted-empty"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Quoted", "c": [{"t": "DoubleQuote"}, []]}]}]}
+'''
+
+[[case]]
+id = "quoted-then-quoted"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Quoted", "c": [{"t": "DoubleQuote"}, [{"t": "Str", "c": "a"}]]}, {"t": "Quoted", "c": [{"t": "SingleQuote"}, [{"t": "Str", "c": "b"}]]}]}]}
+'''
+
+[[case]]
+id = "raw-tex"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "RawInline", "c": ["tex", "\\x"]}]}, {"t": "RawBlock", "c": ["TeX", "\\y"]}]}
+'''
+
+[[case]]
+id = "raw-beamer-in-latex"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "RawBlock", "c": ["beamer", "\\pause"]}]}
+'''
+
+[[case]]
+id = "raw-multiline"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "RawBlock", "c": ["latex", "a\n\nb"]}]}
+'''
+
+[[case]]
+id = "math-display-newline"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Math", "c": [{"t": "DisplayMath"}, "a\n+ b"]}]}]}
+'''
+
+[[case]]
+id = "cite-citeproc"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Cite", "c": [[{"citationId": "k", "citationPrefix": [], "citationSuffix": [], "citationMode": {"t": "NormalCitation"}, "citationNoteNum": 1, "citationHash": 0}], [{"t": "Str", "c": "(K"}, {"t": "Space"}, {"t": "Str", "c": "2000)"}]]}]}]}
+'''
+
+[[case]]
+id = "figure-nocaption"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["", [], []], [null, []], [{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}]}
+'''
+
+[[case]]
+id = "figure-short"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["fid", [], []], [[{"t": "Str", "c": "s"}], [{"t": "Plain", "c": [{"t": "Str", "c": "long"}]}]], [{"t": "Para", "c": [{"t": "Str", "c": "x"}]}]]}]}
+'''
+
+[[case]]
+id = "figure-two-paras"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["", [], []], [null, [{"t": "Para", "c": [{"t": "Str", "c": "a"}]}, {"t": "Para", "c": [{"t": "Str", "c": "b"}]}]], [{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}]}
+'''
+
+[[case]]
+id = "figure-empty"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Figure", "c": [["", [], []], [null, []], []]}]}
+'''
+
+[[case]]
+id = "table-rowspan"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 2, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "r"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-colspan-head"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignCenter"}, 1, 2, [{"t": "Plain", "c": [{"t": "Str", "c": "wide"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "f2"}]}]]]]]]]}]}
+'''
+
+[[case]]
+id = "table-colspan-widths"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignLeft"}, {"t": "ColWidth", "c": 0.5}], [{"t": "AlignCenter"}, {"t": "ColWidth", "c": 0.5}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 2, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "r"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 2, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-colspan-middle"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 2, [{"t": "Plain", "c": [{"t": "Str", "c": "bc"}]}]]]], [["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 2, [{"t": "Plain", "c": [{"t": "Str", "c": "ab"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-two-bodies"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "ih"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "ih2"}]}]]]]], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]], [["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "d"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-mixed-widths"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignRight"}, {"t": "ColWidth", "c": 0.3}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, []]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "BulletList", "c": [[{"t": "Plain", "c": [{"t": "Str", "c": "x"}]}]]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-default-nonsimple"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Para", "c": [{"t": "Str", "c": "p1"}]}, {"t": "Para", "c": [{"t": "Str", "c": "p2"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-short-caption"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["tid", [], []], [[{"t": "Str", "c": "short"}], [{"t": "Plain", "c": [{"t": "Str", "c": "long"}]}]], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-no-head-caption"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-empty"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [], [["", [], []], []], [], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-cell-align"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignRight"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "b"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-short-row"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], []], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-linebreak"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidthDefault"}], [{"t": "AlignDefault"}, {"t": "ColWidthDefault"}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "a"}, {"t": "LineBreak"}, {"t": "Str", "c": "b"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "table-code-cell-width"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Table", "c": [["", [], []], [null, []], [[{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.5}], [{"t": "AlignDefault"}, {"t": "ColWidth", "c": 0.5}]], [["", [], []], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h1"}]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "h2"}]}]]]]]], [[["", [], []], 0, [], [[["", [], []], [[["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "CodeBlock", "c": [["", [], []], "code"]}]], [["", [], []], {"t": "AlignDefault"}, 1, 1, [{"t": "Plain", "c": [{"t": "Str", "c": "c"}]}]]]]]]], [["", [], []], []]]}]}
+'''
+
+[[case]]
+id = "task-list"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "BulletList", "c": [[{"t": "Plain", "c": [{"t": "Str", "c": "\u2610"}, {"t": "Space"}, {"t": "Str", "c": "todo"}]}], [{"t": "Plain", "c": [{"t": "Str", "c": "\u2612"}, {"t": "Space"}, {"t": "Str", "c": "done"}]}]]}]}
+'''
+
+[[case]]
+id = "div-ltr-lang"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Div", "c": [["", [], [["dir", "ltr"], ["lang", "de"]]], [{"t": "Para", "c": [{"t": "Str", "c": "x"}]}]]}]}
+'''
+
+[[case]]
+id = "span-ltr"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Span", "c": [["", [], [["dir", "ltr"]]], [{"t": "Str", "c": "x"}]]}]}]}
+'''
+
+[[case]]
+id = "image-pixel-float"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Image", "c": [["", [], [["width", "100.7px"]]], [], ["a.png", ""]]}]}]}
+'''
+
+[[case]]
+id = "image-uri-escape"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Image", "c": [["", [], []], [], ["a%20b#c.png", ""]]}]}]}
+'''
+
+[[case]]
+id = "image-http"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Image", "c": [["", [], []], [], ["http://x.com/a%20b.png", ""]]}]}]}
+'''
+
+[[case]]
+id = "link-empty-url"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "x"}], ["", ""]]}]}]}
+'''
+
+[[case]]
+id = "link-hash-only"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "x"}], ["#", ""]]}]}]}
+'''
+
+[[case]]
+id = "code-block-trailing-newline"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "CodeBlock", "c": [["", [], []], "a\n"]}]}
+'''
+
+[[case]]
+id = "code-block-empty"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "CodeBlock", "c": [["", [], []], ""]}]}
+'''
+
+[[case]]
+id = "code-block-class-empty"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "CodeBlock", "c": [["", ["zzzz"], []], ""]}]}
+'''
+
+[[case]]
+id = "note-ends-with-code-in-list"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "BulletList", "c": [[{"t": "Plain", "c": [{"t": "Str", "c": "a"}, {"t": "Note", "c": [{"t": "CodeBlock", "c": [["", [], []], "v"]}]}]}]]}]}
+'''
+
+[[case]]
+id = "note-in-note"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "a"}, {"t": "Note", "c": [{"t": "Para", "c": [{"t": "Str", "c": "b"}, {"t": "Note", "c": [{"t": "Para", "c": [{"t": "Str", "c": "c"}]}]}]}]}]}]}
+'''
+
+[[case]]
+id = "deflist-empty-defs"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "DefinitionList", "c": [[[{"t": "Str", "c": "T"}], []]]}]}
+'''
+
+[[case]]
+id = "deflist-empty-term"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "DefinitionList", "c": [[[], [[{"t": "Plain", "c": [{"t": "Str", "c": "d"}]}]]]]}]}
+'''
+
+[[case]]
+id = "lineblock-empty-line"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "LineBlock", "c": [[{"t": "Str", "c": "a"}], [], [{"t": "Str", "c": "b"}]]}]}
+'''
+
+[[case]]
+id = "div-section-class"
+input = '''
+{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Div", "c": [["s", ["section"], []], [{"t": "Para", "c": [{"t": "Str", "c": "x"}]}]]}]}
+'''

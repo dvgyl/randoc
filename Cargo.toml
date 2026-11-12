@@ -10,6 +10,7 @@ members = [
     "crates/randoc",
     "crates/randoc-cli",
     "crates/randoc-harness",
+    "crates/randoc-latex",
     "crates/randoc-markdown-writer",
     "crates/randoc-yaml",
     "crates/randoc-html",
@@ -60,6 +61,7 @@ randoc-data = { path = "crates/randoc-data", version = "0.1.0" }
 randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
 randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
+randoc-latex = { path = "crates/randoc-latex", version = "0.1.0" }
 randoc-markdown-writer = { path = "crates/randoc-markdown-writer", version = "0.1.0" }
 randoc-yaml = { path = "crates/randoc-yaml", version = "0.1.0" }
 randoc-html = { path = "crates/randoc-html", version = "0.1.0" }

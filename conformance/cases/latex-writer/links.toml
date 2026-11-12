@@ -1,0 +1,316 @@
+# Links, URLs and images.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "link-0"
+input = '''
+[link](http://example.com)
+'''
+
+[[case]]
+id = "link-1"
+input = '''
+<http://example.com>
+'''
+
+[[case]]
+id = "link-2"
+input = '''
+<http://x.org/~user/a_b?c=d&e=f#frag>
+'''
+
+[[case]]
+id = "link-3"
+input = '''
+<mailto:me@x.com>
+'''
+
+[[case]]
+id = "link-4"
+input = '''
+<me@x.com>
+'''
+
+[[case]]
+id = "link-5"
+input = '''
+<a_b@x.com>
+'''
+
+[[case]]
+id = "link-6"
+input = '''
+[e](mailto:a@b.c)
+'''
+
+[[case]]
+id = "link-7"
+input = '''
+[t](http://x "title")
+'''
+
+[[case]]
+id = "link-8"
+input = '''
+[int](#sec)
+'''
+
+[[case]]
+id = "link-9"
+input = '''
+[int](#a_b-c)
+'''
+
+[[case]]
+id = "link-10"
+input = '''
+[u](#é)
+'''
+
+[[case]]
+id = "link-11"
+input = '''
+[sp](http://x/a b)
+'''
+
+[[case]]
+id = "link-12"
+input = '''
+[pct](http://x/a%20b%25)
+'''
+
+[[case]]
+id = "link-13"
+input = '''
+[hash](http://x/#a#b)
+'''
+
+[[case]]
+id = "link-14"
+input = '''
+[back](http://x/a\\b)
+'''
+
+[[case]]
+id = "link-15"
+input = '''
+[q](http://x/?a="b")
+'''
+
+[[case]]
+id = "link-16"
+input = '''
+[brace](http://x/{a})
+'''
+
+[[case]]
+id = "link-17"
+input = '''
+[*emph*](http://x)
+'''
+
+[[case]]
+id = "link-18"
+input = '''
+[`code`](http://x)
+'''
+
+[[case]]
+id = "link-19"
+input = '''
+[x](http://x){#lid}
+'''
+
+[[case]]
+id = "link-20"
+input = '''
+[x](http://x){.cls}
+'''
+
+[[case]]
+id = "link-21"
+input = '''
+[](http://empty)
+'''
+
+[[case]]
+id = "link-22"
+input = '''
+<http://a.com/x_y%z>
+'''
+
+[[case]]
+id = "link-23"
+input = '''
+[http://x](http://x)
+'''
+
+[[case]]
+id = "link-24"
+input = '''
+[www](http://www.x.com/path/to/a/very/long/url/that/goes/on/and/on/forever/and/ever/x.html)
+'''
+
+[[case]]
+id = "link-25"
+input = '''
+[x]  [x]: http://ref.com
+'''
+
+[[case]]
+id = "link-26"
+input = '''
+[rel](../a/b.html)
+'''
+
+[[case]]
+id = "link-27"
+input = '''
+[file](file.pdf)
+'''
+
+[[case]]
+id = "link-28"
+input = '''
+![img](a.png)
+'''
+
+[[case]]
+id = "link-29"
+input = '''
+![](a.png)
+'''
+
+[[case]]
+id = "link-30"
+input = '''
+![alt *x*](a.png)
+'''
+
+[[case]]
+id = "link-31"
+input = '''
+![a](a b.png)
+'''
+
+[[case]]
+id = "link-32"
+input = '''
+![a](x.y.z.png)
+'''
+
+[[case]]
+id = "link-33"
+input = '''
+![a](a.png){width=50%}
+'''
+
+[[case]]
+id = "link-34"
+input = '''
+![a](a.png){height=50%}
+'''
+
+[[case]]
+id = "link-35"
+input = '''
+![a](a.png){width=3cm}
+'''
+
+[[case]]
+id = "link-36"
+input = '''
+![a](a.png){width=2in height=1in}
+'''
+
+[[case]]
+id = "link-37"
+input = '''
+![a](a.png){width=300px}
+'''
+
+[[case]]
+id = "link-38"
+input = '''
+![a](a.png){width=300}
+'''
+
+[[case]]
+id = "link-39"
+input = '''
+![a](a.png){width=10em}
+'''
+
+[[case]]
+id = "link-40"
+input = '''
+![a](a.png){width=5pt}
+'''
+
+[[case]]
+id = "link-41"
+input = '''
+![a](a.png){width=2.5inch}
+'''
+
+[[case]]
+id = "link-42"
+input = '''
+![a](a.png){width=12mm}
+'''
+
+[[case]]
+id = "link-43"
+input = '''
+![a](a.png){width=bad}
+'''
+
+[[case]]
+id = "link-44"
+input = '''
+![a](a.png){page=2}
+'''
+
+[[case]]
+id = "link-45"
+input = '''
+![a](a.png){trim=1 2 3 4 clip=true}
+'''
+
+[[case]]
+id = "link-46"
+input = '''
+![a](a.png){#imgid}
+'''
+
+[[case]]
+id = "link-47"
+input = '''
+![a](a%20b.png)
+'''
+
+[[case]]
+id = "link-48"
+input = '''
+![a](http://x.com/a.png)
+'''
+
+[[case]]
+id = "link-49"
+input = '''
+text ![inline](i.png) more
+'''
+
+[[case]]
+id = "link-50"
+input = '''
+[![img](i.png)](http://l)
+'''
+
+[[case]]
+id = "link-51"
+input = '''
+![a](a.png "title")
+'''

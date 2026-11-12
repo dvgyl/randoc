@@ -1,0 +1,622 @@
+# Character escaping in text, code and quotes.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "char-0-text"
+input = '''
+a\'b \'x \'1 \' end\'
+'''
+
+[[case]]
+id = "char-0-code"
+input = '''
+`` a'b ' ``
+'''
+
+[[case]]
+id = "char-1-text"
+input = '''
+a\"b \"x \"1 \" end\"
+'''
+
+[[case]]
+id = "char-1-code"
+input = '''
+`` a"b " ``
+'''
+
+[[case]]
+id = "char-2-text"
+input = '''
+a\`b \`x \`1 \` end\`
+'''
+
+[[case]]
+id = "char-2-code"
+input = '''
+`` a`b ` ``
+'''
+
+[[case]]
+id = "char-3-text"
+input = '''
+a\-b \-x \-1 \- end\-
+'''
+
+[[case]]
+id = "char-3-code"
+input = '''
+`` a-b - ``
+'''
+
+[[case]]
+id = "char-4-text"
+input = '''
+a--b --x --1 -- end--
+'''
+
+[[case]]
+id = "char-4-code"
+input = '''
+`` a--b -- ``
+'''
+
+[[case]]
+id = "char-5-text"
+input = '''
+a---b ---x ---1 --- end---
+'''
+
+[[case]]
+id = "char-5-code"
+input = '''
+`` a---b --- ``
+'''
+
+[[case]]
+id = "char-6-text"
+input = '''
+a\~b \~x \~1 \~ end\~
+'''
+
+[[case]]
+id = "char-6-code"
+input = '''
+`` a~b ~ ``
+'''
+
+[[case]]
+id = "char-7-text"
+input = '''
+a\^b \^x \^1 \^ end\^
+'''
+
+[[case]]
+id = "char-7-code"
+input = '''
+`` a^b ^ ``
+'''
+
+[[case]]
+id = "char-8-text"
+input = '''
+a\\b \\x \\1 \\ end\\
+'''
+
+[[case]]
+id = "char-8-code"
+input = '''
+`` a\b \ ``
+'''
+
+[[case]]
+id = "char-9-text"
+input = '''
+a\|b \|x \|1 \| end\|
+'''
+
+[[case]]
+id = "char-9-code"
+input = '''
+`` a|b | ``
+'''
+
+[[case]]
+id = "char-10-text"
+input = '''
+a\<b \<x \<1 \< end\<
+'''
+
+[[case]]
+id = "char-10-code"
+input = '''
+`` a<b < ``
+'''
+
+[[case]]
+id = "char-11-text"
+input = '''
+a\>b \>x \>1 \> end\>
+'''
+
+[[case]]
+id = "char-11-code"
+input = '''
+`` a>b > ``
+'''
+
+[[case]]
+id = "char-12-text"
+input = '''
+a\[b \[x \[1 \[ end\[
+'''
+
+[[case]]
+id = "char-12-code"
+input = '''
+`` a[b [ ``
+'''
+
+[[case]]
+id = "char-13-text"
+input = '''
+a\]b \]x \]1 \] end\]
+'''
+
+[[case]]
+id = "char-13-code"
+input = '''
+`` a]b ] ``
+'''
+
+[[case]]
+id = "char-14-text"
+input = '''
+a\{b \{x \{1 \{ end\{
+'''
+
+[[case]]
+id = "char-14-code"
+input = '''
+`` a{b { ``
+'''
+
+[[case]]
+id = "char-15-text"
+input = '''
+a\}b \}x \}1 \} end\}
+'''
+
+[[case]]
+id = "char-15-code"
+input = '''
+`` a}b } ``
+'''
+
+[[case]]
+id = "char-16-text"
+input = '''
+a\$b \$x \$1 \$ end\$
+'''
+
+[[case]]
+id = "char-16-code"
+input = '''
+`` a$b $ ``
+'''
+
+[[case]]
+id = "char-17-text"
+input = '''
+a%b %x %1 % end%
+'''
+
+[[case]]
+id = "char-17-code"
+input = '''
+`` a%b % ``
+'''
+
+[[case]]
+id = "char-18-text"
+input = '''
+a&b &x &1 & end&
+'''
+
+[[case]]
+id = "char-18-code"
+input = '''
+`` a&b & ``
+'''
+
+[[case]]
+id = "char-19-text"
+input = '''
+a\#b \#x \#1 \# end\#
+'''
+
+[[case]]
+id = "char-19-code"
+input = '''
+`` a#b # ``
+'''
+
+[[case]]
+id = "char-20-text"
+input = '''
+a\_b \_x \_1 \_ end\_
+'''
+
+[[case]]
+id = "char-20-code"
+input = '''
+`` a_b _ ``
+'''
+
+[[case]]
+id = "char-21-text"
+input = '''
+a@b @x @1 @ end@
+'''
+
+[[case]]
+id = "char-21-code"
+input = '''
+`` a@b @ ``
+'''
+
+[[case]]
+id = "char-22-text"
+input = '''
+a/b /x /1 / end/
+'''
+
+[[case]]
+id = "char-22-code"
+input = '''
+`` a/b / ``
+'''
+
+[[case]]
+id = "char-23-text"
+input = '''
+a.b .x .1 . end.
+'''
+
+[[case]]
+id = "char-23-code"
+input = '''
+`` a.b . ``
+'''
+
+[[case]]
+id = "char-24-text"
+input = '''
+a...b ...x ...1 ... end...
+'''
+
+[[case]]
+id = "char-24-code"
+input = '''
+`` a...b ... ``
+'''
+
+[[case]]
+id = "char-25-text"
+input = '''
+a…b …x …1 … end…
+'''
+
+[[case]]
+id = "char-25-code"
+input = '''
+`` a…b … ``
+'''
+
+[[case]]
+id = "char-26-text"
+input = '''
+a–b –x –1 – end–
+'''
+
+[[case]]
+id = "char-26-code"
+input = '''
+`` a–b – ``
+'''
+
+[[case]]
+id = "char-27-text"
+input = '''
+a—b —x —1 — end—
+'''
+
+[[case]]
+id = "char-27-code"
+input = '''
+`` a—b — ``
+'''
+
+[[case]]
+id = "char-28-text"
+input = '''
+a‘b ‘x ‘1 ‘ end‘
+'''
+
+[[case]]
+id = "char-28-code"
+input = '''
+`` a‘b ‘ ``
+'''
+
+[[case]]
+id = "char-29-text"
+input = '''
+a’b ’x ’1 ’ end’
+'''
+
+[[case]]
+id = "char-29-code"
+input = '''
+`` a’b ’ ``
+'''
+
+[[case]]
+id = "char-30-text"
+input = '''
+a“b “x “1 “ end“
+'''
+
+[[case]]
+id = "char-30-code"
+input = '''
+`` a“b “ ``
+'''
+
+[[case]]
+id = "char-31-text"
+input = '''
+a”b ”x ”1 ” end”
+'''
+
+[[case]]
+id = "char-31-code"
+input = '''
+`` a”b ” ``
+'''
+
+[[case]]
+id = "char-32-text"
+input = '''
+a«b «x «1 « end«
+'''
+
+[[case]]
+id = "char-32-code"
+input = '''
+`` a«b « ``
+'''
+
+[[case]]
+id = "char-33-text"
+input = '''
+a»b »x »1 » end»
+'''
+
+[[case]]
+id = "char-33-code"
+input = '''
+`` a»b » ``
+'''
+
+[[case]]
+id = "char-34-text"
+input = '''
+a©b ©x ©1 © end©
+'''
+
+[[case]]
+id = "char-34-code"
+input = '''
+`` a©b © ``
+'''
+
+[[case]]
+id = "char-35-text"
+input = '''
+aéb éx é1 é endé
+'''
+
+[[case]]
+id = "char-35-code"
+input = '''
+`` aéb é ``
+'''
+
+[[case]]
+id = "char-36-text"
+input = '''
+aßb ßx ß1 ß endß
+'''
+
+[[case]]
+id = "char-36-code"
+input = '''
+`` aßb ß ``
+'''
+
+[[case]]
+id = "text-it-s"
+input = '''
+it's
+'''
+
+[[case]]
+id = "text-rock-n-roll"
+input = '''
+rock 'n' roll
+'''
+
+[[case]]
+id = "text--quoted"
+input = '''
+'quoted'
+'''
+
+[[case]]
+id = "text--double"
+input = '''
+"double"
+'''
+
+[[case]]
+id = "text--nested-inner-here"
+input = '''
+'nested "inner" here'
+'''
+
+[[case]]
+id = "text--outer-inner"
+input = '''
+"outer 'inner'"
+'''
+
+[[case]]
+id = "text--x"
+input = '''
+""x""
+'''
+
+[[case]]
+id = "text-a--b---c"
+input = '''
+a--b---c
+'''
+
+[[case]]
+id = "text-1-2-and-3--4"
+input = '''
+1-2 and 3--4
+'''
+
+[[case]]
+id = "text-x-y"
+input = '''
+x...y
+'''
+
+[[case]]
+id = "text-mr-smith"
+input = '''
+Mr. Smith
+'''
+
+[[case]]
+id = "text-a-b-nonbreaking"
+input = '''
+a\ b nonbreaking
+'''
+
+[[case]]
+id = "text-tab-here"
+input = '''
+tab	here
+'''
+
+[[case]]
+id = "text-e-g-text"
+input = '''
+e.g. text
+'''
+
+[[case]]
+id = "text--code-with-quote"
+input = '''
+`code with 'quote'`
+'''
+
+[[case]]
+id = "text--double-tick-code"
+input = '''
+``double `tick` code``
+'''
+
+[[case]]
+id = "text--a-b"
+input = '''
+`a\b`
+'''
+
+[[case]]
+id = "text"
+input = '''
+`#$%&~_^{}`
+'''
+
+[[case]]
+id = "text--spaces"
+input = '''
+`   spaces   `
+'''
+
+[[case]]
+id = "text-trailing"
+input = '''
+trailing\
+'''
+
+[[case]]
+id = "text-math-a-b-and-5"
+input = '''
+math $a_b$ and \$5
+'''
+
+[[case]]
+id = "text-100-sure-1"
+input = '''
+100% sure & #1
+'''
+
+[[case]]
+id = "text--not-code"
+input = '''
+~~~not code
+'''
+
+[[case]]
+id = "text--b-html-b"
+input = '''
+<b>html</b>
+'''
+
+[[case]]
+id = "text--amp-lt-entity"
+input = '''
+&amp; &lt; entity
+'''
+
+[[case]]
+id = "text--2024"
+input = '''
+© 2024 ™ ®
+'''
+
+[[case]]
+id = "text-ligature-fi-fl-ff"
+input = '''
+ligature fi fl ff
+'''
+
+[[case]]
+id = "text-x-2-and-h-2-o"
+input = '''
+x^2^ and H~2~O
+'''
+
+[[case]]
+id = "text-c-and-c"
+input = '''
+C++ and C#
+'''

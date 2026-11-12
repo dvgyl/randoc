@@ -1,0 +1,759 @@
+# Paragraphs, quotes, line blocks, code, raw blocks and divs.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "block-0"
+input = '''
+para one
+
+para two
+'''
+
+[[case]]
+id = "block-1"
+input = '''
+> quote
+'''
+
+[[case]]
+id = "block-2"
+input = '''
+> quote
+>
+> > nested
+'''
+
+[[case]]
+id = "block-3"
+input = '''
+> - list in quote
+'''
+
+[[case]]
+id = "block-4"
+input = '''
+| line one
+|   line two
+| three
+'''
+
+[[case]]
+id = "block-5"
+input = '''
+| a
+|
+| b
+'''
+
+[[case]]
+id = "block-6"
+input = '''
+***
+'''
+
+[[case]]
+id = "block-7"
+input = '''
+---
+'''
+
+[[case]]
+id = "block-8"
+input = '''
+```
+verb \x {
+  indent
+```
+'''
+
+[[case]]
+id = "block-9"
+input = '''
+```haskell
+main = print 1
+```
+'''
+
+[[case]]
+id = "block-10"
+input = '''
+```{#myid .python}
+x = 1
+```
+'''
+
+[[case]]
+id = "block-11"
+input = '''
+~~~ {.foo}
+a & b
+~~~
+'''
+
+[[case]]
+id = "block-12"
+input = '''
+~~~ {startFrom=3}
+a
+~~~
+'''
+
+[[case]]
+id = "block-13"
+input = '''
+~~~ {.numberLines}
+a
+~~~
+'''
+
+[[case]]
+id = "block-14"
+input = '''
+~~~ {.zzzz .numberLines startFrom=5}
+a
+~~~
+'''
+
+[[case]]
+id = "block-15"
+input = '''
+~~~ {#idonly}
+a
+~~~
+'''
+
+[[case]]
+id = "block-16"
+input = '''
+    indented code
+'''
+
+[[case]]
+id = "block-17"
+input = '''
+```
+
+
+blank lines
+
+```
+'''
+
+[[case]]
+id = "block-18"
+input = '''
+```zzzz
+a % b # c $ d
+	tab
+```
+'''
+
+[[case]]
+id = "block-19"
+input = '''
+```
+end\
+```
+'''
+
+[[case]]
+id = "block-20"
+input = '''
+```zzzz
+[a] (b) "c" | e … é
+```
+'''
+
+[[case]]
+id = "block-21"
+input = '''
+\begin{x}
+raw
+\end{x}
+'''
+
+[[case]]
+id = "block-22"
+input = '''
+<div>html</div>
+'''
+
+[[case]]
+id = "block-23"
+input = '''
+```{=latex}
+\raw
+```
+'''
+
+[[case]]
+id = "block-24"
+input = '''
+```{=html}
+<p>no</p>
+```
+'''
+
+[[case]]
+id = "block-25"
+input = '''
+::: {#did}
+div para
+:::
+'''
+
+[[case]]
+id = "block-26"
+input = '''
+::: {lang=de-CH}
+Deutsch
+:::
+'''
+
+[[case]]
+id = "block-27"
+input = '''
+::: {.foo dir=rtl}
+rtl
+:::
+'''
+
+[[case]]
+id = "block-28"
+input = '''
+::: {dir=ltr}
+ltr
+:::
+'''
+
+[[case]]
+id = "block-29"
+input = '''
+::: {#i dir=rtl lang=fr}
+z
+:::
+'''
+
+[[case]]
+id = "block-30"
+input = '''
+::: foo
+class only
+:::
+'''
+
+[[case]]
+id = "block-31"
+input = '''
+::: {#a}
+::: {#b}
+inner
+:::
+:::
+'''
+
+[[case]]
+id = "block-32"
+input = '''
+::: {lang=xx}
+unknown
+:::
+'''
+
+[[case]]
+id = "block-33"
+input = '''
+text
+
+```
+code
+```
+
+text
+'''
+
+[[case]]
+id = "block-34"
+input = '''
+> ```
+> code in quote
+> ```
+'''
+
+[[case]]
+id = "block-35"
+input = '''
+> | line
+> | block
+'''
+
+[[case]]
+id = "block-36"
+input = '''
+para
+
+***
+
+para
+'''
+
+[[case]]
+id = "block-37"
+input = '''
+<!-- comment -->
+'''
+
+[[case]]
+id = "block-38"
+input = '''
+\newpage
+'''
+
+[[case]]
+id = "block-39"
+input = '''
+a
+
+\clearpage
+
+b
+'''
+
+[[case]]
+id = "block-40"
+input = '''
+::: {#refs .references .csl-bibliography}
+::: {#ref-a .csl-entry}
+A. 2000. *T*.
+:::
+
+::: {#ref-b .csl-entry}
+B
+:::
+:::
+'''
+
+[[case]]
+id = "block-41"
+input = '''
+::: {#refs .hanging-indent entry-spacing=0}
+::: {#ref-b .csl-entry}
+[1.]{.csl-left-margin}[Text.]{.csl-right-inline}
+:::
+:::
+'''
+
+[[case]]
+id = "block-42"
+input = '''
+::: {#other .csl-entry}
+not in refs
+:::
+'''
+
+[[case]]
+id = "block-43"
+input = '''
+[b]{.csl-block} [i]{.csl-indent}
+'''
+
+[[case]]
+id = "block-44"
+input = '''
+a [r]{.csl-right-inline} [b]{.csl-block} c [i]{.csl-indent} d
+
+[l]{.csl-left-margin} x [l]{.csl-left-margin}[r]{.csl-right-inline}
+'''
+
+# Matrix: bibliography forms with each citation method (`tools/matrix.py toml bib`).
+
+[[case]]
+id = "bib-empty-refs-plain"
+input = '''
+x
+
+::: {#refs}
+:::
+'''
+
+[[case]]
+id = "bib-empty-refs-natbib"
+args = ["--natbib"]
+input = '''
+x
+
+::: {#refs}
+:::
+'''
+
+[[case]]
+id = "bib-empty-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+x
+
+::: {#refs}
+:::
+'''
+
+[[case]]
+id = "bib-full-refs-plain"
+input = '''
+x
+
+::: {#refs}
+y
+:::
+'''
+
+[[case]]
+id = "bib-full-refs-natbib"
+args = ["--natbib"]
+input = '''
+x
+
+::: {#refs}
+y
+:::
+'''
+
+[[case]]
+id = "bib-full-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+x
+
+::: {#refs}
+y
+:::
+'''
+
+[[case]]
+id = "bib-hanging-refs-plain"
+input = '''
+x
+
+::: {#refs .hanging-indent}
+:::
+'''
+
+[[case]]
+id = "bib-hanging-refs-natbib"
+args = ["--natbib"]
+input = '''
+x
+
+::: {#refs .hanging-indent}
+:::
+'''
+
+[[case]]
+id = "bib-hanging-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+x
+
+::: {#refs .hanging-indent}
+:::
+'''
+
+[[case]]
+id = "bib-last-section-plain"
+input = '''
+a
+
+# References
+'''
+
+[[case]]
+id = "bib-last-section-natbib"
+args = ["--natbib"]
+input = '''
+a
+
+# References
+'''
+
+[[case]]
+id = "bib-last-section-biblatex"
+args = ["--biblatex"]
+input = '''
+a
+
+# References
+'''
+
+[[case]]
+id = "bib-last-section-text-plain"
+input = '''
+a
+
+# References
+
+b
+'''
+
+[[case]]
+id = "bib-last-section-text-natbib"
+args = ["--natbib"]
+input = '''
+a
+
+# References
+
+b
+'''
+
+[[case]]
+id = "bib-last-section-text-biblatex"
+args = ["--biblatex"]
+input = '''
+a
+
+# References
+
+b
+'''
+
+[[case]]
+id = "bib-section-refs-plain"
+input = '''
+a
+
+# Other
+
+::: {#refs}
+:::
+'''
+
+[[case]]
+id = "bib-section-refs-natbib"
+args = ["--natbib"]
+input = '''
+a
+
+# Other
+
+::: {#refs}
+:::
+'''
+
+[[case]]
+id = "bib-section-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+a
+
+# Other
+
+::: {#refs}
+:::
+'''
+
+[[case]]
+id = "bib-middle-refs-plain"
+input = '''
+# Refs
+
+::: {#refs}
+:::
+
+# After
+
+y
+'''
+
+[[case]]
+id = "bib-middle-refs-natbib"
+args = ["--natbib"]
+input = '''
+# Refs
+
+::: {#refs}
+:::
+
+# After
+
+y
+'''
+
+[[case]]
+id = "bib-middle-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+# Refs
+
+::: {#refs}
+:::
+
+# After
+
+y
+'''
+
+[[case]]
+id = "bib-last-subsection-plain"
+input = '''
+a
+
+## R
+'''
+
+[[case]]
+id = "bib-last-subsection-natbib"
+args = ["--natbib"]
+input = '''
+a
+
+## R
+'''
+
+[[case]]
+id = "bib-last-subsection-biblatex"
+args = ["--biblatex"]
+input = '''
+a
+
+## R
+'''
+
+[[case]]
+id = "bib-refs-heading-plain"
+input = '''
+a
+
+# R {#refs}
+'''
+
+[[case]]
+id = "bib-refs-heading-natbib"
+args = ["--natbib"]
+input = '''
+a
+
+# R {#refs}
+'''
+
+[[case]]
+id = "bib-refs-heading-biblatex"
+args = ["--biblatex"]
+input = '''
+a
+
+# R {#refs}
+'''
+
+[[case]]
+id = "bib-nested-refs-plain"
+input = '''
+::: d
+::: {#refs}
+:::
+:::
+'''
+
+[[case]]
+id = "bib-nested-refs-natbib"
+args = ["--natbib"]
+input = '''
+::: d
+::: {#refs}
+:::
+:::
+'''
+
+[[case]]
+id = "bib-nested-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+::: d
+::: {#refs}
+:::
+:::
+'''
+
+[[case]]
+id = "bib-quoted-refs-plain"
+input = '''
+> ::: {#refs}
+> y
+> :::
+'''
+
+[[case]]
+id = "bib-quoted-refs-natbib"
+args = ["--natbib"]
+input = '''
+> ::: {#refs}
+> y
+> :::
+'''
+
+[[case]]
+id = "bib-quoted-refs-biblatex"
+args = ["--biblatex"]
+input = '''
+> ::: {#refs}
+> y
+> :::
+'''
+
+[[case]]
+id = "bib-unnumbered-plain"
+input = '''
+x
+
+# R {.unnumbered}
+'''
+
+[[case]]
+id = "bib-unnumbered-natbib"
+args = ["--natbib"]
+input = '''
+x
+
+# R {.unnumbered}
+'''
+
+[[case]]
+id = "bib-unnumbered-biblatex"
+args = ["--biblatex"]
+input = '''
+x
+
+# R {.unnumbered}
+'''
+
+[[case]]
+id = "bib-div-section-plain"
+input = '''
+x
+
+::: d
+# R
+:::
+'''
+
+[[case]]
+id = "bib-div-section-natbib"
+args = ["--natbib"]
+input = '''
+x
+
+::: d
+# R
+:::
+'''
+
+[[case]]
+id = "bib-div-section-biblatex"
+args = ["--biblatex"]
+input = '''
+x
+
+::: d
+# R
+:::
+'''

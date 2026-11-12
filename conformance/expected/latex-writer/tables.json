@@ -1,0 +1,491 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "table-0#e2e:latex": {
+      "key": "60912e7c3bfa7109",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}lrc@{}}\n\\toprule\\noalign{}\nA & B: & C \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 & 3 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-0#read": {
+      "key": "f6e71c8e7c4e5942",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"B:\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"C\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-0#write:latex": {
+      "key": "75ef93cbabfdc4c9",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}lrc@{}}\n\\toprule\\noalign{}\nA & B: & C \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 & 3 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-1#e2e:latex": {
+      "key": "f389baeb4fc45c98",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{Caption}\\tabularnewline\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-1#read": {
+      "key": "a1b864512a5da20f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Caption\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-1#write:latex": {
+      "key": "293b60c87082c8c4",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{Caption}\\tabularnewline\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-10#e2e:latex": {
+      "key": "766eec3b3a55259f",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx & y\\footnotemark{} \\\\\n\\end{longtable}\n}\n\\footnotetext{note}\n",
+      "stderr": ""
+    },
+    "table-10#read": {
+      "key": "4e730e219b5a6aa2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-10#write:latex": {
+      "key": "0cc8ba97965b8389",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx & y\\footnotemark{} \\\\\n\\end{longtable}\n}\n\\footnotetext{note}\n",
+      "stderr": ""
+    },
+    "table-11#e2e:latex": {
+      "key": "2a9191bc065ae40f",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\texttt{code} & \\emph{emph} \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-11#read": {
+      "key": "73e8f12666b0427e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"code\"]}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-11#write:latex": {
+      "key": "a19c5290f6a76994",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\texttt{code} & \\emph{emph} \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-12#e2e:latex": {
+      "key": "f46d49b83e1ea716",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\href{http://x}{l} & \\(m\\) \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-12#read": {
+      "key": "b49d1d7d2d6b3283",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"l\"}],[\"http://x\",\"\"]]}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"m\"]}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-12#write:latex": {
+      "key": "5cecf2465c134ee5",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\href{http://x}{l} & \\(m\\) \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-13#e2e:latex": {
+      "key": "651df8f469c6e2a8",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 0\\tabcolsep) * \\real{1.0000}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\na\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nlong long long long long long long long long long long long long long\nlong long long \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-13#read": {
+      "key": "cfa832cc69bbe497",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":1.0}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-13#write:latex": {
+      "key": "b5c255b670821f1d",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 0\\tabcolsep) * \\real{1.0000}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\na\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nlong long long long long long long long long long long long long long\nlong long long \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-14#e2e:latex": {
+      "key": "1987773e91913cc4",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx \\textbar{} y & z \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-14#read": {
+      "key": "bb217f6f9323af23",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"z\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-14#write:latex": {
+      "key": "44a33e517f48a4c0",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx \\textbar{} y & z \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-15#e2e:latex": {
+      "key": "fbb0a3ce1ca5a6ed",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}l@{}}\n\\toprule\\noalign{}\na \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 \\\\\n2 \\\\\n3 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-15#read": {
+      "key": "e66e21881d7ece2c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-15#write:latex": {
+      "key": "537ee1baa5d7f2ed",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}l@{}}\n\\toprule\\noalign{}\na \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 \\\\\n2 \\\\\n3 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-16#e2e:latex": {
+      "key": "0cafe7e90969aae9",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{simple with caption}\\tabularnewline\n\\toprule\\noalign{}\na & b \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\na & b \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-16#read": {
+      "key": "a4e132fa4b8dbcb8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"simple\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"caption\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-16#write:latex": {
+      "key": "b8eca7c5efc20f5c",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{simple with caption}\\tabularnewline\n\\toprule\\noalign{}\na & b \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\na & b \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-17#e2e:latex": {
+      "key": "d7077f7eebdf8cb6",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\midrule\\noalign{}\nf & g \\\\\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-17#read": {
+      "key": "44cd9c73efb95dc7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"f\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"g\"}]}]]]]]]]}]}\n",
+      "stderr": ""
+    },
+    "table-17#write:latex": {
+      "key": "ce46a3953a2bc520",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\midrule\\noalign{}\nf & g \\\\\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-18#e2e:latex": {
+      "key": "c0b8c3f422e42ffc",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.1111}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.1111}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\na\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nb\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\multicolumn{2}{@{}>{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.2222} + 2\\tabcolsep}@{}}{%\nspan cells} \\\\\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-18#read": {
+      "key": "9a0f15d98083a4b1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.1111111111111111}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.1111111111111111}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,2,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"span\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cells\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-18#write:latex": {
+      "key": "9a4721e55717a229",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.1111}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.1111}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\na\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nb\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\multicolumn{2}{@{}>{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.2222} + 2\\tabcolsep}@{}}{%\nspan cells} \\\\\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-19#e2e:latex": {
+      "key": "a4508a342fa29618",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\multirow{2}{=}{r} & 1 \\\\\n& 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-19#read": {
+      "key": "d4ffc1fe1a127b19",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},2,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"r\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-19#write:latex": {
+      "key": "b1fdcfee1c5148af",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\multirow{2}{=}{r} & 1 \\\\\n& 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-2#e2e:latex": {
+      "key": "821060f8eec51828",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{Caption \\emph{x}}\\label{tbl}\\tabularnewline\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-2#read": {
+      "key": "c285c7965b6bef71",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"tbl\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Caption\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-2#write:latex": {
+      "key": "7db03035377bb607",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{Caption \\emph{x}}\\label{tbl}\\tabularnewline\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-20#e2e:latex": {
+      "key": "7b0501dcdca4fe49",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption[Caption]{Caption\\footnotemark{}}\\tabularnewline\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx & y \\\\\n\\end{longtable}\n\\footnotetext{cn}\n",
+      "stderr": ""
+    },
+    "table-20#read": {
+      "key": "fa6c387ac25acd72",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Caption\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"cn\"}]}]}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-20#write:latex": {
+      "key": "53d790ed9f067020",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption[Caption]{Caption\\footnotemark{}}\\tabularnewline\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endfirsthead\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx & y \\\\\n\\end{longtable}\n\\footnotetext{cn}\n",
+      "stderr": ""
+    },
+    "table-21#e2e:latex": {
+      "key": "6661013a01676403",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}c@{}}\n\\toprule\\noalign{}\nh \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nc \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-21#read": {
+      "key": "dccaa5c3c5c822fa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-21#write:latex": {
+      "key": "af18e5129f24dbb7",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}c@{}}\n\\toprule\\noalign{}\nh \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nc \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-22#e2e:latex": {
+      "key": "587d393738d41273",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}r@{}}\n\\toprule\\noalign{}\nh \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nr \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-22#read": {
+      "key": "0c4ab38e562f0872",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"r\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-22#write:latex": {
+      "key": "fbe0281095ac0efc",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}r@{}}\n\\toprule\\noalign{}\nh \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nr \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-23#e2e:latex": {
+      "key": "da53323ad7408ab7",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\n\\emph{head} & \\textbf{b} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-23#read": {
+      "key": "1f0904be0aba662c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"head\"}]}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-23#write:latex": {
+      "key": "d5ca21ab5e81c539",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\n\\emph{head} & \\textbf{b} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-24#e2e:latex": {
+      "key": "2fd77de32998e889",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.2222}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\nwide column\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nn\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\npara one\n\npara two & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-24#read": {
+      "key": "e029f12fab14e358",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.2222222222222222}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"wide\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"column\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-24#write:latex": {
+      "key": "d114a82005605f46",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.2222}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\nwide column\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nn\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\npara one\n\npara two & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-25#e2e:latex": {
+      "key": "0a13969a619b0114",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedleft\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedleft\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-25#read": {
+      "key": "31e0576d33390e8d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-25#write:latex": {
+      "key": "fb50a91150ed9eaa",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedleft\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedleft\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-26#e2e:latex": {
+      "key": "595566068c160d77",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nline\\textbackslash{} & \\\\\nbreak & x \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-26#read": {
+      "key": "ac7c16fe22268a52",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"line\\\\\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"break\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-26#write:latex": {
+      "key": "b2ec2c2f28f4ba9c",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\np & q \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nline\\textbackslash{} & \\\\\nbreak & x \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-3#e2e:latex": {
+      "key": "0967109ffe6468ea",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}rl@{}}\n\\toprule\\noalign{}\nRight & Left \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n12 & 12 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-3#read": {
+      "key": "8c92e551f8f49f91",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Right\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Left\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-3#write:latex": {
+      "key": "d98ff6336c330e48",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}rl@{}}\n\\toprule\\noalign{}\nRight & Left \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n12 & 12 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-4#e2e:latex": {
+      "key": "3d3e757bffd38162",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\centering\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.1250}}\n  >{\\centering\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.1528}}\n  >{\\raggedleft\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.1667}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.3611}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\centering\nFruit kind\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\centering\nColour name\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedleft\nPric euro\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\ne Notes about it\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nApple & green & 0.40 & Sour when it is picked too early in autumn. \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-4#read": {
+      "key": "901688425cf10c9d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidth\",\"c\":0.125}],[{\"t\":\"AlignCenter\"},{\"t\":\"ColWidth\",\"c\":0.1527777777777778}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidth\",\"c\":0.16666666666666666}],[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidth\",\"c\":0.3611111111111111}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Fruit\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"kind\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Colour\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"name\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pric\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"euro\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"e\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Notes\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"about\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Apple\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"green\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"0.40\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Sour\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"when\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"picked\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"too\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"autumn.\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-4#write:latex": {
+      "key": "4a280dbe3e477149",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\centering\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.1250}}\n  >{\\centering\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.1528}}\n  >{\\raggedleft\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.1667}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 6\\tabcolsep) * \\real{0.3611}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\centering\nFruit kind\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\centering\nColour name\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedleft\nPric euro\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\ne Notes about it\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nApple & green & 0.40 & Sour when it is picked too early in autumn. \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-5#e2e:latex": {
+      "key": "ba2c914b2d081fc0",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-5#read": {
+      "key": "d50aaa269712ead9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-5#write:latex": {
+      "key": "f0abeb0e2201dfe0",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\np\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nq\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-6#e2e:latex": {
+      "key": "be6b806099f97816",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0833}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0833}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\na\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nb\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\begin{minipage}[t]{\\linewidth}\\raggedright\n\\begin{itemize}\n\\tightlist\n\\item\n  x\n\\item\n  z\n\\end{itemize}\n\\end{minipage} & y \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-6#read": {
+      "key": "62dad84d49678ceb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"z\"}]}]]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-6#write:latex": {
+      "key": "325937a2796fa296",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0833}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0833}}@{}}\n\\toprule\\noalign{}\n\\begin{minipage}[b]{\\linewidth}\\raggedright\na\n\\end{minipage} & \\begin{minipage}[b]{\\linewidth}\\raggedright\nb\n\\end{minipage} \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n\\begin{minipage}[t]{\\linewidth}\\raggedright\n\\begin{itemize}\n\\tightlist\n\\item\n  x\n\\item\n  z\n\\end{itemize}\n\\end{minipage} & y \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-7#e2e:latex": {
+      "key": "ba6532848762b245",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0833}}@{}}\n\\toprule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx & yy \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-7#read": {
+      "key": "bc7e113f6f5a4f00",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":5.555555555555555e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":8.333333333333333e-2}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"yy\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-7#write:latex": {
+      "key": "69d338b4aeb5c52d",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0556}}\n  >{\\raggedright\\arraybackslash}p{(\\linewidth - 2\\tabcolsep) * \\real{0.0833}}@{}}\n\\toprule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\nx & yy \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-8#e2e:latex": {
+      "key": "0bc3dd8e36157aaa",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-8#read": {
+      "key": "2efa2a4a85a6402b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-8#write:latex": {
+      "key": "20eb72d4e0413bbc",
+      "exit": 0,
+      "stdout": "{\\def\\LTcaptype{none} % do not increment counter\n\\begin{longtable}[]{@{}ll@{}}\n\\toprule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n}\n",
+      "stderr": ""
+    },
+    "table-9#e2e:latex": {
+      "key": "e37f4530f6343ea5",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{cap}\\tabularnewline\n\\toprule\\noalign{}\n\\endfirsthead\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "table-9#read": {
+      "key": "2d6fd2c5da2e5d26",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-9#write:latex": {
+      "key": "06847190ba575850",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}ll@{}}\n\\caption{cap}\\tabularnewline\n\\toprule\\noalign{}\n\\endfirsthead\n\\endhead\n\\bottomrule\\noalign{}\n\\endlastfoot\n1 & 2 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    }
+  }
+}

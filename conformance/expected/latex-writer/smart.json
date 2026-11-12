@@ -1,0 +1,257 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "nosmart--curly-sin#e2e:latex-smart": {
+      "key": "9bd73aa2e1ec4995",
+      "exit": 0,
+      "stdout": "“curly” ‘single’\n",
+      "stderr": ""
+    },
+    "nosmart--curly-sin#read": {
+      "key": "c07390390b6ed030",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"“curly”\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"‘single’\"}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart--curly-sin#write:latex-smart": {
+      "key": "0278aaa3e87cab7c",
+      "exit": 0,
+      "stdout": "“curly” ‘single’\n",
+      "stderr": ""
+    },
+    "nosmart--q-and-s#e2e:latex-smart": {
+      "key": "4459da656be8691c",
+      "exit": 0,
+      "stdout": "“q” and ‘s’\n",
+      "stderr": ""
+    },
+    "nosmart--q-and-s#read": {
+      "key": "6031c4bdfb6ce38b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"q\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"SingleQuote\"},[{\"t\":\"Str\",\"c\":\"s\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart--q-and-s#write:latex-smart": {
+      "key": "a9b576dd90b44d78",
+      "exit": 0,
+      "stdout": "“q” and ‘s’\n",
+      "stderr": ""
+    },
+    "nosmart--x#e2e:latex-smart": {
+      "key": "30241ffef3ca124f",
+      "exit": 0,
+      "stdout": "“\\,“x”\\,”\n",
+      "stderr": ""
+    },
+    "nosmart--x#read": {
+      "key": "603219bf70757328",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"“\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"x\"}]]},{\"t\":\"Str\",\"c\":\"”\"}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart--x#write:latex-smart": {
+      "key": "8fd77e0ed2d4dfa6",
+      "exit": 0,
+      "stdout": "“\\,“x”\\,”\n",
+      "stderr": ""
+    },
+    "nosmart-a----b-----c#e2e:latex-smart": {
+      "key": "c41d5172844cc6e7",
+      "exit": 0,
+      "stdout": "a – b — c\n",
+      "stderr": ""
+    },
+    "nosmart-a----b-----c#read": {
+      "key": "f7a270c4b5212ac2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"–\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"—\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"c\"}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart-a----b-----c#write:latex-smart": {
+      "key": "0da9332e5b674d27",
+      "exit": 0,
+      "stdout": "a – b — c\n",
+      "stderr": ""
+    },
+    "nosmart-en-dash-em-d#e2e:latex-smart": {
+      "key": "003d049e28f0287f",
+      "exit": 0,
+      "stdout": "en–dash em—dash\n",
+      "stderr": ""
+    },
+    "nosmart-en-dash-em-d#read": {
+      "key": "2614e4ec611edd24",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"en–dash\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"em—dash\"}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart-en-dash-em-d#write:latex-smart": {
+      "key": "edf7ab46cf4415ee",
+      "exit": 0,
+      "stdout": "en–dash em—dash\n",
+      "stderr": ""
+    },
+    "nosmart-it-s-ok#e2e:latex-smart": {
+      "key": "a173338eaaf03ae6",
+      "exit": 0,
+      "stdout": "it’s … ok\n",
+      "stderr": ""
+    },
+    "nosmart-it-s-ok#read": {
+      "key": "95c87242948df431",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"it’s\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"…\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ok\"}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart-it-s-ok#write:latex-smart": {
+      "key": "1616b9c8664e1cad",
+      "exit": 0,
+      "stdout": "it’s … ok\n",
+      "stderr": ""
+    },
+    "nosmart-x-y#e2e:latex-smart": {
+      "key": "27c4d6e19fc29650",
+      "exit": 0,
+      "stdout": "x … y\n",
+      "stderr": ""
+    },
+    "nosmart-x-y#read": {
+      "key": "9116c2dac6e7872f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"…\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "nosmart-x-y#write:latex-smart": {
+      "key": "7f8087a7cad231c3",
+      "exit": 0,
+      "stdout": "x … y\n",
+      "stderr": ""
+    },
+    "readernosmart--curly-sin#e2e:latex": {
+      "key": "15fdb6719ac43761",
+      "exit": 0,
+      "stdout": "``curly'' `single'\n",
+      "stderr": ""
+    },
+    "readernosmart--curly-sin#read": {
+      "key": "6555ffb09eb915ca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"“curly”\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"‘single’\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart--curly-sin#write:latex": {
+      "key": "c5d8acf047fc7256",
+      "exit": 0,
+      "stdout": "``curly'' `single'\n",
+      "stderr": ""
+    },
+    "readernosmart--q-and-s#e2e:latex": {
+      "key": "0f04e202889fdcf8",
+      "exit": 0,
+      "stdout": "\"q\" and \\textquotesingle s\\textquotesingle{}\n",
+      "stderr": ""
+    },
+    "readernosmart--q-and-s#read": {
+      "key": "f557999bdb403a6d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\\"q\\\"\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"'s'\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart--q-and-s#write:latex": {
+      "key": "ba0be4cd2c23f5ed",
+      "exit": 0,
+      "stdout": "\"q\" and \\textquotesingle s\\textquotesingle{}\n",
+      "stderr": ""
+    },
+    "readernosmart--x#e2e:latex": {
+      "key": "1019739dabc7be7b",
+      "exit": 0,
+      "stdout": "\"\"x\"\"\n",
+      "stderr": ""
+    },
+    "readernosmart--x#read": {
+      "key": "d9ebac20af944cae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\\"\\\"x\\\"\\\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart--x#write:latex": {
+      "key": "e282adb91a49ab0e",
+      "exit": 0,
+      "stdout": "\"\"x\"\"\n",
+      "stderr": ""
+    },
+    "readernosmart-a----b-----c#e2e:latex": {
+      "key": "d35c7ac831a55b63",
+      "exit": 0,
+      "stdout": "a -\\/- b -\\/-\\/- c\n",
+      "stderr": ""
+    },
+    "readernosmart-a----b-----c#read": {
+      "key": "185c341403fe86f8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"--\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"---\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"c\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart-a----b-----c#write:latex": {
+      "key": "76ff4f1e9b138daa",
+      "exit": 0,
+      "stdout": "a -\\/- b -\\/-\\/- c\n",
+      "stderr": ""
+    },
+    "readernosmart-en-dash-em-d#e2e:latex": {
+      "key": "174c5f4735fe32a3",
+      "exit": 0,
+      "stdout": "en--dash em---dash\n",
+      "stderr": ""
+    },
+    "readernosmart-en-dash-em-d#read": {
+      "key": "28c1bea99ac43996",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"en–dash\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"em—dash\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart-en-dash-em-d#write:latex": {
+      "key": "1db1a168928b6d28",
+      "exit": 0,
+      "stdout": "en--dash em---dash\n",
+      "stderr": ""
+    },
+    "readernosmart-it-s-ok#e2e:latex": {
+      "key": "ee1032094a3d6492",
+      "exit": 0,
+      "stdout": "it\\textquotesingle s ... ok\n",
+      "stderr": ""
+    },
+    "readernosmart-it-s-ok#read": {
+      "key": "0ffd48bb2a136127",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"it's\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"...\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ok\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart-it-s-ok#write:latex": {
+      "key": "9dd4cf8a2f5d891f",
+      "exit": 0,
+      "stdout": "it\\textquotesingle s ... ok\n",
+      "stderr": ""
+    },
+    "readernosmart-x-y#e2e:latex": {
+      "key": "c9dfb0c8ab91a4ec",
+      "exit": 0,
+      "stdout": "x \\ldots{} y\n",
+      "stderr": ""
+    },
+    "readernosmart-x-y#read": {
+      "key": "8561e0fb0d36b689",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"…\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "readernosmart-x-y#write:latex": {
+      "key": "f8eb0563995fe325",
+      "exit": 0,
+      "stdout": "x \\ldots{} y\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1603,3 +1603,44 @@ second `unsafe` block), I-LUA-11, I-CONTRACTS-01 (processor time), the
 scope rows I-LUA-03 to I-LUA-06, the low rows. No program option calls
 the crate yet. Open checks: none of the gate list; the review
 verification is due.
+
+## Workstream latex-writer (branch `ws/latex-writer`, head e50c615, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. New workstream on
+`main`. Content: the crate `randoc-latex` with the writers `latex` and
+`beamer` (fragment output; standalone output is not connected yet, and
+`randoc-cli` stops `-s` for these formats). The corrections of review
+round 2 of session 2 (on d5a005e): a Beamer matrix of 333 cases
+(`tools/matrix.py`, `beamer.toml`; headings, divs, `columns`, `notes`,
+frame classes and keys at 4 slide levels), a bibliography matrix of 39
+cases (13 forms, 3 citation methods), and an oracle regression test for
+each other medium finding (`tests/regressions.rs`, 151 tests). New dev
+dependency `toml` (workspace version) of the crate for `tests/oracle.rs`.
+Registration lines: the root `Cargo.toml` (member, workspace
+dependency; the fuzz exclude was on `main` already),
+`crates/randoc/Cargo.toml` and `crates/randoc/src/formats.rs`. New rows
+I-LATEX-01 to I-LATEX-10. New row in `PROGRESS.md`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on e50c615 (04:01 to 04:23 UTC; worker report): baseline 21069 units, 0 regressions, 23055 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Beamer matrix: 0 of 333 cases differ. Bibliography matrix: 0 of 39 differ. Random trees (realistic generator, depth 3, seed 71, 500 trees): 1 `latex` and 1 `beamer` tree differ (class of I-LATEX-07); seed 63: 1 and 1 (I-LATEX-09.1); seed 62, 300 trees of depth 4: 0 and 1 (I-LATEX-09.3). |
+| 3. Tests | `cargo test -p randoc-latex -p randoc` on the merged tree: 191 pass, 0 fail, 0 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run in this unit. |
+| 5. Reviews | Round 2 of session 2 on the old commit d5a005e: both reviewers REQUEST CHANGES (4 high, 11 medium); the worker corrected each one in this session. No review of the current code: due. |
+| 6. No slowdowns | Rule 21c, debug build, 25,000 and 50,000 items, 11 forms: each ratio is below 2.1 for a size factor of 2 (for example Beamer frames 1.43 / 2.10 s). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. The lines of the branch in the root
+`Cargo.toml`, `crates/randoc/Cargo.toml`, `crates/randoc/src/formats.rs`
+and `docs/ISSUES.md` are additions only; `Cargo.lock` adds the lines of
+the new crate. Licence scan: 21 hits in
+`crates/randoc-latex/tests/regressions.rs` (0.4 %); each hit is LaTeX
+output of the reference for the worker's own inputs (command names of
+LaTeX, facts of the format), not copied text; accepted. No other hit.
+
+Open findings: standalone output is not started (I-LATEX-04); rows
+I-LATEX-09 and I-LATEX-10 have the old text (the worker report has the
+new numbers); scope gaps: math (no row yet) and syntax highlighting
+(I-LATEX-01, I-LATEX-02); the other low rows. Open checks: the mutation sample,
+coverage, fuzzing.

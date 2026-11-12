@@ -1,0 +1,102 @@
+# The smart extension of the writer and of the reader.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "nosmart--x"
+to = ["latex-smart"]
+input = '''
+""x""
+'''
+
+[[case]]
+id = "readernosmart--x"
+from = "markdown-smart"
+input = '''
+""x""
+'''
+
+[[case]]
+id = "nosmart-a----b-----c"
+to = ["latex-smart"]
+input = '''
+a -- b --- c
+'''
+
+[[case]]
+id = "readernosmart-a----b-----c"
+from = "markdown-smart"
+input = '''
+a -- b --- c
+'''
+
+[[case]]
+id = "nosmart--q-and-s"
+to = ["latex-smart"]
+input = '''
+"q" and 's'
+'''
+
+[[case]]
+id = "readernosmart--q-and-s"
+from = "markdown-smart"
+input = '''
+"q" and 's'
+'''
+
+[[case]]
+id = "nosmart-it-s-ok"
+to = ["latex-smart"]
+input = '''
+it's ... ok
+'''
+
+[[case]]
+id = "readernosmart-it-s-ok"
+from = "markdown-smart"
+input = '''
+it's ... ok
+'''
+
+[[case]]
+id = "nosmart--curly-sin"
+to = ["latex-smart"]
+input = '''
+“curly” ‘single’
+'''
+
+[[case]]
+id = "readernosmart--curly-sin"
+from = "markdown-smart"
+input = '''
+“curly” ‘single’
+'''
+
+[[case]]
+id = "nosmart-en-dash-em-d"
+to = ["latex-smart"]
+input = '''
+en–dash em—dash
+'''
+
+[[case]]
+id = "readernosmart-en-dash-em-d"
+from = "markdown-smart"
+input = '''
+en–dash em—dash
+'''
+
+[[case]]
+id = "nosmart-x-y"
+to = ["latex-smart"]
+input = '''
+x … y
+'''
+
+[[case]]
+id = "readernosmart-x-y"
+from = "markdown-smart"
+input = '''
+x … y
+'''

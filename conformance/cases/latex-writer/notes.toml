@@ -1,0 +1,156 @@
+# Footnotes in text, lists, headings and tables.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "note-0"
+input = '''
+Text[^1]
+
+[^1]: Note.
+'''
+
+[[case]]
+id = "note-1"
+input = '''
+Text[^1]
+
+[^1]: Para one.
+
+    Para two.
+'''
+
+[[case]]
+id = "note-2"
+input = '''
+Text[^1]
+
+[^1]: note
+
+    ```
+    v
+    ```
+'''
+
+[[case]]
+id = "note-3"
+input = '''
+A[^1] and B[^2]
+
+[^1]: one
+[^2]: two
+'''
+
+[[case]]
+id = "note-4"
+input = '''
+Text^[inline note]
+'''
+
+[[case]]
+id = "note-5"
+input = '''
+Text^[note with *emph* and `code`]
+'''
+
+[[case]]
+id = "note-6"
+input = '''
+Text[^1]
+
+[^1]: - list
+    - in note
+'''
+
+[[case]]
+id = "note-7"
+input = '''
+Text[^1]
+
+[^1]: > quote in note
+'''
+
+[[case]]
+id = "note-8"
+input = '''
+Text[^1]
+
+[^1]: note[^2]
+
+[^2]: nested?
+'''
+
+[[case]]
+id = "note-9"
+input = '''
+- item[^1]
+
+[^1]: in list
+'''
+
+[[case]]
+id = "note-10"
+input = '''
+> quote[^1]
+
+[^1]: in quote
+'''
+
+[[case]]
+id = "note-11"
+input = '''
+Text[^1]
+
+[^1]: ```
+    only code
+    ```
+'''
+
+[[case]]
+id = "note-12"
+input = '''
+Text^[a note that is long enough to wrap past the line width of seventy two characters for sure]
+'''
+
+[[case]]
+id = "note-13"
+input = '''
+Text[^1]
+
+[^1]: $$x$$
+'''
+
+[[case]]
+id = "note-14"
+input = '''
+*emph[^1]*
+
+[^1]: n
+'''
+
+[[case]]
+id = "note-15"
+input = '''
+[link^[n]](http://x)
+'''
+
+[[case]]
+id = "note-16"
+input = '''
+Term[^1]
+:   def
+
+[^1]: term note
+'''
+
+[[case]]
+id = "note-17"
+input = '''
+Text[^1]
+
+[^1]: note
+
+    | a
+    | b
+'''

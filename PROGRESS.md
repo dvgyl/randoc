@@ -289,6 +289,7 @@ through an engine, and the `lua` and `server` modes.
 | contracts | Shared contracts for the next units: two new `Limits`, 15 new `Host` methods, one Haskell `show`, the public JSON value parser, the `zip` pin (ADR 18) |
 | latex-reader | `randoc-latex-reader`: the reader `latex`, unit 1 (tokenizer, macro definitions, the most frequent constructs) |
 | markdown-writer | `randoc-markdown-writer`: the writers `markdown`, `gfm`, `commonmark`, `commonmark_x`, `plain` and variants (partial: large generated documents still differ) |
+| latex-writer | `randoc-latex`: the writers `latex` and `beamer` (fragment output; standalone output is not connected yet) |
 
 The brief, the report and the reviews of each workstream are in
 `/Volumes/Extreme Pro/Randoc/env/store/` (`briefs/`, `reports/`, `reviews/`).

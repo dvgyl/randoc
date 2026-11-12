@@ -1,0 +1,273 @@
+# Headings, labels and unnumbered sections.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "heading-0"
+input = '''
+# One
+'''
+
+[[case]]
+id = "heading-1"
+input = '''
+## Two
+'''
+
+[[case]]
+id = "heading-2"
+input = '''
+### Three
+'''
+
+[[case]]
+id = "heading-3"
+input = '''
+#### Four
+'''
+
+[[case]]
+id = "heading-4"
+input = '''
+##### Five
+'''
+
+[[case]]
+id = "heading-5"
+input = '''
+###### Six
+'''
+
+[[case]]
+id = "heading-6"
+input = '''
+# With id {#myid}
+'''
+
+[[case]]
+id = "heading-7"
+input = '''
+# Under_score {#a_b}
+'''
+
+[[case]]
+id = "heading-8"
+input = '''
+# Unnumbered {-}
+'''
+
+[[case]]
+id = "heading-9"
+input = '''
+# Unnumbered2 {.unnumbered}
+'''
+
+[[case]]
+id = "heading-10"
+input = '''
+# Unlisted {.unlisted}
+'''
+
+[[case]]
+id = "heading-11"
+input = '''
+# Both {.unnumbered .unlisted}
+'''
+
+[[case]]
+id = "heading-12"
+input = '''
+## Sub *emph* {-}
+'''
+
+[[case]]
+id = "heading-13"
+input = '''
+# *Emph* heading
+'''
+
+[[case]]
+id = "heading-14"
+input = '''
+# Heading `code`
+'''
+
+[[case]]
+id = "heading-15"
+input = '''
+# Heading $x$
+'''
+
+[[case]]
+id = "heading-16"
+input = '''
+# Note[^1]
+
+[^1]: the note
+'''
+
+[[case]]
+id = "heading-17"
+input = '''
+# *E* [^n] x
+
+[^n]: nn
+'''
+
+[[case]]
+id = "heading-18"
+input = '''
+# Note unnumbered[^1] {-}
+
+[^1]: n
+'''
+
+[[case]]
+id = "heading-19"
+input = '''
+# [Link](http://x)
+'''
+
+[[case]]
+id = "heading-20"
+input = '''
+# ![img](i.png) image
+'''
+
+[[case]]
+id = "heading-21"
+input = '''
+# [span]{#sid} id
+'''
+
+[[case]]
+id = "heading-22"
+input = '''
+# 123
+'''
+
+[[case]]
+id = "heading-23"
+input = '''
+# é accent
+'''
+
+[[case]]
+id = "heading-24"
+input = '''
+# Hyphen-ated--dash
+'''
+
+[[case]]
+id = "heading-25"
+input = '''
+# "Quoted"
+'''
+
+[[case]]
+id = "heading-26"
+input = '''
+# A & B
+'''
+
+[[case]]
+id = "heading-27"
+input = '''
+# Very long heading that goes on and on and on past the line width of seventy two
+'''
+
+[[case]]
+id = "heading-28"
+input = '''
+> #### Four in quote
+'''
+
+[[case]]
+id = "heading-29"
+input = '''
+> ##### Five in quote
+'''
+
+[[case]]
+id = "heading-30"
+input = '''
+> ### Three in quote
+'''
+
+[[case]]
+id = "heading-31"
+input = '''
+- #### Four in list
+'''
+
+[[case]]
+id = "heading-32"
+input = '''
+# H {.foo key=val}
+'''
+
+[[case]]
+id = "heading-33"
+input = '''
+# Empty id {#}
+'''
+
+[[case]]
+id = "heading-34"
+input = '''
+#
+'''
+
+[[case]]
+id = "heading-35"
+input = '''
+Setext
+======
+'''
+
+[[case]]
+id = "heading-36"
+input = '''
+Setext2
+-------
+'''
+
+[[case]]
+id = "heading-37"
+input = '''
+# a
+
+## b
+
+### c
+
+text
+'''
+
+[[case]]
+id = "heading-38"
+input = '''
+# Note[^1] *emph*
+
+[^1]: n
+'''
+
+[[case]]
+id = "heading-39"
+input = '''
+# [x]{.smallcaps}
+'''
+
+[[case]]
+id = "heading-40"
+input = '''
+# ~~strike~~ ^sup^
+'''
+
+[[case]]
+id = "heading-41"
+input = '''
+# Line\
+break
+'''

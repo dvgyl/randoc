@@ -1,0 +1,264 @@
+# Tables: alignments, widths, captions, spans, head and foot.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "table-0"
+input = '''
+| A | B: | C |
+|:--|--:|:-:|
+| 1 | 2 | 3 |
+'''
+
+[[case]]
+id = "table-1"
+input = '''
+| p | q |
+|---|---|
+| 1 | 2 |
+
+: Caption
+'''
+
+[[case]]
+id = "table-2"
+input = '''
+| p | q |
+|---|---|
+| 1 | 2 |
+
+: Caption *x* {#tbl}
+'''
+
+[[case]]
+id = "table-3"
+input = '''
+  Right     Left
+-------     ------
+     12     12
+'''
+
+[[case]]
+id = "table-4"
+input = '''
+--------------------------------------------------------
+  Fruit    Colour           Price  Notes
+  kind     name             euro   about it
+-------- ---------- ----------- -------------------------
+  Apple    green           0.40  Sour when it is picked
+                                 too early in autumn.
+--------------------------------------------------------
+'''
+
+[[case]]
+id = "table-5"
+input = '''
++---+---+
+| p | q |
++===+===+
+| 1 | 2 |
++---+---+
+'''
+
+[[case]]
+id = "table-6"
+input = '''
++-----+-----+
+| a   | b   |
++=====+=====+
+| - x | y   |
+| - z |     |
++-----+-----+
+'''
+
+[[case]]
+id = "table-7"
+input = '''
++---+-----+
+| x | yy  |
++---+-----+
+'''
+
+[[case]]
+id = "table-8"
+input = '''
+|   |   |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "table-9"
+input = '''
+|   |   |
+|---|---|
+| 1 | 2 |
+
+: cap
+'''
+
+[[case]]
+id = "table-10"
+input = '''
+| p | q |
+|---|---|
+| x | y[^1] |
+
+[^1]: note
+'''
+
+[[case]]
+id = "table-11"
+input = '''
+| p | q |
+|---|---|
+| `code` | *emph* |
+'''
+
+[[case]]
+id = "table-12"
+input = '''
+| p | q |
+|---|---|
+| [l](http://x) | $m$ |
+'''
+
+[[case]]
+id = "table-13"
+input = '''
+| a |
+|---|
+| long long long long long long long long long long long long long long long long long |
+'''
+
+[[case]]
+id = "table-14"
+input = '''
+| p | q |
+|---|---|
+| x \| y | z |
+'''
+
+[[case]]
+id = "table-15"
+input = '''
+| a |
+|---|
+| 1 |
+| 2 |
+| 3 |
+'''
+
+[[case]]
+id = "table-16"
+input = '''
+a   b
+--- ---
+1   2
+
+Table: simple with caption
+'''
+
+[[case]]
+id = "table-17"
+input = '''
++---+---+
+| p | q |
++===+===+
+| 1 | 2 |
++===+===+
+| f | g |
++===+===+
+'''
+
+[[case]]
+id = "table-18"
+input = '''
++-------+-------+
+| a     | b     |
++=======+=======+
+| span cells    |
++-------+-------+
+| 1     | 2     |
++-------+-------+
+'''
+
+[[case]]
+id = "table-19"
+input = '''
++---+---+
+| p | q |
++===+===+
+| r | 1 |
++   +---+
+|   | 2 |
++---+---+
+'''
+
+[[case]]
+id = "table-20"
+input = '''
+| p | q |
+|---|---|
+| x | y |
+
+: Caption[^c]
+
+[^c]: cn
+'''
+
+[[case]]
+id = "table-21"
+input = '''
+| h |
+|:-:|
+| c |
+'''
+
+[[case]]
+id = "table-22"
+input = '''
+| h |
+|--:|
+| r |
+'''
+
+[[case]]
+id = "table-23"
+input = '''
+| *head* | **b** |
+|---|---|
+| 1 | 2 |
+'''
+
+[[case]]
+id = "table-24"
+input = '''
++---------------+---+
+| wide column   | n |
++===============+===+
+| para one      | 2 |
+|               |   |
+| para two      |   |
++---------------+---+
+'''
+
+[[case]]
+id = "table-25"
+input = '''
++---+---+
+| p | q |
++:==+==:+
+| 1 | 2 |
++---+---+
+'''
+
+[[case]]
+id = "table-26"
+input = '''
+| p | q |
+|---|---|
+| line\
+break | x |
+'''

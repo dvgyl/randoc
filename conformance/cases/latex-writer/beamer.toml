@@ -1,0 +1,5513 @@
+# Beamer slides, blocks, columns and notes.
+
+from = "markdown"
+to = ["beamer"]
+
+[[case]]
+id = "beamer-0"
+input = '''
+## Slide
+
+text
+'''
+
+[[case]]
+id = "beamer-1"
+input = '''
+# Sec
+
+## Slide
+
+text
+'''
+
+[[case]]
+id = "beamer-2"
+input = '''
+# A
+
+text
+
+# B
+
+text2
+'''
+
+[[case]]
+id = "beamer-3"
+input = '''
+## A
+
+text
+
+## B
+
+text
+'''
+
+[[case]]
+id = "beamer-4"
+input = '''
+intro
+
+## S
+
+x
+'''
+
+[[case]]
+id = "beamer-5"
+input = '''
+## S
+
+- a
+- b
+
+. . .
+
+more
+'''
+
+[[case]]
+id = "beamer-6"
+input = '''
+## S
+
+```
+code
+```
+'''
+
+[[case]]
+id = "beamer-7"
+input = '''
+## S `code`
+
+x
+'''
+
+[[case]]
+id = "beamer-8"
+input = '''
+## S
+
+inline `code`
+'''
+
+[[case]]
+id = "beamer-9"
+input = '''
+## S {.fragile}
+
+x
+'''
+
+[[case]]
+id = "beamer-10"
+input = '''
+## S {.allowframebreaks}
+
+x
+'''
+
+[[case]]
+id = "beamer-11"
+input = '''
+## S {.standout}
+
+x
+'''
+
+[[case]]
+id = "beamer-12"
+input = '''
+## {.standout}
+
+notitle
+'''
+
+[[case]]
+id = "beamer-13"
+input = '''
+## S {.c .t .shrink .plain}
+
+x
+'''
+
+[[case]]
+id = "beamer-14"
+input = '''
+## S {frameoptions="squeeze,t"}
+
+x
+'''
+
+[[case]]
+id = "beamer-15"
+input = '''
+## S {#myid}
+
+x
+'''
+
+[[case]]
+id = "beamer-16"
+input = '''
+## S
+
+### Block
+
+b
+'''
+
+[[case]]
+id = "beamer-17"
+input = '''
+## S
+
+### Ex {.example}
+
+e
+'''
+
+[[case]]
+id = "beamer-18"
+input = '''
+## S
+
+### Al {.alert}
+
+a
+'''
+
+[[case]]
+id = "beamer-19"
+input = '''
+## S
+
+### B1
+
+x
+
+#### B2
+
+y
+
+### B3
+
+z
+'''
+
+[[case]]
+id = "beamer-20"
+input = '''
+## S
+
+::: notes
+speaker
+:::
+'''
+
+[[case]]
+id = "beamer-21"
+input = '''
+## S
+
+::: notes
+one
+
+two
+:::
+'''
+
+[[case]]
+id = "beamer-22"
+input = '''
+## S
+
+:::: columns
+::: {.column width="40%"}
+left
+:::
+::: column
+right
+:::
+::::
+'''
+
+[[case]]
+id = "beamer-23"
+input = '''
+## S
+
+:::: {.columns align=center totalwidth=8em}
+::: column
+a
+:::
+::::
+'''
+
+[[case]]
+id = "beamer-24"
+input = '''
+## S
+
+:::: {.columns align=top}
+::: column
+a
+:::
+::::
+'''
+
+[[case]]
+id = "beamer-25"
+input = '''
+## S
+
+:::: {.columns align=bottom}
+::: {.column width=30%}
+a
+:::
+::::
+'''
+
+[[case]]
+id = "beamer-26"
+input = '''
+## S
+
+text
+
+---
+
+after rule
+'''
+
+[[case]]
+id = "beamer-27"
+input = '''
+one
+
+---
+
+two
+'''
+
+[[case]]
+id = "beamer-28"
+input = '''
+## S
+
+note[^1]
+
+[^1]: body
+'''
+
+[[case]]
+id = "beamer-29"
+input = '''
+## Note[^1]
+
+[^1]: in title
+'''
+
+[[case]]
+id = "beamer-30"
+input = '''
+## S
+
+::: incremental
+- x
+- y
+:::
+'''
+
+[[case]]
+id = "beamer-31"
+input = '''
+## S
+
+::: nonincremental
+- x
+:::
+'''
+
+[[case]]
+id = "beamer-32"
+input = '''
+## S
+
+::: incremental
+1. x
+2. y
+:::
+'''
+
+[[case]]
+id = "beamer-33"
+input = '''
+## S
+
+::: incremental
+T
+:   d
+:::
+'''
+
+[[case]]
+id = "beamer-34"
+input = '''
+## S
+
+1. one
+2. two
+'''
+
+[[case]]
+id = "beamer-35"
+input = '''
+## S
+
+a. one
+b. two
+'''
+
+[[case]]
+id = "beamer-36"
+input = '''
+## S
+
+![Cap](f.png)
+'''
+
+[[case]]
+id = "beamer-37"
+input = '''
+## S
+
+| a |
+|---|
+| 1 |
+'''
+
+[[case]]
+id = "beamer-38"
+input = '''
+## S
+
+| p | q |
+|---|---|
+| 1 | 2 |
+
+: cap
+'''
+
+[[case]]
+id = "beamer-39"
+input = '''
+## S
+
+[alert]{.alert}
+'''
+
+[[case]]
+id = "beamer-40"
+input = '''
+## S
+
+`\pause`{=beamer} raw
+'''
+
+[[case]]
+id = "beamer-41"
+input = '''
+## S
+
+```{=beamer}
+\pause
+```
+'''
+
+[[case]]
+id = "beamer-42"
+input = '''
+# Section {-}
+
+## S
+
+x
+'''
+
+[[case]]
+id = "beamer-43"
+input = '''
+# One
+
+## Two
+
+### Three
+
+x
+'''
+
+[[case]]
+id = "beamer-44"
+input = '''
+## S
+
+> quote
+'''
+
+[[case]]
+id = "beamer-45"
+input = '''
+## S
+
+$x^2$
+'''
+
+[[case]]
+id = "beamer-46"
+input = '''
+
+'''
+
+[[case]]
+id = "beamer-47"
+input = '''
+just text
+'''
+
+[[case]]
+id = "beamer-48"
+input = '''
+## S
+
+::: {#d lang=fr}
+fr
+:::
+'''
+
+[[case]]
+id = "beamer-49"
+input = '''
+## S
+
+### Nested block `code`
+
+x
+'''
+
+[[case]]
+id = "beamer-50"
+input = '''
+## S
+
+- a
+
+    ```
+    code
+    ```
+'''
+
+[[case]]
+id = "beamer-51"
+input = '''
+## S
+
+x
+
+#### Deep
+
+y
+'''
+
+[[case]]
+id = "beamer-52"
+input = '''
+a
+
+---
+
+---
+
+b
+'''
+
+[[case]]
+id = "beamer-53"
+input = '''
+# A
+
+## B
+
+x
+
+### C {.alert}
+
+y
+
+---
+
+z
+'''
+
+[[case]]
+id = "beamer-54"
+input = '''
+## S
+
+---
+
+## T
+
+t
+'''
+
+[[case]]
+id = "beamer-55"
+input = '''
+---
+
+lead
+'''
+
+[[case]]
+id = "beamer-56"
+input = '''
+#### D
+
+y
+
+## A
+
+x
+'''
+
+[[case]]
+id = "beamer-57"
+input = '''
+## A
+
+```
+c
+```
+
+---
+
+`x`
+'''
+
+[[case]]
+id = "beamer-58"
+input = '''
+## S
+
+| p | q |
+|---|---|
+| 1 | 2 |
+
+: Cap[^1]
+
+[^1]: tn
+'''
+
+[[case]]
+id = "beamer-59"
+input = '''
+## S
+
+<http://x.org> [l](#s)
+'''
+
+[[case]]
+id = "beamer-60"
+input = '''
+## S
+
+> - a
+> - b
+'''
+
+[[case]]
+id = "beamer-61"
+input = '''
+## S
+
+> > - nested
+'''
+
+[[case]]
+id = "beamer-62"
+input = '''
+## S
+
+::: incremental
+> - toggled off
+:::
+'''
+
+[[case]]
+id = "beamer-63"
+input = '''
+## S
+
+> - a
+>
+> text
+'''
+
+[[case]]
+id = "beamer-64"
+input = '''
+## [span]{#sid} id
+
+x
+'''
+
+[[case]]
+id = "beamer-65"
+input = '''
+## S
+
+x
+
+### B `c`
+
+y
+'''
+
+[[case]]
+id = "beamer-66"
+input = '''
+## S
+
+:::: {.columns align=top-baseline}
+::: column
+a
+:::
+::::
+'''
+
+[[case]]
+id = "beamer-67"
+input = '''
+## S
+
+> - a
+
+- b
+'''
+
+[[case]]
+id = "beamer-68"
+input = '''
+## S
+
+T
+:   d
+'''
+
+[[case]]
+id = "beamer-69"
+input = '''
+## S
+
+x
+
+# H
+
+---
+'''
+
+[[case]]
+id = "beamer-70"
+input = '''
+## S
+
+x
+
+# H
+
+---
+
+after
+'''
+
+[[case]]
+id = "beamer-71"
+input = '''
+## S
+
+x
+
+# H
+
+lead
+
+---
+
+after
+
+## T
+
+t
+'''
+
+[[case]]
+id = "beamer-72"
+input = '''
+a
+
+---
+
+## S
+
+x
+'''
+
+[[case]]
+id = "beamer-73"
+input = '''
+## S
+
+x
+
+---
+'''
+
+[[case]]
+id = "beamer-74"
+input = '''
+## S
+
+x
+
+---
+
+# H
+
+y
+'''
+
+[[case]]
+id = "beamer-75"
+input = '''
+# H
+
+---
+
+# I
+
+---
+'''
+
+[[case]]
+id = "beamer-76"
+input = '''
+a
+
+---
+
+---
+
+b
+
+---
+'''
+
+[[case]]
+id = "beamer-77"
+input = '''
+# H
+
+x
+
+---
+
+# I
+
+y
+'''
+
+[[case]]
+id = "beamer-78"
+input = '''
+# H
+
+## S
+
+x
+
+---
+
+# I
+
+## T
+
+y
+'''
+
+[[case]]
+id = "beamer-79"
+input = '''
+# H
+
+## S
+
+x
+
+---
+
+## T
+
+y
+'''
+
+[[case]]
+id = "beamer-80"
+input = '''
+a
+
+---
+
+# H
+
+## S
+
+x
+'''
+
+[[case]]
+id = "beamer-81"
+input = '''
+## S
+
+x
+
+---
+
+---
+
+## T
+
+y
+'''
+
+# Matrix: headings in containers against the slide level (`tools/matrix.py toml beamer`).
+
+[[case]]
+id = "m-plain-none-h1-auto"
+input = '''
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h2-auto"
+input = '''
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h3-auto"
+input = '''
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h3-1"
+args = ["--slide-level=1"]
+input = '''
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-none-h3-3"
+args = ["--slide-level=3"]
+input = '''
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h1-auto"
+input = '''
+## Slide
+
+text
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h1-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h1-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h1-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h2-auto"
+input = '''
+## Slide
+
+text
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h3-auto"
+input = '''
+## Slide
+
+text
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h3-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h3-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-slide-h3-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h1-auto"
+input = '''
+# Sec
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+# H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h2-auto"
+input = '''
+# Sec
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h2-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h2-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h2-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+## H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h3-auto"
+input = '''
+# Sec
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h3-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h3-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-plain-section-h3-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+### H
+
+in
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h1-auto"
+input = '''
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h1-1"
+args = ["--slide-level=1"]
+input = '''
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h1-3"
+args = ["--slide-level=3"]
+input = '''
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h2-auto"
+input = '''
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h2-1"
+args = ["--slide-level=1"]
+input = '''
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h2-3"
+args = ["--slide-level=3"]
+input = '''
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h3-auto"
+input = '''
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h3-1"
+args = ["--slide-level=1"]
+input = '''
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-none-h3-3"
+args = ["--slide-level=3"]
+input = '''
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h1-auto"
+input = '''
+## Slide
+
+text
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h1-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h1-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h1-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h2-auto"
+input = '''
+## Slide
+
+text
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h3-auto"
+input = '''
+## Slide
+
+text
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h3-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h3-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-slide-h3-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h1-auto"
+input = '''
+# Sec
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: d
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h2-auto"
+input = '''
+# Sec
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h2-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h2-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h2-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: d
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h3-auto"
+input = '''
+# Sec
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h3-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h3-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-div-section-h3-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: d
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h1-auto"
+input = '''
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h1-1"
+args = ["--slide-level=1"]
+input = '''
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h1-3"
+args = ["--slide-level=3"]
+input = '''
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h2-auto"
+input = '''
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h2-1"
+args = ["--slide-level=1"]
+input = '''
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h2-3"
+args = ["--slide-level=3"]
+input = '''
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h3-auto"
+input = '''
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h3-1"
+args = ["--slide-level=1"]
+input = '''
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-none-h3-3"
+args = ["--slide-level=3"]
+input = '''
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h1-auto"
+input = '''
+## Slide
+
+text
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h1-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h1-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h1-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h2-auto"
+input = '''
+## Slide
+
+text
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h3-auto"
+input = '''
+## Slide
+
+text
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h3-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h3-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-slide-h3-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h1-auto"
+input = '''
+# Sec
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: {#i}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h2-auto"
+input = '''
+# Sec
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h2-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h2-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h2-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: {#i}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h3-auto"
+input = '''
+# Sec
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h3-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h3-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-id-div-section-h3-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: {#i}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h1-auto"
+input = '''
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h1-1"
+args = ["--slide-level=1"]
+input = '''
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h1-2"
+args = ["--slide-level=2"]
+input = '''
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h1-3"
+args = ["--slide-level=3"]
+input = '''
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h2-auto"
+input = '''
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h2-1"
+args = ["--slide-level=1"]
+input = '''
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h2-2"
+args = ["--slide-level=2"]
+input = '''
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h2-3"
+args = ["--slide-level=3"]
+input = '''
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h3-auto"
+input = '''
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h3-1"
+args = ["--slide-level=1"]
+input = '''
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h3-2"
+args = ["--slide-level=2"]
+input = '''
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-none-h3-3"
+args = ["--slide-level=3"]
+input = '''
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h1-auto"
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h1-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h1-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h1-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h2-auto"
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h3-auto"
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h3-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h3-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-slide-h3-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h1-auto"
+input = '''
+# Sec
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h2-auto"
+input = '''
+# Sec
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h2-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h2-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h2-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h3-auto"
+input = '''
+# Sec
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h3-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h3-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-column-section-h3-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+:::: columns
+::: column
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h1-auto"
+input = '''
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h1-1"
+args = ["--slide-level=1"]
+input = '''
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h1-3"
+args = ["--slide-level=3"]
+input = '''
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h2-auto"
+input = '''
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h2-1"
+args = ["--slide-level=1"]
+input = '''
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h2-3"
+args = ["--slide-level=3"]
+input = '''
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h3-auto"
+input = '''
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h3-1"
+args = ["--slide-level=1"]
+input = '''
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-none-h3-3"
+args = ["--slide-level=3"]
+input = '''
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h1-auto"
+input = '''
+## Slide
+
+text
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h1-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h1-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h1-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h2-auto"
+input = '''
+## Slide
+
+text
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h3-auto"
+input = '''
+## Slide
+
+text
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h3-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h3-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-slide-h3-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h1-auto"
+input = '''
+# Sec
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: notes
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h2-auto"
+input = '''
+# Sec
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h2-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h2-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h2-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: notes
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h3-auto"
+input = '''
+# Sec
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h3-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h3-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-notes-section-h3-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+::: notes
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h1-auto"
+input = '''
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h1-1"
+args = ["--slide-level=1"]
+input = '''
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h1-2"
+args = ["--slide-level=2"]
+input = '''
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h1-3"
+args = ["--slide-level=3"]
+input = '''
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h2-auto"
+input = '''
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h2-1"
+args = ["--slide-level=1"]
+input = '''
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h2-2"
+args = ["--slide-level=2"]
+input = '''
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h2-3"
+args = ["--slide-level=3"]
+input = '''
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h3-auto"
+input = '''
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h3-1"
+args = ["--slide-level=1"]
+input = '''
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h3-2"
+args = ["--slide-level=2"]
+input = '''
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-none-h3-3"
+args = ["--slide-level=3"]
+input = '''
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h1-auto"
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h1-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h1-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h1-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h2-auto"
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h2-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h2-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h3-auto"
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h3-1"
+args = ["--slide-level=1"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h3-2"
+args = ["--slide-level=2"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-slide-h3-3"
+args = ["--slide-level=3"]
+input = '''
+## Slide
+
+text
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h1-auto"
+input = '''
+# Sec
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h1-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h1-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+:::: d
+::: e
+# H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h2-auto"
+input = '''
+# Sec
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h2-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h2-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h2-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+:::: d
+::: e
+## H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h3-auto"
+input = '''
+# Sec
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h3-1"
+args = ["--slide-level=1"]
+input = '''
+# Sec
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h3-2"
+args = ["--slide-level=2"]
+input = '''
+# Sec
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+[[case]]
+id = "m-nested-section-h3-3"
+args = ["--slide-level=3"]
+input = '''
+# Sec
+
+:::: d
+::: e
+### H
+
+in
+:::
+::::
+
+after
+'''
+
+# Matrix: attributes of sections, frames and columns (`tools/matrix.py toml beamer-attrs`).
+
+[[case]]
+id = "a-frame-classes-h1-auto"
+input = '''
+::: {#i .t .shrink .fragile}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-classes-h1-auto"
+input = '''
+# H {#i .t .shrink .fragile}
+
+in
+'''
+
+[[case]]
+id = "a-frame-classes-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#i .t .shrink .fragile}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-classes-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H {#i .t .shrink .fragile}
+
+in
+'''
+
+[[case]]
+id = "a-frame-classes-h2-auto"
+input = '''
+::: {#i .t .shrink .fragile}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-classes-h2-auto"
+input = '''
+## H {#i .t .shrink .fragile}
+
+in
+'''
+
+[[case]]
+id = "a-frame-classes-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#i .t .shrink .fragile}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-classes-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H {#i .t .shrink .fragile}
+
+in
+'''
+
+[[case]]
+id = "a-frame-classes-h3-auto"
+input = '''
+::: {#i .t .shrink .fragile}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-classes-h3-auto"
+input = '''
+### H {#i .t .shrink .fragile}
+
+in
+'''
+
+[[case]]
+id = "a-frame-classes-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#i .t .shrink .fragile}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-classes-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H {#i .t .shrink .fragile}
+
+in
+'''
+
+[[case]]
+id = "a-frame-keys-h1-auto"
+input = '''
+::: {.c frameoptions=squeeze label=x}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-keys-h1-auto"
+input = '''
+# H {.c frameoptions=squeeze label=x}
+
+in
+'''
+
+[[case]]
+id = "a-frame-keys-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {.c frameoptions=squeeze label=x}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-keys-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H {.c frameoptions=squeeze label=x}
+
+in
+'''
+
+[[case]]
+id = "a-frame-keys-h2-auto"
+input = '''
+::: {.c frameoptions=squeeze label=x}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-keys-h2-auto"
+input = '''
+## H {.c frameoptions=squeeze label=x}
+
+in
+'''
+
+[[case]]
+id = "a-frame-keys-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {.c frameoptions=squeeze label=x}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-keys-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H {.c frameoptions=squeeze label=x}
+
+in
+'''
+
+[[case]]
+id = "a-frame-keys-h3-auto"
+input = '''
+::: {.c frameoptions=squeeze label=x}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-keys-h3-auto"
+input = '''
+### H {.c frameoptions=squeeze label=x}
+
+in
+'''
+
+[[case]]
+id = "a-frame-keys-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {.c frameoptions=squeeze label=x}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-frame-keys-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H {.c frameoptions=squeeze label=x}
+
+in
+'''
+
+[[case]]
+id = "a-lang-h1-auto"
+input = '''
+::: {lang=fr}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-h1-auto"
+input = '''
+# H {lang=fr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {lang=fr}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H {lang=fr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-h2-auto"
+input = '''
+::: {lang=fr}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-h2-auto"
+input = '''
+## H {lang=fr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {lang=fr}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H {lang=fr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-h3-auto"
+input = '''
+::: {lang=fr}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-h3-auto"
+input = '''
+### H {lang=fr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {lang=fr}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H {lang=fr}
+
+in
+'''
+
+[[case]]
+id = "a-dir-h1-auto"
+input = '''
+::: {dir=rtl}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-dir-h1-auto"
+input = '''
+# H {dir=rtl}
+
+in
+'''
+
+[[case]]
+id = "a-dir-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {dir=rtl}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-dir-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H {dir=rtl}
+
+in
+'''
+
+[[case]]
+id = "a-dir-h2-auto"
+input = '''
+::: {dir=rtl}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-dir-h2-auto"
+input = '''
+## H {dir=rtl}
+
+in
+'''
+
+[[case]]
+id = "a-dir-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {dir=rtl}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-dir-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H {dir=rtl}
+
+in
+'''
+
+[[case]]
+id = "a-dir-h3-auto"
+input = '''
+::: {dir=rtl}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-dir-h3-auto"
+input = '''
+### H {dir=rtl}
+
+in
+'''
+
+[[case]]
+id = "a-dir-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {dir=rtl}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-dir-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H {dir=rtl}
+
+in
+'''
+
+[[case]]
+id = "a-lang-dir-h1-auto"
+input = '''
+::: {#d lang=de dir=ltr}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-dir-h1-auto"
+input = '''
+# H {#d lang=de dir=ltr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-dir-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#d lang=de dir=ltr}
+# H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-dir-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H {#d lang=de dir=ltr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-dir-h2-auto"
+input = '''
+::: {#d lang=de dir=ltr}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-dir-h2-auto"
+input = '''
+## H {#d lang=de dir=ltr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-dir-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#d lang=de dir=ltr}
+## H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-dir-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H {#d lang=de dir=ltr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-dir-h3-auto"
+input = '''
+::: {#d lang=de dir=ltr}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-dir-h3-auto"
+input = '''
+### H {#d lang=de dir=ltr}
+
+in
+'''
+
+[[case]]
+id = "a-lang-dir-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#d lang=de dir=ltr}
+### H
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-lang-dir-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H {#d lang=de dir=ltr}
+
+in
+'''
+
+[[case]]
+id = "a-two-ids-h1-auto"
+input = '''
+::: {#d .t}
+# H {#h}
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-two-ids-h1-auto"
+input = '''
+# H {#d .t}
+
+in
+'''
+
+[[case]]
+id = "a-two-ids-h1-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#d .t}
+# H {#h}
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-two-ids-h1-2"
+args = ["--slide-level=2"]
+input = '''
+# H {#d .t}
+
+in
+'''
+
+[[case]]
+id = "a-two-ids-h2-auto"
+input = '''
+::: {#d .t}
+## H {#h}
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-two-ids-h2-auto"
+input = '''
+## H {#d .t}
+
+in
+'''
+
+[[case]]
+id = "a-two-ids-h2-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#d .t}
+## H {#h}
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-two-ids-h2-2"
+args = ["--slide-level=2"]
+input = '''
+## H {#d .t}
+
+in
+'''
+
+[[case]]
+id = "a-two-ids-h3-auto"
+input = '''
+::: {#d .t}
+### H {#h}
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-two-ids-h3-auto"
+input = '''
+### H {#d .t}
+
+in
+'''
+
+[[case]]
+id = "a-two-ids-h3-2"
+args = ["--slide-level=2"]
+input = '''
+::: {#d .t}
+### H {#h}
+
+in
+:::
+
+after
+'''
+
+[[case]]
+id = "a-heading-two-ids-h3-2"
+args = ["--slide-level=2"]
+input = '''
+### H {#d .t}
+
+in
+'''
+
+[[case]]
+id = "c-plain-plain-h0"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-plain-h3"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-plain-h2"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-width-h0"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column width=30%}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-width-h3"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column width=30%}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-width-h2"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column width=30%}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-align-h0"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column align=top-baseline width=2cm}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-align-h3"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column align=top-baseline width=2cm}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-plain-align-h2"
+input = '''
+## S
+
+:::: {.columns}
+::: {.column align=top-baseline width=2cm}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-plain-h0"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-plain-h3"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-plain-h2"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-width-h0"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column width=30%}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-width-h3"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column width=30%}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-width-h2"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column width=30%}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-align-h0"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column align=top-baseline width=2cm}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-align-h3"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column align=top-baseline width=2cm}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-text-width-align-h2"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth}
+::: {.column align=top-baseline width=2cm}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-plain-h0"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-plain-h3"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-plain-h2"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-width-h0"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column width=30%}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-width-h3"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column width=30%}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-width-h2"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column width=30%}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-align-h0"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column align=top-baseline width=2cm}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-align-h3"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column align=top-baseline width=2cm}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-all-align-h2"
+input = '''
+## S
+
+:::: {.columns .onlytextwidth align=bottom totalwidth=8cm}
+::: {.column align=top-baseline width=2cm}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-plain-h0"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-plain-h3"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-plain-h2"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-width-h0"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column width=30%}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-width-h3"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column width=30%}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-width-h2"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column width=30%}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-align-h0"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column align=top-baseline width=2cm}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-align-h3"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column align=top-baseline width=2cm}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-center-align-h2"
+input = '''
+## S
+
+:::: {.columns align=center}
+::: {.column align=top-baseline width=2cm}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-plain-h0"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-plain-h3"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-plain-h2"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-width-h0"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column width=30%}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-width-h3"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column width=30%}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-width-h2"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column width=30%}
+## Slide
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-align-h0"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column align=top-baseline width=2cm}
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-align-h3"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column align=top-baseline width=2cm}
+### Block
+
+text
+:::
+::::
+'''
+
+[[case]]
+id = "c-unknown-align-h2"
+input = '''
+## S
+
+:::: {.columns align=x .other}
+::: {.column align=top-baseline width=2cm}
+## Slide
+
+text
+:::
+::::
+'''

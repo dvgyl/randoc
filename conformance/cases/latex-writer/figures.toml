@@ -1,0 +1,136 @@
+# Figures and captions.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "figure-0"
+input = '''
+![Cap](fig.png)
+'''
+
+[[case]]
+id = "figure-1"
+input = '''
+![Cap](fig.png){#fig:a}
+'''
+
+[[case]]
+id = "figure-2"
+input = '''
+![Cap](fig.png){#fig:a width=3cm}
+'''
+
+[[case]]
+id = "figure-3"
+input = '''
+![Cap *emph*](fig.png)
+'''
+
+[[case]]
+id = "figure-4"
+input = '''
+![Cap](fig.png){width=50%}
+'''
+
+[[case]]
+id = "figure-5"
+input = '''
+![](nocap.png)
+'''
+
+[[case]]
+id = "figure-6"
+input = '''
+![](nocap.png){#fig:n}
+'''
+
+[[case]]
+id = "figure-7"
+input = '''
+![Cap[^1]](f.png)
+
+[^1]: note
+'''
+
+[[case]]
+id = "figure-8"
+input = '''
+![Cap $x$](f.png)
+'''
+
+[[case]]
+id = "figure-9"
+input = '''
+![Cap](f.png "title")
+'''
+
+[[case]]
+id = "figure-10"
+input = '''
+![Cap](f.png){height=2in}
+'''
+
+[[case]]
+id = "figure-11"
+input = '''
+![A long caption that goes on and on for a while to wrap past seventy two chars](f.png)
+'''
+
+[[case]]
+id = "figure-12"
+input = '''
+![Cap](f.png){.cls}
+'''
+
+[[case]]
+id = "figure-13"
+input = '''
+![Cap](a b.png)
+'''
+
+[[case]]
+id = "figure-14"
+input = '''
+text
+
+![Cap](f.png)
+
+text
+'''
+
+[[case]]
+id = "figure-15"
+input = '''
+- ![Cap](f.png)
+'''
+
+[[case]]
+id = "figure-16"
+input = '''
+> ![Cap](f.png)
+'''
+
+[[case]]
+id = "figure-17"
+input = '''
+![Cap with [link](http://x)](f.png)
+'''
+
+[[case]]
+id = "figure-18"
+input = '''
+![x](a.svg)
+'''
+
+[[case]]
+id = "figure-19"
+input = '''
+![y](b.SVG){width=2cm}
+'''
+
+[[case]]
+id = "figure-20"
+input = '''
+text ![i](i.svg) text
+'''

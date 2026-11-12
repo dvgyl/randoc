@@ -1,0 +1,692 @@
+# Language spans and divs with Babel names.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "span-af"
+input = '''
+[x]{lang=af}
+'''
+
+[[case]]
+id = "span-am"
+input = '''
+[x]{lang=am}
+'''
+
+[[case]]
+id = "span-ar"
+input = '''
+[x]{lang=ar}
+'''
+
+[[case]]
+id = "span-ast"
+input = '''
+[x]{lang=ast}
+'''
+
+[[case]]
+id = "span-be"
+input = '''
+[x]{lang=be}
+'''
+
+[[case]]
+id = "span-bg"
+input = '''
+[x]{lang=bg}
+'''
+
+[[case]]
+id = "span-bn"
+input = '''
+[x]{lang=bn}
+'''
+
+[[case]]
+id = "span-bo"
+input = '''
+[x]{lang=bo}
+'''
+
+[[case]]
+id = "span-br"
+input = '''
+[x]{lang=br}
+'''
+
+[[case]]
+id = "span-ca"
+input = '''
+[x]{lang=ca}
+'''
+
+[[case]]
+id = "span-cy"
+input = '''
+[x]{lang=cy}
+'''
+
+[[case]]
+id = "span-cs"
+input = '''
+[x]{lang=cs}
+'''
+
+[[case]]
+id = "span-da"
+input = '''
+[x]{lang=da}
+'''
+
+[[case]]
+id = "span-de"
+input = '''
+[x]{lang=de}
+'''
+
+[[case]]
+id = "span-de-at"
+input = '''
+[x]{lang=de-AT}
+'''
+
+[[case]]
+id = "span-de-ch"
+input = '''
+[x]{lang=de-CH}
+'''
+
+[[case]]
+id = "span-de-de"
+input = '''
+[x]{lang=de-DE}
+'''
+
+[[case]]
+id = "span-de-1901"
+input = '''
+[x]{lang=de-1901}
+'''
+
+[[case]]
+id = "span-de-at-1901"
+input = '''
+[x]{lang=de-AT-1901}
+'''
+
+[[case]]
+id = "span-de-ch-1901"
+input = '''
+[x]{lang=de-CH-1901}
+'''
+
+[[case]]
+id = "span-dsb"
+input = '''
+[x]{lang=dsb}
+'''
+
+[[case]]
+id = "span-dv"
+input = '''
+[x]{lang=dv}
+'''
+
+[[case]]
+id = "span-el"
+input = '''
+[x]{lang=el}
+'''
+
+[[case]]
+id = "span-el-polyton"
+input = '''
+[x]{lang=el-polyton}
+'''
+
+[[case]]
+id = "span-grc"
+input = '''
+[x]{lang=grc}
+'''
+
+[[case]]
+id = "span-en"
+input = '''
+[x]{lang=en}
+'''
+
+[[case]]
+id = "span-en-au"
+input = '''
+[x]{lang=en-AU}
+'''
+
+[[case]]
+id = "span-en-ca"
+input = '''
+[x]{lang=en-CA}
+'''
+
+[[case]]
+id = "span-en-gb"
+input = '''
+[x]{lang=en-GB}
+'''
+
+[[case]]
+id = "span-en-nz"
+input = '''
+[x]{lang=en-NZ}
+'''
+
+[[case]]
+id = "span-en-us"
+input = '''
+[x]{lang=en-US}
+'''
+
+[[case]]
+id = "span-en-uk"
+input = '''
+[x]{lang=en-UK}
+'''
+
+[[case]]
+id = "span-en-in"
+input = '''
+[x]{lang=en-IN}
+'''
+
+[[case]]
+id = "span-eo"
+input = '''
+[x]{lang=eo}
+'''
+
+[[case]]
+id = "span-es"
+input = '''
+[x]{lang=es}
+'''
+
+[[case]]
+id = "span-es-mx"
+input = '''
+[x]{lang=es-MX}
+'''
+
+[[case]]
+id = "span-et"
+input = '''
+[x]{lang=et}
+'''
+
+[[case]]
+id = "span-eu"
+input = '''
+[x]{lang=eu}
+'''
+
+[[case]]
+id = "span-fa"
+input = '''
+[x]{lang=fa}
+'''
+
+[[case]]
+id = "span-fi"
+input = '''
+[x]{lang=fi}
+'''
+
+[[case]]
+id = "span-fr"
+input = '''
+[x]{lang=fr}
+'''
+
+[[case]]
+id = "span-fr-ca"
+input = '''
+[x]{lang=fr-CA}
+'''
+
+[[case]]
+id = "span-fur"
+input = '''
+[x]{lang=fur}
+'''
+
+[[case]]
+id = "span-ga"
+input = '''
+[x]{lang=ga}
+'''
+
+[[case]]
+id = "span-gd"
+input = '''
+[x]{lang=gd}
+'''
+
+[[case]]
+id = "span-gl"
+input = '''
+[x]{lang=gl}
+'''
+
+[[case]]
+id = "span-he"
+input = '''
+[x]{lang=he}
+'''
+
+[[case]]
+id = "span-hi"
+input = '''
+[x]{lang=hi}
+'''
+
+[[case]]
+id = "span-hr"
+input = '''
+[x]{lang=hr}
+'''
+
+[[case]]
+id = "span-hsb"
+input = '''
+[x]{lang=hsb}
+'''
+
+[[case]]
+id = "span-hu"
+input = '''
+[x]{lang=hu}
+'''
+
+[[case]]
+id = "span-hy"
+input = '''
+[x]{lang=hy}
+'''
+
+[[case]]
+id = "span-ia"
+input = '''
+[x]{lang=ia}
+'''
+
+[[case]]
+id = "span-id"
+input = '''
+[x]{lang=id}
+'''
+
+[[case]]
+id = "span-is"
+input = '''
+[x]{lang=is}
+'''
+
+[[case]]
+id = "span-it"
+input = '''
+[x]{lang=it}
+'''
+
+[[case]]
+id = "span-ja"
+input = '''
+[x]{lang=ja}
+'''
+
+[[case]]
+id = "span-km"
+input = '''
+[x]{lang=km}
+'''
+
+[[case]]
+id = "span-kmr"
+input = '''
+[x]{lang=kmr}
+'''
+
+[[case]]
+id = "span-kn"
+input = '''
+[x]{lang=kn}
+'''
+
+[[case]]
+id = "span-ko"
+input = '''
+[x]{lang=ko}
+'''
+
+[[case]]
+id = "span-la"
+input = '''
+[x]{lang=la}
+'''
+
+[[case]]
+id = "span-lo"
+input = '''
+[x]{lang=lo}
+'''
+
+[[case]]
+id = "span-lt"
+input = '''
+[x]{lang=lt}
+'''
+
+[[case]]
+id = "span-lv"
+input = '''
+[x]{lang=lv}
+'''
+
+[[case]]
+id = "span-ml"
+input = '''
+[x]{lang=ml}
+'''
+
+[[case]]
+id = "span-mn"
+input = '''
+[x]{lang=mn}
+'''
+
+[[case]]
+id = "span-mr"
+input = '''
+[x]{lang=mr}
+'''
+
+[[case]]
+id = "span-nb"
+input = '''
+[x]{lang=nb}
+'''
+
+[[case]]
+id = "span-nl"
+input = '''
+[x]{lang=nl}
+'''
+
+[[case]]
+id = "span-nn"
+input = '''
+[x]{lang=nn}
+'''
+
+[[case]]
+id = "span-no"
+input = '''
+[x]{lang=no}
+'''
+
+[[case]]
+id = "span-nqo"
+input = '''
+[x]{lang=nqo}
+'''
+
+[[case]]
+id = "span-oc"
+input = '''
+[x]{lang=oc}
+'''
+
+[[case]]
+id = "span-pa"
+input = '''
+[x]{lang=pa}
+'''
+
+[[case]]
+id = "span-pl"
+input = '''
+[x]{lang=pl}
+'''
+
+[[case]]
+id = "span-pms"
+input = '''
+[x]{lang=pms}
+'''
+
+[[case]]
+id = "span-pt"
+input = '''
+[x]{lang=pt}
+'''
+
+[[case]]
+id = "span-pt-br"
+input = '''
+[x]{lang=pt-BR}
+'''
+
+[[case]]
+id = "span-pt-pt"
+input = '''
+[x]{lang=pt-PT}
+'''
+
+[[case]]
+id = "span-rm"
+input = '''
+[x]{lang=rm}
+'''
+
+[[case]]
+id = "span-ro"
+input = '''
+[x]{lang=ro}
+'''
+
+[[case]]
+id = "span-ru"
+input = '''
+[x]{lang=ru}
+'''
+
+[[case]]
+id = "span-sa"
+input = '''
+[x]{lang=sa}
+'''
+
+[[case]]
+id = "span-se"
+input = '''
+[x]{lang=se}
+'''
+
+[[case]]
+id = "span-sk"
+input = '''
+[x]{lang=sk}
+'''
+
+[[case]]
+id = "span-sl"
+input = '''
+[x]{lang=sl}
+'''
+
+[[case]]
+id = "span-sq"
+input = '''
+[x]{lang=sq}
+'''
+
+[[case]]
+id = "span-sr"
+input = '''
+[x]{lang=sr}
+'''
+
+[[case]]
+id = "span-sr-latn"
+input = '''
+[x]{lang=sr-Latn}
+'''
+
+[[case]]
+id = "span-sr-cyrl"
+input = '''
+[x]{lang=sr-Cyrl}
+'''
+
+[[case]]
+id = "span-sv"
+input = '''
+[x]{lang=sv}
+'''
+
+[[case]]
+id = "span-syr"
+input = '''
+[x]{lang=syr}
+'''
+
+[[case]]
+id = "span-ta"
+input = '''
+[x]{lang=ta}
+'''
+
+[[case]]
+id = "span-te"
+input = '''
+[x]{lang=te}
+'''
+
+[[case]]
+id = "span-th"
+input = '''
+[x]{lang=th}
+'''
+
+[[case]]
+id = "span-tk"
+input = '''
+[x]{lang=tk}
+'''
+
+[[case]]
+id = "span-tr"
+input = '''
+[x]{lang=tr}
+'''
+
+[[case]]
+id = "span-uk"
+input = '''
+[x]{lang=uk}
+'''
+
+[[case]]
+id = "span-ur"
+input = '''
+[x]{lang=ur}
+'''
+
+[[case]]
+id = "span-vi"
+input = '''
+[x]{lang=vi}
+'''
+
+[[case]]
+id = "span-zh"
+input = '''
+[x]{lang=zh}
+'''
+
+[[case]]
+id = "span-zh-hans"
+input = '''
+[x]{lang=zh-Hans}
+'''
+
+[[case]]
+id = "span-zh-hant"
+input = '''
+[x]{lang=zh-Hant}
+'''
+
+[[case]]
+id = "span-xx"
+input = '''
+[x]{lang=xx}
+'''
+
+[[case]]
+id = "span-cop"
+input = '''
+[x]{lang=cop}
+'''
+
+[[case]]
+id = "span-sw"
+input = '''
+[x]{lang=sw}
+'''
+
+[[case]]
+id = "span-en-x"
+input = '''
+[x]{lang=en-x}
+'''
+
+[[case]]
+id = "div-fr"
+input = '''
+::: {lang=fr}
+text
+:::
+'''
+
+[[case]]
+id = "div-de-ch"
+input = '''
+::: {lang=de-CH}
+text
+:::
+'''
+
+[[case]]
+id = "div-ar"
+input = '''
+::: {lang=ar}
+text
+:::
+'''
+
+[[case]]
+id = "div-en-gb"
+input = '''
+::: {lang=en-GB}
+text
+:::
+'''
+
+[[case]]
+id = "div-zz"
+input = '''
+::: {lang=zz}
+text
+:::
+'''

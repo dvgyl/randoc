@@ -1,0 +1,257 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "opt-biblatex#e2e:latex": {
+      "key": "e82eb1f948d4cb0d",
+      "exit": 0,
+      "stdout": "\\textcite{doe99} says \\autocites[3]{a}{b} and \\autocite[see][ch.~2]{c}\nand \\autocite*{d} and \\autocite{e} and \\autocite{f,g}\n",
+      "stderr": ""
+    },
+    "opt-biblatex#read": {
+      "key": "a3db5803b7926970",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe99\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"says\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p. 3\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":2,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":2,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-@b]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"c\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch. 2\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":3,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@c,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"d\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":4,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[-@d]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"e\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":5,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@e]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"f\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":6,\"citationHash\":0},{\"citationId\":\"g\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":6,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@f;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@g]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "opt-biblatex#write:latex": {
+      "key": "1c2c4f89f17a1c07",
+      "exit": 0,
+      "stdout": "\\textcite{doe99} says \\autocites[3]{a}{b} and \\autocite[see][ch.~2]{c}\nand \\autocite*{d} and \\autocite{e} and \\autocite{f,g}\n",
+      "stderr": ""
+    },
+    "opt-caption-below#e2e:latex": {
+      "key": "9f74210ab545358c",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}l@{}}\n\\toprule\\noalign{}\na \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\tabularnewline\n\\caption{Cap}\n\\endlastfoot\n1 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "opt-caption-below#read": {
+      "key": "39687bfacbbede77",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "opt-caption-below#write:latex": {
+      "key": "4fbe12089460f0f0",
+      "exit": 0,
+      "stdout": "\\begin{longtable}[]{@{}l@{}}\n\\toprule\\noalign{}\na \\\\\n\\midrule\\noalign{}\n\\endhead\n\\bottomrule\\noalign{}\n\\tabularnewline\n\\caption{Cap}\n\\endlastfoot\n1 \\\\\n\\end{longtable}\n",
+      "stderr": ""
+    },
+    "opt-chapter#e2e:latex": {
+      "key": "b162fe5ccbe1f24c",
+      "exit": 0,
+      "stdout": "\\chapter{One}\\label{one}\n\n\\section{Two}\\label{two}\n",
+      "stderr": ""
+    },
+    "opt-chapter#read": {
+      "key": "b74c8159a4b7d211",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"one\",[],[]],[{\"t\":\"Str\",\"c\":\"One\"}]]},{\"t\":\"Header\",\"c\":[2,[\"two\",[],[]],[{\"t\":\"Str\",\"c\":\"Two\"}]]}]}\n",
+      "stderr": ""
+    },
+    "opt-chapter#write:latex": {
+      "key": "0434935c9de6e071",
+      "exit": 0,
+      "stdout": "\\chapter{One}\\label{one}\n\n\\section{Two}\\label{two}\n",
+      "stderr": ""
+    },
+    "opt-columns#e2e:latex": {
+      "key": "c4852bb28c795225",
+      "exit": 0,
+      "stdout": "ka lo mi nu pe ra so\ntu vi we ya zo ba ce\ndi fu ga he ji ku le\nmo ni po ru se\n",
+      "stderr": ""
+    },
+    "opt-columns#read": {
+      "key": "d5ca4fad4da39270",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"ka\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ra\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"vi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"we\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ya\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"zo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ba\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ce\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"di\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"fu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ga\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"he\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ji\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ku\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"le\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ni\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"po\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ru\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"se\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-columns#write:latex": {
+      "key": "5f3957779c668f1d",
+      "exit": 0,
+      "stdout": "ka lo mi nu pe ra so\ntu vi we ya zo ba ce\ndi fu ga he ji ku le\nmo ni po ru se\n",
+      "stderr": ""
+    },
+    "opt-dpi#e2e:latex": {
+      "key": "99800465e3334c68",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=2in,height=\\textheight,keepaspectratio,alt={a}]{a.png}\n\\caption{a}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "opt-dpi#read": {
+      "key": "9a8baa5ef7a66b6d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"width\",\"300\"]]],[{\"t\":\"Str\",\"c\":\"a\"}],[\"a.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "opt-dpi#write:latex": {
+      "key": "29e294eedbf55906",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=2in,height=\\textheight,keepaspectratio,alt={a}]{a.png}\n\\caption{a}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "opt-figure-above#e2e:latex": {
+      "key": "721b90f4020dbbec",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\caption{Cap}\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "opt-figure-above#read": {
+      "key": "b09a5fe5a56c66af",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "opt-figure-above#write:latex": {
+      "key": "cbec02867342a730",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\caption{Cap}\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "opt-incremental#e2e:beamer": {
+      "key": "1c480c0064a7487b",
+      "exit": 0,
+      "stdout": "\\begin{frame}{S}\n\\protect\\phantomsection\\label{s}\n\\begin{itemize}[<+->]\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{itemize}\n\\end{frame}\n",
+      "stderr": ""
+    },
+    "opt-incremental#read": {
+      "key": "406fbda5ad7a835b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"s\",[],[]],[{\"t\":\"Str\",\"c\":\"S\"}]]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "opt-incremental#write:beamer": {
+      "key": "19a1b3f3f9270a68",
+      "exit": 0,
+      "stdout": "\\begin{frame}{S}\n\\protect\\phantomsection\\label{s}\n\\begin{itemize}[<+->]\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{itemize}\n\\end{frame}\n",
+      "stderr": ""
+    },
+    "opt-listings#e2e:latex": {
+      "key": "23c2c2e482dac4c4",
+      "exit": 0,
+      "stdout": "\\passthrough{\\lstinline[language=Python]!x!}\n\n\\begin{lstlisting}[language=Python]\nx = 1\n\\end{lstlisting}\n",
+      "stderr": "[WARNING] Deprecated: --listings. Use --syntax-highlighting=idiomatic instead.\n"
+    },
+    "opt-listings#read": {
+      "key": "d569b6920c7e3409",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[\"python\"],[]],\"x\"]}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"x = 1\"]}]}\n",
+      "stderr": "[WARNING] Deprecated: --listings. Use --syntax-highlighting=idiomatic instead.\n"
+    },
+    "opt-listings#write:latex": {
+      "key": "f176da6002f25a5f",
+      "exit": 0,
+      "stdout": "\\passthrough{\\lstinline[language=Python]!x!}\n\n\\begin{lstlisting}[language=Python]\nx = 1\n\\end{lstlisting}\n",
+      "stderr": "[WARNING] Deprecated: --listings. Use --syntax-highlighting=idiomatic instead.\n"
+    },
+    "opt-natbib#e2e:latex": {
+      "key": "cae97a04e82ff798",
+      "exit": 0,
+      "stdout": "\\citet{doe99} says \\citetext{\\citealp[p.~3]{a}; \\citeyear{b}} and\n\\citep[see][ch.~2]{c} and \\citeyearpar{d} and \\citep{e} and \\citep{f, g}\n",
+      "stderr": ""
+    },
+    "opt-natbib#read": {
+      "key": "270ecfb2e32323c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe99\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe99\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"says\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p. 3\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":2,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":2,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-@b]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"c\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch. 2\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":3,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@c,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"d\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":4,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[-@d]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"e\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":5,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@e]\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"f\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":6,\"citationHash\":0},{\"citationId\":\"g\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":6,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@f;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@g]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "opt-natbib#write:latex": {
+      "key": "58c76f93722a73b6",
+      "exit": 0,
+      "stdout": "\\citet{doe99} says \\citetext{\\citealp[p.~3]{a}; \\citeyear{b}} and\n\\citep[see][ch.~2]{c} and \\citeyearpar{d} and \\citep{e} and \\citep{f, g}\n",
+      "stderr": ""
+    },
+    "opt-no-highlight#e2e:latex": {
+      "key": "966c53e434adb5ae",
+      "exit": 0,
+      "stdout": "\\begin{verbatim}\nx = 1\n\\end{verbatim}\n",
+      "stderr": ""
+    },
+    "opt-no-highlight#read": {
+      "key": "427656d7a7cf68bb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"x = 1\"]}]}\n",
+      "stderr": ""
+    },
+    "opt-no-highlight#write:latex": {
+      "key": "0e6da30efc23cdab",
+      "exit": 0,
+      "stdout": "\\begin{verbatim}\nx = 1\n\\end{verbatim}\n",
+      "stderr": ""
+    },
+    "opt-part#e2e:latex": {
+      "key": "eadfbadec74f5e2f",
+      "exit": 0,
+      "stdout": "\\part{One}\\label{one}\n\n\\chapter{Two}\\label{two}\n",
+      "stderr": ""
+    },
+    "opt-part#read": {
+      "key": "bf910f092d4bf250",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"one\",[],[]],[{\"t\":\"Str\",\"c\":\"One\"}]]},{\"t\":\"Header\",\"c\":[2,[\"two\",[],[]],[{\"t\":\"Str\",\"c\":\"Two\"}]]}]}\n",
+      "stderr": ""
+    },
+    "opt-part#write:latex": {
+      "key": "f5db45618dc396fe",
+      "exit": 0,
+      "stdout": "\\part{One}\\label{one}\n\n\\chapter{Two}\\label{two}\n",
+      "stderr": ""
+    },
+    "opt-slide-level#e2e:beamer": {
+      "key": "f3d7974aacc35e62",
+      "exit": 0,
+      "stdout": "\\begin{frame}{A}\n\\protect\\phantomsection\\label{a}\n\\begin{block}{B}\n\\protect\\phantomsection\\label{b}\ntext\n\\end{block}\n\\end{frame}\n",
+      "stderr": ""
+    },
+    "opt-slide-level#read": {
+      "key": "c40ed762423bfec2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"b\",[],[]],[{\"t\":\"Str\",\"c\":\"B\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-slide-level#write:beamer": {
+      "key": "5b34af56d5bfaa73",
+      "exit": 0,
+      "stdout": "\\begin{frame}{A}\n\\protect\\phantomsection\\label{a}\n\\begin{block}{B}\n\\protect\\phantomsection\\label{b}\ntext\n\\end{block}\n\\end{frame}\n",
+      "stderr": ""
+    },
+    "opt-wrap-none#e2e:latex": {
+      "key": "71838c82b07cd6df",
+      "exit": 0,
+      "stdout": "ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se\n",
+      "stderr": ""
+    },
+    "opt-wrap-none#read": {
+      "key": "9f4008464b8e93b4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"ka\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ra\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"vi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"we\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ya\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"zo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ba\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ce\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"di\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"fu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ga\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"he\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ji\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ku\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"le\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ni\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"po\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ru\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"se\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ka\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"nu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ra\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"vi\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"we\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ya\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"zo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ba\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ce\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"di\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"fu\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ga\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"he\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ji\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ku\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"le\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ni\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"po\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ru\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"se\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-wrap-none#write:latex": {
+      "key": "4292d355914c13f9",
+      "exit": 0,
+      "stdout": "ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve#e2e:latex": {
+      "key": "39f659b83fe45663",
+      "exit": 0,
+      "stdout": "a b\nc d\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve#read": {
+      "key": "8e8c76aa1607ff64",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"c\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"d\"}]}]}\n",
+      "stderr": ""
+    },
+    "opt-wrap-preserve#write:latex": {
+      "key": "822abb510245c661",
+      "exit": 0,
+      "stdout": "a b\nc d\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,329 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "note-0#e2e:latex": {
+      "key": "190c0f2b7eebccf6",
+      "exit": 0,
+      "stdout": "Text\\footnote{Note.}\n",
+      "stderr": ""
+    },
+    "note-0#read": {
+      "key": "c61803af2f5d252b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Note.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-0#write:latex": {
+      "key": "29eda3b8262b0210",
+      "exit": 0,
+      "stdout": "Text\\footnote{Note.}\n",
+      "stderr": ""
+    },
+    "note-1#e2e:latex": {
+      "key": "3ac4b7d469575deb",
+      "exit": 0,
+      "stdout": "Text\\footnote{Para one.\n\n  Para two.}\n",
+      "stderr": ""
+    },
+    "note-1#read": {
+      "key": "a66f9e24fbf02f34",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"one.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Para\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-1#write:latex": {
+      "key": "4e6a6d6625a27581",
+      "exit": 0,
+      "stdout": "Text\\footnote{Para one.\n\n  Para two.}\n",
+      "stderr": ""
+    },
+    "note-10#e2e:latex": {
+      "key": "2072e8c5e8a7195a",
+      "exit": 0,
+      "stdout": "\\begin{quote}\nquote\\footnote{in quote}\n\\end{quote}\n",
+      "stderr": ""
+    },
+    "note-10#read": {
+      "key": "f4d584c39d6e2067",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"quote\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"quote\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-10#write:latex": {
+      "key": "d6442ec2cc8042e3",
+      "exit": 0,
+      "stdout": "\\begin{quote}\nquote\\footnote{in quote}\n\\end{quote}\n",
+      "stderr": ""
+    },
+    "note-11#e2e:latex": {
+      "key": "5e87ef683b0893d1",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\begin{Verbatim}\nonly code\n\\end{Verbatim}\n}\n",
+      "stderr": ""
+    },
+    "note-11#read": {
+      "key": "c4a2fcf13e4a3350",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"only code\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-11#write:latex": {
+      "key": "c46f538f046b56b9",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\begin{Verbatim}\nonly code\n\\end{Verbatim}\n}\n",
+      "stderr": ""
+    },
+    "note-12#e2e:latex": {
+      "key": "6520cb460e7b88aa",
+      "exit": 0,
+      "stdout": "Text\\footnote{a note that is long enough to wrap past the line width of\n  seventy two characters for sure}\n",
+      "stderr": ""
+    },
+    "note-12#read": {
+      "key": "1e7a8a71ccd3dba5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"enough\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wrap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"past\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"line\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"width\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seventy\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"characters\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sure\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-12#write:latex": {
+      "key": "226afe68cbd81344",
+      "exit": 0,
+      "stdout": "Text\\footnote{a note that is long enough to wrap past the line width of\n  seventy two characters for sure}\n",
+      "stderr": ""
+    },
+    "note-13#e2e:latex": {
+      "key": "d1f26fb592c640c4",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\[x\\]}\n",
+      "stderr": ""
+    },
+    "note-13#read": {
+      "key": "39047edbbed87b1d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"x\"]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-13#write:latex": {
+      "key": "63dec3a80f6d8a5c",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\[x\\]}\n",
+      "stderr": ""
+    },
+    "note-14#e2e:latex": {
+      "key": "abcd7b07c963b677",
+      "exit": 0,
+      "stdout": "\\emph{emph\\footnote{n}}\n",
+      "stderr": ""
+    },
+    "note-14#read": {
+      "key": "a803ccc1f7fbf8e6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-14#write:latex": {
+      "key": "7c4035b07754bf49",
+      "exit": 0,
+      "stdout": "\\emph{emph\\footnote{n}}\n",
+      "stderr": ""
+    },
+    "note-15#e2e:latex": {
+      "key": "ce978f226efa2f11",
+      "exit": 0,
+      "stdout": "\\href{http://x}{link\\footnote{n}}\n",
+      "stderr": ""
+    },
+    "note-15#read": {
+      "key": "384835d85718c0e2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"link\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}],[\"http://x\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "note-15#write:latex": {
+      "key": "6e25132c11d5aca2",
+      "exit": 0,
+      "stdout": "\\href{http://x}{link\\footnote{n}}\n",
+      "stderr": ""
+    },
+    "note-16#e2e:latex": {
+      "key": "607222d600d0445c",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term\\footnotemark{}]\ndef\n\\end{description}\n\\footnotetext{term note}\n",
+      "stderr": ""
+    },
+    "note-16#read": {
+      "key": "d5df363f39c26825",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"term\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"def\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "note-16#write:latex": {
+      "key": "9f6dd718f4b09ed4",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term\\footnotemark{}]\ndef\n\\end{description}\n\\footnotetext{term note}\n",
+      "stderr": ""
+    },
+    "note-17#e2e:latex": {
+      "key": "f8c3af99aafb3d01",
+      "exit": 0,
+      "stdout": "Text\\footnote{note\n\n  a\\\\\n  b}\n",
+      "stderr": ""
+    },
+    "note-17#read": {
+      "key": "863f53bc02c1e3d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]},{\"t\":\"LineBlock\",\"c\":[[{\"t\":\"Str\",\"c\":\"a\"}],[{\"t\":\"Str\",\"c\":\"b\"}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-17#write:latex": {
+      "key": "2ff549de9c4dfece",
+      "exit": 0,
+      "stdout": "Text\\footnote{note\n\n  a\\\\\n  b}\n",
+      "stderr": ""
+    },
+    "note-2#e2e:latex": {
+      "key": "8f987fe67d61c20c",
+      "exit": 0,
+      "stdout": "Text\\footnote{note\n\n\\begin{Verbatim}\nv\n\\end{Verbatim}\n}\n",
+      "stderr": ""
+    },
+    "note-2#read": {
+      "key": "4bfd2df018c95fe5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"v\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-2#write:latex": {
+      "key": "9709a773974fabbf",
+      "exit": 0,
+      "stdout": "Text\\footnote{note\n\n\\begin{Verbatim}\nv\n\\end{Verbatim}\n}\n",
+      "stderr": ""
+    },
+    "note-3#e2e:latex": {
+      "key": "c435be79bcaa696a",
+      "exit": 0,
+      "stdout": "A\\footnote{one} and B\\footnote{two}\n",
+      "stderr": ""
+    },
+    "note-3#read": {
+      "key": "eb966f8b7e069df5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"B\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"two\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-3#write:latex": {
+      "key": "63cbd40533c7e6ed",
+      "exit": 0,
+      "stdout": "A\\footnote{one} and B\\footnote{two}\n",
+      "stderr": ""
+    },
+    "note-4#e2e:latex": {
+      "key": "5d44c968a8b9506a",
+      "exit": 0,
+      "stdout": "Text\\footnote{inline note}\n",
+      "stderr": ""
+    },
+    "note-4#read": {
+      "key": "e786f625f8f87841",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"inline\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-4#write:latex": {
+      "key": "2cf48fde5cb1aae7",
+      "exit": 0,
+      "stdout": "Text\\footnote{inline note}\n",
+      "stderr": ""
+    },
+    "note-5#e2e:latex": {
+      "key": "81773a5d31459af7",
+      "exit": 0,
+      "stdout": "Text\\footnote{note with \\emph{emph} and \\texttt{code}}\n",
+      "stderr": ""
+    },
+    "note-5#read": {
+      "key": "1d8667b083e378fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"code\"]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-5#write:latex": {
+      "key": "f6ee316b9d6760d1",
+      "exit": 0,
+      "stdout": "Text\\footnote{note with \\emph{emph} and \\texttt{code}}\n",
+      "stderr": ""
+    },
+    "note-6#e2e:latex": {
+      "key": "986edfe11f71f922",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\begin{itemize}\n  \\tightlist\n  \\item\n    list\n  \\item\n    in note\n  \\end{itemize}}\n",
+      "stderr": ""
+    },
+    "note-6#read": {
+      "key": "01b1e70b99c37ac9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"list\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-6#write:latex": {
+      "key": "5f07a3fff085a5bb",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\begin{itemize}\n  \\tightlist\n  \\item\n    list\n  \\item\n    in note\n  \\end{itemize}}\n",
+      "stderr": ""
+    },
+    "note-7#e2e:latex": {
+      "key": "5cba27e021d0a73b",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\begin{quote}\n  quote in note\n  \\end{quote}}\n",
+      "stderr": ""
+    },
+    "note-7#read": {
+      "key": "4ef79cac522b93ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"quote\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-7#write:latex": {
+      "key": "f93365ccbd2301a3",
+      "exit": 0,
+      "stdout": "Text\\footnote{\\begin{quote}\n  quote in note\n  \\end{quote}}\n",
+      "stderr": ""
+    },
+    "note-8#e2e:latex": {
+      "key": "48bcc8262b9829e4",
+      "exit": 0,
+      "stdout": "Text\\footnote{note{[}\\^{}2{]}}\n",
+      "stderr": ""
+    },
+    "note-8#read": {
+      "key": "ac1c7eae78969fd9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note[^2]\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-8#write:latex": {
+      "key": "161bbc507dd24041",
+      "exit": 0,
+      "stdout": "Text\\footnote{note{[}\\^{}2{]}}\n",
+      "stderr": ""
+    },
+    "note-9#e2e:latex": {
+      "key": "a0da78ae97e369d6",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  item\\footnote{in list}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "note-9#read": {
+      "key": "5299adfd6d4a4f53",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"item\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"list\"}]}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-9#write:latex": {
+      "key": "0c6522031c274b90",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  item\\footnote{in list}\n\\end{itemize}\n",
+      "stderr": ""
+    }
+  }
+}

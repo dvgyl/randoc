@@ -1,0 +1,347 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "wrap-0#e2e:latex": {
+      "key": "baf61e3e2f2ecdfe",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-0#read": {
+      "key": "120d9fd83b834e27",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-0#write:latex": {
+      "key": "db771f89f0410e09",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-1#e2e:latex": {
+      "key": "11e55989a686b37e",
+      "exit": 0,
+      "stdout": "\\emph{Every river turns west near, warehouses carrying salt, and two\nharvests before midwinter so farmers can trade grain early. Then boats\ngo south loaded, with timber replacement parts too.}\n",
+      "stderr": ""
+    },
+    "wrap-1#read": {
+      "key": "bc8391ae66b5c07f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-1#write:latex": {
+      "key": "7d8e1108a79c4d7b",
+      "exit": 0,
+      "stdout": "\\emph{Every river turns west near, warehouses carrying salt, and two\nharvests before midwinter so farmers can trade grain early. Then boats\ngo south loaded, with timber replacement parts too.}\n",
+      "stderr": ""
+    },
+    "wrap-10#e2e:latex": {
+      "key": "3c8d9483d30b71c4",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade\n\\href{http://example.com/a/long/url}{grain early link} early. Then boats\ngo south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-10#read": {
+      "key": "2a94112b50233041",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"link\"}],[\"http://example.com/a/long/url\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-10#write:latex": {
+      "key": "74edadc81ec93b70",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade\n\\href{http://example.com/a/long/url}{grain early link} early. Then boats\ngo south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-11#e2e:latex": {
+      "key": "4a92e6c949fd0da1",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\n\\(x + y = z\\) midwinter so farmers can trade grain early. Then boats go\nsouth loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-11#read": {
+      "key": "e589d5cdac102e2a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x + y = z\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-11#write:latex": {
+      "key": "96cb07f5e2c3ca04",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\n\\(x + y = z\\) midwinter so farmers can trade grain early. Then boats go\nsouth loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-12#e2e:latex": {
+      "key": "d804248c642bc4fc",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-12#read": {
+      "key": "c8cb3f64c98d0025",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-12#write:latex": {
+      "key": "7beb610ae6e737f0",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-13#e2e:latex": {
+      "key": "c178441cf9d85597",
+      "exit": 0,
+      "stdout": "\\section{Every river turns west near, warehouses carrying salt, and two\nharvests before midwinter so farmers can trade grain\naliq}\\label{every-river-turns-west-near-warehouses-carrying-salt-and-two-harvests-before-midwinter-so-farmers-can-trade-grain-aliq}\n",
+      "stderr": ""
+    },
+    "wrap-13#read": {
+      "key": "3ad50ca760801fec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"every-river-turns-west-near-warehouses-carrying-salt-and-two-harvests-before-midwinter-so-farmers-can-trade-grain-aliq\",[],[]],[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"aliq\"}]]}]}\n",
+      "stderr": ""
+    },
+    "wrap-13#write:latex": {
+      "key": "4c9ec129c6459017",
+      "exit": 0,
+      "stdout": "\\section{Every river turns west near, warehouses carrying salt, and two\nharvests before midwinter so farmers can trade grain\naliq}\\label{every-river-turns-west-near-warehouses-carrying-salt-and-two-harvests-before-midwinter-so-farmers-can-trade-grain-aliq}\n",
+      "stderr": ""
+    },
+    "wrap-14#e2e:latex": {
+      "key": "2a15352f918919c5",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and\\\\\n\\strut ~two harvests before midwinter so farmers can trade grain early.\nThen eni\n",
+      "stderr": ""
+    },
+    "wrap-14#read": {
+      "key": "5033932dccb7228e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"LineBlock\",\"c\":[[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"}],[{\"t\":\"Str\",\"c\":\" two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eni\"}]]}]}\n",
+      "stderr": ""
+    },
+    "wrap-14#write:latex": {
+      "key": "7ca17260d40d262c",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and\\\\\n\\strut ~two harvests before midwinter so farmers can trade grain early.\nThen eni\n",
+      "stderr": ""
+    },
+    "wrap-15#e2e:latex": {
+      "key": "c377b3072618ec06",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt\\\\\n, and two harvests before midwinter so farmers can trade grain early.\nThen boats go south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-15#read": {
+      "key": "8b4ee06db335dd27",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-15#write:latex": {
+      "key": "5d400e25e9c5fad7",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt\\\\\n, and two harvests before midwinter so farmers can trade grain early.\nThen boats go south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-16#e2e:latex": {
+      "key": "a8f23acd4b0241de",
+      "exit": 0,
+      "stdout": "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a\na a a a a a a a a a a a a a\n",
+      "stderr": ""
+    },
+    "wrap-16#read": {
+      "key": "2de9398957d0c9fd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-16#write:latex": {
+      "key": "e88453e710182c8c",
+      "exit": 0,
+      "stdout": "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a\na a a a a a a a a a a a a a\n",
+      "stderr": ""
+    },
+    "wrap-17#e2e:latex": {
+      "key": "38b1993f8028311d",
+      "exit": 0,
+      "stdout": "Every river turns west ``near warehouses carrying'', warehouses carrying\nsalt, and two harvests before midwinter so farmers can trade grain\nearly. Then boats go south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-17#read": {
+      "key": "4f060034cd766548",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"near\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"}]]},{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-17#write:latex": {
+      "key": "ffda5a75ae8a4151",
+      "exit": 0,
+      "stdout": "Every river turns west ``near warehouses carrying'', warehouses carrying\nsalt, and two harvests before midwinter so farmers can trade grain\nearly. Then boats go south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-18#e2e:latex": {
+      "key": "5f9fa6d5e094228a",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so \\ul{farmers can trade} can trade grain early. Then\nboats go south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-18#read": {
+      "key": "575fd99db422bd8f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-18#write:latex": {
+      "key": "b67f72bdaf837030",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so \\ul{farmers can trade} can trade grain early. Then\nboats go south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-2#e2e:latex": {
+      "key": "7c899235532d04bb",
+      "exit": 0,
+      "stdout": "\\textbf{Every river turns west near, warehouses carrying salt, and two\nharvests before midwinter so farmers } can trade grain early. Then boats\ngo south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-2#read": {
+      "key": "5d660fb005a4f1a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-2#write:latex": {
+      "key": "4f698d153ed16eea",
+      "exit": 0,
+      "stdout": "\\textbf{Every river turns west near, warehouses carrying salt, and two\nharvests before midwinter so farmers } can trade grain early. Then boats\ngo south loaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-3#e2e:latex": {
+      "key": "2d6933d1a950b070",
+      "exit": 0,
+      "stdout": "Every river \\texttt{turns\\ west\\ near\\ code} west near, warehouses\ncarrying salt, and two harvests before midwinter so farmers can\n\\texttt{turns\\ west\\ near\\ code}e grain early. Then boats go south\nloaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-3#read": {
+      "key": "53296d160ca25c73",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"turns west near code\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"turns west near code\"]},{\"t\":\"Str\",\"c\":\"e\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-3#write:latex": {
+      "key": "95e3e9d3e515f8a2",
+      "exit": 0,
+      "stdout": "Every river \\texttt{turns\\ west\\ near\\ code} west near, warehouses\ncarrying salt, and two harvests before midwinter so farmers can\n\\texttt{turns\\ west\\ near\\ code}e grain early. Then boats go south\nloaded, with timber replacement parts too.\n",
+      "stderr": ""
+    },
+    "wrap-4#e2e:latex": {
+      "key": "2ec82967065a8a6e",
+      "exit": 0,
+      "stdout": "\\begin{quote}\nEvery river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n\\end{quote}\n",
+      "stderr": ""
+    },
+    "wrap-4#read": {
+      "key": "19c210c4ccda0b2f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-4#write:latex": {
+      "key": "89a5da849a6a596c",
+      "exit": 0,
+      "stdout": "\\begin{quote}\nEvery river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n\\end{quote}\n",
+      "stderr": ""
+    },
+    "wrap-5#e2e:latex": {
+      "key": "4fbf927d2a9b5999",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  Every river turns west near, warehouses carrying salt, and two\n  harvests before midwinter so farmers can trade grain early. Then boats\n  go south loaded, with timber replacement parts too.\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "wrap-5#read": {
+      "key": "2bac3442c10d9b60",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "wrap-5#write:latex": {
+      "key": "6323ad369ecf73f2",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  Every river turns west near, warehouses carrying salt, and two\n  harvests before midwinter so farmers can trade grain early. Then boats\n  go south loaded, with timber replacement parts too.\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "wrap-6#e2e:latex": {
+      "key": "070e12d3931a05f4",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  Every river turns west near, warehouses carrying salt, and two\n  harvests before midwinter so farmers can trade grain early. Then boats\n  go south loaded, with timber replacement parts too.\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "wrap-6#read": {
+      "key": "6e213bd9af173067",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "wrap-6#write:latex": {
+      "key": "26b833ea907d3008",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  Every river turns west near, warehouses carrying salt, and two\n  harvests before midwinter so farmers can trade grain early. Then boats\n  go south loaded, with timber replacement parts too.\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "wrap-7#e2e:latex": {
+      "key": "5b962e3cce3982f5",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\nEvery river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n\\end{description}\n",
+      "stderr": ""
+    },
+    "wrap-7#read": {
+      "key": "ccaa0df224bf77fa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "wrap-7#write:latex": {
+      "key": "45ab7bc2f754f2ea",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\nEvery river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\n\\end{description}\n",
+      "stderr": ""
+    },
+    "wrap-8#e2e:latex": {
+      "key": "7123e18758e7221d",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\\footnote{Every river turns\n  west near, warehouses carrying salt, and two harvests before midwinter\n  so farmers can trade grain early. Then boats go south loaded, with\n  timber replacement parts too.}\n",
+      "stderr": ""
+    },
+    "wrap-8#read": {
+      "key": "b6cf88be26611a82",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Every\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"river\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"turns\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"near,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"warehouses\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"carrying\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"salt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"harvests\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"midwinter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"so\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"farmers\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"can\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"trade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"grain\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"early.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"boats\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"go\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"south\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loaded,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"timber\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"replacement\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"too.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-8#write:latex": {
+      "key": "f456df9787e19f57",
+      "exit": 0,
+      "stdout": "Every river turns west near, warehouses carrying salt, and two harvests\nbefore midwinter so farmers can trade grain early. Then boats go south\nloaded, with timber replacement parts too.\\footnote{Every river turns\n  west near, warehouses carrying salt, and two harvests before midwinter\n  so farmers can trade grain early. Then boats go south loaded, with\n  timber replacement parts too.}\n",
+      "stderr": ""
+    },
+    "wrap-9#e2e:latex": {
+      "key": "1396ab7df6103052",
+      "exit": 0,
+      "stdout": "verylongwordwithoutanyspacesthatcannotbebrokenbecauseitislongerthanthelinewidthatall\nand more\n",
+      "stderr": ""
+    },
+    "wrap-9#read": {
+      "key": "f911ffd05f71ab37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"verylongwordwithoutanyspacesthatcannotbebrokenbecauseitislongerthanthelinewidthatall\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"more\"}]}]}\n",
+      "stderr": ""
+    },
+    "wrap-9#write:latex": {
+      "key": "b4871194bca803d5",
+      "exit": 0,
+      "stdout": "verylongwordwithoutanyspacesthatcannotbebrokenbecauseitislongerthanthelinewidthatall\nand more\n",
+      "stderr": ""
+    }
+  }
+}

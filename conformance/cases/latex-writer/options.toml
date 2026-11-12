@@ -1,0 +1,126 @@
+# Writer options. These cases need the command-line options of the program.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "opt-natbib"
+args = ["--natbib"]
+input = '''
+@doe99 says [@a, p. 3; -@b] and [see @c, ch. 2] and [-@d] and [@e] and [@f; @g]
+'''
+
+[[case]]
+id = "opt-biblatex"
+args = ["--biblatex"]
+input = '''
+@doe99 says [@a, p. 3; -@b] and [see @c, ch. 2] and [-@d] and [@e] and [@f; @g]
+'''
+
+[[case]]
+id = "opt-listings"
+args = ["--listings"]
+input = '''
+`x`{.python}
+
+```python
+x = 1
+```
+'''
+
+[[case]]
+id = "opt-no-highlight"
+args = ["--syntax-highlighting=none"]
+input = '''
+```python
+x = 1
+```
+'''
+
+[[case]]
+id = "opt-chapter"
+args = ["--top-level-division=chapter"]
+input = '''
+# One
+
+## Two
+'''
+
+[[case]]
+id = "opt-part"
+args = ["--top-level-division=part"]
+input = '''
+# One
+
+## Two
+'''
+
+[[case]]
+id = "opt-wrap-none"
+args = ["--wrap=none"]
+input = '''
+ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se
+'''
+
+[[case]]
+id = "opt-wrap-preserve"
+args = ["--wrap=preserve"]
+input = '''
+a b
+c d
+'''
+
+[[case]]
+id = "opt-columns"
+args = ["--columns=20"]
+input = '''
+ka lo mi nu pe ra so tu vi we ya zo ba ce di fu ga he ji ku le mo ni po ru se
+'''
+
+[[case]]
+id = "opt-caption-below"
+args = ["--table-caption-position=below"]
+input = '''
+| a |
+|---|
+| 1 |
+
+: Cap
+'''
+
+[[case]]
+id = "opt-figure-above"
+args = ["--figure-caption-position=above"]
+input = '''
+![Cap](f.png)
+'''
+
+[[case]]
+id = "opt-dpi"
+args = ["--dpi=150"]
+input = '''
+![a](a.png){width=300}
+'''
+
+[[case]]
+id = "opt-incremental"
+to = ["beamer"]
+args = ["--incremental"]
+input = '''
+## S
+
+- a
+- b
+'''
+
+[[case]]
+id = "opt-slide-level"
+to = ["beamer"]
+args = ["--slide-level=1"]
+input = '''
+# A
+
+## B
+
+text
+'''

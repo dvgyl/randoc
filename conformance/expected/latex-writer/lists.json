@@ -1,0 +1,815 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "list-0#e2e:latex": {
+      "key": "75ce6f5ff42c75fa",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-0#read": {
+      "key": "9228ced57674343f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-0#write:latex": {
+      "key": "dbad7416b11e769f",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-1#e2e:latex": {
+      "key": "cf6c1b87d1e5ee31",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\\item\n  b\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-1#read": {
+      "key": "ec1cd71c35c47166",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-1#write:latex": {
+      "key": "a0054b2c17b91bc1",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\\item\n  b\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-10#e2e:latex": {
+      "key": "53ee3421c36036c2",
+      "exit": 0,
+      "stdout": "I. x II. y\n",
+      "stderr": ""
+    },
+    "list-10#read": {
+      "key": "104d708bee7f0091",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"I.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"II.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "list-10#write:latex": {
+      "key": "667607123681bd12",
+      "exit": 0,
+      "stdout": "I. x II. y\n",
+      "stderr": ""
+    },
+    "list-11#e2e:latex": {
+      "key": "0f894cc297df3694",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-11#read": {
+      "key": "5176783d05a6e8bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-11#write:latex": {
+      "key": "27edbe9b0f4612bc",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-12#e2e:latex": {
+      "key": "db0a1a9ed51e27b4",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{(\\arabic{enumi})}\n\\tightlist\n\\item\n  ex\n\\item\n  ex2\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-12#read": {
+      "key": "9476388fde3755c7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Example\"},{\"t\":\"TwoParens\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ex\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ex2\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-12#write:latex": {
+      "key": "907c92112dab3a45",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{(\\arabic{enumi})}\n\\tightlist\n\\item\n  ex\n\\item\n  ex2\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-13#e2e:latex": {
+      "key": "51726546a1811b42",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\n  \\begin{enumerate}\n  \\def\\labelenumii{\\arabic{enumii}.}\n  \\tightlist\n  \\item\n    b\n\n    \\begin{enumerate}\n    \\def\\labelenumiii{\\arabic{enumiii}.}\n    \\tightlist\n    \\item\n      c\n\n      \\begin{enumerate}\n      \\def\\labelenumiv{\\arabic{enumiv}.}\n      \\tightlist\n      \\item\n        d\n\n        \\begin{enumerate}\n        \\def\\labelenumv{\\arabic{enumv}.}\n        \\tightlist\n        \\item\n          e\n        \\end{enumerate}\n      \\end{enumerate}\n    \\end{enumerate}\n  \\end{enumerate}\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-13#read": {
+      "key": "c6915852eda47c6d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"e\"}]}]]]}]]]}]]]}]]]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-13#write:latex": {
+      "key": "b142a679d0327058",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\n  \\begin{enumerate}\n  \\def\\labelenumii{\\arabic{enumii}.}\n  \\tightlist\n  \\item\n    b\n\n    \\begin{enumerate}\n    \\def\\labelenumiii{\\arabic{enumiii}.}\n    \\tightlist\n    \\item\n      c\n\n      \\begin{enumerate}\n      \\def\\labelenumiv{\\arabic{enumiv}.}\n      \\tightlist\n      \\item\n        d\n\n        \\begin{enumerate}\n        \\def\\labelenumv{\\arabic{enumv}.}\n        \\tightlist\n        \\item\n          e\n        \\end{enumerate}\n      \\end{enumerate}\n    \\end{enumerate}\n  \\end{enumerate}\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-14#e2e:latex": {
+      "key": "5ee3d8c797e65c32",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  a\n\n  para\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-14#read": {
+      "key": "ffaaf56871ad8a61",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"para\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-14#write:latex": {
+      "key": "3ae994e582f6db28",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  a\n\n  para\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-15#e2e:latex": {
+      "key": "f3e3fdfd444a7a5a",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n\\begin{verbatim}\ncode\n\\end{verbatim}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-15#read": {
+      "key": "246c48b0cfa60cab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"code\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-15#write:latex": {
+      "key": "f4a631864fb967d1",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n\\begin{verbatim}\ncode\n\\end{verbatim}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-16#e2e:latex": {
+      "key": "2ab0b5fe32b9f979",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item[$\\square$]\n  todo\n\\item[$\\boxtimes$]\n  done\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-16#read": {
+      "key": "a00cc8b81686bca4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"☐\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"todo\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"☒\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"done\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-16#write:latex": {
+      "key": "0a667caf8ae86018",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item[$\\square$]\n  todo\n\\item[$\\boxtimes$]\n  done\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-17#e2e:latex": {
+      "key": "c6b07f231fd352b0",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item[$\\square$]\n  todo\n\\item[$\\boxtimes$]\n  done loose\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-17#read": {
+      "key": "4bbcb460812600f3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"☐\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"todo\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"☒\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"done\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loose\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-17#write:latex": {
+      "key": "f088f6fa17ade69d",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item[$\\square$]\n  todo\n\\item[$\\boxtimes$]\n  done loose\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-18#e2e:latex": {
+      "key": "b5cd792841646fd2",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n  \\begin{quote}\n  quote\n  \\end{quote}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-18#read": {
+      "key": "bdcd50db44862699",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"quote\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-18#write:latex": {
+      "key": "6d237d65e3f443b6",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n  \\begin{quote}\n  quote\n  \\end{quote}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-19#e2e:latex": {
+      "key": "0132f3f150f9f7e4",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  a\n\n  \\begin{itemize}\n  \\tightlist\n  \\item\n    b\n  \\end{itemize}\n\\item\n  c\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-19#read": {
+      "key": "eb29d70f0928d2bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-19#write:latex": {
+      "key": "bd3b1992976e962b",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  a\n\n  \\begin{itemize}\n  \\tightlist\n  \\item\n    b\n  \\end{itemize}\n\\item\n  c\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-2#e2e:latex": {
+      "key": "b5835447df4950fd",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  a\n\n  \\begin{itemize}\n  \\tightlist\n  \\item\n    b\n\n    \\begin{itemize}\n    \\tightlist\n    \\item\n      c\n    \\end{itemize}\n  \\end{itemize}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-2#read": {
+      "key": "fccea7b744176e2c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-2#write:latex": {
+      "key": "c8c6c5e17e8f490c",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  a\n\n  \\begin{itemize}\n  \\tightlist\n  \\item\n    b\n\n    \\begin{itemize}\n    \\tightlist\n    \\item\n      c\n    \\end{itemize}\n  \\end{itemize}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-20#e2e:latex": {
+      "key": "90cbb0166290a43e",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n\\item\n  b\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-20#read": {
+      "key": "a888990addb84b25",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-20#write:latex": {
+      "key": "bfea9317cb76a0ec",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n\\item\n  b\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-21#e2e:latex": {
+      "key": "ce072491f73dbeb9",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  one\n\n  \\begin{itemize}\n  \\tightlist\n  \\item\n    nested bullet\n  \\end{itemize}\n\\item\n  two\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-21#read": {
+      "key": "8a34ce582305a4ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"nested\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bullet\"}]}]]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"two\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-21#write:latex": {
+      "key": "2dcfdb9933f9981b",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  one\n\n  \\begin{itemize}\n  \\tightlist\n  \\item\n    nested bullet\n  \\end{itemize}\n\\item\n  two\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-22#e2e:latex": {
+      "key": "f68f3742e4293c99",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\ndef\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-22#read": {
+      "key": "119d1de9b6ace97a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"def\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-22#write:latex": {
+      "key": "7e19e44f9bfd897e",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\ndef\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-23#e2e:latex": {
+      "key": "c1d5d829a5335060",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term]\ndef loose\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-23#read": {
+      "key": "25957ef1f3437ee1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"def\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"loose\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-23#write:latex": {
+      "key": "f0ff3b2e145faa6b",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term]\ndef loose\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-24#e2e:latex": {
+      "key": "5f2d2bb8bf852385",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\ndef1\n\ndef2\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-24#read": {
+      "key": "a9da66c0e2ce3e02",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"def1\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"def2\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-24#write:latex": {
+      "key": "55d6fd191ac86c07",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\ndef1\n\ndef2\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-25#e2e:latex": {
+      "key": "de8270d08132fefc",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[T1]\nd1\n\\item[T2]\nd2\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-25#read": {
+      "key": "05e29e04be230c07",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"T1\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d1\"}]}]]],[[{\"t\":\"Str\",\"c\":\"T2\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d2\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-25#write:latex": {
+      "key": "d5042621e3dd1959",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[T1]\nd1\n\\item[T2]\nd2\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-26#e2e:latex": {
+      "key": "7af1b4f550e16193",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[\\emph{Em} term]\nd\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-26#read": {
+      "key": "ab0caf5217ea44e2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Em\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-26#write:latex": {
+      "key": "eccbace8f2cc2e28",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[\\emph{Em} term]\nd\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-27#e2e:latex": {
+      "key": "201a2978e86b7a37",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term {[}x{]}] ~ \n\\begin{verbatim}\nc\n\\end{verbatim}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-27#read": {
+      "key": "020dc18bd69c3b38",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[x]\"}],[[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"c\"]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-27#write:latex": {
+      "key": "84391aef41fa53bf",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term {[}x{]}] ~ \n\\begin{verbatim}\nc\n\\end{verbatim}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-28#e2e:latex": {
+      "key": "c5e544e6be250f3e",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\n\\hfill\n\\begin{itemize}\n\\tightlist\n\\item\n  list\n\\end{itemize}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-28#read": {
+      "key": "4b184926373f9187",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"list\"}]}]]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-28#write:latex": {
+      "key": "33c5de22b0426b3a",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\n\\hfill\n\\begin{itemize}\n\\tightlist\n\\item\n  list\n\\end{itemize}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-29#e2e:latex": {
+      "key": "febe5bd4f4dc2fb8",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\n\\hfill\n\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  ol\n\\end{enumerate}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-29#read": {
+      "key": "542c384111a5b067",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ol\"}]}]]]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-29#write:latex": {
+      "key": "acbfeb78b9e83745",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\n\\hfill\n\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  ol\n\\end{enumerate}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-3#e2e:latex": {
+      "key": "f87dbef3f6d858f1",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-3#read": {
+      "key": "9d69688ac20c554c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-3#write:latex": {
+      "key": "d7fd148e7ac39983",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-30#e2e:latex": {
+      "key": "1370d19d1d4cda0e",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term] ~ \n\\section{Head}\\label{head}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-30#read": {
+      "key": "049436bc37b6cc5f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Header\",\"c\":[1,[\"head\",[],[]],[{\"t\":\"Str\",\"c\":\"Head\"}]]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-30#write:latex": {
+      "key": "c8ba0bec1e244b96",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term] ~ \n\\section{Head}\\label{head}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-31#e2e:latex": {
+      "key": "8d0207779477cf6a",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term]\n\\begin{quote}\nquote\n\\end{quote}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-31#read": {
+      "key": "dc9fa7fb7ba70a51",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"quote\"}]}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-31#write:latex": {
+      "key": "6c429c6643806aff",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\item[Term]\n\\begin{quote}\nquote\n\\end{quote}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-32#e2e:latex": {
+      "key": "4663a076fbfc1f4c",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[\\texttt{code} term]\nd\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-32#read": {
+      "key": "0c1678772f3cedfd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"code\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-32#write:latex": {
+      "key": "d48834077834cb61",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[\\texttt{code} term]\nd\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-33#e2e:latex": {
+      "key": "29c0a3f6fec69ce6",
+      "exit": 0,
+      "stdout": "Term\n\n\\begin{verbatim}\nmulti\n\npara\n\\end{verbatim}\n",
+      "stderr": ""
+    },
+    "list-33#read": {
+      "key": "c9cd2f9aed730757",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Term\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"multi\\n\\npara\"]}]}\n",
+      "stderr": ""
+    },
+    "list-33#write:latex": {
+      "key": "8382f2385c7ebc9c",
+      "exit": 0,
+      "stdout": "Term\n\n\\begin{verbatim}\nmulti\n\npara\n\\end{verbatim}\n",
+      "stderr": ""
+    },
+    "list-34#e2e:latex": {
+      "key": "e72c090f8f32eaac",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n  b\n\\item\n  c\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-34#read": {
+      "key": "805ac1b0b065428f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-34#write:latex": {
+      "key": "c00b71b273b79778",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n  b\n\\item\n  c\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-35#e2e:latex": {
+      "key": "3d0ffb3ad952bab3",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\item\n  c\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-35#read": {
+      "key": "4c47954b89425688",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-35#write:latex": {
+      "key": "0040d188c0b1331b",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\item\n  c\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-36#e2e:latex": {
+      "key": "e1ff7112690c3704",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{8}\n\\tightlist\n\\item\n  nine\n\\item\n  ten\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-36#read": {
+      "key": "0f30222267ce5381",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[9,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"nine\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"ten\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-36#write:latex": {
+      "key": "6744e5cca2580a7a",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{8}\n\\tightlist\n\\item\n  nine\n\\item\n  ten\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-37#e2e:latex": {
+      "key": "0456ae5e9e5abd77",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{-1}\n\\tightlist\n\\item\n  zero\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-37#read": {
+      "key": "f3efd69526d8b4a2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[0,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"zero\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-37#write:latex": {
+      "key": "3b34a78b81f96447",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{-1}\n\\tightlist\n\\item\n  zero\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-38#e2e:latex": {
+      "key": "0052cddd6caf9041",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  item with a long line that should wrap because it is longer than\n  seventy two characters\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-38#read": {
+      "key": "29e727c99bd044b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"item\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"line\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"should\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wrap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"because\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"longer\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"than\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seventy\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"characters\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-38#write:latex": {
+      "key": "a15fcfe2cd3947ca",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\tightlist\n\\item\n  item with a long line that should wrap because it is longer than\n  seventy two characters\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-39#e2e:latex": {
+      "key": "071341ea5c32eab9",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n  \\textbar{} line \\textbar{} block\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-39#read": {
+      "key": "e97f41cdcacb0fa2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"line\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"block\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-39#write:latex": {
+      "key": "d88110b373f985b7",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  a\n\n  \\textbar{} line \\textbar{} block\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-4#e2e:latex": {
+      "key": "e62c016359871229",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{2}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-4#read": {
+      "key": "3f76e97410ce8030",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[3,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-4#write:latex": {
+      "key": "117b734cc0380789",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{2}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-40#e2e:latex": {
+      "key": "a7566460958bcdbd",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\nd\n\n\\begin{description}\n\\tightlist\n\\item[Term2]\nnested\n\\end{description}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-40#read": {
+      "key": "608694beee156b46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"d\"}]},{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term2\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"nested\"}]}]]]]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "list-40#write:latex": {
+      "key": "71f4b45c94b398ca",
+      "exit": 0,
+      "stdout": "\\begin{description}\n\\tightlist\n\\item[Term]\nd\n\n\\begin{description}\n\\tightlist\n\\item[Term2]\nnested\n\\end{description}\n\\end{description}\n",
+      "stderr": ""
+    },
+    "list-41#e2e:latex": {
+      "key": "867bee7b8408a14c",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  \\begin{description}\n  \\tightlist\n  \\item[Term]\n  def\n  \\end{description}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-41#read": {
+      "key": "492d9ab11de40c93",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Term\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"def\"}]}]]]]}]]}]}\n",
+      "stderr": ""
+    },
+    "list-41#write:latex": {
+      "key": "64f972d7dcef8514",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  \\begin{description}\n  \\tightlist\n  \\item[Term]\n  def\n  \\end{description}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "list-42#e2e:latex": {
+      "key": "10bf646e921539dc",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  a\n\n  \\begin{enumerate}\n  \\def\\labelenumii{\\arabic{enumii}.}\n  \\item\n    b\n\n    \\begin{enumerate}\n    \\def\\labelenumiii{\\arabic{enumiii}.}\n    \\tightlist\n    \\item\n      c\n    \\end{enumerate}\n  \\end{enumerate}\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-42#read": {
+      "key": "06080049dbace525",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]}]]]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-42#write:latex": {
+      "key": "8a4d49707fb02aaa",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  a\n\n  \\begin{enumerate}\n  \\def\\labelenumii{\\arabic{enumii}.}\n  \\item\n    b\n\n    \\begin{enumerate}\n    \\def\\labelenumiii{\\arabic{enumiii}.}\n    \\tightlist\n    \\item\n      c\n    \\end{enumerate}\n  \\end{enumerate}\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-43#e2e:latex": {
+      "key": "a03585f9e4409012",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\\end{enumerate}\n\nx\n\n\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-43#read": {
+      "key": "3654c5d7fd1021ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-43#write:latex": {
+      "key": "a572ce04b3fd0a66",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  a\n\\end{enumerate}\n\nx\n\n\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\tightlist\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-44#e2e:latex": {
+      "key": "53450f710bcb2576",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  a\n\n  \\begin{enumerate}\n  \\def\\labelenumii{\\arabic{enumii}.}\n  \\tightlist\n  \\item\n    b\n  \\end{enumerate}\n\\end{enumerate}\n\nx\n\n\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{2}\n\\tightlist\n\\item\n  c\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-44#read": {
+      "key": "88b568e0e7c780f3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"OrderedList\",\"c\":[[3,{\"t\":\"Decimal\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-44#write:latex": {
+      "key": "ec9152e18ef93253",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\item\n  a\n\n  \\begin{enumerate}\n  \\def\\labelenumii{\\arabic{enumii}.}\n  \\tightlist\n  \\item\n    b\n  \\end{enumerate}\n\\end{enumerate}\n\nx\n\n\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi}.}\n\\setcounter{enumi}{2}\n\\tightlist\n\\item\n  c\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-5#e2e:latex": {
+      "key": "7a818c9667000247",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{(\\arabic{enumi})}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-5#read": {
+      "key": "4bb2a569061aafda",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"TwoParens\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-5#write:latex": {
+      "key": "925824df2a619f26",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{(\\arabic{enumi})}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-6#e2e:latex": {
+      "key": "ae13bfca5d1ded0b",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi})}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-6#read": {
+      "key": "ef60f14e06c4bd1e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"Decimal\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-6#write:latex": {
+      "key": "7a0f7a430d78980c",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\arabic{enumi})}\n\\tightlist\n\\item\n  a\n\\item\n  b\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-7#e2e:latex": {
+      "key": "c0f5865fbeda469d",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\alph{enumi}.}\n\\tightlist\n\\item\n  x\n\\item\n  y\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-7#read": {
+      "key": "ca97ef8c9e5e6804",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"LowerAlpha\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-7#write:latex": {
+      "key": "4cbe459224ad2f8c",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\alph{enumi}.}\n\\tightlist\n\\item\n  x\n\\item\n  y\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-8#e2e:latex": {
+      "key": "60051348ffa48add",
+      "exit": 0,
+      "stdout": "A. x B. y\n",
+      "stderr": ""
+    },
+    "list-8#read": {
+      "key": "617c95f3259766c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"A.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"B.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "list-8#write:latex": {
+      "key": "d22c3b81b1ecb783",
+      "exit": 0,
+      "stdout": "A. x B. y\n",
+      "stderr": ""
+    },
+    "list-9#e2e:latex": {
+      "key": "01e7ca489e56b2e2",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\roman{enumi}.}\n\\tightlist\n\\item\n  x\n\\item\n  y\n\\end{enumerate}\n",
+      "stderr": ""
+    },
+    "list-9#read": {
+      "key": "4cfd295204a418b1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"LowerRoman\"},{\"t\":\"Period\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "list-9#write:latex": {
+      "key": "746dbe9f0fa265cb",
+      "exit": 0,
+      "stdout": "\\begin{enumerate}\n\\def\\labelenumi{\\roman{enumi}.}\n\\tightlist\n\\item\n  x\n\\item\n  y\n\\end{enumerate}\n",
+      "stderr": ""
+    }
+  }
+}

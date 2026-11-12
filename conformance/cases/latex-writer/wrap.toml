@@ -1,0 +1,126 @@
+# Line wrapping at 72 columns.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "wrap-0"
+input = '''
+Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-1"
+input = '''
+*Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.*
+'''
+
+[[case]]
+id = "wrap-2"
+input = '''
+**Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers ** can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-3"
+input = '''
+Every river `turns west near code` west near, warehouses carrying salt, and two harvests before midwinter so farmers can `turns west near code`e grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-4"
+input = '''
+> Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-5"
+input = '''
+- Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-6"
+input = '''
+1. Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-7"
+input = '''
+Term
+:   Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-8"
+input = '''
+Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.[^1]
+
+[^1]: Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-9"
+input = '''
+verylongwordwithoutanyspacesthatcannotbebrokenbecauseitislongerthanthelinewidthatall and more
+'''
+
+[[case]]
+id = "wrap-10"
+input = '''
+Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade [grain early link](http://example.com/a/long/url) early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-11"
+input = '''
+Every river turns west near, warehouses carrying salt, and two harvests $x + y = z$ midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-12"
+input = '''
+Every river turns west near,
+warehouses carrying salt,
+and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded,
+with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-13"
+input = '''
+# Every river turns west near, warehouses carrying salt, and two harvests before midwinter so farmers can trade grain aliq
+'''
+
+[[case]]
+id = "wrap-14"
+input = '''
+| Every river turns west near, warehouses carrying salt, and
+|  two harvests before midwinter so farmers can trade grain early. Then eni
+'''
+
+[[case]]
+id = "wrap-15"
+input = '''
+Every river turns west near, warehouses carrying salt\
+, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-16"
+input = '''
+a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a 
+'''
+
+[[case]]
+id = "wrap-17"
+input = '''
+Every river turns west "near warehouses carrying", warehouses carrying salt, and two harvests before midwinter so farmers can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''
+
+[[case]]
+id = "wrap-18"
+input = '''
+Every river turns west near, warehouses carrying salt, and two harvests before midwinter so [farmers can trade]{.underline} can trade grain early. Then boats go south loaded, with timber replacement parts too.
+'''

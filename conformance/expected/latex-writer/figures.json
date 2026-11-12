@@ -1,0 +1,383 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "figure-0#e2e:latex": {
+      "key": "c20d9ac35690b806",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{fig.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-0#read": {
+      "key": "391800308d42e893",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"fig.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-0#write:latex": {
+      "key": "9e77f9c6d50ce274",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{fig.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-1#e2e:latex": {
+      "key": "d30b7ab61708343a",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{fig.png}}\n\\caption{Cap}\\label{fig:a}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-1#read": {
+      "key": "f78ff2ac5a03754f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"fig:a\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"fig.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-1#write:latex": {
+      "key": "f4d296281e7fcdda",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{fig.png}}\n\\caption{Cap}\\label{fig:a}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-10#e2e:latex": {
+      "key": "28d70d667c5ca51f",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=\\linewidth,height=2in,keepaspectratio,alt={Cap}]{f.png}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-10#read": {
+      "key": "1f5295a03d33bc1e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"height\",\"2in\"]]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-10#write:latex": {
+      "key": "e5f0300e0f9da340",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=\\linewidth,height=2in,keepaspectratio,alt={Cap}]{f.png}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-11#e2e:latex": {
+      "key": "a2576915dc054cbe",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={A long caption that\ngoes on and on for a while to wrap past seventy two chars}]{f.png}}\n\\caption{A long caption that goes on and on for a while to wrap past\nseventy two chars}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-11#read": {
+      "key": "31d4135d148a0cff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"caption\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"goes\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"on\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"on\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"while\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wrap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"past\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seventy\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"chars\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"caption\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"goes\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"on\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"on\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"while\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wrap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"past\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seventy\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"chars\"}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-11#write:latex": {
+      "key": "004ee7ad045a2865",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={A long caption that\ngoes on and on for a while to wrap past seventy two chars}]{f.png}}\n\\caption{A long caption that goes on and on for a while to wrap past\nseventy two chars}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-12#e2e:latex": {
+      "key": "7df88a66e2c3f460",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-12#read": {
+      "key": "81917ece6547877d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[\"cls\"],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-12#write:latex": {
+      "key": "b71ba0e66ae0a641",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-13#e2e:latex": {
+      "key": "d283f5904b7f89bd",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{a b.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-13#read": {
+      "key": "290bdf9d44ca5fbc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"a%20b.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-13#write:latex": {
+      "key": "2207961d8cdea2f6",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{a b.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-14#e2e:latex": {
+      "key": "27dcfb82176829da",
+      "exit": 0,
+      "stdout": "text\n\n\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n\ntext\n",
+      "stderr": ""
+    },
+    "figure-14#read": {
+      "key": "6dc924493cc91633",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"}]},{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"\"]]}]}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"}]}]}\n",
+      "stderr": ""
+    },
+    "figure-14#write:latex": {
+      "key": "773cee13ed3d2809",
+      "exit": 0,
+      "stdout": "text\n\n\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n\ntext\n",
+      "stderr": ""
+    },
+    "figure-15#e2e:latex": {
+      "key": "365eda4cda419987",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  \\begin{figure}\n  \\centering\n  \\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n  \\caption{Cap}\n  \\end{figure}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "figure-15#read": {
+      "key": "2c9f028ce8642c0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"\"]]}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-15#write:latex": {
+      "key": "5a2dbd5999b4cc98",
+      "exit": 0,
+      "stdout": "\\begin{itemize}\n\\item\n  \\begin{figure}\n  \\centering\n  \\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n  \\caption{Cap}\n  \\end{figure}\n\\end{itemize}\n",
+      "stderr": ""
+    },
+    "figure-16#e2e:latex": {
+      "key": "9f402d8c38e2e564",
+      "exit": 0,
+      "stdout": "\\begin{quote}\n\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n\\end{quote}\n",
+      "stderr": ""
+    },
+    "figure-16#read": {
+      "key": "8985c9d8b8835981",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"\"]]}]}]]}]}]}\n",
+      "stderr": ""
+    },
+    "figure-16#write:latex": {
+      "key": "097b989f6badd1f3",
+      "exit": 0,
+      "stdout": "\\begin{quote}\n\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n\\end{quote}\n",
+      "stderr": ""
+    },
+    "figure-17#e2e:latex": {
+      "key": "ce0dbf38afbe3f4f",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap with\nlink}]{f.png}}\n\\caption{Cap with \\href{http://x}{link}}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-17#read": {
+      "key": "7a02221eb55ac682",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"link\"}],[\"http://x\",\"\"]]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"link\"}],[\"http://x\",\"\"]]}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-17#write:latex": {
+      "key": "0503b6afbb910387",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap with\nlink}]{f.png}}\n\\caption{Cap with \\href{http://x}{link}}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-18#e2e:latex": {
+      "key": "182442201836d612",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includesvg[keepaspectratio]{a.svg}}\n\\caption{x}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-18#read": {
+      "key": "d63421bf529e50d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"}],[\"a.svg\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-18#write:latex": {
+      "key": "b4791069cd0571a6",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includesvg[keepaspectratio]{a.svg}}\n\\caption{x}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-19#e2e:latex": {
+      "key": "5c6c9854be7745aa",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includesvg[width=2cm,height=\\textheight,keepaspectratio]{b.SVG}\n\\caption{y}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-19#read": {
+      "key": "4a4c567c5b1cc7b5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"width\",\"2cm\"]]],[{\"t\":\"Str\",\"c\":\"y\"}],[\"b.SVG\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-19#write:latex": {
+      "key": "280d0f6dfa229ee4",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includesvg[width=2cm,height=\\textheight,keepaspectratio]{b.SVG}\n\\caption{y}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-2#e2e:latex": {
+      "key": "18ac518f459bf034",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=3cm,height=\\textheight,keepaspectratio,alt={Cap}]{fig.png}\n\\caption{Cap}\\label{fig:a}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-2#read": {
+      "key": "29bdc2557f161065",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"fig:a\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"width\",\"3cm\"]]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"fig.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-2#write:latex": {
+      "key": "74e480c36a73f916",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=3cm,height=\\textheight,keepaspectratio,alt={Cap}]{fig.png}\n\\caption{Cap}\\label{fig:a}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-20#e2e:latex": {
+      "key": "e8dda7b2e10ac75f",
+      "exit": 0,
+      "stdout": "text \\pandocbounded{\\includesvg[keepaspectratio]{i.svg}} text\n",
+      "stderr": ""
+    },
+    "figure-20#read": {
+      "key": "4a4ce9cd1fd03fae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"i\"}],[\"i.svg\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"}]}]}\n",
+      "stderr": ""
+    },
+    "figure-20#write:latex": {
+      "key": "7d46fcbf385c35b8",
+      "exit": 0,
+      "stdout": "text \\pandocbounded{\\includesvg[keepaspectratio]{i.svg}} text\n",
+      "stderr": ""
+    },
+    "figure-3#e2e:latex": {
+      "key": "7272310561dd8987",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap\nemph}]{fig.png}}\n\\caption{Cap \\emph{emph}}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-3#read": {
+      "key": "03468eb53727635c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"emph\"}]}],[\"fig.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-3#write:latex": {
+      "key": "3c7bc092033de449",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap\nemph}]{fig.png}}\n\\caption{Cap \\emph{emph}}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-4#e2e:latex": {
+      "key": "fa577bc57f0d4a3c",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=0.5\\linewidth,height=\\textheight,keepaspectratio,alt={Cap}]{fig.png}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-4#read": {
+      "key": "396ca312d65d7c13",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"width\",\"50%\"]]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"fig.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-4#write:latex": {
+      "key": "b2cd7e3a6be5cb47",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\includegraphics[width=0.5\\linewidth,height=\\textheight,keepaspectratio,alt={Cap}]{fig.png}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-5#e2e:latex": {
+      "key": "4b506e9e3e830172",
+      "exit": 0,
+      "stdout": "\\pandocbounded{\\includegraphics[keepaspectratio]{nocap.png}}\n",
+      "stderr": ""
+    },
+    "figure-5#read": {
+      "key": "2c2f4fe39f8dc901",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[],[\"nocap.png\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "figure-5#write:latex": {
+      "key": "461c60d93249110f",
+      "exit": 0,
+      "stdout": "\\pandocbounded{\\includegraphics[keepaspectratio]{nocap.png}}\n",
+      "stderr": ""
+    },
+    "figure-6#e2e:latex": {
+      "key": "faa78d8b4ec394a7",
+      "exit": 0,
+      "stdout": "\\pandocbounded{\\includegraphics[keepaspectratio]{nocap.png}}\n",
+      "stderr": ""
+    },
+    "figure-6#read": {
+      "key": "b57b2272235f44e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"fig:n\",[],[]],[],[\"nocap.png\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "figure-6#write:latex": {
+      "key": "f26c10259c2098e2",
+      "exit": 0,
+      "stdout": "\\pandocbounded{\\includegraphics[keepaspectratio]{nocap.png}}\n",
+      "stderr": ""
+    },
+    "figure-7#e2e:latex": {
+      "key": "2a21dac0099263b6",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption[Cap]{Cap\\footnotemark{}}\n\\end{figure}\n\\footnotetext{note}\n",
+      "stderr": ""
+    },
+    "figure-7#read": {
+      "key": "88cb1e26558d121f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-7#write:latex": {
+      "key": "c837fab100cc0fc1",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption[Cap]{Cap\\footnotemark{}}\n\\end{figure}\n\\footnotetext{note}\n",
+      "stderr": ""
+    },
+    "figure-8#e2e:latex": {
+      "key": "4541d4624e450eb8",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap x}]{f.png}}\n\\caption{Cap \\(x\\)}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-8#read": {
+      "key": "9c7ac59c47b64195",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x\"]}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x\"]}],[\"f.png\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-8#write:latex": {
+      "key": "733b748d46cc2f3d",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap x}]{f.png}}\n\\caption{Cap \\(x\\)}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-9#e2e:latex": {
+      "key": "ac2ff3dc1b17cc2a",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    },
+    "figure-9#read": {
+      "key": "5707c1d297f832e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cap\"}],[\"f.png\",\"title\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "figure-9#write:latex": {
+      "key": "596595c6df3f4007",
+      "exit": 0,
+      "stdout": "\\begin{figure}\n\\centering\n\\pandocbounded{\\includegraphics[keepaspectratio,alt={Cap}]{f.png}}\n\\caption{Cap}\n\\end{figure}\n",
+      "stderr": ""
+    }
+  }
+}

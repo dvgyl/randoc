@@ -1,0 +1,363 @@
+# Bullet, ordered, task and definition lists.
+
+from = "markdown"
+to = ["latex"]
+
+[[case]]
+id = "list-0"
+input = '''
+- a
+- b
+'''
+
+[[case]]
+id = "list-1"
+input = '''
+- a
+
+- b
+'''
+
+[[case]]
+id = "list-2"
+input = '''
+* a
+    * b
+        * c
+'''
+
+[[case]]
+id = "list-3"
+input = '''
+1. a
+2. b
+'''
+
+[[case]]
+id = "list-4"
+input = '''
+3. a
+4. b
+'''
+
+[[case]]
+id = "list-5"
+input = '''
+(1) a
+(2) b
+'''
+
+[[case]]
+id = "list-6"
+input = '''
+1) a
+2) b
+'''
+
+[[case]]
+id = "list-7"
+input = '''
+a. x
+b. y
+'''
+
+[[case]]
+id = "list-8"
+input = '''
+A. x
+B. y
+'''
+
+[[case]]
+id = "list-9"
+input = '''
+i. x
+ii. y
+'''
+
+[[case]]
+id = "list-10"
+input = '''
+I. x
+II. y
+'''
+
+[[case]]
+id = "list-11"
+input = '''
+#. a
+#. b
+'''
+
+[[case]]
+id = "list-12"
+input = '''
+(@) ex
+(@) ex2
+'''
+
+[[case]]
+id = "list-13"
+input = '''
+1. a
+    1. b
+        1. c
+            1. d
+                1. e
+'''
+
+[[case]]
+id = "list-14"
+input = '''
+1. a
+
+    para
+
+2. b
+'''
+
+[[case]]
+id = "list-15"
+input = '''
+- a
+
+    ```
+    code
+    ```
+'''
+
+[[case]]
+id = "list-16"
+input = '''
+- [ ] todo
+- [x] done
+'''
+
+[[case]]
+id = "list-17"
+input = '''
+- [ ] todo
+
+- [x] done loose
+'''
+
+[[case]]
+id = "list-18"
+input = '''
+- a
+
+  > quote
+'''
+
+[[case]]
+id = "list-19"
+input = '''
+- a
+  - b
+- c
+'''
+
+[[case]]
+id = "list-20"
+input = '''
+- 
+- b
+'''
+
+[[case]]
+id = "list-21"
+input = '''
+1. one
+
+   - nested bullet
+
+2. two
+'''
+
+[[case]]
+id = "list-22"
+input = '''
+Term
+:   def
+'''
+
+[[case]]
+id = "list-23"
+input = '''
+Term
+
+:   def loose
+'''
+
+[[case]]
+id = "list-24"
+input = '''
+Term
+:   def1
+:   def2
+'''
+
+[[case]]
+id = "list-25"
+input = '''
+T1
+:   d1
+
+T2
+:   d2
+'''
+
+[[case]]
+id = "list-26"
+input = '''
+*Em* term
+:   d
+'''
+
+[[case]]
+id = "list-27"
+input = '''
+Term [x]
+:   ```
+    c
+    ```
+'''
+
+[[case]]
+id = "list-28"
+input = '''
+Term
+:   - list
+'''
+
+[[case]]
+id = "list-29"
+input = '''
+Term
+:   1. ol
+'''
+
+[[case]]
+id = "list-30"
+input = '''
+Term
+:   # Head
+'''
+
+[[case]]
+id = "list-31"
+input = '''
+Term
+:   > quote
+'''
+
+[[case]]
+id = "list-32"
+input = '''
+`code` term
+:   d
+'''
+
+[[case]]
+id = "list-33"
+input = '''
+Term
+
+    multi
+
+    para
+'''
+
+[[case]]
+id = "list-34"
+input = '''
+- a
+
+  b
+- c
+'''
+
+[[case]]
+id = "list-35"
+input = '''
+1. a
+1. b
+1. c
+'''
+
+[[case]]
+id = "list-36"
+input = '''
+9. nine
+10. ten
+'''
+
+[[case]]
+id = "list-37"
+input = '''
+0. zero
+'''
+
+[[case]]
+id = "list-38"
+input = '''
+- item with a long line that should wrap because it is longer than seventy two characters
+'''
+
+[[case]]
+id = "list-39"
+input = '''
+- a
+
+    | line
+    |  block
+'''
+
+[[case]]
+id = "list-40"
+input = '''
+Term
+:   d
+
+    Term2
+    :   nested
+'''
+
+[[case]]
+id = "list-41"
+input = '''
+- Term
+  : def
+'''
+
+[[case]]
+id = "list-42"
+input = '''
+1. a
+
+   1. b
+
+      1. c
+'''
+
+[[case]]
+id = "list-43"
+input = '''
+1. a
+
+x
+
+1. b
+'''
+
+[[case]]
+id = "list-44"
+input = '''
+1. a
+
+    1. b
+
+x
+
+3. c
+'''
