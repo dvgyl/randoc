@@ -11,6 +11,7 @@ authors.workspace = true
 [dependencies]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
+randoc-markdown-writer = { workspace = true }
 randoc-html = { workspace = true }
 randoc-markdown = { workspace = true }
 randoc-native = { workspace = true }

@@ -1,0 +1,2975 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "cite-empty-fallback#e2e:commonmark": {
+      "key": "c77b9a39dc7b0940",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#e2e:commonmark_x": {
+      "key": "0029837aaa0c747b",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#e2e:gfm": {
+      "key": "cb706e1529a0cd6b",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#e2e:markdown": {
+      "key": "863ee6236c49f835",
+      "exit": 0,
+      "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#e2e:markdown-citations": {
+      "key": "936ba0afa4c4c1aa",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#e2e:markdown_strict": {
+      "key": "5a767a421319eb4a",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#e2e:plain": {
+      "key": "3ee9892c38c1a175",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#read": {
+      "key": "06146d3b3a78a9b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:commonmark": {
+      "key": "c733cff240e6797d",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:commonmark_x": {
+      "key": "2b0869434d385288",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:gfm": {
+      "key": "8a645ba03bac3798",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:markdown": {
+      "key": "6681bed8766c264e",
+      "exit": 0,
+      "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:markdown-citations": {
+      "key": "30f3789d89b519fb",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:markdown_strict": {
+      "key": "1fa607fc971c875b",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-empty-fallback#write:plain": {
+      "key": "f23f71031c28d60e",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:commonmark": {
+      "key": "49a5e5a2b80b16ee",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:commonmark_x": {
+      "key": "ee23ac41e36ebe31",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:gfm": {
+      "key": "4f52fd6b44486be1",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:markdown": {
+      "key": "64386254816c3dd3",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: [@doe]\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:markdown-citations": {
+      "key": "9d372b6089f19408",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:markdown_strict": {
+      "key": "7c2af37c643f7168",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#e2e:plain": {
+      "key": "05c8833cce3adc13",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] [@doe]\n",
+      "stderr": ""
+    },
+    "cite-in-note#read": {
+      "key": "cf628d1799c13306",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe]\"}]]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:commonmark": {
+      "key": "4673f884d452611f",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:commonmark_x": {
+      "key": "510a66b81a4ac68a",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:gfm": {
+      "key": "034111d16178475a",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:markdown": {
+      "key": "1144c6dfbe46c540",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: [@doe]\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:markdown-citations": {
+      "key": "86a5809dcdf945d5",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:markdown_strict": {
+      "key": "98ea7fb3a34607f5",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-in-note#write:plain": {
+      "key": "1997e7673b819200",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] [@doe]\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:commonmark": {
+      "key": "60ef71d6cd899be3",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:commonmark_x": {
+      "key": "8aa5e54bdb457fe8",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:gfm": {
+      "key": "01cf21fccb2bba18",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:markdown": {
+      "key": "b2b6e8a3c19d603a",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:markdown-citations": {
+      "key": "b5be37de9b7c9e5d",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:markdown_strict": {
+      "key": "b269a8162e97a8bd",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#e2e:plain": {
+      "key": "87b75753a48b21fa",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#read": {
+      "key": "d234330bc03b4acb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-intext#write:commonmark": {
+      "key": "9b3477cc70529080",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#write:commonmark_x": {
+      "key": "ba709af930af7e6d",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#write:gfm": {
+      "key": "6937703ec2df87bd",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#write:markdown": {
+      "key": "0983995630725bbb",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#write:markdown-citations": {
+      "key": "28d317acce9984ae",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#write:markdown_strict": {
+      "key": "d22fbccdfda9f8ce",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext#write:plain": {
+      "key": "b4c4b132695cbdfb",
+      "exit": 0,
+      "stdout": "@doe\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:commonmark": {
+      "key": "8982c47cb3c51c6c",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:commonmark_x": {
+      "key": "afd0a6efda7d82d5",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:gfm": {
+      "key": "5293dcb24317c7a5",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:markdown": {
+      "key": "63d7081c7eb0e89b",
+      "exit": 0,
+      "stdout": "@a [@b]\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:markdown-citations": {
+      "key": "07742e8c0a20b202",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:markdown_strict": {
+      "key": "d3c6a3915f053122",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#e2e:plain": {
+      "key": "713a1c82ab92785b",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#read": {
+      "key": "35551435a8777ee4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@b\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:commonmark": {
+      "key": "0a0b2c249a115611",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:commonmark_x": {
+      "key": "67e09dc096c2ea4e",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:gfm": {
+      "key": "afd13911a4c7137e",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:markdown": {
+      "key": "31331a5047013b44",
+      "exit": 0,
+      "stdout": "@a [@b]\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:markdown-citations": {
+      "key": "b5175802dd60ea77",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:markdown_strict": {
+      "key": "d32c163bc5f839d7",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-multiple#write:plain": {
+      "key": "c7770c8267dce784",
+      "exit": 0,
+      "stdout": "@a @b\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:commonmark": {
+      "key": "c652d704d8d49ae5",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:commonmark_x": {
+      "key": "0fe15c339ceca20c",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:gfm": {
+      "key": "a0967a7af885ec5c",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:markdown": {
+      "key": "d0a248fe3940f9ea",
+      "exit": 0,
+      "stdout": "@doe [p. 3]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:markdown-citations": {
+      "key": "3e15b6a0f21cbfab",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:markdown_strict": {
+      "key": "29b01c399a84f54b",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#e2e:plain": {
+      "key": "d1286da0ec9f372a",
+      "exit": 0,
+      "stdout": "@doe [p. 3]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#read": {
+      "key": "5e75d165278190cd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3\"}],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"@doe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:commonmark": {
+      "key": "6c4638d4ed809b26",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:commonmark_x": {
+      "key": "1879f1b4bb7360d9",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:gfm": {
+      "key": "74e2f362bfe5d309",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:markdown": {
+      "key": "0f7b6b9d2cf9052f",
+      "exit": 0,
+      "stdout": "@doe [p. 3]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:markdown-citations": {
+      "key": "e51e946aa9cf1ae4",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:markdown_strict": {
+      "key": "edd86122a2ab5ec4",
+      "exit": 0,
+      "stdout": "@doe \\[p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-intext-suffix#write:plain": {
+      "key": "3bd4824706f524ef",
+      "exit": 0,
+      "stdout": "@doe [p. 3]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:commonmark": {
+      "key": "365c89f82522d933",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:commonmark_x": {
+      "key": "7615a7fdf5fe01fc",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:gfm": {
+      "key": "a77ac9ec0b6fd5ac",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:markdown": {
+      "key": "f6af79ba1f497aae",
+      "exit": 0,
+      "stdout": "[@{a b}]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:markdown-citations": {
+      "key": "4c5d473bc2dab6a5",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:markdown_strict": {
+      "key": "dd0c3726db860e85",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#e2e:plain": {
+      "key": "0733b21166fbc5ee",
+      "exit": 0,
+      "stdout": "[@{a b}]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#read": {
+      "key": "5b0ada1b5e649b1b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@{a b}]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:commonmark": {
+      "key": "6a58422e919a7ac0",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:commonmark_x": {
+      "key": "84e4a2ade8d6f651",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:gfm": {
+      "key": "8e7e047d55bb40e1",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:markdown": {
+      "key": "ed32f7db3973c56f",
+      "exit": 0,
+      "stdout": "[@{a b}]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:markdown-citations": {
+      "key": "d5d73dd858742e86",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:markdown_strict": {
+      "key": "ca5068e34f5e3026",
+      "exit": 0,
+      "stdout": "\\[@{a b}\\]\n",
+      "stderr": ""
+    },
+    "cite-key-braces#write:plain": {
+      "key": "5c0c1c1046c49f2f",
+      "exit": 0,
+      "stdout": "[@{a b}]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:commonmark": {
+      "key": "bce11617d836f52b",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:commonmark_x": {
+      "key": "6091260e6c18f198",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:gfm": {
+      "key": "d8de85f3821a3ce8",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:markdown": {
+      "key": "2f09d8daebb519f6",
+      "exit": 0,
+      "stdout": "[@doe:2020.x_y]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:markdown-citations": {
+      "key": "861bb58b22847581",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:markdown_strict": {
+      "key": "404572d59d834c61",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x\\_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#e2e:plain": {
+      "key": "11975322b322fe36",
+      "exit": 0,
+      "stdout": "[@doe:2020.x_y]\n",
+      "stderr": ""
+    },
+    "cite-key-special#read": {
+      "key": "4a512738ea971013",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe:2020.x_y\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe:2020.x_y]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:commonmark": {
+      "key": "2a8c109923990510",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:commonmark_x": {
+      "key": "5eea4a6cfb76d71d",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:gfm": {
+      "key": "18b0e9916338280d",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:markdown": {
+      "key": "f833f40a07e20d7f",
+      "exit": 0,
+      "stdout": "[@doe:2020.x_y]\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:markdown-citations": {
+      "key": "4de741853586a412",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:markdown_strict": {
+      "key": "e3f6d6a424072d32",
+      "exit": 0,
+      "stdout": "\\[@doe:2020.x\\_y\\]\n",
+      "stderr": ""
+    },
+    "cite-key-special#write:plain": {
+      "key": "8cdd9306501a163f",
+      "exit": 0,
+      "stdout": "[@doe:2020.x_y]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:commonmark": {
+      "key": "94c4b90a2453fe29",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:commonmark_x": {
+      "key": "fcdac5b04c51aea6",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:gfm": {
+      "key": "62b62efbf1f272b6",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:markdown": {
+      "key": "800ece8ec64d108c",
+      "exit": 0,
+      "stdout": "[@a; @b ch. 2]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:markdown-citations": {
+      "key": "387b608a93a4cb17",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:markdown_strict": {
+      "key": "620f3981aa441cf7",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#e2e:plain": {
+      "key": "ccc58f8bab3acdcc",
+      "exit": 0,
+      "stdout": "[@a; @b, ch. 2]\n",
+      "stderr": ""
+    },
+    "cite-multiple#read": {
+      "key": "d3bbf0223e21ad61",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"ch.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@a;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@b,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ch.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:commonmark": {
+      "key": "a1827586995f4e82",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:commonmark_x": {
+      "key": "32e5dcfd33ee7ecf",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:gfm": {
+      "key": "a297963693b375ff",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:markdown": {
+      "key": "e00c84b122300aa9",
+      "exit": 0,
+      "stdout": "[@a; @b ch. 2]\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:markdown-citations": {
+      "key": "52f361a0ffd3ec3c",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:markdown_strict": {
+      "key": "0f69eb2028896d5c",
+      "exit": 0,
+      "stdout": "\\[@a; @b, ch. 2\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple#write:plain": {
+      "key": "abd1abf654da3269",
+      "exit": 0,
+      "stdout": "[@a; @b, ch. 2]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:commonmark": {
+      "key": "4a9e6e6f04e32654",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:commonmark_x": {
+      "key": "8d13c2456dfb4461",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:gfm": {
+      "key": "8ac358041b6b5bf1",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:markdown": {
+      "key": "66d78c76846b3c2f",
+      "exit": 0,
+      "stdout": "[-@a; @b]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:markdown-citations": {
+      "key": "a08de843594dcdda",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:markdown_strict": {
+      "key": "e7760f46e813687a",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#e2e:plain": {
+      "key": "c541132761b58cef",
+      "exit": 0,
+      "stdout": "[-@a; @b]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#read": {
+      "key": "c3f4c3d44c79eedc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"a\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"b\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[-@a;\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@b]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:commonmark": {
+      "key": "56713e75259233cd",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:commonmark_x": {
+      "key": "18dc3b4ffd6f2b9e",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:gfm": {
+      "key": "62f4131bfd21d98e",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:markdown": {
+      "key": "59bf9205eb9a8484",
+      "exit": 0,
+      "stdout": "[-@a; @b]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:markdown-citations": {
+      "key": "896e7d70f5cd240b",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:markdown_strict": {
+      "key": "b3901725b9dc96eb",
+      "exit": 0,
+      "stdout": "\\[-@a; @b\\]\n",
+      "stderr": ""
+    },
+    "cite-multiple-modes#write:plain": {
+      "key": "171da1c41efa2cc4",
+      "exit": 0,
+      "stdout": "[-@a; @b]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:commonmark": {
+      "key": "e5d62ffc2a1dfa73",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:commonmark_x": {
+      "key": "5f96c8c28eef01a0",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:gfm": {
+      "key": "17b2e2b8d5c4ee10",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:markdown": {
+      "key": "e66ab3e444be38ba",
+      "exit": 0,
+      "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:markdown-citations": {
+      "key": "b9d7fbad9b26614d",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:markdown_strict": {
+      "key": "73daa511e0b8692d",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#e2e:plain": {
+      "key": "e0393d50e6a2edfa",
+      "exit": 0,
+      "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-normal#read": {
+      "key": "dd21934dad59db7b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-normal#write:commonmark": {
+      "key": "d6cd14a0970e6c80",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#write:commonmark_x": {
+      "key": "813fb6475335e03d",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#write:gfm": {
+      "key": "9dacee8b98a6efcd",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#write:markdown": {
+      "key": "ff582ede4b9e8eeb",
+      "exit": 0,
+      "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-normal#write:markdown-citations": {
+      "key": "36f9eceb5197aa66",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#write:markdown_strict": {
+      "key": "a058077599017886",
+      "exit": 0,
+      "stdout": "\\[@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-normal#write:plain": {
+      "key": "b17b379ba5d32eab",
+      "exit": 0,
+      "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:commonmark": {
+      "key": "84b4c8a8d2a469be",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:commonmark_x": {
+      "key": "4d45cdd3ff4d76e9",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:gfm": {
+      "key": "91e79bac8b998919",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:markdown": {
+      "key": "2e848eec9ddef60f",
+      "exit": 0,
+      "stdout": "[*cf.* @doe]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:markdown-citations": {
+      "key": "d688557d0bea8874",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:markdown_strict": {
+      "key": "b01b44a1df5732d4",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#e2e:plain": {
+      "key": "b1bfd4b319fd41cf",
+      "exit": 0,
+      "stdout": "[cf. @doe]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#read": {
+      "key": "7817618d511087f6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"cf.\"}]}],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[cf.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@doe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:commonmark": {
+      "key": "78ada9be649e4bef",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:commonmark_x": {
+      "key": "e54377daac737002",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:gfm": {
+      "key": "524e8f174bf97b92",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:markdown": {
+      "key": "0eaa22f7bbb58f6c",
+      "exit": 0,
+      "stdout": "[*cf.* @doe]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:markdown-citations": {
+      "key": "73648359bf4fe1d1",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:markdown_strict": {
+      "key": "df3f963b331dbdf1",
+      "exit": 0,
+      "stdout": "\\[cf. @doe\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-format#write:plain": {
+      "key": "6eb74f20ed199cac",
+      "exit": 0,
+      "stdout": "[cf. @doe]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:commonmark": {
+      "key": "a48d83013ea4e2f2",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:commonmark_x": {
+      "key": "51e111f505f1683f",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:gfm": {
+      "key": "6daae86dfcb80fef",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:markdown": {
+      "key": "88029a88c53fb575",
+      "exit": 0,
+      "stdout": "[see @doe, p. 3]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:markdown-citations": {
+      "key": "2520ede237cfc498",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:markdown_strict": {
+      "key": "9f8102bee67a45f8",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#e2e:plain": {
+      "key": "f960e8b448650435",
+      "exit": 0,
+      "stdout": "[see @doe, p. 3]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#read": {
+      "key": "9450aeb23442d33a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\",\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"@doe,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:commonmark": {
+      "key": "18d7cc1e7046c5db",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:commonmark_x": {
+      "key": "9daa2766c7e1998c",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:gfm": {
+      "key": "42892b52d72ba79c",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:markdown": {
+      "key": "e036be7b39b4c79a",
+      "exit": 0,
+      "stdout": "[see @doe, p. 3]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:markdown-citations": {
+      "key": "682d64e92ba040f9",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:markdown_strict": {
+      "key": "fa7fd458ce343b99",
+      "exit": 0,
+      "stdout": "\\[see @doe, p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-prefix-suffix#write:plain": {
+      "key": "e3d912557568c0da",
+      "exit": 0,
+      "stdout": "[see @doe, p. 3]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:commonmark": {
+      "key": "26e21cc7e9f4a4c6",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:commonmark_x": {
+      "key": "66d40d8ef9939b6f",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:gfm": {
+      "key": "55ea1616d7f0a79f",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:markdown": {
+      "key": "8eecb8cbd2cc2475",
+      "exit": 0,
+      "stdout": "[@doe p. 3]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:markdown-citations": {
+      "key": "2f4283a882c9fc44",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:markdown_strict": {
+      "key": "eca60fb65d8f2f24",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#e2e:plain": {
+      "key": "47ab526d26f500b5",
+      "exit": 0,
+      "stdout": "[@doe p. 3]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#read": {
+      "key": "32d8bff7f79789de",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@doe\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"3]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:commonmark": {
+      "key": "a914541ad4ddbd23",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:commonmark_x": {
+      "key": "c1809489636c1f60",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:gfm": {
+      "key": "6feec3819117a330",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:markdown": {
+      "key": "d35200e89321af26",
+      "exit": 0,
+      "stdout": "[@doe p. 3]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:markdown-citations": {
+      "key": "310c9f57ac77c5c1",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:markdown_strict": {
+      "key": "34341638d62828e1",
+      "exit": 0,
+      "stdout": "\\[@doe p. 3\\]\n",
+      "stderr": ""
+    },
+    "cite-suffix-no-comma#write:plain": {
+      "key": "ea280105618599e6",
+      "exit": 0,
+      "stdout": "[@doe p. 3]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:commonmark": {
+      "key": "dc521e87dd872971",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:commonmark_x": {
+      "key": "93bef6f2d2928304",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:gfm": {
+      "key": "077751269d2c70b4",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:markdown": {
+      "key": "d83ebca95d89eb86",
+      "exit": 0,
+      "stdout": "[-@doe]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:markdown-citations": {
+      "key": "1bc23b1fa7bd68db",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:markdown_strict": {
+      "key": "0e277b03b35e3c3b",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#e2e:plain": {
+      "key": "990867c142f3be46",
+      "exit": 0,
+      "stdout": "[-@doe]\n",
+      "stderr": ""
+    },
+    "cite-suppress#read": {
+      "key": "7edb53164b476199",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"doe\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"SuppressAuthor\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[-@doe]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:commonmark": {
+      "key": "693bcf821ae7586e",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:commonmark_x": {
+      "key": "b3433bb52ca0e2bd",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:gfm": {
+      "key": "42bf3d9e5d6c730d",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:markdown": {
+      "key": "d7bc7bbcd7dc6f6f",
+      "exit": 0,
+      "stdout": "[-@doe]\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:markdown-citations": {
+      "key": "5a398d3548ddc1f8",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:markdown_strict": {
+      "key": "23ec8925ef0a8a98",
+      "exit": 0,
+      "stdout": "\\[-@doe\\]\n",
+      "stderr": ""
+    },
+    "cite-suppress#write:plain": {
+      "key": "bcac4285da5905af",
+      "exit": 0,
+      "stdout": "[-@doe]\n",
+      "stderr": ""
+    },
+    "note#e2e:commonmark": {
+      "key": "5fa2eb517e9d65dd",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#e2e:commonmark_x": {
+      "key": "9dd29be3914b80d2",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#e2e:gfm": {
+      "key": "2a1afc4581828b02",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#e2e:markdown": {
+      "key": "422e8fb0c7324040",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#e2e:markdown-footnotes": {
+      "key": "3fb31affd15d7452",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#e2e:markdown_mmd": {
+      "key": "985093def622af77",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#e2e:markdown_phpextra": {
+      "key": "f0e2f65ee5600d5c",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#e2e:markdown_strict": {
+      "key": "bb9da34d326fec73",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#e2e:plain": {
+      "key": "9b0e2bfa0fb68580",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#read": {
+      "key": "4cdc829ab125c285",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note#write:commonmark": {
+      "key": "41c21aa35acb01ae",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#write:commonmark_x": {
+      "key": "4930c7e5693268d3",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#write:gfm": {
+      "key": "3b7ad5a50b473663",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#write:markdown": {
+      "key": "eb964771da90b9a5",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#write:markdown-footnotes": {
+      "key": "6b9c44e647b32b53",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#write:markdown_mmd": {
+      "key": "0f8d177e1e316fec",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#write:markdown_phpextra": {
+      "key": "93dab4029123ae29",
+      "exit": 0,
+      "stdout": "text[^1]\n\n[^1]: note\n",
+      "stderr": ""
+    },
+    "note#write:markdown_strict": {
+      "key": "2e89320cd0d65570",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note#write:plain": {
+      "key": "199f99ece678f965",
+      "exit": 0,
+      "stdout": "text[1]\n\n[1] note\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:commonmark": {
+      "key": "eca096bd459c7f5d",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:commonmark_x": {
+      "key": "7d1cdef46fdf9022",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:gfm": {
+      "key": "01be4deb7713acd2",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:markdown": {
+      "key": "fe68cf85b042f500",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:markdown-footnotes": {
+      "key": "fd98cf40a8c8f6a2",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:markdown_mmd": {
+      "key": "50667a74bc7be2ef",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:markdown_phpextra": {
+      "key": "bf0b512f9a014a14",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:markdown_strict": {
+      "key": "a1967d64ac1ec4c3",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#e2e:plain": {
+      "key": "183a17d75b9873c0",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#read": {
+      "key": "a4dc9c22a26287e5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"after\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"z\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:commonmark": {
+      "key": "6ee9c61b2612fe6e",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:commonmark_x": {
+      "key": "5d7360215e193943",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:gfm": {
+      "key": "17ed311f636d4d13",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:markdown": {
+      "key": "57fc92cef9a442e5",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:markdown-footnotes": {
+      "key": "997331a612b264c3",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:markdown_mmd": {
+      "key": "6cc6ca418bf3d154",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:markdown_phpextra": {
+      "key": "51a83b01c17c97f1",
+      "exit": 0,
+      "stdout": "a[^1]\n\nafter\n\n- z\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:markdown_strict": {
+      "key": "0d013706494c5ec0",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-after-blocks#write:plain": {
+      "key": "72d178555a591425",
+      "exit": 0,
+      "stdout": "a[1]\n\nafter\n\n- z\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-code#e2e:commonmark": {
+      "key": "e9a0f80bf48e32f7",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:commonmark_x": {
+      "key": "03bd39270f347666",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:gfm": {
+      "key": "6ddf249fe81940f6",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:markdown": {
+      "key": "5be72e47fa54d82c",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:markdown-footnotes": {
+      "key": "ed8f87eeed2de0e6",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:markdown_mmd": {
+      "key": "31ab4d0399b44e69",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:markdown_phpextra": {
+      "key": "1e6517fdbce96d28",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:markdown_strict": {
+      "key": "c472c21fee0f0b85",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#e2e:plain": {
+      "key": "50c324d3f8f78a6c",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#read": {
+      "key": "04dc7d93151873ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"p\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"x = 1\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-code#write:commonmark": {
+      "key": "35f58d79b5b2a160",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:commonmark_x": {
+      "key": "98c2701a10e0b4bb",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:gfm": {
+      "key": "e0a4df09cfecf92b",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:markdown": {
+      "key": "575c45c20f663901",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:markdown-footnotes": {
+      "key": "e288cdb83fb0ac3b",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:markdown_mmd": {
+      "key": "0f8dbb074239fcea",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:markdown_phpextra": {
+      "key": "6de08de2e222bb55",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p\n\n        x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:markdown_strict": {
+      "key": "a405f6c01ba4f8ae",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-code#write:plain": {
+      "key": "fc669dcf230c24c1",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p\n\n    x = 1\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:commonmark": {
+      "key": "3a0958e7004de6a6",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:commonmark_x": {
+      "key": "81d057f89cf24905",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:gfm": {
+      "key": "eff60286c888bb15",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:markdown": {
+      "key": "7996f7dace058a83",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:markdown-footnotes": {
+      "key": "ba300d0d1351e785",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:markdown_mmd": {
+      "key": "10afd9b794858da8",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:markdown_phpextra": {
+      "key": "521a36293405812f",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:markdown_strict": {
+      "key": "14dae0b1a0e74004",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#e2e:plain": {
+      "key": "5a4b844d86105643",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#read": {
+      "key": "e4ba065aa6ddc26e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[]}]}]}\n",
+      "stderr": ""
+    },
+    "note-empty#write:commonmark": {
+      "key": "0e341b17e0aa9e5b",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#write:commonmark_x": {
+      "key": "8f4c84327ae47002",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#write:gfm": {
+      "key": "274ff07392631cb2",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#write:markdown": {
+      "key": "9ebc2a615b6050f4",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#write:markdown-footnotes": {
+      "key": "b98bb5f79f5ec382",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#write:markdown_mmd": {
+      "key": "e289f75ae08a8521",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#write:markdown_phpextra": {
+      "key": "a6881675dd61c0a8",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n",
+      "stderr": ""
+    },
+    "note-empty#write:markdown_strict": {
+      "key": "aac2e112eecf2045",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-empty#write:plain": {
+      "key": "9ef83e600b7a5934",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:commonmark": {
+      "key": "7409b4a70a839b56",
+      "exit": 0,
+      "stdout": "## H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:commonmark_x": {
+      "key": "27027437172da017",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:gfm": {
+      "key": "2d2ca8bb6fc6a007",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:markdown": {
+      "key": "9b5579f032c1de99",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:markdown-footnotes": {
+      "key": "51796a47ebba1697",
+      "exit": 0,
+      "stdout": "## H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:markdown_mmd": {
+      "key": "3ddf31c299b453b4",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:markdown_phpextra": {
+      "key": "c6989a41af45c8dd",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:markdown_strict": {
+      "key": "2b8e4bcace686e68",
+      "exit": 0,
+      "stdout": "## H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#e2e:plain": {
+      "key": "558349109bb0d759",
+      "exit": 0,
+      "stdout": "H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#read": {
+      "key": "3dbe9b8e4108f68e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:commonmark": {
+      "key": "010c36df0c4022ab",
+      "exit": 0,
+      "stdout": "## H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:commonmark_x": {
+      "key": "34a1df08607367e0",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:gfm": {
+      "key": "4ae5f67d603d64f0",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:markdown": {
+      "key": "0df85fc638833d32",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:markdown-footnotes": {
+      "key": "e93c7da18b20c360",
+      "exit": 0,
+      "stdout": "## H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:markdown_mmd": {
+      "key": "6fb48425567bcad1",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:markdown_phpextra": {
+      "key": "c6ee786f8f8cdcce",
+      "exit": 0,
+      "stdout": "## H[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:markdown_strict": {
+      "key": "9864416c80b59a2d",
+      "exit": 0,
+      "stdout": "## H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-heading#write:plain": {
+      "key": "3bb374ef924f1572",
+      "exit": 0,
+      "stdout": "H[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:commonmark": {
+      "key": "2024e0babe65db91",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:commonmark_x": {
+      "key": "e16dc29eb3df58d0",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:gfm": {
+      "key": "777798c00f3f48c0",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:markdown": {
+      "key": "92a7de92b6c66dea",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:markdown-footnotes": {
+      "key": "3f9e913cfaf20b50",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:markdown_mmd": {
+      "key": "191407696978a927",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:markdown_phpextra": {
+      "key": "6c2124f4d54564f6",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:markdown_strict": {
+      "key": "846948e74d48cf03",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#e2e:plain": {
+      "key": "be9b037fc731f7aa",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#read": {
+      "key": "41aaba28b3e53899",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"item\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "note-in-list#write:commonmark": {
+      "key": "d76522aabcddbeea",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:commonmark_x": {
+      "key": "4d9b3f01803764d5",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:gfm": {
+      "key": "34cbfc0bdc8194e5",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:markdown": {
+      "key": "44177ad10a17e91f",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:markdown-footnotes": {
+      "key": "6d3cd5f444fcb455",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:markdown_mmd": {
+      "key": "0915f3c110c72478",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:markdown_phpextra": {
+      "key": "faee1c96b2471503",
+      "exit": 0,
+      "stdout": "- item[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:markdown_strict": {
+      "key": "9d985008798d239c",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-list#write:plain": {
+      "key": "9504a42d9f849a5f",
+      "exit": 0,
+      "stdout": "- item[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:commonmark": {
+      "key": "9ab963e0adb7f5f8",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:commonmark_x": {
+      "key": "2a43f7705f676817",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:gfm": {
+      "key": "0d22ffc53fa0c067",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:markdown": {
+      "key": "e492d974912f5551",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:markdown-footnotes": {
+      "key": "eb3641648e78f397",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:markdown_mmd": {
+      "key": "7dca1705c0427cc6",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:markdown_phpextra": {
+      "key": "7958e008d6a72d85",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:markdown_strict": {
+      "key": "69da0043f1045f1a",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#e2e:plain": {
+      "key": "3e814ef32ac21911",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#read": {
+      "key": "e739a320b1da5f40",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-in-note#write:commonmark": {
+      "key": "f00dd108a5569831",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:commonmark_x": {
+      "key": "a7d917a97b7566a8",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:gfm": {
+      "key": "72872362d9de8a98",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:markdown": {
+      "key": "481463a4ad7de966",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:markdown-footnotes": {
+      "key": "9518419576457128",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:markdown_mmd": {
+      "key": "0ace8a8290a82373",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:markdown_phpextra": {
+      "key": "07aec28b4fb85252",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: b[^2]\n\n[^2]: c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:markdown_strict": {
+      "key": "f69cc64ad14b660f",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-note#write:plain": {
+      "key": "d182e3ca1fabe4a6",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] b[2]\n\n[2] c\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:commonmark": {
+      "key": "7b118f1019d11eea",
+      "exit": 0,
+      "stdout": "> q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:commonmark_x": {
+      "key": "730eb59007af9c83",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:gfm": {
+      "key": "765875e82d6eb3f3",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:markdown": {
+      "key": "5dcdd9ae7561adf9",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:markdown-footnotes": {
+      "key": "1396e16fa98be303",
+      "exit": 0,
+      "stdout": "> q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:markdown_mmd": {
+      "key": "dea5f69f50ef6054",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:markdown_phpextra": {
+      "key": "95f457c884b386b5",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:markdown_strict": {
+      "key": "eef0dd1cc3801d00",
+      "exit": 0,
+      "stdout": "> q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#e2e:plain": {
+      "key": "620e5b86615696b9",
+      "exit": 0,
+      "stdout": "  q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#read": {
+      "key": "6c944c4037b782e2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:commonmark": {
+      "key": "32853b4b5b2e4777",
+      "exit": 0,
+      "stdout": "> q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:commonmark_x": {
+      "key": "3d303a6f4d6f47c4",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:gfm": {
+      "key": "60bc2d26bafadd94",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:markdown": {
+      "key": "f18613601f364bd2",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:markdown-footnotes": {
+      "key": "e0d9476f56bb1344",
+      "exit": 0,
+      "stdout": "> q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:markdown_mmd": {
+      "key": "9b577fc1662a5351",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:markdown_phpextra": {
+      "key": "b8d6fcd7c91be106",
+      "exit": 0,
+      "stdout": "> q[^1]\n\n[^1]: n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:markdown_strict": {
+      "key": "1281b180e1df3205",
+      "exit": 0,
+      "stdout": "> q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-in-quote#write:plain": {
+      "key": "7d23a334db3e8312",
+      "exit": 0,
+      "stdout": "  q[1]\n\n[1] n\n",
+      "stderr": ""
+    },
+    "note-list#e2e:commonmark": {
+      "key": "73147f0d3377606a",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:commonmark_x": {
+      "key": "d4b0ae4dcde4df95",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:gfm": {
+      "key": "5f785212eeb5c985",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:markdown": {
+      "key": "f5a2116e42ffe653",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:markdown-footnotes": {
+      "key": "ff46f597708a5315",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:markdown_mmd": {
+      "key": "43e438f4c01d60fc",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:markdown_phpextra": {
+      "key": "92f062f68e009f27",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:markdown_strict": {
+      "key": "6a958ae2c880ac50",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#e2e:plain": {
+      "key": "ac167d982ba67913",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#read": {
+      "key": "bd75af16ab607062",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"i\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"j\"}]}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-list#write:commonmark": {
+      "key": "3392a069e79c672b",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#write:commonmark_x": {
+      "key": "34f2e74fadf710d6",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#write:gfm": {
+      "key": "6c44d2869b48dc26",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#write:markdown": {
+      "key": "60847c4d51d8c5f0",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#write:markdown-footnotes": {
+      "key": "37c1896f0d1a5356",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#write:markdown_mmd": {
+      "key": "512a6845144c3b99",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#write:markdown_phpextra": {
+      "key": "21993d42b6b904fc",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]:\n    - i\n    - j\n",
+      "stderr": ""
+    },
+    "note-list#write:markdown_strict": {
+      "key": "48561af9d999c5c5",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-list#write:plain": {
+      "key": "a733076107eef430",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1]\n- i\n- j\n",
+      "stderr": ""
+    },
+    "note-long#e2e:commonmark": {
+      "key": "9fd15bf4d756c0e9",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:commonmark_x": {
+      "key": "483dcc4d8c6630b2",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:gfm": {
+      "key": "06242a607bd026e2",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:markdown": {
+      "key": "22e5258219904a60",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:markdown-footnotes": {
+      "key": "2eeb5750ad11ec32",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:markdown_mmd": {
+      "key": "1cf013b5a66de803",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:markdown_phpextra": {
+      "key": "dd903a42bd5bb2fc",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:markdown_strict": {
+      "key": "996d0a3b38a8eb4f",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#e2e:plain": {
+      "key": "5a796a172fabc820",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#read": {
+      "key": "f1401b750069ab61",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lorem\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ipsum\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dolor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"amet\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"consectetur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"adipiscing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"elit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"do\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"eiusmod\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tempor\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"incididunt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ut\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"labore\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-long#write:commonmark": {
+      "key": "2832704b56342c8e",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#write:commonmark_x": {
+      "key": "c8444eaa7e8d98e7",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#write:gfm": {
+      "key": "dd2059dc76eba277",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#write:markdown": {
+      "key": "2d690b5249702c49",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#write:markdown-footnotes": {
+      "key": "6ce304fb025d3367",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#write:markdown_mmd": {
+      "key": "4b0b98ef8dde36dc",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#write:markdown_phpextra": {
+      "key": "a58cb6925f80f22d",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: lorem ipsum dolor sit amet consectetur adipiscing elit sed do\n    eiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\n    consectetur adipiscing elit sed do eiusmod tempor incididunt ut\n    labore\n",
+      "stderr": ""
+    },
+    "note-long#write:markdown_strict": {
+      "key": "5b9cb7675c631d00",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-long#write:plain": {
+      "key": "2aef2b042a682389",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] lorem ipsum dolor sit amet consectetur adipiscing elit sed do\neiusmod tempor incididunt ut labore lorem ipsum dolor sit amet\nconsectetur adipiscing elit sed do eiusmod tempor incididunt ut labore\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:commonmark": {
+      "key": "07fb9f3cef0766f6",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:commonmark_x": {
+      "key": "1038a0c5cf11db9b",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:gfm": {
+      "key": "0fb7f448d484102b",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:markdown": {
+      "key": "95f4affa06e8dcc1",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:markdown-footnotes": {
+      "key": "4223f007d71bc21b",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:markdown_mmd": {
+      "key": "c900c3cb8a8ad6c8",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:markdown_phpextra": {
+      "key": "af8c9274c82ce17d",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:markdown_strict": {
+      "key": "10c13bc90bbb35c4",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#e2e:plain": {
+      "key": "a3f5842d9310e701",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#read": {
+      "key": "458051470329b91e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"p1\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"p2\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:commonmark": {
+      "key": "0a214d5ace1caf2f",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:commonmark_x": {
+      "key": "bc07c907457e2768",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:gfm": {
+      "key": "cabed48168479598",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:markdown": {
+      "key": "3a48861042dadb4e",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:markdown-footnotes": {
+      "key": "98c5f63aee50d2e8",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:markdown_mmd": {
+      "key": "6683becc6b4736e9",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:markdown_phpextra": {
+      "key": "d988363ef9417442",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: p1\n\n    p2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:markdown_strict": {
+      "key": "5ad65fa20c7387fd",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-multi-para#write:plain": {
+      "key": "f0dc27904b76040e",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] p1\n\np2\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:commonmark": {
+      "key": "3617ca896822eed5",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:commonmark_x": {
+      "key": "f1910f5f28ef1c6a",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:gfm": {
+      "key": "f747ef72d456b8da",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:markdown": {
+      "key": "b6c0bea024776154",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:markdown-footnotes": {
+      "key": "3f71b227e18f63ea",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:markdown_mmd": {
+      "key": "8989021e20dd610b",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:markdown_phpextra": {
+      "key": "c1984833a8265198",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:markdown_strict": {
+      "key": "a2a5fc755fa6966f",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#e2e:plain": {
+      "key": "fab25951b96e7f94",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#read": {
+      "key": "a1b8c82f4d08563d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"bare\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-plain#write:commonmark": {
+      "key": "b69d69c4581ac53e",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:commonmark_x": {
+      "key": "52e9c6009f595b63",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:gfm": {
+      "key": "df86bba63e78ebf3",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:markdown": {
+      "key": "9498ffc272502581",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:markdown-footnotes": {
+      "key": "47e5e11257b2d9e3",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:markdown_mmd": {
+      "key": "0ade659d41b7c730",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:markdown_phpextra": {
+      "key": "43526615a2c5f425",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:markdown_strict": {
+      "key": "ebb0c48353779824",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-plain#write:plain": {
+      "key": "97a4ae3c4b815841",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] bare\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:commonmark": {
+      "key": "937e141bd33285e8",
+      "exit": 0,
+      "stdout": "# A\n\nx[1]\n\n# B\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:commonmark_x": {
+      "key": "ea0ad53a2d9fae01",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:gfm": {
+      "key": "1debc2ca0fd5eef1",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:markdown": {
+      "key": "4d3c92cd97568a3b",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:markdown-footnotes": {
+      "key": "a5819baa1f889181",
+      "exit": 0,
+      "stdout": "# A\n\nx[1]\n\n# B\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:markdown_mmd": {
+      "key": "e4edcc28b38c81ce",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:markdown_phpextra": {
+      "key": "fc59a79ce8a6037f",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:markdown_strict": {
+      "key": "f39d1d1d052ab882",
+      "exit": 0,
+      "stdout": "# A\n\nx[1]\n\n# B\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#e2e:plain": {
+      "key": "99cac19a7af51b7b",
+      "exit": 0,
+      "stdout": "A\n\nx[1]\n\nB\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#read": {
+      "key": "19c42d06f8b7aac0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n1\"}]}]}]},{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"B\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n2\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-sections#write:commonmark": {
+      "key": "192b8ed582af8fe5",
+      "exit": 0,
+      "stdout": "# A\n\nx[1]\n\n# B\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:commonmark_x": {
+      "key": "8a121c7b296d6842",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:gfm": {
+      "key": "faefdc3d727e4492",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:markdown": {
+      "key": "269edf988c8596e4",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:markdown-footnotes": {
+      "key": "fdc8ccb33827fac2",
+      "exit": 0,
+      "stdout": "# A\n\nx[1]\n\n# B\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:markdown_mmd": {
+      "key": "1d914015038ffa6b",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:markdown_phpextra": {
+      "key": "af7c77e6f8c93300",
+      "exit": 0,
+      "stdout": "# A\n\nx[^1]\n\n# B\n\ny[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:markdown_strict": {
+      "key": "a73d7546723db727",
+      "exit": 0,
+      "stdout": "# A\n\nx[1]\n\n# B\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-sections#write:plain": {
+      "key": "9e4e4ae5e58135a4",
+      "exit": 0,
+      "stdout": "A\n\nx[1]\n\nB\n\ny[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:commonmark": {
+      "key": "1764a8ebb14e2150",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:commonmark_x": {
+      "key": "5f9278e6e0965a2f",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:gfm": {
+      "key": "824ef03662b26bdf",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:markdown": {
+      "key": "1f9b1a63b2ccc519",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:markdown-footnotes": {
+      "key": "735f73cdf8ae95af",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:markdown_mmd": {
+      "key": "3031245d42fef386",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:markdown_phpextra": {
+      "key": "07b9f2060ad8f2bd",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:markdown_strict": {
+      "key": "5c90db3765ed96aa",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#e2e:plain": {
+      "key": "c998b4b9cfff7fd9",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] # h\n",
+      "stderr": ""
+    },
+    "note-start-special#read": {
+      "key": "cc5ad968fac66fd8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"#\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"h\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-start-special#write:commonmark": {
+      "key": "01860858721e17f9",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:commonmark_x": {
+      "key": "dc2a490fb5b26c38",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:gfm": {
+      "key": "d59940ccc80a2048",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:markdown": {
+      "key": "a417d5be71e38f7e",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:markdown-footnotes": {
+      "key": "99b41fbda6df86b8",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:markdown_mmd": {
+      "key": "edd82792bc3a272b",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:markdown_phpextra": {
+      "key": "eb3e5663019e442a",
+      "exit": 0,
+      "stdout": "a[^1]\n\n[^1]: \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:markdown_strict": {
+      "key": "38d0cae7c47ec3a7",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] \\# h\n",
+      "stderr": ""
+    },
+    "note-start-special#write:plain": {
+      "key": "07da78b5376418be",
+      "exit": 0,
+      "stdout": "a[1]\n\n[1] # h\n",
+      "stderr": ""
+    },
+    "note-two#e2e:commonmark": {
+      "key": "9c1c1ab68f5610c4",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:commonmark_x": {
+      "key": "7b889ac8c4711673",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:gfm": {
+      "key": "d4a8e1d26e6d02c3",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:markdown": {
+      "key": "77564277fb48e8ed",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:markdown-footnotes": {
+      "key": "a3cbe6fc8034d9f3",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:markdown_mmd": {
+      "key": "f70864031f495e92",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:markdown_phpextra": {
+      "key": "e06d03e55b8b3d11",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:markdown_strict": {
+      "key": "179c7f08eeed66d6",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#e2e:plain": {
+      "key": "b6167e54138e1fad",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#read": {
+      "key": "458f0984a1708eac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n1\"}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"n2\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "note-two#write:commonmark": {
+      "key": "cca4910cb22ccbd5",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#write:commonmark_x": {
+      "key": "b1962f945354cf8c",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#write:gfm": {
+      "key": "e247e800f0a9dd3c",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#write:markdown": {
+      "key": "4d0af783d11056fa",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#write:markdown-footnotes": {
+      "key": "dfb42b7c60fa020c",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#write:markdown_mmd": {
+      "key": "4a211a1b73529fd7",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#write:markdown_phpextra": {
+      "key": "eb3238048bf502a6",
+      "exit": 0,
+      "stdout": "a[^1] b[^2]\n\n[^1]: n1\n\n[^2]: n2\n",
+      "stderr": ""
+    },
+    "note-two#write:markdown_strict": {
+      "key": "3d88f179b3b6c1a3",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    },
+    "note-two#write:plain": {
+      "key": "d0f4a45aefa6023a",
+      "exit": 0,
+      "stdout": "a[1] b[2]\n\n[1] n1\n\n[2] n2\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,3965 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "display-alone#e2e:commonmark": {
+      "key": "d20c6ac953ecbe2b",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:commonmark_x": {
+      "key": "e0c61985949961b2",
+      "exit": 0,
+      "stdout": "$$\\int f$$\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:gfm": {
+      "key": "32d0b70f6e4cdb42",
+      "exit": 0,
+      "stdout": "``` math\n\\int f\n```\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "6822f1e5d5d95549",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:gfm-tex_math_gfm": {
+      "key": "766a5da364e9cfc5",
+      "exit": 0,
+      "stdout": "$$\\int f$$\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:markdown": {
+      "key": "1c15854e8d96d504",
+      "exit": 0,
+      "stdout": "$$\\int f$$\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:markdown-tex_math_dollars": {
+      "key": "9a7baa787802a2fc",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "ee10901bc26bcd6e",
+      "exit": 0,
+      "stdout": "\\\\[\\int f\\\\]\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "b64f3bcc638d5e27",
+      "exit": 0,
+      "stdout": "\\[\\int f\\]\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:markdown_strict": {
+      "key": "c6ff36b281c0cf65",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#e2e:plain": {
+      "key": "6dd2c8e84ff17744",
+      "exit": 0,
+      "stdout": "∫f\n",
+      "stderr": ""
+    },
+    "display-alone#read": {
+      "key": "05fac5c4eace8a83",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\int f\"]}]}]}\n",
+      "stderr": ""
+    },
+    "display-alone#write:commonmark": {
+      "key": "ffa525ef456fee94",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#write:commonmark_x": {
+      "key": "948869e2c0cd2b57",
+      "exit": 0,
+      "stdout": "$$\\int f$$\n",
+      "stderr": ""
+    },
+    "display-alone#write:gfm": {
+      "key": "edf04472293d2507",
+      "exit": 0,
+      "stdout": "``` math\n\\int f\n```\n",
+      "stderr": ""
+    },
+    "display-alone#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "685b59e05a73a132",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#write:gfm-tex_math_gfm": {
+      "key": "0b3c569172fe1026",
+      "exit": 0,
+      "stdout": "$$\\int f$$\n",
+      "stderr": ""
+    },
+    "display-alone#write:markdown": {
+      "key": "ef0ea2363c556f71",
+      "exit": 0,
+      "stdout": "$$\\int f$$\n",
+      "stderr": ""
+    },
+    "display-alone#write:markdown-tex_math_dollars": {
+      "key": "183b9386f3243ce9",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "cefe904f3c6089ab",
+      "exit": 0,
+      "stdout": "\\\\[\\int f\\\\]\n",
+      "stderr": ""
+    },
+    "display-alone#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "50e00bfe350807c8",
+      "exit": 0,
+      "stdout": "\\[\\int f\\]\n",
+      "stderr": ""
+    },
+    "display-alone#write:markdown_strict": {
+      "key": "6d27d1783513be06",
+      "exit": 0,
+      "stdout": "∫*f*\n",
+      "stderr": ""
+    },
+    "display-alone#write:plain": {
+      "key": "f625958bc9e1f931",
+      "exit": 0,
+      "stdout": "∫f\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:commonmark": {
+      "key": "f79f33ecc4360caf",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#e2e:commonmark_x": {
+      "key": "f21f98c28d98d75a",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:gfm": {
+      "key": "04b89f7449f3798a",
+      "exit": 0,
+      "stdout": "``` math\na $ b\n```\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "06e4e0f5e1eacffd",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#e2e:gfm-tex_math_gfm": {
+      "key": "b9d904fba7200c79",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:markdown": {
+      "key": "5b23a97aa6bcb2e4",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:markdown-tex_math_dollars": {
+      "key": "52bd5bc01fd2b45c",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "52d3a59f1c4631d6",
+      "exit": 0,
+      "stdout": "\\\\[a $ b\\\\]\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "1590a46ca138aecb",
+      "exit": 0,
+      "stdout": "\\[a $ b\\]\n",
+      "stderr": ""
+    },
+    "display-dollar#e2e:markdown_strict": {
+      "key": "20068290d4002c99",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#e2e:plain": {
+      "key": "a419527eb5ca0b24",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#read": {
+      "key": "68f559793a228927",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a $ b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "display-dollar#write:commonmark": {
+      "key": "fd30a033cf0cfd7c",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#write:commonmark_x": {
+      "key": "f5da7fc641fa48d3",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": ""
+    },
+    "display-dollar#write:gfm": {
+      "key": "12c4e3882b4e8ae3",
+      "exit": 0,
+      "stdout": "``` math\na $ b\n```\n",
+      "stderr": ""
+    },
+    "display-dollar#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "2054436f5c251072",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#write:gfm-tex_math_gfm": {
+      "key": "06f44977175981e6",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": ""
+    },
+    "display-dollar#write:markdown": {
+      "key": "f2607b79bf80b94d",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": ""
+    },
+    "display-dollar#write:markdown-tex_math_dollars": {
+      "key": "de95d388b3eb01e5",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "5e9772596a57bed7",
+      "exit": 0,
+      "stdout": "\\\\[a $ b\\\\]\n",
+      "stderr": ""
+    },
+    "display-dollar#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "a954286ce6ff8a10",
+      "exit": 0,
+      "stdout": "\\[a $ b\\]\n",
+      "stderr": ""
+    },
+    "display-dollar#write:markdown_strict": {
+      "key": "10eb1c7a7b130bc6",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-dollar#write:plain": {
+      "key": "abad7d0c1039620d",
+      "exit": 0,
+      "stdout": "$$a $ b$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "display-in-para#e2e:commonmark": {
+      "key": "9c16ca428d6124bd",
+      "exit": 0,
+      "stdout": "a\n*x*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:commonmark_x": {
+      "key": "8c33f9b839f74f98",
+      "exit": 0,
+      "stdout": "a $$x^2$$ b\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:gfm": {
+      "key": "40f4c57ab54930a8",
+      "exit": 0,
+      "stdout": "a\n``` math\nx^2\n```\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "f4f904bf113b5d9f",
+      "exit": 0,
+      "stdout": "a\n*x*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:gfm-tex_math_gfm": {
+      "key": "e045477a07bd907b",
+      "exit": 0,
+      "stdout": "a $$x^2$$ b\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:markdown": {
+      "key": "ff609b27f4c4ddc6",
+      "exit": 0,
+      "stdout": "a $$x^2$$ b\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:markdown-tex_math_dollars": {
+      "key": "89545e287b5a2c1e",
+      "exit": 0,
+      "stdout": "a\n*x*^2^\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "1ea652e949f9bec4",
+      "exit": 0,
+      "stdout": "a \\\\[x^2\\\\] b\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "68f10b3422383979",
+      "exit": 0,
+      "stdout": "a \\[x^2\\] b\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:markdown_strict": {
+      "key": "0bd8978d3f3b98db",
+      "exit": 0,
+      "stdout": "a\n*x*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#e2e:plain": {
+      "key": "186d5d1b156d0c86",
+      "exit": 0,
+      "stdout": "a\nx²\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#read": {
+      "key": "c8b0527a0088b015",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"x^2\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "display-in-para#write:commonmark": {
+      "key": "0c35f5aac5f0c032",
+      "exit": 0,
+      "stdout": "a\n*x*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#write:commonmark_x": {
+      "key": "9adedae49a8afd09",
+      "exit": 0,
+      "stdout": "a $$x^2$$ b\n",
+      "stderr": ""
+    },
+    "display-in-para#write:gfm": {
+      "key": "e9ef6357ea58dbf9",
+      "exit": 0,
+      "stdout": "a\n``` math\nx^2\n```\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "2144c74609199fec",
+      "exit": 0,
+      "stdout": "a\n*x*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#write:gfm-tex_math_gfm": {
+      "key": "e8f3e45c0997f100",
+      "exit": 0,
+      "stdout": "a $$x^2$$ b\n",
+      "stderr": ""
+    },
+    "display-in-para#write:markdown": {
+      "key": "df1804405968e007",
+      "exit": 0,
+      "stdout": "a $$x^2$$ b\n",
+      "stderr": ""
+    },
+    "display-in-para#write:markdown-tex_math_dollars": {
+      "key": "7c7a3501f7f5b07f",
+      "exit": 0,
+      "stdout": "a\n*x*^2^\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "7917abeb3e8e06cd",
+      "exit": 0,
+      "stdout": "a \\\\[x^2\\\\] b\n",
+      "stderr": ""
+    },
+    "display-in-para#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "c6d53599ca7990f6",
+      "exit": 0,
+      "stdout": "a \\[x^2\\] b\n",
+      "stderr": ""
+    },
+    "display-in-para#write:markdown_strict": {
+      "key": "2780738f64d30820",
+      "exit": 0,
+      "stdout": "a\n*x*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "display-in-para#write:plain": {
+      "key": "5052cbbfc47a6647",
+      "exit": 0,
+      "stdout": "a\nx²\nb\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:commonmark": {
+      "key": "eee38fd1a6062856",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#e2e:commonmark_x": {
+      "key": "6517e43226ba8d5d",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:gfm": {
+      "key": "00d5fedd4a0bf98d",
+      "exit": 0,
+      "stdout": "``` math\na\\\\\nb\n```\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "e693d1ad0c717698",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#e2e:gfm-tex_math_gfm": {
+      "key": "4e08fd2deacdd534",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:markdown": {
+      "key": "3fc721561a3f9ab3",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:markdown-tex_math_dollars": {
+      "key": "7aa6e5add0c83f1b",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "2056a2bc4bbc96f9",
+      "exit": 0,
+      "stdout": "\\\\[a\\\\\nb\\\\]\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "3b149648b4d71162",
+      "exit": 0,
+      "stdout": "\\[a\\\\\nb\\]\n",
+      "stderr": ""
+    },
+    "display-multiline#e2e:markdown_strict": {
+      "key": "eafb9a8d2a693a14",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#e2e:plain": {
+      "key": "dfe0658abe116a73",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#read": {
+      "key": "f4c22d2f919c71de",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\\\\\\\\\\nb\"]}]}]}\n",
+      "stderr": ""
+    },
+    "display-multiline#write:commonmark": {
+      "key": "80d9931cd816f577",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#write:commonmark_x": {
+      "key": "84517f5fc5ac5fe6",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": ""
+    },
+    "display-multiline#write:gfm": {
+      "key": "68153abae1cc91b6",
+      "exit": 0,
+      "stdout": "``` math\na\\\\\nb\n```\n",
+      "stderr": ""
+    },
+    "display-multiline#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "0d7e804725422b45",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#write:gfm-tex_math_gfm": {
+      "key": "495a2d03bd8ef5e1",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": ""
+    },
+    "display-multiline#write:markdown": {
+      "key": "f6198b25e4c6d450",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": ""
+    },
+    "display-multiline#write:markdown-tex_math_dollars": {
+      "key": "eba05f9c32601a78",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "bd5c246c42ef3542",
+      "exit": 0,
+      "stdout": "\\\\[a\\\\\nb\\\\]\n",
+      "stderr": ""
+    },
+    "display-multiline#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "0674b6b584292023",
+      "exit": 0,
+      "stdout": "\\[a\\\\\nb\\]\n",
+      "stderr": ""
+    },
+    "display-multiline#write:markdown_strict": {
+      "key": "6e3bffff2cf21481",
+      "exit": 0,
+      "stdout": "$$a\\\\\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "display-multiline#write:plain": {
+      "key": "6c7f365e7ab72090",
+      "exit": 0,
+      "stdout": "$$a\\\\\nb$$\n",
+      "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "inline#e2e:commonmark": {
+      "key": "c993a36e993a7a33",
+      "exit": 0,
+      "stdout": "a *x*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "inline#e2e:commonmark_x": {
+      "key": "419769c0a0f78fec",
+      "exit": 0,
+      "stdout": "a $x^2$ b\n",
+      "stderr": ""
+    },
+    "inline#e2e:gfm": {
+      "key": "008e99657ff6bf3c",
+      "exit": 0,
+      "stdout": "a $`x^2`$ b\n",
+      "stderr": ""
+    },
+    "inline#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "a38955cae046a371",
+      "exit": 0,
+      "stdout": "a *x*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "inline#e2e:gfm-tex_math_gfm": {
+      "key": "396ae2227b65d335",
+      "exit": 0,
+      "stdout": "a $x^2$ b\n",
+      "stderr": ""
+    },
+    "inline#e2e:markdown": {
+      "key": "25d1bd1f1d67c42e",
+      "exit": 0,
+      "stdout": "a $x^2$ b\n",
+      "stderr": ""
+    },
+    "inline#e2e:markdown-tex_math_dollars": {
+      "key": "134bb76fb014bd76",
+      "exit": 0,
+      "stdout": "a *x*^2^ b\n",
+      "stderr": ""
+    },
+    "inline#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "9d64e44889949990",
+      "exit": 0,
+      "stdout": "a \\\\(x^2\\\\) b\n",
+      "stderr": ""
+    },
+    "inline#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "9a9a1d4f9441b197",
+      "exit": 0,
+      "stdout": "a \\(x^2\\) b\n",
+      "stderr": ""
+    },
+    "inline#e2e:markdown_strict": {
+      "key": "8f9d2136bea65515",
+      "exit": 0,
+      "stdout": "a *x*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "inline#e2e:plain": {
+      "key": "1ccea82f5f631dee",
+      "exit": 0,
+      "stdout": "a x² b\n",
+      "stderr": ""
+    },
+    "inline#read": {
+      "key": "abfc66e27417ba9b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline#write:commonmark": {
+      "key": "ce0b95f190d8c2bc",
+      "exit": 0,
+      "stdout": "a *x*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "inline#write:commonmark_x": {
+      "key": "bc482e465321afa5",
+      "exit": 0,
+      "stdout": "a $x^2$ b\n",
+      "stderr": ""
+    },
+    "inline#write:gfm": {
+      "key": "b53797951b547d95",
+      "exit": 0,
+      "stdout": "a $`x^2`$ b\n",
+      "stderr": ""
+    },
+    "inline#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "2226628aa9e02e2e",
+      "exit": 0,
+      "stdout": "a *x*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "inline#write:gfm-tex_math_gfm": {
+      "key": "bfe45b65cfc2bbba",
+      "exit": 0,
+      "stdout": "a $x^2$ b\n",
+      "stderr": ""
+    },
+    "inline#write:markdown": {
+      "key": "a024c8de936faa4b",
+      "exit": 0,
+      "stdout": "a $x^2$ b\n",
+      "stderr": ""
+    },
+    "inline#write:markdown-tex_math_dollars": {
+      "key": "a459ada9879fd1d3",
+      "exit": 0,
+      "stdout": "a *x*^2^ b\n",
+      "stderr": ""
+    },
+    "inline#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "0de3617235a89c81",
+      "exit": 0,
+      "stdout": "a \\\\(x^2\\\\) b\n",
+      "stderr": ""
+    },
+    "inline#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "3d18d79dd73a2918",
+      "exit": 0,
+      "stdout": "a \\(x^2\\) b\n",
+      "stderr": ""
+    },
+    "inline#write:markdown_strict": {
+      "key": "3665ad9c0541bc5a",
+      "exit": 0,
+      "stdout": "a *x*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "inline#write:plain": {
+      "key": "3069c84e756d858b",
+      "exit": 0,
+      "stdout": "a x² b\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:commonmark": {
+      "key": "750ab0dff903a89f",
+      "exit": 0,
+      "stdout": "*x*<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:commonmark_x": {
+      "key": "e3c5136bba1a0aac",
+      "exit": 0,
+      "stdout": "$x$`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:gfm": {
+      "key": "db741b0979a90cfc",
+      "exit": 0,
+      "stdout": "$`x`$<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "84d6c62a3f88d9f5",
+      "exit": 0,
+      "stdout": "*x*<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:gfm-tex_math_gfm": {
+      "key": "65671dec08b23a39",
+      "exit": 0,
+      "stdout": "$x$<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:markdown": {
+      "key": "036163d21bf474ce",
+      "exit": 0,
+      "stdout": "$x$`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:markdown-tex_math_dollars": {
+      "key": "aaf0b0db5657a5f6",
+      "exit": 0,
+      "stdout": "*x*`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "db079da5d61ec850",
+      "exit": 0,
+      "stdout": "\\\\(x\\\\)`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "0d7641d7c0874e03",
+      "exit": 0,
+      "stdout": "\\(x\\)`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:markdown_strict": {
+      "key": "eee00da9ddaa3bd9",
+      "exit": 0,
+      "stdout": "*x*<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#e2e:plain": {
+      "key": "c92481b50536468e",
+      "exit": 0,
+      "stdout": "x5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#read": {
+      "key": "247c68407ddc5207",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x\"]},{\"t\":\"Str\",\"c\":\"5\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:commonmark": {
+      "key": "a27ac39fb8a6c488",
+      "exit": 0,
+      "stdout": "*x*<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:commonmark_x": {
+      "key": "fddaefd2258e4805",
+      "exit": 0,
+      "stdout": "$x$`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:gfm": {
+      "key": "05d64dff18e6cc35",
+      "exit": 0,
+      "stdout": "$`x`$<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "ab0dde45844fd56a",
+      "exit": 0,
+      "stdout": "*x*<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:gfm-tex_math_gfm": {
+      "key": "b385cace1c5719be",
+      "exit": 0,
+      "stdout": "$x$<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:markdown": {
+      "key": "cbf0dab33500ff1b",
+      "exit": 0,
+      "stdout": "$x$`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:markdown-tex_math_dollars": {
+      "key": "c34697789714e3d3",
+      "exit": 0,
+      "stdout": "*x*`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "0b2cfb17c4019c19",
+      "exit": 0,
+      "stdout": "\\\\(x\\\\)`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "27cefde74b461a3c",
+      "exit": 0,
+      "stdout": "\\(x\\)`<!-- -->`{=html}5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:markdown_strict": {
+      "key": "303b8dbc8710239e",
+      "exit": 0,
+      "stdout": "*x*<!-- -->5\n",
+      "stderr": ""
+    },
+    "inline-adjacent-digit#write:plain": {
+      "key": "71b3b6030ead695b",
+      "exit": 0,
+      "stdout": "x5\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:commonmark": {
+      "key": "abe7d8af3314ad92",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#e2e:commonmark_x": {
+      "key": "05fd5bf14e475de7",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:gfm": {
+      "key": "0021e6a3d31df457",
+      "exit": 0,
+      "stdout": "$`\\frac{a}{b}`$\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "677db2cd30911e0c",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#e2e:gfm-tex_math_gfm": {
+      "key": "e74b6d4acd1b5fc0",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:markdown": {
+      "key": "4dd88bd09fd8c915",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:markdown-tex_math_dollars": {
+      "key": "32e423a5b227a1ed",
+      "exit": 0,
+      "stdout": "$\\\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "cecdb1b2bc0d265b",
+      "exit": 0,
+      "stdout": "\\\\(\\frac{a}{b}\\\\)\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "36061daf0f2835d6",
+      "exit": 0,
+      "stdout": "\\(\\frac{a}{b}\\)\n",
+      "stderr": ""
+    },
+    "inline-backslash#e2e:markdown_strict": {
+      "key": "ee52411d56694c60",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#e2e:plain": {
+      "key": "8daef8ff0c1c04d5",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#read": {
+      "key": "e954930c787a584a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\\\\frac{a}{b}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:commonmark": {
+      "key": "53422037068874ab",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#write:commonmark_x": {
+      "key": "120f2469f2447134",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:gfm": {
+      "key": "b076c68ebb21a844",
+      "exit": 0,
+      "stdout": "$`\\frac{a}{b}`$\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "02f4daeebbf63d15",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#write:gfm-tex_math_gfm": {
+      "key": "b714d34ae6f7a371",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:markdown": {
+      "key": "fb50a1d2402698aa",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:markdown-tex_math_dollars": {
+      "key": "9eb5e073829a6b22",
+      "exit": 0,
+      "stdout": "$\\\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "307ca47c74abc8a0",
+      "exit": 0,
+      "stdout": "\\\\(\\frac{a}{b}\\\\)\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "6372574bf6468757",
+      "exit": 0,
+      "stdout": "\\(\\frac{a}{b}\\)\n",
+      "stderr": ""
+    },
+    "inline-backslash#write:markdown_strict": {
+      "key": "7ac723faa6d65ad1",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backslash#write:plain": {
+      "key": "1ecd77f467ce5aea",
+      "exit": 0,
+      "stdout": "$\\frac{a}{b}$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\frac{a}{b}, rendering as TeX\n"
+    },
+    "inline-backtick#e2e:commonmark": {
+      "key": "38feb97d683126e9",
+      "exit": 0,
+      "stdout": "*a*‘*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:commonmark_x": {
+      "key": "c753dc647907e82e",
+      "exit": 0,
+      "stdout": "$a`b$\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:gfm": {
+      "key": "0f810ed26c89dede",
+      "exit": 0,
+      "stdout": "$`a`b`$\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "d7f37e5655d3a4b7",
+      "exit": 0,
+      "stdout": "*a*‘*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:gfm-tex_math_gfm": {
+      "key": "9b43139fd362600b",
+      "exit": 0,
+      "stdout": "$a`b$\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:markdown": {
+      "key": "2fabad752d44bd80",
+      "exit": 0,
+      "stdout": "$a`b$\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:markdown-tex_math_dollars": {
+      "key": "f02b6e722671ebd8",
+      "exit": 0,
+      "stdout": "*a*'*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "de476ef0a77c0802",
+      "exit": 0,
+      "stdout": "\\\\(a`b\\\\)\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "160c8d737fba1ccd",
+      "exit": 0,
+      "stdout": "\\(a`b\\)\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:markdown_strict": {
+      "key": "5573b30bf04d812b",
+      "exit": 0,
+      "stdout": "*a*‘*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#e2e:plain": {
+      "key": "93a2a4dfc1f90840",
+      "exit": 0,
+      "stdout": "a‘b\n",
+      "stderr": ""
+    },
+    "inline-backtick#read": {
+      "key": "f3042e6e88326f61",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a`b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:commonmark": {
+      "key": "396228619e2954ee",
+      "exit": 0,
+      "stdout": "*a*‘*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:commonmark_x": {
+      "key": "acc3a108e9c1b95b",
+      "exit": 0,
+      "stdout": "$a`b$\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:gfm": {
+      "key": "f0ffe5fb9457622b",
+      "exit": 0,
+      "stdout": "$`a`b`$\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "35c806c433ea2218",
+      "exit": 0,
+      "stdout": "*a*‘*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:gfm-tex_math_gfm": {
+      "key": "15b9d233ce385064",
+      "exit": 0,
+      "stdout": "$a`b$\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:markdown": {
+      "key": "c726072a0aede0c9",
+      "exit": 0,
+      "stdout": "$a`b$\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:markdown-tex_math_dollars": {
+      "key": "95a1847e9869abe1",
+      "exit": 0,
+      "stdout": "*a*'*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "c005eddc3a7870a7",
+      "exit": 0,
+      "stdout": "\\\\(a`b\\\\)\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "4f0438a286b2a49a",
+      "exit": 0,
+      "stdout": "\\(a`b\\)\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:markdown_strict": {
+      "key": "1b5516a2234ea344",
+      "exit": 0,
+      "stdout": "*a*‘*b*\n",
+      "stderr": ""
+    },
+    "inline-backtick#write:plain": {
+      "key": "0e3aadb34a36c709",
+      "exit": 0,
+      "stdout": "a‘b\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:commonmark": {
+      "key": "1df420a3e299dd2b",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#e2e:commonmark_x": {
+      "key": "61f467877d0ceca0",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:gfm": {
+      "key": "59825a03f394fa10",
+      "exit": 0,
+      "stdout": "$`a $ b`$\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "6ac6b550bd7eec9d",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#e2e:gfm-tex_math_gfm": {
+      "key": "26e2359417612fb9",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:markdown": {
+      "key": "2b6854cc4ca71536",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:markdown-tex_math_dollars": {
+      "key": "fad62d438d218cce",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "b570d0efdb21cb7c",
+      "exit": 0,
+      "stdout": "\\\\(a $ b\\\\)\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "cc64330a6639f077",
+      "exit": 0,
+      "stdout": "\\(a $ b\\)\n",
+      "stderr": ""
+    },
+    "inline-dollar#e2e:markdown_strict": {
+      "key": "4b1e81be4f732159",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#e2e:plain": {
+      "key": "10cef07bca11b776",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#read": {
+      "key": "ed14fd197cd1d663",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a $ b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:commonmark": {
+      "key": "62014d0535078b48",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#write:commonmark_x": {
+      "key": "f108558b67befe7d",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:gfm": {
+      "key": "04fa89acdfdae78d",
+      "exit": 0,
+      "stdout": "$`a $ b`$\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "7d22b2cd7f54afa6",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#write:gfm-tex_math_gfm": {
+      "key": "7d081afe6b5c50b2",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:markdown": {
+      "key": "12a88d31e4a5d697",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:markdown-tex_math_dollars": {
+      "key": "826e7a050093b79f",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "aff5bb2c47292d39",
+      "exit": 0,
+      "stdout": "\\\\(a $ b\\\\)\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "6f47919e14f59dc4",
+      "exit": 0,
+      "stdout": "\\(a $ b\\)\n",
+      "stderr": ""
+    },
+    "inline-dollar#write:markdown_strict": {
+      "key": "f849e4886d280992",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-dollar#write:plain": {
+      "key": "5ff5c6c8baba6757",
+      "exit": 0,
+      "stdout": "$a $ b$\n",
+      "stderr": "[WARNING] Could not convert TeX math a $ b, rendering as TeX:\n  a $ b\n    ^\n  unexpected '$'\n  expecting \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or end of input\n"
+    },
+    "inline-empty#e2e:commonmark": {
+      "key": "64655c00dc8134ef",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:commonmark_x": {
+      "key": "3594afc52f2da916",
+      "exit": 0,
+      "stdout": "e$$e\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:gfm": {
+      "key": "217d8a56752e4ea6",
+      "exit": 0,
+      "stdout": "e$``$e\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "b5d314b23e4ed5b9",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:gfm-tex_math_gfm": {
+      "key": "7e50d6c80b90ecad",
+      "exit": 0,
+      "stdout": "e$$e\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:markdown": {
+      "key": "1f49448f9f7d1de4",
+      "exit": 0,
+      "stdout": "e$$e\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:markdown-tex_math_dollars": {
+      "key": "e18103e4fec3547c",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "b8790c1d48c5cc3a",
+      "exit": 0,
+      "stdout": "e\\\\(\\\\)e\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "4467dbfea361af83",
+      "exit": 0,
+      "stdout": "e\\(\\)e\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:markdown_strict": {
+      "key": "ce00a706b7fe040d",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#e2e:plain": {
+      "key": "80fa7885b9447024",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#read": {
+      "key": "8234d1bd918b8887",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"e\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]},{\"t\":\"Str\",\"c\":\"e\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-empty#write:commonmark": {
+      "key": "06944846b3fcbc38",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#write:commonmark_x": {
+      "key": "db2df356c6a84a6b",
+      "exit": 0,
+      "stdout": "e$$e\n",
+      "stderr": ""
+    },
+    "inline-empty#write:gfm": {
+      "key": "9b060a1b687e91db",
+      "exit": 0,
+      "stdout": "e$``$e\n",
+      "stderr": ""
+    },
+    "inline-empty#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "3e1d57c1b64ae372",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#write:gfm-tex_math_gfm": {
+      "key": "968129dfaa5eb72e",
+      "exit": 0,
+      "stdout": "e$$e\n",
+      "stderr": ""
+    },
+    "inline-empty#write:markdown": {
+      "key": "8b6653c2e34bbb41",
+      "exit": 0,
+      "stdout": "e$$e\n",
+      "stderr": ""
+    },
+    "inline-empty#write:markdown-tex_math_dollars": {
+      "key": "48beae61ef63c1b9",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "1cd21ed7d01c2d37",
+      "exit": 0,
+      "stdout": "e\\\\(\\\\)e\n",
+      "stderr": ""
+    },
+    "inline-empty#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "9d778b3e0766b874",
+      "exit": 0,
+      "stdout": "e\\(\\)e\n",
+      "stderr": ""
+    },
+    "inline-empty#write:markdown_strict": {
+      "key": "c5eb9fbb363ce3ce",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-empty#write:plain": {
+      "key": "11216e86756d9c01",
+      "exit": 0,
+      "stdout": "ee\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:commonmark": {
+      "key": "d90151c6ccc9e9ae",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:commonmark_x": {
+      "key": "619aa7f6cf1b6d69",
+      "exit": 0,
+      "stdout": "$x$\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:gfm": {
+      "key": "556e023e3436f3f9",
+      "exit": 0,
+      "stdout": "$`x`$\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "0a4d72001a56e240",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:gfm-tex_math_gfm": {
+      "key": "e8638c451d011f84",
+      "exit": 0,
+      "stdout": "$x$\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:markdown": {
+      "key": "81b64e41f260ea47",
+      "exit": 0,
+      "stdout": "$x$\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:markdown-tex_math_dollars": {
+      "key": "230f8f1b312860af",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "7f1965bd03c7a5ed",
+      "exit": 0,
+      "stdout": "\\\\(x\\\\)\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "810eefb0e3dc12b2",
+      "exit": 0,
+      "stdout": "\\(x\\)\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:markdown_strict": {
+      "key": "ac9c8fd0ce3c0024",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#e2e:plain": {
+      "key": "239715874ce19307",
+      "exit": 0,
+      "stdout": "x\n",
+      "stderr": ""
+    },
+    "inline-spaces#read": {
+      "key": "b0b02184a0ef4ff6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" x \"]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:commonmark": {
+      "key": "3aded3e138dec2e7",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:commonmark_x": {
+      "key": "168fba8d023fb122",
+      "exit": 0,
+      "stdout": "$x$\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:gfm": {
+      "key": "a1371aa9350de452",
+      "exit": 0,
+      "stdout": "$`x`$\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "c62c430508676405",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:gfm-tex_math_gfm": {
+      "key": "f48267bfee84fea1",
+      "exit": 0,
+      "stdout": "$x$\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:markdown": {
+      "key": "81819c9cab03e71c",
+      "exit": 0,
+      "stdout": "$x$\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:markdown-tex_math_dollars": {
+      "key": "f5f450483c2de924",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "d21c8455257a073e",
+      "exit": 0,
+      "stdout": "\\\\(x\\\\)\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "cb634adcf09934d3",
+      "exit": 0,
+      "stdout": "\\(x\\)\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:markdown_strict": {
+      "key": "df1842f12762ec01",
+      "exit": 0,
+      "stdout": "*x*\n",
+      "stderr": ""
+    },
+    "inline-spaces#write:plain": {
+      "key": "09efb31f683fe55c",
+      "exit": 0,
+      "stdout": "x\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:commonmark": {
+      "key": "eae8a1395ef8d8d8",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:commonmark_x": {
+      "key": "500175ec7d755c9d",
+      "exit": 0,
+      "stdout": "*$x$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:gfm": {
+      "key": "9c355ac7dc9f342d",
+      "exit": 0,
+      "stdout": "*$`x`$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "3b3a43bfa1e07756",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:gfm-tex_math_gfm": {
+      "key": "99dfca2416e5ba42",
+      "exit": 0,
+      "stdout": "*$x$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:markdown": {
+      "key": "b72c18f6c50e363f",
+      "exit": 0,
+      "stdout": "*$x$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:markdown-tex_math_dollars": {
+      "key": "dcbf15439a5af1e7",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "0c24517303677ce9",
+      "exit": 0,
+      "stdout": "*\\\\(x\\\\)*\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "e039e9916b80af74",
+      "exit": 0,
+      "stdout": "*\\(x\\)*\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:markdown_strict": {
+      "key": "0074dddb64d73262",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#e2e:plain": {
+      "key": "5628eaaac465cdff",
+      "exit": 0,
+      "stdout": "x\n",
+      "stderr": ""
+    },
+    "math-in-emph#read": {
+      "key": "fd42c6b5703e52c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:commonmark": {
+      "key": "47a660e30d02cc51",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:commonmark_x": {
+      "key": "c9b88da328e26f7a",
+      "exit": 0,
+      "stdout": "*$x$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:gfm": {
+      "key": "cb3551d6119d8b6a",
+      "exit": 0,
+      "stdout": "*$`x`$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "f89303a180d72d67",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:gfm-tex_math_gfm": {
+      "key": "da73317940d9ce6b",
+      "exit": 0,
+      "stdout": "*$x$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:markdown": {
+      "key": "40732d4081e4915c",
+      "exit": 0,
+      "stdout": "*$x$*\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:markdown-tex_math_dollars": {
+      "key": "56c7eb998ed0dca4",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "7d0105ce63b68e9e",
+      "exit": 0,
+      "stdout": "*\\\\(x\\\\)*\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "6c7140dc09824eb5",
+      "exit": 0,
+      "stdout": "*\\(x\\)*\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:markdown_strict": {
+      "key": "35443c579877bb4b",
+      "exit": 0,
+      "stdout": "**x**\n",
+      "stderr": ""
+    },
+    "math-in-emph#write:plain": {
+      "key": "fc26019f95b6b89c",
+      "exit": 0,
+      "stdout": "x\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:commonmark": {
+      "key": "4c43691cf3efcf29",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:commonmark_x": {
+      "key": "daf3b44bf40a5ee8",
+      "exit": 0,
+      "stdout": "## H $y$\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:gfm": {
+      "key": "ad55f3a9ce1b91f8",
+      "exit": 0,
+      "stdout": "## H $`y`$\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "ae17413bfc0e190f",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:gfm-tex_math_gfm": {
+      "key": "3214ddf1aa3ef77b",
+      "exit": 0,
+      "stdout": "## H $y$\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:markdown": {
+      "key": "72228fccf8239a72",
+      "exit": 0,
+      "stdout": "## H $y$\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:markdown-tex_math_dollars": {
+      "key": "f6b7b8ed977ef30a",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "955ab5f0bbe935f4",
+      "exit": 0,
+      "stdout": "## H \\\\(y\\\\)\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "c4b1c156c38648b5",
+      "exit": 0,
+      "stdout": "## H \\(y\\)\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:markdown_strict": {
+      "key": "a792d66f8e2382db",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#e2e:plain": {
+      "key": "94a9cd7b86053832",
+      "exit": 0,
+      "stdout": "H y\n",
+      "stderr": ""
+    },
+    "math-in-heading#read": {
+      "key": "48585fc515989da1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"y\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:commonmark": {
+      "key": "61509bf1adf30b62",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:commonmark_x": {
+      "key": "c740ac6272d97bad",
+      "exit": 0,
+      "stdout": "## H $y$\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:gfm": {
+      "key": "108fb3afdfe5e31d",
+      "exit": 0,
+      "stdout": "## H $`y`$\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "faea6c60d437eaf0",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:gfm-tex_math_gfm": {
+      "key": "ddfc33eb99332134",
+      "exit": 0,
+      "stdout": "## H $y$\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:markdown": {
+      "key": "94102dc64429dd37",
+      "exit": 0,
+      "stdout": "## H $y$\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:markdown-tex_math_dollars": {
+      "key": "2be5ab066434b40f",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "10c87f96505b2031",
+      "exit": 0,
+      "stdout": "## H \\\\(y\\\\)\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "f07aeee6e22ec966",
+      "exit": 0,
+      "stdout": "## H \\(y\\)\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:markdown_strict": {
+      "key": "64d61df6e01cd754",
+      "exit": 0,
+      "stdout": "## H *y*\n",
+      "stderr": ""
+    },
+    "math-in-heading#write:plain": {
+      "key": "f45b298fdfb6da77",
+      "exit": 0,
+      "stdout": "H y\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:commonmark": {
+      "key": "af98a1daf08583fd",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:commonmark_x": {
+      "key": "69f04d83ab12b060",
+      "exit": 0,
+      "stdout": "[$z$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:gfm": {
+      "key": "2a1d3067e2620a50",
+      "exit": 0,
+      "stdout": "[$`z`$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "6d96ef12b0368f77",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:gfm-tex_math_gfm": {
+      "key": "31452f7d3af7efeb",
+      "exit": 0,
+      "stdout": "[$z$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:markdown": {
+      "key": "b89cbf4e199dee9e",
+      "exit": 0,
+      "stdout": "[$z$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:markdown-tex_math_dollars": {
+      "key": "703bbf734d2144e6",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "8cb07330e3d030f4",
+      "exit": 0,
+      "stdout": "[\\\\(z\\\\)](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "f98fe93e99078891",
+      "exit": 0,
+      "stdout": "[\\(z\\)](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:markdown_strict": {
+      "key": "b3231e87bc728e8b",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#e2e:plain": {
+      "key": "9d925b9b608b70de",
+      "exit": 0,
+      "stdout": "z\n",
+      "stderr": ""
+    },
+    "math-in-link#read": {
+      "key": "2f21a048a85eb8e5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"z\"]}],[\"u\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "math-in-link#write:commonmark": {
+      "key": "c2851fff04548a32",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:commonmark_x": {
+      "key": "c9cf00dd6623f541",
+      "exit": 0,
+      "stdout": "[$z$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:gfm": {
+      "key": "2855913ddec55691",
+      "exit": 0,
+      "stdout": "[$`z`$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "16b797c8f8389714",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:gfm-tex_math_gfm": {
+      "key": "09ccfee35ec07b10",
+      "exit": 0,
+      "stdout": "[$z$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:markdown": {
+      "key": "1c439c8c31898c2f",
+      "exit": 0,
+      "stdout": "[$z$](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:markdown-tex_math_dollars": {
+      "key": "ff444aa4203c60d7",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "b85300d9260ed07d",
+      "exit": 0,
+      "stdout": "[\\\\(z\\\\)](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "d70144362e5e7abe",
+      "exit": 0,
+      "stdout": "[\\(z\\)](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:markdown_strict": {
+      "key": "6acef93f983d5070",
+      "exit": 0,
+      "stdout": "[*z*](u)\n",
+      "stderr": ""
+    },
+    "math-in-link#write:plain": {
+      "key": "0c372b6fe53443ef",
+      "exit": 0,
+      "stdout": "z\n",
+      "stderr": ""
+    },
+    "math-long#e2e:commonmark": {
+      "key": "fb7e1f8ddaf1f46a",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#e2e:commonmark_x": {
+      "key": "8d6339c9e43ed24d",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$a + b + c + d$\n",
+      "stderr": ""
+    },
+    "math-long#e2e:gfm": {
+      "key": "5e4f9033bf43395d",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$`a + b + c + d`$\n",
+      "stderr": ""
+    },
+    "math-long#e2e:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "51c2f539a3d0732c",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#e2e:gfm-tex_math_gfm": {
+      "key": "b83dd5fe9f1d0188",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$a + b + c + d$\n",
+      "stderr": ""
+    },
+    "math-long#e2e:markdown": {
+      "key": "7d9ef6d34e04f3b3",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$a + b + c + d$\n",
+      "stderr": ""
+    },
+    "math-long#e2e:markdown-tex_math_dollars": {
+      "key": "bb7e92e4f505d43b",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#e2e:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "40895c9b4bcefd09",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n\\\\(a + b + c + d\\\\)\n",
+      "stderr": ""
+    },
+    "math-long#e2e:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "6e4daf1b8e916626",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n\\(a + b + c + d\\)\n",
+      "stderr": ""
+    },
+    "math-long#e2e:markdown_strict": {
+      "key": "d7a0530e126a2e68",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#e2e:plain": {
+      "key": "c12ec5184561f173",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\na + b + c + d\n",
+      "stderr": ""
+    },
+    "math-long#read": {
+      "key": "e7e8d767ea0dcd12",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcd\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"abcdef\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a + b + c + d\"]}]}]}\n",
+      "stderr": ""
+    },
+    "math-long#write:commonmark": {
+      "key": "6c059a3f35e7805f",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#write:commonmark_x": {
+      "key": "3e7627f1fbe758ea",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$a + b + c + d$\n",
+      "stderr": ""
+    },
+    "math-long#write:gfm": {
+      "key": "143b8834a143351a",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$`a + b + c + d`$\n",
+      "stderr": ""
+    },
+    "math-long#write:gfm-tex_math_dollars-tex_math_gfm": {
+      "key": "31c7e6b9f598e6fd",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#write:gfm-tex_math_gfm": {
+      "key": "61809527ab5c9da9",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$a + b + c + d$\n",
+      "stderr": ""
+    },
+    "math-long#write:markdown": {
+      "key": "8d28cac3e205f754",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n$a + b + c + d$\n",
+      "stderr": ""
+    },
+    "math-long#write:markdown-tex_math_dollars": {
+      "key": "a88c514351b2be4c",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#write:markdown-tex_math_dollars+tex_math_double_backslash": {
+      "key": "4114c809daa9ca56",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n\\\\(a + b + c + d\\\\)\n",
+      "stderr": ""
+    },
+    "math-long#write:markdown-tex_math_dollars+tex_math_single_backslash": {
+      "key": "665a25a53a50c94b",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n\\(a + b + c + d\\)\n",
+      "stderr": ""
+    },
+    "math-long#write:markdown_strict": {
+      "key": "dd1df5e95d94e349",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\n*a* + *b* + *c* + *d*\n",
+      "stderr": ""
+    },
+    "math-long#write:plain": {
+      "key": "9b7a6f64dd71a394",
+      "exit": 0,
+      "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\na + b + c + d\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:commonmark": {
+      "key": "93a45c1a81d87bfa",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:commonmark_x": {
+      "key": "4180239f6a8894d5",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:gfm": {
+      "key": "885f46963ae18f85",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:markdown": {
+      "key": "53b65b9b63d7529f",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:markdown-raw_attribute": {
+      "key": "3c0f58c91de0b3c9",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:markdown-raw_html": {
+      "key": "bc27406e25d149c5",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "2f2dc7a62c44313c",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:markdown-raw_tex": {
+      "key": "699b272788d6af4c",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:markdown_strict": {
+      "key": "ca5db5e19372e87c",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#e2e:plain": {
+      "key": "71e278779c8c6ddf",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#read": {
+      "key": "1845cadec115b092",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"rst\",\"a`b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:commonmark": {
+      "key": "cfaf69bde4111ddf",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:commonmark_x": {
+      "key": "385832749fd4ae0a",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:gfm": {
+      "key": "e0f027f27f34c6da",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:markdown": {
+      "key": "cdafb4bc6d9481a0",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:markdown-raw_attribute": {
+      "key": "b6b4ea38766224e6",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:markdown-raw_html": {
+      "key": "2c513ac530144a9a",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "8bb766d13eec74a5",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:markdown-raw_tex": {
+      "key": "5b81ed6a685918d5",
+      "exit": 0,
+      "stdout": "``a`b``{=rst}\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:markdown_strict": {
+      "key": "439484c7c12e6665",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-backtick#write:plain": {
+      "key": "8293c5cc2e4bc060",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:commonmark": {
+      "key": "eef0ad2afb598e4d",
+      "exit": 0,
+      "stdout": "a **c** b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:commonmark_x": {
+      "key": "3760d8f0d2650374",
+      "exit": 0,
+      "stdout": "a **c** b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:gfm": {
+      "key": "4d2c74a2475f47a4",
+      "exit": 0,
+      "stdout": "a **c** b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:markdown": {
+      "key": "4707760b2cbd37ba",
+      "exit": 0,
+      "stdout": "a `**c**`{=commonmark} b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:markdown-raw_attribute": {
+      "key": "a9497d9d3ce3fca0",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:markdown-raw_html": {
+      "key": "354547490137fa64",
+      "exit": 0,
+      "stdout": "a `**c**`{=commonmark} b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "71441e626f30adb3",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:markdown-raw_tex": {
+      "key": "bc9b297b5978dd03",
+      "exit": 0,
+      "stdout": "a `**c**`{=commonmark} b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:markdown_strict": {
+      "key": "88b5d40101493e73",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#e2e:plain": {
+      "key": "677a08d8e4a6317a",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#read": {
+      "key": "f3853186c1ad4245",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"commonmark\",\"**c**\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:commonmark": {
+      "key": "37cc9a37dd580cc6",
+      "exit": 0,
+      "stdout": "a **c** b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:commonmark_x": {
+      "key": "5b15e483f3b57329",
+      "exit": 0,
+      "stdout": "a **c** b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:gfm": {
+      "key": "3fa4140292b21db9",
+      "exit": 0,
+      "stdout": "a **c** b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:markdown": {
+      "key": "08383dcaaa53e14f",
+      "exit": 0,
+      "stdout": "a `**c**`{=commonmark} b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:markdown-raw_attribute": {
+      "key": "7e37c55671c046bd",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:markdown-raw_html": {
+      "key": "e6679d016c51aef9",
+      "exit": 0,
+      "stdout": "a `**c**`{=commonmark} b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "294d19588f179a3c",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:markdown-raw_tex": {
+      "key": "2a13e1d09bacba6c",
+      "exit": 0,
+      "stdout": "a `**c**`{=commonmark} b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:markdown_strict": {
+      "key": "e9e0d57d11f6c57c",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-commonmark#write:plain": {
+      "key": "2ff6c4e3dbbb668f",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:commonmark": {
+      "key": "b9b64cd6a1d572ba",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:commonmark_x": {
+      "key": "2f93389b328c9ec5",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:gfm": {
+      "key": "70c093e6db08ba55",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:markdown": {
+      "key": "ee9b314f9cc54b3f",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:markdown-raw_attribute": {
+      "key": "9007df8a855fb191",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:markdown-raw_html": {
+      "key": "986cea99b66e7b15",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "ec0752ff43ce55e4",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:markdown-raw_tex": {
+      "key": "734a2e6063e7a614",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:markdown_strict": {
+      "key": "a4c3d174929e46a4",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#e2e:plain": {
+      "key": "abe94b50e2ff78ff",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#read": {
+      "key": "16322cab5308b7d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"RawInline\",\"c\":[\"html\",\"\"]},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:commonmark": {
+      "key": "78e2b24d7b0bfc0b",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:commonmark_x": {
+      "key": "14745984db016c16",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:gfm": {
+      "key": "876f3a3a69814d46",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:markdown": {
+      "key": "fa0f865cf9ca917c",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:markdown-raw_attribute": {
+      "key": "dfef67f01b2a4ce2",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:markdown-raw_html": {
+      "key": "e4505b0063493e86",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "35b07a06358ba209",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:markdown-raw_tex": {
+      "key": "2d1e99b4982cc019",
+      "exit": 0,
+      "stdout": "x``{=html}y\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:markdown_strict": {
+      "key": "926ef5be437d1549",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-empty#write:plain": {
+      "key": "02a2c45019013cbc",
+      "exit": 0,
+      "stdout": "xy\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:commonmark": {
+      "key": "eba4b79283814bfe",
+      "exit": 0,
+      "stdout": "a ~~g~~ b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:commonmark_x": {
+      "key": "62a98c4256426d71",
+      "exit": 0,
+      "stdout": "a ~~g~~ b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:gfm": {
+      "key": "99617cfa117fbd21",
+      "exit": 0,
+      "stdout": "a ~~g~~ b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:markdown": {
+      "key": "cd7cbde3dba6e5f3",
+      "exit": 0,
+      "stdout": "a `~~g~~`{=gfm} b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:markdown-raw_attribute": {
+      "key": "18946c5f08228bf5",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:markdown-raw_html": {
+      "key": "a9c31280354235e1",
+      "exit": 0,
+      "stdout": "a `~~g~~`{=gfm} b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "f2b42daf4e6a0f68",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:markdown-raw_tex": {
+      "key": "4c0c331d701056b8",
+      "exit": 0,
+      "stdout": "a `~~g~~`{=gfm} b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:markdown_strict": {
+      "key": "1be9d1263fbdce28",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#e2e:plain": {
+      "key": "071e061374053db3",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#read": {
+      "key": "c796c8e007644d96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"gfm\",\"~~g~~\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:commonmark": {
+      "key": "84329ba67866726f",
+      "exit": 0,
+      "stdout": "a ~~g~~ b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:commonmark_x": {
+      "key": "7cf56b0b2012611a",
+      "exit": 0,
+      "stdout": "a ~~g~~ b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:gfm": {
+      "key": "69b3d444a7c5d7aa",
+      "exit": 0,
+      "stdout": "a ~~g~~ b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:markdown": {
+      "key": "fea1841112010b90",
+      "exit": 0,
+      "stdout": "a `~~g~~`{=gfm} b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:markdown-raw_attribute": {
+      "key": "4c3f75b96fb666be",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:markdown-raw_html": {
+      "key": "7aab3fd61374ebea",
+      "exit": 0,
+      "stdout": "a `~~g~~`{=gfm} b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "2d6a09771117cab5",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:markdown-raw_tex": {
+      "key": "fa95a53073089125",
+      "exit": 0,
+      "stdout": "a `~~g~~`{=gfm} b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:markdown_strict": {
+      "key": "d66c6a0192dee7f5",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-gfm#write:plain": {
+      "key": "2d8f76f6bb5b7ed0",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:commonmark": {
+      "key": "7772330ae87c17a3",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:commonmark_x": {
+      "key": "a7b9ac1ad0935038",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:gfm": {
+      "key": "95a4d55608fef468",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:markdown": {
+      "key": "9bb93c9f378f8e82",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:markdown-raw_attribute": {
+      "key": "8c43eacb551c3a04",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:markdown-raw_html": {
+      "key": "5ff966f59a9cfaa8",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "8ce529d5b6963e45",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:markdown-raw_tex": {
+      "key": "c20d15953fce2015",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:markdown_strict": {
+      "key": "528c0eef4f466385",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#e2e:plain": {
+      "key": "4e4a089320a25cc2",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#read": {
+      "key": "b895252b665fc53b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"html\",\"<b>x</b>\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:commonmark": {
+      "key": "78a96b702e2d9e5c",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:commonmark_x": {
+      "key": "21b705c3bcea0d51",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:gfm": {
+      "key": "44411ddfa43fb461",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:markdown": {
+      "key": "ff51c64c822f60af",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:markdown-raw_attribute": {
+      "key": "03b462821dec218d",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:markdown-raw_html": {
+      "key": "c9730d775ccd6021",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "6f4a4782bb0e50ba",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:markdown-raw_tex": {
+      "key": "9f3c714ad7e6bc6a",
+      "exit": 0,
+      "stdout": "a `<b>x</b>`{=html} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:markdown_strict": {
+      "key": "c3052b524973de7a",
+      "exit": 0,
+      "stdout": "a <b>x</b> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html#write:plain": {
+      "key": "25e614f0e90c896f",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:commonmark": {
+      "key": "bcd73d913fcc927b",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:commonmark_x": {
+      "key": "c9fca3b039401af0",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:gfm": {
+      "key": "0aa2b7bcd04b3580",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:markdown": {
+      "key": "aa81017ab203477e",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:markdown-raw_attribute": {
+      "key": "b99b81cef4dd19e4",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:markdown-raw_html": {
+      "key": "fbd7ff5ee4f3d040",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "0c26ca2595cd4911",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:markdown-raw_tex": {
+      "key": "79016f2296979c81",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:markdown_strict": {
+      "key": "f166550e466951d1",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#e2e:plain": {
+      "key": "aba85aa721b2f23e",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#read": {
+      "key": "766fd4ff951ec813",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"html\",\"<!-- c -->\"]}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:commonmark": {
+      "key": "5dad87b5e0e40bec",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:commonmark_x": {
+      "key": "c5dcb12864145269",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:gfm": {
+      "key": "3736f2b0fc17ef59",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:markdown": {
+      "key": "bafa3e6736ddbe73",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:markdown-raw_attribute": {
+      "key": "b4397c5f4dc589b5",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:markdown-raw_html": {
+      "key": "55d2455fcf967399",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "94216e1ab3289a46",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:markdown-raw_tex": {
+      "key": "13a96be6634c4cd6",
+      "exit": 0,
+      "stdout": "`<!-- c -->`{=html}\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:markdown_strict": {
+      "key": "2d6835aee5b77e86",
+      "exit": 0,
+      "stdout": "<!-- c -->\n",
+      "stderr": ""
+    },
+    "raw-inline-html-comment#write:plain": {
+      "key": "ff6f946b6b9f7ab3",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:commonmark": {
+      "key": "994c6a56d48fa8d8",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:commonmark_x": {
+      "key": "73e0169cf1ab58f5",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:gfm": {
+      "key": "7b1c17c7382a5ca5",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:markdown": {
+      "key": "717652b313f462a7",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:markdown-raw_attribute": {
+      "key": "afd16153f9db4699",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:markdown-raw_html": {
+      "key": "b1cf979a53428265",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "d2713e7bcb3394b2",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:markdown-raw_tex": {
+      "key": "ccd82c727f2ed602",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:markdown_strict": {
+      "key": "bf026143f99f1f72",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#e2e:plain": {
+      "key": "4b992bb58e7fef67",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#read": {
+      "key": "dcf003175efd7c50",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"html5\",\"<i>y</i>\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:commonmark": {
+      "key": "b8f64ce4e0f4c2f1",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:commonmark_x": {
+      "key": "cfc494caad412a62",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:gfm": {
+      "key": "d0faca7c26370932",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:markdown": {
+      "key": "810ad5a4b5ae8d84",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:markdown-raw_attribute": {
+      "key": "92976134aebfe36e",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:markdown-raw_html": {
+      "key": "e94f22a76ae5e372",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "7ab8ab188c6e8a4b",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:markdown-raw_tex": {
+      "key": "3fdc24b67db7ca3b",
+      "exit": 0,
+      "stdout": "a `<i>y</i>`{=html5} b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:markdown_strict": {
+      "key": "270f5d04c96ff58b",
+      "exit": 0,
+      "stdout": "a <i>y</i> b\n",
+      "stderr": ""
+    },
+    "raw-inline-html5#write:plain": {
+      "key": "04c7ce7d3d393ac4",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:commonmark": {
+      "key": "a231927bee2136b7",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:commonmark_x": {
+      "key": "e43414b0cf24b6c0",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:gfm": {
+      "key": "ad8c1a3f01839970",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:markdown": {
+      "key": "47620053cc7b362a",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:markdown-raw_attribute": {
+      "key": "a3620d0df8924524",
+      "exit": 0,
+      "stdout": "a \\textbf{y} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:markdown-raw_html": {
+      "key": "7d0116046968c530",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "3550e93c21b1de79",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:markdown-raw_tex": {
+      "key": "cc604fae8b08bc89",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:markdown_strict": {
+      "key": "85670ad82e92e739",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#e2e:plain": {
+      "key": "447091722a394dea",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#read": {
+      "key": "0f7b783500a6c7cf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"latex\",\"\\\\textbf{y}\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:commonmark": {
+      "key": "ec9108e1e54abc94",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:commonmark_x": {
+      "key": "ab0d3ac47f50dd3d",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:gfm": {
+      "key": "db490590afb5830d",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:markdown": {
+      "key": "7ad6743e0c3f984b",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:markdown-raw_attribute": {
+      "key": "274290d5a379f301",
+      "exit": 0,
+      "stdout": "a \\textbf{y} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:markdown-raw_html": {
+      "key": "32212f2fa40f734d",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "c09a1338b9502372",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:markdown-raw_tex": {
+      "key": "28a79900f2632962",
+      "exit": 0,
+      "stdout": "a `\\textbf{y}`{=latex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:markdown_strict": {
+      "key": "08b714ef4af8f1b2",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-latex#write:plain": {
+      "key": "a38c79b418ea668b",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:commonmark": {
+      "key": "de8281b441d392b2",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:commonmark_x": {
+      "key": "946e7a0b32c00b6b",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:gfm": {
+      "key": "027d57b02bb216bb",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:markdown": {
+      "key": "948e5d0c05f19fa9",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:markdown-raw_attribute": {
+      "key": "501d5ce11cba9a8f",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:markdown-raw_html": {
+      "key": "fc0f63f3b481c37b",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "b1d4625139d4b460",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:markdown-raw_tex": {
+      "key": "a54f09b16c9c7690",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:markdown_strict": {
+      "key": "4c9216b18bf2ab20",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#e2e:plain": {
+      "key": "ec25db0c8400f269",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#read": {
+      "key": "82162963ab0e3bfa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"markdown\",\"*m*\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:commonmark": {
+      "key": "fa4b2465e92f8897",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:commonmark_x": {
+      "key": "3980192b5ae09094",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:gfm": {
+      "key": "397eb6508f8a3204",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:markdown": {
+      "key": "1dc78f64ae454fda",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:markdown-raw_attribute": {
+      "key": "e57cafd468760b50",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:markdown-raw_html": {
+      "key": "bb8d30662b420a44",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "1b5e5f5d2576ec7d",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:markdown-raw_tex": {
+      "key": "04713be4d5f16e8d",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:markdown_strict": {
+      "key": "64b5a72baf712abd",
+      "exit": 0,
+      "stdout": "a *m* b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown#write:plain": {
+      "key": "c9c6a7b9a933df1a",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:commonmark": {
+      "key": "1fde6a3de31cad07",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:commonmark_x": {
+      "key": "743aeda74c68862c",
+      "exit": 0,
+      "stdout": "a `_s_`{=markdown_strict} b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:gfm": {
+      "key": "3594c52f1b24f69c",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:markdown": {
+      "key": "6dd54d91acd4260e",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:markdown-raw_attribute": {
+      "key": "3ca7a611adfcac08",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:markdown-raw_html": {
+      "key": "63deeecb0f85755c",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "09c76964fb410d01",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:markdown-raw_tex": {
+      "key": "2108e44c9302a4d1",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:markdown_strict": {
+      "key": "d25d6d3ea29e59c1",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#e2e:plain": {
+      "key": "e5a0bfccc2a56ace",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#read": {
+      "key": "db7446621526b43f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"markdown_strict\",\"_s_\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:commonmark": {
+      "key": "18cadc1e1f12f17c",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:commonmark_x": {
+      "key": "e1feef518c3ac3f9",
+      "exit": 0,
+      "stdout": "a `_s_`{=markdown_strict} b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:gfm": {
+      "key": "a8c771a057c80cc9",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:markdown": {
+      "key": "b55503c1105c6127",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:markdown-raw_attribute": {
+      "key": "f85151cdc2efbcbd",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:markdown-raw_html": {
+      "key": "4c21624bd37d4409",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "88008834dca5e74a",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:markdown-raw_tex": {
+      "key": "8ea121e1addae9ba",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:markdown_strict": {
+      "key": "9a9a23724b097e8a",
+      "exit": 0,
+      "stdout": "a _s_ b\n",
+      "stderr": ""
+    },
+    "raw-inline-markdown_strict#write:plain": {
+      "key": "ed01cdc4e8c15467",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:commonmark": {
+      "key": "65ff10f572bba7f4",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:commonmark_x": {
+      "key": "f50034fdbdab548b",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:gfm": {
+      "key": "adca08cc56a06c5b",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:markdown": {
+      "key": "fb6efeb8ed76cf05",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:markdown-raw_attribute": {
+      "key": "6902c3d0a42d6097",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:markdown-raw_html": {
+      "key": "7c8065aa53a87e1b",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "924e65363dd9a686",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:markdown-raw_tex": {
+      "key": "01c1e143fa725ab6",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:markdown_strict": {
+      "key": "70b5db8490ceb446",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#e2e:plain": {
+      "key": "5f8ecf8936a5f6c5",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#read": {
+      "key": "8dea355d7c068efc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"openxml\",\"<w:br/>\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:commonmark": {
+      "key": "8573081b45dab34d",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:commonmark_x": {
+      "key": "fbe26cd139e3dd7c",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:gfm": {
+      "key": "aa760886b835de2c",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:markdown": {
+      "key": "8b3525c17451d98a",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:markdown-raw_attribute": {
+      "key": "f3061d09f2a5fd70",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:markdown-raw_html": {
+      "key": "125c3dbae54ee86c",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "ccb00e5189fa90db",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:markdown-raw_tex": {
+      "key": "5b638ab785bc882b",
+      "exit": 0,
+      "stdout": "a `<w:br/>`{=openxml} b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:markdown_strict": {
+      "key": "afdfb0fda2628b1b",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-openxml#write:plain": {
+      "key": "0ac5f413ea0508ca",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:commonmark": {
+      "key": "577b669fbe966676",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:commonmark_x": {
+      "key": "5651d7d5e6183b9b",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:gfm": {
+      "key": "25d18cd30580ca6b",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:markdown": {
+      "key": "a0d434c6d149a0a9",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:markdown-raw_attribute": {
+      "key": "5fc01e911b82188f",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:markdown-raw_html": {
+      "key": "e4c1be3d567ebd2b",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "ceab02e88444c9fc",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:markdown-raw_tex": {
+      "key": "1258790422ed49ac",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:markdown_strict": {
+      "key": "77abef4836bc17bc",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#e2e:plain": {
+      "key": "fa17af7b8f896269",
+      "exit": 0,
+      "stdout": "a pl b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#read": {
+      "key": "1492a5496bf7eb2e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"plain\",\"pl\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:commonmark": {
+      "key": "a89f4a704858d767",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:commonmark_x": {
+      "key": "b392b574f7becbf0",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:gfm": {
+      "key": "0a57332b333b5e60",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:markdown": {
+      "key": "a3249fb2b10cb51e",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:markdown-raw_attribute": {
+      "key": "06599c415ecad8ac",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:markdown-raw_html": {
+      "key": "7c424958caaf98a0",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "51315b694434e62d",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:markdown-raw_tex": {
+      "key": "e7d6c47e6d97093d",
+      "exit": 0,
+      "stdout": "a `pl`{=plain} b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:markdown_strict": {
+      "key": "c03404aca22f2b6d",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-plain#write:plain": {
+      "key": "e65e78de409c535e",
+      "exit": 0,
+      "stdout": "a pl b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:commonmark": {
+      "key": "4ead9b6fe5bea828",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:commonmark_x": {
+      "key": "36eb1ea22143acfb",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:gfm": {
+      "key": "21e4b345121edfab",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:markdown": {
+      "key": "fa5372110166205d",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:markdown-raw_attribute": {
+      "key": "e4cdccc459354c5f",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:markdown-raw_html": {
+      "key": "ff587ce2985a4e6b",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "f6da7ad1491f17b2",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:markdown-raw_tex": {
+      "key": "645b9ee56f7b4882",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:markdown_strict": {
+      "key": "d1be01f74fd36d72",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#e2e:plain": {
+      "key": "b5074ef6316dcf1d",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#read": {
+      "key": "ff3d71618a9225b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"rtf\",\"\\\\par\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:commonmark": {
+      "key": "1ed35c32dfdf4549",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:commonmark_x": {
+      "key": "3e8b245b1686e1cc",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:gfm": {
+      "key": "8ddacab67f56471c",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:markdown": {
+      "key": "7cbf641d2deb59aa",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:markdown-raw_attribute": {
+      "key": "2df653c3e27b1230",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:markdown-raw_html": {
+      "key": "12d6570db606b65c",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "02ca58cb63804687",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:markdown-raw_tex": {
+      "key": "7d0f10cdd7c0b6b7",
+      "exit": 0,
+      "stdout": "a `\\par`{=rtf} b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:markdown_strict": {
+      "key": "09b4d0a3bc4448c7",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-rtf#write:plain": {
+      "key": "8eb5801346856aea",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:commonmark": {
+      "key": "4a05e6663e933e5a",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:commonmark_x": {
+      "key": "5cee272789ae0bb1",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:gfm": {
+      "key": "7732ca0c4c72ac61",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:markdown": {
+      "key": "83368374489efd13",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:markdown-raw_attribute": {
+      "key": "f4b68f3ac69e73e5",
+      "exit": 0,
+      "stdout": "a \\emph{x} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:markdown-raw_html": {
+      "key": "f3371f43d9e86521",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "55d42b65d1ee7fa4",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:markdown-raw_tex": {
+      "key": "074828abd790bbf4",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:markdown_strict": {
+      "key": "416ec06bc1c02a64",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#e2e:plain": {
+      "key": "cfaff207d3bdead3",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#read": {
+      "key": "c9d75afe0103f7e2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\emph{x}\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:commonmark": {
+      "key": "1fa00abeed10fcf7",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:commonmark_x": {
+      "key": "b31cdf5455e66cc6",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:gfm": {
+      "key": "0a88bc2dddcebc16",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:markdown": {
+      "key": "67be3970638c86ac",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:markdown-raw_attribute": {
+      "key": "2f6bee5a04cdde7a",
+      "exit": 0,
+      "stdout": "a \\emph{x} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:markdown-raw_html": {
+      "key": "462abab70df4ae56",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "4b5a86935771eecd",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:markdown-raw_tex": {
+      "key": "10f76748e901a03d",
+      "exit": 0,
+      "stdout": "a `\\emph{x}`{=tex} b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:markdown_strict": {
+      "key": "486e2186b085fb0d",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex#write:plain": {
+      "key": "8fbeb44eea912bec",
+      "exit": 0,
+      "stdout": "a b\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:commonmark": {
+      "key": "db0352f37973b9a0",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:commonmark_x": {
+      "key": "32d28c6bf15acb27",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:gfm": {
+      "key": "6890a5c496f29dd7",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:markdown": {
+      "key": "9a7caf6420fc3721",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:markdown-raw_attribute": {
+      "key": "edbc4dedc8aa4fa3",
+      "exit": 0,
+      "stdout": "\\foobar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:markdown-raw_html": {
+      "key": "7414885884b17c97",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "fedf5509aa868dda",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:markdown-raw_tex": {
+      "key": "e6a9231e5b3b39aa",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:markdown_strict": {
+      "key": "481b0ff14e07339a",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#e2e:plain": {
+      "key": "8d59cf63f2abfce1",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#read": {
+      "key": "369175cc22b8aff8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"RawInline\",\"c\":[\"tex\",\"\\\\foo\"]},{\"t\":\"Str\",\"c\":\"bar\"}]}]}\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:commonmark": {
+      "key": "a02dadc91afa7d81",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:commonmark_x": {
+      "key": "6d8e43af8e3fa818",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:gfm": {
+      "key": "ea787906b640d8a8",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:markdown": {
+      "key": "137c02216a28546e",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:markdown-raw_attribute": {
+      "key": "5d0b6b954a44307c",
+      "exit": 0,
+      "stdout": "\\foobar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:markdown-raw_html": {
+      "key": "81f25e8b2031c7e8",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:markdown-raw_html-raw_tex-raw_attribute": {
+      "key": "789b893583feca0f",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:markdown-raw_tex": {
+      "key": "c88335bebb38d7bf",
+      "exit": 0,
+      "stdout": "`\\foo`{=tex}bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:markdown_strict": {
+      "key": "41f00022ca4cdc4f",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    },
+    "raw-inline-tex-macro#write:plain": {
+      "key": "3980893a689835ae",
+      "exit": 0,
+      "stdout": "bar\n",
+      "stderr": ""
+    }
+  }
+}

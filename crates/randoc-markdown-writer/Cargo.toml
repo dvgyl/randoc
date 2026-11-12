@@ -1,0 +1,23 @@
+[package]
+name = "randoc-markdown-writer"
+description = "The Markdown, CommonMark, GFM, plain text and Markua writers of Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-html = { workspace = true }
+randoc-math = { workspace = true }
+randoc-layout = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+toml = { workspace = true }
+
+[lints]
+workspace = true

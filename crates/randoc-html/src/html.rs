@@ -73,6 +73,41 @@ pub(crate) fn write(
     Ok(out)
 }
 
+/// Renders blocks as an HTML fragment without a final newline, as `write`
+/// does for a document of these blocks with no template.
+pub(crate) fn write_blocks(
+    blocks: &[Block],
+    options: &WriterOptions,
+    context: &mut Context,
+    version: Version,
+) -> Result<Text> {
+    let mut writer = Html::new(
+        options,
+        version,
+        context.limits.max_nesting_depth,
+        min_heading_level(blocks),
+    );
+    let mut body = writer.section_blocks(blocks, 0)?;
+    let notes = writer.footnote_section(ReferenceLocation::EndOfDocument, "")?;
+    if !notes.is_empty() {
+        body += lit("\n");
+        body += notes;
+    }
+    let width = match options.wrap_text {
+        WrapOption::WrapAuto => usize::try_from(options.columns).ok(),
+        WrapOption::WrapNone | WrapOption::WrapPreserve => None,
+    };
+    let mut out = body.render(width);
+    out.truncate(out.trim_end_matches('\n').len());
+    for warning in writer.warnings.take() {
+        context.report(warning);
+    }
+    if options.prefer_ascii {
+        out = ascii_references(&out);
+    }
+    Ok(out)
+}
+
 /// An attribute list in output order.
 pub(crate) type Attrs = Vec<(String, String)>;
 

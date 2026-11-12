@@ -10,6 +10,7 @@ members = [
     "crates/randoc",
     "crates/randoc-cli",
     "crates/randoc-harness",
+    "crates/randoc-markdown-writer",
     "crates/randoc-yaml",
     "crates/randoc-html",
     "crates/randoc-markdown",
@@ -33,6 +34,7 @@ exclude = [
     "crates/randoc-latex/fuzz",
     "crates/randoc-layout/fuzz",
     "crates/randoc-markdown/fuzz",
+    "crates/randoc-markdown-writer/fuzz",
     "crates/randoc-math/fuzz",
     "crates/randoc-native/fuzz",
     "crates/randoc-templates/fuzz",
@@ -58,6 +60,7 @@ randoc-data = { path = "crates/randoc-data", version = "0.1.0" }
 randoc-core = { path = "crates/randoc-core", version = "0.1.0" }
 randoc = { path = "crates/randoc", version = "0.1.0" }
 randoc-cli = { path = "crates/randoc-cli", version = "0.1.0" }
+randoc-markdown-writer = { path = "crates/randoc-markdown-writer", version = "0.1.0" }
 randoc-yaml = { path = "crates/randoc-yaml", version = "0.1.0" }
 randoc-html = { path = "crates/randoc-html", version = "0.1.0" }
 randoc-markdown = { path = "crates/randoc-markdown", version = "0.1.0" }

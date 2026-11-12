@@ -52,9 +52,35 @@ pub fn writer(format: &str) -> Option<Writer> {
     )))
 }
 
+/// Renders blocks as an HTML5 fragment without a final newline, as the
+/// writer `html` does for a document of these blocks. A writer of a
+/// different format calls it for content that its syntax cannot show, for
+/// example a table in Markdown.
+pub fn render_blocks(
+    blocks: &[randoc_ast::Block],
+    options: &randoc_core::WriterOptions,
+    context: &mut randoc_core::Context,
+) -> randoc_core::Result<randoc_core::Text> {
+    html::write_blocks(blocks, options, context, Version::Html5)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn render_blocks_gives_the_fragment_of_the_html_writer() {
+        use randoc_ast::{Block, Inline};
+        let blocks = [Block::Div(
+            randoc_ast::Attr::new("d", Vec::new(), Vec::new()),
+            vec![Block::Para(vec![Inline::Str("a<b".into())])],
+        )];
+        let mut context = randoc_core::Context::pure();
+        let options = randoc_core::WriterOptions::default();
+        let html = render_blocks(&blocks, &options, &mut context).unwrap();
+        // `pandoc -f json -t html` gives these bytes and a final newline.
+        assert_eq!(html, "<div id=\"d\">\n<p>a&lt;b</p>\n</div>");
+    }
 
     /// Write units with a known divergence. See `docs/ISSUES.md`, I-HTML-01 and I-HTML-02.
     const KNOWN_DIVERGENCES: &[&str] = &[

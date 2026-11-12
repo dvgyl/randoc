@@ -1240,3 +1240,39 @@ Open findings: I-CM-01 (scope gap), I-CM-10, I-CM-18. 16 documents of the
 differential run in two classes (`BulletList` with commonmark_x and gfm,
 `Div`) are not reduced yet. Open checks: the specification run, coverage,
 the mutation sample.
+
+## Workstream markdown-writer (branch `ws/markdown-writer`, head 0d455dc, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. New workstream on
+`main`. Content: the crate `randoc-markdown-writer` with the writers
+`markdown`, `gfm`, `commonmark`, `commonmark_x`, `plain` and the
+variants (`markdown_strict`, `markdown_phpextra`, `markdown_mmd`). Tables,
+figures and images in HTML form call the new public function
+`randoc_html::render_blocks` (with one test) and the new internal
+function `html::write_blocks` of `crates/randoc-html`; `html::write` is
+unchanged. Math without math syntax uses `randoc_math::to_inlines`. The
+branch merged `main` at 3d61cbb and resolved the earlier conflict in
+`crates/randoc-html` (it keeps the code of `main`). New matrices as
+cases: table forms (3360 units) and edges (2500 units). The last commit
+(0d455dc) changes only `docs/ISSUES.md` on top of the merge commit
+8464487. New row in `PROGRESS.md`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 8464487 (run ended 02:12 UTC; worker report): baseline 20243 units, 0 regressions, 17511 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Writer harness at bf90c2c: 17162 units, 16982 pass, 180 fail. Per format: markdown 1207/1209, gfm 1171/1173, commonmark 1153/1160, commonmark_x 613/614, markdown_strict 728/734, plain 1163/1174. Large random trees (seed 7, 200 each) still differ: markdown 177, gfm 180, commonmark 172. |
+| 3. Tests | `cargo test -p randoc-markdown-writer -p randoc-html -p randoc` on the merged tree: 317 pass, 0 fail, 1 ignored. Coverage and mutation tests: not run. |
+| 4. No panics | Fuzzing: not run. `tests/limits.rs` passes (deep test 9.8 s). |
+| 5. Reviews | No review round of the current code; the review of the major block is due. |
+| 6. No slowdowns | CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. The lines of the branch in the root
+`Cargo.toml`, `crates/randoc/Cargo.toml`, `crates/randoc/src/formats.rs`
+and `crates/randoc-html` are additions only. Licence scan: no hit.
+
+Open findings: large random trees still differ (I-MDW-11; many small
+rules); 28 option units fail (I-MDW-05 `--ascii`, I-MDW-06 a reference
+form; `-s` is not connected for these writers); `plain` passes 1163 of
+1174 units; the other open rows I-MDW-01, -02, -04, -07, -08, -09, -12,
+-13. Open checks: fuzzing, coverage, mutation tests.
