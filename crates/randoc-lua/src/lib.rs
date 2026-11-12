@@ -43,11 +43,12 @@ mod runtime;
 mod show;
 #[cfg(test)]
 mod sources;
+mod system;
 #[cfg(test)]
 mod tests;
 mod text;
 mod utils;
 mod walk;
 
-pub use filter::{FilterEnvironment, LuaFilter, apply_filter};
+pub use filter::{FilterEnvironment, LuaFilter, apply_filter, apply_filter_files};
 pub use runtime::{INSTRUCTION_LIMIT_MESSAGE, LuaRuntime, Mode, RuntimeLimits};

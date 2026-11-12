@@ -199,7 +199,11 @@ fn table_json(cx: &Cx, table: &Table, depth: usize) -> Result<Json, Fail> {
         }
     }
     let length = table.raw_len();
-    if length > 0 {
+    // A `List` is an array also when it is empty.
+    let is_list = table.metatable().is_some_and(|metatable| {
+        push::metatable(cx.lua, "List").is_ok_and(|list| list == metatable)
+    });
+    if length > 0 || is_list {
         let mut items = Vec::with_capacity(length);
         for index in 1..=length {
             items.push(to_json(cx, &table.raw_get::<Value>(index)?, depth + 1)?);
@@ -268,21 +272,31 @@ fn write_string(text: &str, out: &mut String) {
     out.push('"');
 }
 
-/// The shortest decimal digits of a finite positive number and its
-/// exponent `e`, with the value `0.d1d2... * 10^e` (`floatToDigits`).
+/// The decimal digits of a finite positive number and its exponent `e`,
+/// with the value `0.d1d2... * 10^e`, as `floatToDigits` of GHC gives them.
+/// They are read back from the `show` form of `randoc-ast`, which has the
+/// port of `floatToDigits`.
 fn digits(number: f64) -> (Vec<u8>, i64) {
-    let text = format!("{number:e}");
-    let (mantissa, exponent) = text.split_once('e').unwrap_or((&text, "0"));
+    let shown = randoc_ast::json::show_double(number);
+    let (mantissa, exponent) = match shown.split_once('e') {
+        Some((mantissa, exponent)) => (mantissa, exponent.parse::<i64>().unwrap_or(0) + 1),
+        None => {
+            let whole = shown.split('.').next().unwrap_or_default();
+            let exponent = if whole == "0" { 0 } else { whole.len() as i64 };
+            (shown.as_str(), exponent)
+        }
+    };
     let digits: Vec<u8> = mantissa
         .bytes()
         .filter(u8::is_ascii_digit)
         .map(|byte| byte - b'0')
+        .skip_while(|digit| exponent <= 0 && *digit == 0)
         .collect();
     let digits = match digits.iter().rposition(|d| *d != 0) {
         Some(last) => digits.get(..=last).unwrap_or_default().to_vec(),
         None => vec![0],
     };
-    (digits, exponent.parse::<i64>().unwrap_or(0) + 1)
+    (digits, exponent)
 }
 
 /// A number as `aeson` writes a `Scientific` made from a `Double`: an

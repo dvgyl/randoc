@@ -14,6 +14,7 @@ code block. Thus the recorded output shows each result and each error text.
 """
 
 import os
+import random
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUTPUT = os.path.join(HERE, "..", "tests", "replay", "modules.txt")
@@ -612,6 +613,142 @@ GROUPS["structure"] = [
                  "{P.Code('c d'), P.Math('InlineMath', 'x')}", "{P.Note{P.Para'n'}, P.Str'x'}"]
 ] + [
     ("structure names", "local n = {} for k in pairs(P.structure) do n[#n + 1] = k end table.sort(n) return table.concat(n, ' ')"),
+]
+
+RANDOM = random.Random(20261112)
+
+GROUPS["state-fields"] = [
+    (f"PANDOC_STATE.{key}", f"return PANDOC_STATE.{key}")
+    for key in ["output_file", "source_url", "user_data_dir", "trace", "verbosity", "log",
+                "resource_path", "request_headers", "nokey", "Output_file", "input"]
+] + [
+    ("state key 1", "return PANDOC_STATE[1]"),
+    ("state key true", "return PANDOC_STATE[true]"),
+    ("state output test", "if PANDOC_STATE.output_file then return 'file' end return 'stdout'"),
+]
+
+GROUPS["json-empty-lists"] = [
+    (f"encode {value}", f"return P.json.encode({value})")
+    for value in ["P.List{}", "P.Inlines{}", "P.Blocks{}", "{}", "setmetatable({}, {})",
+                  "setmetatable({}, {__name = 'List'})", "setmetatable({}, P.List)",
+                  "{a = P.List{}}", "P.List{P.List{}}", "{P.List{}, {}}", "P.Attr().classes",
+                  "P.Attr().attributes", "P.AttributeList{}", "P.MetaList{}", "P.Meta{}",
+                  "P.Div{}.content", "P.Para{}.content", "P.Cell{}.contents", "P.Table(P.Caption(), {}, P.TableHead(), {}, P.TableFoot()).bodies",
+                  "P.json.decode('[]')", "P.json.decode('{\"a\":[]}')", "P.json.decode('[[],{}]')",
+                  "P.json.decode('{\"a\":{}}')", "P.json.decode('{\"a\":[[]]}')", "P.Pandoc{}",
+                  "P.List{1}:filter(function() return false end)", "P.List{1}:map(function(x) return x end)",
+                  "P.Inlines{}:clone()", "pandoc.List{}:clone()"]
+]
+
+NUMBERS = [2.0 ** 54 + 8, -(2.0 ** 54 + 8), 2.0 ** 55, 2.0 ** 53 + 2, 2.0 ** 60 + 2 ** 8, 1e22, 1e23,
+           1e21 + 2 ** 20, 0.1, 0.3, 1 / 3, 123.456, 5e-324, 2.2250738585072014e-308, 1.7976931348623157e308,
+           9007199254740993.0, 4.35, 1e7, 1e8, 12345678.9, 0.000123, 1e-7, 100.0, -0.5]
+for _ in range(220):
+    kind = RANDOM.randrange(4)
+    if kind == 0:
+        NUMBERS.append(float(RANDOM.randrange(2 ** 53, 2 ** 62)))
+    elif kind == 1:
+        NUMBERS.append(RANDOM.uniform(-1e6, 1e6))
+    elif kind == 2:
+        NUMBERS.append(RANDOM.uniform(1, 10) * 10.0 ** RANDOM.randrange(-30, 30))
+    else:
+        NUMBERS.append(float(RANDOM.randrange(1, 2 ** 20)) * 2.0 ** RANDOM.randrange(30, 70))
+GROUPS["json-numbers"] = [
+    (f"encode {number!r}", f"return P.json.encode({number.hex()})") for number in NUMBERS
+] + [
+    (f"encode integer {value}", f"return P.json.encode({value})")
+    for value in [18014398509481992, -18014398509481992, 2 ** 62, 2 ** 63 - 1, -(2 ** 63), 12345, 0]
+] + [
+    ("encode list of numbers", "return P.json.encode({0x1.0000000000002p+54, 1/3, 1e23})"),
+]
+
+ENCODINGS = ["UTF-16", "UTF-16LE", "UTF-16BE", "UTF-32", "UTF-32LE", "UTF-32BE", "UTF-8", "UTF-8BOM",
+             "utf16", "UTF16LE//IGNORE"]
+BOM_INPUTS = ["'\\255\\254a\\0'", "'\\254\\255\\0a'", "'\\255\\254\\0\\0a\\0\\0\\0'", "'\\0\\0\\254\\255\\0\\0\\0a'",
+              "'\\239\\187\\191a'", "'a\\0'", "'\\0a'", "'\\255\\254'", "'\\254\\255'", "''",
+              "'\\255\\254\\255\\254a\\0'", "'\\254\\255\\254\\255\\0a'", "'\\255\\254\\0'"]
+GROUPS["text-bom"] = [
+    (f"fromencoding {text} {name}",
+     f"local s = P.text.fromencoding({text}, {lua_string(name)}) return (s:gsub('.', function(c) return c:byte() .. ' ' end))")
+    for name in ENCODINGS for text in BOM_INPUTS
+] + [
+    (f"toencoding {name}",
+     f"return (P.text.toencoding('a\\226\\128\\147', {lua_string(name)}):gsub('.', function(c) return c:byte() .. ' ' end))")
+    for name in ENCODINGS
+]
+
+
+def slide_blocks(depth):
+    blocks = []
+    for _ in range(RANDOM.randrange(0, 6)):
+        kind = RANDOM.randrange(10)
+        if kind < 5:
+            blocks.append(f"H({RANDOM.randrange(1, 7)}, 'h')")
+        elif kind < 7:
+            blocks.append("P.Para'x'")
+        elif kind == 7:
+            blocks.append("P.HorizontalRule()")
+        elif depth < 2:
+            blocks.append("P.Div{" + ", ".join(slide_blocks(depth + 1)) + "}")
+        else:
+            blocks.append("P.BlockQuote{H(1, 'q'), P.Para'y'}")
+    return blocks
+
+
+SLIDE_LISTS = ["H(2, 'a'), P.Div{H(1, 'b'), P.Para'c'}", "H(2, 'a'), P.Para'x', P.Div{H(1, 'b'), P.Para'c'}",
+               "P.Div{H(1, 'b'), P.Para'c'}", "H(2, 'a'), P.HorizontalRule(), P.Para'x'", "H(3, 'a'), H(2, 'b'), P.Para'x'",
+               "H(1, 'a'), P.Div{}, H(2, 'b'), P.Para'x'", "P.Div{H(3, 'a')}, P.Para'x'", "H(2, 'a'), P.Div{P.Div{H(1, 'b'), P.Para'c'}}",
+               "H(4, 'a'), P.Para'x', H(4, 'b'), P.Div{H(2, 'c'), P.Para'y'}", "H(1, 'a')", "P.Para'x', H(1, 'a')",
+               "P.Div{H(2, 'a'), P.Para'x'}, H(3, 'b'), P.Div{H(1, 'c'), P.Para'y'}",
+               "P.Div{H(3, 'a'), P.Para'x'}, H(2, 'b'), P.Div{H(1, 'c'), P.Para'y'}",
+               "P.Div{H(2, 'a'), P.Para'x'}, H(2, 'b'), P.Div{H(1, 'c'), P.Para'y'}",
+               "P.Div{P.Div{H(2, 'a'), P.Para'x'}, H(3, 'b'), P.Div{H(1, 'c'), P.Para'y'}}",
+               "P.Div{H(4, 'a'), P.Para'x'}, P.Div{H(5, 'b'), P.Div{H(1, 'c'), P.Para'y'}}",
+               "H(3, 'a'), P.BlockQuote{H(1, 'q'), P.Para'y'}, H(2, 'b'), P.Para'x'"]
+SLIDE_LISTS += [", ".join(slide_blocks(0)) for _ in range(160)]
+GROUPS["slide-level"] = [
+    (f"slide_level {{{blocks}}}", f"return P.structure.slide_level{{{blocks}}}") for blocks in SLIDE_LISTS
+]
+
+GROUPS["from-path-uri"] = [
+    (f"from_path {path!r}", f"return P.format.from_path({lua_string(path)})")
+    for path in ["file:/a.md#x", "file:///a.md#x", "file:a.md?q", "https://h/é.md#x", "https://h/a.md#x",
+                 "https://h/a.md?x=1#y", "http://h:80/a.tex", "http://h:x/a.tex", "http://[::1]/a.rst",
+                 "http://u@h/a.rst?z", "mailto:a.md", "urn:x:a.md", "x:a.md#f", "1x:a.md#f", "a b:c.md#f",
+                 "https://h/a%20b.md#x", "https://h/a%zz.md#x", "https://h/a b.md#x", "https://h/a.md#x#y",
+                 "https://h/a.md#é", "https://h/a.md?é", "https://h/a{b}.md#x", "https://h/a|b.md#x",
+                 "https://h/a.md#x?y", "https://h/a.md?", "https://h/a.md#", "https:/a.md#x", "https:a.md#x",
+                 "c:/a.md#x", "C:\\a.md#x", "-x:a.md#f", "x+y.z-w:a.md#f", "x_y:a.md#f", "://a.md#x",
+                 ":a.md#x", "https://h/dir.md/#x", "https://h#x.md", "https://h?x.md", "https://h/.md#x",
+                 "https://h/a.MD#x", "https://user:pw@h:8080/p/a.html?x=1&y=2#frag", "https://[v1.x]/a.md#f",
+                 "https://[zz]/a.md#f", "https://h/a.md#[x]", "https://h/a[x].md#f", "data:text/plain,a.md#x",
+                 "https://h/a.md%23x", "https://h/~a/!$&'()*+,;=:@.md#x", "http://h:x/a.tex#f",
+                 "http://h:80x/a.tex#f", "http://u[@h/a.tex#f", "http://u:p:q@h/a.tex#f", "http://h%41/a.tex#f",
+                 "http://1.2.3.4/a.tex#f", "http://[1:2::3]/a.tex#f", "http://[1:2::3]:9/a.tex#f",
+                 "http://[1:2::3]x/a.tex#f", "http://[::ffff:1.2.3.4]/a.tex#f", "http://[1:2:3]/a.tex#f",
+                 "https://h/", "https://h", "https://h/#x", "https://h?q", "mailto:", "x:#f", "file://h",
+                 "file:///", "x:", "x:/", "x:?q.md", "https://h/a.md/..", "https://h/a/./b.rst#x", "x://a.md",
+                 "http://h/a.tex%", "http://h/a.tex%4", "HTTP://H/A.TEX#F", "http://h/a.tex#f%20"]
+]
+
+GROUPS["changed-chains"] = [
+    (f"insert chain {n}", "local e = P.Plain{P.Str'x'} for i = 1, " + str(n)
+     + " do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e)")
+    for n in [1, 2, 24, 25, 30, 64, 100, 126]
+] + [
+    (f"list chain {n}", "local l = P.BulletList{} local cur = l for i = 1, " + str(n)
+     + " do local n = P.BulletList{} cur.content = {{n}} cur = n end return #tostring(l), #P.json.encode(l)")
+    for n in [1, 24, 25, 30, 60]
+] + [
+    (f"span chain {n}", "local e = P.Str'x' for i = 1, " + str(n)
+     + " do local s = P.Span{} s.content = {e, P.Space()} s.attr.classes:insert('c' .. i) e = s end "
+     "local p = P.Para{e} return #tostring(p), #P.utils.stringify(p)")
+    for n in [10, 40, 100]
+] + [
+    ("shared child", "local c = P.Div{} c.content:insert(P.Para'x') local d = P.Div{} d.content = {c, c, c} "
+     "local e = P.Div{} e.content = {d, d} return #tostring(e), P.json.encode(e)"),
+    ("changed after read", "local c = P.Div{} c.content:insert(P.Para'x') local d = P.Div{c} local s1 = tostring(d) "
+     "c.content:insert(P.Para'y') d.content = {c} return s1 == tostring(d), #tostring(d)"),
 ]
 
 RAW_FILTERS = {

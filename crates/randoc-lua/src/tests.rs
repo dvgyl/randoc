@@ -1050,8 +1050,10 @@ fn a_chain_of_changed_objects_stops_at_its_bound() {
     for mode in [Mode::Full, Mode::Restricted] {
         for (levels, passes) in [
             (24, true),
-            (25, false),
-            (64, false),
+            (25, true),
+            (64, true),
+            (126, true),
+            (129, false),
             (250, false),
             (10_000, false),
             (100_000, false),
@@ -1069,7 +1071,7 @@ fn a_chain_of_changed_objects_stops_at_its_bound() {
                     } else {
                         let error = result.unwrap_err().to_string();
                         assert!(
-                            error.contains("more than 24 objects with changed properties"),
+                            error.contains("nested deeper than the limit of 128 levels"),
                             "{levels} {setter}: {error}"
                         );
                     }
@@ -1144,43 +1146,25 @@ fn restricted_mode_has_no_system_function_with_access() {
     );
 }
 
+/// Decision (a) of the session 4 brief, row I-CONTRACTS-03: in full mode
+/// the system functions use a native host of their own, also when the
+/// conversion has a restricted host, as `--sandbox` gives one.
 #[test]
-fn full_mode_reads_and_writes_files_through_the_context() {
+fn full_mode_system_functions_do_not_use_the_host_of_the_conversion() {
+    let folder = scratch_folder("own-host");
+    let file = folder.join("in.txt");
+    std::fs::write(&file, "on disk").unwrap();
     let mut host = randoc_core::PureHost::default();
-    host.files.insert("in.txt".into(), b"inside".to_vec());
+    host.files
+        .insert(file.display().to_string(), b"in the context".to_vec());
     let mut context = Context::new(Box::new(host));
-    assert_eq!(
-        system_probe(
-            Mode::Full,
-            "pandoc.system.read_file('in.txt')",
-            &mut context
-        ),
-        "inside"
+    let code = format!("pandoc.system.read_file({:?})", file.display().to_string());
+    assert_eq!(system_probe(Mode::Full, &code, &mut context), "on disk");
+    let code = format!(
+        "pandoc.path.exists({:?}, 'file')",
+        file.display().to_string()
     );
-    assert_eq!(
-        system_probe(
-            Mode::Full,
-            "pandoc.system.write_file('out.txt', 'abc') or pandoc.system.read_file('out.txt')",
-            &mut context
-        ),
-        "abc"
-    );
-    assert_eq!(
-        system_probe(
-            Mode::Full,
-            "select(2, pcall(pandoc.system.read_file, 'none.txt'))",
-            &mut context
-        ),
-        "none.txt: withBinaryFile: does not exist (No such file or directory)"
-    );
-    assert_eq!(
-        system_probe(
-            Mode::Full,
-            "select(2, pcall(pandoc.system.cputime))",
-            &mut context
-        ),
-        "pandoc.system.cputime is not implemented in Randoc"
-    );
+    assert_eq!(system_probe(Mode::Full, &code, &mut context), "true");
 }
 
 #[test]
@@ -1192,5 +1176,188 @@ fn the_system_names_are_the_names_of_ghc() {
     }
     if cfg!(target_arch = "aarch64") {
         assert_eq!(arch, "aarch64");
+    }
+}
+
+/// The smallest of 5 CPU times of `operation` in a Lua script, for an input
+/// of `size` items. `setup` makes the input `x` from `n`.
+fn lua_seconds(setup: &str, operation: &str, size: usize) -> f64 {
+    let code = format!(
+        "(function() local n = {size} {setup} local best = math.huge \
+         for _ = 1, 5 do local c = os.clock() {operation} best = math.min(best, os.clock() - c) end \
+         return best end)()"
+    );
+    system_probe(Mode::Full, &code, &mut Context::pure())
+        .parse()
+        .unwrap()
+}
+
+/// Standing order 21a: 4 times the input needs less than 10 times the
+/// time. Reviews lua-R2-04 and lua-R2-05 found quadratic time. The path
+/// functions copy bytes, which is fast, so their test uses 8 times the
+/// input and a bound of 20.
+#[test]
+fn path_and_table_functions_need_linear_time() {
+    let cases = [
+        (
+            "join",
+            "local x = {} for i = 1, n do x[i] = 'a' end",
+            "pandoc.path.join(x)",
+            50_000,
+            8,
+        ),
+        (
+            "make_relative",
+            "local x = string.rep('a/', n)",
+            "pandoc.path.make_relative(x .. 'b', x)",
+            50_000,
+            8,
+        ),
+        (
+            "normalize of a wide table",
+            "local P = pandoc local specs, cells = {}, {} \
+             for i = 1, n do specs[i] = {P.AlignDefault, 0} cells[i] = P.Cell{} end \
+             local x = P.Pandoc{P.Table(P.Caption(), specs, P.TableHead{P.Row(cells)}, {}, P.TableFoot())}",
+            "x:normalize()",
+            2_000,
+            4,
+        ),
+    ];
+    let mut failures = Vec::new();
+    for (name, setup, operation, size, factor) in cases {
+        let small = lua_seconds(setup, operation, size);
+        let large = lua_seconds(setup, operation, factor * size);
+        let bound = if factor == 4 { 10.0 } else { 20.0 };
+        if large >= bound * small.max(0.001) {
+            failures.push(format!(
+                "{name}: {small} s for {size} items, {large} s for {factor} times as many"
+            ));
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
+}
+
+/// A folder of the tests under the temporary folder of the session. The
+/// tests never remove it.
+fn scratch_folder(name: &str) -> std::path::PathBuf {
+    let folder = std::env::temp_dir().join("lua-s4").join(name);
+    std::fs::create_dir_all(&folder).unwrap();
+    folder
+}
+
+/// Codex lua-R2-06: GHC writes `Is` for a write and `is` for a read
+/// (oracle probe of session 4).
+#[test]
+fn a_directory_gives_the_error_texts_of_ghc() {
+    let folder = scratch_folder("directory-errors");
+    let path = folder.display().to_string();
+    for (call, text) in [
+        (
+            "write_file, PATH, 'x'",
+            "inappropriate type (Is a directory)",
+        ),
+        ("read_file, PATH", "inappropriate type (is a directory)"),
+    ] {
+        let code = format!(
+            "select(2, pcall(pandoc.system.{}))",
+            call.replace("PATH", &format!("{path:?}"))
+        );
+        assert_eq!(
+            system_probe(Mode::Full, &code, &mut Context::native()),
+            format!("{path}: withBinaryFile: {text}")
+        );
+    }
+}
+
+/// Decision (b) of the session 4 brief: restricted mode refuses each
+/// function with file, directory, environment or process access.
+#[test]
+fn restricted_mode_refuses_each_system_function() {
+    for name in SYSTEM_ACCESS {
+        let code = format!("select(2, pcall(pandoc.system.{name}, '.', {{}}, function() end))");
+        assert_eq!(
+            system_probe(Mode::Restricted, &code, &mut Context::native()),
+            "attempt to call a nil value",
+            "{name}"
+        );
+    }
+    for name in ["pandoc.pipe", "pandoc.path.exists"] {
+        let code = format!("select(2, pcall({name}, 'true', {{}}, ''))");
+        assert_eq!(
+            system_probe(Mode::Restricted, &code, &mut Context::native()),
+            format!("{name} needs the system functions of full mode"),
+        );
+    }
+    assert_eq!(
+        system_probe(Mode::Restricted, "type(os)", &mut Context::native()),
+        "nil"
+    );
+}
+
+/// Item 5 of the session 4 brief: the entrance of `--lua-filter`. The
+/// expected texts are the results of
+/// `pandoc -f json -t json --lua-filter FILE ... d.json` of Pandoc 3.13.
+#[test]
+fn filter_files_give_the_results_and_errors_of_pandoc() {
+    let folder = scratch_folder("entrance");
+    let write = |name: &str, text: &str| {
+        let path = folder.join(name);
+        std::fs::write(&path, text).unwrap();
+        path.display().to_string()
+    };
+    let a = write(
+        "a.lua",
+        "function Str(s) return pandoc.Str(s.text .. '1') end\n",
+    );
+    let b = write(
+        "b.lua",
+        "function Str(s) return pandoc.Str(s.text .. '2') end\n",
+    );
+    let bad = write("bad.lua", "function Str(s\n");
+    let err = write("err.lua", "function Str(s) error('boom') end\n");
+    let missing = folder.join("nope.lua").display().to_string();
+    let directory = folder.join("dir.lua");
+    std::fs::create_dir_all(&directory).unwrap();
+    let directory = directory.display().to_string();
+    let run = |paths: &[&str]| {
+        let mut doc = Pandoc {
+            blocks: vec![Block::Para(vec![Inline::Str("x".into())])],
+            ..Pandoc::default()
+        };
+        let result =
+            crate::apply_filter_files(&mut doc, paths, &environment(), &mut Context::pure());
+        result
+            .map(|()| doc)
+            .map_err(|error| (error.exit_code(), error.to_string()))
+    };
+    let doc = run(&[&a, &b]).unwrap();
+    assert_eq!(
+        doc.blocks,
+        vec![Block::Para(vec![Inline::Str("x12".into())])]
+    );
+    let failures = [
+        (
+            vec![missing.as_str()],
+            format!(
+                "Error running filter '{missing}':\ncannot open {missing}: No such file or directory"
+            ),
+        ),
+        (
+            vec![directory.as_str()],
+            format!("Error running filter '{directory}':\ncannot read {directory}: Is a directory"),
+        ),
+        (
+            vec![bad.as_str()],
+            format!("Error running filter '{bad}':\n{bad}:2: ')' expected near <eof>"),
+        ),
+        (
+            vec![a.as_str(), err.as_str()],
+            format!(
+                "Error running filter '{err}':\n{err}:1: boom\nstack traceback:\n\t{err}:1: in function 'Str'"
+            ),
+        ),
+    ];
+    for (paths, text) in failures {
+        assert_eq!(run(&paths).unwrap_err(), (83, text), "{paths:?}");
     }
 }

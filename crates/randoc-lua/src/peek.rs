@@ -5,7 +5,7 @@
 //! text of its Haskell original, because a script can see that text.
 
 use std::cell::RefCell;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 use mlua::{Lua, Table, Value};
 use randoc_ast::{
@@ -209,14 +209,20 @@ pub(crate) fn mismatch(expected: &str, value: &Value) -> PeekError {
 /// The largest number of objects with changed properties that one
 /// conversion reads inside each other. The conversion of each such object
 /// uses much stack in a debug build: this bound keeps the conversion in a
-/// thread stack of 2 MB.
+/// thread stack of 2 MB. The conversion reads the inner objects first
+/// (`Cx::convert_inner_objects`), so a tree that a script builds level by
+/// level stays far below the bound.
 pub(crate) const MAX_ACTIVE_OBJECTS: usize = 24;
 
 /// The addresses of the objects with changed properties that the
 /// conversions read now, outermost first. It finds an object that contains
-/// itself.
+/// itself. `converted` holds the result of each inner object while the
+/// outermost conversion runs.
 #[derive(Default)]
-pub(crate) struct ActiveObjects(RefCell<Vec<usize>>);
+pub(crate) struct ActiveObjects {
+    addresses: RefCell<Vec<usize>>,
+    converted: RefCell<Option<HashMap<usize, Node>>>,
+}
 
 /// Marks one object as read until the value is dropped.
 struct ActiveObject<'a> {
@@ -230,7 +236,7 @@ impl<'a> ActiveObject<'a> {
                 "internal error: no list of active objects".into(),
             ));
         };
-        let mut addresses = active.0.borrow_mut();
+        let mut addresses = active.addresses.borrow_mut();
         if addresses.contains(&address) {
             // The text of Pandoc, whose conversion of such a value ends
             // when its stack is full.
@@ -252,7 +258,7 @@ impl<'a> ActiveObject<'a> {
 impl Drop for ActiveObject<'_> {
     fn drop(&mut self) {
         if let Some(active) = self.lua.app_data_ref::<ActiveObjects>() {
-            active.0.borrow_mut().pop();
+            active.addresses.borrow_mut().pop();
         }
     }
 }
@@ -395,7 +401,7 @@ impl Cx<'_> {
         let base = with_node(value, |node| {
             (node.type_name() == type_name).then(|| node.clone())
         });
-        let Some(Some(mut node)) = base else {
+        let Some(Some(node)) = base else {
             return Err(mismatch(type_name, value));
         };
         let Value::UserData(userdata) = value else {
@@ -404,7 +410,49 @@ impl Cx<'_> {
         let Some(cache) = cache_of(userdata).filter(|cache| !cache.is_empty()) else {
             return Ok(node);
         };
-        let _active = ActiveObject::enter(self, userdata.to_pointer() as usize)?;
+        let address = userdata.to_pointer() as usize;
+        let Some(active) = self.lua.app_data_ref::<ActiveObjects>() else {
+            return Err(PeekError::Thrown(
+                "internal error: no list of active objects".into(),
+            ));
+        };
+        let (done, outermost) = {
+            let converted = active.converted.borrow();
+            let done = converted
+                .as_ref()
+                .and_then(|map| map.get(&address).cloned());
+            (done, converted.is_none())
+        };
+        drop(active);
+        if let Some(done) = done {
+            return Ok(done);
+        }
+        if outermost {
+            self.set_converted(Some(HashMap::new()));
+            let result = self
+                .convert_inner_objects(&cache)
+                .and_then(|()| self.apply_cache(node, address, &cache));
+            self.set_converted(None);
+            return result;
+        }
+        let node = self.apply_cache(node, address, &cache)?;
+        if let Some(active) = self.lua.app_data_ref::<ActiveObjects>()
+            && let Some(map) = active.converted.borrow_mut().as_mut()
+        {
+            map.insert(address, node.clone());
+        }
+        Ok(node)
+    }
+
+    fn set_converted(&self, value: Option<HashMap<usize, Node>>) {
+        if let Some(active) = self.lua.app_data_ref::<ActiveObjects>() {
+            *active.converted.borrow_mut() = value;
+        }
+    }
+
+    /// Applies each cached property to the base of an object.
+    fn apply_cache(&self, mut node: Node, address: usize, cache: &Table) -> Peek<Node> {
+        let _active = ActiveObject::enter(self, address)?;
         for pair in cache.pairs::<Value, Value>() {
             let (key, cached) = pair?;
             let Value::String(key) = key else { continue };
@@ -412,6 +460,57 @@ impl Cx<'_> {
         }
         check_node(self, &node)?;
         Ok(node)
+    }
+
+    /// Converts the objects with changed properties inside the cached
+    /// values of an object, the innermost first, so that the conversion of
+    /// each outer object finds its inner objects done and does not recurse
+    /// for each level. A search on the heap finds them. An inner object
+    /// that gives an error is left out: the conversion that reads it gives
+    /// the error.
+    fn convert_inner_objects(&self, cache: &Table) -> Peek<()> {
+        let mut seen = HashSet::new();
+        let mut order = Vec::new();
+        // A value, its depth in changed objects, and whether its inner
+        // values are done (the second visit of an object).
+        let mut work: Vec<(Value, usize, bool)> = vec![(Value::Table(cache.clone()), 0, false)];
+        while let Some((value, depth, done)) = work.pop() {
+            match &value {
+                Value::UserData(userdata) if done => order.push(Value::UserData(userdata.clone())),
+                Value::UserData(userdata) => {
+                    let Some(inner) = cache_of(userdata).filter(|cache| !cache.is_empty()) else {
+                        continue;
+                    };
+                    if !seen.insert(userdata.to_pointer() as usize) {
+                        continue;
+                    }
+                    if depth >= self.max_depth {
+                        return Err(PeekError::Thrown(depth_message(self.max_depth)));
+                    }
+                    work.push((value.clone(), depth, true));
+                    work.push((Value::Table(inner), depth + 1, false));
+                }
+                Value::Table(table) => {
+                    if !seen.insert(table.to_pointer() as usize) {
+                        continue;
+                    }
+                    for pair in table.pairs::<Value, Value>() {
+                        let (_, item) = pair?;
+                        if matches!(item, Value::Table(_) | Value::UserData(_)) {
+                            work.push((item, depth, false));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        for value in &order {
+            if let Some(type_name) = with_node(value, Node::type_name) {
+                // The error, if any, comes again from the outer conversion.
+                let _ = self.object(type_name, value);
+            }
+        }
+        Ok(())
     }
 
     /// Reads an `Inline` object.

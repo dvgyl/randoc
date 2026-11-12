@@ -5,7 +5,7 @@ Usage (from the root of the worktree, after `. env.sh`):
 
     python3 -I crates/randoc-lua/tools/record-replay.py [SET]
 
-SET is `cases` (the default), `walk` or `modules`. The script reads
+SET is `cases` (the default), `walk`, `modules` or `system`. The script reads
 `crates/randoc-lua/tests/replay/SET.txt`. For each filter
 and each of its documents it runs
 
@@ -88,7 +88,7 @@ def main():
     if not pandoc or "GHCRTS" not in os.environ:
         sys.exit("source env.sh first: RANDOC_ORACLE_PANDOC and GHCRTS must be set")
     name = sys.argv[1] if len(sys.argv) > 1 else "cases"
-    if name not in ("cases", "walk", "modules"):
+    if name not in ("cases", "walk", "modules", "system"):
         sys.exit(f"unknown set: {name}")
     docs, filters = read_cases(os.path.join(REPLAY, name + ".txt"))
     expected = "expected.txt" if name == "cases" else name + "-expected.txt"

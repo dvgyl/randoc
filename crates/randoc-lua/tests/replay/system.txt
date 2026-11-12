@@ -1,0 +1,357 @@
+# The oracle matrix of `pandoc.system`, `pandoc.path.exists` and `pandoc.pipe`.
+# `tools/system-matrix.py` writes this file. Do not edit it.
+@@@ doc empty
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}
+@@@ doc small
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"one"}]}]}
+@@@ filter system-files empty small
+
+local P, S = pandoc, pandoc.system
+local log = {}
+local here = ''
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  if kind == 'string' then
+    local text = here ~= '' and value:gsub(here:gsub('%p', '%%%0'), 'TMP') or value
+    return '"' .. text:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 4 then
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    local mt = getmetatable(value)
+    local name = type(mt) == 'table' and rawget(mt, '__name')
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises `PandocError` objects (row I-LUA-10): the text is compared.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  log[#log + 1] = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+end
+local function sorted(list) table.sort(list) return list end
+
+local function run()
+  probe('mkdir a', function() return S.make_directory('a') end)
+  probe('mkdir a again', function() return S.make_directory('a') end)
+  probe('mkdir b/c', function() return S.make_directory('b/c') end)
+  probe('mkdir b/c parents', function() return S.make_directory('b/c', true) end)
+  probe('mkdir b/c parents again', function() return S.make_directory('b/c', true) end)
+  probe('mkdir parents false', function() return S.make_directory('d/e', false) end)
+  probe('mkdir results', function() return select('#', S.make_directory('m')) end)
+  probe('write a/f', function() return S.write_file('a/f', 'xyz') end)
+  probe('write results', function() return select('#', S.write_file('a/w', '')) end)
+  probe('write missing folder', function() return S.write_file('nope/x', 'x') end)
+  probe('write to folder', function() return S.write_file('a', 'x') end)
+  probe('read a/f', function() return S.read_file('a/f') end)
+  probe('read missing', function() return S.read_file('nope') end)
+  probe('read folder', function() return S.read_file('a') end)
+  probe('list a', function() return sorted(S.list_directory('a')) end)
+  probe('list type', function() local l = S.list_directory('a') return type(l), rawget(getmetatable(l) or {}, '__name') end)
+  probe('list missing', function() return S.list_directory('nope') end)
+  probe('list file', function() return S.list_directory('a/f') end)
+  probe('copy', function() return S.copy('a/f', 'a/g') end)
+  probe('copy read', function() return S.read_file('a/g') end)
+  probe('copy over', function() S.write_file('a/o', 'old') S.copy('a/f', 'a/o') return S.read_file('a/o') end)
+  probe('copy missing', function() return S.copy('nope', 'a/h') end)
+  probe('copy to folder', function() return S.copy('a/f', 'b') end)
+  probe('rename', function() return S.rename('a/g', 'a/h') end)
+  probe('rename read', function() return S.read_file('a/h') end)
+  probe('rename missing', function() return S.rename('a/g', 'a/i') end)
+  probe('rename file over folder', function() return S.rename('a/h', 'b') end)
+  probe('rename folder', function() S.make_directory('r1') return S.rename('r1', 'r2'), P.path.exists('r2', 'directory') end)
+  probe('times types', function() local m, a = S.times('a/f') return type(m), type(a), select('#', S.times('a/f')) end)
+  probe('times form', function() local m = S.times('a/f') return m:match('^%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%d[.%d]*Z$') ~= nil end)
+  probe('times missing', function() return S.times('nope') end)
+  probe('remove', function() return S.remove('a/h') end)
+  probe('remove missing', function() return S.remove('a/h') end)
+  probe('remove folder', function() return S.remove('b') end)
+  probe('rmdir nonempty', function() return S.remove_directory('a') end)
+  probe('rmdir missing', function() return S.remove_directory('nope') end)
+  probe('rmdir file', function() return S.remove_directory('a/f') end)
+  probe('rmdir empty', function() S.make_directory('e') return S.remove_directory('e'), P.path.exists('e') end)
+  probe('rmdir empty recursive', function() S.make_directory('e2') return S.remove_directory('e2', true), P.path.exists('e2') end)
+  probe('exists', function() return P.path.exists('a'), P.path.exists('a', 'directory'), P.path.exists('a', 'file'), P.path.exists('a/f', 'file'), P.path.exists('a/f', 'directory'), P.path.exists('nope'), P.path.exists('a', 'symlink'), P.path.exists('nope', 'file') end)
+  probe('exists bad type', function() return P.path.exists('a', 'pipe') end)
+  probe('exists number', function() return P.path.exists(5) end)
+end
+
+function Pandoc(document)
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  S.make_directory(parent, true)
+  S.with_temporary_directory(parent, 'matrix', function(directory)
+    S.with_working_directory(directory, function()
+      here = S.get_working_directory()
+      run()
+    end)
+  end)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter system-directories empty small
+
+local P, S = pandoc, pandoc.system
+local log = {}
+local here = ''
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  if kind == 'string' then
+    local text = here ~= '' and value:gsub(here:gsub('%p', '%%%0'), 'TMP') or value
+    return '"' .. text:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 4 then
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    local mt = getmetatable(value)
+    local name = type(mt) == 'table' and rawget(mt, '__name')
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises `PandocError` objects (row I-LUA-10): the text is compared.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  log[#log + 1] = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+end
+local function sorted(list) table.sort(list) return list end
+
+local function run()
+  probe('with_wd', function() return S.with_working_directory('.', function() return S.get_working_directory() end) end)
+  probe('with_wd sub', function() S.make_directory('w') S.write_file('w/f', 'in w') return S.with_working_directory('w', function() return S.get_working_directory(), S.read_file('f') end) end)
+  probe('with_wd after', function() return S.get_working_directory() end)
+  probe('with_wd error', function() return S.with_working_directory('w', function() error('in w', 0) end) end)
+  probe('with_wd error after', function() return S.get_working_directory() end)
+  probe('with_wd missing', function() return S.with_working_directory('nope', function() return 1 end) end)
+  probe('with_wd results', function() return select('#', S.with_working_directory('.', function() return nil, nil end)) end)
+  probe('with_wd values', function() return S.with_working_directory('.', function() return 1, 'two', {3} end) end)
+  probe('with_tmp', function() local seen return S.with_temporary_directory('.', 'tt', function(d) seen = d return d:match('^%./tt%-%x+$') ~= nil, P.path.exists(d, 'directory') end), P.path.exists(seen) end)
+  probe('with_tmp error', function() return S.with_temporary_directory('.', 'tt', function() error('x', 0) end) end)
+  probe('with_tmp results', function() return select('#', S.with_temporary_directory('.', 'tt', function() end)) end)
+  probe('list after', function() local l = {} for _, n in ipairs(S.list_directory('.')) do if n:sub(1, 2) ~= '._' then l[#l + 1] = n end end return sorted(l) end)
+end
+
+function Pandoc(document)
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  S.make_directory(parent, true)
+  S.with_temporary_directory(parent, 'matrix', function(directory)
+    S.with_working_directory(directory, function()
+      here = S.get_working_directory()
+      run()
+    end)
+  end)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter system-environment empty small
+
+local P, S = pandoc, pandoc.system
+local log = {}
+local here = ''
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  if kind == 'string' then
+    local text = here ~= '' and value:gsub(here:gsub('%p', '%%%0'), 'TMP') or value
+    return '"' .. text:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 4 then
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    local mt = getmetatable(value)
+    local name = type(mt) == 'table' and rawget(mt, '__name')
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises `PandocError` objects (row I-LUA-10): the text is compared.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  log[#log + 1] = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+end
+local function sorted(list) table.sort(list) return list end
+
+local function run()
+  probe('env type', function() local e = S.environment() return type(e), getmetatable(e), type(e.PATH) end)
+  probe('with_env', function() return S.with_environment({X_PROBE = 'v'}, function() return os.getenv('X_PROBE'), S.environment().X_PROBE, os.getenv('PATH') == nil end) end)
+  probe('with_env after', function() return os.getenv('X_PROBE'), S.environment().X_PROBE, os.getenv('PATH') ~= nil end)
+  probe('with_env error', function() return S.with_environment({X_PROBE = 'v'}, function() error('boom', 0) end) end)
+  probe('with_env error after', function() return os.getenv('X_PROBE'), os.getenv('PATH') ~= nil end)
+  probe('with_env number', function() return S.with_environment({X_PROBE = 1}, function() return S.environment().X_PROBE end) end)
+  probe('with_env count', function() return S.with_environment({A1 = 'a', B1 = 'b'}, function() local n = 0 for _ in pairs(S.environment()) do n = n + 1 end return n end) end)
+  probe('with_env empty', function() return S.with_environment({}, function() return next(S.environment()) end) end)
+  probe('with_env results', function() return select('#', S.with_environment({}, function() end)) end)
+  probe('with_env command', function() return S.with_environment({X_PROBE = 'seen'}, function() return S.command('sh', {'-c', 'echo $X_PROBE'}) end) end)
+  probe('getenv missing', function() return os.getenv('X_PROBE_NEVER_SET') end)
+  probe('xdg config', function() return S.with_environment({HOME = '/h'}, function() return S.xdg('config'), S.xdg('data', 'x/y'), S.xdg('datadirs'), S.xdg('configdirs'), S.xdg('cache'), S.xdg('state') end) end)
+  probe('xdg variables', function() return S.with_environment({HOME = '/h', XDG_CONFIG_HOME = 'rel', XDG_DATA_DIRS = '/a::/b', XDG_CACHE_HOME = '/c'}, function() return S.xdg('config'), S.xdg('datadirs'), S.xdg('cache', '/abs'), S.xdg('CONFIG_DIRS'), S.xdg('XDG_CACHE'), S.xdg('cache', 'f') end) end)
+  probe('xdg names', function() return S.with_environment({HOME = '/h'}, function() return S.xdg('Config'), S.xdg('XDGDATA'), S.xdg('xdg_state_') end) end)
+  probe('xdg bad', function() return S.xdg('nope') end)
+  probe('xdg home', function() return S.xdg('Xdg_Config_Home') end)
+  probe('xdg none', function() return S.xdg() end)
+end
+
+function Pandoc(document)
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  S.make_directory(parent, true)
+  S.with_temporary_directory(parent, 'matrix', function(directory)
+    S.with_working_directory(directory, function()
+      here = S.get_working_directory()
+      run()
+    end)
+  end)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter system-processes empty small
+
+local P, S = pandoc, pandoc.system
+local log = {}
+local here = ''
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  if kind == 'string' then
+    local text = here ~= '' and value:gsub(here:gsub('%p', '%%%0'), 'TMP') or value
+    return '"' .. text:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 4 then
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    local mt = getmetatable(value)
+    local name = type(mt) == 'table' and rawget(mt, '__name')
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises `PandocError` objects (row I-LUA-10): the text is compared.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  log[#log + 1] = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+end
+local function sorted(list) table.sort(list) return list end
+
+local function run()
+  probe('command echo', function() return S.command('echo', {'a', 'b'}) end)
+  probe('command cat', function() return S.command('cat', {}, 'in put') end)
+  probe('command cat number', function() return S.command('cat', {}, 12) end)
+  probe('command false', function() return S.command('false', {}) end)
+  probe('command true', function() return S.command('true', {}) end)
+  probe('command sh', function() return S.command('sh', {'-c', 'echo err 1>&2; exit 3'}) end)
+  probe('command signal', function() return S.command('sh', {'-c', 'kill -9 $$'}) end)
+  probe('command opts', function() return S.command('echo', {'x'}, '', {}) end)
+  probe('command noargs', function() return S.command('true') end)
+  probe('command args string', function() return S.command('true', 'x') end)
+  probe('command none', function() return S.command() end)
+  probe('command in folder', function() S.make_directory('cw') return S.with_working_directory('cw', function() return S.command('sh', {'-c', 'pwd'}) end) end)
+  probe('pipe cat', function() return P.pipe('cat', {}, 'pi') end)
+  probe('pipe echo', function() return P.pipe('echo', {'x', 'y'}, '') end)
+  probe('pipe false', function() return P.pipe('false', {}, '') end)
+  probe('pipe error fields', function() local ok, e = pcall(P.pipe, 'sh', {'-c', 'echo o; exit 2'}, '') return ok, e.command, e.error_code, e.output, P.utils.type(e) end)
+  probe('pipe error text', function() local ok, e = pcall(P.pipe, 'sh', {'-c', 'echo o; exit 2'}, '') return tostring(e) end)
+  probe('pipe no input', function() return P.pipe('true', {}) end)
+  probe('pipe none', function() return P.pipe() end)
+end
+
+function Pandoc(document)
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  S.make_directory(parent, true)
+  S.with_temporary_directory(parent, 'matrix', function(directory)
+    S.with_working_directory(directory, function()
+      here = S.get_working_directory()
+      run()
+    end)
+  end)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter system-cputime empty small
+
+local P, S = pandoc, pandoc.system
+local log = {}
+local here = ''
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  if kind == 'string' then
+    local text = here ~= '' and value:gsub(here:gsub('%p', '%%%0'), 'TMP') or value
+    return '"' .. text:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 4 then
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    local mt = getmetatable(value)
+    local name = type(mt) == 'table' and rawget(mt, '__name')
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises `PandocError` objects (row I-LUA-10): the text is compared.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  log[#log + 1] = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+end
+local function sorted(list) table.sort(list) return list end
+
+local function run()
+  probe('cputime', function() local t = S.cputime() return math.type(t), t > 0 end)
+end
+
+function Pandoc(document)
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  S.make_directory(parent, true)
+  S.with_temporary_directory(parent, 'matrix', function(directory)
+    S.with_working_directory(directory, function()
+      here = S.get_working_directory()
+      run()
+    end)
+  end)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+

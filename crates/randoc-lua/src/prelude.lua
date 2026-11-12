@@ -507,7 +507,6 @@ pandoc.path, path_run = module_of('path', {
   'directory', 'filename', 'is_absolute', 'is_relative', 'join', 'make_relative', 'normalize',
   'split', 'split_extension', 'split_search_path',
 })
-pandoc.path.exists = missing_function('pandoc.path.exists')
 pandoc.path.separator = '/'
 pandoc.path.search_path_separator = ':'
 function pandoc.path.treat_strings_as_paths()
@@ -522,23 +521,86 @@ function pandoc.path.treat_strings_as_paths()
   end
 end
 -- `pandoc.system`: restricted mode has only the fields. In full mode Rust
--- calls `native.system_functions` with the functions that use the context.
+-- calls `native.system_functions` with the function that runs each
+-- operation of `system.rs` with the host.
 local function system_os()
   local os_name, arch = native.os, native.arch
   return os_name, arch
 end
 pandoc.system = {}
 pandoc.system.os, pandoc.system.arch = system_os()
-function native.system_functions(read_file, write_file)
+local function refused(name)
+  return function() error(name .. ' needs the system functions of full mode', 2) end
+end
+pandoc.pipe = refused('pandoc.pipe')
+pandoc.path.exists = refused('pandoc.path.exists')
+function native.system_functions(system_call)
   local system = pandoc.system
-  system.read_file = function(...) return check(read_file(...)) end
-  system.write_file = function(...) return check(write_file(...)) end
+  local pack, unpack, select, type, setmetatable = table.pack, table.unpack, select, type, setmetatable
+  local function op(name) return function(...) return check(system_call(name, ...)) end end
+  local filepath_list = {}
+  for key, value in pairs(pandoc.List) do filepath_list[key] = value end
+  filepath_list.__name = 'FilePath list'
+  filepath_list.__index = filepath_list
   for _, name in ipairs {
-    'command', 'copy', 'cputime', 'environment', 'get_working_directory', 'list_directory',
-    'make_directory', 'remove', 'remove_directory', 'rename', 'times', 'with_environment',
-    'with_temporary_directory', 'with_working_directory', 'xdg',
+    'command', 'copy', 'cputime', 'environment', 'get_working_directory', 'make_directory',
+    'read_file', 'remove', 'remove_directory', 'rename', 'times', 'write_file',
   } do
-    system[name] = missing_function('pandoc.system.' .. name)
+    system[name] = op(name)
+  end
+  local list_directory, xdg = op('list_directory'), op('xdg')
+  function system.list_directory(...) return setmetatable(list_directory(...), filepath_list) end
+  function system.xdg(...)
+    local result = xdg(...)
+    if type(result) == 'table' then setmetatable(result, filepath_list) end
+    return result
+  end
+  local set_directory, set_environment = op('set_working_directory'), op('set_environment')
+  local temporary_directory, remove_tree = op('temporary_directory'), op('remove_tree')
+  local get_directory, environment = system.get_working_directory, system.environment
+  -- Runs `callback` and then `restore`, also after an error of the callback.
+  local function finally(restore, callback, ...)
+    local results = pack(pcall(callback, ...))
+    restore()
+    if not results[1] then error(results[2], 0) end
+    return unpack(results, 2, results.n)
+  end
+  function system.with_working_directory(directory, callback)
+    local old = get_directory()
+    set_directory(directory)
+    return finally(function() set_directory(old) end, callback)
+  end
+  function system.with_environment(variables, callback)
+    local old = environment()
+    set_environment(variables)
+    return finally(function() set_environment(old) end, callback)
+  end
+  function system.with_temporary_directory(...)
+    local parent, template, callback = ...
+    if select('#', ...) < 3 then parent, template, callback = nil, ... end
+    local directory = temporary_directory(parent, template)
+    return finally(function() remove_tree(directory) end, callback, directory)
+  end
+  local getenv = os.getenv
+  function os.getenv(name)
+    if type(name) ~= 'string' and type(name) ~= 'number' then return getenv(name) end
+    return check(system_call('getenv', name))
+  end
+  pandoc.path.exists = op('exists')
+  local pipe_error = {
+    __name = 'pandoc pipe error',
+    __tostring = function(e)
+      local output = e.output == '' and '<no output>' or e.output
+      return 'Error running ' .. e.command .. ' (error code ' .. e.error_code .. '): ' .. output
+    end,
+  }
+  function pandoc.pipe(...)
+    local command = ...
+    local code, output = check(system_call('pipe', ...))
+    if code then
+      error(setmetatable({ command = command, error_code = code, output = output }, pipe_error), 0)
+    end
+    return output
   end
 end
 pandoc.json = module_of('json', { 'decode', 'encode' })
@@ -560,7 +622,7 @@ local function missing_module(name)
 end
 
 for _, name in ipairs {
-  'read', 'write', 'write_classic', 'pipe', 'with_state', 'ReaderOptions',
+  'read', 'write', 'write_classic', 'with_state', 'ReaderOptions',
   'WriterOptions', 'SimpleTable',
 } do
   pandoc[name] = missing_function('pandoc.' .. name)

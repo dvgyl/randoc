@@ -30,12 +30,7 @@ pub(crate) fn call(call: &Call, name: &str) -> Peek<Vec<Value>> {
         "is_relative" => Ok(vec![Value::Boolean(!path(0, "filepath")?.starts_with('/'))]),
         "join" => {
             let parts = call.required(0, "filepaths", |v| cx.list(v, |item| cx.text(item)))?;
-            text(
-                &parts
-                    .iter()
-                    .rev()
-                    .fold(String::new(), |rest, part| combine(part, &rest)),
-            )
+            text(&join_path(&parts))
         }
         "make_relative" => {
             let target = path(0, "path")?;
@@ -229,24 +224,22 @@ fn make_relative(root: &str, path: &str) -> String {
     if split_drive(root).0 != split_drive(path).0 {
         return path.to_string();
     }
-    let next = |x: &str| -> (String, String) {
+    // Slices of the inputs: each step copies only one directory name.
+    fn next(x: &str) -> (&str, &str) {
         let x = x.trim_start_matches('/');
         let end = x.find(is_separator).unwrap_or(x.len());
         let (a, b) = x.split_at(end);
-        (
-            a.trim_start_matches('/').to_string(),
-            b.trim_start_matches('/').to_string(),
-        )
-    };
-    let mut x = split_drive(root).1.to_string();
-    let mut y = split_drive(path).1.to_string();
+        (a, b.trim_start_matches('/'))
+    }
+    let mut x = split_drive(root).1;
+    let mut y = split_drive(path).1;
     loop {
         if x.is_empty() {
             return y.trim_start_matches('/').to_string();
         }
-        let (x1, x2) = next(&x);
-        let (y1, y2) = next(&y);
-        if !equal_file_path(&x1, &y1) {
+        let (x1, x2) = next(x);
+        let (y1, y2) = next(y);
+        if !equal_file_path(x1, y1) {
             return path.to_string();
         }
         x = x2;

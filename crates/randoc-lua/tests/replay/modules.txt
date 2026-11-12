@@ -2775,6 +2775,1084 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter state-fields empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('PANDOC_STATE.output_file', function() return PANDOC_STATE.output_file end)
+  probe('PANDOC_STATE.source_url', function() return PANDOC_STATE.source_url end)
+  probe('PANDOC_STATE.user_data_dir', function() return PANDOC_STATE.user_data_dir end)
+  probe('PANDOC_STATE.trace', function() return PANDOC_STATE.trace end)
+  probe('PANDOC_STATE.verbosity', function() return PANDOC_STATE.verbosity end)
+  probe('PANDOC_STATE.log', function() return PANDOC_STATE.log end)
+  probe('PANDOC_STATE.resource_path', function() return PANDOC_STATE.resource_path end)
+  probe('PANDOC_STATE.request_headers', function() return PANDOC_STATE.request_headers end)
+  probe('PANDOC_STATE.nokey', function() return PANDOC_STATE.nokey end)
+  probe('PANDOC_STATE.Output_file', function() return PANDOC_STATE.Output_file end)
+  probe('PANDOC_STATE.input', function() return PANDOC_STATE.input end)
+  probe('state key 1', function() return PANDOC_STATE[1] end)
+  probe('state key true', function() return PANDOC_STATE[true] end)
+  probe('state output test', function() if PANDOC_STATE.output_file then return 'file' end return 'stdout' end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter json-empty-lists empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('encode P.List{}', function() return P.json.encode(P.List{}) end)
+  probe('encode P.Inlines{}', function() return P.json.encode(P.Inlines{}) end)
+  probe('encode P.Blocks{}', function() return P.json.encode(P.Blocks{}) end)
+  probe('encode {}', function() return P.json.encode({}) end)
+  probe('encode setmetatable({}, {})', function() return P.json.encode(setmetatable({}, {})) end)
+  probe('encode setmetatable({}, {__name = \039List\039})', function() return P.json.encode(setmetatable({}, {__name = 'List'})) end)
+  probe('encode setmetatable({}, P.List)', function() return P.json.encode(setmetatable({}, P.List)) end)
+  probe('encode {a = P.List{}}', function() return P.json.encode({a = P.List{}}) end)
+  probe('encode P.List{P.List{}}', function() return P.json.encode(P.List{P.List{}}) end)
+  probe('encode {P.List{}, {}}', function() return P.json.encode({P.List{}, {}}) end)
+  probe('encode P.Attr().classes', function() return P.json.encode(P.Attr().classes) end)
+  probe('encode P.Attr().attributes', function() return P.json.encode(P.Attr().attributes) end)
+  probe('encode P.AttributeList{}', function() return P.json.encode(P.AttributeList{}) end)
+  probe('encode P.MetaList{}', function() return P.json.encode(P.MetaList{}) end)
+  probe('encode P.Meta{}', function() return P.json.encode(P.Meta{}) end)
+  probe('encode P.Div{}.content', function() return P.json.encode(P.Div{}.content) end)
+  probe('encode P.Para{}.content', function() return P.json.encode(P.Para{}.content) end)
+  probe('encode P.Cell{}.contents', function() return P.json.encode(P.Cell{}.contents) end)
+  probe('encode P.Table(P.Caption(), {}, P.TableHead(), {}, P.TableFoot()).bodies', function() return P.json.encode(P.Table(P.Caption(), {}, P.TableHead(), {}, P.TableFoot()).bodies) end)
+  probe('encode P.json.decode(\039[]\039)', function() return P.json.encode(P.json.decode('[]')) end)
+  probe('encode P.json.decode(\039{"a":[]}\039)', function() return P.json.encode(P.json.decode('{"a":[]}')) end)
+  probe('encode P.json.decode(\039[[],{}]\039)', function() return P.json.encode(P.json.decode('[[],{}]')) end)
+  probe('encode P.json.decode(\039{"a":{}}\039)', function() return P.json.encode(P.json.decode('{"a":{}}')) end)
+  probe('encode P.json.decode(\039{"a":[[]]}\039)', function() return P.json.encode(P.json.decode('{"a":[[]]}')) end)
+  probe('encode P.Pandoc{}', function() return P.json.encode(P.Pandoc{}) end)
+  probe('encode P.List{1}:filter(function() return false end)', function() return P.json.encode(P.List{1}:filter(function() return false end)) end)
+  probe('encode P.List{1}:map(function(x) return x end)', function() return P.json.encode(P.List{1}:map(function(x) return x end)) end)
+  probe('encode P.Inlines{}:clone()', function() return P.json.encode(P.Inlines{}:clone()) end)
+  probe('encode pandoc.List{}:clone()', function() return P.json.encode(pandoc.List{}:clone()) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter json-numbers empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('encode 1.801439850948199e+16', function() return P.json.encode(0x1.0000000000002p+54) end)
+  probe('encode -1.801439850948199e+16', function() return P.json.encode(-0x1.0000000000002p+54) end)
+  probe('encode 3.602879701896397e+16', function() return P.json.encode(0x1.0000000000000p+55) end)
+  probe('encode 9007199254740994.0', function() return P.json.encode(0x1.0000000000001p+53) end)
+  probe('encode 1.1529215046068472e+18', function() return P.json.encode(0x1.0000000000001p+60) end)
+  probe('encode 1e+22', function() return P.json.encode(0x1.0f0cf064dd592p+73) end)
+  probe('encode 1e+23', function() return P.json.encode(0x1.52d02c7e14af6p+76) end)
+  probe('encode 1.000000000000001e+21', function() return P.json.encode(0x1.b1ae4d6e2ef58p+69) end)
+  probe('encode 0.1', function() return P.json.encode(0x1.999999999999ap-4) end)
+  probe('encode 0.3', function() return P.json.encode(0x1.3333333333333p-2) end)
+  probe('encode 0.3333333333333333', function() return P.json.encode(0x1.5555555555555p-2) end)
+  probe('encode 123.456', function() return P.json.encode(0x1.edd2f1a9fbe77p+6) end)
+  probe('encode 5e-324', function() return P.json.encode(0x0.0000000000001p-1022) end)
+  probe('encode 2.2250738585072014e-308', function() return P.json.encode(0x1.0000000000000p-1022) end)
+  probe('encode 1.7976931348623157e+308', function() return P.json.encode(0x1.fffffffffffffp+1023) end)
+  probe('encode 9007199254740992.0', function() return P.json.encode(0x1.0000000000000p+53) end)
+  probe('encode 4.35', function() return P.json.encode(0x1.1666666666666p+2) end)
+  probe('encode 10000000.0', function() return P.json.encode(0x1.312d000000000p+23) end)
+  probe('encode 100000000.0', function() return P.json.encode(0x1.7d78400000000p+26) end)
+  probe('encode 12345678.9', function() return P.json.encode(0x1.78c29dccccccdp+23) end)
+  probe('encode 0.000123', function() return P.json.encode(0x1.01f31f46ed246p-13) end)
+  probe('encode 1e-07', function() return P.json.encode(0x1.ad7f29abcaf48p-24) end)
+  probe('encode 100.0', function() return P.json.encode(0x1.9000000000000p+6) end)
+  probe('encode -0.5', function() return P.json.encode(-0x1.0000000000000p-1) end)
+  probe('encode 579200.0220012947', function() return P.json.encode(0x1.1ad000b43c0f2p+19) end)
+  probe('encode -234990.82298615016', function() return P.json.encode(-0x1.caf769579c340p+17) end)
+  probe('encode 914435.3360542061', function() return P.json.encode(0x1.be806ac0f4c02p+19) end)
+  probe('encode 3.5154428903336873e+18', function() return P.json.encode(0x1.864ae57714187p+61) end)
+  probe('encode -129263.35105124814', function() return P.json.encode(-0x1.f8ef59de7e9e0p+16) end)
+  probe('encode 587428.4129482505', function() return P.json.encode(0x1.1ed48d36df3fep+19) end)
+  probe('encode 930639.1512075728', function() return P.json.encode(0x1.c669e4d6b1438p+19) end)
+  probe('encode 6.512233884215352e+22', function() return P.json.encode(0x1.b949400000000p+75) end)
+  probe('encode 1.4133325551805967e+18', function() return P.json.encode(0x1.39d2a788508dep+60) end)
+  probe('encode 3.1808109959489756e+18', function() return P.json.encode(0x1.612415fc398fbp+61) end)
+  probe('encode 340789.42416860326', function() return P.json.encode(0x1.4ccd5b259411cp+18) end)
+  probe('encode 7.565834355022385e+28', function() return P.json.encode(0x1.e8ee3adc6177ep+95) end)
+  probe('encode 2.8803254914596065e+18', function() return P.json.encode(0x1.3fc7c630df9e4p+61) end)
+  probe('encode 9.694753942189769e-18', function() return P.json.encode(0x1.65ac5cb6073b5p-57) end)
+  probe('encode 1.1110886935681093e+20', function() return P.json.encode(0x1.817c800000000p+66) end)
+  probe('encode 1.910569360946388e+18', function() return P.json.encode(0x1.a83b4b60df45cp+60) end)
+  probe('encode 2.5389483636365103e-26', function() return P.json.encode(0x1.f6e3fa07feb03p-86) end)
+  probe('encode 318405.3399785508', function() return P.json.encode(0x1.36f155c235654p+18) end)
+  probe('encode 2.779100857096054e+18', function() return P.json.encode(0x1.348acc0ab18d2p+61) end)
+  probe('encode 4.847949077003895e+18', function() return P.json.encode(0x1.0d1d800000000p+62) end)
+  probe('encode 2.9797416735857684e+27', function() return P.json.encode(0x1.34191af98401dp+91) end)
+  probe('encode 268812.19312144024', function() return P.json.encode(0x1.06830c5c1a078p+18) end)
+  probe('encode 2.5730642140696714e+18', function() return P.json.encode(0x1.1daae228ff23bp+61) end)
+  probe('encode 210014.29069603048', function() return P.json.encode(0x1.9a2f2535870c0p+17) end)
+  probe('encode 2138958137917440.0', function() return P.json.encode(0x1.e657c00000000p+50) end)
+  probe('encode 4.003739651150971e+17', function() return P.json.encode(0x1.639a800000000p+58) end)
+  probe('encode 684908.1672590176', function() return P.json.encode(0x1.4e6d855a2f955p+19) end)
+  probe('encode 6.056825777222598e+17', function() return P.json.encode(0x1.0cfa230d78e73p+59) end)
+  probe('encode 4.784582022871908e+18', function() return P.json.encode(0x1.0999000000000p+62) end)
+  probe('encode 1.6731928146844058e+18', function() return P.json.encode(0x1.7386000000000p+60) end)
+  probe('encode 422138.558335318', function() return P.json.encode(0x1.9c3ea3bbc40ecp+18) end)
+  probe('encode 3.117623402797765e+18', function() return P.json.encode(0x1.5a202fbc59a49p+61) end)
+  probe('encode 722299.1142297024', function() return P.json.encode(0x1.60af63a7c50c8p+19) end)
+  probe('encode -323144.0520662996', function() return P.json.encode(-0x1.3b9203550de38p+18) end)
+  probe('encode 5.061155424832947e-21', function() return P.json.encode(0x1.7e68fbc82349dp-68) end)
+  probe('encode 7.860388234108561e+22', function() return P.json.encode(0x1.0a52000000000p+76) end)
+  probe('encode 964114.6194736792', function() return P.json.encode(0x1.d6c253d2ba772p+19) end)
+  probe('encode 914087.054606888', function() return P.json.encode(0x1.be54e1bf56f1cp+19) end)
+  probe('encode 5.945011263124516e+17', function() return P.json.encode(0x1.0802f3fc8d8bcp+59) end)
+  probe('encode 1.5896862973628273e+18', function() return P.json.encode(0x1.60fb343d29e08p+60) end)
+  probe('encode 3.412618138845749e+25', function() return P.json.encode(0x1.c3a8000000000p+84) end)
+  probe('encode 408626338687.24805', function() return P.json.encode(0x1.7c901c6dfcfe0p+38) end)
+  probe('encode 8506242859270144.0', function() return P.json.encode(0x1.e386200000000p+52) end)
+  probe('encode 6.633304107100666e+17', function() return P.json.encode(0x1.2693efcf62ccbp+59) end)
+  probe('encode 9.958420047561245e+17', function() return P.json.encode(0x1.ba3e20de3cda7p+59) end)
+  probe('encode 543630620534.3808', function() return P.json.encode(0x1.fa4ba3ddd985fp+38) end)
+  probe('encode 6.810622810149212e-08', function() return P.json.encode(0x1.248396f7fde92p-24) end)
+  probe('encode 2.3311034172040148e-28', function() return P.json.encode(0x1.2780a18525df4p-92) end)
+  probe('encode 2.9750816608358396e+24', function() return P.json.encode(0x1.3affc00000000p+81) end)
+  probe('encode 590951.2728602237', function() return P.json.encode(0x1.208ce8bb455d2p+19) end)
+  probe('encode 5.2058402954792154e+17', function() return P.json.encode(0x1.ce5f1aab3c802p+58) end)
+  probe('encode 7.75361329126316e+21', function() return P.json.encode(0x1.a453000000000p+72) end)
+  probe('encode -85442.84885972878', function() return P.json.encode(-0x1.4dc2d94edf060p+16) end)
+  probe('encode 1.0038365943421878e+21', function() return P.json.encode(0x1.b358400000000p+69) end)
+  probe('encode 9.768020819384879e-11', function() return P.json.encode(0x1.ad9a232679711p-34) end)
+  probe('encode 5.564879704392461e+22', function() return P.json.encode(0x1.7917464eef90dp+75) end)
+  probe('encode 338894500942.94604', function() return P.json.encode(0x1.3b9ebed13bc8cp+38) end)
+  probe('encode 3.10239504992928e+18', function() return P.json.encode(0x1.586f5ee2bfb85p+61) end)
+  probe('encode 3.4080646926166026e+20', function() return P.json.encode(0x1.279a3ce1f9858p+68) end)
+  probe('encode -782264.8180562548', function() return P.json.encode(-0x1.7df71a2d844f9p+19) end)
+  probe('encode 7.117157386163757e+23', function() return P.json.encode(0x1.2d6c600000000p+79) end)
+  probe('encode 4.8306823464013005e+17', function() return P.json.encode(0x1.ad0d000000000p+58) end)
+  probe('encode 989027.647321933', function() return P.json.encode(0x1.e2ec74b6dc7c8p+19) end)
+  probe('encode 3.411581201244506e+23', function() return P.json.encode(0x1.20f8e00000000p+78) end)
+  probe('encode 3.078722917390182e+18', function() return P.json.encode(0x1.55ce9173e72b3p+61) end)
+  probe('encode 4.479940929506147e+18', function() return P.json.encode(0x1.f15f94512f93dp+61) end)
+  probe('encode -671717.562194424', function() return P.json.encode(-0x1.47fcb1fd7f292p+19) end)
+  probe('encode 4.074953187301261e+18', function() return P.json.encode(0x1.c46922abab7ffp+61) end)
+  probe('encode 2.42511530813221e+18', function() return P.json.encode(0x1.0d3dec3104a8bp+61) end)
+  probe('encode 11978663788544.0', function() return P.json.encode(0x1.5ca0000000000p+43) end)
+  probe('encode 2.831520755403981e+16', function() return P.json.encode(0x1.9262200000000p+54) end)
+  probe('encode 5.009425490772676e+24', function() return P.json.encode(0x1.0932600000000p+82) end)
+  probe('encode 3.328323580128789e+18', function() return P.json.encode(0x1.7184a54b99101p+61) end)
+  probe('encode 1.5152097447321224e+18', function() return P.json.encode(0x1.5071b3c22f7edp+60) end)
+  probe('encode 4.361657282684032e+21', function() return P.json.encode(0x1.d8e44efb19d28p+71) end)
+  probe('encode 827373.594371943', function() return P.json.encode(0x1.93fdb305184f2p+19) end)
+  probe('encode -520995.7790675168', function() return P.json.encode(-0x1.fcc8f1dc3e008p+18) end)
+  probe('encode -900924.1261627885', function() return P.json.encode(-0x1.b7e78409868b5p+19) end)
+  probe('encode -432256.2265785894', function() return P.json.encode(-0x1.a6200e80437bep+18) end)
+  probe('encode 9.808281713210733e-16', function() return P.json.encode(0x1.1ab45853a96adp-50) end)
+  probe('encode 47757586642.16662', function() return P.json.encode(0x1.63d25e1a4554fp+35) end)
+  probe('encode -595673.8491421869', function() return P.json.encode(-0x1.22db3b2c2c3c5p+19) end)
+  probe('encode 3.3842396677627543e+24', function() return P.json.encode(0x1.6652000000000p+81) end)
+  probe('encode 275964.49416516675', function() return P.json.encode(0x1.0d7f1fa066ef8p+18) end)
+  probe('encode 891017.0863896485', function() return P.json.encode(0x1.b31122c3b4396p+19) end)
+  probe('encode 4.88799846991618e-16', function() return P.json.encode(0x1.19c6201d36fbap-51) end)
+  probe('encode 5.024236854917779e+19', function() return P.json.encode(0x1.5ca0600000000p+65) end)
+  probe('encode 3.3027796509231304e+18', function() return P.json.encode(0x1.6eaea4bfc54b7p+61) end)
+  probe('encode 4.371758200301218e+18', function() return P.json.encode(0x1.e55cd75d66d74p+61) end)
+  probe('encode 1.8305207267875794e+18', function() return P.json.encode(0x1.96750e70a29dep+60) end)
+  probe('encode 1.7018690539808686e+28', function() return P.json.encode(0x1.b7ec3f3672980p+93) end)
+  probe('encode 7.357225212825778e-14', function() return P.json.encode(0x1.4b57081850c56p-44) end)
+  probe('encode 4.1639331752108326e+17', function() return P.json.encode(0x1.71d4e1086c32ep+58) end)
+  probe('encode 1.4806737941137802e+18', function() return P.json.encode(0x1.48c68f88661bap+60) end)
+  probe('encode 4.3439233255431107e+18', function() return P.json.encode(0x1.e245b9fef43ecp+61) end)
+  probe('encode 5.671975352993695e+26', function() return P.json.encode(0x1.d52cc00000000p+88) end)
+  probe('encode -283611.32830918767', function() return P.json.encode(-0x1.14f6d503048a0p+18) end)
+  probe('encode 5.673522220570667e+19', function() return P.json.encode(0x1.89ae000000000p+65) end)
+  probe('encode -719654.3052200521', function() return P.json.encode(-0x1.5f64c9c45cd7cp+19) end)
+  probe('encode 2.2247346937274642e+18', function() return P.json.encode(0x1.edfd86ab31cebp+60) end)
+  probe('encode 6.325160696632446e-30', function() return P.json.encode(0x1.0094395a02c14p-97) end)
+  probe('encode -611810.4099341319', function() return P.json.encode(-0x1.2abc4d1e2e2f4p+19) end)
+  probe('encode 1.5017552305382863e+18', function() return P.json.encode(0x1.4d74e6cefd1c5p+60) end)
+  probe('encode 4.492884663137056e+22', function() return P.json.encode(0x1.3073200000000p+75) end)
+  probe('encode -491738.22989996284', function() return P.json.encode(-0x1.e0368eb6ae557p+18) end)
+  probe('encode 265115.64557818836', function() return P.json.encode(0x1.02e6e951272d8p+18) end)
+  probe('encode -601967.7816640844', function() return P.json.encode(-0x1.25edf9036465ep+19) end)
+  probe('encode 5.3028163435790084e+23', function() return P.json.encode(0x1.c12a800000000p+78) end)
+  probe('encode 9.681529736056013e+16', function() return P.json.encode(0x1.57f5000000000p+56) end)
+  probe('encode 2.1818645409717184e+20', function() return P.json.encode(0x1.7a7e400000000p+67) end)
+  probe('encode 4436946029903872.0', function() return P.json.encode(0x1.f86c200000000p+51) end)
+  probe('encode 1.612854315143923e+18', function() return P.json.encode(0x1.6620274509c05p+60) end)
+  probe('encode 16630.150383849803', function() return P.json.encode(0x1.03d899fe39530p+14) end)
+  probe('encode 4.473829155572531e-05', function() return P.json.encode(0x1.774abfe2dc750p-15) end)
+  probe('encode 1.751202432404463e-20', function() return P.json.encode(0x1.4acaf4146589bp-66) end)
+  probe('encode 684914139725824.0', function() return P.json.encode(0x1.3776800000000p+49) end)
+  probe('encode 1.0860711976380662e+18', function() return P.json.encode(0x1.e250000000000p+59) end)
+  probe('encode 575959.985299493', function() return P.json.encode(0x1.193aff8792cd6p+19) end)
+  probe('encode 290521.6737077595', function() return P.json.encode(0x1.1bb66b1e07268p+18) end)
+  probe('encode 3.7172617898396995e+18', function() return P.json.encode(0x1.9cb2ef3944397p+61) end)
+  probe('encode 717276718301184.0', function() return P.json.encode(0x1.462e000000000p+49) end)
+  probe('encode 2.1825126900228903e+24', function() return P.json.encode(0x1.ce2a400000000p+80) end)
+  probe('encode 2.4182249574273556e+18', function() return P.json.encode(0x1.0c7a164ab3888p+61) end)
+  probe('encode 3094665670688768.0', function() return P.json.encode(0x1.5fd2a00000000p+51) end)
+  probe('encode 736089.1970086275', function() return P.json.encode(0x1.676b264de5098p+19) end)
+  probe('encode 1561693058498560.0', function() return P.json.encode(0x1.6316800000000p+50) end)
+  probe('encode 226730249814016.0', function() return P.json.encode(0x1.9c6b800000000p+47) end)
+  probe('encode 3.4127078970300805e-16', function() return P.json.encode(0x1.89755bd26f940p-52) end)
+  probe('encode 1.7355368304358566e+18', function() return P.json.encode(0x1.815dd8d50bc91p+60) end)
+  probe('encode 5.784964125663399e+24', function() return P.json.encode(0x1.3240e22727549p+82) end)
+  probe('encode 8.115929606020074e+17', function() return P.json.encode(0x1.686b6fecdc7cfp+59) end)
+  probe('encode 3.770123707796661e+18', function() return P.json.encode(0x1.a2915c4c53fd2p+61) end)
+  probe('encode 5.894775626014078e+19', function() return P.json.encode(0x1.9908400000000p+65) end)
+  probe('encode 1.085898949363838e+25', function() return P.json.encode(0x1.1f6f600000000p+83) end)
+  probe('encode 1.9109081395645697e-27', function() return P.json.encode(0x1.2ecba4a8f709ap-89) end)
+  probe('encode 3.999286789441388e+18', function() return P.json.encode(0x1.bc02912abc87fp+61) end)
+  probe('encode 1.0003162025710663e+24', function() return P.json.encode(0x1.a7a6800000000p+79) end)
+  probe('encode 257123555.58862096', function() return P.json.encode(0x1.ea6c9c72d5fbap+27) end)
+  probe('encode 3.865322125123931e+27', function() return P.json.encode(0x1.8faa3988aa406p+91) end)
+  probe('encode 4.5902638079611135e-06', function() return P.json.encode(0x1.340c21b9c4387p-18) end)
+  probe('encode 8.50865319491666e+16', function() return P.json.encode(0x1.2e49c00000000p+56) end)
+  probe('encode 1.7985767226694697e+18', function() return P.json.encode(0x1.8f5d400000000p+60) end)
+  probe('encode 116384.78102969448', function() return P.json.encode(0x1.c6a0c7f18fe30p+16) end)
+  probe('encode 26427.45570087852', function() return P.json.encode(0x1.9cedd2a340480p+14) end)
+  probe('encode 2.9449333150730936e+18', function() return P.json.encode(0x1.46f409fa21298p+61) end)
+  probe('encode 1.7361159936593316e+18', function() return P.json.encode(0x1.817ec4c42f054p+60) end)
+  probe('encode 493227.8932764188', function() return P.json.encode(0x1.e1aaf92b70db4p+18) end)
+  probe('encode 7.514003813373145e-28', function() return P.json.encode(0x1.dc41aeb7560eap-91) end)
+  probe('encode 107339.49240746698', function() return P.json.encode(0x1.a34b7e0e6a6f0p+16) end)
+  probe('encode 141730.5173265792', function() return P.json.encode(0x1.14d14237c1e18p+17) end)
+  probe('encode 3.37711787141671e+18', function() return P.json.encode(0x1.76ef767d9354ap+61) end)
+  probe('encode 6.179361675558969e-15', function() return P.json.encode(0x1.bd451a765202cp-48) end)
+  probe('encode -347784.33125497575', function() return P.json.encode(-0x1.53a215334811ep+18) end)
+  probe('encode 3.1081498905763425e+18', function() return P.json.encode(0x1.5912eedcc3c6fp+61) end)
+  probe('encode 26897201693197.47', function() return P.json.encode(0x1.8767e27020d78p+44) end)
+  probe('encode 0.004071538075234959', function() return P.json.encode(0x1.0ad512e0a74f3p-8) end)
+  probe('encode 3.3548235965493775e+18', function() return P.json.encode(0x1.7475d24aa3647p+61) end)
+  probe('encode 1.8357032369132331e+21', function() return P.json.encode(0x1.8e0e000000000p+70) end)
+  probe('encode 2.861335106799957e+18', function() return P.json.encode(0x1.3dac08f50153ap+61) end)
+  probe('encode -28061.865795414546', function() return P.json.encode(-0x1.b677769312ba0p+14) end)
+  probe('encode 2.3605049511982915e+18', function() return P.json.encode(0x1.061195f915ccbp+61) end)
+  probe('encode 3.4395789730772565e-27', function() return P.json.encode(0x1.1082f318ba384p-88) end)
+  probe('encode 4.547249245325729e+18', function() return P.json.encode(0x1.f8d898c5266cep+61) end)
+  probe('encode 5.654687039346125e-21', function() return P.json.encode(0x1.ab418dfb87a7dp-68) end)
+  probe('encode 2.085800136634744e+18', function() return P.json.encode(0x1.cf2402c58933dp+60) end)
+  probe('encode 6.4233333752087735e+25', function() return P.json.encode(0x1.a90f800000000p+85) end)
+  probe('encode 1.548285730334144e+18', function() return P.json.encode(0x1.57c9dab275f76p+60) end)
+  probe('encode 3.3848245558758605e+17', function() return P.json.encode(0x1.2ca2000000000p+58) end)
+  probe('encode 573400.3174223269', function() return P.json.encode(0x1.17fb0a2852de2p+19) end)
+  probe('encode 3.434439906921902e+18', function() return P.json.encode(0x1.7d4ca730f40b8p+61) end)
+  probe('encode 1.33014313596524e+17', function() return P.json.encode(0x1.d88fd03ff695ep+56) end)
+  probe('encode 3.8662105837121203e+18', function() return P.json.encode(0x1.ad3c5055a821fp+61) end)
+  probe('encode 825847.4646516605', function() return P.json.encode(0x1.933eeede6d28cp+19) end)
+  probe('encode 1.789051973886871e-23', function() return P.json.encode(0x1.5a0d9015daeefp-76) end)
+  probe('encode -862617.1839272861', function() return P.json.encode(-0x1.a53325e2bb79dp+19) end)
+  probe('encode -787176.0926987383', function() return P.json.encode(-0x1.805d02f763583p+19) end)
+  probe('encode 6.239802432930624e+17', function() return P.json.encode(0x1.151a57358b08ap+59) end)
+  probe('encode 42090.48357667553', function() return P.json.encode(0x1.48d4f7975cad0p+15) end)
+  probe('encode -179217.90488649835', function() return P.json.encode(-0x1.5e08f3d3521e8p+17) end)
+  probe('encode -887186.4132634355', function() return P.json.encode(-0x1.b1324d39743d8p+19) end)
+  probe('encode 183761486852.02356', function() return P.json.encode(0x1.56484e2020304p+37) end)
+  probe('encode 3.1144361748103954e+19', function() return P.json.encode(0x1.b037000000000p+64) end)
+  probe('encode 3.423910126683296e+19', function() return P.json.encode(0x1.db29b9321634bp+64) end)
+  probe('encode 1.140953209995878e+18', function() return P.json.encode(0x1.faaf5cc864abdp+59) end)
+  probe('encode 457878947233792.0', function() return P.json.encode(0x1.a070400000000p+48) end)
+  probe('encode 2164815988523008.0', function() return P.json.encode(0x1.ec38e00000000p+50) end)
+  probe('encode 1.9066579156786877e+18', function() return P.json.encode(0x1.a75cf45bc3702p+60) end)
+  probe('encode 2.5051803771643013e+18', function() return P.json.encode(0x1.1621823d79422p+61) end)
+  probe('encode 2.1459978396120607e+18', function() return P.json.encode(0x1.dc81daa46d524p+60) end)
+  probe('encode 4.823586010394704e+20', function() return P.json.encode(0x1.a261200000000p+68) end)
+  probe('encode 1.6548943043406313e+24', function() return P.json.encode(0x1.5e70000000000p+80) end)
+  probe('encode 939894.4134325944', function() return P.json.encode(0x1.caeecd3ad6fe0p+19) end)
+  probe('encode 59.72604796617738', function() return P.json.encode(0x1.ddcef23c70793p+5) end)
+  probe('encode 3.106986580074426e+26', function() return P.json.encode(0x1.0101000000000p+88) end)
+  probe('encode -851793.1894858044', function() return P.json.encode(-0x1.9fea26104488ap+19) end)
+  probe('encode 750476.7867877351', function() return P.json.encode(0x1.6e71992d5d78ep+19) end)
+  probe('encode 8.95427070012032e+20', function() return P.json.encode(0x1.8454600000000p+69) end)
+  probe('encode -917366.1895010343', function() return P.json.encode(-0x1.bfeec61064792p+19) end)
+  probe('encode 7.066398792915256e+18', function() return P.json.encode(0x1.8843910d13da1p+62) end)
+  probe('encode 1.7826091750062555e+20', function() return P.json.encode(0x1.353bc00000000p+67) end)
+  probe('encode 3.852516079467371e-14', function() return P.json.encode(0x1.5b00f902af8fbp-45) end)
+  probe('encode 7665801881813.26', function() return P.json.encode(0x1.be35597a3550ap+42) end)
+  probe('encode 2.215024470772751e+18', function() return P.json.encode(0x1.ebd59053d351bp+60) end)
+  probe('encode 5.915305219751551e-29', function() return P.json.encode(0x1.2bf10d411793dp-94) end)
+  probe('encode -235667.336753643', function() return P.json.encode(-0x1.cc49ab1abe4dcp+17) end)
+  probe('encode 1.5442139434811654e+20', function() return P.json.encode(0x1.0be0e00000000p+67) end)
+  probe('encode -627863.7597851485', function() return P.json.encode(-0x1.3292f85028f1ap+19) end)
+  probe('encode 6.641242646301901e+16', function() return P.json.encode(0x1.d7e3800000000p+55) end)
+  probe('encode 0.29118189786454257', function() return P.json.encode(0x1.2a2b96620fcafp-2) end)
+  probe('encode 5.434399972520932e-11', function() return P.json.encode(0x1.de03cef6fb3eep-35) end)
+  probe('encode 1.4825187043438524e+23', function() return P.json.encode(0x1.f64c000000000p+76) end)
+  probe('encode -76466.02736025664', function() return P.json.encode(-0x1.2ab2070114ef8p+16) end)
+  probe('encode 6.19707669731613e-10', function() return P.json.encode(0x1.54b019d806e91p-31) end)
+  probe('encode 9.842432818280278e-14', function() return P.json.encode(0x1.bb43864826a02p-44) end)
+  probe('encode 1.0307723203952648e+18', function() return P.json.encode(0x1.c9c13eda2ee06p+59) end)
+  probe('encode 5.939501103597075e+24', function() return P.json.encode(0x1.3a6f400000000p+82) end)
+  probe('encode 1.851815916525913e+18', function() return P.json.encode(0x1.9b2f8c3c5f104p+60) end)
+  probe('encode 22032.794787860475', function() return P.json.encode(0x1.58432ddcde700p+14) end)
+  probe('encode 330212.4017215248', function() return P.json.encode(0x1.427919b5ce32cp+18) end)
+  probe('encode 4.096842948426661e+18', function() return P.json.encode(0x1.c6d747a50c47ep+61) end)
+  probe('encode integer 18014398509481992', function() return P.json.encode(18014398509481992) end)
+  probe('encode integer -18014398509481992', function() return P.json.encode(-18014398509481992) end)
+  probe('encode integer 4611686018427387904', function() return P.json.encode(4611686018427387904) end)
+  probe('encode integer 9223372036854775807', function() return P.json.encode(9223372036854775807) end)
+  probe('encode integer -9223372036854775808', function() return P.json.encode(-9223372036854775808) end)
+  probe('encode integer 12345', function() return P.json.encode(12345) end)
+  probe('encode integer 0', function() return P.json.encode(0) end)
+  probe('encode list of numbers', function() return P.json.encode({0x1.0000000000002p+54, 1/3, 1e23}) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter text-bom empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-16', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-16', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-16', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-16', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-16', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-16', function() local s = P.text.fromencoding('a\0', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-16', function() local s = P.text.fromencoding('\0a', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-16', function() local s = P.text.fromencoding('\255\254', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-16', function() local s = P.text.fromencoding('\254\255', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-16', function() local s = P.text.fromencoding('', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-16', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-16', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-16', function() local s = P.text.fromencoding('\255\254\0', 'UTF-16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-16LE', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-16LE', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-16LE', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-16LE', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-16LE', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-16LE', function() local s = P.text.fromencoding('a\0', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-16LE', function() local s = P.text.fromencoding('\0a', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-16LE', function() local s = P.text.fromencoding('\255\254', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-16LE', function() local s = P.text.fromencoding('\254\255', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-16LE', function() local s = P.text.fromencoding('', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-16LE', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-16LE', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-16LE', function() local s = P.text.fromencoding('\255\254\0', 'UTF-16LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-16BE', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-16BE', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-16BE', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-16BE', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-16BE', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-16BE', function() local s = P.text.fromencoding('a\0', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-16BE', function() local s = P.text.fromencoding('\0a', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-16BE', function() local s = P.text.fromencoding('\255\254', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-16BE', function() local s = P.text.fromencoding('\254\255', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-16BE', function() local s = P.text.fromencoding('', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-16BE', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-16BE', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-16BE', function() local s = P.text.fromencoding('\255\254\0', 'UTF-16BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-32', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-32', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-32', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-32', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-32', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-32', function() local s = P.text.fromencoding('a\0', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-32', function() local s = P.text.fromencoding('\0a', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-32', function() local s = P.text.fromencoding('\255\254', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-32', function() local s = P.text.fromencoding('\254\255', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-32', function() local s = P.text.fromencoding('', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-32', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-32', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-32', function() local s = P.text.fromencoding('\255\254\0', 'UTF-32') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-32LE', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-32LE', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-32LE', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-32LE', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-32LE', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-32LE', function() local s = P.text.fromencoding('a\0', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-32LE', function() local s = P.text.fromencoding('\0a', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-32LE', function() local s = P.text.fromencoding('\255\254', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-32LE', function() local s = P.text.fromencoding('\254\255', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-32LE', function() local s = P.text.fromencoding('', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-32LE', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-32LE', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-32LE', function() local s = P.text.fromencoding('\255\254\0', 'UTF-32LE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-32BE', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-32BE', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-32BE', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-32BE', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-32BE', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-32BE', function() local s = P.text.fromencoding('a\0', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-32BE', function() local s = P.text.fromencoding('\0a', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-32BE', function() local s = P.text.fromencoding('\255\254', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-32BE', function() local s = P.text.fromencoding('\254\255', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-32BE', function() local s = P.text.fromencoding('', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-32BE', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-32BE', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-32BE', function() local s = P.text.fromencoding('\255\254\0', 'UTF-32BE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-8', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-8', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-8', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-8', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-8', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-8', function() local s = P.text.fromencoding('a\0', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-8', function() local s = P.text.fromencoding('\0a', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-8', function() local s = P.text.fromencoding('\255\254', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-8', function() local s = P.text.fromencoding('\254\255', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-8', function() local s = P.text.fromencoding('', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-8', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-8', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-8', function() local s = P.text.fromencoding('\255\254\0', 'UTF-8') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF-8BOM', function() local s = P.text.fromencoding('\255\254a\0', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF-8BOM', function() local s = P.text.fromencoding('\254\255\0a', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF-8BOM', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF-8BOM', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF-8BOM', function() local s = P.text.fromencoding('\239\187\191a', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF-8BOM', function() local s = P.text.fromencoding('a\0', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF-8BOM', function() local s = P.text.fromencoding('\0a', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF-8BOM', function() local s = P.text.fromencoding('\255\254', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF-8BOM', function() local s = P.text.fromencoding('\254\255', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF-8BOM', function() local s = P.text.fromencoding('', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF-8BOM', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF-8BOM', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF-8BOM', function() local s = P.text.fromencoding('\255\254\0', 'UTF-8BOM') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 utf16', function() local s = P.text.fromencoding('\255\254a\0', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 utf16', function() local s = P.text.fromencoding('\254\255\0a', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 utf16', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 utf16', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 utf16', function() local s = P.text.fromencoding('\239\187\191a', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 utf16', function() local s = P.text.fromencoding('a\0', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 utf16', function() local s = P.text.fromencoding('\0a', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 utf16', function() local s = P.text.fromencoding('\255\254', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 utf16', function() local s = P.text.fromencoding('\254\255', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 utf16', function() local s = P.text.fromencoding('', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 utf16', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 utf16', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 utf16', function() local s = P.text.fromencoding('\255\254\0', 'utf16') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254a\0920\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\255\254a\0', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\0920a\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\254\255\0a', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\0920a\0920\0920\0920\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\255\254\0\0a\0\0\0', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920\0920\092254\092255\0920\0920\0920a\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\0\0\254\255\0\0\0a', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092239\092187\092191a\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\239\187\191a', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039a\0920\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('a\0', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\0920a\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\0a', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\255\254', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\254\255', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\092255\092254a\0920\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\255\254\255\254a\0', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092254\092255\092254\092255\0920a\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\254\255\254\255\0a', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('fromencoding \039\092255\092254\0920\039 UTF16LE//IGNORE', function() local s = P.text.fromencoding('\255\254\0', 'UTF16LE//IGNORE') return (s:gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-16', function() return (P.text.toencoding('a\226\128\147', 'UTF-16'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-16LE', function() return (P.text.toencoding('a\226\128\147', 'UTF-16LE'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-16BE', function() return (P.text.toencoding('a\226\128\147', 'UTF-16BE'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-32', function() return (P.text.toencoding('a\226\128\147', 'UTF-32'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-32LE', function() return (P.text.toencoding('a\226\128\147', 'UTF-32LE'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-32BE', function() return (P.text.toencoding('a\226\128\147', 'UTF-32BE'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-8', function() return (P.text.toencoding('a\226\128\147', 'UTF-8'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF-8BOM', function() return (P.text.toencoding('a\226\128\147', 'UTF-8BOM'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding utf16', function() return (P.text.toencoding('a\226\128\147', 'utf16'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+  probe('toencoding UTF16LE//IGNORE', function() return (P.text.toencoding('a\226\128\147', 'UTF16LE//IGNORE'):gsub('.', function(c) return c:byte() .. ' ' end)) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter slide-level empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('slide_level {H(2, \039a\039), P.Div{H(1, \039b\039), P.Para\039c\039}}', function() return P.structure.slide_level{H(2, 'a'), P.Div{H(1, 'b'), P.Para'c'}} end)
+  probe('slide_level {H(2, \039a\039), P.Para\039x\039, P.Div{H(1, \039b\039), P.Para\039c\039}}', function() return P.structure.slide_level{H(2, 'a'), P.Para'x', P.Div{H(1, 'b'), P.Para'c'}} end)
+  probe('slide_level {P.Div{H(1, \039b\039), P.Para\039c\039}}', function() return P.structure.slide_level{P.Div{H(1, 'b'), P.Para'c'}} end)
+  probe('slide_level {H(2, \039a\039), P.HorizontalRule(), P.Para\039x\039}', function() return P.structure.slide_level{H(2, 'a'), P.HorizontalRule(), P.Para'x'} end)
+  probe('slide_level {H(3, \039a\039), H(2, \039b\039), P.Para\039x\039}', function() return P.structure.slide_level{H(3, 'a'), H(2, 'b'), P.Para'x'} end)
+  probe('slide_level {H(1, \039a\039), P.Div{}, H(2, \039b\039), P.Para\039x\039}', function() return P.structure.slide_level{H(1, 'a'), P.Div{}, H(2, 'b'), P.Para'x'} end)
+  probe('slide_level {P.Div{H(3, \039a\039)}, P.Para\039x\039}', function() return P.structure.slide_level{P.Div{H(3, 'a')}, P.Para'x'} end)
+  probe('slide_level {H(2, \039a\039), P.Div{P.Div{H(1, \039b\039), P.Para\039c\039}}}', function() return P.structure.slide_level{H(2, 'a'), P.Div{P.Div{H(1, 'b'), P.Para'c'}}} end)
+  probe('slide_level {H(4, \039a\039), P.Para\039x\039, H(4, \039b\039), P.Div{H(2, \039c\039), P.Para\039y\039}}', function() return P.structure.slide_level{H(4, 'a'), P.Para'x', H(4, 'b'), P.Div{H(2, 'c'), P.Para'y'}} end)
+  probe('slide_level {H(1, \039a\039)}', function() return P.structure.slide_level{H(1, 'a')} end)
+  probe('slide_level {P.Para\039x\039, H(1, \039a\039)}', function() return P.structure.slide_level{P.Para'x', H(1, 'a')} end)
+  probe('slide_level {P.Div{H(2, \039a\039), P.Para\039x\039}, H(3, \039b\039), P.Div{H(1, \039c\039), P.Para\039y\039}}', function() return P.structure.slide_level{P.Div{H(2, 'a'), P.Para'x'}, H(3, 'b'), P.Div{H(1, 'c'), P.Para'y'}} end)
+  probe('slide_level {P.Div{H(3, \039a\039), P.Para\039x\039}, H(2, \039b\039), P.Div{H(1, \039c\039), P.Para\039y\039}}', function() return P.structure.slide_level{P.Div{H(3, 'a'), P.Para'x'}, H(2, 'b'), P.Div{H(1, 'c'), P.Para'y'}} end)
+  probe('slide_level {P.Div{H(2, \039a\039), P.Para\039x\039}, H(2, \039b\039), P.Div{H(1, \039c\039), P.Para\039y\039}}', function() return P.structure.slide_level{P.Div{H(2, 'a'), P.Para'x'}, H(2, 'b'), P.Div{H(1, 'c'), P.Para'y'}} end)
+  probe('slide_level {P.Div{P.Div{H(2, \039a\039), P.Para\039x\039}, H(3, \039b\039), P.Div{H(1, \039c\039), P.Para\039y\039}}}', function() return P.structure.slide_level{P.Div{P.Div{H(2, 'a'), P.Para'x'}, H(3, 'b'), P.Div{H(1, 'c'), P.Para'y'}}} end)
+  probe('slide_level {P.Div{H(4, \039a\039), P.Para\039x\039}, P.Div{H(5, \039b\039), P.Div{H(1, \039c\039), P.Para\039y\039}}}', function() return P.structure.slide_level{P.Div{H(4, 'a'), P.Para'x'}, P.Div{H(5, 'b'), P.Div{H(1, 'c'), P.Para'y'}}} end)
+  probe('slide_level {H(3, \039a\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(2, \039b\039), P.Para\039x\039}', function() return P.structure.slide_level{H(3, 'a'), P.BlockQuote{H(1, 'q'), P.Para'y'}, H(2, 'b'), P.Para'x'} end)
+  probe('slide_level {P.Para\039x\039, H(3, \039h\039), H(2, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(3, 'h'), H(2, 'h')} end)
+  probe('slide_level {H(3, \039h\039), H(4, \039h\039), H(2, \039h\039), P.Div{}, H(5, \039h\039)}', function() return P.structure.slide_level{H(3, 'h'), H(4, 'h'), H(2, 'h'), P.Div{}, H(5, 'h')} end)
+  probe('slide_level {H(4, \039h\039)}', function() return P.structure.slide_level{H(4, 'h')} end)
+  probe('slide_level {P.Div{P.Para\039x\039, P.Para\039x\039, P.Div{H(6, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.Para\039x\039}, P.HorizontalRule(), H(3, \039h\039)}, H(6, \039h\039), P.Div{P.Para\039x\039, P.Para\039x\039}, P.HorizontalRule(), H(5, \039h\039)}', function() return P.structure.slide_level{P.Div{P.Para'x', P.Para'x', P.Div{H(6, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, P.Para'x'}, P.HorizontalRule(), H(3, 'h')}, H(6, 'h'), P.Div{P.Para'x', P.Para'x'}, P.HorizontalRule(), H(5, 'h')} end)
+  probe('slide_level {P.HorizontalRule(), H(6, \039h\039)}', function() return P.structure.slide_level{P.HorizontalRule(), H(6, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {P.Para\039x\039, H(3, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', H(3, 'h'), P.Para'x'} end)
+  probe('slide_level {H(6, \039h\039), P.Div{H(3, \039h\039), H(4, \039h\039), H(5, \039h\039), H(5, \039h\039), P.Div{H(2, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.Para\039x\039, P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.HorizontalRule()}}, P.Div{H(5, \039h\039), H(2, \039h\039), P.Div{}, P.Para\039x\039}}', function() return P.structure.slide_level{H(6, 'h'), P.Div{H(3, 'h'), H(4, 'h'), H(5, 'h'), H(5, 'h'), P.Div{H(2, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, P.Para'x', P.BlockQuote{H(1, 'q'), P.Para'y'}, P.HorizontalRule()}}, P.Div{H(5, 'h'), H(2, 'h'), P.Div{}, P.Para'x'}} end)
+  probe('slide_level {H(2, \039h\039), H(3, \039h\039)}', function() return P.structure.slide_level{H(2, 'h'), H(3, 'h')} end)
+  probe('slide_level {H(6, \039h\039), H(3, \039h\039), H(6, \039h\039), P.Div{H(3, \039h\039)}, H(6, \039h\039)}', function() return P.structure.slide_level{H(6, 'h'), H(3, 'h'), H(6, 'h'), P.Div{H(3, 'h')}, H(6, 'h')} end)
+  probe('slide_level {H(6, \039h\039), P.Para\039x\039, H(5, \039h\039)}', function() return P.structure.slide_level{H(6, 'h'), P.Para'x', H(5, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {P.HorizontalRule(), H(6, \039h\039), H(3, \039h\039), H(6, \039h\039)}', function() return P.structure.slide_level{P.HorizontalRule(), H(6, 'h'), H(3, 'h'), H(6, 'h')} end)
+  probe('slide_level {P.Div{H(4, \039h\039)}, P.Para\039x\039, P.HorizontalRule(), P.Para\039x\039}', function() return P.structure.slide_level{P.Div{H(4, 'h')}, P.Para'x', P.HorizontalRule(), P.Para'x'} end)
+  probe('slide_level {H(3, \039h\039), H(1, \039h\039), H(1, \039h\039)}', function() return P.structure.slide_level{H(3, 'h'), H(1, 'h'), H(1, 'h')} end)
+  probe('slide_level {H(5, \039h\039)}', function() return P.structure.slide_level{H(5, 'h')} end)
+  probe('slide_level {H(6, \039h\039), P.Para\039x\039, P.HorizontalRule(), P.Para\039x\039}', function() return P.structure.slide_level{H(6, 'h'), P.Para'x', P.HorizontalRule(), P.Para'x'} end)
+  probe('slide_level {P.Para\039x\039, H(6, \039h\039), H(6, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', H(6, 'h'), H(6, 'h'), P.Para'x'} end)
+  probe('slide_level {H(4, \039h\039), H(1, \039h\039), P.Div{}, H(2, \039h\039), P.Div{P.Div{H(6, \039h\039), P.Para\039x\039, H(6, \039h\039), H(1, \039h\039), P.Para\039x\039}, H(6, \039h\039), P.Div{H(6, \039h\039), P.Para\039x\039, H(2, \039h\039), H(1, \039h\039), P.HorizontalRule()}}}', function() return P.structure.slide_level{H(4, 'h'), H(1, 'h'), P.Div{}, H(2, 'h'), P.Div{P.Div{H(6, 'h'), P.Para'x', H(6, 'h'), H(1, 'h'), P.Para'x'}, H(6, 'h'), P.Div{H(6, 'h'), P.Para'x', H(2, 'h'), H(1, 'h'), P.HorizontalRule()}}} end)
+  probe('slide_level {P.HorizontalRule(), H(2, \039h\039)}', function() return P.structure.slide_level{P.HorizontalRule(), H(2, 'h')} end)
+  probe('slide_level {H(4, \039h\039), P.Div{P.Div{P.Para\039x\039, P.Para\039x\039, H(5, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(4, \039h\039)}, H(2, \039h\039), H(6, \039h\039), H(3, \039h\039)}}', function() return P.structure.slide_level{H(4, 'h'), P.Div{P.Div{P.Para'x', P.Para'x', H(5, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, H(4, 'h')}, H(2, 'h'), H(6, 'h'), H(3, 'h')}} end)
+  probe('slide_level {H(3, \039h\039), H(2, \039h\039)}', function() return P.structure.slide_level{H(3, 'h'), H(2, 'h')} end)
+  probe('slide_level {P.Para\039x\039, H(1, \039h\039), H(1, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', H(1, 'h'), H(1, 'h'), P.Para'x'} end)
+  probe('slide_level {H(5, \039h\039), P.Div{P.HorizontalRule(), H(6, \039h\039), P.Para\039x\039, H(4, \039h\039), P.Div{H(4, \039h\039), H(1, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.Para\039x\039}}, P.Div{P.Para\039x\039}}', function() return P.structure.slide_level{H(5, 'h'), P.Div{P.HorizontalRule(), H(6, 'h'), P.Para'x', H(4, 'h'), P.Div{H(4, 'h'), H(1, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, P.Para'x'}}, P.Div{P.Para'x'}} end)
+  probe('slide_level {P.Para\039x\039, P.HorizontalRule()}', function() return P.structure.slide_level{P.Para'x', P.HorizontalRule()} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(1, \039h\039), P.HorizontalRule(), H(5, \039h\039)}', function() return P.structure.slide_level{H(1, 'h'), P.HorizontalRule(), H(5, 'h')} end)
+  probe('slide_level {H(3, \039h\039)}', function() return P.structure.slide_level{H(3, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(4, \039h\039), H(1, \039h\039), P.Div{}}', function() return P.structure.slide_level{H(4, 'h'), H(1, 'h'), P.Div{}} end)
+  probe('slide_level {P.Div{P.Para\039x\039}}', function() return P.structure.slide_level{P.Div{P.Para'x'}} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(4, \039h\039), P.Div{H(2, \039h\039), P.Para\039x\039, H(2, \039h\039)}}', function() return P.structure.slide_level{H(4, 'h'), P.Div{H(2, 'h'), P.Para'x', H(2, 'h')}} end)
+  probe('slide_level {P.Div{H(5, \039h\039), H(4, \039h\039)}, P.Div{H(5, \039h\039), P.HorizontalRule(), P.Para\039x\039, H(4, \039h\039), P.Para\039x\039}, H(6, \039h\039), H(4, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Div{H(5, 'h'), H(4, 'h')}, P.Div{H(5, 'h'), P.HorizontalRule(), P.Para'x', H(4, 'h'), P.Para'x'}, H(6, 'h'), H(4, 'h'), P.Para'x'} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(3, \039h\039), P.Div{H(3, \039h\039), H(6, \039h\039), P.Div{P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.HorizontalRule()}, H(4, \039h\039)}, H(1, \039h\039)}', function() return P.structure.slide_level{H(3, 'h'), P.Div{H(3, 'h'), H(6, 'h'), P.Div{P.BlockQuote{H(1, 'q'), P.Para'y'}, P.HorizontalRule()}, H(4, 'h')}, H(1, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(5, \039h\039)}', function() return P.structure.slide_level{H(5, 'h')} end)
+  probe('slide_level {H(2, \039h\039), H(6, \039h\039), P.Div{P.HorizontalRule()}, P.Div{H(1, \039h\039)}}', function() return P.structure.slide_level{H(2, 'h'), H(6, 'h'), P.Div{P.HorizontalRule()}, P.Div{H(1, 'h')}} end)
+  probe('slide_level {P.HorizontalRule(), P.Para\039x\039}', function() return P.structure.slide_level{P.HorizontalRule(), P.Para'x'} end)
+  probe('slide_level {H(4, \039h\039), H(4, \039h\039), P.Para\039x\039, P.Div{H(4, \039h\039), P.Div{H(4, \039h\039), H(3, \039h\039), P.HorizontalRule(), H(5, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}}, H(1, \039h\039)}}', function() return P.structure.slide_level{H(4, 'h'), H(4, 'h'), P.Para'x', P.Div{H(4, 'h'), P.Div{H(4, 'h'), H(3, 'h'), P.HorizontalRule(), H(5, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}}, H(1, 'h')}} end)
+  probe('slide_level {H(1, \039h\039), H(6, \039h\039), P.Para\039x\039, P.Para\039x\039, P.HorizontalRule()}', function() return P.structure.slide_level{H(1, 'h'), H(6, 'h'), P.Para'x', P.Para'x', P.HorizontalRule()} end)
+  probe('slide_level {P.HorizontalRule(), P.Para\039x\039, P.Para\039x\039, P.Div{P.HorizontalRule(), P.Div{P.Para\039x\039, H(6, \039h\039)}, P.Para\039x\039, H(6, \039h\039), H(2, \039h\039)}, P.Div{H(6, \039h\039), H(5, \039h\039), P.HorizontalRule(), H(3, \039h\039), P.Para\039x\039}}', function() return P.structure.slide_level{P.HorizontalRule(), P.Para'x', P.Para'x', P.Div{P.HorizontalRule(), P.Div{P.Para'x', H(6, 'h')}, P.Para'x', H(6, 'h'), H(2, 'h')}, P.Div{H(6, 'h'), H(5, 'h'), P.HorizontalRule(), H(3, 'h'), P.Para'x'}} end)
+  probe('slide_level {P.Para\039x\039, P.HorizontalRule(), P.Div{H(5, \039h\039), P.Div{H(1, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(4, \039h\039), H(5, \039h\039), H(5, \039h\039)}, H(2, \039h\039), H(4, \039h\039)}, P.Div{P.Div{P.Para\039x\039, H(3, \039h\039), H(2, \039h\039)}, P.Para\039x\039, P.Para\039x\039}, P.Div{P.Para\039x\039}}', function() return P.structure.slide_level{P.Para'x', P.HorizontalRule(), P.Div{H(5, 'h'), P.Div{H(1, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, H(4, 'h'), H(5, 'h'), H(5, 'h')}, H(2, 'h'), H(4, 'h')}, P.Div{P.Div{P.Para'x', H(3, 'h'), H(2, 'h')}, P.Para'x', P.Para'x'}, P.Div{P.Para'x'}} end)
+  probe('slide_level {H(2, \039h\039), P.Div{}, H(5, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(2, 'h'), P.Div{}, H(5, 'h'), P.Para'x'} end)
+  probe('slide_level {P.HorizontalRule(), H(2, \039h\039), P.HorizontalRule(), P.Para\039x\039}', function() return P.structure.slide_level{P.HorizontalRule(), H(2, 'h'), P.HorizontalRule(), P.Para'x'} end)
+  probe('slide_level {H(5, \039h\039), H(1, \039h\039), P.Div{P.Para\039x\039, H(1, \039h\039), P.Para\039x\039, P.Para\039x\039, H(2, \039h\039)}, H(3, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(1, 'h'), P.Div{P.Para'x', H(1, 'h'), P.Para'x', P.Para'x', H(2, 'h')}, H(3, 'h')} end)
+  probe('slide_level {H(6, \039h\039), H(4, \039h\039), H(6, \039h\039), P.Div{H(2, \039h\039), P.Div{H(4, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(4, \039h\039), H(6, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}}, H(1, \039h\039)}}', function() return P.structure.slide_level{H(6, 'h'), H(4, 'h'), H(6, 'h'), P.Div{H(2, 'h'), P.Div{H(4, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, H(4, 'h'), H(6, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}}, H(1, 'h')}} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(1, \039h\039)}', function() return P.structure.slide_level{H(1, 'h')} end)
+  probe('slide_level {H(5, \039h\039)}', function() return P.structure.slide_level{H(5, 'h')} end)
+  probe('slide_level {P.Para\039x\039, H(2, \039h\039), H(5, \039h\039), H(5, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(2, 'h'), H(5, 'h'), H(5, 'h')} end)
+  probe('slide_level {P.Para\039x\039, P.Div{H(6, \039h\039), P.Para\039x\039, H(1, \039h\039), P.Para\039x\039, P.Para\039x\039}, P.Div{P.Div{H(1, \039h\039)}, P.Para\039x\039, P.Para\039x\039, P.HorizontalRule(), P.Para\039x\039}}', function() return P.structure.slide_level{P.Para'x', P.Div{H(6, 'h'), P.Para'x', H(1, 'h'), P.Para'x', P.Para'x'}, P.Div{P.Div{H(1, 'h')}, P.Para'x', P.Para'x', P.HorizontalRule(), P.Para'x'}} end)
+  probe('slide_level {H(5, \039h\039)}', function() return P.structure.slide_level{H(5, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(2, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(2, 'h'), P.Para'x'} end)
+  probe('slide_level {P.Div{P.Div{}, P.Div{P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.HorizontalRule(), P.Para\039x\039, P.Para\039x\039}, H(3, \039h\039)}, P.Para\039x\039, H(6, \039h\039), P.Div{H(4, \039h\039), P.Div{H(5, \039h\039), P.Para\039x\039, P.BlockQuote{H(1, \039q\039), P.Para\039y\039}}, H(4, \039h\039), P.HorizontalRule(), P.Div{H(3, \039h\039), H(4, \039h\039), H(2, \039h\039)}}}', function() return P.structure.slide_level{P.Div{P.Div{}, P.Div{P.BlockQuote{H(1, 'q'), P.Para'y'}, P.HorizontalRule(), P.Para'x', P.Para'x'}, H(3, 'h')}, P.Para'x', H(6, 'h'), P.Div{H(4, 'h'), P.Div{H(5, 'h'), P.Para'x', P.BlockQuote{H(1, 'q'), P.Para'y'}}, H(4, 'h'), P.HorizontalRule(), P.Div{H(3, 'h'), H(4, 'h'), H(2, 'h')}}} end)
+  probe('slide_level {H(6, \039h\039), P.Para\039x\039, H(6, \039h\039)}', function() return P.structure.slide_level{H(6, 'h'), P.Para'x', H(6, 'h')} end)
+  probe('slide_level {H(4, \039h\039), H(4, \039h\039), H(3, \039h\039), H(5, \039h\039)}', function() return P.structure.slide_level{H(4, 'h'), H(4, 'h'), H(3, 'h'), H(5, 'h')} end)
+  probe('slide_level {P.Para\039x\039, H(6, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(6, 'h')} end)
+  probe('slide_level {H(3, \039h\039), H(5, \039h\039), H(1, \039h\039), H(3, \039h\039), P.Div{H(6, \039h\039), H(4, \039h\039)}}', function() return P.structure.slide_level{H(3, 'h'), H(5, 'h'), H(1, 'h'), H(3, 'h'), P.Div{H(6, 'h'), H(4, 'h')}} end)
+  probe('slide_level {P.Para\039x\039, H(4, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(4, 'h')} end)
+  probe('slide_level {H(4, \039h\039), H(6, \039h\039)}', function() return P.structure.slide_level{H(4, 'h'), H(6, 'h')} end)
+  probe('slide_level {H(4, \039h\039), H(3, \039h\039)}', function() return P.structure.slide_level{H(4, 'h'), H(3, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(6, \039h\039)}', function() return P.structure.slide_level{H(6, 'h')} end)
+  probe('slide_level {H(1, \039h\039), P.Para\039x\039, P.Div{P.Div{H(6, \039h\039), H(2, \039h\039)}, P.Para\039x\039, H(6, \039h\039), H(1, \039h\039)}, H(4, \039h\039)}', function() return P.structure.slide_level{H(1, 'h'), P.Para'x', P.Div{P.Div{H(6, 'h'), H(2, 'h')}, P.Para'x', H(6, 'h'), H(1, 'h')}, H(4, 'h')} end)
+  probe('slide_level {H(5, \039h\039), H(2, \039h\039), H(5, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(2, 'h'), H(5, 'h')} end)
+  probe('slide_level {P.HorizontalRule(), H(2, \039h\039), P.Div{P.Div{P.Para\039x\039}, H(3, \039h\039), H(3, \039h\039), H(1, \039h\039), H(3, \039h\039)}, P.Div{P.Div{H(4, \039h\039)}, H(2, \039h\039), H(4, \039h\039)}, P.Div{H(6, \039h\039)}}', function() return P.structure.slide_level{P.HorizontalRule(), H(2, 'h'), P.Div{P.Div{P.Para'x'}, H(3, 'h'), H(3, 'h'), H(1, 'h'), H(3, 'h')}, P.Div{P.Div{H(4, 'h')}, H(2, 'h'), H(4, 'h')}, P.Div{H(6, 'h')}} end)
+  probe('slide_level {H(3, \039h\039), H(1, \039h\039), H(4, \039h\039), H(6, \039h\039), H(4, \039h\039)}', function() return P.structure.slide_level{H(3, 'h'), H(1, 'h'), H(4, 'h'), H(6, 'h'), H(4, 'h')} end)
+  probe('slide_level {P.Div{H(3, \039h\039), P.Para\039x\039}, P.Div{P.Para\039x\039, H(4, \039h\039)}, P.Div{H(5, \039h\039), H(4, \039h\039), P.Para\039x\039, P.Para\039x\039, H(1, \039h\039)}, H(5, \039h\039), P.Div{H(4, \039h\039)}}', function() return P.structure.slide_level{P.Div{H(3, 'h'), P.Para'x'}, P.Div{P.Para'x', H(4, 'h')}, P.Div{H(5, 'h'), H(4, 'h'), P.Para'x', P.Para'x', H(1, 'h')}, H(5, 'h'), P.Div{H(4, 'h')}} end)
+  probe('slide_level {P.Div{}, H(4, \039h\039), H(3, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Div{}, H(4, 'h'), H(3, 'h'), P.Para'x'} end)
+  probe('slide_level {P.Div{H(4, \039h\039), P.HorizontalRule(), H(2, \039h\039), P.HorizontalRule(), P.Para\039x\039}}', function() return P.structure.slide_level{P.Div{H(4, 'h'), P.HorizontalRule(), H(2, 'h'), P.HorizontalRule(), P.Para'x'}} end)
+  probe('slide_level {P.Div{P.HorizontalRule()}, H(2, \039h\039), P.Div{}, H(5, \039h\039)}', function() return P.structure.slide_level{P.Div{P.HorizontalRule()}, H(2, 'h'), P.Div{}, H(5, 'h')} end)
+  probe('slide_level {H(3, \039h\039), H(3, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{H(3, 'h'), H(3, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {P.Div{H(6, \039h\039), H(4, \039h\039)}, P.Para\039x\039, H(3, \039h\039), H(1, \039h\039)}', function() return P.structure.slide_level{P.Div{H(6, 'h'), H(4, 'h')}, P.Para'x', H(3, 'h'), H(1, 'h')} end)
+  probe('slide_level {P.Para\039x\039, P.Para\039x\039, P.Para\039x\039, P.Div{P.HorizontalRule(), P.Div{H(3, \039h\039), P.Para\039x\039, H(1, \039h\039), P.Para\039x\039, H(2, \039h\039)}}}', function() return P.structure.slide_level{P.Para'x', P.Para'x', P.Para'x', P.Div{P.HorizontalRule(), P.Div{H(3, 'h'), P.Para'x', H(1, 'h'), P.Para'x', H(2, 'h')}}} end)
+  probe('slide_level {P.Para\039x\039, H(6, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(6, 'h')} end)
+  probe('slide_level {P.HorizontalRule(), P.Div{P.Div{H(6, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.HorizontalRule(), P.HorizontalRule(), H(4, \039h\039)}, P.HorizontalRule(), P.Para\039x\039}, H(1, \039h\039)}', function() return P.structure.slide_level{P.HorizontalRule(), P.Div{P.Div{H(6, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, P.HorizontalRule(), P.HorizontalRule(), H(4, 'h')}, P.HorizontalRule(), P.Para'x'}, H(1, 'h')} end)
+  probe('slide_level {H(2, \039h\039), P.Div{}}', function() return P.structure.slide_level{H(2, 'h'), P.Div{}} end)
+  probe('slide_level {H(4, \039h\039), P.Para\039x\039, H(1, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{H(4, 'h'), P.Para'x', H(1, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {H(1, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(1, 'h'), P.Para'x'} end)
+  probe('slide_level {H(2, \039h\039), P.Para\039x\039, H(2, \039h\039)}', function() return P.structure.slide_level{H(2, 'h'), P.Para'x', H(2, 'h')} end)
+  probe('slide_level {P.Div{H(5, \039h\039), P.Div{P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(5, \039h\039)}}, P.Para\039x\039, P.Div{H(6, \039h\039), H(2, \039h\039), H(6, \039h\039)}, H(6, \039h\039), H(5, \039h\039)}', function() return P.structure.slide_level{P.Div{H(5, 'h'), P.Div{P.BlockQuote{H(1, 'q'), P.Para'y'}, H(5, 'h')}}, P.Para'x', P.Div{H(6, 'h'), H(2, 'h'), H(6, 'h')}, H(6, 'h'), H(5, 'h')} end)
+  probe('slide_level {H(1, \039h\039)}', function() return P.structure.slide_level{H(1, 'h')} end)
+  probe('slide_level {H(4, \039h\039), H(4, \039h\039), P.Div{H(5, \039h\039), P.Para\039x\039, H(3, \039h\039)}, H(2, \039h\039)}', function() return P.structure.slide_level{H(4, 'h'), H(4, 'h'), P.Div{H(5, 'h'), P.Para'x', H(3, 'h')}, H(2, 'h')} end)
+  probe('slide_level {H(5, \039h\039), H(6, \039h\039), P.Div{P.Div{P.Para\039x\039, P.HorizontalRule(), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, P.BlockQuote{H(1, \039q\039), P.Para\039y\039}}, H(1, \039h\039)}, H(2, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(6, 'h'), P.Div{P.Div{P.Para'x', P.HorizontalRule(), P.BlockQuote{H(1, 'q'), P.Para'y'}, P.BlockQuote{H(1, 'q'), P.Para'y'}}, H(1, 'h')}, H(2, 'h')} end)
+  probe('slide_level {H(4, \039h\039), P.Para\039x\039, H(1, \039h\039)}', function() return P.structure.slide_level{H(4, 'h'), P.Para'x', H(1, 'h')} end)
+  probe('slide_level {H(3, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(3, 'h'), P.Para'x'} end)
+  probe('slide_level {P.Div{H(6, \039h\039), P.HorizontalRule()}, H(4, \039h\039), H(1, \039h\039), P.Para\039x\039, P.Para\039x\039}', function() return P.structure.slide_level{P.Div{H(6, 'h'), P.HorizontalRule()}, H(4, 'h'), H(1, 'h'), P.Para'x', P.Para'x'} end)
+  probe('slide_level {P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x'} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(3, \039h\039), H(6, \039h\039), H(3, \039h\039), P.Para\039x\039, H(3, \039h\039)}', function() return P.structure.slide_level{H(3, 'h'), H(6, 'h'), H(3, 'h'), P.Para'x', H(3, 'h')} end)
+  probe('slide_level {H(5, \039h\039), P.Para\039x\039, H(1, \039h\039), P.HorizontalRule(), H(6, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), P.Para'x', H(1, 'h'), P.HorizontalRule(), H(6, 'h')} end)
+  probe('slide_level {P.Para\039x\039, H(4, \039h\039), H(6, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(4, 'h'), H(6, 'h')} end)
+  probe('slide_level {P.HorizontalRule()}', function() return P.structure.slide_level{P.HorizontalRule()} end)
+  probe('slide_level {H(2, \039h\039), P.Div{P.Para\039x\039, P.HorizontalRule()}, P.Para\039x\039, P.Div{P.HorizontalRule(), H(6, \039h\039), P.Div{P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(5, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(4, \039h\039), P.HorizontalRule()}}}', function() return P.structure.slide_level{H(2, 'h'), P.Div{P.Para'x', P.HorizontalRule()}, P.Para'x', P.Div{P.HorizontalRule(), H(6, 'h'), P.Div{P.BlockQuote{H(1, 'q'), P.Para'y'}, H(5, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}, H(4, 'h'), P.HorizontalRule()}}} end)
+  probe('slide_level {P.Para\039x\039, P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', P.Para'x'} end)
+  probe('slide_level {P.Para\039x\039, P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', P.Para'x'} end)
+  probe('slide_level {P.Div{P.Para\039x\039}, P.Para\039x\039, P.Div{P.Div{}}}', function() return P.structure.slide_level{P.Div{P.Para'x'}, P.Para'x', P.Div{P.Div{}}} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {P.Div{H(5, \039h\039)}, H(2, \039h\039), H(1, \039h\039), H(5, \039h\039)}', function() return P.structure.slide_level{P.Div{H(5, 'h')}, H(2, 'h'), H(1, 'h'), H(5, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(1, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(1, 'h'), P.Para'x'} end)
+  probe('slide_level {H(5, \039h\039), H(5, \039h\039), P.HorizontalRule(), H(2, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(5, 'h'), P.HorizontalRule(), H(2, 'h')} end)
+  probe('slide_level {P.Para\039x\039, H(3, \039h\039), H(3, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', H(3, 'h'), H(3, 'h'), P.Para'x'} end)
+  probe('slide_level {H(5, \039h\039), H(5, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{H(5, 'h'), H(5, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {P.HorizontalRule(), H(3, \039h\039)}', function() return P.structure.slide_level{P.HorizontalRule(), H(3, 'h')} end)
+  probe('slide_level {P.HorizontalRule(), H(1, \039h\039), H(5, \039h\039), P.Div{H(5, \039h\039), H(4, \039h\039), H(4, \039h\039), P.Para\039x\039, P.Div{P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(5, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}}}}', function() return P.structure.slide_level{P.HorizontalRule(), H(1, 'h'), H(5, 'h'), P.Div{H(5, 'h'), H(4, 'h'), H(4, 'h'), P.Para'x', P.Div{P.BlockQuote{H(1, 'q'), P.Para'y'}, H(5, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}}}} end)
+  probe('slide_level {P.Div{P.Para\039x\039, H(4, \039h\039), H(5, \039h\039), P.Div{P.Para\039x\039, P.HorizontalRule(), P.HorizontalRule(), H(6, \039h\039)}}, H(6, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{P.Div{P.Para'x', H(4, 'h'), H(5, 'h'), P.Div{P.Para'x', P.HorizontalRule(), P.HorizontalRule(), H(6, 'h')}}, H(6, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {H(2, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{H(2, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {H(1, \039h\039), P.Div{H(5, \039h\039), P.Div{H(3, \039h\039), P.HorizontalRule(), P.HorizontalRule(), H(6, \039h\039)}, P.HorizontalRule(), H(1, \039h\039), H(1, \039h\039)}, P.HorizontalRule()}', function() return P.structure.slide_level{H(1, 'h'), P.Div{H(5, 'h'), P.Div{H(3, 'h'), P.HorizontalRule(), P.HorizontalRule(), H(6, 'h')}, P.HorizontalRule(), H(1, 'h'), H(1, 'h')}, P.HorizontalRule()} end)
+  probe('slide_level {H(6, \039h\039), H(2, \039h\039), H(5, \039h\039), P.Div{P.HorizontalRule(), P.Para\039x\039, P.HorizontalRule(), H(5, \039h\039), P.Div{H(3, \039h\039), P.Para\039x\039, H(3, \039h\039), H(5, \039h\039), P.Para\039x\039}}}', function() return P.structure.slide_level{H(6, 'h'), H(2, 'h'), H(5, 'h'), P.Div{P.HorizontalRule(), P.Para'x', P.HorizontalRule(), H(5, 'h'), P.Div{H(3, 'h'), P.Para'x', H(3, 'h'), H(5, 'h'), P.Para'x'}}} end)
+  probe('slide_level {P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x'} end)
+  probe('slide_level {H(6, \039h\039), H(1, \039h\039), H(2, \039h\039)}', function() return P.structure.slide_level{H(6, 'h'), H(1, 'h'), H(2, 'h')} end)
+  probe('slide_level {P.Para\039x\039, P.Div{H(4, \039h\039), P.Div{P.BlockQuote{H(1, \039q\039), P.Para\039y\039}, H(2, \039h\039)}, H(5, \039h\039)}, H(3, \039h\039), H(4, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{P.Para'x', P.Div{H(4, 'h'), P.Div{P.BlockQuote{H(1, 'q'), P.Para'y'}, H(2, 'h')}, H(5, 'h')}, H(3, 'h'), H(4, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(5, \039h\039), H(2, \039h\039), P.Para\039x\039, H(2, \039h\039), H(4, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(2, 'h'), P.Para'x', H(2, 'h'), H(4, 'h')} end)
+  probe('slide_level {H(5, \039h\039), H(2, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(2, 'h')} end)
+  probe('slide_level {H(1, \039h\039), H(4, \039h\039), H(4, \039h\039), H(5, \039h\039)}', function() return P.structure.slide_level{H(1, 'h'), H(4, 'h'), H(4, 'h'), H(5, 'h')} end)
+  probe('slide_level {P.Para\039x\039, H(3, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', H(3, 'h'), P.Para'x'} end)
+  probe('slide_level {H(2, \039h\039), H(4, \039h\039), H(6, \039h\039), H(4, \039h\039)}', function() return P.structure.slide_level{H(2, 'h'), H(4, 'h'), H(6, 'h'), H(4, 'h')} end)
+  probe('slide_level {H(1, \039h\039), H(6, \039h\039), P.Div{P.Div{}, H(4, \039h\039), P.Div{H(6, \039h\039), P.Para\039x\039, H(4, \039h\039)}, H(3, \039h\039), P.Para\039x\039}}', function() return P.structure.slide_level{H(1, 'h'), H(6, 'h'), P.Div{P.Div{}, H(4, 'h'), P.Div{H(6, 'h'), P.Para'x', H(4, 'h')}, H(3, 'h'), P.Para'x'}} end)
+  probe('slide_level {H(6, \039h\039), P.Para\039x\039, P.Para\039x\039, H(2, \039h\039)}', function() return P.structure.slide_level{H(6, 'h'), P.Para'x', P.Para'x', H(2, 'h')} end)
+  probe('slide_level {H(5, \039h\039), H(2, \039h\039), H(2, \039h\039)}', function() return P.structure.slide_level{H(5, 'h'), H(2, 'h'), H(2, 'h')} end)
+  probe('slide_level {P.HorizontalRule(), P.HorizontalRule(), H(3, \039h\039), H(1, \039h\039)}', function() return P.structure.slide_level{P.HorizontalRule(), P.HorizontalRule(), H(3, 'h'), H(1, 'h')} end)
+  probe('slide_level {P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x'} end)
+  probe('slide_level {H(6, \039h\039), P.Para\039x\039, P.HorizontalRule()}', function() return P.structure.slide_level{H(6, 'h'), P.Para'x', P.HorizontalRule()} end)
+  probe('slide_level {H(2, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{H(2, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(6, \039h\039), H(2, \039h\039), P.Div{P.HorizontalRule(), P.Para\039x\039, H(6, \039h\039), P.Para\039x\039, H(4, \039h\039)}, P.Para\039x\039, P.Para\039x\039}', function() return P.structure.slide_level{H(6, 'h'), H(2, 'h'), P.Div{P.HorizontalRule(), P.Para'x', H(6, 'h'), P.Para'x', H(4, 'h')}, P.Para'x', P.Para'x'} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {P.Para\039x\039, H(4, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(4, 'h')} end)
+  probe('slide_level {P.Para\039x\039, P.HorizontalRule()}', function() return P.structure.slide_level{P.Para'x', P.HorizontalRule()} end)
+  probe('slide_level {P.Div{H(6, \039h\039), H(1, \039h\039), H(2, \039h\039), P.Para\039x\039, H(2, \039h\039)}, H(5, \039h\039), P.Div{}, P.Div{H(3, \039h\039), P.HorizontalRule(), H(5, \039h\039)}}', function() return P.structure.slide_level{P.Div{H(6, 'h'), H(1, 'h'), H(2, 'h'), P.Para'x', H(2, 'h')}, H(5, 'h'), P.Div{}, P.Div{H(3, 'h'), P.HorizontalRule(), H(5, 'h')}} end)
+  probe('slide_level {P.Para\039x\039, H(6, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(6, 'h')} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(3, \039h\039), P.HorizontalRule(), P.HorizontalRule(), H(4, \039h\039), P.Div{H(2, \039h\039), H(5, \039h\039)}}', function() return P.structure.slide_level{H(3, 'h'), P.HorizontalRule(), P.HorizontalRule(), H(4, 'h'), P.Div{H(2, 'h'), H(5, 'h')}} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(6, \039h\039), P.Div{}, P.Div{H(3, \039h\039), H(4, \039h\039), P.HorizontalRule(), H(3, \039h\039), P.Para\039x\039}}', function() return P.structure.slide_level{H(6, 'h'), P.Div{}, P.Div{H(3, 'h'), H(4, 'h'), P.HorizontalRule(), H(3, 'h'), P.Para'x'}} end)
+  probe('slide_level {H(1, \039h\039), H(1, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(1, 'h'), H(1, 'h'), P.Para'x'} end)
+  probe('slide_level {P.Para\039x\039, H(5, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{P.Para'x', H(5, 'h'), P.Para'x'} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {H(2, \039h\039), P.Div{P.Div{H(5, \039h\039), P.BlockQuote{H(1, \039q\039), P.Para\039y\039}}, P.Para\039x\039, H(2, \039h\039), P.Para\039x\039}, H(2, \039h\039)}', function() return P.structure.slide_level{H(2, 'h'), P.Div{P.Div{H(5, 'h'), P.BlockQuote{H(1, 'q'), P.Para'y'}}, P.Para'x', H(2, 'h'), P.Para'x'}, H(2, 'h')} end)
+  probe('slide_level {H(1, \039h\039), P.Para\039x\039, H(6, \039h\039), P.HorizontalRule(), H(3, \039h\039)}', function() return P.structure.slide_level{H(1, 'h'), P.Para'x', H(6, 'h'), P.HorizontalRule(), H(3, 'h')} end)
+  probe('slide_level {H(3, \039h\039)}', function() return P.structure.slide_level{H(3, 'h')} end)
+  probe('slide_level {H(2, \039h\039), H(1, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{H(2, 'h'), H(1, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {P.Div{}, H(5, \039h\039)}', function() return P.structure.slide_level{P.Div{}, H(5, 'h')} end)
+  probe('slide_level {H(6, \039h\039), P.Div{H(5, \039h\039), P.Div{H(2, \039h\039)}, P.Para\039x\039, H(4, \039h\039)}, P.Para\039x\039, H(6, \039h\039), P.Para\039x\039}', function() return P.structure.slide_level{H(6, 'h'), P.Div{H(5, 'h'), P.Div{H(2, 'h')}, P.Para'x', H(4, 'h')}, P.Para'x', H(6, 'h'), P.Para'x'} end)
+  probe('slide_level {H(4, \039h\039)}', function() return P.structure.slide_level{H(4, 'h')} end)
+  probe('slide_level {H(1, \039h\039)}', function() return P.structure.slide_level{H(1, 'h')} end)
+  probe('slide_level {P.Div{H(6, \039h\039), H(3, \039h\039), P.HorizontalRule(), P.Para\039x\039, H(4, \039h\039)}, P.HorizontalRule()}', function() return P.structure.slide_level{P.Div{H(6, 'h'), H(3, 'h'), P.HorizontalRule(), P.Para'x', H(4, 'h')}, P.HorizontalRule()} end)
+  probe('slide_level {H(4, \039h\039), H(6, \039h\039)}', function() return P.structure.slide_level{H(4, 'h'), H(6, 'h')} end)
+  probe('slide_level {P.Div{H(6, \039h\039)}, H(5, \039h\039), H(4, \039h\039), P.HorizontalRule()}', function() return P.structure.slide_level{P.Div{H(6, 'h')}, H(5, 'h'), H(4, 'h'), P.HorizontalRule()} end)
+  probe('slide_level {}', function() return P.structure.slide_level{} end)
+  probe('slide_level {P.Para\039x\039, H(1, \039h\039), H(4, \039h\039), H(3, \039h\039), H(3, \039h\039)}', function() return P.structure.slide_level{P.Para'x', H(1, 'h'), H(4, 'h'), H(3, 'h'), H(3, 'h')} end)
+  probe('slide_level {H(6, \039h\039), H(1, \039h\039)}', function() return P.structure.slide_level{H(6, 'h'), H(1, 'h')} end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter from-path-uri empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('from_path \039file:/a.md#x\039', function() return P.format.from_path('file:/a.md#x') end)
+  probe('from_path \039file:///a.md#x\039', function() return P.format.from_path('file:///a.md#x') end)
+  probe('from_path \039file:a.md?q\039', function() return P.format.from_path('file:a.md?q') end)
+  probe('from_path \039https://h/\195\169.md#x\039', function() return P.format.from_path('https://h/\195\169.md#x') end)
+  probe('from_path \039https://h/a.md#x\039', function() return P.format.from_path('https://h/a.md#x') end)
+  probe('from_path \039https://h/a.md?x=1#y\039', function() return P.format.from_path('https://h/a.md?x=1#y') end)
+  probe('from_path \039http://h:80/a.tex\039', function() return P.format.from_path('http://h:80/a.tex') end)
+  probe('from_path \039http://h:x/a.tex\039', function() return P.format.from_path('http://h:x/a.tex') end)
+  probe('from_path \039http://[::1]/a.rst\039', function() return P.format.from_path('http://[::1]/a.rst') end)
+  probe('from_path \039http://u@h/a.rst?z\039', function() return P.format.from_path('http://u@h/a.rst?z') end)
+  probe('from_path \039mailto:a.md\039', function() return P.format.from_path('mailto:a.md') end)
+  probe('from_path \039urn:x:a.md\039', function() return P.format.from_path('urn:x:a.md') end)
+  probe('from_path \039x:a.md#f\039', function() return P.format.from_path('x:a.md#f') end)
+  probe('from_path \0391x:a.md#f\039', function() return P.format.from_path('1x:a.md#f') end)
+  probe('from_path \039a b:c.md#f\039', function() return P.format.from_path('a b:c.md#f') end)
+  probe('from_path \039https://h/a%20b.md#x\039', function() return P.format.from_path('https://h/a%20b.md#x') end)
+  probe('from_path \039https://h/a%zz.md#x\039', function() return P.format.from_path('https://h/a%zz.md#x') end)
+  probe('from_path \039https://h/a b.md#x\039', function() return P.format.from_path('https://h/a b.md#x') end)
+  probe('from_path \039https://h/a.md#x#y\039', function() return P.format.from_path('https://h/a.md#x#y') end)
+  probe('from_path \039https://h/a.md#\195\169\039', function() return P.format.from_path('https://h/a.md#\195\169') end)
+  probe('from_path \039https://h/a.md?\195\169\039', function() return P.format.from_path('https://h/a.md?\195\169') end)
+  probe('from_path \039https://h/a{b}.md#x\039', function() return P.format.from_path('https://h/a{b}.md#x') end)
+  probe('from_path \039https://h/a|b.md#x\039', function() return P.format.from_path('https://h/a|b.md#x') end)
+  probe('from_path \039https://h/a.md#x?y\039', function() return P.format.from_path('https://h/a.md#x?y') end)
+  probe('from_path \039https://h/a.md?\039', function() return P.format.from_path('https://h/a.md?') end)
+  probe('from_path \039https://h/a.md#\039', function() return P.format.from_path('https://h/a.md#') end)
+  probe('from_path \039https:/a.md#x\039', function() return P.format.from_path('https:/a.md#x') end)
+  probe('from_path \039https:a.md#x\039', function() return P.format.from_path('https:a.md#x') end)
+  probe('from_path \039c:/a.md#x\039', function() return P.format.from_path('c:/a.md#x') end)
+  probe('from_path \039C:\092\092a.md#x\039', function() return P.format.from_path('C:\092a.md#x') end)
+  probe('from_path \039-x:a.md#f\039', function() return P.format.from_path('-x:a.md#f') end)
+  probe('from_path \039x+y.z-w:a.md#f\039', function() return P.format.from_path('x+y.z-w:a.md#f') end)
+  probe('from_path \039x_y:a.md#f\039', function() return P.format.from_path('x_y:a.md#f') end)
+  probe('from_path \039://a.md#x\039', function() return P.format.from_path('://a.md#x') end)
+  probe('from_path \039:a.md#x\039', function() return P.format.from_path(':a.md#x') end)
+  probe('from_path \039https://h/dir.md/#x\039', function() return P.format.from_path('https://h/dir.md/#x') end)
+  probe('from_path \039https://h#x.md\039', function() return P.format.from_path('https://h#x.md') end)
+  probe('from_path \039https://h?x.md\039', function() return P.format.from_path('https://h?x.md') end)
+  probe('from_path \039https://h/.md#x\039', function() return P.format.from_path('https://h/.md#x') end)
+  probe('from_path \039https://h/a.MD#x\039', function() return P.format.from_path('https://h/a.MD#x') end)
+  probe('from_path \039https://user:pw@h:8080/p/a.html?x=1&y=2#frag\039', function() return P.format.from_path('https://user:pw@h:8080/p/a.html?x=1&y=2#frag') end)
+  probe('from_path \039https://[v1.x]/a.md#f\039', function() return P.format.from_path('https://[v1.x]/a.md#f') end)
+  probe('from_path \039https://[zz]/a.md#f\039', function() return P.format.from_path('https://[zz]/a.md#f') end)
+  probe('from_path \039https://h/a.md#[x]\039', function() return P.format.from_path('https://h/a.md#[x]') end)
+  probe('from_path \039https://h/a[x].md#f\039', function() return P.format.from_path('https://h/a[x].md#f') end)
+  probe('from_path \039data:text/plain,a.md#x\039', function() return P.format.from_path('data:text/plain,a.md#x') end)
+  probe('from_path \039https://h/a.md%23x\039', function() return P.format.from_path('https://h/a.md%23x') end)
+  probe('from_path "https://h/~a/!$&\039()*+,;=:@.md#x"', function() return P.format.from_path('https://h/~a/!$&\039()*+,;=:@.md#x') end)
+  probe('from_path \039http://h:x/a.tex#f\039', function() return P.format.from_path('http://h:x/a.tex#f') end)
+  probe('from_path \039http://h:80x/a.tex#f\039', function() return P.format.from_path('http://h:80x/a.tex#f') end)
+  probe('from_path \039http://u[@h/a.tex#f\039', function() return P.format.from_path('http://u[@h/a.tex#f') end)
+  probe('from_path \039http://u:p:q@h/a.tex#f\039', function() return P.format.from_path('http://u:p:q@h/a.tex#f') end)
+  probe('from_path \039http://h%41/a.tex#f\039', function() return P.format.from_path('http://h%41/a.tex#f') end)
+  probe('from_path \039http://1.2.3.4/a.tex#f\039', function() return P.format.from_path('http://1.2.3.4/a.tex#f') end)
+  probe('from_path \039http://[1:2::3]/a.tex#f\039', function() return P.format.from_path('http://[1:2::3]/a.tex#f') end)
+  probe('from_path \039http://[1:2::3]:9/a.tex#f\039', function() return P.format.from_path('http://[1:2::3]:9/a.tex#f') end)
+  probe('from_path \039http://[1:2::3]x/a.tex#f\039', function() return P.format.from_path('http://[1:2::3]x/a.tex#f') end)
+  probe('from_path \039http://[::ffff:1.2.3.4]/a.tex#f\039', function() return P.format.from_path('http://[::ffff:1.2.3.4]/a.tex#f') end)
+  probe('from_path \039http://[1:2:3]/a.tex#f\039', function() return P.format.from_path('http://[1:2:3]/a.tex#f') end)
+  probe('from_path \039https://h/\039', function() return P.format.from_path('https://h/') end)
+  probe('from_path \039https://h\039', function() return P.format.from_path('https://h') end)
+  probe('from_path \039https://h/#x\039', function() return P.format.from_path('https://h/#x') end)
+  probe('from_path \039https://h?q\039', function() return P.format.from_path('https://h?q') end)
+  probe('from_path \039mailto:\039', function() return P.format.from_path('mailto:') end)
+  probe('from_path \039x:#f\039', function() return P.format.from_path('x:#f') end)
+  probe('from_path \039file://h\039', function() return P.format.from_path('file://h') end)
+  probe('from_path \039file:///\039', function() return P.format.from_path('file:///') end)
+  probe('from_path \039x:\039', function() return P.format.from_path('x:') end)
+  probe('from_path \039x:/\039', function() return P.format.from_path('x:/') end)
+  probe('from_path \039x:?q.md\039', function() return P.format.from_path('x:?q.md') end)
+  probe('from_path \039https://h/a.md/..\039', function() return P.format.from_path('https://h/a.md/..') end)
+  probe('from_path \039https://h/a/./b.rst#x\039', function() return P.format.from_path('https://h/a/./b.rst#x') end)
+  probe('from_path \039x://a.md\039', function() return P.format.from_path('x://a.md') end)
+  probe('from_path \039http://h/a.tex%\039', function() return P.format.from_path('http://h/a.tex%') end)
+  probe('from_path \039http://h/a.tex%4\039', function() return P.format.from_path('http://h/a.tex%4') end)
+  probe('from_path \039HTTP://H/A.TEX#F\039', function() return P.format.from_path('HTTP://H/A.TEX#F') end)
+  probe('from_path \039http://h/a.tex#f%20\039', function() return P.format.from_path('http://h/a.tex#f%20') end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter changed-chains empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('insert chain 1', function() local e = P.Plain{P.Str'x'} for i = 1, 1 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 2', function() local e = P.Plain{P.Str'x'} for i = 1, 2 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 24', function() local e = P.Plain{P.Str'x'} for i = 1, 24 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 25', function() local e = P.Plain{P.Str'x'} for i = 1, 25 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 30', function() local e = P.Plain{P.Str'x'} for i = 1, 30 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 64', function() local e = P.Plain{P.Str'x'} for i = 1, 64 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 100', function() local e = P.Plain{P.Str'x'} for i = 1, 100 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('insert chain 126', function() local e = P.Plain{P.Str'x'} for i = 1, 126 do local d = P.Div{} d.content:insert(e) e = d end return #tostring(e), #P.json.encode(e) end)
+  probe('list chain 1', function() local l = P.BulletList{} local cur = l for i = 1, 1 do local n = P.BulletList{} cur.content = {{n}} cur = n end return #tostring(l), #P.json.encode(l) end)
+  probe('list chain 24', function() local l = P.BulletList{} local cur = l for i = 1, 24 do local n = P.BulletList{} cur.content = {{n}} cur = n end return #tostring(l), #P.json.encode(l) end)
+  probe('list chain 25', function() local l = P.BulletList{} local cur = l for i = 1, 25 do local n = P.BulletList{} cur.content = {{n}} cur = n end return #tostring(l), #P.json.encode(l) end)
+  probe('list chain 30', function() local l = P.BulletList{} local cur = l for i = 1, 30 do local n = P.BulletList{} cur.content = {{n}} cur = n end return #tostring(l), #P.json.encode(l) end)
+  probe('list chain 60', function() local l = P.BulletList{} local cur = l for i = 1, 60 do local n = P.BulletList{} cur.content = {{n}} cur = n end return #tostring(l), #P.json.encode(l) end)
+  probe('span chain 10', function() local e = P.Str'x' for i = 1, 10 do local s = P.Span{} s.content = {e, P.Space()} s.attr.classes:insert('c' .. i) e = s end local p = P.Para{e} return #tostring(p), #P.utils.stringify(p) end)
+  probe('span chain 40', function() local e = P.Str'x' for i = 1, 40 do local s = P.Span{} s.content = {e, P.Space()} s.attr.classes:insert('c' .. i) e = s end local p = P.Para{e} return #tostring(p), #P.utils.stringify(p) end)
+  probe('span chain 100', function() local e = P.Str'x' for i = 1, 100 do local s = P.Span{} s.content = {e, P.Space()} s.attr.classes:insert('c' .. i) e = s end local p = P.Para{e} return #tostring(p), #P.utils.stringify(p) end)
+  probe('shared child', function() local c = P.Div{} c.content:insert(P.Para'x') local d = P.Div{} d.content = {c, c, c} local e = P.Div{} e.content = {d, d} return #tostring(e), P.json.encode(e) end)
+  probe('changed after read', function() local c = P.Div{} c.content:insert(P.Para'x') local d = P.Div{c} local s1 = tostring(d) c.content:insert(P.Para'y') d.content = {c} return s1 == tostring(d), #tostring(d) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter raw-bom empty small
 ﻿function Pandoc(d) d.meta.r = 'ok' return d end
 @@@ filter raw-bom-shebang empty small

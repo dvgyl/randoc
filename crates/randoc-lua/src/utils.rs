@@ -878,23 +878,33 @@ fn document_blocks(cx: &Cx, value: &Value) -> Peek<Vec<Block>> {
     cx.blocks_fuzzy(value)
 }
 
-/// The lowest level of a heading that a block other than a heading or a
-/// rule follows, also inside a `Div`; at most 6.
+/// The slide level: the lowest level of a heading that a block other than
+/// a heading or a rule follows; at most 6. The block after such a heading
+/// is skipped, also when it is a `Div`. The search continues inside each
+/// other `Div`, and a heading level found there does not change the search
+/// after the `Div` (oracle matrix group `slide-level`).
 fn slide_level(blocks: &[Block]) -> i64 {
     let mut lowest = 6;
-    let mut lists = vec![blocks];
-    while let Some(list) = lists.pop() {
-        for (index, block) in list.iter().enumerate() {
-            match (block, list.get(index + 1)) {
-                (Block::Header(level, ..), Some(next))
-                    if !matches!(next, Block::Header(..) | Block::HorizontalRule) =>
+    let mut work = vec![(6, blocks)];
+    while let Some((mut least, mut rest)) = work.pop() {
+        loop {
+            match rest {
+                [Block::Header(level, ..), next, tail @ ..]
+                    if *level < least
+                        && !matches!(next, Block::Header(..) | Block::HorizontalRule) =>
                 {
-                    lowest = lowest.min(*level);
+                    least = *level;
+                    rest = tail;
                 }
-                (Block::Div(_, content), _) => lists.push(content),
-                _ => {}
+                [Block::Div(_, content), tail @ ..] => {
+                    work.push((least, content));
+                    rest = tail;
+                }
+                [_, tail @ ..] => rest = tail,
+                [] => break,
             }
         }
+        lowest = lowest.min(least);
     }
     lowest
 }

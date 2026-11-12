@@ -121,13 +121,15 @@ fn place_row_section<I: Iterator<Item = Cell>>(
             continue;
         }
         let wanted = stream.peek().map_or(1, |cell| cell.col_span.max(1));
+        // The scan stops at the span of the cell, so that a row needs
+        // linear time.
         let free = hang
             .get(at..)
             .unwrap_or_default()
             .iter()
+            .take(usize::try_from(wanted).unwrap_or(usize::MAX))
             .take_while(|o| **o == 1)
-            .count()
-            .min(usize::try_from(wanted).unwrap_or(usize::MAX));
+            .count();
         if free == 0 {
             break;
         }

@@ -1562,3 +1562,44 @@ Open findings: I-CITE-14 (high: Codex R2-07, a 2 MB stack overflows in
 the public render functions; the 9 medium findings of the Codex report
 and the 2 medium findings of the Opus report), the low rows. Open
 checks: fuzzing, coverage, the mutation sample.
+
+## Workstream lua (branch `ws/lua-2`, head 13d6f87, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+correction of all 12 findings of review round 2 (Opus lua-R2-01, R2-03
+to R2-06; Codex lua-R2-01 to R2-07), each rule from new groups of the
+module matrix (`tools/module-matrix.py`; 2,652 probes equal to the
+oracle); the character locale of the environment for the Lua state
+(`runtime::use_environment_locale`, the rule of `setlocale(LC_CTYPE, "")`;
+20 of 20 environments equal; row I-LUA-13 closed); each function of
+`pandoc.system`, `pandoc.path.exists` and `pandoc.pipe` on the host
+methods (new module `src/system.rs`; 91 probes equal, except `cputime`);
+the public function `randoc_lua::apply_filter_files` (the entrance for
+the `--lua-filter` files). Rows: I-LUA-03 and I-LUA-08 changed, I-LUA-13
+closed, I-LUA-15 new (low); I-CONTRACTS-01 open, I-CONTRACTS-02 partly
+answered, I-CONTRACTS-03 closed for `randoc-lua`. No new dependency.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 13d6f87 (run ended 04:17 UTC; worker report): baseline 20243 units, 0 regressions. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Module matrix: 2,652 probes equal. System matrix `tests/replay/system.txt`: 91 probes equal except `cputime` (I-CONTRACTS-01). Locale matrix: 26 probes in 20 environments, 20 of 20 equal. Replay runs: modules 56, system 10, cases 313, walk 164; equal except `KNOWN` (2 x I-LUA-01, 2 x I-CONTRACTS-01). |
+| 3. Tests | `cargo test -p randoc-lua -p randoc-core` on the merged tree: 121 pass, 0 fail, 2 ignored. New tests include `path_and_table_functions_need_linear_time`, `full_mode_system_functions_do_not_use_the_host_of_the_conversion`, `restricted_mode_refuses_each_system_function`, `filter_files_give_the_results_and_errors_of_pandoc`, `tests/locale.rs`. Coverage on 13d6f87: 92.96 % of 5711 lines. Mutation sample (`--in-diff --shard 1/30`): 12 tested, 12 caught. |
+| 4. No panics | Fuzz `lua_modules` on 13d6f87: 901 s, 134,656 runs, 0 crashes, peak 434 MB. |
+| 5. Reviews | Round 2 on main 98806b9: Opus REQUEST CHANGES (2 high, 4 medium, 6 low), Codex REQUEST CHANGES (3 high, 4 medium, 1 low). The worker corrected each one; the verification by the reviewers is due. |
+| 6. No slowdowns | `path.join` 50,000 / 400,000 parts 0.039 / 0.304 s; `make_relative` 0.19 / 1.73 s (debug, CPU time in Lua). CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: `docs/ISSUES.md` only (`resolve-tables`; then
+the rows I-LUA-03, I-LUA-08, I-LUA-13 and I-CONTRACTS-01 to 03 take the
+text of the branch, because `main` did not change them after the merge
+base; `resolve-tables` put back the row I-CM-17, which `main` removed
+when it closed the row, so the row is removed again). Licence scan: the
+hits are lists of API and format names (`src/prelude.lua`,
+`tools/module-matrix.py`) and the native form of oracle output
+(`tests/replay/modules-expected.txt`), not copied text.
+
+Open findings: `lpeg` and `re` (not started; they need a decision on a
+second `unsafe` block), I-LUA-11, I-CONTRACTS-01 (processor time), the
+scope rows I-LUA-03 to I-LUA-06, the low rows. No program option calls
+the crate yet. Open checks: none of the gate list; the review
+verification is due.

@@ -95,6 +95,23 @@ const FIFTH_SEARCHER: &str = r#"
 package.searchers[#package.searchers + 1] = function(name) return nil end
 "#;
 
+/// Sets the character locale of the process (`LC_CTYPE`) from the
+/// environment, one time, before the first Lua state exists. Pandoc runs
+/// Lua in that locale, so the character classes, `string.upper`,
+/// `string.lower` and `%q` agree with Pandoc for bytes from 128 (row
+/// I-LUA-13). The other categories stay `C`, so the number format of Lua
+/// does not change. The Rust code of Randoc does not read the C locale.
+fn use_environment_locale() {
+    static ONCE: std::sync::Once = std::sync::Once::new();
+    ONCE.call_once(|| {
+        // A state of its own, so that restricted mode gets the locale too.
+        // A failure keeps the C locale, as a program without the call has.
+        if let Ok(lua) = Lua::new_with(StdLib::OS, LuaOptions::default()) {
+            let _ = lua.load("os.setlocale('', 'ctype')").exec();
+        }
+    });
+}
+
 /// One Lua 5.4.8 state.
 pub struct LuaRuntime {
     lua: Lua,
@@ -109,6 +126,7 @@ impl LuaRuntime {
 
     /// Makes a Lua state with the libraries of `mode` and the given limits.
     pub fn with_limits(mode: Mode, limits: RuntimeLimits) -> Result<Self, Error> {
+        use_environment_locale();
         let lua = match mode {
             Mode::Full => full_state(),
             Mode::Restricted => {

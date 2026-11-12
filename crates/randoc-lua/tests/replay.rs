@@ -22,9 +22,11 @@ const HEADER: &str = "@@@ ";
 /// The runs that differ from the oracle for a reason that a row of
 /// `docs/ISSUES.md` records. The test fails when one of them becomes equal,
 /// so that the list stays exact.
-const KNOWN: [(&str, &str, &str); 2] = [
+const KNOWN: [(&str, &str, &str); 4] = [
     ("walk-error-error-in-walk", "walk-allkinds", "I-LUA-01"),
     ("walk-error-error-in-walk", "walk-deep", "I-LUA-01"),
+    ("system-cputime", "empty", "I-CONTRACTS-01"),
+    ("system-cputime", "small", "I-CONTRACTS-01"),
 ];
 
 /// Splits a file into its sections: the words of each header line and the
@@ -89,6 +91,15 @@ fn each_probe_of_the_module_matrix_gives_the_result_of_the_oracle() {
         include_str!("replay/modules.txt"),
         include_str!("replay/modules-expected.txt"),
         5,
+    );
+}
+
+#[test]
+fn each_probe_of_the_system_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/system.txt"),
+        include_str!("replay/system-expected.txt"),
+        4,
     );
 }
 

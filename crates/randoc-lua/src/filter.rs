@@ -4,10 +4,10 @@ use mlua::{Function, Lua, MultiValue, Table, Value, Variadic};
 use randoc_ast::{Pandoc, Text};
 use randoc_core::{Context, Error};
 
-use crate::construct::Call;
 use crate::module;
 use crate::peek::{Cx, Peek, PeekError, mismatch, retrieving};
 use crate::runtime::{self, LuaRuntime, Mode, RuntimeLimits};
+use crate::system;
 use crate::walk::{CALL_TRACED, Filter, apply_fully, check_document};
 
 /// One Lua filter file.
@@ -94,48 +94,24 @@ pub fn apply_filter(
         check_document(&cx, doc)?;
         module::install(lua, max_depth)?;
         set_globals(lua, filter, environment)?;
-        let context = std::cell::RefCell::new(&mut *context);
         lua.scope(|scope| {
-            // ADR 11: restricted mode has no function with file access.
+            // ADR 11: restricted mode has no function with file access. In
+            // full mode the system functions use a native host of their own,
+            // also when the conversion has a restricted host, because Pandoc
+            // permits them with `--sandbox` (row I-CONTRACTS-03).
             if environment.mode == Mode::Full {
                 let native: Table = lua.named_registry_value(module::NATIVE)?;
-                let read = scope.create_function(|lua, arguments: Variadic<Value>| {
+                let system = scope.create_function(|lua, arguments: Variadic<Value>| {
                     let cx = Cx { lua, max_depth };
-                    let call = Call {
-                        cx: &cx,
-                        name: "read_file",
-                        arguments: &arguments,
+                    let (name, rest) = match arguments.split_first() {
+                        Some((Value::String(name), rest)) => (name.to_string_lossy(), rest),
+                        _ => (String::new(), &arguments[..0]),
                     };
-                    system_result(
-                        lua,
-                        (|| {
-                            let path = call.required(0, "filepath", |v| cx.text(v))?;
-                            let bytes = context.borrow_mut().host().read_file(&path);
-                            let bytes = bytes.map_err(|error| io_error(&path, &error))?;
-                            Ok(Value::String(lua.create_string(bytes)?))
-                        })(),
-                    )
-                })?;
-                let write = scope.create_function(|lua, arguments: Variadic<Value>| {
-                    let cx = Cx { lua, max_depth };
-                    let call = Call {
-                        cx: &cx,
-                        name: "write_file",
-                        arguments: &arguments,
-                    };
-                    system_result(
-                        lua,
-                        (|| {
-                            let path = call.required(0, "filepath", |v| cx.text(v))?;
-                            let contents = call.required(1, "contents", |v| bytes(&cx, v))?;
-                            let written = context.borrow_mut().host().write_file(&path, &contents);
-                            written.map_err(|error| io_error(&path, &error))?;
-                            Ok(Value::Nil)
-                        })(),
-                    )
+                    let result = system::call(&cx, &mut randoc_core::NativeHost, &name, rest);
+                    system_result(lua, result)
                 })?;
                 let add: Function = native.get("system_functions")?;
-                add.call::<()>((read, write))?;
+                add.call::<()>(system)?;
             }
             let result = (|| -> Peek<()> {
                 for filter in load_filters(&cx, filter, environment.mode)? {
@@ -152,34 +128,66 @@ pub fn apply_filter(
     })
 }
 
-/// The result of a system function for the Lua wrapper of the prelude:
-/// `true` and the value, or `false` and the message.
-fn system_result(lua: &Lua, result: Peek<Value>) -> mlua::Result<(bool, Value)> {
-    Ok(match result {
-        Ok(value) => (true, value),
-        Err(error) => (false, Value::String(lua.create_string(error.text())?)),
-    })
+/// Applies Lua filter files to a document in their order, as
+/// `pandoc --lua-filter FILE ...` does. This is the entrance of the command
+/// line.
+///
+/// Each file runs in a new Lua state with the globals of `environment`;
+/// `PANDOC_SCRIPT_FILE` is the path as given. The function reads each file
+/// with the file system of the process, not with the host of `context`,
+/// because Pandoc reads a filter file also with `--sandbox`. A file that is
+/// missing, that does not compile or that fails at run time gives
+/// [`Error::Filter`] with the text of Pandoc and the exit code 83; the
+/// filters after it do not run.
+///
+/// `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS` are not implemented
+/// yet (row I-LUA-05).
+pub fn apply_filter_files(
+    doc: &mut Pandoc,
+    paths: &[&str],
+    environment: &FilterEnvironment,
+    context: &mut Context,
+) -> Result<(), Error> {
+    for path in paths {
+        let source = std::fs::read(path).map_err(|error| Error::Filter {
+            filter: (*path).to_string(),
+            message: open_error(path, &error),
+        })?;
+        let filter = LuaFilter {
+            path,
+            source: &source,
+        };
+        apply_filter(doc, &filter, environment, context)?;
+    }
+    Ok(())
 }
 
-/// The bytes of a string or a number argument.
-fn bytes(cx: &Cx, value: &Value) -> Peek<Vec<u8>> {
-    match value {
-        Value::String(text) => Ok(text.as_bytes().to_vec()),
-        Value::Integer(_) | Value::Number(_) => Ok(cx.text(value)?.into_bytes()),
-        _ => Err(mismatch("string", value)),
+/// The message of Lua (`luaL_loadfilex`) for a filter file that it cannot
+/// read.
+fn open_error(path: &str, error: &std::io::Error) -> String {
+    let shown = error.to_string();
+    let reason = shown.split(" (os error").next().unwrap_or_default();
+    if error.kind() == std::io::ErrorKind::IsADirectory {
+        format!("cannot read {path}: {reason}")
+    } else {
+        format!("cannot open {path}: {reason}")
     }
 }
 
-/// The message of an input or output error, as GHC shows it.
-fn io_error(path: &str, error: &std::io::Error) -> PeekError {
-    use std::io::ErrorKind;
-    let description = match error.kind() {
-        ErrorKind::NotFound => "does not exist (No such file or directory)".to_string(),
-        ErrorKind::IsADirectory => "inappropriate type (is a directory)".to_string(),
-        ErrorKind::PermissionDenied => "permission denied (Permission denied)".to_string(),
-        _ => error.to_string(),
-    };
-    PeekError::Thrown(format!("{path}: withBinaryFile: {description}"))
+/// The result of a system function for the Lua wrapper of the prelude:
+/// `true` and the values, or `false` and the message.
+fn system_result(lua: &Lua, result: Peek<Vec<Value>>) -> mlua::Result<MultiValue> {
+    Ok(match result {
+        Ok(values) => std::iter::once(Value::Boolean(true))
+            .chain(values)
+            .collect(),
+        Err(error) => [
+            Value::Boolean(false),
+            Value::String(lua.create_string(error.text())?),
+        ]
+        .into_iter()
+        .collect(),
+    })
 }
 
 /// Sets the globals that Pandoc gives a filter.
@@ -213,16 +221,35 @@ fn set_globals(lua: &Lua, filter: &LuaFilter, environment: &FilterEnvironment) -
     // Pandoc makes each value again at each read, so a change to a list
     // that a script read does not change the state.
     let metatable = crate::push::metatable(lua, "CommonStateInterface")?;
-    let index: Function = lua.load(STATE_INDEX).set_name("=[randoc]").call(state)?;
+    let index: Function = lua
+        .load(STATE_INDEX)
+        .set_name("=[randoc]")
+        .call((state, lua.create_sequence_from(STATE_KEYS)?))?;
     metatable.set("__index", index)?;
     let proxy = lua.create_table()?;
     proxy.set_metatable(Some(metatable))?;
     globals.set("PANDOC_STATE", proxy)
 }
 
-/// The `__index` function of `PANDOC_STATE`. It gets the table of values.
+/// The fields of `PANDOC_STATE`. A field without a value reads as nil.
+const STATE_KEYS: [&str; 9] = [
+    "input_files",
+    "output_file",
+    "log",
+    "request_headers",
+    "resource_path",
+    "source_url",
+    "user_data_dir",
+    "trace",
+    "verbosity",
+];
+
+/// The `__index` function of `PANDOC_STATE`. It gets the table of values
+/// and the list of the field names.
 const STATE_INDEX: &str = r#"
-local state = ...
+local state, names = ...
+local known = {}
+for _, name in ipairs(names) do known[name] = true end
 local error, pairs, type, setmetatable, getmetatable = error, pairs, type, setmetatable, getmetatable
 local function copy(value)
   if type(value) ~= 'table' then return value end
@@ -231,8 +258,11 @@ local function copy(value)
   return setmetatable(result, getmetatable(value))
 end
 return function(_, key)
+  if type(key) ~= 'string' and type(key) ~= 'number' then
+    error('string expected, got ' .. type(key), 0)
+  end
+  if not known[key] then error('Unknown key', 0) end
   local value = state[key]
-  if value == nil then error('Unknown key', 0) end
   return copy(value)
 end
 "#;

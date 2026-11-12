@@ -165,20 +165,13 @@ const BY_EXTENSION: [(&str, &str); 59] = [
     ("ods", "ods"),
 ];
 
-/// The format of a file path, from its extension. A URL loses its query
-/// and its fragment first.
+/// The format of a file path, from its extension. An absolute URI gives
+/// the extension of its path; an empty path or `/` gives `html`.
 fn from_path(path: &str) -> Option<&'static str> {
-    let path = match path.split_once("://") {
-        Some((scheme, rest))
-            if !scheme.is_empty()
-                && scheme.starts_with(|c: char| c.is_ascii_alphabetic())
-                && scheme
-                    .chars()
-                    .all(|c| c.is_ascii_alphanumeric() || matches!(c, '+' | '-' | '.')) =>
-        {
-            rest.split(['?', '#']).next().unwrap_or_default()
-        }
-        _ => path,
+    let path = match uri_path(path) {
+        Some("" | "/") => return Some("html"),
+        Some(uri_path) => uri_path,
+        None => path,
     };
     let file = path.rsplit('/').next().unwrap_or_default();
     let (_, extension) = file.rsplit_once('.')?;
@@ -190,4 +183,102 @@ fn from_path(path: &str) -> Option<&'static str> {
         .iter()
         .find(|(known, _)| *known == extension)
         .map(|(_, format)| *format)
+}
+
+/// The path of an absolute URI of RFC 3986 with an optional fragment, or
+/// `None` when the text is not such a URI.
+fn uri_path(text: &str) -> Option<&str> {
+    let (scheme, rest) = text.split_once(':')?;
+    let scheme_ok = scheme.starts_with(|c: char| c.is_ascii_alphabetic())
+        && scheme
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'+' | b'-' | b'.'));
+    let (rest, fragment) = rest.split_once('#').unwrap_or((rest, ""));
+    let (hierarchy, query) = rest.split_once('?').unwrap_or((rest, ""));
+    let tail_ok = |part: &str| uri_text(part, |b| is_pchar(b) || matches!(b, b'/' | b'?'));
+    if !scheme_ok || !tail_ok(fragment) || !tail_ok(query) {
+        return None;
+    }
+    let path = match hierarchy.strip_prefix("//") {
+        Some(after) => {
+            let end = after.find('/').unwrap_or(after.len());
+            let (authority, path) = after.split_at(end);
+            authority_ok(authority).then_some(path)?
+        }
+        None => hierarchy,
+    };
+    uri_text(path, |b| is_pchar(b) || b == b'/').then_some(path)
+}
+
+/// `[userinfo@]host[:port]` of RFC 3986.
+fn authority_ok(authority: &str) -> bool {
+    let (user, host_port) = match authority.rsplit_once('@') {
+        Some((user, host_port)) => (Some(user), host_port),
+        None => (None, authority),
+    };
+    let user_ok = user
+        .is_none_or(|user| uri_text(user, |b| is_unreserved(b) || is_sub_delim(b) || b == b':'));
+    let (host, port) = match host_port.strip_prefix('[') {
+        Some(literal) => match literal.split_once(']') {
+            Some((address, after)) if ip_literal_ok(address) => ("", after),
+            _ => return false,
+        },
+        None => match host_port.split_once(':') {
+            Some((host, port)) => (host, host_port.get(host.len()..).unwrap_or(port)),
+            None => (host_port, ""),
+        },
+    };
+    let port_ok = port.is_empty()
+        || port
+            .strip_prefix(':')
+            .is_some_and(|digits| digits.bytes().all(|b| b.is_ascii_digit()));
+    user_ok && port_ok && uri_text(host, |b| is_unreserved(b) || is_sub_delim(b))
+}
+
+/// An IPv6 address or an `IPvFuture` literal, without its brackets.
+fn ip_literal_ok(address: &str) -> bool {
+    if let Some(future) = address.strip_prefix(['v', 'V']) {
+        return future.split_once('.').is_some_and(|(version, rest)| {
+            !version.is_empty()
+                && version.bytes().all(|b| b.is_ascii_hexdigit())
+                && !rest.is_empty()
+                && rest
+                    .bytes()
+                    .all(|b| is_unreserved(b) || is_sub_delim(b) || b == b':')
+        });
+    }
+    address.parse::<std::net::Ipv6Addr>().is_ok()
+}
+
+/// The text is made of the bytes that `allowed` accepts and of
+/// percent-encoded bytes.
+fn uri_text(text: &str, allowed: impl Fn(u8) -> bool) -> bool {
+    let mut bytes = text.bytes();
+    while let Some(byte) = bytes.next() {
+        let ok = if byte == b'%' {
+            bytes.next().is_some_and(|b| b.is_ascii_hexdigit())
+                && bytes.next().is_some_and(|b| b.is_ascii_hexdigit())
+        } else {
+            allowed(byte)
+        };
+        if !ok {
+            return false;
+        }
+    }
+    true
+}
+
+fn is_unreserved(byte: u8) -> bool {
+    byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'.' | b'_' | b'~')
+}
+
+fn is_sub_delim(byte: u8) -> bool {
+    matches!(
+        byte,
+        b'!' | b'$' | b'&' | b'\'' | b'(' | b')' | b'*' | b'+' | b',' | b';' | b'='
+    )
+}
+
+fn is_pchar(byte: u8) -> bool {
+    is_unreserved(byte) || is_sub_delim(byte) || matches!(byte, b':' | b'@')
 }
