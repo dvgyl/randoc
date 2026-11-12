@@ -27,6 +27,9 @@ pub fn reader(format: &str) -> Option<Reader> {
 fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
     let input = sources.concat();
     let mut parser = Parser::new(&input, options.extensions, context);
+    if let [source] = sources.0.as_slice() {
+        parser.source_name.clone_from(&source.name);
+    }
     let blocks = parser.document().map_err(|stop| match stop {
         Stop::TooDeep => Error::Parse(Text::from("the document is nested too deeply")),
         Stop::Loop(name) => Error::MacroLoop(name),
@@ -43,6 +46,7 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
 mod tests {
     use std::time::Instant;
 
+    use randoc_ast::{Attr, Block, Inline};
     use randoc_core::FormatSpec;
 
     use super::*;
@@ -142,6 +146,143 @@ mod tests {
         ] {
             assert!(convert(input, "latex").is_ok(), "{input}");
         }
+    }
+
+    /// Pandoc 3.13 stops with a parse error when a command that needs an
+    /// argument group, or a definition that needs a name, has another token.
+    #[test]
+    fn a_missing_argument_group_is_the_parse_error_of_pandoc() {
+        for (input, line, column, shown) in [
+            ("a \\section| b", "a \\section| b", 11, "|"),
+            ("a \\section\\foo b", "a \\section\\foo b", 11, "\\foo "),
+            ("a \\section x", "a \\section x", 12, "x"),
+            ("\\section[a]*|", "\\section[a]*|", 12, "*"),
+            ("\\cite[p][q]| b", "\\cite[p][q]| b", 12, "|"),
+            ("\\emph{\\section|}", "\\emph{\\section|}", 15, "|"),
+            ("\\footnote{\\label|}", "\\footnote{\\label|}", 17, "|"),
+            (
+                "\\newcommand{\\x y}{z}\\x",
+                "\\newcommand{\\x y}{z}\\x",
+                16,
+                "y",
+            ),
+            ("\\newcommand~{y}", "\\newcommand~{y}", 12, "~"),
+            ("\\def-{x}", "\\def-{x}", 5, "-"),
+            ("a \\input@path b", "a \\input@path b", 9, "@"),
+        ] {
+            let caret = " ".repeat(column - 1);
+            let expected = format!(
+                "Error at (line 1, column {column}):\nunexpected {shown}\n{line}\n{caret}^"
+            );
+            match convert(input, "latex") {
+                Err(Error::Parse(message)) => assert_eq!(message, expected, "{input}"),
+                other => panic!("{input}: {other:?}"),
+            }
+        }
+    }
+
+    #[test]
+    fn an_argument_that_pandoc_accepts_is_no_error() {
+        for input in [
+            "a \\emph| b",
+            "\\href{u}|",
+            "\\section\n{x}",
+            "\\newcommand{ \\x }{y}\\x",
+            "\\newcommand*{\\x}{y}\\x",
+            "\\def\\x#1|{y}",
+            "\\begin{itemize}\\item \\label|\\end{itemize}",
+            "\\begin{tabular}{l}\\ref|\\end{tabular}",
+            "\\iffalse \\label| \\fi",
+            "\\documentclass{article}\\label|\\begin{document}x\\end{document}",
+        ] {
+            assert!(convert(input, "latex").is_ok(), "{input}");
+        }
+    }
+
+    #[test]
+    fn a_parse_error_names_the_input_file() {
+        let sources = Sources(vec![randoc_core::Source {
+            name: "p.tex".into(),
+            text: "\\label|".into(),
+        }]);
+        let mut context = Context::pure();
+        let error = read(&sources, &options("latex"), &mut context).expect_err("error");
+        assert_eq!(
+            error,
+            Error::Parse(
+                "Error at \"p.tex\" (line 1, column 7):\nunexpected |\n\\label|\n      ^".into()
+            )
+        );
+    }
+
+    /// Found by the fuzzer: a parameter count of 7,846,271,350,796,597,476
+    /// made the argument loop allocate without a bound. Pandoc reads a
+    /// macro without all of its arguments as an unknown command.
+    #[test]
+    fn a_macro_without_its_arguments_is_an_unknown_command() {
+        let para = |inlines: Vec<Inline>| vec![Block::Para(inlines)];
+        let str = |text: &str| Inline::Str(text.into());
+        let span = |text: &str| Inline::Span(Attr::default(), vec![Inline::Str(text.into())]);
+        let groups: String = "abcdefghijkl".chars().map(|c| format!("{{{c}}}")).collect();
+        for (input, blocks) in [
+            (
+                format!("\\newcommand{{\\x}}[10]{{y}}\\x{groups}"),
+                para(vec![str("y"), span("k"), span("l")]),
+            ),
+            (
+                format!("\\newcommand{{\\x}}[12]{{y}}\\x{groups}"),
+                para(vec![str("y")]),
+            ),
+            (
+                "\\newcommand{\\x}[99999999999999999999]{#1}\\x{a}b".to_owned(),
+                para(vec![str("b")]),
+            ),
+            (
+                "\\newcommand{\\x}[1]{y}{\\x} b".to_owned(),
+                para(vec![str("b")]),
+            ),
+            ("\\newcommand{\\x}[1]{y}\\x".to_owned(), vec![]),
+            (
+                "\\newcommand{\\x}[1]{y}\\x\n\nb".to_owned(),
+                para(vec![str("y")]),
+            ),
+            (
+                "\\newcommand{\\x}[10]{y}\\x {a} {b} c".to_owned(),
+                para(vec![span("b"), Inline::Space, str("c")]),
+            ),
+        ] {
+            assert_eq!(
+                convert(&input, "latex").expect(&input).blocks,
+                blocks,
+                "{input}"
+            );
+        }
+    }
+
+    /// A declaration in a table cell ends at the end of the cell, as in
+    /// Pandoc 3.13. Before, it read the rest of the document into the cell.
+    #[test]
+    fn a_declaration_ends_at_the_end_of_a_cell() {
+        let tree = convert(
+            "\\begin{tabular}{ll}\\itshape a & b\\\\ c & d\\end{tabular} after",
+            "latex",
+        )
+        .expect("tree");
+        let Block::Table(table) = &tree.blocks[0] else {
+            panic!("{:?}", tree.blocks);
+        };
+        let rows = &table.bodies[0].body;
+        assert_eq!(rows.len(), 2);
+        assert_eq!(
+            rows[0].cells[0].content,
+            vec![Block::Plain(vec![Inline::Emph(vec![Inline::Str(
+                "a".into()
+            )])])]
+        );
+        assert_eq!(
+            tree.blocks[1],
+            Block::Para(vec![Inline::Str("after".into())])
+        );
     }
 
     #[test]

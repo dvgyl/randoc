@@ -122,6 +122,16 @@ pub(crate) struct Parser<'c> {
     rounds: usize,
     /// The number of tokens of the input.
     input_tokens: usize,
+    /// The name of the input file for error messages; empty for standard input.
+    pub(crate) source_name: Text,
+    /// The depth of `with_tokens`: rules that read a copy of tokens.
+    copies: usize,
+    /// The depth of lists and tables. Pandoc gives no parse error for a
+    /// missing argument group there.
+    lenient: usize,
+    /// True in the preamble. Pandoc gives no parse error for a missing
+    /// argument group there, but it does for a definition without a name.
+    in_preamble: bool,
     /// The flags of `\newif`, without the `if`.
     flags: HashMap<Text, bool>,
     /// For each word of the input that starts with `if`: the index of its
@@ -172,6 +182,10 @@ impl<'c> Parser<'c> {
             bumps: 0,
             unread: 0,
             rounds: 0,
+            source_name: Text::new(),
+            copies: 0,
+            lenient: 0,
+            in_preamble: false,
             scanned: std::cell::Cell::new(0),
             quote_kinds: Vec::new(),
             flags: HashMap::new(),
@@ -301,11 +315,50 @@ impl<'c> Parser<'c> {
             let Some(definition) = self.macros.get(&name).cloned() else {
                 return Ok(());
             };
+            let required = definition
+                .parameters
+                .saturating_sub(usize::from(definition.default.is_some()));
+            if !self.arguments_ahead(required) {
+                return Ok(());
+            }
             self.bump();
             self.skip_word_spaces();
             let arguments = self.macro_arguments(definition.parameters, definition.default)?;
             self.push_expansion(&name, depth, &definition.body, &arguments)?;
         }
+    }
+
+    /// True when `count` required arguments follow the macro name. Pandoc
+    /// reads a macro without them as an unknown command. An argument is a
+    /// group or one token after blank space; a `}` or the end of the input
+    /// is none.
+    fn arguments_ahead(&self, count: usize) -> bool {
+        let mut tokens = self.scan().skip(1);
+        let mut found = 0usize;
+        while found < count {
+            let Some(tok) = tokens.next() else {
+                return false;
+            };
+            match &tok.kind {
+                Kind::Space | Kind::Newline | Kind::Comment | Kind::Par => {}
+                Kind::Close => return false,
+                Kind::Open => {
+                    let mut nesting = 1usize;
+                    while nesting > 0 {
+                        match tokens.next().map(|tok| &tok.kind) {
+                            None => return false,
+                            Some(Kind::Open) => nesting += 1,
+                            Some(Kind::Close) => nesting -= 1,
+                            Some(_) => {}
+                        }
+                    }
+                    found += 1;
+                }
+                Kind::Letters(text) => found += text.chars().count(),
+                _ => found += 1,
+            }
+        }
+        true
     }
 
     fn macro_arguments(&mut self, count: usize, default: Option<Vec<Tok>>) -> R<Vec<Vec<Tok>>> {
@@ -314,7 +367,11 @@ impl<'c> Parser<'c> {
             arguments.push(self.bracket_tokens().unwrap_or(default));
         }
         while arguments.len() < count {
-            arguments.push(self.argument_tokens().unwrap_or_default());
+            self.skip_blank();
+            let Some(argument) = self.argument_tokens() else {
+                break;
+            };
+            arguments.push(argument);
         }
         Ok(arguments)
     }
@@ -364,7 +421,7 @@ impl<'c> Parser<'c> {
         self.bump();
         self.argument_tokens();
         let arguments = self.macro_arguments(definition.parameters, definition.default)?;
-        let body = self.environment_body_tokens(&name);
+        let (body, _) = self.environment_body_tokens(&name);
         let mut all = vec![self.synthetic(Kind::Open, "{")];
         all.extend(definition.begin.iter().cloned());
         all.extend(body);
@@ -607,8 +664,8 @@ impl<'c> Parser<'c> {
     }
 
     /// The tokens up to the `\end{NAME}` that closes the environment, which
-    /// it consumes.
-    fn environment_body_tokens(&mut self, name: &str) -> Vec<Tok> {
+    /// it consumes, and false when the input ends before that `\end`.
+    fn environment_body_tokens(&mut self, name: &str) -> (Vec<Tok>, bool) {
         let mut nesting = 0usize;
         let mut body = Vec::new();
         while let Some(tok) = self.peek_raw() {
@@ -620,7 +677,7 @@ impl<'c> Parser<'c> {
                     if ends && nesting == 0 {
                         self.bump();
                         self.argument_tokens();
-                        return body;
+                        return (body, true);
                     }
                     if begins {
                         nesting += 1;
@@ -633,7 +690,7 @@ impl<'c> Parser<'c> {
                 body.push(tok);
             }
         }
-        body
+        (body, false)
     }
 
     fn peek_kind(&mut self) -> R<Option<Kind>> {
@@ -766,7 +823,9 @@ impl<'c> Parser<'c> {
             let saved_conditionals =
                 std::mem::replace(&mut parser.conditionals, match_conditionals(&parser.tokens));
             let saved_skips = std::mem::take(&mut parser.skips);
+            parser.copies += 1;
             let result = run(parser);
+            parser.copies -= 1;
             parser.conditionals = saved_conditionals;
             parser.skips = saved_skips;
             parser.tokens = saved_tokens;
@@ -881,11 +940,22 @@ impl<'c> Parser<'c> {
         let mut rounds = Rounds::default();
         while let Some(kind) = self.peek_kind()? {
             self.round(&mut rounds)?;
+            if let Kind::Word(name) = &kind {
+                self.check_argument(name, 1)?;
+            }
             match kind {
                 Kind::Par | Kind::Space | Kind::Newline | Kind::Comment => {
                     self.bump();
                 }
                 Kind::Close if end == End::Close => break,
+                Kind::Close if let End::Environment(name) = end => {
+                    let message = format!("unexpected }}\nexpecting \\end{{{name}}}");
+                    return Err(self
+                        .peek_raw()
+                        .map_or(Stop::Unexpected(Text::new()), |tok| {
+                            self.error_at(tok, &message)
+                        }));
+                }
                 Kind::Close if self.depth == 0 => return Err(self.unexpected()),
                 Kind::Close => {
                     self.bump();
@@ -1152,7 +1222,7 @@ impl<'c> Parser<'c> {
         self.skip_spaces();
         let count = self
             .bracket_tokens()
-            .and_then(|tokens| tokens_text(&tokens).trim().parse().ok())
+            .and_then(|tokens| parameter_count(tokens_text(&tokens).trim()))
             .unwrap_or(0);
         self.skip_spaces();
         let default = self.bracket_tokens();
@@ -1166,8 +1236,11 @@ impl<'c> Parser<'c> {
             self.start_record();
             self.bump();
             self.argument_tokens();
-            self.environment_body_tokens(name);
+            let (_, closed) = self.environment_body_tokens(name);
             let raw = self.stop_record();
+            if !closed {
+                self.unclosed(name)?;
+            }
             blocks.push(Block::RawBlock(Format::new("latex"), raw));
             return Ok(());
         }
@@ -1176,6 +1249,9 @@ impl<'c> Parser<'c> {
         match name {
             "document" => {
                 blocks.extend(self.blocks(End::Environment(name))?);
+                if self.peek_raw().is_none() {
+                    self.unclosed(name)?;
+                }
                 self.finished = true;
                 return Ok(());
             }
@@ -1226,8 +1302,28 @@ impl<'c> Parser<'c> {
                 ));
             }
         }
+        if self.peek_raw().is_none() {
+            self.unclosed(name)?;
+        }
         self.end_environment();
         Ok(())
+    }
+
+    /// The error of Pandoc for an environment that the input ends inside.
+    /// Pandoc gives it at column 2 of the line after the input. A rule that
+    /// reads a copy of tokens, such as a title, has no such error: its
+    /// copy ends before the input does.
+    fn unclosed(&self, name: &str) -> R<()> {
+        if self.copies > 0 {
+            return Ok(());
+        }
+        let lines = self.input.matches('\n').count() + usize::from(!self.input.ends_with('\n'));
+        let line = u32::try_from(lines + 1).unwrap_or(u32::MAX);
+        Err(self.error_at_position(
+            line,
+            2,
+            &format!("unexpected end of input\nexpecting \\end{{{name}}}"),
+        ))
     }
 
     fn end_environment(&mut self) {
@@ -1240,6 +1336,13 @@ impl<'c> Parser<'c> {
     /// A list. A list without items, or a description item without a
     /// term, makes a `Div` with the class of the environment, as in Pandoc.
     fn list(&mut self, name: &str, attributes: ListAttributes) -> R<Block> {
+        self.lenient += 1;
+        let list = self.list_items(name, attributes);
+        self.lenient -= 1;
+        list
+    }
+
+    fn list_items(&mut self, name: &str, attributes: ListAttributes) -> R<Block> {
         let mut items = Vec::new();
         let mut terms = Vec::new();
         let mut lead = Vec::new();
@@ -1368,6 +1471,13 @@ impl<'c> Parser<'c> {
 
     /// A tabular environment, read in place up to its `\end`.
     fn tabular(&mut self) -> R<Block> {
+        self.lenient += 1;
+        let table = self.tabular_rows();
+        self.lenient -= 1;
+        table
+    }
+
+    fn tabular_rows(&mut self) -> R<Block> {
         self.bracket_tokens();
         let spec = self.argument_tokens().unwrap_or_default();
         let aligns = column_alignments(&spec);
@@ -1551,6 +1661,9 @@ impl<'c> Parser<'c> {
         let Some(tok) = self.bump() else {
             return Ok(());
         };
+        if let Kind::Word(name) = &tok.kind {
+            self.check_argument(name, 0)?;
+        }
         match tok.kind {
             Kind::Letters(text) => out.push_str(&text),
             Kind::Space => out.push(Inline::Space),
@@ -1810,6 +1923,13 @@ impl<'c> Parser<'c> {
     /// The preamble after `\documentclass`: definitions and metadata count,
     /// other content does not.
     fn preamble(&mut self) -> R<()> {
+        let outer = std::mem::replace(&mut self.in_preamble, true);
+        let preamble = self.preamble_items();
+        self.in_preamble = outer;
+        preamble
+    }
+
+    fn preamble_items(&mut self) -> R<()> {
         let mut rounds = Rounds::default();
         loop {
             self.round(&mut rounds)?;
@@ -1839,12 +1959,17 @@ impl<'c> Parser<'c> {
         wrap: impl FnOnce(Vec<Inline>) -> Inline,
     ) -> R<()> {
         self.skip_word_spaces();
-        let rest = self.inlines(if until == Until::Paragraph {
-            Until::Paragraph
-        } else {
-            Until::Close
+        let rest = self.inlines(match until {
+            Until::Paragraph | Until::Cell => until,
+            _ => Until::Close,
         })?;
-        out.push(wrap(rest.0));
+        // A cell drops the spaces at its end, also inside the declaration.
+        let content = if until == Until::Cell {
+            rest.trimmed()
+        } else {
+            rest.0
+        };
+        out.push(wrap(content));
         Ok(())
     }
 
@@ -2130,20 +2255,161 @@ impl<'c> Parser<'c> {
         let Some(tok) = self.peek_raw() else {
             return Stop::Unexpected(Text::new());
         };
-        let (line, column) = (tok.line, tok.column);
         let shown = match &tok.kind {
             Kind::Word(name) => format!("CtrlSeq \"{name}\""),
             _ => format!("Symbol \"{}\"", tok.text),
         };
+        let (line, column) = (tok.line, tok.column);
+        self.error_at(
+            tok,
+            &format!(
+                "unexpected Tok (line {line}, column {column}) {shown}\nexpecting end of input"
+            ),
+        )
+    }
+
+    /// A parse error at `tok`, with the source line and a caret, as Pandoc
+    /// prints it.
+    fn error_at(&self, tok: &Tok, message: &str) -> Stop {
+        self.error_at_position(tok.line, tok.column, message)
+    }
+
+    fn error_at_position(&self, line: u32, column: u32, message: &str) -> Stop {
         let source_line = self
             .input
             .lines()
             .nth(usize::try_from(line).unwrap_or(1).saturating_sub(1))
             .unwrap_or_default();
         let caret = " ".repeat(usize::try_from(column).unwrap_or(1).saturating_sub(1));
+        let source = if self.source_name.is_empty() {
+            Text::new()
+        } else {
+            format!("\"{}\" ", self.source_name)
+        };
         Stop::Unexpected(format!(
-            "Error at (line {line}, column {column}):\nunexpected Tok (line {line}, column {column}) {shown}\nexpecting end of input\n{source_line}\n{caret}^"
+            "Error at {source}(line {line}, column {column}):\n{message}\n{source_line}\n{caret}^"
         ))
+    }
+
+    /// Pandoc stops with a parse error when a command that needs an
+    /// argument group, or a definition that needs a name, has another
+    /// token there. `skip` is 1 when the next token is the command itself.
+    /// An argument that a macro, a conditional, a paragraph break or the
+    /// end of the input can give is not checked.
+    fn check_argument(&self, name: &str, skip: usize) -> R<()> {
+        let Some(rule) = argument_rule(name) else {
+            return Ok(());
+        };
+        if self.lenient > 0 || (self.in_preamble && rule == ArgumentRule::Group) {
+            return Ok(());
+        }
+        let mut tokens = self.scan().skip(skip).peekable();
+        let blank = |tok: &&Tok| matches!(tok.kind, Kind::Space | Kind::Newline | Kind::Comment);
+        if !matches!(name, "begin" | "def" | "let")
+            && tokens
+                .peek()
+                .is_some_and(|tok| tok.kind == Kind::Other('*'))
+        {
+            tokens.next();
+        }
+        while tokens.next_if(blank).is_some() {}
+        if multi_citation_mode(name).is_some() {
+            for _ in 0..2 {
+                if tokens.next_if(|tok| tok.kind == Kind::Other('(')).is_none() {
+                    break;
+                }
+                if !tokens
+                    .by_ref()
+                    .take(MAX_OPTION_TOKENS)
+                    .any(|tok| tok.kind == Kind::Other(')'))
+                {
+                    return Ok(());
+                }
+                while tokens.next_if(blank).is_some() {}
+            }
+        }
+        if rule == ArgumentRule::Group && takes_options(name) {
+            if name == "hyperref"
+                && tokens
+                    .peek()
+                    .is_some_and(|tok| tok.kind == Kind::Other('['))
+            {
+                return Ok(());
+            }
+            while tokens.next_if(|tok| tok.kind == Kind::Other('[')).is_some() {
+                let mut nesting = 0usize;
+                let closed = tokens
+                    .by_ref()
+                    .take(MAX_OPTION_TOKENS)
+                    .any(|tok| match tok.kind {
+                        Kind::Open => {
+                            nesting += 1;
+                            false
+                        }
+                        Kind::Close => {
+                            nesting = nesting.saturating_sub(1);
+                            false
+                        }
+                        Kind::Other(']') => nesting == 0,
+                        _ => false,
+                    });
+                if !closed {
+                    return Ok(());
+                }
+                while tokens.next_if(blank).is_some() {}
+            }
+        }
+        let Some(mut tok) = tokens.next() else {
+            return Ok(());
+        };
+        let is_name = |tok: &Tok| matches!(tok.kind, Kind::Word(_) | Kind::Symbol(_));
+        match rule {
+            ArgumentRule::Group if tok.kind == Kind::Open => return Ok(()),
+            ArgumentRule::Name if is_name(tok) => return Ok(()),
+            ArgumentRule::NameOrGroup if is_name(tok) => return Ok(()),
+            ArgumentRule::NameOrGroup if tok.kind == Kind::Open => {
+                while tokens.next_if(blank).is_some() {}
+                let Some(inner) = tokens.next() else {
+                    return Ok(());
+                };
+                tok = inner;
+                // A name with `@` is one name after `\makeatletter`.
+                if tok.kind == Kind::Symbol('@') {
+                    return Ok(());
+                }
+                if is_name(tok) {
+                    while tokens.next_if(blank).is_some() {}
+                    let Some(after) = tokens.next() else {
+                        return Ok(());
+                    };
+                    if matches!(after.kind, Kind::Close | Kind::Other('@')) {
+                        return Ok(());
+                    }
+                    tok = after;
+                }
+            }
+            _ => {}
+        }
+        if self.expands(tok) || matches!(tok.kind, Kind::Par) {
+            return Ok(());
+        }
+        let mut shown = tok.text.clone();
+        if matches!(tok.kind, Kind::Word(_))
+            && let Some(space) = tokens.next().filter(|next| next.kind == Kind::Space)
+        {
+            shown.push_str(&space.text);
+        }
+        Err(self.error_at(tok, &format!("unexpected {shown}")))
+    }
+
+    /// True when `tok` is a macro or a conditional that the parser expands.
+    fn expands(&self, tok: &Tok) -> bool {
+        let Kind::Word(word) = &tok.kind else {
+            return false;
+        };
+        let macros = self.extensions.contains(Extension::LatexMacros);
+        self.condition_value(word, macros).is_some()
+            || (macros && (self.macros.contains_key(word) || word == "newif"))
     }
 
     fn raw_tex(&self) -> bool {
@@ -2202,7 +2468,10 @@ impl<'c> Parser<'c> {
     }
 
     fn inline_environment(&mut self, name: &str, out: &mut Inlines) -> R<()> {
-        let body = self.environment_body_tokens(name);
+        let (body, closed) = self.environment_body_tokens(name);
+        if !closed {
+            self.unclosed(name)?;
+        }
         let text = tokens_text(&body);
         let text = text.trim();
         let math = match name {
@@ -2805,6 +3074,81 @@ fn multi_citation_mode(name: &str) -> Option<CitationMode> {
         "textcites" | "Textcites" => CitationMode::AuthorInText,
         _ => return None,
     })
+}
+
+/// What must come after a command, after its star and options.
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum ArgumentRule {
+    /// A `{...}` group.
+    Group,
+    /// A control sequence.
+    Name,
+    /// A control sequence, alone or in a group.
+    NameOrGroup,
+}
+
+/// The commands for which Pandoc stops with a parse error when the
+/// argument is not there. Found with probes of each command of
+/// `tools/names.tsv` (matrix `braced` of `rules.toml`).
+fn argument_rule(name: &str) -> Option<ArgumentRule> {
+    if citation_mode(name).is_some()
+        || multi_citation_mode(name).is_some()
+        || name == "footcite"
+        || sectioning_level(name).is_some()
+    {
+        return Some(ArgumentRule::Group);
+    }
+    match name {
+        "def" | "let" => Some(ArgumentRule::Name),
+        "newcommand" | "renewcommand" | "providecommand" | "DeclareMathOperator" => {
+            Some(ArgumentRule::NameOrGroup)
+        }
+        "label" | "ref" | "eqref" | "autoref" | "cref" | "Cref" | "nocite" | "begin"
+        | "usepackage" | "includegraphics" | "footnote" | "footnotetext" | "documentclass"
+        | "url" | "href" | "nolinkurl" | "hyperlink" | "hypertarget" | "hyperref" | "title"
+        | "author" | "thanks" | "bibliography" | "addbibresource" | "input" | "include"
+        | "newenvironment" | "newtheorem" | "theoremstyle" | "textcolor" | "colorbox"
+        | "foreignquote" | "SI" | "num" | "qty" | "ang" | "ensuremath" | "gls" | "ac"
+        | "parbox" | "graphicspath" => Some(ArgumentRule::Group),
+        _ => None,
+    }
+}
+
+/// The number of `[n]`. A number too large for `usize` is `usize::MAX`:
+/// no input has so many arguments.
+fn parameter_count(text: &str) -> Option<usize> {
+    if text.is_empty() || !text.bytes().all(|byte| byte.is_ascii_digit()) {
+        return None;
+    }
+    Some(text.parse().unwrap_or(usize::MAX))
+}
+
+/// False for a command of `argument_rule` for which Pandoc reads no
+/// `[...]` option: a `[` there is the parse error.
+fn takes_options(name: &str) -> bool {
+    !matches!(
+        name,
+        "label"
+            | "ref"
+            | "eqref"
+            | "autoref"
+            | "cref"
+            | "Cref"
+            | "begin"
+            | "url"
+            | "href"
+            | "nolinkurl"
+            | "hyperlink"
+            | "hypertarget"
+            | "newenvironment"
+            | "newtheorem"
+            | "theoremstyle"
+            | "foreignquote"
+            | "ensuremath"
+            | "gls"
+            | "ac"
+            | "graphicspath"
+    )
 }
 
 fn is_definition(name: &str) -> bool {

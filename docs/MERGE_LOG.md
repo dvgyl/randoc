@@ -1491,3 +1491,41 @@ Codex R3-12), I-MD-58 (high, Codex R3-18), I-MD-59 (high: Codex R3-08,
 R3-09, R3-10, R3-11, R3-14, R3-15, R3-20 and Opus R3-01 high; Codex
 R3-17, R3-19 and Opus R3-02, R3-03, R3-05 medium), I-MD-54 and I-MD-55
 (low). Open checks: fuzzing, coverage, the mutation tests.
+
+## Workstream latex-reader (branch `ws/latex-reader`, head 6a8c609, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. The earlier commit
+of the branch (9dea9a8) is on `main` as 27f478c. Content: a second
+CRITICAL defect, found by fuzzing and corrected: a very large parameter
+count in `\newcommand` made the argument loop of a macro allocate
+without a bound (fuzz artifact `oom-247a81c1`, 2,537 MB). The reader now
+reads a macro without all of its required arguments as an unknown
+command, as Pandoc does, and a count larger than `usize` is
+`usize::MAX` (row I-LTXR-15, closed). New parse-error rules from probes
+and the matrices `braced` (80 commands, 7 contexts) and `unclosed` (17
+environments, 4 contexts) of `rules.toml`, with 628 new oracle units: 4
+of 8 corpus documents give the error text and the exit code of the
+reference (row I-LTXR-11 partly closed). New row I-LTXR-14 (low). A
+declaration in a table cell no longer reads the rest of the document
+into the cell.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 6a8c609 (end 04:05 UTC; worker report): baseline 40,768 units, 0 regressions, 590 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Corpus (8 LaTeX documents): the error text and the exit code are equal for cfgguide, clsguide, cmdguide, fntguide; cyrguide exit 0 in both. Suite `latex-reader/`: 4,253 units, 3,244 pass, 1,009 fail (probes 938 fail before, 900 now). |
+| 3. Tests | `cargo test -p randoc-latex-reader` on the merged tree: 19 pass, 0 fail, 1 ignored. New tests `tests::a_macro_without_its_arguments_is_an_unknown_command`, `tests::a_missing_argument_group_is_the_parse_error_of_pandoc`, `tests::an_argument_that_pandoc_accepts_is_no_error`, `tests::a_parse_error_names_the_input_file`, `tests::a_declaration_ends_at_the_end_of_a_cell`. Coverage and the mutation tests: not run. |
+| 4. No panics | Final fuzz run on the head code (03:22 to 03:37 UTC): 901 s, 855,543 runs, 0 crashes, 0 timeouts, peak RSS 980 MB. |
+| 5. Reviews | No review round for this workstream yet; due. |
+| 6. No slowdowns | CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: `crates/randoc-latex-reader/src/parse.rs` (the
+version of the branch is taken, the newer one; the crate on `main` is
+equal to 9dea9a8, an ancestor of the branch head) and `docs/ISSUES.md`
+(`resolve-tables`: the row I-LTXR-13 keeps the text of `main`, the rows
+I-LTXR-14 and I-LTXR-15 of the branch are added). Licence scan: no hit.
+
+Open findings: I-LTXR-11 (high: encguide, ltnews, ltnews23), I-LTXR-07
+(medium), I-LTXR-08 (medium), I-LTXR-09, I-LTXR-10, I-LTXR-12, I-LTXR-14
+(low). Open checks: coverage, the mutation tests, the work list of
+`COMMANDS.md` (the command table).

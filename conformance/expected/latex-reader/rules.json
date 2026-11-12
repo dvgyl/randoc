@@ -97,6 +97,3366 @@
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"é\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
       "stderr": ""
     },
+    "braced-01-01#read": {
+      "key": "8f0e335247a63e66",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\section| b\n          ^\n"
+    },
+    "braced-01-02#read": {
+      "key": "c6a078ef603fd312",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected x\na \\section x y\n           ^\n"
+    },
+    "braced-01-03#read": {
+      "key": "9dd04f23e8917013",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\section*| b\n           ^\n"
+    },
+    "braced-01-04#read": {
+      "key": "fe5469a09d769f1e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\section[o]| b\n             ^\n"
+    },
+    "braced-01-05#read": {
+      "key": "736061f9a7265d86",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected \\foo  \na \\section\\foo  b\n          ^\n"
+    },
+    "braced-01-06#read": {
+      "key": "e315b20cc9eddc92",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\n\\emph{\\section|}\n              ^\n"
+    },
+    "braced-01-07#read": {
+      "key": "ea17f330e26a342a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-02-01#read": {
+      "key": "2acf81f95a4c0ddb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\subsection| b\n             ^\n"
+    },
+    "braced-02-02#read": {
+      "key": "0b481a9a7d7ec5e1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected x\na \\subsection x y\n              ^\n"
+    },
+    "braced-02-03#read": {
+      "key": "e2485ccf05a7f6a4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\subsection*| b\n              ^\n"
+    },
+    "braced-02-04#read": {
+      "key": "0578319c10f692c9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\subsection[o]| b\n                ^\n"
+    },
+    "braced-02-05#read": {
+      "key": "d5b979e256a4799f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected \\foo  \na \\subsection\\foo  b\n             ^\n"
+    },
+    "braced-02-06#read": {
+      "key": "1a842ade648b6edd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\n\\emph{\\subsection|}\n                 ^\n"
+    },
+    "braced-02-07#read": {
+      "key": "9d28fee81a9251d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-03-01#read": {
+      "key": "8707398eefe7addc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\chapter| b\n          ^\n"
+    },
+    "braced-03-02#read": {
+      "key": "eee8b47a936cb7e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected x\na \\chapter x y\n           ^\n"
+    },
+    "braced-03-03#read": {
+      "key": "50bd5225a342e0f9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\chapter*| b\n           ^\n"
+    },
+    "braced-03-04#read": {
+      "key": "383448a18a3e2130",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\chapter[o]| b\n             ^\n"
+    },
+    "braced-03-05#read": {
+      "key": "79fd12cd0d6d3a90",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected \\foo  \na \\chapter\\foo  b\n          ^\n"
+    },
+    "braced-03-06#read": {
+      "key": "d7242b5135622100",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\n\\emph{\\chapter|}\n              ^\n"
+    },
+    "braced-03-07#read": {
+      "key": "c75fdf3b4e347be4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-04-01#read": {
+      "key": "c9b13706ae38e2cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\part| b\n       ^\n"
+    },
+    "braced-04-02#read": {
+      "key": "e8e029a10817a5cb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected x\na \\part x y\n        ^\n"
+    },
+    "braced-04-03#read": {
+      "key": "e6763badf6de1e3e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\part*| b\n        ^\n"
+    },
+    "braced-04-04#read": {
+      "key": "fb41799ba2a7575b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\part[o]| b\n          ^\n"
+    },
+    "braced-04-05#read": {
+      "key": "c3dee341ed4b5fbd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected \\foo  \na \\part\\foo  b\n       ^\n"
+    },
+    "braced-04-06#read": {
+      "key": "953c37bd3617003b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\part|}\n           ^\n"
+    },
+    "braced-04-07#read": {
+      "key": "15be6704583070c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-05-01#read": {
+      "key": "24ce375af70653cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\paragraph| b\n            ^\n"
+    },
+    "braced-05-02#read": {
+      "key": "bdaa0d70d70559fb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected x\na \\paragraph x y\n             ^\n"
+    },
+    "braced-05-03#read": {
+      "key": "c100d727906ba68e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\paragraph*| b\n             ^\n"
+    },
+    "braced-05-04#read": {
+      "key": "8616cbbb1ff8e5b7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\paragraph[o]| b\n               ^\n"
+    },
+    "braced-05-05#read": {
+      "key": "68dc05955c625265",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected \\foo  \na \\paragraph\\foo  b\n            ^\n"
+    },
+    "braced-05-06#read": {
+      "key": "95fdeba6ac896877",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\n\\emph{\\paragraph|}\n                ^\n"
+    },
+    "braced-05-07#read": {
+      "key": "8b0726ec52ef4c6f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-06-01#read": {
+      "key": "0aa6d19fb3167f94",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\subparagraph| b\n               ^\n"
+    },
+    "braced-06-02#read": {
+      "key": "4e9b2a5a32f40928",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\subparagraph x y\n                ^\n"
+    },
+    "braced-06-03#read": {
+      "key": "506d9fe1c1af99a1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\subparagraph*| b\n                ^\n"
+    },
+    "braced-06-04#read": {
+      "key": "2cafdd2c83bd9130",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\subparagraph[o]| b\n                  ^\n"
+    },
+    "braced-06-05#read": {
+      "key": "6f1e63a264047530",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected \\foo  \na \\subparagraph\\foo  b\n               ^\n"
+    },
+    "braced-06-06#read": {
+      "key": "90e42129f1a8f6f0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\subparagraph|}\n                   ^\n"
+    },
+    "braced-06-07#read": {
+      "key": "ffb75443fc490042",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-07-01#read": {
+      "key": "4cf4a3781d4a5c0d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\label| b\n        ^\n"
+    },
+    "braced-07-02#read": {
+      "key": "79a70b86d8592417",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\label x y\n         ^\n"
+    },
+    "braced-07-03#read": {
+      "key": "a2698d524ffbdf42",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\label*| b\n         ^\n"
+    },
+    "braced-07-04#read": {
+      "key": "490cec8f3fdd4513",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected [\na \\label[o]| b\n        ^\n"
+    },
+    "braced-07-05#read": {
+      "key": "5e6d1269505c15a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\label\\foo  b\n        ^\n"
+    },
+    "braced-07-06#read": {
+      "key": "fa7d47ac128be9ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\label|}\n            ^\n"
+    },
+    "braced-07-07#read": {
+      "key": "83e3163e9c4fd077",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-08-01#read": {
+      "key": "19fac7c9bd73caf0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\ref| b\n      ^\n"
+    },
+    "braced-08-02#read": {
+      "key": "46c6efd516e7e514",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\ref x y\n       ^\n"
+    },
+    "braced-08-03#read": {
+      "key": "4fdc06169b6c74f5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\ref*| b\n       ^\n"
+    },
+    "braced-08-04#read": {
+      "key": "2fff24faca6ccfc4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected [\na \\ref[o]| b\n      ^\n"
+    },
+    "braced-08-05#read": {
+      "key": "e86b661ea343264c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\foo  \na \\ref\\foo  b\n      ^\n"
+    },
+    "braced-08-06#read": {
+      "key": "41836b403a3038ec",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\ref|}\n          ^\n"
+    },
+    "braced-08-07#read": {
+      "key": "d5076feeeb4161b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-09-01#read": {
+      "key": "71e91394c7269040",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\eqref| b\n        ^\n"
+    },
+    "braced-09-02#read": {
+      "key": "b9040780e3f64490",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\eqref x y\n         ^\n"
+    },
+    "braced-09-03#read": {
+      "key": "c5ae65297f70b309",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\eqref*| b\n         ^\n"
+    },
+    "braced-09-04#read": {
+      "key": "d7de1f37088735b0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected [\na \\eqref[o]| b\n        ^\n"
+    },
+    "braced-09-05#read": {
+      "key": "87238f5b58a264b4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\eqref\\foo  b\n        ^\n"
+    },
+    "braced-09-06#read": {
+      "key": "6a9b1dd09cd2d72c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\eqref|}\n            ^\n"
+    },
+    "braced-09-07#read": {
+      "key": "35025a3fb0760b58",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-10-01#read": {
+      "key": "b598fe0fe3e73489",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\autoref| b\n          ^\n"
+    },
+    "braced-10-02#read": {
+      "key": "1ced43e590db592b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected x\na \\autoref x y\n           ^\n"
+    },
+    "braced-10-03#read": {
+      "key": "1a8355f27fa1d19e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\autoref*| b\n           ^\n"
+    },
+    "braced-10-04#read": {
+      "key": "c057d9cc7657fbc7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected [\na \\autoref[o]| b\n          ^\n"
+    },
+    "braced-10-05#read": {
+      "key": "b9394431f81e4a99",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected \\foo  \na \\autoref\\foo  b\n          ^\n"
+    },
+    "braced-10-06#read": {
+      "key": "34663df62dedb3a3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\n\\emph{\\autoref|}\n              ^\n"
+    },
+    "braced-10-07#read": {
+      "key": "df1f45be349d9653",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-11-01#read": {
+      "key": "2e33f7d863381b3a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\cref| b\n       ^\n"
+    },
+    "braced-11-02#read": {
+      "key": "606d77668ebed552",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected x\na \\cref x y\n        ^\n"
+    },
+    "braced-11-03#read": {
+      "key": "379d4d9b17107253",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\cref*| b\n        ^\n"
+    },
+    "braced-11-04#read": {
+      "key": "c652931eb9b9c0be",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected [\na \\cref[o]| b\n       ^\n"
+    },
+    "braced-11-05#read": {
+      "key": "524714be351e56ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected \\foo  \na \\cref\\foo  b\n       ^\n"
+    },
+    "braced-11-06#read": {
+      "key": "33d51bb74897682a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\cref|}\n           ^\n"
+    },
+    "braced-11-07#read": {
+      "key": "29d15f016984e9bc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-12-01#read": {
+      "key": "d3c49ab36be5b59a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\Cref| b\n       ^\n"
+    },
+    "braced-12-02#read": {
+      "key": "c91d068ad16b41f2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected x\na \\Cref x y\n        ^\n"
+    },
+    "braced-12-03#read": {
+      "key": "f50a5cc1cdbc3473",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\Cref*| b\n        ^\n"
+    },
+    "braced-12-04#read": {
+      "key": "93cc7f101c38bd1e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected [\na \\Cref[o]| b\n       ^\n"
+    },
+    "braced-12-05#read": {
+      "key": "87d7ae65c229322a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected \\foo  \na \\Cref\\foo  b\n       ^\n"
+    },
+    "braced-12-06#read": {
+      "key": "c2f5738529bf4aca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\Cref|}\n           ^\n"
+    },
+    "braced-12-07#read": {
+      "key": "1932580d26cd461c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-13-01#read": {
+      "key": "412b85a856c1dca3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\cite| b\n       ^\n"
+    },
+    "braced-13-02#read": {
+      "key": "7d0a07e09c5d1d5d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected x\na \\cite x y\n        ^\n"
+    },
+    "braced-13-03#read": {
+      "key": "7616795c67d5e178",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\cite*| b\n        ^\n"
+    },
+    "braced-13-04#read": {
+      "key": "c1cbc5895a25ae51",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\cite[o]| b\n          ^\n"
+    },
+    "braced-13-05#read": {
+      "key": "d27b7fdb934617cf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected \\foo  \na \\cite\\foo  b\n       ^\n"
+    },
+    "braced-13-06#read": {
+      "key": "e797973c764d0c15",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\cite|}\n           ^\n"
+    },
+    "braced-13-07#read": {
+      "key": "2f41e2aff311319b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-14-01#read": {
+      "key": "5fb53cabfca7dcf6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\citep| b\n        ^\n"
+    },
+    "braced-14-02#read": {
+      "key": "159a0716cd42e81a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\citep x y\n         ^\n"
+    },
+    "braced-14-03#read": {
+      "key": "e3732cd40fd987fb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\citep*| b\n         ^\n"
+    },
+    "braced-14-04#read": {
+      "key": "cfa46f40769383da",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\citep[o]| b\n           ^\n"
+    },
+    "braced-14-05#read": {
+      "key": "fcbe68014f2eb2e6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\citep\\foo  b\n        ^\n"
+    },
+    "braced-14-06#read": {
+      "key": "083e6f8a97495afe",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\citep|}\n            ^\n"
+    },
+    "braced-14-07#read": {
+      "key": "12bc17b1bb98ca86",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-15-01#read": {
+      "key": "bff97463fbfd565a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\citet| b\n        ^\n"
+    },
+    "braced-15-02#read": {
+      "key": "d2012ed4dd58bd06",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\citet x y\n         ^\n"
+    },
+    "braced-15-03#read": {
+      "key": "d035854d4ea2f2df",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\citet*| b\n         ^\n"
+    },
+    "braced-15-04#read": {
+      "key": "27f2b1ef0adb9776",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\citet[o]| b\n           ^\n"
+    },
+    "braced-15-05#read": {
+      "key": "6674fd1d035fd4aa",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\citet\\foo  b\n        ^\n"
+    },
+    "braced-15-06#read": {
+      "key": "0df7b7adef2f8b12",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\citet|}\n            ^\n"
+    },
+    "braced-15-07#read": {
+      "key": "f4645d02bcf0c462",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-16-01#read": {
+      "key": "b8caacf983d78a83",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\citealp| b\n          ^\n"
+    },
+    "braced-16-02#read": {
+      "key": "5c1a0b7553b586f5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected x\na \\citealp x y\n           ^\n"
+    },
+    "braced-16-03#read": {
+      "key": "5e7d2d6864e94830",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\citealp*| b\n           ^\n"
+    },
+    "braced-16-04#read": {
+      "key": "2fe7defea6ca4425",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\citealp[o]| b\n             ^\n"
+    },
+    "braced-16-05#read": {
+      "key": "cb437b462c09167f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected \\foo  \na \\citealp\\foo  b\n          ^\n"
+    },
+    "braced-16-06#read": {
+      "key": "fb5109bd76494805",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\n\\emph{\\citealp|}\n              ^\n"
+    },
+    "braced-16-07#read": {
+      "key": "e8ce6876285c9571",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-17-01#read": {
+      "key": "affa7aa6fc622df2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\citeauthor| b\n             ^\n"
+    },
+    "braced-17-02#read": {
+      "key": "1ad6c2237a8687aa",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected x\na \\citeauthor x y\n              ^\n"
+    },
+    "braced-17-03#read": {
+      "key": "bd0ae7df82084d6b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\citeauthor*| b\n              ^\n"
+    },
+    "braced-17-04#read": {
+      "key": "e1f2bad414ed50ee",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\citeauthor[o]| b\n                ^\n"
+    },
+    "braced-17-05#read": {
+      "key": "92292869d4746a1a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected \\foo  \na \\citeauthor\\foo  b\n             ^\n"
+    },
+    "braced-17-06#read": {
+      "key": "9069f065ac272e16",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\n\\emph{\\citeauthor|}\n                 ^\n"
+    },
+    "braced-17-07#read": {
+      "key": "d7d816722a2720e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-18-01#read": {
+      "key": "19ced8b028aac376",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\citeyear| b\n           ^\n"
+    },
+    "braced-18-02#read": {
+      "key": "f72e1d895651ebd6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\citeyear x y\n            ^\n"
+    },
+    "braced-18-03#read": {
+      "key": "2107740302b0fbcf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\citeyear*| b\n            ^\n"
+    },
+    "braced-18-04#read": {
+      "key": "a30663782a5041de",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\citeyear[o]| b\n              ^\n"
+    },
+    "braced-18-05#read": {
+      "key": "56996a285089d2a6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\citeyear\\foo  b\n           ^\n"
+    },
+    "braced-18-06#read": {
+      "key": "b75b457775791706",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\citeyear|}\n               ^\n"
+    },
+    "braced-18-07#read": {
+      "key": "df5beaa585c671c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-19-01#read": {
+      "key": "8409227359b9eaf8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\parencite| b\n            ^\n"
+    },
+    "braced-19-02#read": {
+      "key": "f24c1e485e5b3374",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected x\na \\parencite x y\n             ^\n"
+    },
+    "braced-19-03#read": {
+      "key": "520cac361e3f5ed5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\parencite*| b\n             ^\n"
+    },
+    "braced-19-04#read": {
+      "key": "38a885e26177abc8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\parencite[o]| b\n               ^\n"
+    },
+    "braced-19-05#read": {
+      "key": "954316480730aab4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected \\foo  \na \\parencite\\foo  b\n            ^\n"
+    },
+    "braced-19-06#read": {
+      "key": "dee98153bfc2c530",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\n\\emph{\\parencite|}\n                ^\n"
+    },
+    "braced-19-07#read": {
+      "key": "caf1105f3f27429c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-20-01#read": {
+      "key": "733ef449b2c3d358",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\Parencite| b\n            ^\n"
+    },
+    "braced-20-02#read": {
+      "key": "a0f4cbf6b50b9854",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected x\na \\Parencite x y\n             ^\n"
+    },
+    "braced-20-03#read": {
+      "key": "abf7d9e200f06e35",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\Parencite*| b\n             ^\n"
+    },
+    "braced-20-04#read": {
+      "key": "7a6d11970156a8a8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\Parencite[o]| b\n               ^\n"
+    },
+    "braced-20-05#read": {
+      "key": "dafa4963fe003114",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected \\foo  \na \\Parencite\\foo  b\n            ^\n"
+    },
+    "braced-20-06#read": {
+      "key": "e39cd8ffdf269150",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\n\\emph{\\Parencite|}\n                ^\n"
+    },
+    "braced-20-07#read": {
+      "key": "ae2483e52e48d1fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-21-01#read": {
+      "key": "960ac823c556b35c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\textcite| b\n           ^\n"
+    },
+    "braced-21-02#read": {
+      "key": "08ca40a1eb1568e8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\textcite x y\n            ^\n"
+    },
+    "braced-21-03#read": {
+      "key": "0736b62976edd061",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\textcite*| b\n            ^\n"
+    },
+    "braced-21-04#read": {
+      "key": "f0162a7cd11c44e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\textcite[o]| b\n              ^\n"
+    },
+    "braced-21-05#read": {
+      "key": "fd56f72bbd1bea40",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\textcite\\foo  b\n           ^\n"
+    },
+    "braced-21-06#read": {
+      "key": "848843f741700438",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\textcite|}\n               ^\n"
+    },
+    "braced-21-07#read": {
+      "key": "60a8aaa3c7cb1c02",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-22-01#read": {
+      "key": "6a080398aa75de0c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\autocite| b\n           ^\n"
+    },
+    "braced-22-02#read": {
+      "key": "4e0cd6a821482690",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\autocite x y\n            ^\n"
+    },
+    "braced-22-03#read": {
+      "key": "5ab73450bcc29509",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\autocite*| b\n            ^\n"
+    },
+    "braced-22-04#read": {
+      "key": "f7130a4cf1f20064",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\autocite[o]| b\n              ^\n"
+    },
+    "braced-22-05#read": {
+      "key": "90b50f79b3eac730",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\autocite\\foo  b\n           ^\n"
+    },
+    "braced-22-06#read": {
+      "key": "74c01be7f8d75200",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\autocite|}\n               ^\n"
+    },
+    "braced-22-07#read": {
+      "key": "b8918c833d0e66d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-23-01#read": {
+      "key": "fe15f534267281ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\footcite| b\n           ^\n"
+    },
+    "braced-23-02#read": {
+      "key": "1962f8550d1bd2a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\footcite x y\n            ^\n"
+    },
+    "braced-23-03#read": {
+      "key": "17f35a481b1005c0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\footcite*| b\n            ^\n"
+    },
+    "braced-23-04#read": {
+      "key": "f3cb8a8c3d8777cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\footcite[o]| b\n              ^\n"
+    },
+    "braced-23-05#read": {
+      "key": "3586e2238c2ad3a7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\footcite\\foo  b\n           ^\n"
+    },
+    "braced-23-06#read": {
+      "key": "8f2c6497acc7d0e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\footcite|}\n               ^\n"
+    },
+    "braced-23-07#read": {
+      "key": "9c1e4283ac3383f3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-24-01#read": {
+      "key": "5630308e4f7075af",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\cites| b\n        ^\n"
+    },
+    "braced-24-02#read": {
+      "key": "1cf0337939284d65",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\cites x y\n         ^\n"
+    },
+    "braced-24-03#read": {
+      "key": "1ee6956c49ffa980",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\cites*| b\n         ^\n"
+    },
+    "braced-24-04#read": {
+      "key": "3a5e882145ee7a09",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\cites[o]| b\n           ^\n"
+    },
+    "braced-24-05#read": {
+      "key": "97f846fd1ae5b1ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\cites\\foo  b\n        ^\n"
+    },
+    "braced-24-06#read": {
+      "key": "cd4d9f95d7a05d59",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\cites|}\n            ^\n"
+    },
+    "braced-24-07#read": {
+      "key": "90c7fc30f477baf9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-25-01#read": {
+      "key": "36b799fb79cdcf06",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\nocite| b\n         ^\n"
+    },
+    "braced-25-02#read": {
+      "key": "8a69e91c7336b5ee",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected x\na \\nocite x y\n          ^\n"
+    },
+    "braced-25-03#read": {
+      "key": "82ad8f1da1a917a7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\nocite*| b\n          ^\n"
+    },
+    "braced-25-04#read": {
+      "key": "d73bb580d93b1e52",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\nocite[o]| b\n            ^\n"
+    },
+    "braced-25-05#read": {
+      "key": "dbbc1a9e555df49e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected \\foo  \na \\nocite\\foo  b\n         ^\n"
+    },
+    "braced-25-06#read": {
+      "key": "7a14aa82551b369a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\n\\emph{\\nocite|}\n             ^\n"
+    },
+    "braced-25-07#read": {
+      "key": "1e7baf8d87d63aa0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-26-01#read": {
+      "key": "1606f388c605805a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\begin| b\n        ^\n"
+    },
+    "braced-26-02#read": {
+      "key": "f69add64bbd1a2ae",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\begin x y\n         ^\n"
+    },
+    "braced-26-03#read": {
+      "key": "e98a8bbc20009567",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected *\na \\begin*| b\n        ^\n"
+    },
+    "braced-26-04#read": {
+      "key": "5fa69830a893ccfe",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected [\na \\begin[o]| b\n        ^\n"
+    },
+    "braced-26-05#read": {
+      "key": "28b1b0aa49b0a9da",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\begin\\foo  b\n        ^\n"
+    },
+    "braced-26-06#read": {
+      "key": "912aacc2426c499a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\begin|}\n            ^\n"
+    },
+    "braced-26-07#read": {
+      "key": "274f96b387440d22",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-27-01#read": {
+      "key": "bd530688b01f3347",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\usepackage| b\n             ^\n"
+    },
+    "braced-27-02#read": {
+      "key": "38d52c3332624051",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected x\na \\usepackage x y\n              ^\n"
+    },
+    "braced-27-03#read": {
+      "key": "64ffae6a2ee72bb4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\usepackage*| b\n              ^\n"
+    },
+    "braced-27-04#read": {
+      "key": "7aed7b26c711b1e1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\usepackage[o]| b\n                ^\n"
+    },
+    "braced-27-05#read": {
+      "key": "93924fb9164fe47b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected \\foo  \na \\usepackage\\foo  b\n             ^\n"
+    },
+    "braced-27-06#read": {
+      "key": "3190a86cff0475a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\n\\emph{\\usepackage|}\n                 ^\n"
+    },
+    "braced-27-07#read": {
+      "key": "56f97ec4063023d7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-28-01#read": {
+      "key": "ae5d97b6721e76ac",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\includegraphics| b\n                  ^\n"
+    },
+    "braced-28-02#read": {
+      "key": "252137cd35eca864",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected x\na \\includegraphics x y\n                   ^\n"
+    },
+    "braced-28-03#read": {
+      "key": "574ece0ff35bb3a5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\na \\includegraphics*| b\n                   ^\n"
+    },
+    "braced-28-04#read": {
+      "key": "8f7a88930c774ea4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 22):\nunexpected |\na \\includegraphics[o]| b\n                     ^\n"
+    },
+    "braced-28-05#read": {
+      "key": "78b5de3df9ffa8e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected \\foo  \na \\includegraphics\\foo  b\n                  ^\n"
+    },
+    "braced-28-06#read": {
+      "key": "945a166be4fc3324",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 23):\nunexpected |\n\\emph{\\includegraphics|}\n                      ^\n"
+    },
+    "braced-28-07#read": {
+      "key": "7c009795d00089dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-29-01#read": {
+      "key": "f8406bcadad84208",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\footnote| b\n           ^\n"
+    },
+    "braced-29-02#read": {
+      "key": "3c90dde0544053b4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\footnote x y\n            ^\n"
+    },
+    "braced-29-03#read": {
+      "key": "9a6374244cc43915",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\footnote*| b\n            ^\n"
+    },
+    "braced-29-04#read": {
+      "key": "9b28444f06f41514",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\footnote[o]| b\n              ^\n"
+    },
+    "braced-29-05#read": {
+      "key": "550383ff1577587c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\footnote\\foo  b\n           ^\n"
+    },
+    "braced-29-06#read": {
+      "key": "546597fc61c015a4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\footnote|}\n               ^\n"
+    },
+    "braced-29-07#read": {
+      "key": "13401f0dd2bdbbd6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-30-01#read": {
+      "key": "4bacd30c40abbac7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\footnotetext| b\n               ^\n"
+    },
+    "braced-30-02#read": {
+      "key": "a6d75327391247e9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\footnotetext x y\n                ^\n"
+    },
+    "braced-30-03#read": {
+      "key": "4caea4e343ab2f8c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\footnotetext*| b\n                ^\n"
+    },
+    "braced-30-04#read": {
+      "key": "f0b7119a0822224d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\footnotetext[o]| b\n                  ^\n"
+    },
+    "braced-30-05#read": {
+      "key": "4a11723fbc36a3e3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected \\foo  \na \\footnotetext\\foo  b\n               ^\n"
+    },
+    "braced-30-06#read": {
+      "key": "28639c67eaf5c0a1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\footnotetext|}\n                   ^\n"
+    },
+    "braced-30-07#read": {
+      "key": "653411f3ecb60a17",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-31-01#read": {
+      "key": "2bd46f49ae6e78b0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\documentclass| b\n                ^\n"
+    },
+    "braced-31-02#read": {
+      "key": "d62194131401a2e0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected x\na \\documentclass x y\n                 ^\n"
+    },
+    "braced-31-03#read": {
+      "key": "37f631be23d7cbf9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\na \\documentclass*| b\n                 ^\n"
+    },
+    "braced-31-04#read": {
+      "key": "be53a009e9170be8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\na \\documentclass[o]| b\n                   ^\n"
+    },
+    "braced-31-05#read": {
+      "key": "6a540d31935df81c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected \\foo  \na \\documentclass\\foo  b\n                ^\n"
+    },
+    "braced-31-06#read": {
+      "key": "14de95f653647974",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 21):\nunexpected |\n\\emph{\\documentclass|}\n                    ^\n"
+    },
+    "braced-31-07#read": {
+      "key": "15bcbe79b884c6e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-32-01#read": {
+      "key": "a29a44fb516a4318",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\url| b\n      ^\n"
+    },
+    "braced-32-02#read": {
+      "key": "46d8e7da7d2ab8f0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\url x y\n       ^\n"
+    },
+    "braced-32-03#read": {
+      "key": "a2eccddbc2610de9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\url*| b\n       ^\n"
+    },
+    "braced-32-04#read": {
+      "key": "384f7314a61f8fa4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected [\na \\url[o]| b\n      ^\n"
+    },
+    "braced-32-05#read": {
+      "key": "e6df6706dc991be4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\foo  \na \\url\\foo  b\n      ^\n"
+    },
+    "braced-32-06#read": {
+      "key": "9ef582ad50c76058",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\url|}\n          ^\n"
+    },
+    "braced-32-07#read": {
+      "key": "1d5dbff7f38b3a44",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-33-01#read": {
+      "key": "0fc669bb63554745",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\href| b\n       ^\n"
+    },
+    "braced-33-02#read": {
+      "key": "5ec650c8f9c1ea5f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected x\na \\href x y\n        ^\n"
+    },
+    "braced-33-03#read": {
+      "key": "67c7230a7e355daa",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\href*| b\n        ^\n"
+    },
+    "braced-33-04#read": {
+      "key": "3144d5790791dc73",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected [\na \\href[o]| b\n       ^\n"
+    },
+    "braced-33-05#read": {
+      "key": "16a66b0346d42c1d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected \\foo  \na \\href\\foo  b\n       ^\n"
+    },
+    "braced-33-06#read": {
+      "key": "09cbee03f31f88bf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\href|}\n           ^\n"
+    },
+    "braced-33-07#read": {
+      "key": "b531596868986311",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-34-01#read": {
+      "key": "d14824695b8ee72f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\nolinkurl| b\n            ^\n"
+    },
+    "braced-34-02#read": {
+      "key": "249959e941343581",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected x\na \\nolinkurl x y\n             ^\n"
+    },
+    "braced-34-03#read": {
+      "key": "50571c203d5cbbc4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\nolinkurl*| b\n             ^\n"
+    },
+    "braced-34-04#read": {
+      "key": "0b88bfbf7a7a0581",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected [\na \\nolinkurl[o]| b\n            ^\n"
+    },
+    "braced-34-05#read": {
+      "key": "b568d6634eca32cb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected \\foo  \na \\nolinkurl\\foo  b\n            ^\n"
+    },
+    "braced-34-06#read": {
+      "key": "e1444e839b8acf8d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\n\\emph{\\nolinkurl|}\n                ^\n"
+    },
+    "braced-34-07#read": {
+      "key": "5e2961d0d48549a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-35-01#read": {
+      "key": "16f8085848985499",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\hyperlink| b\n            ^\n"
+    },
+    "braced-35-02#read": {
+      "key": "14b0f47446ad7577",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected x\na \\hyperlink x y\n             ^\n"
+    },
+    "braced-35-03#read": {
+      "key": "e8b5f63d4a50db22",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\hyperlink*| b\n             ^\n"
+    },
+    "braced-35-04#read": {
+      "key": "5be71ea7a89a9c73",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected [\na \\hyperlink[o]| b\n            ^\n"
+    },
+    "braced-35-05#read": {
+      "key": "91e3f7bacce7bb39",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected \\foo  \na \\hyperlink\\foo  b\n            ^\n"
+    },
+    "braced-35-06#read": {
+      "key": "5beb992d5dea9a13",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\n\\emph{\\hyperlink|}\n                ^\n"
+    },
+    "braced-35-07#read": {
+      "key": "4a9d032b8877d51b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-36-01#read": {
+      "key": "eff03f4eedabd336",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\hypertarget| b\n              ^\n"
+    },
+    "braced-36-02#read": {
+      "key": "c3e1455b6ccdafe2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected x\na \\hypertarget x y\n               ^\n"
+    },
+    "braced-36-03#read": {
+      "key": "9817db8ff2988903",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\hypertarget*| b\n               ^\n"
+    },
+    "braced-36-04#read": {
+      "key": "9c7165161a074e22",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected [\na \\hypertarget[o]| b\n              ^\n"
+    },
+    "braced-36-05#read": {
+      "key": "b4630b47129a12fe",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected \\foo  \na \\hypertarget\\foo  b\n              ^\n"
+    },
+    "braced-36-06#read": {
+      "key": "910e439fb4a41cda",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\n\\emph{\\hypertarget|}\n                  ^\n"
+    },
+    "braced-36-07#read": {
+      "key": "e9667ff4391193ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-37-01#read": {
+      "key": "4d0627c367a85b3f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\hyperref| b\n           ^\n"
+    },
+    "braced-37-02#read": {
+      "key": "ce14d3d201b16f09",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\hyperref x y\n            ^\n"
+    },
+    "braced-37-03#read": {
+      "key": "bfefade6b323142c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\hyperref*| b\n            ^\n"
+    },
+    "braced-37-04#read": {
+      "key": "3a8a81a4de638995",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"|\"}],[\"#o\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-37-05#read": {
+      "key": "ba79f14f8cd527eb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\hyperref\\foo  b\n           ^\n"
+    },
+    "braced-37-06#read": {
+      "key": "1e9b083474a18229",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\hyperref|}\n               ^\n"
+    },
+    "braced-37-07#read": {
+      "key": "9f8c00d5435052df",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-38-01#read": {
+      "key": "1b6ddba46a78dfd9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\title| b\n        ^\n"
+    },
+    "braced-38-02#read": {
+      "key": "804a8ef6cb108b33",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\title x y\n         ^\n"
+    },
+    "braced-38-03#read": {
+      "key": "b04fd17c387c7c26",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\title*| b\n         ^\n"
+    },
+    "braced-38-04#read": {
+      "key": "a741240689e1930b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\title[o]| b\n           ^\n"
+    },
+    "braced-38-05#read": {
+      "key": "ad444d4850c53fd1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\title\\foo  b\n        ^\n"
+    },
+    "braced-38-06#read": {
+      "key": "38b5b754e55b301f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\title|}\n            ^\n"
+    },
+    "braced-38-07#read": {
+      "key": "bc3dcfa0786c2647",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-39-01#read": {
+      "key": "85982cc20f101165",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\author| b\n         ^\n"
+    },
+    "braced-39-02#read": {
+      "key": "cb76e42860fb154f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected x\na \\author x y\n          ^\n"
+    },
+    "braced-39-03#read": {
+      "key": "02e42e14e89c72fa",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\author*| b\n          ^\n"
+    },
+    "braced-39-04#read": {
+      "key": "dce2e60c14f142eb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\author[o]| b\n            ^\n"
+    },
+    "braced-39-05#read": {
+      "key": "6dab9a57c6cedef5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected \\foo  \na \\author\\foo  b\n         ^\n"
+    },
+    "braced-39-06#read": {
+      "key": "00437f01043d93cb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\n\\emph{\\author|}\n             ^\n"
+    },
+    "braced-39-07#read": {
+      "key": "eb2c1fa43df08871",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-40-01#read": {
+      "key": "a300e31bd5ee5d67",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\thanks| b\n         ^\n"
+    },
+    "braced-40-02#read": {
+      "key": "c6f4b9a6de4fec45",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected x\na \\thanks x y\n          ^\n"
+    },
+    "braced-40-03#read": {
+      "key": "c8eb1b99ef274860",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\thanks*| b\n          ^\n"
+    },
+    "braced-40-04#read": {
+      "key": "b7fa19db380201b1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\thanks[o]| b\n            ^\n"
+    },
+    "braced-40-05#read": {
+      "key": "a3354ddd1db3a75b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected \\foo  \na \\thanks\\foo  b\n         ^\n"
+    },
+    "braced-40-06#read": {
+      "key": "a03eb347106fa371",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\n\\emph{\\thanks|}\n             ^\n"
+    },
+    "braced-40-07#read": {
+      "key": "a1719af66cead9a7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-41-01#read": {
+      "key": "447551994f31aa34",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\bibliography| b\n               ^\n"
+    },
+    "braced-41-02#read": {
+      "key": "02636a6815935560",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\bibliography x y\n                ^\n"
+    },
+    "braced-41-03#read": {
+      "key": "6438081325697e79",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\bibliography*| b\n                ^\n"
+    },
+    "braced-41-04#read": {
+      "key": "7de27a37d398bfc0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\bibliography[o]| b\n                  ^\n"
+    },
+    "braced-41-05#read": {
+      "key": "99e2022920d53198",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected \\foo  \na \\bibliography\\foo  b\n               ^\n"
+    },
+    "braced-41-06#read": {
+      "key": "6da12dfbab9c0af8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\bibliography|}\n                   ^\n"
+    },
+    "braced-41-07#read": {
+      "key": "4fe8d0f3aa01a6aa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-42-01#read": {
+      "key": "bb4b2caf295cbbe2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\na \\addbibresource| b\n                 ^\n"
+    },
+    "braced-42-02#read": {
+      "key": "9efc82d7af498eb6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected x\na \\addbibresource x y\n                  ^\n"
+    },
+    "braced-42-03#read": {
+      "key": "777e594eea8c722f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\addbibresource*| b\n                  ^\n"
+    },
+    "braced-42-04#read": {
+      "key": "1b1a63c6171be23a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 21):\nunexpected |\na \\addbibresource[o]| b\n                    ^\n"
+    },
+    "braced-42-05#read": {
+      "key": "c0202a364788aa22",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected \\foo  \na \\addbibresource\\foo  b\n                 ^\n"
+    },
+    "braced-42-06#read": {
+      "key": "8a7ad0bcfc11fce2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 22):\nunexpected |\n\\emph{\\addbibresource|}\n                     ^\n"
+    },
+    "braced-42-07#read": {
+      "key": "6efbd3535392d01c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-43-01#read": {
+      "key": "fc48225bb3732e63",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\input| b\n        ^\n"
+    },
+    "braced-43-02#read": {
+      "key": "29669095d6782d2d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected x\na \\input x y\n         ^\n"
+    },
+    "braced-43-03#read": {
+      "key": "f4068a669ec306e8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\input*| b\n         ^\n"
+    },
+    "braced-43-04#read": {
+      "key": "68ad8e726c94b175",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\input[o]| b\n           ^\n"
+    },
+    "braced-43-05#read": {
+      "key": "0a5cd9d6124feb8f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected \\foo  \na \\input\\foo  b\n        ^\n"
+    },
+    "braced-43-06#read": {
+      "key": "ef89c78b60660c59",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\n\\emph{\\input|}\n            ^\n"
+    },
+    "braced-43-07#read": {
+      "key": "0078537d3fe27171",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-44-01#read": {
+      "key": "3ef1ee4071788d6d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\include| b\n          ^\n"
+    },
+    "braced-44-02#read": {
+      "key": "3f82c3afb06378ff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected x\na \\include x y\n           ^\n"
+    },
+    "braced-44-03#read": {
+      "key": "9d4115f3a8d641ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\include*| b\n           ^\n"
+    },
+    "braced-44-04#read": {
+      "key": "238260a8b672462f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\include[o]| b\n             ^\n"
+    },
+    "braced-44-05#read": {
+      "key": "dabbc4be4e2b7b95",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected \\foo  \na \\include\\foo  b\n          ^\n"
+    },
+    "braced-44-06#read": {
+      "key": "bc332b0b00467bf7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\n\\emph{\\include|}\n              ^\n"
+    },
+    "braced-44-07#read": {
+      "key": "19c2db35df55d3c3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-45-01#read": {
+      "key": "39c95211585fbdad",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\na \\newenvironment| b\n                 ^\n"
+    },
+    "braced-45-02#read": {
+      "key": "5d5ce88f69acfb17",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected x\na \\newenvironment x y\n                  ^\n"
+    },
+    "braced-45-03#read": {
+      "key": "861f6a5ae14fb642",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\newenvironment*| b\n                  ^\n"
+    },
+    "braced-45-04#read": {
+      "key": "eb3f95c4ffc0a503",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected [\na \\newenvironment[o]| b\n                 ^\n"
+    },
+    "braced-45-05#read": {
+      "key": "17e0d6633285f4f5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected \\foo  \na \\newenvironment\\foo  b\n                 ^\n"
+    },
+    "braced-45-06#read": {
+      "key": "1a79c25dfba96a5b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 22):\nunexpected |\n\\emph{\\newenvironment|}\n                     ^\n"
+    },
+    "braced-45-07#read": {
+      "key": "1dab179008ac8aa1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-46-01#read": {
+      "key": "011a93a744de0ba4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\newtheorem| b\n             ^\n"
+    },
+    "braced-46-02#read": {
+      "key": "2e936dc3b9ea2164",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected x\na \\newtheorem x y\n              ^\n"
+    },
+    "braced-46-03#read": {
+      "key": "60c1040677592ca5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\newtheorem*| b\n              ^\n"
+    },
+    "braced-46-04#read": {
+      "key": "1570843841da80a0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected [\na \\newtheorem[o]| b\n             ^\n"
+    },
+    "braced-46-05#read": {
+      "key": "3fee5a5054bf2b60",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected \\foo  \na \\newtheorem\\foo  b\n             ^\n"
+    },
+    "braced-46-06#read": {
+      "key": "95caa21055ce3888",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\n\\emph{\\newtheorem|}\n                 ^\n"
+    },
+    "braced-46-07#read": {
+      "key": "cf35740e3d373a0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-47-01#read": {
+      "key": "ad3f12231158e42d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\theoremstyle| b\n               ^\n"
+    },
+    "braced-47-02#read": {
+      "key": "3261c1a8b1b416cb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\theoremstyle x y\n                ^\n"
+    },
+    "braced-47-03#read": {
+      "key": "2ff7d3b5a07a8f3e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\theoremstyle*| b\n                ^\n"
+    },
+    "braced-47-04#read": {
+      "key": "7d22d9af4f29d2ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected [\na \\theoremstyle[o]| b\n               ^\n"
+    },
+    "braced-47-05#read": {
+      "key": "7de966cb3fe97695",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected \\foo  \na \\theoremstyle\\foo  b\n               ^\n"
+    },
+    "braced-47-06#read": {
+      "key": "d52a57d6f689c4ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\theoremstyle|}\n                   ^\n"
+    },
+    "braced-47-07#read": {
+      "key": "260cbc1e15c6f029",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-48-01#read": {
+      "key": "13843f791efc3fc5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\textcolor| b\n            ^\n"
+    },
+    "braced-48-02#read": {
+      "key": "2cd2ba7e875e5b8f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected x\na \\textcolor x y\n             ^\n"
+    },
+    "braced-48-03#read": {
+      "key": "5eec0cc144bc4a3a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\textcolor*| b\n             ^\n"
+    },
+    "braced-48-04#read": {
+      "key": "6851fd3ecec01af7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\textcolor[o]| b\n               ^\n"
+    },
+    "braced-48-05#read": {
+      "key": "37e3f41317922e55",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected \\foo  \na \\textcolor\\foo  b\n            ^\n"
+    },
+    "braced-48-06#read": {
+      "key": "c1e18ca616546ad3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\n\\emph{\\textcolor|}\n                ^\n"
+    },
+    "braced-48-07#read": {
+      "key": "4d6aedb8fbe6cd73",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-49-01#read": {
+      "key": "c563a27e5ce05130",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\na \\colorbox| b\n           ^\n"
+    },
+    "braced-49-02#read": {
+      "key": "b7ecdc2043c3c3a4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected x\na \\colorbox x y\n            ^\n"
+    },
+    "braced-49-03#read": {
+      "key": "ea1a72630132cee5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\colorbox*| b\n            ^\n"
+    },
+    "braced-49-04#read": {
+      "key": "150abb2c90b4f4b8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\colorbox[o]| b\n              ^\n"
+    },
+    "braced-49-05#read": {
+      "key": "e4dec457007e8984",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected \\foo  \na \\colorbox\\foo  b\n           ^\n"
+    },
+    "braced-49-06#read": {
+      "key": "23129795a9408754",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\n\\emph{\\colorbox|}\n               ^\n"
+    },
+    "braced-49-07#read": {
+      "key": "70b64486bd68c0be",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-50-01#read": {
+      "key": "6a44946012637c00",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\foreignquote| b\n               ^\n"
+    },
+    "braced-50-02#read": {
+      "key": "d9f7ca53d85a3ce4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\foreignquote x y\n                ^\n"
+    },
+    "braced-50-03#read": {
+      "key": "0c25609695c94825",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\foreignquote*| b\n                ^\n"
+    },
+    "braced-50-04#read": {
+      "key": "d900b088c406e418",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected [\na \\foreignquote[o]| b\n               ^\n"
+    },
+    "braced-50-05#read": {
+      "key": "2bf93e8aad345acc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected \\foo  \na \\foreignquote\\foo  b\n               ^\n"
+    },
+    "braced-50-06#read": {
+      "key": "e23fa93f3e4505fc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\foreignquote|}\n                   ^\n"
+    },
+    "braced-50-07#read": {
+      "key": "bad249da91005086",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-51-01#read": {
+      "key": "b8af512345f30426",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 6):\nunexpected |\na \\SI| b\n     ^\n"
+    },
+    "braced-51-02#read": {
+      "key": "4a8dc6d283ce485a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected x\na \\SI x y\n      ^\n"
+    },
+    "braced-51-03#read": {
+      "key": "1312f4e5fc21793b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\SI*| b\n      ^\n"
+    },
+    "braced-51-04#read": {
+      "key": "d3ad6c13d96a7b36",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 9):\nunexpected |\na \\SI[o]| b\n        ^\n"
+    },
+    "braced-51-05#read": {
+      "key": "abb78429f796241e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 6):\nunexpected \\foo  \na \\SI\\foo  b\n     ^\n"
+    },
+    "braced-51-06#read": {
+      "key": "0b9b0a17e088013e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\n\\emph{\\SI|}\n         ^\n"
+    },
+    "braced-51-07#read": {
+      "key": "8686d590b2363d40",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-52-01#read": {
+      "key": "604778b69d7d0ab1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\num| b\n      ^\n"
+    },
+    "braced-52-02#read": {
+      "key": "0c79a82cd88198e7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\num x y\n       ^\n"
+    },
+    "braced-52-03#read": {
+      "key": "0c23a9f71739d8b2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\num*| b\n       ^\n"
+    },
+    "braced-52-04#read": {
+      "key": "1185f9b849fa80b3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\num[o]| b\n         ^\n"
+    },
+    "braced-52-05#read": {
+      "key": "02960db013a2d871",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\foo  \na \\num\\foo  b\n      ^\n"
+    },
+    "braced-52-06#read": {
+      "key": "3e38a74b8bac9e77",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\num|}\n          ^\n"
+    },
+    "braced-52-07#read": {
+      "key": "8e57d726442c6ebb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-53-01#read": {
+      "key": "43fcd055e71c8585",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\qty| b\n      ^\n"
+    },
+    "braced-53-02#read": {
+      "key": "7a6a446b480aaa93",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\qty x y\n       ^\n"
+    },
+    "braced-53-03#read": {
+      "key": "b3297e9a829d3386",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\qty*| b\n       ^\n"
+    },
+    "braced-53-04#read": {
+      "key": "289976b33f7a9793",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\qty[o]| b\n         ^\n"
+    },
+    "braced-53-05#read": {
+      "key": "6ab0de47d6a1ec0d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\foo  \na \\qty\\foo  b\n      ^\n"
+    },
+    "braced-53-06#read": {
+      "key": "1c57067b84054073",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\qty|}\n          ^\n"
+    },
+    "braced-53-07#read": {
+      "key": "22329e37b45816eb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-54-01#read": {
+      "key": "188373e503101c2d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\ang| b\n      ^\n"
+    },
+    "braced-54-02#read": {
+      "key": "51717c5d4c332a3f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\ang x y\n       ^\n"
+    },
+    "braced-54-03#read": {
+      "key": "abc9cea141c2ca0a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\ang*| b\n       ^\n"
+    },
+    "braced-54-04#read": {
+      "key": "b0493f29e0b98fa7",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\ang[o]| b\n         ^\n"
+    },
+    "braced-54-05#read": {
+      "key": "4919d55f6e04028d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\foo  \na \\ang\\foo  b\n      ^\n"
+    },
+    "braced-54-06#read": {
+      "key": "ccb9aaec56e41dbf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\ang|}\n          ^\n"
+    },
+    "braced-54-07#read": {
+      "key": "ff2d7fd4f0c9c68b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-55-01#read": {
+      "key": "dba63d9648486492",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\ensuremath| b\n             ^\n"
+    },
+    "braced-55-02#read": {
+      "key": "22f31df420df2c4a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected x\na \\ensuremath x y\n              ^\n"
+    },
+    "braced-55-03#read": {
+      "key": "19e4c3b29c60478b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\ensuremath*| b\n              ^\n"
+    },
+    "braced-55-04#read": {
+      "key": "aa6a43fe8ddaf566",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected [\na \\ensuremath[o]| b\n             ^\n"
+    },
+    "braced-55-05#read": {
+      "key": "cc64bc073ce9bbf2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected \\foo  \na \\ensuremath\\foo  b\n             ^\n"
+    },
+    "braced-55-06#read": {
+      "key": "df589dd6fde1341e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\n\\emph{\\ensuremath|}\n                 ^\n"
+    },
+    "braced-55-07#read": {
+      "key": "fa216776517ba32c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-56-01#read": {
+      "key": "0cfa7a9df4452f41",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\gls| b\n      ^\n"
+    },
+    "braced-56-02#read": {
+      "key": "bf19d118d6e3c647",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\gls x y\n       ^\n"
+    },
+    "braced-56-03#read": {
+      "key": "bec3d2e3159c0612",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected |\na \\gls*| b\n       ^\n"
+    },
+    "braced-56-04#read": {
+      "key": "59e4aff30c576eff",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected [\na \\gls[o]| b\n      ^\n"
+    },
+    "braced-56-05#read": {
+      "key": "45c922eed2feffc9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\foo  \na \\gls\\foo  b\n      ^\n"
+    },
+    "braced-56-06#read": {
+      "key": "055988fc1a166787",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\gls|}\n          ^\n"
+    },
+    "braced-56-07#read": {
+      "key": "1fad6df4e56694d7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-57-01#read": {
+      "key": "fcdf0846ced882e6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 6):\nunexpected |\na \\ac| b\n     ^\n"
+    },
+    "braced-57-02#read": {
+      "key": "c83be378964fa3f6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected x\na \\ac x y\n      ^\n"
+    },
+    "braced-57-03#read": {
+      "key": "9d57b9efceaf5e6f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\ac*| b\n      ^\n"
+    },
+    "braced-57-04#read": {
+      "key": "7052f6bcfd776b02",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 6):\nunexpected [\na \\ac[o]| b\n     ^\n"
+    },
+    "braced-57-05#read": {
+      "key": "e28b43c29e326cae",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 6):\nunexpected \\foo  \na \\ac\\foo  b\n     ^\n"
+    },
+    "braced-57-06#read": {
+      "key": "7fbe6451f2790aba",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\n\\emph{\\ac|}\n         ^\n"
+    },
+    "braced-57-07#read": {
+      "key": "0f9231662086f550",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-58-01#read": {
+      "key": "b4885cc2c2477706",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected |\na \\parbox| b\n         ^\n"
+    },
+    "braced-58-02#read": {
+      "key": "00fde5fbea737f66",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected x\na \\parbox x y\n          ^\n"
+    },
+    "braced-58-03#read": {
+      "key": "02983c745ea0de3f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\na \\parbox*| b\n          ^\n"
+    },
+    "braced-58-04#read": {
+      "key": "5dec75a2467a68ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 13):\nunexpected |\na \\parbox[o]| b\n            ^\n"
+    },
+    "braced-58-05#read": {
+      "key": "e7d6367c4b6e75d6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 10):\nunexpected \\foo  \na \\parbox\\foo  b\n         ^\n"
+    },
+    "braced-58-06#read": {
+      "key": "0b1f960aa609ab2a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\n\\emph{\\parbox|}\n             ^\n"
+    },
+    "braced-58-07#read": {
+      "key": "260de4ce534e6888",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-59-01#read": {
+      "key": "7bdad6c9c5122252",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\graphicspath| b\n               ^\n"
+    },
+    "braced-59-02#read": {
+      "key": "bdcd403c5c55cfd6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\graphicspath x y\n                ^\n"
+    },
+    "braced-59-03#read": {
+      "key": "e7a696b608b4dfcf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\graphicspath*| b\n                ^\n"
+    },
+    "braced-59-04#read": {
+      "key": "e670c909c9382e76",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected [\na \\graphicspath[o]| b\n               ^\n"
+    },
+    "braced-59-05#read": {
+      "key": "7dbdd4e0a62484f2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected \\foo  \na \\graphicspath\\foo  b\n               ^\n"
+    },
+    "braced-59-06#read": {
+      "key": "b7f6fe187509045e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\graphicspath|}\n                   ^\n"
+    },
+    "braced-59-07#read": {
+      "key": "7d315c89220ff554",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-60-01#read": {
+      "key": "488f6b999243b2e9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected |\na \\newcommand| b\n             ^\n"
+    },
+    "braced-60-02#read": {
+      "key": "47c12501f6497657",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected x\na \\newcommand x y\n              ^\n"
+    },
+    "braced-60-03#read": {
+      "key": "7083a6cd6dec3182",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\na \\newcommand*| b\n              ^\n"
+    },
+    "braced-60-04#read": {
+      "key": "f4f429abe5ee6307",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected [\na \\newcommand[o]| b\n             ^\n"
+    },
+    "braced-60-05#read": {
+      "key": "8eb80d2ecac8b229",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-60-06#read": {
+      "key": "9316989fb09d76d3",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\n\\emph{\\newcommand|}\n                 ^\n"
+    },
+    "braced-60-07#read": {
+      "key": "efabc4914939723d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-61-01#read": {
+      "key": "8c2d21c5f554a7c6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected |\na \\renewcommand| b\n               ^\n"
+    },
+    "braced-61-02#read": {
+      "key": "13160898b8725e3e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected x\na \\renewcommand x y\n                ^\n"
+    },
+    "braced-61-03#read": {
+      "key": "b708ee977341cf97",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 17):\nunexpected |\na \\renewcommand*| b\n                ^\n"
+    },
+    "braced-61-04#read": {
+      "key": "a7d8dbaeef9a7c1e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected [\na \\renewcommand[o]| b\n               ^\n"
+    },
+    "braced-61-05#read": {
+      "key": "b7bb6155539d50e6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-61-06#read": {
+      "key": "a37f104a2cb8fd26",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 20):\nunexpected |\n\\emph{\\renewcommand|}\n                   ^\n"
+    },
+    "braced-61-07#read": {
+      "key": "6cafd59b3d586ef0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-62-01#read": {
+      "key": "16b1def0ed226cf0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected |\na \\providecommand| b\n                 ^\n"
+    },
+    "braced-62-02#read": {
+      "key": "22ce1df20cdcd9f8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected x\na \\providecommand x y\n                  ^\n"
+    },
+    "braced-62-03#read": {
+      "key": "4a53137ad19fbcd1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 19):\nunexpected |\na \\providecommand*| b\n                  ^\n"
+    },
+    "braced-62-04#read": {
+      "key": "4ce78eda4033364c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected [\na \\providecommand[o]| b\n                 ^\n"
+    },
+    "braced-62-05#read": {
+      "key": "693f0354593bfa6c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-62-06#read": {
+      "key": "8e54595bcdeceb2c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 22):\nunexpected |\n\\emph{\\providecommand|}\n                     ^\n"
+    },
+    "braced-62-07#read": {
+      "key": "8f3ae6b91c6f400e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-63-01#read": {
+      "key": "5443dc45cabd66a9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 23):\nunexpected |\na \\DeclareMathOperator| b\n                      ^\n"
+    },
+    "braced-63-02#read": {
+      "key": "c6c05ab128c30cdb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 24):\nunexpected x\na \\DeclareMathOperator x y\n                       ^\n"
+    },
+    "braced-63-03#read": {
+      "key": "c8292cbe1ac9136e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 24):\nunexpected |\na \\DeclareMathOperator*| b\n                       ^\n"
+    },
+    "braced-63-04#read": {
+      "key": "32030b03dff4c803",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 23):\nunexpected [\na \\DeclareMathOperator[o]| b\n                      ^\n"
+    },
+    "braced-63-05#read": {
+      "key": "6d3e7aadb41d2e31",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-63-06#read": {
+      "key": "85588dc5bb3b475b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 27):\nunexpected |\n\\emph{\\DeclareMathOperator|}\n                          ^\n"
+    },
+    "braced-63-07#read": {
+      "key": "0d0729d4200e3d0f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-64-01#read": {
+      "key": "a360f8e41c91e19e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\def| b\n      ^\n"
+    },
+    "braced-64-02#read": {
+      "key": "5043d4718b227db6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\def x y\n       ^\n"
+    },
+    "braced-64-03#read": {
+      "key": "28c5aae8c665612f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected *\na \\def*| b\n      ^\n"
+    },
+    "braced-64-04#read": {
+      "key": "61f7197c9826be56",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected [\na \\def[o]| b\n      ^\n"
+    },
+    "braced-64-05#read": {
+      "key": "d8d805e17114f876",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 14):\nunexpected \n\na \\def\\foo  b\n             ^\n"
+    },
+    "braced-64-06#read": {
+      "key": "36389705652e254e",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\def|}\n          ^\n"
+    },
+    "braced-64-07#read": {
+      "key": "721e18a1fd195bc6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-65-01#read": {
+      "key": "8ecd972ca40cba10",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected |\na \\let| b\n      ^\n"
+    },
+    "braced-65-02#read": {
+      "key": "e3609ad706e559a4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 8):\nunexpected x\na \\let x y\n       ^\n"
+    },
+    "braced-65-03#read": {
+      "key": "158e3119c45464e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected *\na \\let*| b\n      ^\n"
+    },
+    "braced-65-04#read": {
+      "key": "343d7dca835440dc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected [\na \\let[o]| b\n      ^\n"
+    },
+    "braced-65-05#read": {
+      "key": "cac515e31ae50404",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-65-06#read": {
+      "key": "bc3b24a358b714cc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 11):\nunexpected |\n\\emph{\\let|}\n          ^\n"
+    },
+    "braced-65-07#read": {
+      "key": "71a19a8e21db8a28",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "braced-66-01#read": {
+      "key": "8483f77c2c20a25a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-66-02#read": {
+      "key": "af330f6fdc654986",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-66-03#read": {
+      "key": "ad6765e84daf7f5f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-66-04#read": {
+      "key": "f2efca809004117e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"[\"}]},{\"t\":\"Str\",\"c\":\"o]|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-66-05#read": {
+      "key": "4dfb32b3fd56a02a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[]},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-66-06#read": {
+      "key": "cbebd5d5bd04ca5e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-66-07#read": {
+      "key": "6bd08ec56cf2d23c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-01#read": {
+      "key": "c3b9480bbba2140d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-02#read": {
+      "key": "eafea4bc37b686ff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-03#read": {
+      "key": "48bcf70030294fca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-04#read": {
+      "key": "8e6f305a87acefdb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"[\"}]},{\"t\":\"Str\",\"c\":\"o]|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-05#read": {
+      "key": "198730b534811fb5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[]},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-06#read": {
+      "key": "c22ae1a536c32273",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-67-07#read": {
+      "key": "2bdd20a51b80fd31",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-01#read": {
+      "key": "bb45c4dfde125731",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"|\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-02#read": {
+      "key": "9036af9bf865e2ef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"x\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-03#read": {
+      "key": "c25001deb5c3d19a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"|\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-04#read": {
+      "key": "2305f27292b53d43",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"[\"]},{\"t\":\"Str\",\"c\":\"o]|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-05#read": {
+      "key": "012783aafd95b8a9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-06#read": {
+      "key": "48e3d22c65886fab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"|\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-68-07#read": {
+      "key": "3e1962553906852d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"|\"]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-69-01#read": {
+      "key": "9d20159fa1a16bef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-69-02#read": {
+      "key": "24d902adad159ab5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-69-03#read": {
+      "key": "273c24a0be495bf0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-69-04#read": {
+      "key": "c1989b5a3faa1245",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-69-05#read": {
+      "key": "b717133f2dddcdd3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-69-06#read": {
+      "key": "1618d9b5da5b3dc5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected |\n\\emph{\\caption|}\n              ^\n"
+    },
+    "braced-69-07#read": {
+      "key": "62e7e9ef60451275",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[]]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-01#read": {
+      "key": "4be75b96665a01d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-02#read": {
+      "key": "a63d8ca2d2e84a78",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-03#read": {
+      "key": "cdc2822b97ab2d51",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-04#read": {
+      "key": "25c4342ff336f94c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"[o]|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-05#read": {
+      "key": "7123edffe089b070",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-06#read": {
+      "key": "e0db950e3b0c37c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-70-07#read": {
+      "key": "77bde77cfb7443d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-71-01#read": {
+      "key": "262795148f6e8c67",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-71-02#read": {
+      "key": "4c3c6839ae33779d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-71-03#read": {
+      "key": "3ff4e20baf68ccb8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-71-04#read": {
+      "key": "6c75772c0e31b59d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-71-05#read": {
+      "key": "bb9afb26007998b3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-71-06#read": {
+      "key": "e1e61544b66bf6e5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\item|}\n           ^\n"
+    },
+    "braced-71-07#read": {
+      "key": "ea4f68495c6b6907",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-72-01#read": {
+      "key": "3ef211d4e8ebd6e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-72-02#read": {
+      "key": "5705239df91c9bd8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-72-03#read": {
+      "key": "2d3299244cc35231",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-72-04#read": {
+      "key": "76545d781cbc7aac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-72-05#read": {
+      "key": "3cf93959fef2aeec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-72-06#read": {
+      "key": "3ce095f1720461f0",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 12):\nunexpected |\n\\emph{\\date|}\n           ^\n"
+    },
+    "braced-72-07#read": {
+      "key": "25d53f8e1b270e96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[]]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-01#read": {
+      "key": "443682fe34e64954",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-02#read": {
+      "key": "2c2b701279c051dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-03#read": {
+      "key": "5495b5ddf118313d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-04#read": {
+      "key": "b769dbf12fc864b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-05#read": {
+      "key": "dfdac32aadecb8d8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-06#read": {
+      "key": "247380a3546ea750",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-73-07#read": {
+      "key": "d4c8f1d1ff2b6a02",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-01#read": {
+      "key": "0288cec635a285c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"|\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-02#read": {
+      "key": "1784da6cf9bf3500",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"x\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-03#read": {
+      "key": "249bf81595960899",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"SingleQuote\"},[{\"t\":\"Str\",\"c\":\"|\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-04#read": {
+      "key": "763cad2415c6b6d0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"|\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-05#read": {
+      "key": "366fe02105bbcddc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[]]},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-06#read": {
+      "key": "3a6ae369f237b9a0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"|\"}]]}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-74-07#read": {
+      "key": "344fcd6465e10110",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"|\"}]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-01#read": {
+      "key": "7fc1c9000bd42612",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-02#read": {
+      "key": "58e350ea5ddffe8e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-03#read": {
+      "key": "fc6976e918530ac7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-04#read": {
+      "key": "624a8c27b93e53ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-05#read": {
+      "key": "8e1189b6783c7fa2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-06#read": {
+      "key": "719b4b5eb51c9a16",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-75-07#read": {
+      "key": "c3d2123b20684a6a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-01#read": {
+      "key": "fe6d598f5e504a47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-02#read": {
+      "key": "23e8c7b48c8d582d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-03#read": {
+      "key": "ee88c18554d831e8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-04#read": {
+      "key": "b08260eb461564bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"[\"}]},{\"t\":\"Str\",\"c\":\"o]|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-05#read": {
+      "key": "bfd4216478f8f9f3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"SmallCaps\",\"c\":[]},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-06#read": {
+      "key": "6af199c8d5b70531",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-76-07#read": {
+      "key": "a075e94478ec3c6f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"SmallCaps\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-01#read": {
+      "key": "700e6b6e4fce992b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-02#read": {
+      "key": "3b3c71443de38929",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-03#read": {
+      "key": "d859cb567b55d8cc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-04#read": {
+      "key": "1538e37b3cc04fe1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"[\"}]},{\"t\":\"Str\",\"c\":\"o]|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-05#read": {
+      "key": "ecc49d1eed48a597",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Underline\",\"c\":[]},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-06#read": {
+      "key": "d6d18af01cf7323d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-77-07#read": {
+      "key": "235979505e649aa9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Underline\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-01#read": {
+      "key": "01b7f3ca1f8ca48e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-02#read": {
+      "key": "53f9c2b71e069512",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-03#read": {
+      "key": "2b2998eba6583213",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-04#read": {
+      "key": "470011ef5cad5eb6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-05#read": {
+      "key": "dbf08d49e13d1716",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-06#read": {
+      "key": "96fd1faa44e47976",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-78-07#read": {
+      "key": "40b337765c1e79ba",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-01#read": {
+      "key": "734983b13b012640",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-02#read": {
+      "key": "2f7a2aad44394cb4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-03#read": {
+      "key": "8d4cc0f13cbd3215",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-04#read": {
+      "key": "07ac26f21bc82500",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-05#read": {
+      "key": "38f88a1965e84cb4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-06#read": {
+      "key": "78bf8b27c1c73008",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-79-07#read": {
+      "key": "64fece7963108fa6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-01#read": {
+      "key": "8f6f84d79c454604",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-02#read": {
+      "key": "3635af267d6b96ac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"y\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-03#read": {
+      "key": "5f0cb4f1f51fdb2d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-04#read": {
+      "key": "11134c22b1f9edd4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"|\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-05#read": {
+      "key": "217e478012cd40c0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-06#read": {
+      "key": "6974410c21ea7738",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "braced-80-07#read": {
+      "key": "04487aba2eb57354",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"|\"}]}]]}]}\n",
+      "stderr": ""
+    },
     "cites-01-01#read": {
       "key": "d12307b5376f3840",
       "exit": 0,
@@ -1680,6 +5040,414 @@
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2023-11-14x\"}]}},\"blocks\":[]}\n",
       "stderr": ""
+    },
+    "unclosed-01-01#read": {
+      "key": "e7de325326e2cdb1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{document}\n\n ^\n"
+    },
+    "unclosed-01-02#read": {
+      "key": "b6d44c0e54feb058",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{document}\n\n ^\n"
+    },
+    "unclosed-01-03#read": {
+      "key": "c6db693a9dd15026",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected }\nexpecting \\end{document}\n\\begin{document}a}b\\end{document}\n                 ^\n"
+    },
+    "unclosed-01-04#read": {
+      "key": "3315ccd3f040b2b6",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{document}a} b\n      ^\n"
+    },
+    "unclosed-02-01#read": {
+      "key": "0884ee04ffca599c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{abstract}\n\n ^\n"
+    },
+    "unclosed-02-02#read": {
+      "key": "63340f12229bc87d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{abstract}\n\n ^\n"
+    },
+    "unclosed-02-03#read": {
+      "key": "a4e7dd64d0f5a048",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected }\nexpecting \\end{abstract}\n\\begin{abstract}a}b\\end{abstract}\n                 ^\n"
+    },
+    "unclosed-02-04#read": {
+      "key": "a0b39d21750ce2cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{abstract}a} b\n      ^\n"
+    },
+    "unclosed-03-01#read": {
+      "key": "eeb60c1cd9bda472",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{itemize}\n\n ^\n"
+    },
+    "unclosed-03-02#read": {
+      "key": "d881eff8158f83d1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{itemize}\n\n ^\n"
+    },
+    "unclosed-03-03#read": {
+      "key": "c7a013e822a19770",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unclosed-03-04#read": {
+      "key": "6f8b4b3d7c9591d1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{itemize}a} b\n      ^\n"
+    },
+    "unclosed-04-01#read": {
+      "key": "b8fb3f74166d810f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{enumerate}\n\n ^\n"
+    },
+    "unclosed-04-02#read": {
+      "key": "ff43af4b97577a58",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{enumerate}\n\n ^\n"
+    },
+    "unclosed-04-03#read": {
+      "key": "9695234a9d0a98bc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unclosed-04-04#read": {
+      "key": "603212197a760a42",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{enumerate}a} b\n      ^\n"
+    },
+    "unclosed-05-01#read": {
+      "key": "0ea0205c1d80244d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{description}\n\n ^\n"
+    },
+    "unclosed-05-02#read": {
+      "key": "f8c95eb85dd3ad12",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{description}\n\n ^\n"
+    },
+    "unclosed-05-03#read": {
+      "key": "0719463867e4fa30",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unclosed-05-04#read": {
+      "key": "7c320c2bab471634",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{description}a} b\n      ^\n"
+    },
+    "unclosed-06-01#read": {
+      "key": "9a0220eaf16a5755",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{quote}\n\n ^\n"
+    },
+    "unclosed-06-02#read": {
+      "key": "1442e4c3ce524e7a",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{quote}\n\n ^\n"
+    },
+    "unclosed-06-03#read": {
+      "key": "1fb549ba1e92eadc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected }\nexpecting \\end{quote}\n\\begin{quote}a}b\\end{quote}\n              ^\n"
+    },
+    "unclosed-06-04#read": {
+      "key": "ce297ece9e2fd5a8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{quote}a} b\n      ^\n"
+    },
+    "unclosed-07-01#read": {
+      "key": "36b2cf40c395cf4b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{center}\n\n ^\n"
+    },
+    "unclosed-07-02#read": {
+      "key": "5cc88dc46ca09f06",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{center}\n\n ^\n"
+    },
+    "unclosed-07-03#read": {
+      "key": "a9d24c9520fbaa42",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected }\nexpecting \\end{center}\n\\begin{center}a}b\\end{center}\n               ^\n"
+    },
+    "unclosed-07-04#read": {
+      "key": "6edc83f5591abf3c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{center}a} b\n      ^\n"
+    },
+    "unclosed-08-01#read": {
+      "key": "6965a4ec451cddb2",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{minipage}\n\n ^\n"
+    },
+    "unclosed-08-02#read": {
+      "key": "467a29b03dd19f4b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{minipage}\n\n ^\n"
+    },
+    "unclosed-08-03#read": {
+      "key": "62bd495d40c334fc",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 18):\nunexpected }\nexpecting \\end{minipage}\n\\begin{minipage}a}b\\end{minipage}\n                 ^\n"
+    },
+    "unclosed-08-04#read": {
+      "key": "29bc88ca8babcf83",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{minipage}a} b\n      ^\n"
+    },
+    "unclosed-09-01#read": {
+      "key": "d04f156ae744841c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{verbatim}\n\n ^\n"
+    },
+    "unclosed-09-02#read": {
+      "key": "47b2f6449a01c9b5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{verbatim}\n\n ^\n"
+    },
+    "unclosed-09-03#read": {
+      "key": "2c91498f75bb51a0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a}b\"]}]}\n",
+      "stderr": ""
+    },
+    "unclosed-09-04#read": {
+      "key": "83750f4cd114a621",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{verbatim}a} b\n      ^\n"
+    },
+    "unclosed-10-01#read": {
+      "key": "378f2e3b2ff3c41b",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{lstlisting}\n\n ^\n"
+    },
+    "unclosed-10-02#read": {
+      "key": "dcd318173bb4acae",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{lstlisting}\n\n ^\n"
+    },
+    "unclosed-10-03#read": {
+      "key": "8c830beb38826676",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a}b\"]}]}\n",
+      "stderr": ""
+    },
+    "unclosed-10-04#read": {
+      "key": "9e463b9ca7a4d150",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{lstlisting}a} b\n      ^\n"
+    },
+    "unclosed-11-01#read": {
+      "key": "942a9f0b5e39922c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{figure}\n\n ^\n"
+    },
+    "unclosed-11-02#read": {
+      "key": "55c9528c25fe4ee1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{figure}\n\n ^\n"
+    },
+    "unclosed-11-03#read": {
+      "key": "5ae26b640033373c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 16):\nunexpected }\nexpecting \\end{figure}\n\\begin{figure}a}b\\end{figure}\n               ^\n"
+    },
+    "unclosed-11-04#read": {
+      "key": "3ca3b18fc30943fd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{figure}a} b\n      ^\n"
+    },
+    "unclosed-12-01#read": {
+      "key": "a0b04ebead26d56d",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{table}\n\n ^\n"
+    },
+    "unclosed-12-02#read": {
+      "key": "541ff2484e1b06ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{table}\n\n ^\n"
+    },
+    "unclosed-12-03#read": {
+      "key": "cc80fdd89f8a85b4",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 15):\nunexpected }\nexpecting \\end{table}\n\\begin{table}a}b\\end{table}\n              ^\n"
+    },
+    "unclosed-12-04#read": {
+      "key": "1a3924c1f80f6b78",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{table}a} b\n      ^\n"
+    },
+    "unclosed-13-01#read": {
+      "key": "573ab2a51fe15460",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{tabular}\n\n ^\n"
+    },
+    "unclosed-13-02#read": {
+      "key": "28468d0d3a22d577",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{tabular}\n\n ^\n"
+    },
+    "unclosed-13-03#read": {
+      "key": "8bf978d80ff138e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unclosed-13-04#read": {
+      "key": "ec9c23c36c4a9727",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{tabular}a} b\n      ^\n"
+    },
+    "unclosed-14-01#read": {
+      "key": "da86dca635b70b9f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{longtable}\n\n ^\n"
+    },
+    "unclosed-14-02#read": {
+      "key": "520d00c4c77d4cc8",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{longtable}\n\n ^\n"
+    },
+    "unclosed-14-03#read": {
+      "key": "7e6962b775e781fc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unclosed-14-04#read": {
+      "key": "40e4494913e59f72",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{longtable}a} b\n      ^\n"
+    },
+    "unclosed-15-01#read": {
+      "key": "4edd4d306cb4c30c",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{equation}\n\n ^\n"
+    },
+    "unclosed-15-02#read": {
+      "key": "7c50530ef1959425",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{equation}\n\n ^\n"
+    },
+    "unclosed-15-03#read": {
+      "key": "ea1735385557b5a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\begin{equation}\\na}b\\n\\\\end{equation}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "unclosed-15-04#read": {
+      "key": "49788f87f6bae2cd",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{equation}\n\n ^\n"
+    },
+    "unclosed-16-01#read": {
+      "key": "cdb9c13e7a370edf",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{align*}\n\n ^\n"
+    },
+    "unclosed-16-02#read": {
+      "key": "f120fe48cb3db396",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{align*}\n\n ^\n"
+    },
+    "unclosed-16-03#read": {
+      "key": "b7436437f416b162",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\begin{align*}\\na}b\\n\\\\end{align*}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "unclosed-16-04#read": {
+      "key": "103d0cd69cebef80",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{align*}\n\n ^\n"
+    },
+    "unclosed-17-01#read": {
+      "key": "ee11297f7e70f1bb",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 2, column 2):\nunexpected end of input\nexpecting \\end{unknownenv}\n\n ^\n"
+    },
+    "unclosed-17-02#read": {
+      "key": "c2bfdc69f49aa852",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 7, column 2):\nunexpected end of input\nexpecting \\end{unknownenv}\n\n ^\n"
+    },
+    "unclosed-17-03#read": {
+      "key": "5cae272d7bf3c31e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unclosed-17-04#read": {
+      "key": "c613b13ec4ee1c10",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 1, column 7):\nunexpected \\begin\n\\emph{\\begin{unknownenv}a} b\n      ^\n"
     },
     "url-01-01#read": {
       "key": "9b435859cb5aa2c7",
