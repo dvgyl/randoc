@@ -1039,6 +1039,1938 @@
       "stdout": "One {#x}\n===\n\na b\n---\n",
       "stderr": ""
     },
+    "standalone-author-single#e2e:commonmark": {
+      "key": "501be9d92047cd27",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:commonmark_x": {
+      "key": "4d3dcd999a5d3b0a",
+      "exit": 0,
+      "stdout": "---\nauthor: Cy Moss\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:gfm": {
+      "key": "6d545848cdc9ca7a",
+      "exit": 0,
+      "stdout": "---\nauthor: Cy Moss\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown": {
+      "key": "90860704765918f4",
+      "exit": 0,
+      "stdout": "---\nauthor: Cy Moss\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown-yaml_metadata_block": {
+      "key": "aad1e77c2c79b986",
+      "exit": 0,
+      "stdout": "% \n% Cy Moss\n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "d2ae2dd9f50fb590",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "c6dece5d31338f4e",
+      "exit": 0,
+      "stdout": "author: Cy Moss\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown_mmd": {
+      "key": "157df879d7aaef9d",
+      "exit": 0,
+      "stdout": "author: Cy Moss\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown_phpextra": {
+      "key": "0da8dc5f0d7c9c58",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:markdown_strict": {
+      "key": "06a0061053e64d61",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#e2e:plain": {
+      "key": "fe29fdc09bdfa534",
+      "exit": 0,
+      "stdout": "Cy Moss\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#read": {
+      "key": "0253294e0239432f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Cy\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Moss\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-author-single#write:commonmark": {
+      "key": "501be9d92047cd27",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:commonmark_x": {
+      "key": "4d3dcd999a5d3b0a",
+      "exit": 0,
+      "stdout": "---\nauthor: Cy Moss\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:gfm": {
+      "key": "6d545848cdc9ca7a",
+      "exit": 0,
+      "stdout": "---\nauthor: Cy Moss\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown": {
+      "key": "90860704765918f4",
+      "exit": 0,
+      "stdout": "---\nauthor: Cy Moss\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown-yaml_metadata_block": {
+      "key": "aad1e77c2c79b986",
+      "exit": 0,
+      "stdout": "% \n% Cy Moss\n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "d2ae2dd9f50fb590",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "c6dece5d31338f4e",
+      "exit": 0,
+      "stdout": "author: Cy Moss\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown_mmd": {
+      "key": "157df879d7aaef9d",
+      "exit": 0,
+      "stdout": "author: Cy Moss\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown_phpextra": {
+      "key": "0da8dc5f0d7c9c58",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:markdown_strict": {
+      "key": "06a0061053e64d61",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-author-single#write:plain": {
+      "key": "fe29fdc09bdfa534",
+      "exit": 0,
+      "stdout": "Cy Moss\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:commonmark": {
+      "key": "ce43727be884fe11",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:commonmark_x": {
+      "key": "34b3b7485a1ce084",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- A Very Long Name Of A Person\n- Another Long Name Of Someone\n- Third Person\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:gfm": {
+      "key": "6188c2830b265e74",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- A Very Long Name Of A Person\n- Another Long Name Of Someone\n- Third Person\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown": {
+      "key": "81261f230d7bf47e",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- A Very Long Name Of A Person\n- Another Long Name Of Someone\n- Third Person\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown-yaml_metadata_block": {
+      "key": "319cf1034026b8e8",
+      "exit": 0,
+      "stdout": "% \n% A Very Long Name Of A Person\n  Another Long Name Of Someone\n  Third Person\n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "db22786fd5adfec2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "04c5401c36137b40",
+      "exit": 0,
+      "stdout": "author: A Very Long Name Of A Person; Another Long Name Of\nSomeone; Third Person\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown_mmd": {
+      "key": "c10029ea156583f7",
+      "exit": 0,
+      "stdout": "author: A Very Long Name Of A Person; Another Long Name Of\nSomeone; Third Person\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown_phpextra": {
+      "key": "9392941b2dd1459a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:markdown_strict": {
+      "key": "0b39a2ec94b22663",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#e2e:plain": {
+      "key": "6a42eb02366e7e3e",
+      "exit": 0,
+      "stdout": "A Very Long Name Of A Person; Another Long Name Of Someone; Third Person\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#read": {
+      "key": "718b2993fcccefe9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Very\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Name\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Person\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Another\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Name\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Someone\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Third\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Person\"}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:commonmark": {
+      "key": "ce43727be884fe11",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:commonmark_x": {
+      "key": "34b3b7485a1ce084",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- A Very Long Name Of A Person\n- Another Long Name Of Someone\n- Third Person\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:gfm": {
+      "key": "6188c2830b265e74",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- A Very Long Name Of A Person\n- Another Long Name Of Someone\n- Third Person\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown": {
+      "key": "81261f230d7bf47e",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- A Very Long Name Of A Person\n- Another Long Name Of Someone\n- Third Person\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown-yaml_metadata_block": {
+      "key": "319cf1034026b8e8",
+      "exit": 0,
+      "stdout": "% \n% A Very Long Name Of A Person\n  Another Long Name Of Someone\n  Third Person\n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "db22786fd5adfec2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "04c5401c36137b40",
+      "exit": 0,
+      "stdout": "author: A Very Long Name Of A Person; Another Long Name Of\nSomeone; Third Person\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown_mmd": {
+      "key": "c10029ea156583f7",
+      "exit": 0,
+      "stdout": "author: A Very Long Name Of A Person; Another Long Name Of\nSomeone; Third Person\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown_phpextra": {
+      "key": "9392941b2dd1459a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:markdown_strict": {
+      "key": "0b39a2ec94b22663",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-authors-long#write:plain": {
+      "key": "6a42eb02366e7e3e",
+      "exit": 0,
+      "stdout": "A Very Long Name Of A Person; Another Long Name Of Someone; Third Person\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:commonmark": {
+      "key": "89e5bf4ec2ea977f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:commonmark_x": {
+      "key": "df0cb7c81be6362a",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  first part\n\n  second part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:gfm": {
+      "key": "da587eeb2612c2da",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  first part\n\n  second part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown": {
+      "key": "7908b3c04c2bbf70",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  first part\n\n  second part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown-yaml_metadata_block": {
+      "key": "18babe876386495e",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "56ce4d8c6b144dd4",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "47ea244f966264f6",
+      "exit": 0,
+      "stdout": "abstract: first part\n  .\n  second part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown_mmd": {
+      "key": "d088dd275e3327b9",
+      "exit": 0,
+      "stdout": "abstract: first part\n  .\n  second part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown_phpextra": {
+      "key": "5836b664df80e5ec",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:markdown_strict": {
+      "key": "d6c4aa98d5636555",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#e2e:plain": {
+      "key": "4f0534ecb5fbdcb0",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#read": {
+      "key": "adbdacf85c285fd7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abstract\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"first\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"part\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"second\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"part\"}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-blocks#write:commonmark": {
+      "key": "89e5bf4ec2ea977f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:commonmark_x": {
+      "key": "df0cb7c81be6362a",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  first part\n\n  second part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:gfm": {
+      "key": "da587eeb2612c2da",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  first part\n\n  second part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown": {
+      "key": "7908b3c04c2bbf70",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  first part\n\n  second part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown-yaml_metadata_block": {
+      "key": "18babe876386495e",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "56ce4d8c6b144dd4",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "47ea244f966264f6",
+      "exit": 0,
+      "stdout": "abstract: first part\n  .\n  second part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown_mmd": {
+      "key": "d088dd275e3327b9",
+      "exit": 0,
+      "stdout": "abstract: first part\n  .\n  second part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown_phpextra": {
+      "key": "5836b664df80e5ec",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:markdown_strict": {
+      "key": "d6c4aa98d5636555",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-blocks#write:plain": {
+      "key": "4f0534ecb5fbdcb0",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:commonmark": {
+      "key": "fd2274cd08bc8cce",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:commonmark_x": {
+      "key": "a04e07c72c239bcb",
+      "exit": 0,
+      "stdout": "---\ndraft: true\nfinal: false\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:gfm": {
+      "key": "e0d1096e66df547b",
+      "exit": 0,
+      "stdout": "---\ndraft: true\nfinal: false\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown": {
+      "key": "3cefa70d3bdda23d",
+      "exit": 0,
+      "stdout": "---\ndraft: true\nfinal: false\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown-yaml_metadata_block": {
+      "key": "773260d0775e4417",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "716365eaff33ef29",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "b7a64588fd5b7c5f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown_mmd": {
+      "key": "e30ffe6c5a759f9c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown_phpextra": {
+      "key": "006c325e525da631",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:markdown_strict": {
+      "key": "6240acc32e148770",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#e2e:plain": {
+      "key": "e7fa84d8e3cada7d",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#read": {
+      "key": "305a3cd406a99f56",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"draft\":{\"t\":\"MetaBool\",\"c\":true},\"final\":{\"t\":\"MetaBool\",\"c\":false}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-bool#write:commonmark": {
+      "key": "fd2274cd08bc8cce",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:commonmark_x": {
+      "key": "a04e07c72c239bcb",
+      "exit": 0,
+      "stdout": "---\ndraft: true\nfinal: false\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:gfm": {
+      "key": "e0d1096e66df547b",
+      "exit": 0,
+      "stdout": "---\ndraft: true\nfinal: false\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown": {
+      "key": "3cefa70d3bdda23d",
+      "exit": 0,
+      "stdout": "---\ndraft: true\nfinal: false\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown-yaml_metadata_block": {
+      "key": "773260d0775e4417",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "716365eaff33ef29",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "b7a64588fd5b7c5f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown_mmd": {
+      "key": "e30ffe6c5a759f9c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown_phpextra": {
+      "key": "006c325e525da631",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:markdown_strict": {
+      "key": "6240acc32e148770",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bool#write:plain": {
+      "key": "e7fa84d8e3cada7d",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:commonmark": {
+      "key": "f4ab112e4fd2ccb0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:commonmark_x": {
+      "key": "37ec01fad36503bf",
+      "exit": 0,
+      "stdout": "---\nnote: \"{x}\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:gfm": {
+      "key": "0a8331ebfd97d84f",
+      "exit": 0,
+      "stdout": "---\nnote: \"{x}\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown": {
+      "key": "6ccc47d16d2f32e5",
+      "exit": 0,
+      "stdout": "---\nnote: \"{x}\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown-yaml_metadata_block": {
+      "key": "b94936768c6656fb",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "1afdd53ec0f98651",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "28191c978221d063",
+      "exit": 0,
+      "stdout": "note: {x}\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown_mmd": {
+      "key": "e7be9afe598c9a0a",
+      "exit": 0,
+      "stdout": "note: {x}\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown_phpextra": {
+      "key": "2b97e742e0c4f579",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:markdown_strict": {
+      "key": "2fc5ba00099d45ae",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#e2e:plain": {
+      "key": "627942a416cd7825",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#read": {
+      "key": "5d9f5edfe2ba45b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"{x}\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:commonmark": {
+      "key": "f4ab112e4fd2ccb0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:commonmark_x": {
+      "key": "37ec01fad36503bf",
+      "exit": 0,
+      "stdout": "---\nnote: \"{x}\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:gfm": {
+      "key": "0a8331ebfd97d84f",
+      "exit": 0,
+      "stdout": "---\nnote: \"{x}\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown": {
+      "key": "6ccc47d16d2f32e5",
+      "exit": 0,
+      "stdout": "---\nnote: \"{x}\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown-yaml_metadata_block": {
+      "key": "b94936768c6656fb",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "1afdd53ec0f98651",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "28191c978221d063",
+      "exit": 0,
+      "stdout": "note: {x}\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown_mmd": {
+      "key": "e7be9afe598c9a0a",
+      "exit": 0,
+      "stdout": "note: {x}\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown_phpextra": {
+      "key": "2b97e742e0c4f579",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:markdown_strict": {
+      "key": "2fc5ba00099d45ae",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-brace-start#write:plain": {
+      "key": "627942a416cd7825",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:commonmark": {
+      "key": "727ea8b905f2bcf0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:commonmark_x": {
+      "key": "673a86d1e8cd31bf",
+      "exit": 0,
+      "stdout": "---\nnote: \\[x\\]\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:gfm": {
+      "key": "785f8764bb3d890f",
+      "exit": 0,
+      "stdout": "---\nnote: \\[x\\]\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown": {
+      "key": "3d7dc2fa57c704e5",
+      "exit": 0,
+      "stdout": "---\nnote: \\[x\\]\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown-yaml_metadata_block": {
+      "key": "2dac98de0709fdbb",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "4a4c5a15d661b451",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "84bf1f2a0123caa3",
+      "exit": 0,
+      "stdout": "note: \\[x\\]\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown_mmd": {
+      "key": "b870162744246c0a",
+      "exit": 0,
+      "stdout": "note: \\[x\\]\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown_phpextra": {
+      "key": "bbad38a7fc02bab9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:markdown_strict": {
+      "key": "00773528f43517ae",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#e2e:plain": {
+      "key": "332abdcd01654a25",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#read": {
+      "key": "83bcb82b9843e4b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"[x]\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-bracket#write:commonmark": {
+      "key": "727ea8b905f2bcf0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:commonmark_x": {
+      "key": "673a86d1e8cd31bf",
+      "exit": 0,
+      "stdout": "---\nnote: \\[x\\]\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:gfm": {
+      "key": "785f8764bb3d890f",
+      "exit": 0,
+      "stdout": "---\nnote: \\[x\\]\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown": {
+      "key": "3d7dc2fa57c704e5",
+      "exit": 0,
+      "stdout": "---\nnote: \\[x\\]\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown-yaml_metadata_block": {
+      "key": "2dac98de0709fdbb",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "4a4c5a15d661b451",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "84bf1f2a0123caa3",
+      "exit": 0,
+      "stdout": "note: \\[x\\]\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown_mmd": {
+      "key": "b870162744246c0a",
+      "exit": 0,
+      "stdout": "note: \\[x\\]\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown_phpextra": {
+      "key": "bbad38a7fc02bab9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:markdown_strict": {
+      "key": "00773528f43517ae",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-bracket#write:plain": {
+      "key": "332abdcd01654a25",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:commonmark": {
+      "key": "073ed7f36ce0d6cb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:commonmark_x": {
+      "key": "054e957c1394b22e",
+      "exit": 0,
+      "stdout": "---\nnote: \"- item\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:gfm": {
+      "key": "9d4ed8a8d32b65de",
+      "exit": 0,
+      "stdout": "---\nnote: \"- item\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown": {
+      "key": "3170bc2bb0309d1c",
+      "exit": 0,
+      "stdout": "---\nnote: \"- item\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown-yaml_metadata_block": {
+      "key": "d919f09ec65f7c92",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "dbbb742c4b7573e0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "af687f199c61a8aa",
+      "exit": 0,
+      "stdout": "note: - item\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown_mmd": {
+      "key": "ab8ddf33b88a43fd",
+      "exit": 0,
+      "stdout": "note: - item\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown_phpextra": {
+      "key": "e1dba5e5d86c7e18",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:markdown_strict": {
+      "key": "f3606728dc8d8609",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#e2e:plain": {
+      "key": "80fcf5eb068a5d5c",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#read": {
+      "key": "e1e7cd01ad347243",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"- item\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:commonmark": {
+      "key": "073ed7f36ce0d6cb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:commonmark_x": {
+      "key": "054e957c1394b22e",
+      "exit": 0,
+      "stdout": "---\nnote: \"- item\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:gfm": {
+      "key": "9d4ed8a8d32b65de",
+      "exit": 0,
+      "stdout": "---\nnote: \"- item\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown": {
+      "key": "3170bc2bb0309d1c",
+      "exit": 0,
+      "stdout": "---\nnote: \"- item\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown-yaml_metadata_block": {
+      "key": "d919f09ec65f7c92",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "dbbb742c4b7573e0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "af687f199c61a8aa",
+      "exit": 0,
+      "stdout": "note: - item\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown_mmd": {
+      "key": "ab8ddf33b88a43fd",
+      "exit": 0,
+      "stdout": "note: - item\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown_phpextra": {
+      "key": "e1dba5e5d86c7e18",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:markdown_strict": {
+      "key": "f3606728dc8d8609",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-dash-start#write:plain": {
+      "key": "80fcf5eb068a5d5c",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:commonmark": {
+      "key": "abf125e38ecbd9ad",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:commonmark_x": {
+      "key": "32ac925c1d46524c",
+      "exit": 0,
+      "stdout": "---\ndate: May 2001\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:gfm": {
+      "key": "b91f92cb845dfbfc",
+      "exit": 0,
+      "stdout": "---\ndate: May 2001\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown": {
+      "key": "a5404434c75d0b5a",
+      "exit": 0,
+      "stdout": "---\ndate: May 2001\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown-yaml_metadata_block": {
+      "key": "46b6782de690f8c0",
+      "exit": 0,
+      "stdout": "% \n% \n% May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "353233e2fc1b33ae",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "be83bff2e8df40a8",
+      "exit": 0,
+      "stdout": "date: May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown_mmd": {
+      "key": "568a64abdfc59e3f",
+      "exit": 0,
+      "stdout": "date: May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown_phpextra": {
+      "key": "39620a01323b2c36",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:markdown_strict": {
+      "key": "de49bc48296f3cbb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#e2e:plain": {
+      "key": "25ca84e9508b5e1a",
+      "exit": 0,
+      "stdout": "May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#read": {
+      "key": "3d204345059437f5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"date\":{\"t\":\"MetaString\",\"c\":\"May 2001\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-date-only#write:commonmark": {
+      "key": "abf125e38ecbd9ad",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:commonmark_x": {
+      "key": "32ac925c1d46524c",
+      "exit": 0,
+      "stdout": "---\ndate: May 2001\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:gfm": {
+      "key": "b91f92cb845dfbfc",
+      "exit": 0,
+      "stdout": "---\ndate: May 2001\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown": {
+      "key": "a5404434c75d0b5a",
+      "exit": 0,
+      "stdout": "---\ndate: May 2001\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown-yaml_metadata_block": {
+      "key": "46b6782de690f8c0",
+      "exit": 0,
+      "stdout": "% \n% \n% May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "353233e2fc1b33ae",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "be83bff2e8df40a8",
+      "exit": 0,
+      "stdout": "date: May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown_mmd": {
+      "key": "568a64abdfc59e3f",
+      "exit": 0,
+      "stdout": "date: May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown_phpextra": {
+      "key": "39620a01323b2c36",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:markdown_strict": {
+      "key": "de49bc48296f3cbb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-date-only#write:plain": {
+      "key": "25ca84e9508b5e1a",
+      "exit": 0,
+      "stdout": "May 2001\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:commonmark": {
+      "key": "22574dc336ae79f2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:commonmark_x": {
+      "key": "ad7fcb60728ca5ff",
+      "exit": 0,
+      "stdout": "---\nnote: \"*loud* words\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:gfm": {
+      "key": "cc55ca340524da2f",
+      "exit": 0,
+      "stdout": "---\nnote: \"*loud* words\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown": {
+      "key": "2a9521cfa9713b41",
+      "exit": 0,
+      "stdout": "---\nnote: \"*loud* words\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown-yaml_metadata_block": {
+      "key": "7415912b902ef2f3",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "e249e58d856d4d75",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "b3697750ce34448b",
+      "exit": 0,
+      "stdout": "note: *loud* words\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown_mmd": {
+      "key": "6867fcccbb26daf0",
+      "exit": 0,
+      "stdout": "note: *loud* words\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown_phpextra": {
+      "key": "b5c436d3601068cd",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:markdown_strict": {
+      "key": "b193352d6a35f73c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#e2e:plain": {
+      "key": "69dcebb23b516701",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#read": {
+      "key": "0c9bb9426797f24a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"loud\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"words\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:commonmark": {
+      "key": "22574dc336ae79f2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:commonmark_x": {
+      "key": "ad7fcb60728ca5ff",
+      "exit": 0,
+      "stdout": "---\nnote: \"*loud* words\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:gfm": {
+      "key": "cc55ca340524da2f",
+      "exit": 0,
+      "stdout": "---\nnote: \"*loud* words\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown": {
+      "key": "2a9521cfa9713b41",
+      "exit": 0,
+      "stdout": "---\nnote: \"*loud* words\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown-yaml_metadata_block": {
+      "key": "7415912b902ef2f3",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "e249e58d856d4d75",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "b3697750ce34448b",
+      "exit": 0,
+      "stdout": "note: *loud* words\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown_mmd": {
+      "key": "6867fcccbb26daf0",
+      "exit": 0,
+      "stdout": "note: *loud* words\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown_phpextra": {
+      "key": "b5c436d3601068cd",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:markdown_strict": {
+      "key": "b193352d6a35f73c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-emphasis#write:plain": {
+      "key": "69dcebb23b516701",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:commonmark": {
+      "key": "3a3a18e541bed23c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:commonmark_x": {
+      "key": "edda28ed429c5a3b",
+      "exit": 0,
+      "stdout": "---\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:gfm": {
+      "key": "b6464927e819220b",
+      "exit": 0,
+      "stdout": "---\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown": {
+      "key": "400ece4e54ff1805",
+      "exit": 0,
+      "stdout": "---\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown-yaml_metadata_block": {
+      "key": "9d610e94cae74807",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "ceac753f595e5ce1",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "cf6da1ff2aee382f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown_mmd": {
+      "key": "150b9813a37b804a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown_phpextra": {
+      "key": "e435c06e9ac82969",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:markdown_strict": {
+      "key": "20fe8b4f4d6be51e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#e2e:plain": {
+      "key": "4316e45d0edbc845",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#read": {
+      "key": "965c7902a59ad1c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"list\":{\"t\":\"MetaList\",\"c\":[]},\"note\":{\"t\":\"MetaString\",\"c\":\"\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:commonmark": {
+      "key": "786d6d5c01f17406",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:commonmark_x": {
+      "key": "57b796bc4d52f625",
+      "exit": 0,
+      "stdout": "---\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:gfm": {
+      "key": "ba2698df623de335",
+      "exit": 0,
+      "stdout": "---\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown": {
+      "key": "8367bfe39646275f",
+      "exit": 0,
+      "stdout": "---\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown-yaml_metadata_block": {
+      "key": "2f0d0baa3fdc4d71",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "b72110e0e778de4b",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "f7d77e2c7078adb9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown_mmd": {
+      "key": "ad8f0960e1d9404c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown_phpextra": {
+      "key": "1f9716f0a466b993",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:markdown_strict": {
+      "key": "42a3ca4dac20c3e0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-empty-values#write:plain": {
+      "key": "13ec8a5add19429f",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:commonmark": {
+      "key": "6c291f952fa2978f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:commonmark_x": {
+      "key": "df791bdf63db12da",
+      "exit": 0,
+      "stdout": "---\nnote: |\n  one\\\n  two\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:gfm": {
+      "key": "3205e65533a0644a",
+      "exit": 0,
+      "stdout": "---\nnote: |\n  one\\\n  two\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown": {
+      "key": "b5807f77fcec9798",
+      "exit": 0,
+      "stdout": "---\nnote: |\n  one\\\n  two\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown-yaml_metadata_block": {
+      "key": "d1b02d5413340c5e",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "827036c746caa26c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "7617e8f37c9370a6",
+      "exit": 0,
+      "stdout": "note: one\\\n  two\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown_mmd": {
+      "key": "7fd88b3a619ea069",
+      "exit": 0,
+      "stdout": "note: one  \n  two\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown_phpextra": {
+      "key": "4d26891b0ce6ddf4",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:markdown_strict": {
+      "key": "def4c02c627fc325",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#e2e:plain": {
+      "key": "68c6e5c1166241d8",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#read": {
+      "key": "a237ada94b7c83d7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"one\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"two\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-line-break#write:commonmark": {
+      "key": "6c291f952fa2978f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:commonmark_x": {
+      "key": "df791bdf63db12da",
+      "exit": 0,
+      "stdout": "---\nnote: |\n  one\\\n  two\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:gfm": {
+      "key": "3205e65533a0644a",
+      "exit": 0,
+      "stdout": "---\nnote: |\n  one\\\n  two\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown": {
+      "key": "b5807f77fcec9798",
+      "exit": 0,
+      "stdout": "---\nnote: |\n  one\\\n  two\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown-yaml_metadata_block": {
+      "key": "d1b02d5413340c5e",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "827036c746caa26c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "7617e8f37c9370a6",
+      "exit": 0,
+      "stdout": "note: one\\\n  two\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown_mmd": {
+      "key": "7fd88b3a619ea069",
+      "exit": 0,
+      "stdout": "note: one  \n  two\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown_phpextra": {
+      "key": "4d26891b0ce6ddf4",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:markdown_strict": {
+      "key": "def4c02c627fc325",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-line-break#write:plain": {
+      "key": "68c6e5c1166241d8",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:commonmark": {
+      "key": "397efd5e1f18f365",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:commonmark_x": {
+      "key": "1b65484a353df56e",
+      "exit": 0,
+      "stdout": "---\npeople:\n- name: Di\n- name: Ed\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:gfm": {
+      "key": "a175eb08d1ca0dbe",
+      "exit": 0,
+      "stdout": "---\npeople:\n- name: Di\n- name: Ed\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown": {
+      "key": "646a7e7749a85354",
+      "exit": 0,
+      "stdout": "---\npeople:\n- name: Di\n- name: Ed\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown-yaml_metadata_block": {
+      "key": "cd7633c011bd428a",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "48a1ac5cbf9fb490",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "2048f2bb54169a62",
+      "exit": 0,
+      "stdout": "people:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown_mmd": {
+      "key": "b4b5d2d1b2f680bf",
+      "exit": 0,
+      "stdout": "people:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown_phpextra": {
+      "key": "a39e2c46f95b8aa8",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:markdown_strict": {
+      "key": "b7917c35adc29db3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#e2e:plain": {
+      "key": "7b9846ebdd806614",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#read": {
+      "key": "1a2762e24444eadd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"people\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"name\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Di\"}]}}},{\"t\":\"MetaMap\",\"c\":{\"name\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Ed\"}]}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:commonmark": {
+      "key": "397efd5e1f18f365",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:commonmark_x": {
+      "key": "1b65484a353df56e",
+      "exit": 0,
+      "stdout": "---\npeople:\n- name: Di\n- name: Ed\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:gfm": {
+      "key": "a175eb08d1ca0dbe",
+      "exit": 0,
+      "stdout": "---\npeople:\n- name: Di\n- name: Ed\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown": {
+      "key": "646a7e7749a85354",
+      "exit": 0,
+      "stdout": "---\npeople:\n- name: Di\n- name: Ed\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown-yaml_metadata_block": {
+      "key": "cd7633c011bd428a",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "48a1ac5cbf9fb490",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "2048f2bb54169a62",
+      "exit": 0,
+      "stdout": "people:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown_mmd": {
+      "key": "b4b5d2d1b2f680bf",
+      "exit": 0,
+      "stdout": "people:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown_phpextra": {
+      "key": "a39e2c46f95b8aa8",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:markdown_strict": {
+      "key": "b7917c35adc29db3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-list-of-maps#write:plain": {
+      "key": "7b9846ebdd806614",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:commonmark": {
+      "key": "49fc49f97e88b8e5",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:commonmark_x": {
+      "key": "7830a79943683004",
+      "exit": 0,
+      "stdout": "---\nnote: value value value value value value value value value value value\n  value value value value value value value\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:gfm": {
+      "key": "141fdc1b90842f54",
+      "exit": 0,
+      "stdout": "---\nnote: value value value value value value value value value value value\n  value value value value value value value\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown": {
+      "key": "775d62f8cd8a363e",
+      "exit": 0,
+      "stdout": "---\nnote: value value value value value value value value value value value\n  value value value value value value value\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown-yaml_metadata_block": {
+      "key": "7295e92f601834f0",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "2c0d4bb93fa78eda",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "38d84bcf7dac7f68",
+      "exit": 0,
+      "stdout": "note: value value value value value value value value value value value\n  value value value value value value value\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown_mmd": {
+      "key": "12ecfe8ab18177c3",
+      "exit": 0,
+      "stdout": "note: value value value value value value value value value value value\n  value value value value value value value\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown_phpextra": {
+      "key": "bab71b70d38ce5f2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:markdown_strict": {
+      "key": "786cec1dfd1f2567",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#e2e:plain": {
+      "key": "adeedc5e4513247e",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#read": {
+      "key": "f89f4bbed8f042bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-long-value#write:commonmark": {
+      "key": "49fc49f97e88b8e5",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:commonmark_x": {
+      "key": "7830a79943683004",
+      "exit": 0,
+      "stdout": "---\nnote: value value value value value value value value value value value\n  value value value value value value value\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:gfm": {
+      "key": "141fdc1b90842f54",
+      "exit": 0,
+      "stdout": "---\nnote: value value value value value value value value value value value\n  value value value value value value value\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown": {
+      "key": "775d62f8cd8a363e",
+      "exit": 0,
+      "stdout": "---\nnote: value value value value value value value value value value value\n  value value value value value value value\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown-yaml_metadata_block": {
+      "key": "7295e92f601834f0",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "2c0d4bb93fa78eda",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "38d84bcf7dac7f68",
+      "exit": 0,
+      "stdout": "note: value value value value value value value value value value value\n  value value value value value value value\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown_mmd": {
+      "key": "12ecfe8ab18177c3",
+      "exit": 0,
+      "stdout": "note: value value value value value value value value value value value\n  value value value value value value value\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown_phpextra": {
+      "key": "bab71b70d38ce5f2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:markdown_strict": {
+      "key": "786cec1dfd1f2567",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-long-value#write:plain": {
+      "key": "adeedc5e4513247e",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:commonmark": {
+      "key": "deb25c2080ad60f1",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:commonmark_x": {
+      "key": "f90f23759d4e41b4",
+      "exit": 0,
+      "stdout": "---\ninfo:\n  codes:\n  - z\n  place: Oslo\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:gfm": {
+      "key": "ae7cec9e8cbceb64",
+      "exit": 0,
+      "stdout": "---\ninfo:\n  codes:\n  - z\n  place: Oslo\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown": {
+      "key": "ac25e4b3e675a922",
+      "exit": 0,
+      "stdout": "---\ninfo:\n  codes:\n  - z\n  place: Oslo\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown-yaml_metadata_block": {
+      "key": "d247c216d7935020",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "f080c2b3719cf8ce",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "1ed3df44667afef8",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown_mmd": {
+      "key": "7e9cb344c47ee513",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown_phpextra": {
+      "key": "41e5f0011e147266",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:markdown_strict": {
+      "key": "d67115df5437f057",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#e2e:plain": {
+      "key": "3c7a82ab2397e962",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#read": {
+      "key": "862ce7610f77be89",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"info\":{\"t\":\"MetaMap\",\"c\":{\"codes\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"z\"}]}]},\"place\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Oslo\"}]}}}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-map#write:commonmark": {
+      "key": "db626cc8d81b80c1",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:commonmark_x": {
+      "key": "3d0c9aee9020b254",
+      "exit": 0,
+      "stdout": "---\ninfo:\n  codes:\n  - z\n  place: Oslo\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:gfm": {
+      "key": "7f849d9a7862dfc4",
+      "exit": 0,
+      "stdout": "---\ninfo:\n  codes:\n  - z\n  place: Oslo\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown": {
+      "key": "7b2fa61b92f3a702",
+      "exit": 0,
+      "stdout": "---\ninfo:\n  codes:\n  - z\n  place: Oslo\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown-yaml_metadata_block": {
+      "key": "c5e513645aadde20",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "092f97b704b7826e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "f289159c604fbc98",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown_mmd": {
+      "key": "a6d43c4706c758fb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown_phpextra": {
+      "key": "cdefe0097e2234a6",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:markdown_strict": {
+      "key": "0860f9982ddb291f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-map#write:plain": {
+      "key": "972bdb008f4e9e42",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
     "standalone-meta#e2e:gfm": {
       "key": "2a6f87188f354e0d",
       "exit": 0,
@@ -1079,6 +3011,2214 @@
       "key": "20c2d29b44cc4efc",
       "exit": 0,
       "stdout": "T\n\n\nx\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:commonmark": {
+      "key": "b7d6c4a6b2de1cec",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:commonmark_x": {
+      "key": "b1545c0e1471ce01",
+      "exit": 0,
+      "stdout": "---\ngrid:\n- - a\n  - b\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:gfm": {
+      "key": "17c24355c091ccd1",
+      "exit": 0,
+      "stdout": "---\ngrid:\n- - a\n  - b\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown": {
+      "key": "42fe4b05cd2392e7",
+      "exit": 0,
+      "stdout": "---\ngrid:\n- - a\n  - b\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown-yaml_metadata_block": {
+      "key": "092086ed2f3c9815",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "9b42b0b57bf17ffb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "07d9c00770c4540d",
+      "exit": 0,
+      "stdout": "grid:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown_mmd": {
+      "key": "70809fe544821db6",
+      "exit": 0,
+      "stdout": "grid:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown_phpextra": {
+      "key": "725f0e0a02102453",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:markdown_strict": {
+      "key": "8eb521769fe21282",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#e2e:plain": {
+      "key": "666c14aebacb5b27",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#read": {
+      "key": "a09d704268548164",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"grid\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:commonmark": {
+      "key": "b7d6c4a6b2de1cec",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:commonmark_x": {
+      "key": "b1545c0e1471ce01",
+      "exit": 0,
+      "stdout": "---\ngrid:\n- - a\n  - b\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:gfm": {
+      "key": "17c24355c091ccd1",
+      "exit": 0,
+      "stdout": "---\ngrid:\n- - a\n  - b\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown": {
+      "key": "42fe4b05cd2392e7",
+      "exit": 0,
+      "stdout": "---\ngrid:\n- - a\n  - b\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown-yaml_metadata_block": {
+      "key": "092086ed2f3c9815",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "9b42b0b57bf17ffb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "07d9c00770c4540d",
+      "exit": 0,
+      "stdout": "grid:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown_mmd": {
+      "key": "70809fe544821db6",
+      "exit": 0,
+      "stdout": "grid:\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown_phpextra": {
+      "key": "725f0e0a02102453",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:markdown_strict": {
+      "key": "8eb521769fe21282",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-nested-list#write:plain": {
+      "key": "666c14aebacb5b27",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:commonmark": {
+      "key": "5c69b2f96ef41676",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:commonmark_x": {
+      "key": "5b0937225839ffe3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:gfm": {
+      "key": "16aed5d9c2dc3053",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown": {
+      "key": "e6b23371e6507fd9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown-yaml_metadata_block": {
+      "key": "7cf694cda24a85af",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "bd2ed9691b3ac555",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "65e42613819d05f7",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown_mmd": {
+      "key": "a47e64d6e31d6ff8",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown_phpextra": {
+      "key": "44110926a3e545bd",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:markdown_strict": {
+      "key": "cb0e18a97a00bb0c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#e2e:plain": {
+      "key": "cef14d7fe82e8419",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#read": {
+      "key": "b851af32df21105e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-none#write:commonmark": {
+      "key": "5c69b2f96ef41676",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:commonmark_x": {
+      "key": "5b0937225839ffe3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:gfm": {
+      "key": "16aed5d9c2dc3053",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown": {
+      "key": "e6b23371e6507fd9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown-yaml_metadata_block": {
+      "key": "7cf694cda24a85af",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "bd2ed9691b3ac555",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "65e42613819d05f7",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown_mmd": {
+      "key": "a47e64d6e31d6ff8",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown_phpextra": {
+      "key": "44110926a3e545bd",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:markdown_strict": {
+      "key": "cb0e18a97a00bb0c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-none#write:plain": {
+      "key": "cef14d7fe82e8419",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:commonmark": {
+      "key": "7248ee6e3ad9f092",
+      "exit": 0,
+      "stdout": "Body text.\n\n[1] title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:commonmark_x": {
+      "key": "abd08f33ffdaeb35",
+      "exit": 0,
+      "stdout": "---\ntitle: Titled[^1]\n---\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:gfm": {
+      "key": "a57d4ad64bdcca85",
+      "exit": 0,
+      "stdout": "---\ntitle: Titled[^1]\n---\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown": {
+      "key": "f4b351dd4a833557",
+      "exit": 0,
+      "stdout": "---\ntitle: Titled[^1]\n---\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown-yaml_metadata_block": {
+      "key": "6c6adf3764649d11",
+      "exit": 0,
+      "stdout": "% Titled[^1]\n% \n% \n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "a63bb673dbcd12f3",
+      "exit": 0,
+      "stdout": "Body text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "9fc0ff41f39ba319",
+      "exit": 0,
+      "stdout": "title: Titled[^1]\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown_mmd": {
+      "key": "fd0b1cdc928b6a70",
+      "exit": 0,
+      "stdout": "title: Titled[^1]\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown_phpextra": {
+      "key": "fa6c7122005edf9b",
+      "exit": 0,
+      "stdout": "Body text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:markdown_strict": {
+      "key": "f535fc0ea4585c94",
+      "exit": 0,
+      "stdout": "Body text.\n\n[1] title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#e2e:plain": {
+      "key": "337134d7d3cc0a17",
+      "exit": 0,
+      "stdout": "Titled[1]\n\n\nBody text.\n\n[1] title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#read": {
+      "key": "3bade7e90222807a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Titled\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"title\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:commonmark": {
+      "key": "7248ee6e3ad9f092",
+      "exit": 0,
+      "stdout": "Body text.\n\n[1] title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:commonmark_x": {
+      "key": "abd08f33ffdaeb35",
+      "exit": 0,
+      "stdout": "---\ntitle: Titled[^1]\n---\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:gfm": {
+      "key": "a57d4ad64bdcca85",
+      "exit": 0,
+      "stdout": "---\ntitle: Titled[^1]\n---\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown": {
+      "key": "f4b351dd4a833557",
+      "exit": 0,
+      "stdout": "---\ntitle: Titled[^1]\n---\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown-yaml_metadata_block": {
+      "key": "6c6adf3764649d11",
+      "exit": 0,
+      "stdout": "% Titled[^1]\n% \n% \n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "a63bb673dbcd12f3",
+      "exit": 0,
+      "stdout": "Body text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "9fc0ff41f39ba319",
+      "exit": 0,
+      "stdout": "title: Titled[^1]\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown_mmd": {
+      "key": "fd0b1cdc928b6a70",
+      "exit": 0,
+      "stdout": "title: Titled[^1]\n\nBody text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown_phpextra": {
+      "key": "fa6c7122005edf9b",
+      "exit": 0,
+      "stdout": "Body text.\n\n[^1]: title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:markdown_strict": {
+      "key": "f535fc0ea4585c94",
+      "exit": 0,
+      "stdout": "Body text.\n\n[1] title note\n",
+      "stderr": ""
+    },
+    "standalone-note-in-title#write:plain": {
+      "key": "337134d7d3cc0a17",
+      "exit": 0,
+      "stdout": "Titled[1]\n\n\nBody text.\n\n[1] title note\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:commonmark": {
+      "key": "927d751634b72f44",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:commonmark_x": {
+      "key": "5edc360a044baaf9",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  only part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:gfm": {
+      "key": "c53042199d731fe9",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  only part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown": {
+      "key": "3f5defef699bf3d3",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  only part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown-yaml_metadata_block": {
+      "key": "311b798988f6ed6d",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "4b8daad9af8d0427",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "f26bcdcb7c49c405",
+      "exit": 0,
+      "stdout": "abstract: only part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown_mmd": {
+      "key": "991b1ab6ab24d722",
+      "exit": 0,
+      "stdout": "abstract: only part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown_phpextra": {
+      "key": "0c1a67703327d73f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:markdown_strict": {
+      "key": "52ed6fbf0c19eb2e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#e2e:plain": {
+      "key": "16d184623b094f93",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#read": {
+      "key": "685c0e0a0446ec5c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abstract\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"only\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"part\"}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-one-block#write:commonmark": {
+      "key": "927d751634b72f44",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:commonmark_x": {
+      "key": "5edc360a044baaf9",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  only part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:gfm": {
+      "key": "c53042199d731fe9",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  only part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown": {
+      "key": "3f5defef699bf3d3",
+      "exit": 0,
+      "stdout": "---\nabstract: |\n  only part\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown-yaml_metadata_block": {
+      "key": "311b798988f6ed6d",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "4b8daad9af8d0427",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "f26bcdcb7c49c405",
+      "exit": 0,
+      "stdout": "abstract: only part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown_mmd": {
+      "key": "991b1ab6ab24d722",
+      "exit": 0,
+      "stdout": "abstract: only part\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown_phpextra": {
+      "key": "0c1a67703327d73f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:markdown_strict": {
+      "key": "52ed6fbf0c19eb2e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-one-block#write:plain": {
+      "key": "16d184623b094f93",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:commonmark": {
+      "key": "16e443199a8531a3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:commonmark_x": {
+      "key": "5b20ff8b7e1b0138",
+      "exit": 0,
+      "stdout": "---\nkeywords:\n- graph\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:gfm": {
+      "key": "6d54d262406070e8",
+      "exit": 0,
+      "stdout": "---\nkeywords:\n- graph\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown": {
+      "key": "43a091ea5e425076",
+      "exit": 0,
+      "stdout": "---\nkeywords:\n- graph\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown-yaml_metadata_block": {
+      "key": "8423068bd3cdb5ec",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "9a438bb2bd6a133a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "82d0ee46822a1584",
+      "exit": 0,
+      "stdout": "keywords: graph\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown_mmd": {
+      "key": "8e8fe6c2234e425d",
+      "exit": 0,
+      "stdout": "keywords: graph\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown_phpextra": {
+      "key": "d5a55fb137735472",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:markdown_strict": {
+      "key": "079edc7e916eefb9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#e2e:plain": {
+      "key": "b01108162d1ed036",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#read": {
+      "key": "a1706e0bc7bcf01b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"keywords\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"graph\"}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-only-other#write:commonmark": {
+      "key": "16e443199a8531a3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:commonmark_x": {
+      "key": "5b20ff8b7e1b0138",
+      "exit": 0,
+      "stdout": "---\nkeywords:\n- graph\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:gfm": {
+      "key": "6d54d262406070e8",
+      "exit": 0,
+      "stdout": "---\nkeywords:\n- graph\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown": {
+      "key": "43a091ea5e425076",
+      "exit": 0,
+      "stdout": "---\nkeywords:\n- graph\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown-yaml_metadata_block": {
+      "key": "8423068bd3cdb5ec",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "9a438bb2bd6a133a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "82d0ee46822a1584",
+      "exit": 0,
+      "stdout": "keywords: graph\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown_mmd": {
+      "key": "8e8fe6c2234e425d",
+      "exit": 0,
+      "stdout": "keywords: graph\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown_phpextra": {
+      "key": "d5a55fb137735472",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:markdown_strict": {
+      "key": "079edc7e916eefb9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-only-other#write:plain": {
+      "key": "b01108162d1ed036",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:commonmark": {
+      "key": "6e6a856337ca90e0",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:commonmark_x": {
+      "key": "3cd1d7cc675a0ccf",
+      "exit": 0,
+      "stdout": "---\nlang: en\ntags:\n- red\n- blue\ntitle: T\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:gfm": {
+      "key": "5978c0b02da4e33f",
+      "exit": 0,
+      "stdout": "---\nlang: en\ntags:\n- red\n- blue\ntitle: T\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown": {
+      "key": "7990cebf1fc63cf1",
+      "exit": 0,
+      "stdout": "---\nlang: en\ntags:\n- red\n- blue\ntitle: T\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown-yaml_metadata_block": {
+      "key": "ac784ae5b177cddb",
+      "exit": 0,
+      "stdout": "% T\n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "25dbedefaad6ac1d",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "9d3a4316bb0213d3",
+      "exit": 0,
+      "stdout": "lang: en\ntags: red; blue\ntitle: T\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown_mmd": {
+      "key": "9d0d8beac5d08be6",
+      "exit": 0,
+      "stdout": "lang: en\ntags: red; blue\ntitle: T\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown_phpextra": {
+      "key": "98318a751e6c1215",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:markdown_strict": {
+      "key": "d9f667f4537c52ea",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#e2e:plain": {
+      "key": "2e0caeb6701fb431",
+      "exit": 0,
+      "stdout": "T\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#read": {
+      "key": "239a3f8b9da7c818",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"lang\":{\"t\":\"MetaString\",\"c\":\"en\"},\"tags\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"red\"},{\"t\":\"MetaString\",\"c\":\"blue\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"T\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:commonmark": {
+      "key": "b805f7ce76c4fc20",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:commonmark_x": {
+      "key": "70a8bf63346f6507",
+      "exit": 0,
+      "stdout": "---\nlang: en\ntags:\n- red\n- blue\ntitle: T\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:gfm": {
+      "key": "5547b71ff77aa5b7",
+      "exit": 0,
+      "stdout": "---\nlang: en\ntags:\n- red\n- blue\ntitle: T\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown": {
+      "key": "4b2b5db7f39f4a29",
+      "exit": 0,
+      "stdout": "---\nlang: en\ntags:\n- red\n- blue\ntitle: T\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown-yaml_metadata_block": {
+      "key": "e6dd90ad2c2b3883",
+      "exit": 0,
+      "stdout": "% T\n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "06095855076ca795",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "65dfed942b19495b",
+      "exit": 0,
+      "stdout": "lang: en\ntags: red; blue\ntitle: T\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown_mmd": {
+      "key": "d1654be49fbc81e6",
+      "exit": 0,
+      "stdout": "lang: en\ntags: red; blue\ntitle: T\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown_phpextra": {
+      "key": "8c99cdd9f486fdad",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:markdown_strict": {
+      "key": "92cc5f97d0cdfc4a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-other-keys#write:plain": {
+      "key": "733c0a5e40c5a069",
+      "exit": 0,
+      "stdout": "T\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:commonmark": {
+      "key": "ce4056ebbd171eba",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:commonmark_x": {
+      "key": "793e0faf939f0f41",
+      "exit": 0,
+      "stdout": "---\nnote: say \\\"so\\\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:gfm": {
+      "key": "6875f0695992ed51",
+      "exit": 0,
+      "stdout": "---\nnote: say \"so\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown": {
+      "key": "a8e554cda21f3f1b",
+      "exit": 0,
+      "stdout": "---\nnote: say \\\"so\\\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown-yaml_metadata_block": {
+      "key": "e059101049019f05",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "f53213fdf224160f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "20b0479fb922e8ad",
+      "exit": 0,
+      "stdout": "note: say \\\"so\\\"\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown_mmd": {
+      "key": "8246c535ce692540",
+      "exit": 0,
+      "stdout": "note: say \"so\"\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown_phpextra": {
+      "key": "fc68b071af7a9077",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:markdown_strict": {
+      "key": "b84b29e3ce55a02c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#e2e:plain": {
+      "key": "789cbf691b31565b",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#read": {
+      "key": "488a6dd2b9c24902",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"say\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"\\\"so\\\"\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-quotes#write:commonmark": {
+      "key": "ce4056ebbd171eba",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:commonmark_x": {
+      "key": "793e0faf939f0f41",
+      "exit": 0,
+      "stdout": "---\nnote: say \\\"so\\\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:gfm": {
+      "key": "6875f0695992ed51",
+      "exit": 0,
+      "stdout": "---\nnote: say \"so\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown": {
+      "key": "a8e554cda21f3f1b",
+      "exit": 0,
+      "stdout": "---\nnote: say \\\"so\\\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown-yaml_metadata_block": {
+      "key": "e059101049019f05",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "f53213fdf224160f",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "20b0479fb922e8ad",
+      "exit": 0,
+      "stdout": "note: say \\\"so\\\"\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown_mmd": {
+      "key": "8246c535ce692540",
+      "exit": 0,
+      "stdout": "note: say \"so\"\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown_phpextra": {
+      "key": "fc68b071af7a9077",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:markdown_strict": {
+      "key": "b84b29e3ce55a02c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-quotes#write:plain": {
+      "key": "789cbf691b31565b",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:commonmark": {
+      "key": "beb8dd9e681d1d93",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:commonmark_x": {
+      "key": "7773c336aab53674",
+      "exit": 0,
+      "stdout": "---\nnote: \"left: right\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:gfm": {
+      "key": "8e1850974c3fa944",
+      "exit": 0,
+      "stdout": "---\nnote: \"left: right\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown": {
+      "key": "dd23d9aa91daff2e",
+      "exit": 0,
+      "stdout": "---\nnote: \"left: right\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown-yaml_metadata_block": {
+      "key": "7c65dd6e4fda3078",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "7644bc76159dbdc2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "dea55f2376404960",
+      "exit": 0,
+      "stdout": "note: left: right\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown_mmd": {
+      "key": "9b9b355ff6bcb849",
+      "exit": 0,
+      "stdout": "note: left: right\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown_phpextra": {
+      "key": "1390a04142432e4a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:markdown_strict": {
+      "key": "85cb7042cd32def5",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#e2e:plain": {
+      "key": "683c4e8af48e666e",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#read": {
+      "key": "01397ab52346243b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"left: right\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:commonmark": {
+      "key": "beb8dd9e681d1d93",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:commonmark_x": {
+      "key": "7773c336aab53674",
+      "exit": 0,
+      "stdout": "---\nnote: \"left: right\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:gfm": {
+      "key": "8e1850974c3fa944",
+      "exit": 0,
+      "stdout": "---\nnote: \"left: right\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown": {
+      "key": "dd23d9aa91daff2e",
+      "exit": 0,
+      "stdout": "---\nnote: \"left: right\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown-yaml_metadata_block": {
+      "key": "7c65dd6e4fda3078",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "7644bc76159dbdc2",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "dea55f2376404960",
+      "exit": 0,
+      "stdout": "note: left: right\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown_mmd": {
+      "key": "9b9b355ff6bcb849",
+      "exit": 0,
+      "stdout": "note: left: right\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown_phpextra": {
+      "key": "1390a04142432e4a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:markdown_strict": {
+      "key": "85cb7042cd32def5",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-colon#write:plain": {
+      "key": "683c4e8af48e666e",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:commonmark": {
+      "key": "ea852e0cdff78a15",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:commonmark_x": {
+      "key": "50069a8cba24d168",
+      "exit": 0,
+      "stdout": "---\nnote: \"before \\\\# after\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:gfm": {
+      "key": "36a5315db9c22cf8",
+      "exit": 0,
+      "stdout": "---\nnote: \"before \\\\# after\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown": {
+      "key": "a798afe0febee092",
+      "exit": 0,
+      "stdout": "---\nnote: \"before \\\\# after\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown-yaml_metadata_block": {
+      "key": "9ddedf4bdedc03c4",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "099d48a7a046465e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "e9b4dc1a59a0d48c",
+      "exit": 0,
+      "stdout": "note: before \\# after\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown_mmd": {
+      "key": "6d174c1f37e15c83",
+      "exit": 0,
+      "stdout": "note: before \\# after\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown_phpextra": {
+      "key": "3978aea38e73ab46",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:markdown_strict": {
+      "key": "f675598b043249a7",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#e2e:plain": {
+      "key": "f6c8fb5c0d53fc52",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#read": {
+      "key": "dc9fa163a5e4b4bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"before # after\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:commonmark": {
+      "key": "ea852e0cdff78a15",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:commonmark_x": {
+      "key": "50069a8cba24d168",
+      "exit": 0,
+      "stdout": "---\nnote: \"before \\\\# after\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:gfm": {
+      "key": "36a5315db9c22cf8",
+      "exit": 0,
+      "stdout": "---\nnote: \"before \\\\# after\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown": {
+      "key": "a798afe0febee092",
+      "exit": 0,
+      "stdout": "---\nnote: \"before \\\\# after\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown-yaml_metadata_block": {
+      "key": "9ddedf4bdedc03c4",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "099d48a7a046465e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "e9b4dc1a59a0d48c",
+      "exit": 0,
+      "stdout": "note: before \\# after\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown_mmd": {
+      "key": "6d174c1f37e15c83",
+      "exit": 0,
+      "stdout": "note: before \\# after\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown_phpextra": {
+      "key": "3978aea38e73ab46",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:markdown_strict": {
+      "key": "f675598b043249a7",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-hash#write:plain": {
+      "key": "f6c8fb5c0d53fc52",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:commonmark": {
+      "key": "f0df25d8a00876d3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:commonmark_x": {
+      "key": "78834236a2fb5552",
+      "exit": 0,
+      "stdout": "---\nnote: 42\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:gfm": {
+      "key": "f7cd6a73bd9fba62",
+      "exit": 0,
+      "stdout": "---\nnote: 42\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown": {
+      "key": "304e969a833457a4",
+      "exit": 0,
+      "stdout": "---\nnote: 42\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown-yaml_metadata_block": {
+      "key": "6e69deab6ed22e66",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "28f775b414c6e818",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "65acc15fa2600cee",
+      "exit": 0,
+      "stdout": "note: 42\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown_mmd": {
+      "key": "fcd09b4eabecc641",
+      "exit": 0,
+      "stdout": "note: 42\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown_phpextra": {
+      "key": "b832864764194800",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:markdown_strict": {
+      "key": "fd49fa26254fc95d",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#e2e:plain": {
+      "key": "ba7336a719b23be4",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#read": {
+      "key": "3bd63bf298f0803b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"42\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-string-number#write:commonmark": {
+      "key": "f0df25d8a00876d3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:commonmark_x": {
+      "key": "78834236a2fb5552",
+      "exit": 0,
+      "stdout": "---\nnote: 42\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:gfm": {
+      "key": "f7cd6a73bd9fba62",
+      "exit": 0,
+      "stdout": "---\nnote: 42\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown": {
+      "key": "304e969a833457a4",
+      "exit": 0,
+      "stdout": "---\nnote: 42\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown-yaml_metadata_block": {
+      "key": "6e69deab6ed22e66",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "28f775b414c6e818",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "65acc15fa2600cee",
+      "exit": 0,
+      "stdout": "note: 42\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown_mmd": {
+      "key": "fcd09b4eabecc641",
+      "exit": 0,
+      "stdout": "note: 42\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown_phpextra": {
+      "key": "b832864764194800",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:markdown_strict": {
+      "key": "fd49fa26254fc95d",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-number#write:plain": {
+      "key": "ba7336a719b23be4",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:commonmark": {
+      "key": "0b26fe2c9122be84",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:commonmark_x": {
+      "key": "c06da273c0ddf745",
+      "exit": 0,
+      "stdout": "---\nnote: plain words here\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:gfm": {
+      "key": "6551856af0b9d495",
+      "exit": 0,
+      "stdout": "---\nnote: plain words here\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown": {
+      "key": "01ef2de8a64bd877",
+      "exit": 0,
+      "stdout": "---\nnote: plain words here\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown-yaml_metadata_block": {
+      "key": "e0671a4155c5fe71",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "4d40f8261a52f5b3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "7930ed3cc97a0df9",
+      "exit": 0,
+      "stdout": "note: plain words here\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown_mmd": {
+      "key": "ae2363282ae32f8a",
+      "exit": 0,
+      "stdout": "note: plain words here\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown_phpextra": {
+      "key": "d98de5256957a07b",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:markdown_strict": {
+      "key": "3a57db5ffdd37aee",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#e2e:plain": {
+      "key": "d01d2328befd3bb7",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#read": {
+      "key": "207cd7c5df468d8c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"plain words here\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:commonmark": {
+      "key": "0b26fe2c9122be84",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:commonmark_x": {
+      "key": "c06da273c0ddf745",
+      "exit": 0,
+      "stdout": "---\nnote: plain words here\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:gfm": {
+      "key": "6551856af0b9d495",
+      "exit": 0,
+      "stdout": "---\nnote: plain words here\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown": {
+      "key": "01ef2de8a64bd877",
+      "exit": 0,
+      "stdout": "---\nnote: plain words here\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown-yaml_metadata_block": {
+      "key": "e0671a4155c5fe71",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "4d40f8261a52f5b3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "7930ed3cc97a0df9",
+      "exit": 0,
+      "stdout": "note: plain words here\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown_mmd": {
+      "key": "ae2363282ae32f8a",
+      "exit": 0,
+      "stdout": "note: plain words here\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown_phpextra": {
+      "key": "d98de5256957a07b",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:markdown_strict": {
+      "key": "3a57db5ffdd37aee",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-plain#write:plain": {
+      "key": "d01d2328befd3bb7",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:commonmark": {
+      "key": "f22375fde05e0cfb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:commonmark_x": {
+      "key": "5ec1f1ae65d84586",
+      "exit": 0,
+      "stdout": "---\nnote: \"true\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:gfm": {
+      "key": "f6d7a1ca7d51bfb6",
+      "exit": 0,
+      "stdout": "---\nnote: \"true\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown": {
+      "key": "7e022e7b945a3c84",
+      "exit": 0,
+      "stdout": "---\nnote: \"true\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown-yaml_metadata_block": {
+      "key": "b14d71d65dda35ba",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "032c051ad09b0128",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "0a80ad88f18a45c2",
+      "exit": 0,
+      "stdout": "note: true\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown_mmd": {
+      "key": "f8c5c15f30a95a9d",
+      "exit": 0,
+      "stdout": "note: true\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown_phpextra": {
+      "key": "9a54a48ba0f5cb90",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:markdown_strict": {
+      "key": "116e084f809b0179",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#e2e:plain": {
+      "key": "d25db1fd5666ddc4",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#read": {
+      "key": "cfa931d050128be3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaString\",\"c\":\"true\"}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-string-true#write:commonmark": {
+      "key": "f22375fde05e0cfb",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:commonmark_x": {
+      "key": "5ec1f1ae65d84586",
+      "exit": 0,
+      "stdout": "---\nnote: \"true\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:gfm": {
+      "key": "f6d7a1ca7d51bfb6",
+      "exit": 0,
+      "stdout": "---\nnote: \"true\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown": {
+      "key": "7e022e7b945a3c84",
+      "exit": 0,
+      "stdout": "---\nnote: \"true\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown-yaml_metadata_block": {
+      "key": "b14d71d65dda35ba",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "032c051ad09b0128",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "0a80ad88f18a45c2",
+      "exit": 0,
+      "stdout": "note: true\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown_mmd": {
+      "key": "f8c5c15f30a95a9d",
+      "exit": 0,
+      "stdout": "note: true\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown_phpextra": {
+      "key": "9a54a48ba0f5cb90",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:markdown_strict": {
+      "key": "116e084f809b0179",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-true#write:plain": {
+      "key": "d25db1fd5666ddc4",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:commonmark": {
+      "key": "5402ad37573ecde9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:commonmark_x": {
+      "key": "945119136bd5b0a0",
+      "exit": 0,
+      "stdout": "---\nnote:\n- \"y\"\n- \"n\"\n- \"yes\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:gfm": {
+      "key": "2ba32dd35523d630",
+      "exit": 0,
+      "stdout": "---\nnote:\n- \"y\"\n- \"n\"\n- \"yes\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown": {
+      "key": "00750cccd2ad4bd2",
+      "exit": 0,
+      "stdout": "---\nnote:\n- \"y\"\n- \"n\"\n- \"yes\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown-yaml_metadata_block": {
+      "key": "e0af7802f53ab7ac",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "c02281262ce1077e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "7e665b44298b9dd4",
+      "exit": 0,
+      "stdout": "note: y; n; yes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown_mmd": {
+      "key": "1293fe81c587a2af",
+      "exit": 0,
+      "stdout": "note: y; n; yes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown_phpextra": {
+      "key": "09bce3938a3dd986",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:markdown_strict": {
+      "key": "79dc0464de2bf493",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#e2e:plain": {
+      "key": "4fe4c826d4d32912",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#read": {
+      "key": "97f5b758881c6fd1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"note\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"y\"},{\"t\":\"MetaString\",\"c\":\"n\"},{\"t\":\"MetaString\",\"c\":\"yes\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-string-y#write:commonmark": {
+      "key": "5402ad37573ecde9",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:commonmark_x": {
+      "key": "945119136bd5b0a0",
+      "exit": 0,
+      "stdout": "---\nnote:\n- \"y\"\n- \"n\"\n- \"yes\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:gfm": {
+      "key": "2ba32dd35523d630",
+      "exit": 0,
+      "stdout": "---\nnote:\n- \"y\"\n- \"n\"\n- \"yes\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown": {
+      "key": "00750cccd2ad4bd2",
+      "exit": 0,
+      "stdout": "---\nnote:\n- \"y\"\n- \"n\"\n- \"yes\"\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown-yaml_metadata_block": {
+      "key": "e0af7802f53ab7ac",
+      "exit": 0,
+      "stdout": "% \n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "c02281262ce1077e",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "7e665b44298b9dd4",
+      "exit": 0,
+      "stdout": "note: y; n; yes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown_mmd": {
+      "key": "1293fe81c587a2af",
+      "exit": 0,
+      "stdout": "note: y; n; yes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown_phpextra": {
+      "key": "09bce3938a3dd986",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:markdown_strict": {
+      "key": "79dc0464de2bf493",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-string-y#write:plain": {
+      "key": "4fe4c826d4d32912",
+      "exit": 0,
+      "stdout": "\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:commonmark": {
+      "key": "148ac349eff1b0c1",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:commonmark_x": {
+      "key": "f01a59f04554e20a",
+      "exit": 0,
+      "stdout": "---\ntitle: A Short Title\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:gfm": {
+      "key": "bcb5f9b710a4e3ba",
+      "exit": 0,
+      "stdout": "---\ntitle: A Short Title\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown": {
+      "key": "892b565b3026d43c",
+      "exit": 0,
+      "stdout": "---\ntitle: A Short Title\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown-yaml_metadata_block": {
+      "key": "35db51b0fa4bf5d6",
+      "exit": 0,
+      "stdout": "% A Short Title\n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "97343a7f717f1258",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "f879b2038480a99e",
+      "exit": 0,
+      "stdout": "title: A Short Title\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown_mmd": {
+      "key": "3da5b8cc9b08a687",
+      "exit": 0,
+      "stdout": "title: A Short Title\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown_phpextra": {
+      "key": "a237a74b81debb80",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:markdown_strict": {
+      "key": "c140bf88dd645b3b",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#e2e:plain": {
+      "key": "a7655233337842fc",
+      "exit": 0,
+      "stdout": "A Short Title\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#read": {
+      "key": "cfe72ea00d1a61e9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Short\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-title#write:commonmark": {
+      "key": "148ac349eff1b0c1",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:commonmark_x": {
+      "key": "f01a59f04554e20a",
+      "exit": 0,
+      "stdout": "---\ntitle: A Short Title\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:gfm": {
+      "key": "bcb5f9b710a4e3ba",
+      "exit": 0,
+      "stdout": "---\ntitle: A Short Title\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown": {
+      "key": "892b565b3026d43c",
+      "exit": 0,
+      "stdout": "---\ntitle: A Short Title\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown-yaml_metadata_block": {
+      "key": "35db51b0fa4bf5d6",
+      "exit": 0,
+      "stdout": "% A Short Title\n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "97343a7f717f1258",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "f879b2038480a99e",
+      "exit": 0,
+      "stdout": "title: A Short Title\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown_mmd": {
+      "key": "3da5b8cc9b08a687",
+      "exit": 0,
+      "stdout": "title: A Short Title\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown_phpextra": {
+      "key": "a237a74b81debb80",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:markdown_strict": {
+      "key": "c140bf88dd645b3b",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title#write:plain": {
+      "key": "a7655233337842fc",
+      "exit": 0,
+      "stdout": "A Short Title\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:commonmark": {
+      "key": "d918a280a93e8cb6",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:commonmark_x": {
+      "key": "e761ceda4734d0eb",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- Ann Lee\n- Bo\ndate: 2020-01-02\ntitle: Field Notes\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:gfm": {
+      "key": "d92143398130dabb",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- Ann Lee\n- Bo\ndate: 2020-01-02\ntitle: Field Notes\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown": {
+      "key": "61c04d89228ca4c1",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- Ann Lee\n- Bo\ndate: 2020-01-02\ntitle: Field Notes\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown-yaml_metadata_block": {
+      "key": "e333a55215f5f447",
+      "exit": 0,
+      "stdout": "% Field Notes\n% Ann Lee\n  Bo\n% 2020-01-02\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "7f7bcebe2f9d7ded",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "0e131837e383854f",
+      "exit": 0,
+      "stdout": "author: Ann Lee; Bo\ndate: 2020-01-02\ntitle: Field Notes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown_mmd": {
+      "key": "4c7b98b91c3786b8",
+      "exit": 0,
+      "stdout": "author: Ann Lee; Bo\ndate: 2020-01-02\ntitle: Field Notes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown_phpextra": {
+      "key": "6eec0d2aa0ee5f95",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:markdown_strict": {
+      "key": "d44bc2e613b2a78c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#e2e:plain": {
+      "key": "86d4c7163e30b501",
+      "exit": 0,
+      "stdout": "Field Notes\nAnn Lee; Bo\n2020-01-02\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#read": {
+      "key": "7bad27566dca039e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Ann\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Lee\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Bo\"}]}]},\"date\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2020-01-02\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Notes\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:commonmark": {
+      "key": "fc912ba290ea645c",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:commonmark_x": {
+      "key": "7197585b1b10ac11",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- Ann Lee\n- Bo\ndate: 2020-01-02\ntitle: Field Notes\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:gfm": {
+      "key": "24f0405724d6b3a1",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- Ann Lee\n- Bo\ndate: 2020-01-02\ntitle: Field Notes\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown": {
+      "key": "3ed0582348c6338f",
+      "exit": 0,
+      "stdout": "---\nauthor:\n- Ann Lee\n- Bo\ndate: 2020-01-02\ntitle: Field Notes\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown-yaml_metadata_block": {
+      "key": "cbef47ad63d20e8d",
+      "exit": 0,
+      "stdout": "% Field Notes\n% Ann Lee\n  Bo\n% 2020-01-02\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "d83086840cf6623b",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "c6a44f25b10c22f5",
+      "exit": 0,
+      "stdout": "author: Ann Lee; Bo\ndate: 2020-01-02\ntitle: Field Notes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown_mmd": {
+      "key": "d07963ad38e7e206",
+      "exit": 0,
+      "stdout": "author: Ann Lee; Bo\ndate: 2020-01-02\ntitle: Field Notes\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown_phpextra": {
+      "key": "f99c155171652ee3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:markdown_strict": {
+      "key": "0eb88e3e7da2c94a",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-author-date#write:plain": {
+      "key": "77b548def1efdbcf",
+      "exit": 0,
+      "stdout": "Field Notes\nAnn Lee; Bo\n2020-01-02\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:commonmark": {
+      "key": "4627382f598eb0a3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:commonmark_x": {
+      "key": "29d10eefc8f7eb54",
+      "exit": 0,
+      "stdout": "---\ntitle: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:gfm": {
+      "key": "fc09bfade74c7604",
+      "exit": 0,
+      "stdout": "---\ntitle: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown": {
+      "key": "fa46acadfb8cc892",
+      "exit": 0,
+      "stdout": "---\ntitle: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown-yaml_metadata_block": {
+      "key": "e6cdc15fb5cb1320",
+      "exit": 0,
+      "stdout": "% heading heading heading heading heading heading heading heading\n  heading heading heading heading\n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "f2f959bc3ffab3ce",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "fc117e7de5175618",
+      "exit": 0,
+      "stdout": "title: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown_mmd": {
+      "key": "66eee8c96e6bf9dd",
+      "exit": 0,
+      "stdout": "title: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown_phpextra": {
+      "key": "ee736e63dafca366",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:markdown_strict": {
+      "key": "d29459d97a0ac941",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#e2e:plain": {
+      "key": "ef3d443f65a35dd2",
+      "exit": 0,
+      "stdout": "heading heading heading heading heading heading heading heading heading\nheading heading heading\n\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#read": {
+      "key": "9545b141cca1a9fb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-title-long#write:commonmark": {
+      "key": "4627382f598eb0a3",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:commonmark_x": {
+      "key": "29d10eefc8f7eb54",
+      "exit": 0,
+      "stdout": "---\ntitle: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:gfm": {
+      "key": "fc09bfade74c7604",
+      "exit": 0,
+      "stdout": "---\ntitle: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown": {
+      "key": "fa46acadfb8cc892",
+      "exit": 0,
+      "stdout": "---\ntitle: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n---\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown-yaml_metadata_block": {
+      "key": "e6cdc15fb5cb1320",
+      "exit": 0,
+      "stdout": "% heading heading heading heading heading heading heading heading\n  heading heading heading heading\n% \n% \n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown-yaml_metadata_block-pandoc_title_block": {
+      "key": "f2f959bc3ffab3ce",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block": {
+      "key": "fc117e7de5175618",
+      "exit": 0,
+      "stdout": "title: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown_mmd": {
+      "key": "66eee8c96e6bf9dd",
+      "exit": 0,
+      "stdout": "title: heading heading heading heading heading heading heading heading\n  heading heading heading heading\n\nBody text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown_phpextra": {
+      "key": "ee736e63dafca366",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:markdown_strict": {
+      "key": "d29459d97a0ac941",
+      "exit": 0,
+      "stdout": "Body text.\n",
+      "stderr": ""
+    },
+    "standalone-title-long#write:plain": {
+      "key": "ef3d443f65a35dd2",
+      "exit": 0,
+      "stdout": "heading heading heading heading heading heading heading heading heading\nheading heading heading\n\n\nBody text.\n",
       "stderr": ""
     },
     "tab-stop-2#e2e:commonmark": {

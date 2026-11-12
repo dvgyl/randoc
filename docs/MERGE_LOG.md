@@ -1644,3 +1644,42 @@ I-LATEX-09 and I-LATEX-10 have the old text (the worker report has the
 new numbers); scope gaps: math (no row yet) and syntax highlighting
 (I-LATEX-01, I-LATEX-02); the other low rows. Open checks: the mutation sample,
 coverage, fuzzing.
+
+## Workstream markdown-writer (branch `ws/markdown-writer`, head 4eb413e, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. The earlier commits
+of the branch are on `main` as c0a90c0, and the branch merged `main` at
+34fb476. Content: the difference classes of real corpus documents, each
+from an oracle matrix that stays as cases (`mdw_tool.py corpus --trees
+DIR` runs the writer on the oracle tree of each document): the blank line
+after an indented table, the fence count of nested fenced divs, the
+newlines of raw blocks and raw-attribute fences, the unbreakable `; `
+between citations, the breaks of image attributes and the HTML `<a>`
+tag, unique automatic heading identifiers, `%` at a line start, the
+notes of the metadata first, and `gfm` display math. New dependency
+inside the workspace: `randoc-markdown-writer` uses `randoc-templates`
+(for the metadata context). New rows I-MDW-14 and I-MDW-15 (low).
+
+The branch also holds 30 replay cases (330 units, `options/standalone-*`,
+`-s` over 11 format and extension sets) with the results of the
+reference. These units FAIL at the head, because the writer does not
+render the template yet (standalone output is half-done). They are new
+units, not regressions: the baseline does not hold them.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 4eb413e (04:11 to 04:40 UTC; worker report): baseline 40768 units, 0 regressions, 1532 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Writer on the oracle trees of the corpus: 57 of 60 documents correct (39 before); 51 pass end to end, 6 differ only by reader differences; 7 documents have no oracle tree (the reference stops with a LaTeX parse error). Writer harness before the merge of `main`: 19287 units, 18411 pass, 876 fail (666 of the failures are the new standalone units), 0 regressions unit by unit. |
+| 3. Tests | `cargo test -p randoc-markdown-writer -p randoc` on the merged tree: 23 pass, 0 fail, 1 ignored. Coverage and the mutation tests: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | No review round of the current code; due. |
+| 6. No slowdowns | CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` and `Cargo.lock` merged
+without a conflict). Licence scan: no hit.
+
+Open findings: grid tables with row spans (I-MDW-02); standalone output
+is half-done (the 330 `options/standalone-*` units fail); I-MDW-05,
+I-MDW-06, I-MDW-14, I-MDW-15 and the other open rows. Open checks:
+fuzzing, coverage, the mutation tests, the CPU table.

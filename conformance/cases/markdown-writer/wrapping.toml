@@ -326,3 +326,51 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"BlockQuote",
 [[case]]
 id = "wrap-code-span"
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcd"},{"t":"Space"},{"t":"Str","c":"abcdef"},{"t":"Space"},{"t":"Code","c":[["",[],[]],"a b c d e f"]},{"t":"Space"},{"t":"Str","c":"tail"}]}]}'
+
+[[case]]
+id = "start-percent-letter"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"%x"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "hard-percent-letter"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"LineBreak"},{"t":"Str","c":"%x"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "soft-percent-letter"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"SoftBreak"},{"t":"Str","c":"%x"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "start-percent-nbsp"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"%\u00a0x"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "hard-percent-nbsp"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"LineBreak"},{"t":"Str","c":"%\u00a0x"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "soft-percent-nbsp"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"SoftBreak"},{"t":"Str","c":"%\u00a0x"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "start-percent-twice"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"%%"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "hard-percent-twice"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"LineBreak"},{"t":"Str","c":"%%"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "soft-percent-twice"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"SoftBreak"},{"t":"Str","c":"%%"},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "start-percent-dot"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"%."},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "hard-percent-dot"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"LineBreak"},{"t":"Str","c":"%."},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "soft-percent-dot"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"SoftBreak"},{"t":"Str","c":"%."},{"t":"Space"},{"t":"Str","c":"b"}]}]}'

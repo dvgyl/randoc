@@ -430,6 +430,7 @@ dependencies = [
  "randoc-html",
  "randoc-layout",
  "randoc-math",
+ "randoc-templates",
  "serde_json",
  "toml",
 ]

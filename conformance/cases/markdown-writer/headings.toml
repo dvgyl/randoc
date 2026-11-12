@@ -152,3 +152,48 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":
 [[case]]
 id = "braces"
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["",[],[]],[{"t":"Str","c":"Text"},{"t":"Space"},{"t":"Str","c":"{#x}"}]]}]}'
+
+[[case]]
+id = "unique-id-repeat"
+to = ["markdown", "gfm", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["a-1",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["a-2",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "unique-id-gap"
+to = ["markdown", "gfm", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["a-2",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "unique-id-explicit-first"
+to = ["markdown", "gfm", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["x",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "unique-id-suffix-first"
+to = ["markdown", "gfm", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a-1",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "unique-id-taken-by-other"
+to = ["markdown", "gfm", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[2,["a-1",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "unique-id-other-first"
+to = ["markdown", "gfm", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "unique-id-after-div"
+to = ["markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Div","c":[["a",[],[]],[{"t":"Para","c":[{"t":"Str","c":"x"}]}]]},{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "auto-id-with-class"
+to = ["markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a",["c"],[]],[{"t":"Str","c":"A"}]]}]}'
+
+[[case]]
+id = "auto-id-with-kv"
+to = ["markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[2,["a",[],[["k","v"]]],[{"t":"Str","c":"A"}]]}]}'

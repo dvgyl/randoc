@@ -3,6 +3,7 @@
 
 Subcommands:
   diff   Generate random document trees and compare the oracle with Randoc.
+  corpus Classify the corpus documents whose writer output differs.
   cases  Write the conformance case files in conformance/cases/markdown-writer/.
 
 The trees and the cases are original data (standing order 7a).
@@ -218,6 +219,8 @@ def Table(head, body, aligns=None, widths=None, caption=None, foot=(), rowhead=0
 
 
 def doc(blocks, meta=None):
+    if isinstance(blocks, dict):
+        blocks, meta = blocks["blocks"], blocks["meta"]
     s = json.dumps(
         {"pandoc-api-version": API, "meta": meta or {}, "blocks": blocks},
         ensure_ascii=False,
@@ -651,9 +654,102 @@ def cmd_reduce(args):
     return 0
 
 
+# ---------------------------------------------------------------- corpus
+
+CORPUS_FORMATS = "markdown,gfm,commonmark,html,latex,json,native"
+
+
+def corpus_signature(o, r):
+    """The first differing line pair of two outcomes, with digits as N and words as W."""
+    if o.stdout == r.stdout:
+        return "exit %s vs %s / stderr differs" % (o.exit, r.exit)
+    ol = o.stdout.decode(errors="replace").split("\n")
+    rl = r.stdout.decode(errors="replace").split("\n")
+    for i in range(max(len(ol), len(rl))):
+        a = ol[i] if i < len(ol) else "<END>"
+        b = rl[i] if i < len(rl) else "<END>"
+        if a != b:
+            norm = lambda t: re.sub(r"[A-Za-z]+", "W", re.sub(r"[0-9]+", "N", t))[:70]
+            return "%r | %r" % (norm(a), norm(b))
+    return "same lines"
+
+
+def cmd_corpus(args):
+    """Classifies each corpus document whose writer output differs.
+
+    The writer runs on the oracle tree, so that a reader difference cannot
+    hide or make a writer class. A document whose Randoc tree differs from
+    the oracle tree is listed as a reader difference.
+    """
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools", "corpus")
+    sys.path.insert(0, os.path.normpath(root))
+    import corpuslib
+    import run as corpus_run
+
+    corpus = os.path.abspath(os.environ["RANDOC_CORPUS"])
+    oracle = os.path.abspath(os.environ.get("RANDOC_ORACLE_PANDOC", "pandoc"))
+    randoc = os.path.abspath(args.randoc)
+    formats = set(args.formats.split(","))
+    documents = [d for d in corpuslib.load_manifest() if d.format in formats]
+    os.makedirs(args.trees, exist_ok=True)
+    home = corpus_run.HOME
+    to = args.to
+
+    def oracle_outcome(cache, document, cli):
+        key = cache.key(document.sha256, cli)
+        stored = cache.get(key)
+        if stored is not None:
+            return stored
+        outcome = corpus_run.execute(oracle, cli, corpus, home, 60)
+        cache.put(key, outcome)
+        return outcome
+
+    def job(document):
+        cache = corpus_run.OracleCache(os.path.join(corpus, corpus_run.CACHE_NAME),
+                                       corpus_run.fingerprint(oracle))
+        try:
+            json_cli = ["-f", document.format, "-t", "json", document.file_name]
+            o_tree = oracle_outcome(cache, document, json_cli)
+            o_out = oracle_outcome(cache, document, ["-f", document.format, "-t", to, document.file_name])
+        finally:
+            cache.close()
+        if o_tree.exit != 0:
+            return document, "oracle error", None
+        tree_path = os.path.join(args.trees, document.name + ".json")
+        with open(tree_path, "wb") as fh:
+            fh.write(o_tree.stdout)
+        r_out = corpus_run.execute(randoc, ["-f", "json", "-t", to, tree_path], corpus, home, 60)
+        r_tree = corpus_run.execute(randoc, json_cli, corpus, home, 60)
+        reader_same = r_tree.exit == 0 and corpus_run.json_equal(
+            json.loads(o_tree.stdout), json.loads(r_tree.stdout))
+        if (o_out.exit, o_out.stdout, o_out.stderr) == (r_out.exit, r_out.stdout, r_out.stderr):
+            return document, "pass" if reader_same else "reader", None
+        return document, "writer", corpus_signature(o_out, r_out)
+
+    counts = collections.Counter()
+    example = {}
+    status = collections.Counter()
+    readers = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
+        for document, kind, sig in pool.map(job, documents):
+            status[kind] += 1
+            if kind == "reader":
+                readers.append("%s (%s)" % (document.name, document.format))
+            if sig is not None:
+                counts[sig] += 1
+                example.setdefault(sig, document.name)
+    print("%s: %d documents; writer on the oracle tree: %s" % (
+        to, len(documents), ", ".join("%s %d" % kv for kv in sorted(status.items()))))
+    for sig, n in counts.most_common():
+        print("%4d  %-40s %s" % (n, example[sig][:40], sig))
+    for name in readers:
+        print("reader difference only: %s" % name)
+    return 0
+
+
 # ---------------------------------------------------------------- cases
 
-MD5 = ["markdown", "gfm", "commonmark", "plain", "markdown_strict"]
+MD5 =["markdown", "gfm", "commonmark", "plain", "markdown_strict"]
 MD6 = ["markdown", "gfm", "commonmark", "commonmark_x", "plain", "markdown_strict"]
 
 FILES = {}
@@ -763,6 +859,11 @@ def define_cases():
     c("wrap-in-list", [BL([" ".join([LONG] * 2), FILLER + " 1. x"])])
     c("wrap-in-quote", [BQ(Para(FILLER + " > quoted # hash"))])
     c("wrap-code-span", [Para(FILLER, " ", Code("a b c d e f"), " tail")])
+    # A `%` at the start of a line needs a backslash only when it is a word of its own.
+    for name, tok in [("percent-letter", "%x"), ("percent-nbsp", "%\u00a0x"), ("percent-twice", "%%"), ("percent-dot", "%.")]:
+        c("start-" + name, [Para(Str(tok), SP, Str("b"))])
+        c("hard-" + name, [Para("a", LB, Str(tok), SP, Str("b"))])
+        c("soft-" + name, [Para("a", SB, Str(tok), SP, Str("b"))])
 
     # ---------------------------------------------------------- headings
     c = suite("headings", "Headings: levels, attributes, content.", MD6)
@@ -798,6 +899,21 @@ def define_cases():
     c("dash-text", [H(2, "- item")])
     c("nbsp", [H(2, "a\u00a0b")])
     c("braces", [H(2, "Text {#x}")])
+
+    # The automatic identifier of a heading counts the headings before it.
+    ids = {
+        "repeat": [("A", "a"), ("A", "a-1"), ("A", "a-2")],
+        "gap": [("A", "a"), ("A", "a-2")],
+        "explicit-first": [("A", "x"), ("A", "a")],
+        "suffix-first": [("A", "a-1"), ("A", "a")],
+        "taken-by-other": [("A", "a"), ("B", "a"), ("A", "a-1")],
+        "other-first": [("B", "a"), ("A", "a")],
+    }
+    for name, hs in ids.items():
+        c("unique-id-" + name, [H(2, t, A(i)) for t, i in hs], to=["markdown", "gfm", "markdown_phpextra"])
+    c("unique-id-after-div", [Div(A("a"), Para("x")), H(2, "A", A("a"))], to=["markdown"])
+    c("auto-id-with-class", [H(2, "A", A("a", ["c"]))], to=["markdown", "markdown_phpextra"])
+    c("auto-id-with-kv", [H(2, "A", A("a", [], [("k", "v")]))], to=["markdown", "markdown_phpextra"])
 
     # ---------------------------------------------------------- blocks
     c = suite("blocks", "Paragraphs, plain blocks, block quotes, line blocks, rules, raw blocks.", MD6)
@@ -842,6 +958,15 @@ def define_cases():
     c("raw-html-inline-tag", [RawB("html", "<b>")], to=MD6 + ["markdown-raw_html"])
     c("raw-latex-env", [RawB("latex", "\\begin{center}\nx\n\\end{center}")], to=MD6 + ["markdown-raw_tex", "markdown-raw_tex-raw_attribute"])
     c("raw-block-in-list", [BL([[RawB("html", "<hr>")], "x"])], to=MD6 + ["markdown-raw_html"])
+
+    # Raw blocks: the text with its own trailing newlines, then the separator.
+    rto = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+    nexts = [("raw", RawB("html", "<j>")), ("raw-nl", RawB("html", "<j>\n")), ("raw-tex", RawB("latex", "\\j")),
+             ("plain", Plain("a")), ("para", Para("a")), ("end", None)]
+    for fmt in ["html", "latex"]:
+        for tname, text in [("empty", ""), ("one", "<i>"), ("nl", "<i>\n"), ("two-nl", "<i>\n\n"), ("lines", "a\nb\n")]:
+            for nname, nxt in nexts:
+                c("raw-%s-%s-then-%s" % (fmt, tname, nname), [Para("z"), RawB(fmt, text)] + ([nxt] if nxt else []), to=rto)
 
     # ---------------------------------------------------------- code
     c = suite("code", "Code blocks and code spans.", MD6 + ["markdown-fenced_code_blocks-backtick_code_blocks"])
@@ -983,6 +1108,23 @@ def define_cases():
     c("gfm-caption", [Table([["a"]], [["1"]], caption="Cap")], to=["gfm", "commonmark_x", "markdown_mmd", "markdown-table_captions"])
     c("list-tables", [Table([["a"]], [["1"]])], to=["markdown", "markdown_mmd", "markua"])
 
+    # A table, then one more block: one blank line between them in each form.
+    wide = "a cell text that is long " * 4
+    follow = {
+        "simple": Table([["h1", "h2"]], [["a", "b"]]),
+        "simple-no-head": Table([], [["a", "b"]]),
+        "simple-caption": Table([["h1", "h2"]], [["a", "b"]], caption="Cap"),
+        "multiline": Table([["h1", "h2"]], [[wide, "b"]]),
+        "multiline-widths": Table([["h1", "h2"]], [["a", "b"]], widths=[0.7, 0.3]),
+        "multiline-caption": Table([["h1", "h2"]], [[wide, "b"]], caption="Cap"),
+        "grid": Table([["h1", "h2"]], [[[Para("a"), Para("b")], "c"]]),
+        "pipe": Table([["h1", "h2"]], [["a", "b"]]),
+    }
+    for name, table in follow.items():
+        to = ["markdown", "markdown-simple_tables", "gfm", "plain"] if name == "pipe" else ["markdown", "plain"]
+        for nname, nxt in [("para", Para("next")), ("heading", H(2, "Next")), ("table", table)]:
+            c("then-%s-%s" % (nname, name), [table, nxt], to=to)
+
     # ---------------------------------------------------------- table form matrix
     fto = ["markdown", "markdown-simple_tables", "markdown-simple_tables-multiline_tables",
            "markdown-simple_tables-multiline_tables-grid_tables",
@@ -1119,6 +1261,20 @@ def define_cases():
     c("span-mark-class", [Para(Span(A("", ["mark"]), "m"))], to=span_to + ["markdown+mark"])
     c("span-brackets", [Para(Span(A("", ["c"]), "[x]"))], to=span_to)
 
+    # The fence of a div counts each div inside it, through divs only.
+    dv = lambda *bs: Div(A("", ["c"]), *bs)
+    px = Para("x")
+    fences = {
+        "one": dv(dv(px)), "two": dv(dv(px), dv(px)), "three": dv(dv(px), dv(px), dv(px)),
+        "nested": dv(dv(dv(px))), "nested-and-sibling": dv(dv(dv(px)), dv(px)), "between-para": dv(dv(px), px, dv(px)),
+        "in-list": dv(BL([[dv(px)], [dv(px)]])), "in-quote": dv(BQ(dv(px), dv(px))),
+        "after-list": dv(BL([[dv(px)]]), dv(px)),
+        "in-note": dv(Para(Note(dv(px)))),
+    }
+    for name, tree in fences.items():
+        c("fence-count-" + name, [tree], to=["markdown", "commonmark_x"])
+    c("fence-count-top-siblings", [dv(dv(px)), dv(px)], to=["markdown", "commonmark_x"])
+
     # ---------------------------------------------------------- links and images
     c = suite("links-images", "Links, autolinks and images.", MD6 + ["markdown-link_attributes"])
     c("inline", [Para(Link("text", "http://e.x/p"))])
@@ -1161,6 +1317,17 @@ def define_cases():
     c("image-adjacent", [Para(Image("a", "a.png"), Image("b", "b.png"))])
     c("ref-like-text", [Para("[a]: http://e.x")])
 
+    # The attributes of an image break between their parts, as those of a link.
+    words = "word " * 10
+    img_attr = A("fig-one", ["wide", "framed"], [("height", "11px"), ("width", "11px")])
+    c("image-attributes-wrap", [Para(words, Image("small icon", "images/icon.svg", attr=img_attr), " after")])
+    c("image-attributes-wrap-figure", [Fig(NA, [Plain("cap")], Plain(Image("cap", "images/icon-with-a-long-name.svg", attr=img_attr)))])
+    c("link-attributes-wrap", [Para(words, Link("small link", "https://e.x/page", attr=img_attr), " after")])
+    tag_attr = A("an-id", ["c1"], [("k", "v w")])
+    c("html-link-tag-wrap-long-href", [Para("word " * 12, Link("t", "https://e.x/" + "p" * 40, attr=tag_attr))], to=["gfm", "markdown-link_attributes"])
+    c("html-link-tag-wrap-title", [Para("word " * 10, Link("t", "https://e.x/p", title="the title here", attr=tag_attr), " end")], to=["gfm", "markdown-link_attributes"])
+    c("html-span-tag-wrap", [Para("word " * 11, Span(tag_attr, Str("t")))], to=["gfm", "markdown-bracketed_spans-native_spans"])
+
     # ---------------------------------------------------------- math and raw inlines
     mto = ["markdown", "markdown-tex_math_dollars", "markdown-tex_math_dollars+tex_math_single_backslash",
            "markdown-tex_math_dollars+tex_math_double_backslash", "gfm", "gfm-tex_math_gfm", "gfm-tex_math_dollars-tex_math_gfm",
@@ -1191,6 +1358,15 @@ def define_cases():
     c("raw-inline-backtick", [Para(RawI("rst", "a`b"))], to=rto)
     c("raw-inline-tex-macro", [Para(RawI("tex", "\\foo"), "bar")], to=rto)
     c("raw-inline-empty", [Para("x", RawI("html", ""), "y")], to=rto)
+
+    # White space at the ends of math: inline math loses it before the
+    # conversion and before the warning; display math keeps it; `gfm`
+    # writes the TeX without a warning and drops the outer newlines of a display.
+    edge_to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+    for name, tex in [("spaces", " y^2 "), ("newline", "  c+d\n"), ("two-newlines", "\n\nc+d\n\n"),
+                      ("bad-spaces", " \\sqrt{ "), ("bad-newline", "\n\\nosuch{y} ")]:
+        c("edge-space-inline-" + name, [Para("a ", Math(tex), " b")], to=edge_to)
+        c("edge-space-display-" + name, [Para("a ", DMath(tex), " b")], to=edge_to)
 
     # ---------------------------------------------------------- notes and citations
     nto = ["markdown", "markdown-footnotes", "gfm", "commonmark", "commonmark_x", "plain", "markdown_strict", "markdown_phpextra", "markdown_mmd"]
@@ -1225,6 +1401,29 @@ def define_cases():
     c("cite-intext-multiple", [Para(Cite([cit("a", "AuthorInText"), cit("b", "AuthorInText")], T("@a @b")))], to=cto)
     c("cite-in-note", [Para("a", Note(Para(Cite([cit("doe")], Str("[@doe]")))))], to=cto)
     c("cite-prefix-format", [Para(Cite([cit("doe", prefix=I(Emph("cf.")))], T("[cf. @doe]")))], to=cto)
+
+    # The separator `; ` between citations does not break; the other spaces do.
+    words = "word " * 9
+    keys = [("alphaalphaalpha_one", "", ""), ("betabetabeta_two", "", ""), ("gammagamma_three", "", "")]
+    c("cite-group-no-break", [Para(words, Cite([cit(k, prefix=p, suffix=x) for k, p, x in keys], Str("x")), " after words here")])
+    c("cite-prefix-breaks", [Para(words, Cite([cit("alphaalphaalpha_one", prefix="see also the", suffix="p. 33 and more"), cit("betabetabeta_two")], Str("x")), " after")])
+    c("cite-in-text-breaks", [Para(words, Cite([cit("alphaalpha_one", "AuthorInText", suffix="p. 33 and more words"), cit("betabeta_two")], Str("x")), " after")])
+    c("cite-many-keys", [Para("text ", Cite([cit("key_number_%d" % n) for n in range(8)], Str("x")), ".")])
+
+    # The writer converts the metadata before the body, also for a fragment:
+    # the notes of the metadata come first, in the order of the keys.
+    def mi(*xs):
+        return {"t": "MetaInlines", "c": I(*xs)}
+    body_note = [Para("body", Note(Para("body note")))]
+    metas = {
+        "author": {"author": {"t": "MetaList", "c": [mi("Ann", Note(Para("author note")))]}},
+        "title": {"title": mi("T", Note(Para("title note")))},
+        "custom": {"foo": mi("F", Note(Para("foo note")))},
+        "blocks": {"abstract": {"t": "MetaBlocks", "c": [Para("Abs", Note(Para("abstract note")))]}},
+        "two-keys": {"title": mi("T", Note(Para("t1"))), "author": {"t": "MetaList", "c": [mi("Ann", Note(Para("a1")))]}},
+    }
+    for name, meta in metas.items():
+        c("meta-note-" + name, {"blocks": body_note, "meta": meta}, to=["markdown", "gfm", "plain"])
 
     # ---------------------------------------------------------- inline styles
     c = suite("inlines", "Emphasis, quotes, breaks, emoji, non-breaking spaces and empty inlines.", MD6)
@@ -1300,6 +1499,63 @@ def define_cases():
     # ---------------------------------------------------------- writer options
     c = suite("options", "Writer options on the command line. These units wait for the command-line workstream.", ["markdown", "gfm", "plain"])
     long_para = [Para(" ".join([LONG] * 2), SB, "after soft break")]
+    # Standalone output: the title block forms over the extension set, the
+    # metadata kinds and the format.
+    def mi(*xs):
+        return {"t": "MetaInlines", "c": I(*xs)}
+
+    def ms(text):
+        return {"t": "MetaString", "c": text}
+
+    def ml(*xs):
+        return {"t": "MetaList", "c": list(xs)}
+
+    def mm(**kw):
+        return {"t": "MetaMap", "c": kw}
+
+    def mb(*bs):
+        return {"t": "MetaBlocks", "c": list(bs)}
+
+    def mbool(b):
+        return {"t": "MetaBool", "c": b}
+
+    standalone_to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block",
+                     "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd",
+                     "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+    meta_kinds = {
+        "none": {},
+        "title": {"title": mi("A Short Title")},
+        "title-author-date": {"title": mi("Field Notes"), "author": ml(mi("Ann Lee"), mi("Bo")), "date": mi("2020-01-02")},
+        "author-single": {"author": mi("Cy Moss")},
+        "date-only": {"date": ms("May 2001")},
+        "other-keys": {"title": mi("T"), "lang": ms("en"), "tags": ml(ms("red"), ms("blue"))},
+        "only-other": {"keywords": ml(mi("graph"))},
+        "string-plain": {"note": ms("plain words here")},
+        "string-colon": {"note": ms("left: right")},
+        "string-hash": {"note": ms("before # after")},
+        "string-number": {"note": ms("42")},
+        "string-true": {"note": ms("true")},
+        "string-y": {"note": ml(ms("y"), ms("n"), ms("yes"))},
+        "bool": {"draft": mbool(True), "final": mbool(False)},
+        "emphasis": {"note": mi(Emph("loud"), " words")},
+        "quotes": {"note": mi('say "so"')},
+        "empty-values": {"note": ms(""), "list": ml()},
+        "map": {"info": mm(place=mi("Oslo"), codes=ml(mi("z")))},
+        "blocks": {"abstract": mb(Para("first part"), Para("second part"))},
+        "one-block": {"abstract": mb(Para("only part"))},
+        "long-value": {"note": mi(" ".join(["value"] * 18))},
+        "dash-start": {"note": ms("- item")},
+        "brace-start": {"note": ms("{x}")},
+        "bracket": {"note": ms("[x]")},
+        "nested-list": {"grid": ml(ml(mi("a"), mi("b")))},
+        "list-of-maps": {"people": ml(mm(name=mi("Di")), mm(name=mi("Ed")))},
+        "line-break": {"note": mi("one", LB, "two")},
+        "note-in-title": {"title": mi("Titled", Note(Para("title note")))},
+        "title-long": {"title": mi(" ".join(["heading"] * 12))},
+        "authors-long": {"author": ml(mi("A Very Long Name Of A Person"), mi("Another Long Name Of Someone"), mi("Third Person"))},
+    }
+    for name, meta in meta_kinds.items():
+        c("standalone-" + name, {"blocks": [Para("Body text.")], "meta": meta}, to=standalone_to, args=["-s"])
     for a in [["--wrap=none"], ["--wrap=preserve"], ["--columns=20"], ["--columns=120"], ["--wrap=auto", "--columns=30"]]:
         c("wrap-" + slug(" ".join(a)), long_para, args=a)
     links = [Para(Link("one", "http://e.x/1", "t"), " and ", Link("two", "http://e.x/2"), " and ", Image("i", "i.png")), Para("x", Note(Para("n")))]
@@ -1414,8 +1670,15 @@ def main():
     k = sub.add_parser("cases", help="write the conformance case files")
     k.add_argument("--out", default="conformance/cases/markdown-writer")
     k.add_argument("--check", action="store_true", help="run the oracle on each unit; print each error and warning")
+    c = sub.add_parser("corpus", help="classify the corpus documents whose writer output differs")
+    c.add_argument("--to", default="markdown")
+    c.add_argument("--formats", default=CORPUS_FORMATS, help="the input formats of the documents")
+    c.add_argument("--randoc", default="target/debug/randoc")
+    c.add_argument("--jobs", type=int, default=2)
+    c.add_argument("--trees", required=True, help="a folder for the oracle trees")
     a = ap.parse_args()
-    sys.exit({"diff": cmd_diff, "reduce": cmd_reduce, "cases": cmd_cases}[a.cmd](a))
+    commands = {"diff": cmd_diff, "reduce": cmd_reduce, "cases": cmd_cases, "corpus": cmd_corpus}
+    sys.exit(commands[a.cmd](a))
 
 
 if __name__ == "__main__":

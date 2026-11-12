@@ -3505,6 +3505,798 @@
       "stdout": "  ------\n  only\n  ------\n",
       "stderr": ""
     },
+    "then-heading-grid#e2e:markdown": {
+      "key": "aa1732ad317afed7",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-grid#e2e:plain": {
+      "key": "1d6a38e201804297",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-grid#read": {
+      "key": "2cc42c04da098fd6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-grid#write:markdown": {
+      "key": "cfba1fbaaf77a14c",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-grid#write:plain": {
+      "key": "3369d062cb283b8c",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-multiline#e2e:markdown": {
+      "key": "584e05240fcbe741",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-multiline#e2e:plain": {
+      "key": "d782125e13db5e01",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-multiline#read": {
+      "key": "710f8642a9459a8c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-multiline#write:markdown": {
+      "key": "321caebd5c4e5c96",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-multiline#write:plain": {
+      "key": "9f69f91df32ad0d6",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-caption#e2e:markdown": {
+      "key": "ccbbfcbbba0940b8",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-caption#e2e:plain": {
+      "key": "526f185f2d7250f8",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-caption#read": {
+      "key": "73d9f11578830e63",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-caption#write:markdown": {
+      "key": "8033c9b72172ce25",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-caption#write:plain": {
+      "key": "471af54f622eb1e5",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-widths#e2e:markdown": {
+      "key": "b21c8ad1bb00155d",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-widths#e2e:plain": {
+      "key": "eb740847094cc59d",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-widths#read": {
+      "key": "85c715b006333dec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.7}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.3}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-widths#write:markdown": {
+      "key": "9463163925dbd8aa",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-multiline-widths#write:plain": {
+      "key": "94d58da7efb21f6a",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#e2e:gfm": {
+      "key": "12650367dd99272f",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#e2e:markdown": {
+      "key": "4fbfa5d1e0b0b691",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#e2e:markdown-simple_tables": {
+      "key": "991d3d40ae6addb6",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#e2e:plain": {
+      "key": "556bdcfc1566c3d1",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#read": {
+      "key": "297d5d8808042cc8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#write:gfm": {
+      "key": "f705941935914584",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#write:markdown": {
+      "key": "c1f47e97cb0eb6ba",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#write:markdown-simple_tables": {
+      "key": "761f03aabb8887ef",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-pipe#write:plain": {
+      "key": "d565e7471e24307a",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-simple#e2e:markdown": {
+      "key": "4fbfa5d1e0b0b691",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-simple#e2e:plain": {
+      "key": "556bdcfc1566c3d1",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-simple#read": {
+      "key": "297d5d8808042cc8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-simple#write:markdown": {
+      "key": "c1f47e97cb0eb6ba",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-simple#write:plain": {
+      "key": "d565e7471e24307a",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-simple-caption#e2e:markdown": {
+      "key": "c358f4d774027717",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-simple-caption#e2e:plain": {
+      "key": "a0f82a67e1edfb57",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-simple-caption#read": {
+      "key": "4f153960bee20924",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-simple-caption#write:markdown": {
+      "key": "2dcf8732acf1f27c",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-simple-caption#write:plain": {
+      "key": "1005b1a788d0a83c",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-simple-no-head#e2e:markdown": {
+      "key": "9cf9a6b00238e7d9",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-simple-no-head#e2e:plain": {
+      "key": "6720470430aa2599",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\nNext\n",
+      "stderr": ""
+    },
+    "then-heading-simple-no-head#read": {
+      "key": "4888dac75987da24",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Next\"}]]}]}\n",
+      "stderr": ""
+    },
+    "then-heading-simple-no-head#write:markdown": {
+      "key": "364b588efd274186",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\n## Next\n",
+      "stderr": ""
+    },
+    "then-heading-simple-no-head#write:plain": {
+      "key": "c2358e4ee6b11ec6",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\nNext\n",
+      "stderr": ""
+    },
+    "then-para-grid#e2e:markdown": {
+      "key": "c9f9657859e36b87",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-grid#e2e:plain": {
+      "key": "6c201dd9795027c7",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-grid#read": {
+      "key": "e7a8953fdcd407c8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-grid#write:markdown": {
+      "key": "ab610d7ad622432c",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-grid#write:plain": {
+      "key": "f611fa42b7bfeaec",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline#e2e:markdown": {
+      "key": "6878b2038284ca31",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline#e2e:plain": {
+      "key": "644563b8c7978971",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline#read": {
+      "key": "c9cfefe9bcf4a986",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-multiline#write:markdown": {
+      "key": "3f25749bae18a6a6",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline#write:plain": {
+      "key": "77dbed4e5eaef466",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-caption#e2e:markdown": {
+      "key": "ac6386753b5328b9",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-caption#e2e:plain": {
+      "key": "889dab15769540f9",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-caption#read": {
+      "key": "e97cf6fa7791e300",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-multiline-caption#write:markdown": {
+      "key": "30e9efd7516a672a",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-caption#write:plain": {
+      "key": "5fe2f56131b1ccea",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-widths#e2e:markdown": {
+      "key": "713561acd9c33a91",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-widths#e2e:plain": {
+      "key": "bba475cc041c5851",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-widths#read": {
+      "key": "c2e95768de1ce8b2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.7}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.3}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-multiline-widths#write:markdown": {
+      "key": "df8cde699997ce6a",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-multiline-widths#write:plain": {
+      "key": "2243f6a767b071aa",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#e2e:gfm": {
+      "key": "fade5dc476408d1f",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#e2e:markdown": {
+      "key": "fe1f047118383ce9",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#e2e:markdown-simple_tables": {
+      "key": "ebb09b54ab0ea918",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#e2e:plain": {
+      "key": "5ef8e214bb47b029",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#read": {
+      "key": "99ac5c0460f7b66a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-pipe#write:gfm": {
+      "key": "d11da151b2bf26a4",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#write:markdown": {
+      "key": "0503736df3770536",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#write:markdown-simple_tables": {
+      "key": "36c6cf96438db299",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-pipe#write:plain": {
+      "key": "0d10ba3688167cf6",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple#e2e:markdown": {
+      "key": "fe1f047118383ce9",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple#e2e:plain": {
+      "key": "5ef8e214bb47b029",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple#read": {
+      "key": "99ac5c0460f7b66a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-simple#write:markdown": {
+      "key": "0503736df3770536",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple#write:plain": {
+      "key": "0d10ba3688167cf6",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-caption#e2e:markdown": {
+      "key": "e90ec16f3d702f9b",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-caption#e2e:plain": {
+      "key": "c3739cce55d76a5b",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-caption#read": {
+      "key": "360327913497a2ca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-simple-caption#write:markdown": {
+      "key": "215e1134f6bb682c",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-caption#write:plain": {
+      "key": "ee5da84f2ab0c86c",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-no-head#e2e:markdown": {
+      "key": "2bbde0f6c25590a1",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-no-head#e2e:plain": {
+      "key": "4806aca077b8eae1",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-no-head#read": {
+      "key": "79d043f98f87425e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"next\"}]}]}\n",
+      "stderr": ""
+    },
+    "then-para-simple-no-head#write:markdown": {
+      "key": "5fbf2ccdb0a75fde",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\nnext\n",
+      "stderr": ""
+    },
+    "then-para-simple-no-head#write:plain": {
+      "key": "26a7d895a72b549e",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\nnext\n",
+      "stderr": ""
+    },
+    "then-table-grid#e2e:markdown": {
+      "key": "4dac9836a7eee6ab",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\n+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n",
+      "stderr": ""
+    },
+    "then-table-grid#e2e:plain": {
+      "key": "3fe86baed8c07d6b",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\n+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n",
+      "stderr": ""
+    },
+    "then-table-grid#read": {
+      "key": "fb9da8a12e2cecb4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"c\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-grid#write:markdown": {
+      "key": "e016bdd1b9c7acc0",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\n+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n",
+      "stderr": ""
+    },
+    "then-table-grid#write:plain": {
+      "key": "7b36f9a54b74a000",
+      "exit": 0,
+      "stdout": "+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n\n+----+----+\n| h1 | h2 |\n+====+====+\n| a  | c  |\n|    |    |\n| b  |    |\n+----+----+\n",
+      "stderr": ""
+    },
+    "then-table-multiline#e2e:markdown": {
+      "key": "144e6ccec0017316",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n",
+      "stderr": ""
+    },
+    "then-table-multiline#e2e:plain": {
+      "key": "c2c197803b2dcfd6",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n",
+      "stderr": ""
+    },
+    "then-table-multiline#read": {
+      "key": "4e04ead00c6b216d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-multiline#write:markdown": {
+      "key": "63c30f5678bd12e7",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n",
+      "stderr": ""
+    },
+    "then-table-multiline#write:plain": {
+      "key": "6025ef6fdf4d6127",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n",
+      "stderr": ""
+    },
+    "then-table-multiline-caption#e2e:markdown": {
+      "key": "2efee544a1166134",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-multiline-caption#e2e:plain": {
+      "key": "69836e45db310374",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-multiline-caption#read": {
+      "key": "d6826063d332624b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cell\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"that\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"long\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-multiline-caption#write:markdown": {
+      "key": "75522a5a973fa4b9",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-multiline-caption#write:plain": {
+      "key": "bd266fcbc2802b79",
+      "exit": 0,
+      "stdout": "  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n\n  h1                                                                                                     h2\n  ------------------------------------------------------------------------------------------------------ ----\n  a cell text that is long a cell text that is long a cell text that is long a cell text that is long    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-multiline-widths#e2e:markdown": {
+      "key": "d6d3cf2ae25d4167",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\n  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n",
+      "stderr": ""
+    },
+    "then-table-multiline-widths#e2e:plain": {
+      "key": "a0243b19793ce7a7",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\n  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n",
+      "stderr": ""
+    },
+    "then-table-multiline-widths#read": {
+      "key": "5aaf5024125b7338",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.7}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.3}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.7}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.3}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-multiline-widths#write:markdown": {
+      "key": "bf9e72541bc188e4",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\n  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n",
+      "stderr": ""
+    },
+    "then-table-multiline-widths#write:plain": {
+      "key": "0efaadb22cbeaea4",
+      "exit": 0,
+      "stdout": "  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n\n  -----------------------------------------------------------------------\n  h1                                                h2\n  ------------------------------------------------- ---------------------\n  a                                                 b\n\n  -----------------------------------------------------------------------\n",
+      "stderr": ""
+    },
+    "then-table-pipe#e2e:gfm": {
+      "key": "155b6f430cf79555",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n| h1  | h2  |\n|-----|-----|\n| a   | b   |\n",
+      "stderr": ""
+    },
+    "then-table-pipe#e2e:markdown": {
+      "key": "5ec30236aea20eaf",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-pipe#e2e:markdown-simple_tables": {
+      "key": "b90c676202fb4d2e",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n| h1  | h2  |\n|-----|-----|\n| a   | b   |\n",
+      "stderr": ""
+    },
+    "then-table-pipe#e2e:plain": {
+      "key": "7a1daf59a647fdef",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-pipe#read": {
+      "key": "ae43103603b00590",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-pipe#write:gfm": {
+      "key": "78b7497a2de17d8a",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n| h1  | h2  |\n|-----|-----|\n| a   | b   |\n",
+      "stderr": ""
+    },
+    "then-table-pipe#write:markdown": {
+      "key": "9180d0c3d255fc0c",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-pipe#write:markdown-simple_tables": {
+      "key": "dd7d0c73e15b61ff",
+      "exit": 0,
+      "stdout": "| h1  | h2  |\n|-----|-----|\n| a   | b   |\n\n| h1  | h2  |\n|-----|-----|\n| a   | b   |\n",
+      "stderr": ""
+    },
+    "then-table-pipe#write:plain": {
+      "key": "6e73852367d289cc",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-simple#e2e:markdown": {
+      "key": "5ec30236aea20eaf",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-simple#e2e:plain": {
+      "key": "7a1daf59a647fdef",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-simple#read": {
+      "key": "ae43103603b00590",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-simple#write:markdown": {
+      "key": "9180d0c3d255fc0c",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-simple#write:plain": {
+      "key": "6e73852367d289cc",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  h1   h2\n  ---- ----\n  a    b\n",
+      "stderr": ""
+    },
+    "then-table-simple-caption#e2e:markdown": {
+      "key": "09b687043c1d87f3",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\n  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-simple-caption#e2e:plain": {
+      "key": "60a0543808604d33",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\n  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-simple-caption#read": {
+      "key": "da9f125f324e8258",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h1\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"h2\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-simple-caption#write:markdown": {
+      "key": "f0e36db54771e150",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\n  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-simple-caption#write:plain": {
+      "key": "88ce68600ef70d10",
+      "exit": 0,
+      "stdout": "  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n\n  h1   h2\n  ---- ----\n  a    b\n\n  : Cap\n",
+      "stderr": ""
+    },
+    "then-table-simple-no-head#e2e:markdown": {
+      "key": "1955daa0142d7a56",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\n  --- ---\n  a   b\n  --- ---\n",
+      "stderr": ""
+    },
+    "then-table-simple-no-head#e2e:plain": {
+      "key": "0bc7d05dc0b0e416",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\n  --- ---\n  a   b\n  --- ---\n",
+      "stderr": ""
+    },
+    "then-table-simple-no-head#read": {
+      "key": "4ebfac2ec0fb0cbd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"b\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "then-table-simple-no-head#write:markdown": {
+      "key": "70e02e67ccf3f967",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\n  --- ---\n  a   b\n  --- ---\n",
+      "stderr": ""
+    },
+    "then-table-simple-no-head#write:plain": {
+      "key": "e60958bd1fc975a7",
+      "exit": 0,
+      "stdout": "  --- ---\n  a   b\n  --- ---\n\n  --- ---\n  a   b\n  --- ---\n",
+      "stderr": ""
+    },
     "unicode-width#e2e:commonmark": {
       "key": "93c24f91c8678f77",
       "exit": 0,

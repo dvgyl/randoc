@@ -201,7 +201,7 @@ impl W<'_> {
             blankline() + caption + blankline()
         };
         Ok(if indented {
-            cr() + nest(2, body + caption_doc)
+            cr() + nest(2, body + caption_doc) + blankline()
         } else {
             body + caption_doc
         })

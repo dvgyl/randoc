@@ -4,6 +4,186 @@ from = "json"
 to = ["markdown", "gfm", "plain"]
 
 [[case]]
+id = "standalone-none"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-title"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"A"},{"t":"Space"},{"t":"Str","c":"Short"},{"t":"Space"},{"t":"Str","c":"Title"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-title-author-date"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"Field"},{"t":"Space"},{"t":"Str","c":"Notes"}]},"author":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"Ann"},{"t":"Space"},{"t":"Str","c":"Lee"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"Bo"}]}]},"date":{"t":"MetaInlines","c":[{"t":"Str","c":"2020-01-02"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-author-single"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"author":{"t":"MetaInlines","c":[{"t":"Str","c":"Cy"},{"t":"Space"},{"t":"Str","c":"Moss"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-date-only"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"date":{"t":"MetaString","c":"May 2001"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-other-keys"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"T"}]},"lang":{"t":"MetaString","c":"en"},"tags":{"t":"MetaList","c":[{"t":"MetaString","c":"red"},{"t":"MetaString","c":"blue"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-only-other"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"keywords":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"graph"}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-string-plain"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"plain words here"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-string-colon"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"left: right"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-string-hash"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"before # after"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-string-number"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"42"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-string-true"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"true"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-string-y"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaList","c":[{"t":"MetaString","c":"y"},{"t":"MetaString","c":"n"},{"t":"MetaString","c":"yes"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-bool"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"draft":{"t":"MetaBool","c":true},"final":{"t":"MetaBool","c":false}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-emphasis"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaInlines","c":[{"t":"Emph","c":[{"t":"Str","c":"loud"}]},{"t":"Space"},{"t":"Str","c":"words"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-quotes"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaInlines","c":[{"t":"Str","c":"say"},{"t":"Space"},{"t":"Str","c":"\"so\""}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-empty-values"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":""},"list":{"t":"MetaList","c":[]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-map"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"info":{"t":"MetaMap","c":{"place":{"t":"MetaInlines","c":[{"t":"Str","c":"Oslo"}]},"codes":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"z"}]}]}}}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-blocks"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"abstract":{"t":"MetaBlocks","c":[{"t":"Para","c":[{"t":"Str","c":"first"},{"t":"Space"},{"t":"Str","c":"part"}]},{"t":"Para","c":[{"t":"Str","c":"second"},{"t":"Space"},{"t":"Str","c":"part"}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-one-block"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"abstract":{"t":"MetaBlocks","c":[{"t":"Para","c":[{"t":"Str","c":"only"},{"t":"Space"},{"t":"Str","c":"part"}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-long-value"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaInlines","c":[{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"},{"t":"Space"},{"t":"Str","c":"value"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-dash-start"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"- item"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-brace-start"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"{x}"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-bracket"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaString","c":"[x]"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-nested-list"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"grid":{"t":"MetaList","c":[{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"a"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"b"}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-list-of-maps"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"people":{"t":"MetaList","c":[{"t":"MetaMap","c":{"name":{"t":"MetaInlines","c":[{"t":"Str","c":"Di"}]}}},{"t":"MetaMap","c":{"name":{"t":"MetaInlines","c":[{"t":"Str","c":"Ed"}]}}}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-line-break"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"note":{"t":"MetaInlines","c":[{"t":"Str","c":"one"},{"t":"LineBreak"},{"t":"Str","c":"two"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-note-in-title"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"Titled"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"title"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-title-long"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"},{"t":"Space"},{"t":"Str","c":"heading"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
+id = "standalone-authors-long"
+to = ["markdown", "markdown-yaml_metadata_block", "markdown-yaml_metadata_block-pandoc_title_block", "markdown-yaml_metadata_block-pandoc_title_block+mmd_title_block", "markdown_mmd", "markdown_strict", "markdown_phpextra", "gfm", "commonmark", "commonmark_x", "plain"]
+args = ["-s"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"author":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"A"},{"t":"Space"},{"t":"Str","c":"Very"},{"t":"Space"},{"t":"Str","c":"Long"},{"t":"Space"},{"t":"Str","c":"Name"},{"t":"Space"},{"t":"Str","c":"Of"},{"t":"Space"},{"t":"Str","c":"A"},{"t":"Space"},{"t":"Str","c":"Person"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"Another"},{"t":"Space"},{"t":"Str","c":"Long"},{"t":"Space"},{"t":"Str","c":"Name"},{"t":"Space"},{"t":"Str","c":"Of"},{"t":"Space"},{"t":"Str","c":"Someone"}]},{"t":"MetaInlines","c":[{"t":"Str","c":"Third"},{"t":"Space"},{"t":"Str","c":"Person"}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Body"},{"t":"Space"},{"t":"Str","c":"text."}]}]}'
+
+[[case]]
 id = "wrap-wrap-none"
 args = ["--wrap=none"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"lorem"},{"t":"Space"},{"t":"Str","c":"ipsum"},{"t":"Space"},{"t":"Str","c":"dolor"},{"t":"Space"},{"t":"Str","c":"sit"},{"t":"Space"},{"t":"Str","c":"amet"},{"t":"Space"},{"t":"Str","c":"consectetur"},{"t":"Space"},{"t":"Str","c":"adipiscing"},{"t":"Space"},{"t":"Str","c":"elit"},{"t":"Space"},{"t":"Str","c":"sed"},{"t":"Space"},{"t":"Str","c":"do"},{"t":"Space"},{"t":"Str","c":"eiusmod"},{"t":"Space"},{"t":"Str","c":"tempor"},{"t":"Space"},{"t":"Str","c":"incididunt"},{"t":"Space"},{"t":"Str","c":"ut"},{"t":"Space"},{"t":"Str","c":"labore"},{"t":"Space"},{"t":"Str","c":"lorem"},{"t":"Space"},{"t":"Str","c":"ipsum"},{"t":"Space"},{"t":"Str","c":"dolor"},{"t":"Space"},{"t":"Str","c":"sit"},{"t":"Space"},{"t":"Str","c":"amet"},{"t":"Space"},{"t":"Str","c":"consectetur"},{"t":"Space"},{"t":"Str","c":"adipiscing"},{"t":"Space"},{"t":"Str","c":"elit"},{"t":"Space"},{"t":"Str","c":"sed"},{"t":"Space"},{"t":"Str","c":"do"},{"t":"Space"},{"t":"Str","c":"eiusmod"},{"t":"Space"},{"t":"Str","c":"tempor"},{"t":"Space"},{"t":"Str","c":"incididunt"},{"t":"Space"},{"t":"Str","c":"ut"},{"t":"Space"},{"t":"Str","c":"labore"},{"t":"SoftBreak"},{"t":"Str","c":"after"},{"t":"Space"},{"t":"Str","c":"soft"},{"t":"Space"},{"t":"Str","c":"break"}]}]}'

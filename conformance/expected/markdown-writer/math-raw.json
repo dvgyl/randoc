@@ -553,6 +553,666 @@
       "stdout": "$$a\\\\\nb$$\n",
       "stderr": "[WARNING] Could not convert TeX math a\\\\\n  b, rendering as TeX:\n  b\n  ^\n  unexpected control sequence \\\\\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
     },
+    "edge-space-display-bad-newline#e2e:gfm": {
+      "key": "08f080e4f1290738",
+      "exit": 0,
+      "stdout": "a\n``` math\n\\nosuch{y} \n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-newline#e2e:markdown": {
+      "key": "bb69cb1df225a69e",
+      "exit": 0,
+      "stdout": "a $$\n\\nosuch{y} $$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-newline#e2e:markdown-tex_math_dollars": {
+      "key": "218e93fd1054eff6",
+      "exit": 0,
+      "stdout": "a\n$$\n\\\\nosuch{y} $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math \n  \\nosuch{y} , rendering as TeX:\n  \n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-display-bad-newline#e2e:markdown_strict": {
+      "key": "482d20e274af1275",
+      "exit": 0,
+      "stdout": "a\n$$\n\\nosuch{y} $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math \n  \\nosuch{y} , rendering as TeX:\n  \n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-display-bad-newline#e2e:plain": {
+      "key": "a9c1495ed0892ede",
+      "exit": 0,
+      "stdout": "a\n$$\n\\nosuch{y} $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math \n  \\nosuch{y} , rendering as TeX:\n  \n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-display-bad-newline#read": {
+      "key": "89895ace7ffc2d3f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\n\\\\nosuch{y} \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-newline#write:gfm": {
+      "key": "804e80f4f8b1f0a5",
+      "exit": 0,
+      "stdout": "a\n``` math\n\\nosuch{y} \n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-newline#write:markdown": {
+      "key": "24886a9911253d67",
+      "exit": 0,
+      "stdout": "a $$\n\\nosuch{y} $$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-newline#write:markdown-tex_math_dollars": {
+      "key": "5f1f34871329de9f",
+      "exit": 0,
+      "stdout": "a\n$$\n\\\\nosuch{y} $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math \n  \\nosuch{y} , rendering as TeX:\n  \n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-display-bad-newline#write:markdown_strict": {
+      "key": "1a9a8835d8e9b17e",
+      "exit": 0,
+      "stdout": "a\n$$\n\\nosuch{y} $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math \n  \\nosuch{y} , rendering as TeX:\n  \n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-display-bad-newline#write:plain": {
+      "key": "3a60889d2486ed27",
+      "exit": 0,
+      "stdout": "a\n$$\n\\nosuch{y} $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math \n  \\nosuch{y} , rendering as TeX:\n  \n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-display-bad-spaces#e2e:gfm": {
+      "key": "3fcdc9f311b2d1a9",
+      "exit": 0,
+      "stdout": "a\n``` math\n \\sqrt{ \n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-spaces#e2e:markdown": {
+      "key": "b626f60c725deebf",
+      "exit": 0,
+      "stdout": "a $$ \\sqrt{ $$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-spaces#e2e:markdown-tex_math_dollars": {
+      "key": "f6cb368b71a3e1b7",
+      "exit": 0,
+      "stdout": "a\n$$ \\\\sqrt{ $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math  \\sqrt{ , rendering as TeX:\n   \\sqrt{ \n         ^\n  unexpected eof\n  expecting space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\", white space or \"}\"\n"
+    },
+    "edge-space-display-bad-spaces#e2e:markdown_strict": {
+      "key": "992ffe370f947382",
+      "exit": 0,
+      "stdout": "a\n$$ \\sqrt{ $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math  \\sqrt{ , rendering as TeX:\n   \\sqrt{ \n         ^\n  unexpected eof\n  expecting space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\", white space or \"}\"\n"
+    },
+    "edge-space-display-bad-spaces#e2e:plain": {
+      "key": "3d1c635e4da7ff7f",
+      "exit": 0,
+      "stdout": "a\n$$ \\sqrt{ $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math  \\sqrt{ , rendering as TeX:\n   \\sqrt{ \n         ^\n  unexpected eof\n  expecting space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\", white space or \"}\"\n"
+    },
+    "edge-space-display-bad-spaces#read": {
+      "key": "5ead2d55fd6848e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\" \\\\sqrt{ \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-spaces#write:gfm": {
+      "key": "4025ab5fc38d7516",
+      "exit": 0,
+      "stdout": "a\n``` math\n \\sqrt{ \n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-spaces#write:markdown": {
+      "key": "cc03b0cc275d1c9c",
+      "exit": 0,
+      "stdout": "a $$ \\sqrt{ $$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-bad-spaces#write:markdown-tex_math_dollars": {
+      "key": "3cd926dcd9357db4",
+      "exit": 0,
+      "stdout": "a\n$$ \\\\sqrt{ $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math  \\sqrt{ , rendering as TeX:\n   \\sqrt{ \n         ^\n  unexpected eof\n  expecting space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\", white space or \"}\"\n"
+    },
+    "edge-space-display-bad-spaces#write:markdown_strict": {
+      "key": "d76bd874bb2789eb",
+      "exit": 0,
+      "stdout": "a\n$$ \\sqrt{ $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math  \\sqrt{ , rendering as TeX:\n   \\sqrt{ \n         ^\n  unexpected eof\n  expecting space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\", white space or \"}\"\n"
+    },
+    "edge-space-display-bad-spaces#write:plain": {
+      "key": "af77d6e3505ddedc",
+      "exit": 0,
+      "stdout": "a\n$$ \\sqrt{ $$\nb\n",
+      "stderr": "[WARNING] Could not convert TeX math  \\sqrt{ , rendering as TeX:\n   \\sqrt{ \n         ^\n  unexpected eof\n  expecting space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\", white space or \"}\"\n"
+    },
+    "edge-space-display-newline#e2e:gfm": {
+      "key": "89d92c54d255d4e4",
+      "exit": 0,
+      "stdout": "a\n``` math\n  c+d\n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#e2e:markdown": {
+      "key": "7dd9c2a8a473b206",
+      "exit": 0,
+      "stdout": "a $$  c+d\n$$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#e2e:markdown-tex_math_dollars": {
+      "key": "23f399678beab40e",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#e2e:markdown_strict": {
+      "key": "7ac144f82abd29b7",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#e2e:plain": {
+      "key": "d5454080bfbb24c6",
+      "exit": 0,
+      "stdout": "a\nc + d\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#read": {
+      "key": "9139d62576b3ca1d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"  c+d\\n\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#write:gfm": {
+      "key": "64b4228f3249d879",
+      "exit": 0,
+      "stdout": "a\n``` math\n  c+d\n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#write:markdown": {
+      "key": "c95b02fc6c7ce0d3",
+      "exit": 0,
+      "stdout": "a $$  c+d\n$$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#write:markdown-tex_math_dollars": {
+      "key": "a643309f6233527b",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#write:markdown_strict": {
+      "key": "e0440caadc3bad98",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-newline#write:plain": {
+      "key": "3e96b5cc5ca43513",
+      "exit": 0,
+      "stdout": "a\nc + d\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#e2e:gfm": {
+      "key": "0ed1002035c74519",
+      "exit": 0,
+      "stdout": "a\n``` math\n y^2 \n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#e2e:markdown": {
+      "key": "bc2827ea9d7d08fb",
+      "exit": 0,
+      "stdout": "a $$ y^2 $$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#e2e:markdown-tex_math_dollars": {
+      "key": "db222e1effa9e593",
+      "exit": 0,
+      "stdout": "a\n*y*^2^\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#e2e:markdown_strict": {
+      "key": "069dee2b38626b1a",
+      "exit": 0,
+      "stdout": "a\n*y*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#e2e:plain": {
+      "key": "f5b1c5e58cc8b0bb",
+      "exit": 0,
+      "stdout": "a\ny²\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#read": {
+      "key": "123fa02759c5f838",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\" y^2 \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#write:gfm": {
+      "key": "efb8fcda623c9daa",
+      "exit": 0,
+      "stdout": "a\n``` math\n y^2 \n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#write:markdown": {
+      "key": "7537837dd3f5caec",
+      "exit": 0,
+      "stdout": "a $$ y^2 $$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#write:markdown-tex_math_dollars": {
+      "key": "2dc20c7c2541eda4",
+      "exit": 0,
+      "stdout": "a\n*y*^2^\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#write:markdown_strict": {
+      "key": "8023626b9280d117",
+      "exit": 0,
+      "stdout": "a\n*y*<sup>2</sup>\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-spaces#write:plain": {
+      "key": "8753f03ca4d80b2c",
+      "exit": 0,
+      "stdout": "a\ny²\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#e2e:gfm": {
+      "key": "ab501881e2a35afa",
+      "exit": 0,
+      "stdout": "a\n``` math\nc+d\n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#e2e:markdown": {
+      "key": "2a566ab61dd22a78",
+      "exit": 0,
+      "stdout": "a $$\n\nc+d\n\n$$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#e2e:markdown-tex_math_dollars": {
+      "key": "a8cb1b57d92d5750",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#e2e:markdown_strict": {
+      "key": "4bf6b6345e370331",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#e2e:plain": {
+      "key": "fafb3adcffa117b8",
+      "exit": 0,
+      "stdout": "a\nc + d\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#read": {
+      "key": "a529e2b27c26c253",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\n\\nc+d\\n\\n\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#write:gfm": {
+      "key": "a5250798c4565aa7",
+      "exit": 0,
+      "stdout": "a\n``` math\nc+d\n```\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#write:markdown": {
+      "key": "ed2567f12c86d805",
+      "exit": 0,
+      "stdout": "a $$\n\nc+d\n\n$$ b\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#write:markdown-tex_math_dollars": {
+      "key": "ae597170ec59e3fd",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#write:markdown_strict": {
+      "key": "e76e47a636beeb12",
+      "exit": 0,
+      "stdout": "a\n*c* + *d*\nb\n",
+      "stderr": ""
+    },
+    "edge-space-display-two-newlines#write:plain": {
+      "key": "0d7f464a246d49c5",
+      "exit": 0,
+      "stdout": "a\nc + d\nb\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-newline#e2e:gfm": {
+      "key": "6f4444b2137a5cb4",
+      "exit": 0,
+      "stdout": "a $`\\nosuch{y}`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-newline#e2e:markdown": {
+      "key": "49a57a8c4e8aca22",
+      "exit": 0,
+      "stdout": "a $\\nosuch{y}$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-newline#e2e:markdown-tex_math_dollars": {
+      "key": "39c02bf33abcadea",
+      "exit": 0,
+      "stdout": "a $\\\\nosuch{y}$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\nosuch{y}, rendering as TeX:\n  \\nosuch{y}\n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-inline-bad-newline#e2e:markdown_strict": {
+      "key": "b1596b8ad6cac00b",
+      "exit": 0,
+      "stdout": "a $\\nosuch{y}$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\nosuch{y}, rendering as TeX:\n  \\nosuch{y}\n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-inline-bad-newline#e2e:plain": {
+      "key": "b6351ec066653262",
+      "exit": 0,
+      "stdout": "a $\\nosuch{y}$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\nosuch{y}, rendering as TeX:\n  \\nosuch{y}\n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-inline-bad-newline#read": {
+      "key": "1456675df3cf4745",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\\n\\\\nosuch{y} \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-newline#write:gfm": {
+      "key": "0dad2537b2632ef9",
+      "exit": 0,
+      "stdout": "a $`\\nosuch{y}`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-newline#write:markdown": {
+      "key": "fe47e77e80a2b437",
+      "exit": 0,
+      "stdout": "a $\\nosuch{y}$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-newline#write:markdown-tex_math_dollars": {
+      "key": "8369e2cbc85cb03f",
+      "exit": 0,
+      "stdout": "a $\\\\nosuch{y}$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\nosuch{y}, rendering as TeX:\n  \\nosuch{y}\n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-inline-bad-newline#write:markdown_strict": {
+      "key": "921d36f523348ac4",
+      "exit": 0,
+      "stdout": "a $\\nosuch{y}$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\nosuch{y}, rendering as TeX:\n  \\nosuch{y}\n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-inline-bad-newline#write:plain": {
+      "key": "0112fe4803eff7f7",
+      "exit": 0,
+      "stdout": "a $\\nosuch{y}$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\nosuch{y}, rendering as TeX:\n  \\nosuch{y}\n         ^\n  unexpected control sequence \\nosuch\n  expecting \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace or \"\\\\allowbreak\"\n"
+    },
+    "edge-space-inline-bad-spaces#e2e:gfm": {
+      "key": "e032d02dd9ce0d05",
+      "exit": 0,
+      "stdout": "a $`\\sqrt{`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-spaces#e2e:markdown": {
+      "key": "f3b08507b939b38f",
+      "exit": 0,
+      "stdout": "a $\\sqrt{$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-spaces#e2e:markdown-tex_math_dollars": {
+      "key": "b8411df385adc6a7",
+      "exit": 0,
+      "stdout": "a $\\\\sqrt{$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\sqrt{, rendering as TeX:\n  \\sqrt{\n        ^\n  unexpected eof\n  expecting white space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or \"}\"\n"
+    },
+    "edge-space-inline-bad-spaces#e2e:markdown_strict": {
+      "key": "bbbd2330d7f6c6e0",
+      "exit": 0,
+      "stdout": "a $\\sqrt{$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\sqrt{, rendering as TeX:\n  \\sqrt{\n        ^\n  unexpected eof\n  expecting white space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or \"}\"\n"
+    },
+    "edge-space-inline-bad-spaces#e2e:plain": {
+      "key": "69c445665a9288cf",
+      "exit": 0,
+      "stdout": "a $\\sqrt{$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\sqrt{, rendering as TeX:\n  \\sqrt{\n        ^\n  unexpected eof\n  expecting white space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or \"}\"\n"
+    },
+    "edge-space-inline-bad-spaces#read": {
+      "key": "c46a5a5e4dabec46",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" \\\\sqrt{ \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-spaces#write:gfm": {
+      "key": "f7cc6a45322d0852",
+      "exit": 0,
+      "stdout": "a $`\\sqrt{`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-spaces#write:markdown": {
+      "key": "1739097c38a33300",
+      "exit": 0,
+      "stdout": "a $\\sqrt{$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-bad-spaces#write:markdown-tex_math_dollars": {
+      "key": "16085fc5cb2330a8",
+      "exit": 0,
+      "stdout": "a $\\\\sqrt{$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\sqrt{, rendering as TeX:\n  \\sqrt{\n        ^\n  unexpected eof\n  expecting white space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or \"}\"\n"
+    },
+    "edge-space-inline-bad-spaces#write:markdown_strict": {
+      "key": "424955334e376231",
+      "exit": 0,
+      "stdout": "a $\\sqrt{$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\sqrt{, rendering as TeX:\n  \\sqrt{\n        ^\n  unexpected eof\n  expecting white space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or \"}\"\n"
+    },
+    "edge-space-inline-bad-spaces#write:plain": {
+      "key": "f87855f662430740",
+      "exit": 0,
+      "stdout": "a $\\sqrt{$ b\n",
+      "stderr": "[WARNING] Could not convert TeX math \\sqrt{, rendering as TeX:\n  \\sqrt{\n        ^\n  unexpected eof\n  expecting white space, \"%\", \"\\\\label\", \"\\\\tag\", \"\\\\nonumber\", whitespace, \"\\\\allowbreak\", \"\\\\\", \"{\", \"\\\\operatorname\", letter, digit, \".\", \"!\", \"'\", \"''\", \"'''\", \"''''\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\", \":=\", \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"~\", \"_\", \"^\", \"'\", \"\\\\left\", \"\\\\lVert\", \"\\\\hyperref\", \"``\", \"''\", \"`\", \"~\", \"\\\\ \", \"\\\\\\\"\", \"\\\\#\", \"\\\\$\", \"\\\\%\", \"\\\\&\", \"\\\\'\", \"\\\\.\", \"\\\\=\", \"\\\\AA\", \"\\\\AE\", \"\\\\L\", \"\\\\O\", \"\\\\OE\", \"\\\\^\", \"\\\\_\", \"\\\\`\", \"\\\\aa\", \"\\\\ae\", \"\\\\c\", \"\\\\char\", \"\\\\l\", \"\\\\ldots\", \"\\\\o\", \"\\\\oe\", \"\\\\quad\", \"\\\\ss\", \"\\\\textasciicircum\", \"\\\\textasciitilde\", \"\\\\textbackslash\", \"\\\\u\", \"\\\\v\", \"\\\\{\", \"\\\\}\", \"\\\\~\" or \"}\"\n"
+    },
+    "edge-space-inline-newline#e2e:gfm": {
+      "key": "ab52f887176614e0",
+      "exit": 0,
+      "stdout": "a $`c+d`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#e2e:markdown": {
+      "key": "248995c86ffd6f66",
+      "exit": 0,
+      "stdout": "a $c+d$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#e2e:markdown-tex_math_dollars": {
+      "key": "8b9faf1edfc5fafe",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#e2e:markdown_strict": {
+      "key": "b33f98eb79122e1d",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#e2e:plain": {
+      "key": "7803f6e981892626",
+      "exit": 0,
+      "stdout": "a c + d b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#read": {
+      "key": "e6392b04a4a53977",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"  c+d\\n\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#write:gfm": {
+      "key": "ba67de4c5991216d",
+      "exit": 0,
+      "stdout": "a $`c+d`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#write:markdown": {
+      "key": "4c142fb36a03327f",
+      "exit": 0,
+      "stdout": "a $c+d$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#write:markdown-tex_math_dollars": {
+      "key": "027e52d39495e417",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#write:markdown_strict": {
+      "key": "430786925fd73066",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-newline#write:plain": {
+      "key": "f84ba6756375a1bf",
+      "exit": 0,
+      "stdout": "a c + d b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#e2e:gfm": {
+      "key": "bbcd247ed7e19b7d",
+      "exit": 0,
+      "stdout": "a $`y^2`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#e2e:markdown": {
+      "key": "dfb12a3cb31c0b33",
+      "exit": 0,
+      "stdout": "a $y^2$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#e2e:markdown-tex_math_dollars": {
+      "key": "6c9fe5736574be3b",
+      "exit": 0,
+      "stdout": "a *y*^2^ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#e2e:markdown_strict": {
+      "key": "7a2c7f377f7e9c24",
+      "exit": 0,
+      "stdout": "a *y*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#e2e:plain": {
+      "key": "4355a0fc48e042f3",
+      "exit": 0,
+      "stdout": "a y² b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#read": {
+      "key": "c16409f3814f1c3e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" y^2 \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#write:gfm": {
+      "key": "3af8a16d56a411fe",
+      "exit": 0,
+      "stdout": "a $`y^2`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#write:markdown": {
+      "key": "1302a6128286e518",
+      "exit": 0,
+      "stdout": "a $y^2$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#write:markdown-tex_math_dollars": {
+      "key": "79c054f3c1db6fc0",
+      "exit": 0,
+      "stdout": "a *y*^2^ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#write:markdown_strict": {
+      "key": "50a1c0bba5885579",
+      "exit": 0,
+      "stdout": "a *y*<sup>2</sup> b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-spaces#write:plain": {
+      "key": "9e554547eab88b58",
+      "exit": 0,
+      "stdout": "a y² b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#e2e:gfm": {
+      "key": "3c6d8a7042cca51e",
+      "exit": 0,
+      "stdout": "a $`c+d`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#e2e:markdown": {
+      "key": "0399f62156b238e0",
+      "exit": 0,
+      "stdout": "a $c+d$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#e2e:markdown-tex_math_dollars": {
+      "key": "c4dc362f7abe0e28",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#e2e:markdown_strict": {
+      "key": "e3fdc7ba554207f3",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#e2e:plain": {
+      "key": "f7223b1b5cd21820",
+      "exit": 0,
+      "stdout": "a c + d b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#read": {
+      "key": "c835ab8b57192791",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\\n\\nc+d\\n\\n\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b\"}]}]}\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#write:gfm": {
+      "key": "ca4047b7f617b923",
+      "exit": 0,
+      "stdout": "a $`c+d`$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#write:markdown": {
+      "key": "2e4d0b5426ed0fe9",
+      "exit": 0,
+      "stdout": "a $c+d$ b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#write:markdown-tex_math_dollars": {
+      "key": "a656a10b4b454851",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#write:markdown_strict": {
+      "key": "b0c4eb9c86fbfe94",
+      "exit": 0,
+      "stdout": "a *c* + *d* b\n",
+      "stderr": ""
+    },
+    "edge-space-inline-two-newlines#write:plain": {
+      "key": "01c73c16c94987a9",
+      "exit": 0,
+      "stdout": "a c + d b\n",
+      "stderr": ""
+    },
     "inline#e2e:commonmark": {
       "key": "c993a36e993a7a33",
       "exit": 0,

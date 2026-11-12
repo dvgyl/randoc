@@ -1171,6 +1171,96 @@
       "stdout": "sec\n",
       "stderr": ""
     },
+    "html-link-tag-wrap-long-href#e2e:gfm": {
+      "key": "0aa25a077345bf78",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word word\n<a href=\"https://e.x/pppppppppppppppppppppppppppppppppppppppp\"\nid=\"an-id\" class=\"c1\" data-k=\"v w\">t</a>\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-long-href#e2e:markdown-link_attributes": {
+      "key": "a2e1c9e169fc05f5",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word word\n<a href=\"https://e.x/pppppppppppppppppppppppppppppppppppppppp\"\nid=\"an-id\" class=\"c1\" data-k=\"v w\">t</a>\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-long-href#read": {
+      "key": "14de7fd16b750cc3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"an-id\",[\"c1\"],[[\"k\",\"v w\"]]],[{\"t\":\"Str\",\"c\":\"t\"}],[\"https://e.x/pppppppppppppppppppppppppppppppppppppppp\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-long-href#write:gfm": {
+      "key": "99d9f5d2aebaf4a1",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word word\n<a href=\"https://e.x/pppppppppppppppppppppppppppppppppppppppp\"\nid=\"an-id\" class=\"c1\" data-k=\"v w\">t</a>\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-long-href#write:markdown-link_attributes": {
+      "key": "b542b5e5ea1d1562",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word word\n<a href=\"https://e.x/pppppppppppppppppppppppppppppppppppppppp\"\nid=\"an-id\" class=\"c1\" data-k=\"v w\">t</a>\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-title#e2e:gfm": {
+      "key": "927e8b0e7c06a1c3",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/p\" id=\"an-id\" class=\"c1\" data-k=\"v w\"\ntitle=\"the title here\">t</a> end\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-title#e2e:markdown-link_attributes": {
+      "key": "6141821aff4bb898",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/p\" id=\"an-id\" class=\"c1\" data-k=\"v w\"\ntitle=\"the title here\">t</a> end\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-title#read": {
+      "key": "8797b93df5c7c3a6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"an-id\",[\"c1\"],[[\"k\",\"v w\"]]],[{\"t\":\"Str\",\"c\":\"t\"}],[\"https://e.x/p\",\"the title here\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"end\"}]}]}\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-title#write:gfm": {
+      "key": "2e8b37d648661ac8",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/p\" id=\"an-id\" class=\"c1\" data-k=\"v w\"\ntitle=\"the title here\">t</a> end\n",
+      "stderr": ""
+    },
+    "html-link-tag-wrap-title#write:markdown-link_attributes": {
+      "key": "76eb0a00d6d9c5f9",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/p\" id=\"an-id\" class=\"c1\" data-k=\"v w\"\ntitle=\"the title here\">t</a> end\n",
+      "stderr": ""
+    },
+    "html-span-tag-wrap#e2e:gfm": {
+      "key": "72cc8d62fc160472",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word <span id=\"an-id\"\nclass=\"c1\" data-k=\"v w\">t</span>\n",
+      "stderr": ""
+    },
+    "html-span-tag-wrap#e2e:markdown-bracketed_spans-native_spans": {
+      "key": "73bcd810831c79b3",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word <span id=\"an-id\"\nclass=\"c1\" data-k=\"v w\">t</span>\n",
+      "stderr": ""
+    },
+    "html-span-tag-wrap#read": {
+      "key": "3cd5b055e934c753",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Span\",\"c\":[[\"an-id\",[\"c1\"],[[\"k\",\"v w\"]]],[{\"t\":\"Str\",\"c\":\"t\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "html-span-tag-wrap#write:gfm": {
+      "key": "22ee7fef48d0be67",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word <span id=\"an-id\"\nclass=\"c1\" data-k=\"v w\">t</span>\n",
+      "stderr": ""
+    },
+    "html-span-tag-wrap#write:markdown-bracketed_spans-native_spans": {
+      "key": "55b32fc338a54e7c",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word word <span id=\"an-id\"\nclass=\"c1\" data-k=\"v w\">t</span>\n",
+      "stderr": ""
+    },
     "image#e2e:commonmark": {
       "key": "936df284d658661e",
       "exit": 0,
@@ -1439,6 +1529,186 @@
       "key": "b9861615387727c9",
       "exit": 0,
       "stdout": "a [alt]\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:commonmark": {
+      "key": "97c10966da31a1fb",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:commonmark_x": {
+      "key": "06d49c6c45c8d802",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word ![small\nicon](images/icon.svg){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:gfm": {
+      "key": "5a8d390bd3509452",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:markdown": {
+      "key": "1a42f77f8ecddfb8",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word ![small\nicon](images/icon.svg){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:markdown-link_attributes": {
+      "key": "7479da12e8356fed",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:markdown_strict": {
+      "key": "025ea8fcb27285a1",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#e2e:plain": {
+      "key": "1b8e41a5ab8d9778",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word [small icon] after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#read": {
+      "key": "a755cd5645d12703",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Image\",\"c\":[[\"fig-one\",[\"wide\",\"framed\"],[[\"height\",\"11px\"],[\"width\",\"11px\"]]],[{\"t\":\"Str\",\"c\":\"small\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"icon\"}],[\"images/icon.svg\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"after\"}]}]}\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:commonmark": {
+      "key": "4ec016e574ab8634",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:commonmark_x": {
+      "key": "6dcfecffdeea0d37",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word ![small\nicon](images/icon.svg){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:gfm": {
+      "key": "8fb29fb9c62339e7",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:markdown": {
+      "key": "e173115181405c65",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word ![small\nicon](images/icon.svg){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:markdown-link_attributes": {
+      "key": "5adea56ffcfcb096",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:markdown_strict": {
+      "key": "6e0c6e406529be92",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<img src=\"images/icon.svg\" id=\"fig-one\" class=\"wide framed\" width=\"11\"\nheight=\"11\" alt=\"small icon\" /> after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap#write:plain": {
+      "key": "7e26438d0ce16aa5",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word [small icon] after\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:commonmark": {
+      "key": "df424f857b9b6153",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:commonmark_x": {
+      "key": "384846bb81d891a6",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:gfm": {
+      "key": "11f2c1c4161bea96",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:markdown": {
+      "key": "1bd86e6215dba1c0",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:markdown-link_attributes": {
+      "key": "d9ae82e7001ea3e1",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:markdown_strict": {
+      "key": "400b8d6fe56a6435",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#e2e:plain": {
+      "key": "a22cff3604a99a80",
+      "exit": 0,
+      "stdout": "[cap]\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#read": {
+      "key": "278d6591f79138fb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"cap\"}]}]],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Image\",\"c\":[[\"fig-one\",[\"wide\",\"framed\"],[[\"height\",\"11px\"],[\"width\",\"11px\"]]],[{\"t\":\"Str\",\"c\":\"cap\"}],[\"images/icon-with-a-long-name.svg\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:commonmark": {
+      "key": "419a0f2f23fe0aa0",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:commonmark_x": {
+      "key": "bf08263bc940bcff",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:gfm": {
+      "key": "2f0121474ac7db8f",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:markdown": {
+      "key": "892c6d26b140c731",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:markdown-link_attributes": {
+      "key": "f22c44d959d013de",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:markdown_strict": {
+      "key": "7ed6d8310deb4a3a",
+      "exit": 0,
+      "stdout": "<figure>\n<img src=\"images/icon-with-a-long-name.svg\" id=\"fig-one\"\nclass=\"wide framed\" width=\"11\" height=\"11\" alt=\"cap\" />\n<figcaption aria-hidden=\"true\">cap</figcaption>\n</figure>\n",
+      "stderr": ""
+    },
+    "image-attributes-wrap-figure#write:plain": {
+      "key": "f784c5609e51bd71",
+      "exit": 0,
+      "stdout": "[cap]\n",
       "stderr": ""
     },
     "image-empty-alt#e2e:commonmark": {
@@ -1979,6 +2249,96 @@
       "key": "69f207469a763cbb",
       "exit": 0,
       "stdout": "text\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:commonmark": {
+      "key": "29cb4a83f9889a79",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:commonmark_x": {
+      "key": "e987aef08e8001a4",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word [small\nlink](https://e.x/page){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:gfm": {
+      "key": "57ce95e19462acb4",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:markdown": {
+      "key": "97de9e609368bf06",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word [small\nlink](https://e.x/page){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:markdown-link_attributes": {
+      "key": "45ad4717cb126267",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:markdown_strict": {
+      "key": "ecbdba60ac42fa13",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#e2e:plain": {
+      "key": "bff10babf5bd1d46",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word small link after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#read": {
+      "key": "5ca2815f9af95ab1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"fig-one\",[\"wide\",\"framed\"],[[\"height\",\"11px\"],[\"width\",\"11px\"]]],[{\"t\":\"Str\",\"c\":\"small\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"link\"}],[\"https://e.x/page\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"after\"}]}]}\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:commonmark": {
+      "key": "ac00e8b6f96e4c5e",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:commonmark_x": {
+      "key": "70132e33164fc305",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word [small\nlink](https://e.x/page){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:gfm": {
+      "key": "0a3981109bbadd35",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:markdown": {
+      "key": "b38fd4c2da246917",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word [small\nlink](https://e.x/page){#fig-one .wide .framed height=\"11px\"\nwidth=\"11px\"} after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:markdown-link_attributes": {
+      "key": "6f70a0eb8d8b1484",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:markdown_strict": {
+      "key": "fea67f9c6a64ad38",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word\n<a href=\"https://e.x/page\" id=\"fig-one\" class=\"wide framed\"\nheight=\"11px\" width=\"11px\">small link</a> after\n",
+      "stderr": ""
+    },
+    "link-attributes-wrap#write:plain": {
+      "key": "db1303781aac6fd7",
+      "exit": 0,
+      "stdout": "word word word word word word word word word word small link after\n",
       "stderr": ""
     },
     "link-in-emph#e2e:commonmark": {

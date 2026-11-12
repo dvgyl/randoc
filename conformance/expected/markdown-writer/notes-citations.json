@@ -91,6 +91,120 @@
       "stdout": "\n",
       "stderr": ""
     },
+    "cite-group-no-break#e2e:commonmark": {
+      "key": "36972cf022bbf878",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:commonmark_x": {
+      "key": "bcd0eafdedc344d1",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:gfm": {
+      "key": "dc228118871ff141",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:markdown": {
+      "key": "e13b2881c66e4dc3",
+      "exit": 0,
+      "stdout": "word word word word word word word word word\n[@alphaalphaalpha_one; @betabetabeta_two; @gammagamma_three] after words\nhere\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:markdown-footnotes": {
+      "key": "1cc5d90c5f49b351",
+      "exit": 0,
+      "stdout": "word word word word word word word word word\n[@alphaalphaalpha_one; @betabetabeta_two; @gammagamma_three] after words\nhere\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:markdown_mmd": {
+      "key": "2141d796db3ee426",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:markdown_phpextra": {
+      "key": "ca2a4fc1ca9ca217",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:markdown_strict": {
+      "key": "0b20a5e5d192807a",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#e2e:plain": {
+      "key": "e8415e69d5b84183",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#read": {
+      "key": "318140185317c380",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"alphaalphaalpha_one\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"betabetabeta_two\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"gammagamma_three\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"x\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"after\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"words\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:commonmark": {
+      "key": "efdd0b348c0e4165",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:commonmark_x": {
+      "key": "1e0c69f368aefd12",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:gfm": {
+      "key": "8617a37cbcca1fa2",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:markdown": {
+      "key": "add7b718e56beeec",
+      "exit": 0,
+      "stdout": "word word word word word word word word word\n[@alphaalphaalpha_one; @betabetabeta_two; @gammagamma_three] after words\nhere\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:markdown-footnotes": {
+      "key": "b1ab6c7e501cc092",
+      "exit": 0,
+      "stdout": "word word word word word word word word word\n[@alphaalphaalpha_one; @betabetabeta_two; @gammagamma_three] after words\nhere\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:markdown_mmd": {
+      "key": "01150d2ca794ad03",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:markdown_phpextra": {
+      "key": "200c9b7bd4cad6a8",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:markdown_strict": {
+      "key": "cfad71b0bd50ea6f",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
+    "cite-group-no-break#write:plain": {
+      "key": "2d1e73dae7fa9c2c",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after words here\n",
+      "stderr": ""
+    },
     "cite-in-note#e2e:commonmark": {
       "key": "49a5e5a2b80b16ee",
       "exit": 0,
@@ -179,6 +293,120 @@
       "key": "1997e7673b819200",
       "exit": 0,
       "stdout": "a[1]\n\n[1] [@doe]\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:commonmark": {
+      "key": "fb2bff43dc03ee77",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:commonmark_x": {
+      "key": "d867c4769c26bd18",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:gfm": {
+      "key": "b07dd1489df7dfa8",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:markdown": {
+      "key": "b2d3ec2dd138cee2",
+      "exit": 0,
+      "stdout": "word word word word word word word word word @alphaalpha_one [p. 33 and\nmore words; @betabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:markdown-footnotes": {
+      "key": "44163a41b3ff1c98",
+      "exit": 0,
+      "stdout": "word word word word word word word word word @alphaalpha_one [p. 33 and\nmore words; @betabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:markdown_mmd": {
+      "key": "5576920d6f85b795",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:markdown_phpextra": {
+      "key": "d18277fc4f148a9e",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:markdown_strict": {
+      "key": "7b73c8b23e1a6da1",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#e2e:plain": {
+      "key": "a4a59ea7925cb0a2",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#read": {
+      "key": "9716756350563f6f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"alphaalpha_one\",\"citationPrefix\":[],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"33\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"more\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"words\"}],\"citationMode\":{\"t\":\"AuthorInText\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"betabeta_two\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"x\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"after\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:commonmark": {
+      "key": "01b801dd3a28b4ac",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:commonmark_x": {
+      "key": "550c73865e4dd2e5",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:gfm": {
+      "key": "90fa31a617371fb5",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:markdown": {
+      "key": "c625ddaea31b675b",
+      "exit": 0,
+      "stdout": "word word word word word word word word word @alphaalpha_one [p. 33 and\nmore words; @betabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:markdown-footnotes": {
+      "key": "26de1b9fe2f81965",
+      "exit": 0,
+      "stdout": "word word word word word word word word word @alphaalpha_one [p. 33 and\nmore words; @betabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:markdown_mmd": {
+      "key": "c6ff2005e4c1e68e",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:markdown_phpextra": {
+      "key": "2e419b3060541cd7",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:markdown_strict": {
+      "key": "841191ffc022c08a",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-in-text-breaks#write:plain": {
+      "key": "05df819a57f9a49b",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
       "stderr": ""
     },
     "cite-intext#e2e:commonmark": {
@@ -631,6 +859,120 @@
       "stdout": "[@doe:2020.x_y]\n",
       "stderr": ""
     },
+    "cite-many-keys#e2e:commonmark": {
+      "key": "2838ea473cb9699e",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:commonmark_x": {
+      "key": "34b1e0136a0a5769",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:gfm": {
+      "key": "1b3d0cf2002e2a79",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:markdown": {
+      "key": "b790b2c5a08a93cf",
+      "exit": 0,
+      "stdout": "text\n[@key_number_0; @key_number_1; @key_number_2; @key_number_3; @key_number_4; @key_number_5; @key_number_6; @key_number_7].\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:markdown-footnotes": {
+      "key": "edfd7ab8b5f49de9",
+      "exit": 0,
+      "stdout": "text\n[@key_number_0; @key_number_1; @key_number_2; @key_number_3; @key_number_4; @key_number_5; @key_number_6; @key_number_7].\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:markdown_mmd": {
+      "key": "922bedabe94078b0",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:markdown_phpextra": {
+      "key": "2314cd9bf1ae5a83",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:markdown_strict": {
+      "key": "824965e18a16c514",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#e2e:plain": {
+      "key": "2c45174435efb30f",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#read": {
+      "key": "f1789b067a25a116",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"text\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"key_number_0\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_1\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_2\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_3\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_4\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_5\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_6\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"key_number_7\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"x\"}]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:commonmark": {
+      "key": "6c8eef3f606b89cf",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:commonmark_x": {
+      "key": "6344b917765afe42",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:gfm": {
+      "key": "79145a87ca2e43b2",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:markdown": {
+      "key": "3562b352b843ec2c",
+      "exit": 0,
+      "stdout": "text\n[@key_number_0; @key_number_1; @key_number_2; @key_number_3; @key_number_4; @key_number_5; @key_number_6; @key_number_7].\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:markdown-footnotes": {
+      "key": "2902fff77570c9c2",
+      "exit": 0,
+      "stdout": "text\n[@key_number_0; @key_number_1; @key_number_2; @key_number_3; @key_number_4; @key_number_5; @key_number_6; @key_number_7].\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:markdown_mmd": {
+      "key": "34abad4e600002b5",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:markdown_phpextra": {
+      "key": "67fe2e1ac39c3b28",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:markdown_strict": {
+      "key": "c55ce8b5023e1111",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
+    "cite-many-keys#write:plain": {
+      "key": "507d1b4d2f98dcec",
+      "exit": 0,
+      "stdout": "text x.\n",
+      "stderr": ""
+    },
     "cite-multiple#e2e:commonmark": {
       "key": "94c4b90a2453fe29",
       "exit": 0,
@@ -899,6 +1241,120 @@
       "key": "b17b379ba5d32eab",
       "exit": 0,
       "stdout": "[@doe]\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:commonmark": {
+      "key": "2676ba4c404fdda7",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:commonmark_x": {
+      "key": "00b849750c60199e",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:gfm": {
+      "key": "ea32b50f034de30e",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:markdown": {
+      "key": "662ab1204e20d8e0",
+      "exit": 0,
+      "stdout": "word word word word word word word word word [see also the\n@alphaalphaalpha_one p. 33 and more; @betabetabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:markdown-footnotes": {
+      "key": "127ae00303d3641e",
+      "exit": 0,
+      "stdout": "word word word word word word word word word [see also the\n@alphaalphaalpha_one p. 33 and more; @betabetabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:markdown_mmd": {
+      "key": "356920e4c8ad72b5",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:markdown_phpextra": {
+      "key": "6e7a79c12b8a208c",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:markdown_strict": {
+      "key": "808c47e63dca0c81",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#e2e:plain": {
+      "key": "0f8fd355f42e27a0",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#read": {
+      "key": "e42a9f2ce64f169f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"word\"},{\"t\":\"Space\"},{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"alphaalphaalpha_one\",\"citationPrefix\":[{\"t\":\"Str\",\"c\":\"see\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"also\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"}],\"citationSuffix\":[{\"t\":\"Str\",\"c\":\"p.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"33\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"more\"}],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0},{\"citationId\":\"betabetabeta_two\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":1,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"x\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"after\"}]}]}\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:commonmark": {
+      "key": "4652c5bb928eee28",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:commonmark_x": {
+      "key": "dc6a6b11c14a4e3b",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:gfm": {
+      "key": "f9894f3788ccd00b",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:markdown": {
+      "key": "4ceccf694c1a5905",
+      "exit": 0,
+      "stdout": "word word word word word word word word word [see also the\n@alphaalphaalpha_one p. 33 and more; @betabetabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:markdown-footnotes": {
+      "key": "7d5abe4d3a31e5bb",
+      "exit": 0,
+      "stdout": "word word word word word word word word word [see also the\n@alphaalphaalpha_one p. 33 and more; @betabetabeta_two] after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:markdown_mmd": {
+      "key": "f8344d89bc0948e6",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:markdown_phpextra": {
+      "key": "ac85570f6e27e1d9",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:markdown_strict": {
+      "key": "540a2aced972a68a",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
+      "stderr": ""
+    },
+    "cite-prefix-breaks#write:plain": {
+      "key": "6bc07bbe957e1345",
+      "exit": 0,
+      "stdout": "word word word word word word word word word x after\n",
       "stderr": ""
     },
     "cite-prefix-format#e2e:commonmark": {
@@ -1259,6 +1715,216 @@
       "key": "bcac4285da5905af",
       "exit": 0,
       "stdout": "[-@doe]\n",
+      "stderr": ""
+    },
+    "meta-note-author#e2e:gfm": {
+      "key": "80b0888448196d4d",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: author note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-author#e2e:markdown": {
+      "key": "c5d5fa022951119b",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: author note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-author#e2e:plain": {
+      "key": "a70d665817aa355b",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] author note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-author#read": {
+      "key": "b876251b066325d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Ann\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"author\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "meta-note-author#write:gfm": {
+      "key": "100f972f9c1ffcd6",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: author note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-author#write:markdown": {
+      "key": "ee34e08adeba61e0",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: author note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-author#write:plain": {
+      "key": "91073a21c546e120",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] author note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#e2e:gfm": {
+      "key": "11dd5b878dfd19b0",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: abstract note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#e2e:markdown": {
+      "key": "8d92eac289234232",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: abstract note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#e2e:plain": {
+      "key": "1e7f5c26a2c89df2",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] abstract note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#read": {
+      "key": "cbb0803a7394c87d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abstract\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Abs\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"abstract\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#write:gfm": {
+      "key": "22bdbd756d120b11",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: abstract note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#write:markdown": {
+      "key": "8865f4c9cef54d5b",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: abstract note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-blocks#write:plain": {
+      "key": "980f1622d117669b",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] abstract note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-custom#e2e:gfm": {
+      "key": "d50feed443d21c11",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: foo note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-custom#e2e:markdown": {
+      "key": "1ad83fa536930d0b",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: foo note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-custom#e2e:plain": {
+      "key": "1894f9f91aad0d4b",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] foo note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-custom#read": {
+      "key": "955f645e93b2cbc8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"foo\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"F\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"foo\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "meta-note-custom#write:gfm": {
+      "key": "80b44997c754c2ea",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: foo note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-custom#write:markdown": {
+      "key": "7571021aa345d8cc",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: foo note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-custom#write:plain": {
+      "key": "7d95800aa8c5808c",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] foo note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-title#e2e:gfm": {
+      "key": "cc70b765918f3a53",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: title note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-title#e2e:markdown": {
+      "key": "03279887a0189eb9",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: title note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-title#e2e:plain": {
+      "key": "e7456711f0f4eaf9",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] title note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-title#read": {
+      "key": "8f81c6e309122bfa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"T\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"title\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "meta-note-title#write:gfm": {
+      "key": "32aad32e2f4c208c",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: title note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-title#write:markdown": {
+      "key": "7f83a82b63d92dc2",
+      "exit": 0,
+      "stdout": "body[^2]\n\n[^1]: title note\n\n[^2]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-title#write:plain": {
+      "key": "71777bb9296d9582",
+      "exit": 0,
+      "stdout": "body[2]\n\n[1] title note\n\n[2] body note\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#e2e:gfm": {
+      "key": "999d4cfcfc3bc559",
+      "exit": 0,
+      "stdout": "body[^3]\n\n[^1]: a1\n\n[^2]: t1\n\n[^3]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#e2e:markdown": {
+      "key": "66cc111bf0f9d527",
+      "exit": 0,
+      "stdout": "body[^3]\n\n[^1]: a1\n\n[^2]: t1\n\n[^3]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#e2e:plain": {
+      "key": "b6d5c7cbc56e9b67",
+      "exit": 0,
+      "stdout": "body[3]\n\n[1] a1\n\n[2] t1\n\n[3] body note\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#read": {
+      "key": "f2a472f91b38446a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Ann\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a1\"}]}]}]}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"T\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"t1\"}]}]}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"body\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#write:gfm": {
+      "key": "d8344e8e28734ec0",
+      "exit": 0,
+      "stdout": "body[^3]\n\n[^1]: a1\n\n[^2]: t1\n\n[^3]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#write:markdown": {
+      "key": "9e0bf838a0a8feea",
+      "exit": 0,
+      "stdout": "body[^3]\n\n[^1]: a1\n\n[^2]: t1\n\n[^3]: body note\n",
+      "stderr": ""
+    },
+    "meta-note-two-keys#write:plain": {
+      "key": "2518fab9974fbfaa",
+      "exit": 0,
+      "stdout": "body[3]\n\n[1] a1\n\n[2] t1\n\n[3] body note\n",
       "stderr": ""
     },
     "note#e2e:commonmark": {

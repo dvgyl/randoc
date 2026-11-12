@@ -137,3 +137,53 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{
 id = "raw-inline-empty"
 to = ["markdown", "markdown-raw_html", "markdown-raw_tex", "markdown-raw_attribute", "markdown-raw_html-raw_tex-raw_attribute", "gfm", "commonmark", "commonmark_x", "plain", "markdown_strict"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"RawInline","c":["html",""]},{"t":"Str","c":"y"}]}]}'
+
+[[case]]
+id = "edge-space-inline-spaces"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"}," y^2 "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-display-spaces"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"DisplayMath"}," y^2 "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-inline-newline"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"},"  c+d\n"]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-display-newline"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"DisplayMath"},"  c+d\n"]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-inline-two-newlines"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"},"\n\nc+d\n\n"]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-display-two-newlines"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"DisplayMath"},"\n\nc+d\n\n"]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-inline-bad-spaces"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"}," \\sqrt{ "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-display-bad-spaces"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"DisplayMath"}," \\sqrt{ "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-inline-bad-newline"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"InlineMath"},"\n\\nosuch{y} "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "edge-space-display-bad-newline"
+to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"DisplayMath"},"\n\\nosuch{y} "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'

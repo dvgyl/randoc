@@ -5,7 +5,7 @@ use randoc_core::{Extension, LogMessage, Result, WrapOption};
 use randoc_layout::{Doc, cr, empty, literal, space};
 
 use crate::escape::is_interrupting_marker;
-use crate::html::{escape_html, html_attr_parts, html_attrs};
+use crate::html::{escape_html, html_attr_parts};
 use randoc_core::shared::stringify;
 
 use crate::{LinkRef, Variant, W};
@@ -513,6 +513,7 @@ impl W<'_> {
         Ok(match (syntax, display) {
             (None, _) => return self.math_fallback(kind, text),
             (Some(Extension::TexMathGfm), true) => {
+                let text = text.trim_matches('\n');
                 cr() + literal(format!("``` math\n{text}\n```")) + cr()
             }
             (Some(Extension::TexMathGfm), false) => literal(format!("$`{text}`$")),
@@ -627,7 +628,7 @@ impl W<'_> {
             let mut out = empty();
             for (index, part) in parts.into_iter().enumerate() {
                 if index > 0 {
-                    out += literal(";") + space();
+                    out += literal("; ");
                 }
                 out += part;
             }
@@ -641,7 +642,7 @@ impl W<'_> {
         let rest = join(rest.collect());
         let group = match (in_text_suffix.is_empty(), rest.is_empty()) {
             (true, true) => return Ok(key),
-            (false, false) => in_text_suffix + literal(";") + space() + rest,
+            (false, false) => in_text_suffix + literal("; ") + rest,
             (false, true) => in_text_suffix,
             (true, false) => rest,
         };
@@ -669,13 +670,17 @@ impl W<'_> {
         }
         if !attr.is_empty() && !self.link_attributes() && self.has(Extension::RawHtml) {
             let inner = self.inline_list(content, false)?;
-            let mut open = format!("<a href=\"{}\"", escape_html(&target.url));
-            open.push_str(&html_attrs(attr));
+            let mut open = literal(format!("<a href=\"{}\"", escape_html(&target.url)));
+            let mut parts = html_attr_parts(attr);
             if !target.title.is_empty() {
-                open.push_str(&format!(" title=\"{}\"", escape_html(&target.title)));
+                parts.push(format!("title=\"{}\"", escape_html(&target.title)));
             }
-            open.push('>');
-            return Ok(literal(open) + inner + literal("</a>"));
+            for part in parts {
+                open += space() + literal(part);
+            }
+            // Pandoc wraps the tag on its own and puts the lines in the text.
+            let open = literal(self.render_alone(open + literal(">")));
+            return Ok(open + inner + literal("</a>"));
         }
         let inner = self.inline_list(content, false)?;
         let attrs = if !attr.is_empty() && self.link_attributes() {
@@ -753,7 +758,12 @@ impl W<'_> {
                 literal("![") + inner + literal(format!("][{label}]"))
             };
         }
-        literal("![") + inner + literal("](") + destination(target) + literal(")") + literal(attrs)
+        let attrs = if attrs.is_empty() {
+            empty()
+        } else {
+            attr_doc(attr)
+        };
+        literal("![") + inner + literal("](") + destination(target) + literal(")") + attrs
     }
 
     fn image(&mut self, attr: &Attr, content: &[Inline], target: &Target) -> Result<Doc> {

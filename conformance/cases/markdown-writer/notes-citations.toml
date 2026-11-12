@@ -132,3 +132,44 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{
 id = "cite-prefix-format"
 to = ["markdown", "markdown-citations", "gfm", "commonmark", "commonmark_x", "plain", "markdown_strict"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Cite","c":[[{"citationId":"doe","citationPrefix":[{"t":"Emph","c":[{"t":"Str","c":"cf."}]}],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[cf."},{"t":"Space"},{"t":"Str","c":"@doe]"}]]}]}]}'
+
+[[case]]
+id = "cite-group-no-break"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"alphaalphaalpha_one","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"betabetabeta_two","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"gammagamma_three","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"x"}]]},{"t":"Space"},{"t":"Str","c":"after"},{"t":"Space"},{"t":"Str","c":"words"},{"t":"Space"},{"t":"Str","c":"here"}]}]}'
+
+[[case]]
+id = "cite-prefix-breaks"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"alphaalphaalpha_one","citationPrefix":[{"t":"Str","c":"see"},{"t":"Space"},{"t":"Str","c":"also"},{"t":"Space"},{"t":"Str","c":"the"}],"citationSuffix":[{"t":"Str","c":"p."},{"t":"Space"},{"t":"Str","c":"33"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"more"}],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"betabetabeta_two","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"x"}]]},{"t":"Space"},{"t":"Str","c":"after"}]}]}'
+
+[[case]]
+id = "cite-in-text-breaks"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"alphaalpha_one","citationPrefix":[],"citationSuffix":[{"t":"Str","c":"p."},{"t":"Space"},{"t":"Str","c":"33"},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Str","c":"more"},{"t":"Space"},{"t":"Str","c":"words"}],"citationMode":{"t":"AuthorInText"},"citationNoteNum":1,"citationHash":0},{"citationId":"betabeta_two","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"x"}]]},{"t":"Space"},{"t":"Str","c":"after"}]}]}'
+
+[[case]]
+id = "cite-many-keys"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"text"},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"key_number_0","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_1","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_2","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_3","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_4","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_5","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_6","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0},{"citationId":"key_number_7","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"x"}]]},{"t":"Str","c":"."}]}]}'
+
+[[case]]
+id = "meta-note-author"
+to = ["markdown", "gfm", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"author":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"Ann"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"author"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}'
+
+[[case]]
+id = "meta-note-title"
+to = ["markdown", "gfm", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"T"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"title"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}'
+
+[[case]]
+id = "meta-note-custom"
+to = ["markdown", "gfm", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"foo":{"t":"MetaInlines","c":[{"t":"Str","c":"F"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"foo"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}'
+
+[[case]]
+id = "meta-note-blocks"
+to = ["markdown", "gfm", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"abstract":{"t":"MetaBlocks","c":[{"t":"Para","c":[{"t":"Str","c":"Abs"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"abstract"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}'
+
+[[case]]
+id = "meta-note-two-keys"
+to = ["markdown", "gfm", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"T"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"t1"}]}]}]},"author":{"t":"MetaList","c":[{"t":"MetaInlines","c":[{"t":"Str","c":"Ann"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"a1"}]}]}]}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"body"},{"t":"Space"},{"t":"Str","c":"note"}]}]}]}]}'

@@ -79,6 +79,66 @@
       "stdout": "text\n\nNext\n",
       "stderr": ""
     },
+    "auto-id-with-class#e2e:markdown": {
+      "key": "541913145f95e3d2",
+      "exit": 0,
+      "stdout": "## A {#a .c}\n",
+      "stderr": ""
+    },
+    "auto-id-with-class#e2e:markdown_phpextra": {
+      "key": "ae694ee2d16ee976",
+      "exit": 0,
+      "stdout": "## A {#a .c}\n",
+      "stderr": ""
+    },
+    "auto-id-with-class#read": {
+      "key": "a06ef667ef3216d5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a\",[\"c\"],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "auto-id-with-class#write:markdown": {
+      "key": "a8ef1352598d082b",
+      "exit": 0,
+      "stdout": "## A {#a .c}\n",
+      "stderr": ""
+    },
+    "auto-id-with-class#write:markdown_phpextra": {
+      "key": "07e41e634b8b8e87",
+      "exit": 0,
+      "stdout": "## A {#a .c}\n",
+      "stderr": ""
+    },
+    "auto-id-with-kv#e2e:markdown": {
+      "key": "11d8da489dcbdc8c",
+      "exit": 0,
+      "stdout": "## A {#a k=\"v\"}\n",
+      "stderr": ""
+    },
+    "auto-id-with-kv#e2e:markdown_phpextra": {
+      "key": "671cf9befdeed3c8",
+      "exit": 0,
+      "stdout": "## A {#a k=\"v\"}\n",
+      "stderr": ""
+    },
+    "auto-id-with-kv#read": {
+      "key": "3a421118b48d6eef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a\",[],[[\"k\",\"v\"]]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "auto-id-with-kv#write:markdown": {
+      "key": "041938d3d0b91d11",
+      "exit": 0,
+      "stdout": "## A {#a k=\"v\"}\n",
+      "stderr": ""
+    },
+    "auto-id-with-kv#write:markdown_phpextra": {
+      "key": "d34ccbd99faa2025",
+      "exit": 0,
+      "stdout": "## A {#a k=\"v\"}\n",
+      "stderr": ""
+    },
     "braces#e2e:commonmark": {
       "key": "72159c3cedf264ec",
       "exit": 0,
@@ -2723,6 +2783,276 @@
       "key": "194e656815c30a78",
       "exit": 0,
       "stdout": "C ##\n",
+      "stderr": ""
+    },
+    "unique-id-after-div#e2e:markdown": {
+      "key": "e2c2c841399881af",
+      "exit": 0,
+      "stdout": "::: {#a}\nx\n:::\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-after-div#read": {
+      "key": "2b723d791cdda504",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"a\",[],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"}]}]]},{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-after-div#write:markdown": {
+      "key": "a8104e37020c9c44",
+      "exit": 0,
+      "stdout": "::: {#a}\nx\n:::\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#e2e:gfm": {
+      "key": "b86bd34670a9cd82",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#e2e:markdown": {
+      "key": "884604e85c1f0d30",
+      "exit": 0,
+      "stdout": "## A {#x}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#e2e:markdown_phpextra": {
+      "key": "418b925bf5c8c754",
+      "exit": 0,
+      "stdout": "## A {#x}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#read": {
+      "key": "cdc04407885eab83",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"x\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#write:gfm": {
+      "key": "9479c8c752abe9ef",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#write:markdown": {
+      "key": "a87eed50ac8ac425",
+      "exit": 0,
+      "stdout": "## A {#x}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-explicit-first#write:markdown_phpextra": {
+      "key": "b2597eb290229801",
+      "exit": 0,
+      "stdout": "## A {#x}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-gap#e2e:gfm": {
+      "key": "55a77b1800929202",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-gap#e2e:markdown": {
+      "key": "2d62e7e24231e398",
+      "exit": 0,
+      "stdout": "## A\n\n## A {#a-2}\n",
+      "stderr": ""
+    },
+    "unique-id-gap#e2e:markdown_phpextra": {
+      "key": "450a533ae98c04f4",
+      "exit": 0,
+      "stdout": "## A {#a}\n\n## A {#a-2}\n",
+      "stderr": ""
+    },
+    "unique-id-gap#read": {
+      "key": "9c79e0e7426af49f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a-2\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-gap#write:gfm": {
+      "key": "e7e6b866d2211b7b",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-gap#write:markdown": {
+      "key": "e16d40c7719c8941",
+      "exit": 0,
+      "stdout": "## A\n\n## A {#a-2}\n",
+      "stderr": ""
+    },
+    "unique-id-gap#write:markdown_phpextra": {
+      "key": "0357343f2ce52435",
+      "exit": 0,
+      "stdout": "## A {#a}\n\n## A {#a-2}\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#e2e:gfm": {
+      "key": "c23fa5eb5cbe7872",
+      "exit": 0,
+      "stdout": "## B\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#e2e:markdown": {
+      "key": "e7db5ddcabe81fb4",
+      "exit": 0,
+      "stdout": "## B {#a}\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#e2e:markdown_phpextra": {
+      "key": "c3884a3d09142318",
+      "exit": 0,
+      "stdout": "## B {#a}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#read": {
+      "key": "c18c5cc684946493",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"B\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#write:gfm": {
+      "key": "a12c421e4bb589ff",
+      "exit": 0,
+      "stdout": "## B\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#write:markdown": {
+      "key": "4242d5237c65b839",
+      "exit": 0,
+      "stdout": "## B {#a}\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-other-first#write:markdown_phpextra": {
+      "key": "d3d0ffd172e279e5",
+      "exit": 0,
+      "stdout": "## B {#a}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#e2e:gfm": {
+      "key": "fb00f099414e642d",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#e2e:markdown": {
+      "key": "5a7c80612d365c37",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#e2e:markdown_phpextra": {
+      "key": "e95db32915b8fdfb",
+      "exit": 0,
+      "stdout": "## A {#a}\n\n## A {#a-1}\n\n## A {#a-2}\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#read": {
+      "key": "c84927d448bb1f26",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a-1\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a-2\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#write:gfm": {
+      "key": "880437e4dade609e",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#write:markdown": {
+      "key": "e39c0eba4a52bf7c",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-repeat#write:markdown_phpextra": {
+      "key": "84a19a5c28518118",
+      "exit": 0,
+      "stdout": "## A {#a}\n\n## A {#a-1}\n\n## A {#a-2}\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#e2e:gfm": {
+      "key": "41a1bc81a4aedd87",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#e2e:markdown": {
+      "key": "49e515a6d4a5c279",
+      "exit": 0,
+      "stdout": "## A {#a-1}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#e2e:markdown_phpextra": {
+      "key": "72c9020c7f49d525",
+      "exit": 0,
+      "stdout": "## A {#a-1}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#read": {
+      "key": "8639a371f8ffeada",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a-1\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#write:gfm": {
+      "key": "6d6c679bc2f5ad7c",
+      "exit": 0,
+      "stdout": "## A\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#write:markdown": {
+      "key": "c47fe88f48dcdff6",
+      "exit": 0,
+      "stdout": "## A {#a-1}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-suffix-first#write:markdown_phpextra": {
+      "key": "e857d75733c59eaa",
+      "exit": 0,
+      "stdout": "## A {#a-1}\n\n## A {#a}\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#e2e:gfm": {
+      "key": "aad66fcdd560a231",
+      "exit": 0,
+      "stdout": "## A\n\n## B\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#e2e:markdown": {
+      "key": "b0dff16d1c79c677",
+      "exit": 0,
+      "stdout": "## A\n\n## B {#a}\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#e2e:markdown_phpextra": {
+      "key": "a473ef7feed7befb",
+      "exit": 0,
+      "stdout": "## A {#a}\n\n## B {#a}\n\n## A {#a-1}\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#read": {
+      "key": "88c20093b8f899c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a\",[],[]],[{\"t\":\"Str\",\"c\":\"B\"}]]},{\"t\":\"Header\",\"c\":[2,[\"a-1\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#write:gfm": {
+      "key": "b90df58de3255a8e",
+      "exit": 0,
+      "stdout": "## A\n\n## B\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#write:markdown": {
+      "key": "364d01d2718a0cb0",
+      "exit": 0,
+      "stdout": "## A\n\n## B {#a}\n\n## A\n",
+      "stderr": ""
+    },
+    "unique-id-taken-by-other#write:markdown_phpextra": {
+      "key": "6211474237acd534",
+      "exit": 0,
+      "stdout": "## A {#a}\n\n## B {#a}\n\n## A {#a-1}\n",
       "stderr": ""
     },
     "unnumbered#e2e:commonmark": {

@@ -138,7 +138,7 @@ impl W<'_> {
         if alone && (raw == "-" || raw == "+") {
             return format!("\\{raw}");
         }
-        if raw.starts_with('%') && self.has(Extension::PandocTitleBlock) {
+        if alone && raw == "%" && self.has(Extension::PandocTitleBlock) {
             return format!("\\{escaped}");
         }
         if alone

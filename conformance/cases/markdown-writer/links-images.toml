@@ -160,3 +160,30 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{
 [[case]]
 id = "ref-like-text"
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"[a]:"},{"t":"Space"},{"t":"Str","c":"http://e.x"}]}]}'
+
+[[case]]
+id = "image-attributes-wrap"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Image","c":[["fig-one",["wide","framed"],[["height","11px"],["width","11px"]]],[{"t":"Str","c":"small"},{"t":"Space"},{"t":"Str","c":"icon"}],["images/icon.svg",""]]},{"t":"Space"},{"t":"Str","c":"after"}]}]}'
+
+[[case]]
+id = "image-attributes-wrap-figure"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["fig-one",["wide","framed"],[["height","11px"],["width","11px"]]],[{"t":"Str","c":"cap"}],["images/icon-with-a-long-name.svg",""]]}]}]]}]}'
+
+[[case]]
+id = "link-attributes-wrap"
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Link","c":[["fig-one",["wide","framed"],[["height","11px"],["width","11px"]]],[{"t":"Str","c":"small"},{"t":"Space"},{"t":"Str","c":"link"}],["https://e.x/page",""]]},{"t":"Space"},{"t":"Str","c":"after"}]}]}'
+
+[[case]]
+id = "html-link-tag-wrap-long-href"
+to = ["gfm", "markdown-link_attributes"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Link","c":[["an-id",["c1"],[["k","v w"]]],[{"t":"Str","c":"t"}],["https://e.x/pppppppppppppppppppppppppppppppppppppppp",""]]}]}]}'
+
+[[case]]
+id = "html-link-tag-wrap-title"
+to = ["gfm", "markdown-link_attributes"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Link","c":[["an-id",["c1"],[["k","v w"]]],[{"t":"Str","c":"t"}],["https://e.x/p","the title here"]]},{"t":"Space"},{"t":"Str","c":"end"}]}]}'
+
+[[case]]
+id = "html-span-tag-wrap"
+to = ["gfm", "markdown-bracketed_spans-native_spans"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Str","c":"word"},{"t":"Space"},{"t":"Span","c":[["an-id",["c1"],[["k","v w"]]],[{"t":"Str","c":"t"}]]}]}]}'

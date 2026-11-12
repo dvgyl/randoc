@@ -5,7 +5,7 @@ use randoc_ast::{
 };
 use randoc_core::{Extension, Result};
 use randoc_layout::{
-    Doc, blankline, chomp, cr, empty, hang, literal, nest, prefixed, real_length, vcat,
+    Doc, blankline, blanklines, chomp, cr, empty, hang, literal, nest, prefixed, real_length, vcat,
 };
 
 use crate::html::html_attrs;
@@ -306,6 +306,16 @@ fn is_language(class: &str) -> bool {
         .is_ok()
 }
 
+/// The text of a raw block, by the way that the writer joins it to the next block.
+enum RawBody {
+    /// The text with its own newlines.
+    Verbatim(Doc),
+    /// The text without its final newlines.
+    Trimmed(Doc),
+    /// A fenced block with the `raw_attribute` form.
+    Fence(Doc),
+}
+
 /// The kind of a list, for the separator between two adjacent lists.
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum ListKind {
@@ -400,15 +410,16 @@ impl W<'_> {
                 && blocks
                     .get(index + 1)
                     .is_some_and(|next| !matches!(next, Block::RawBlock(..)));
-            let raw_pair = matches!(block, Block::RawBlock(..))
-                && match blocks.get(index + 1) {
-                    Some(Block::RawBlock(..)) => true,
-                    Some(Block::Plain(_)) => self.variant != Variant::Commonmark,
-                    _ => false,
-                };
+            let raw_pair = self.variant != Variant::Commonmark
+                && matches!(
+                    blocks.get(index + 1),
+                    Some(Block::RawBlock(..) | Block::Plain(_))
+                );
             out += match block {
                 Block::Plain(inlines) if promote => self.plain_block(inlines)? + blankline(),
-                Block::RawBlock(..) if raw_pair => chomp(self.block(block)?) + cr(),
+                Block::RawBlock(format, text) if raw_pair => {
+                    self.raw_block_before_raw(&format.as_str().to_lowercase(), text)
+                }
                 _ => self.block(block)?,
             };
         }
@@ -427,6 +438,16 @@ impl W<'_> {
     }
 
     fn block(&mut self, block: &Block) -> Result<Doc> {
+        if matches!(block, Block::Div(..)) {
+            return self.block_node(block);
+        }
+        let outer = std::mem::take(&mut self.div_count);
+        let out = self.block_node(block);
+        self.div_count = outer;
+        out
+    }
+
+    fn block_node(&mut self, block: &Block) -> Result<Doc> {
         Ok(match block {
             Block::Plain(inlines) => self.plain_block(inlines)? + cr(),
             Block::Para(inlines) => self.plain_block(inlines)? + blankline(),
@@ -535,12 +556,32 @@ impl W<'_> {
     }
 
     fn raw_block(&self, format: &str, text: &str) -> Doc {
+        match self.raw_body(format, text) {
+            Some(RawBody::Fence(fence)) => fence + cr(),
+            Some(RawBody::Verbatim(_)) if text.ends_with('\n') => {
+                let trimmed = text.trim_end_matches('\n');
+                literal(trimmed) + blanklines(text.len() - trimmed.len())
+            }
+            Some(RawBody::Verbatim(body) | RawBody::Trimmed(body)) => body + blankline(),
+            None => empty(),
+        }
+    }
+
+    /// A raw block before a raw block or a plain block: no blank line between.
+    fn raw_block_before_raw(&self, format: &str, text: &str) -> Doc {
+        match self.raw_body(format, text) {
+            Some(RawBody::Verbatim(body)) => body + literal("\n"),
+            Some(RawBody::Fence(body) | RawBody::Trimmed(body)) => body + cr(),
+            None => empty(),
+        }
+    }
+
+    /// The text of a raw block without the separator after it, or `None`
+    /// when the format drops the block.
+    fn raw_body(&self, format: &str, text: &str) -> Option<RawBody> {
         if self.plain() {
-            return if format == "plain" {
-                literal(text.trim_end_matches('\n')) + blankline()
-            } else {
-                empty()
-            };
+            return (format == "plain")
+                .then(|| RawBody::Trimmed(literal(text.trim_end_matches('\n'))));
         }
         let own = format == "markdown"
             || self.variant == Variant::Markdown && format.starts_with("markdown")
@@ -548,23 +589,29 @@ impl W<'_> {
                 && matches!(format, "commonmark" | "gfm" | "commonmark_x");
         let html = matches!(format, "html" | "html4" | "html5");
         let tex = matches!(format, "latex" | "tex");
-        if html && self.has(Extension::RawHtml) && self.variant == Variant::Commonmark {
-            let text = text.trim_end_matches('\n').replace("\n\n", "\n&#10;");
-            return literal(text) + blankline();
-        }
-        if own || html && self.has(Extension::RawHtml) || tex && self.has(Extension::RawTex) {
-            return literal(text.trim_end_matches('\n')) + blankline();
+        if self.variant == Variant::Commonmark {
+            if html && self.has(Extension::RawHtml) {
+                let text = text.replace("\n\n", "\n&#10;");
+                return Some(RawBody::Trimmed(literal(text.trim_end_matches('\n'))));
+            }
+            if own {
+                return Some(RawBody::Trimmed(literal(text.trim_end_matches('\n'))));
+            }
+        } else if own || html && self.has(Extension::RawHtml) || tex && self.has(Extension::RawTex)
+        {
+            return Some(RawBody::Verbatim(literal(text)));
         }
         if self.has(Extension::RawAttribute) {
             let ticks = "`".repeat((longest_run(text, '`') + 1).max(3));
-            return literal(format!("{ticks}{{={format}}}"))
-                + cr()
-                + literal(text.trim_end_matches('\n'))
-                + cr()
-                + literal(ticks)
-                + cr();
+            return Some(RawBody::Fence(
+                literal(format!("{ticks}{{={format}}}"))
+                    + cr()
+                    + literal(text)
+                    + cr()
+                    + literal(ticks),
+            ));
         }
-        empty()
+        None
     }
 
     fn header(&mut self, level: i64, attr: &Attr, inlines: &[Inline]) -> Result<Doc> {
@@ -588,9 +635,12 @@ impl W<'_> {
             return Ok(literal(contents) + blankline());
         }
         let gfm_ids = self.has(Extension::GfmAutoIdentifiers);
-        let auto = (self.has(Extension::AutoIdentifiers) || gfm_ids)
-            .then(|| randoc_core::shared::auto_identifier(inlines, self.ext));
-        let show_id = !attr.id.is_empty() && auto.as_deref() != Some(attr.id.as_str());
+        let auto = (self.has(Extension::AutoIdentifiers) || gfm_ids).then(|| {
+            let base = randoc_core::shared::auto_identifier(inlines, self.ext);
+            self.heading_ids.unique(&base)
+        });
+        let bare = attr.classes.is_empty() && attr.attributes.is_empty();
+        let show_id = !attr.id.is_empty() && (!bare || auto.as_deref() != Some(attr.id.as_str()));
         let mut shown = attr.clone();
         if show_id {
             shown.id = format!("{}{}", self.opts.identifier_prefix, attr.id);
@@ -789,12 +839,12 @@ impl W<'_> {
             return self.block_list(blocks);
         }
         if self.has(Extension::FencedDivs) {
-            let outer = std::mem::take(&mut self.div_depth);
+            let outer = std::mem::take(&mut self.div_count);
             let inner = self.block_list(blocks);
-            let depth = self.div_depth;
-            self.div_depth = outer.max(depth + 1);
+            let count = self.div_count;
+            self.div_count = outer + count + 1;
             let inner = inner?;
-            let fence = ":".repeat(3 + depth);
+            let fence = ":".repeat(3 + count);
             let info = if self.variant == Variant::Markdown
                 && attr.id.is_empty()
                 && attr.attributes.is_empty()

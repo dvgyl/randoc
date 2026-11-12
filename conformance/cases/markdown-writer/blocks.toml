@@ -217,3 +217,303 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"RawBlock","c
 id = "raw-block-in-list"
 to = ["markdown", "gfm", "commonmark", "commonmark_x", "plain", "markdown_strict", "markdown-raw_html"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"BulletList","c":[[{"t":"RawBlock","c":["html","<hr>"]}],[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]}]}'
+
+[[case]]
+id = "raw-html-empty-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html",""]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-html-empty-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html",""]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-html-empty-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html",""]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-html-empty-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html",""]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-empty-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html",""]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-empty-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html",""]}]}'
+
+[[case]]
+id = "raw-html-one-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-html-one-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-html-one-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-html-one-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-one-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-one-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>"]}]}'
+
+[[case]]
+id = "raw-html-nl-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-html-nl-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-html-nl-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-html-nl-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-nl-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-nl-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n"]}]}'
+
+[[case]]
+id = "raw-html-two-nl-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n\n"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-html-two-nl-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n\n"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-html-two-nl-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n\n"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-html-two-nl-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n\n"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-two-nl-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n\n"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-two-nl-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","<i>\n\n"]}]}'
+
+[[case]]
+id = "raw-html-lines-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","a\nb\n"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-html-lines-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","a\nb\n"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-html-lines-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","a\nb\n"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-html-lines-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","a\nb\n"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-lines-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","a\nb\n"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-html-lines-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["html","a\nb\n"]}]}'
+
+[[case]]
+id = "raw-latex-empty-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex",""]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-latex-empty-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex",""]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-latex-empty-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex",""]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-latex-empty-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex",""]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-empty-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex",""]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-empty-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex",""]}]}'
+
+[[case]]
+id = "raw-latex-one-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-latex-one-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-latex-one-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-latex-one-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-one-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-one-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>"]}]}'
+
+[[case]]
+id = "raw-latex-nl-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-latex-nl-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-latex-nl-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-latex-nl-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-nl-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-nl-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n"]}]}'
+
+[[case]]
+id = "raw-latex-two-nl-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n\n"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-latex-two-nl-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n\n"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-latex-two-nl-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n\n"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-latex-two-nl-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n\n"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-two-nl-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n\n"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-two-nl-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","<i>\n\n"]}]}'
+
+[[case]]
+id = "raw-latex-lines-then-raw"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","a\nb\n"]},{"t":"RawBlock","c":["html","<j>"]}]}'
+
+[[case]]
+id = "raw-latex-lines-then-raw-nl"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","a\nb\n"]},{"t":"RawBlock","c":["html","<j>\n"]}]}'
+
+[[case]]
+id = "raw-latex-lines-then-raw-tex"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","a\nb\n"]},{"t":"RawBlock","c":["latex","\\j"]}]}'
+
+[[case]]
+id = "raw-latex-lines-then-plain"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","a\nb\n"]},{"t":"Plain","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-lines-then-para"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","a\nb\n"]},{"t":"Para","c":[{"t":"Str","c":"a"}]}]}'
+
+[[case]]
+id = "raw-latex-lines-then-end"
+to = ["markdown", "gfm", "commonmark", "commonmark_x", "markdown_strict", "plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"z"}]},{"t":"RawBlock","c":["latex","a\nb\n"]}]}'
