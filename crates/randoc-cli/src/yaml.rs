@@ -343,6 +343,54 @@ pub fn render_error(file: &str, text: &str, error: &YamlError) -> String {
     out
 }
 
+/// Returns the text of a YAML file in the encoding that its first bytes
+/// give, as the YAML specification (section 5.2) detects it: UTF-32 and
+/// UTF-16 in both byte orders, with or without a byte order mark, else UTF-8
+/// (see [`utf8_text`]). An invalid UTF-16 or UTF-32 sequence becomes U+FFFD.
+pub fn decode_text(bytes: &[u8]) -> Result<std::borrow::Cow<'_, str>, (YamlError, &str)> {
+    use std::borrow::Cow;
+    let units = |data: &[u8], size: usize, big: bool| -> Vec<u32> {
+        data.chunks(size)
+            .map(|chunk| {
+                let mut unit = 0u32;
+                for index in 0..size {
+                    let byte = u32::from(chunk.get(index).copied().unwrap_or(0));
+                    let shift = if big { size - 1 - index } else { index } * 8;
+                    unit |= byte << shift;
+                }
+                unit
+            })
+            .collect()
+    };
+    let utf32 = |data: &[u8], big: bool| -> String {
+        units(data, 4, big)
+            .into_iter()
+            .map(|unit| char::from_u32(unit).unwrap_or('\u{fffd}'))
+            .collect()
+    };
+    let utf16 = |data: &[u8], big: bool| -> String {
+        let units: Vec<u16> = units(data, 2, big)
+            .into_iter()
+            .map(|unit| u16::try_from(unit).unwrap_or(0xfffd))
+            .collect();
+        char::decode_utf16(units)
+            .map(|c| c.unwrap_or('\u{fffd}'))
+            .collect()
+    };
+    let text = match bytes {
+        [0, 0, 0xfe, 0xff, rest @ ..] => utf32(rest, true),
+        [0, 0, 0, _, ..] => utf32(bytes, true),
+        [0xff, 0xfe, 0, 0, rest @ ..] => utf32(rest, false),
+        [_, 0, 0, 0, ..] => utf32(bytes, false),
+        [0xfe, 0xff, rest @ ..] => utf16(rest, true),
+        [0, _, ..] => utf16(bytes, true),
+        [0xff, 0xfe, rest @ ..] => utf16(rest, false),
+        [_, 0, ..] => utf16(bytes, false),
+        _ => return utf8_text(bytes).map(Cow::Borrowed),
+    };
+    Ok(Cow::Owned(text))
+}
+
 /// Returns the text of a YAML file, or the error of Pandoc for a file that
 /// is not UTF-8 with the text before the first bad byte, for `render_error`.
 pub fn utf8_text(bytes: &[u8]) -> Result<&str, (YamlError, &str)> {

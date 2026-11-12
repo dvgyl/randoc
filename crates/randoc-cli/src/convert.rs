@@ -6,14 +6,14 @@ use std::io::{IsTerminal, Read};
 
 use randoc::ast::{Block, Inline, Meta, MetaValue, Pandoc};
 use randoc::{
-    Context, Error, FormatSpec, LogMessage, Output, Reader, ReaderOptions, Result, Source, Sources,
-    Verbosity, WriterOptions, formats,
+    Context, Error, Extension, FormatSpec, LogMessage, Output, Reader, ReaderOptions, Result,
+    Source, Sources, Verbosity, WrapOption, WriterOptions, formats,
 };
 
 use crate::cli::HIGHLIGHT_STYLES;
-use crate::data_files::DATA_FILES;
 use crate::settings::{Eol, Filter, Settings};
 use crate::subsystem::{self, Subsystem};
+use crate::template::{Includes, TemplateText};
 use crate::yaml::{self, Node, Resolved};
 
 /// Checks a highlighting style name or a theme file.
@@ -161,21 +161,21 @@ fn extension_of(path: &str) -> String {
         .map_or(String::new(), |(_, ext)| format!(".{ext}"))
 }
 
-/// Picks a format from a file name, or the default with a warning.
-fn guess_format(path: Option<&str>, default: &str, context: &mut Context) -> String {
-    let Some(path) = path.filter(|p| *p != "-") else {
+/// Picks the input format from the first input file name with a known
+/// extension, or the default with a warning that names each extension.
+/// Standard input alone (`-` or no file) takes the default without a warning.
+fn guess_format(inputs: &[String], default: &str, context: &mut Context) -> String {
+    if inputs.is_empty() || inputs == ["-"] {
         return default.to_owned();
-    };
-    match format_from_extension(path) {
-        Some(format) => format.to_owned(),
-        None => {
-            context.report(LogMessage::CouldNotDeduceFormat(
-                vec![extension_of(path)],
-                default.to_owned(),
-            ));
-            default.to_owned()
-        }
     }
+    if let Some(format) = inputs.iter().find_map(|path| format_from_extension(path)) {
+        return format.to_owned();
+    }
+    context.report(LogMessage::CouldNotDeduceFormat(
+        inputs.iter().map(|path| extension_of(path)).collect(),
+        default.to_owned(),
+    ));
+    default.to_owned()
 }
 
 /// Picks the output format from the output file name. Pandoc prints the
@@ -357,12 +357,12 @@ fn markdown_meta(text: &str, context: &mut Context) -> Result<MetaValue> {
 
 /// The file `abbreviations` of the user data folder.
 fn data_abbreviations(data_dir: &str) -> String {
-    format!("{data_dir}/abbreviations")
+    data_path(data_dir, "abbreviations")
 }
 
 /// The second place of a metadata file: the `metadata` folder of the user data folder.
 fn data_metadata_file(path: &str, data_dir: &str) -> String {
-    format!("{data_dir}/metadata/{path}")
+    data_path(data_dir, &format!("metadata/{path}"))
 }
 
 /// Reads a metadata file from the working directory or the user data directory.
@@ -375,7 +375,7 @@ fn read_metadata_file(path: &str, data_dir: &str, context: &mut Context) -> Resu
             .read_file(&in_data_dir)
             .map_err(|_| Error::CouldNotFindMetadataFile(path.to_owned()))?,
     };
-    let text = yaml::utf8_text(&bytes)
+    let text = yaml::decode_text(&bytes)
         .map_err(|(error, valid)| {
             Error::Parse(format!(
                 "Error parsing YAML metadata at \"{path}\" (line 1, column 1):\n{}",
@@ -454,6 +454,38 @@ fn group_by_key<K: Ord, V>(entries: impl Iterator<Item = (K, V)>) -> BTreeMap<K,
         grouped.entry(key).or_default().push(value);
     }
     grouped
+}
+
+/// Removes each `SoftBreak` whose neighbours, as plain text, end and start
+/// with an East Asian wide character (the extension
+/// `east_asian_line_breaks`), in each list of inlines of the document.
+fn remove_east_asian_line_breaks(doc: &mut Pandoc) {
+    struct Breaks;
+    impl randoc::ast::walk::VisitorMut for Breaks {
+        fn inlines(&mut self, inlines: &mut Vec<Inline>) {
+            let wide = |c: Option<char>| c.is_some_and(|c| randoc_layout::char_width(c) == 2);
+            let text = |inline: &Inline| randoc::shared::stringify(std::slice::from_ref(inline));
+            // A removal does not change the neighbours of another break, so
+            // each break is judged on the list as the reader made it.
+            let remove: Vec<bool> = (0..inlines.len())
+                .map(|i| {
+                    matches!(inlines[i], Inline::SoftBreak)
+                        && i > 0
+                        && inlines.get(i + 1).is_some_and(|next| {
+                            wide(text(&inlines[i - 1]).chars().next_back())
+                                && wide(text(next).chars().next())
+                        })
+                })
+                .collect();
+            let mut index = 0;
+            inlines.retain(|_| {
+                let keep = !remove[index];
+                index += 1;
+                keep
+            });
+        }
+    }
+    randoc::ast::walk::walk_mut(doc, &mut Breaks);
 }
 
 /// Changes the level of each heading. A heading below level 1 becomes a paragraph.
@@ -561,14 +593,14 @@ const NAMED_FILES: &[NamedFiles] = &[
         text: false,
     },
     NamedFiles {
-        files: |s| s.epub_fonts.iter().collect(),
+        files: |s| s.citation_abbreviations.iter().collect(),
         operation: "withBinaryFile",
         point: ReadPoint::AfterInputs,
         sandbox_only: true,
         text: false,
     },
     NamedFiles {
-        files: |s| s.citation_abbreviations.iter().collect(),
+        files: |s| s.epub_fonts.iter().collect(),
         operation: "withBinaryFile",
         point: ReadPoint::AfterInputs,
         sandbox_only: true,
@@ -624,8 +656,13 @@ fn abbreviations(
         // under `--sandbox`; its UTF-8 error names the empty name.
         None => match context.host().read_file(&data_abbreviations(data_dir)) {
             Ok(bytes) => ("", bytes),
-            // The default list comes with the Markdown reader. It is empty until then.
-            Err(_) => return Ok(BTreeSet::new()),
+            // Without the file, Pandoc uses its default list.
+            Err(_) => {
+                return Ok(randoc::shared::default_abbreviations()
+                    .iter()
+                    .map(|a| (*a).to_owned())
+                    .collect());
+            }
         },
     };
     check_utf8(name, &bytes)?;
@@ -642,11 +679,6 @@ fn abbreviations(
 fn writer_options(settings: &Settings, spec: &FormatSpec) -> Result<WriterOptions> {
     let mut options = WriterOptions::default();
     options.extensions = spec.extensions()?;
-    // A writer gives standalone output when and only when it has a template.
-    // The program sets an empty one for `-s` when the format has no default template.
-    if settings.is_standalone() {
-        options.template = Some(Default::default());
-    }
     options.tab_stop = settings.tab_stop;
     options.table_of_contents = settings.toc;
     options.list_of_figures = settings.lof;
@@ -709,7 +741,7 @@ fn find_template(
     data_dir: &str,
     settings: &Settings,
     context: &mut Context,
-) -> Result<Vec<u8>> {
+) -> Result<TemplateText> {
     let candidates = template_candidates(name, format, data_dir, &settings.resource_path);
     for candidate in &candidates {
         if let Ok(bytes) = context.host().read_file(&candidate.path) {
@@ -720,7 +752,15 @@ fn find_template(
                 ));
             }
             match check_utf8(&candidate.name, &bytes) {
-                Ok(()) => return Ok(clean_template(bytes)),
+                // Error messages and partial paths use the template name,
+                // not the path of the file that was found.
+                Ok(()) => {
+                    return Ok(TemplateText {
+                        path: candidate.name.clone(),
+                        text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
+                        is_file: true,
+                    });
+                }
                 // Pandoc goes on to NAME.FORMAT when NAME without an
                 // extension is not UTF-8.
                 Err(_) if candidate.name == name && !has_extension(name) => {}
@@ -782,7 +822,7 @@ pub fn template_candidates(
             });
         }
         candidates.push(TemplateCandidate {
-            path: format!("{data_dir}/templates/{}", file_name(&name)),
+            path: data_path(data_dir, &format!("templates/{}", file_name(&name))),
             name,
             in_data_dir: true,
         });
@@ -965,23 +1005,25 @@ fn add_citation_metadata(doc: &mut Pandoc, settings: &Settings) {
     }
     // The key of a defaults file replaces the options. As for a repeated
     // `-M`, one option is a string and more options are a list.
+    // The key of a defaults file replaces the options and `-M`. Each
+    // option is a `-M citation-abbreviations=FILE` in the order of the
+    // command line (`cli::apply`).
     if let Some(file) = &settings.citation_abbreviations {
         doc.meta.insert(
             "citation-abbreviations",
             MetaValue::MetaString(file.clone()),
         );
-        return;
     }
-    let mut files: Vec<MetaValue> = settings
-        .citation_abbreviations_options
-        .iter()
-        .map(|file| MetaValue::MetaString(file.clone()))
-        .collect();
-    if files.len() > 1 {
-        doc.meta
-            .insert("citation-abbreviations", MetaValue::MetaList(files));
-    } else if let Some(file) = files.pop() {
-        doc.meta.insert("citation-abbreviations", file);
+}
+
+/// Joins the user data folder and a path in it, as the Haskell `</>` does:
+/// an empty folder gives the path alone, and a folder that ends with `/`
+/// gets no second separator.
+pub fn data_path(data_dir: &str, rest: &str) -> String {
+    if data_dir.is_empty() || data_dir.ends_with('/') {
+        format!("{data_dir}{rest}")
+    } else {
+        format!("{data_dir}/{rest}")
     }
 }
 
@@ -1141,7 +1183,7 @@ fn check_filter(
             let found = context.host().file_exists(path)
                 || context
                     .host()
-                    .file_exists(&format!("{data_dir}/filters/{path}"));
+                    .file_exists(&data_path(data_dir, &format!("filters/{path}")));
             if found {
                 subsystem::missing(Subsystem::Filters(path.clone()))
             } else {
@@ -1156,7 +1198,7 @@ fn check_filter(
             let found = context.host().file_exists(path)
                 || context
                     .host()
-                    .file_exists(&format!("{data_dir}/filters/{path}"))
+                    .file_exists(&data_path(data_dir, &format!("filters/{path}")))
                 || (!path.contains('/') && {
                     let dirs = context
                         .host()
@@ -1320,7 +1362,7 @@ fn convert(
     let output = settings.output_file.as_deref().filter(|path| *path != "-");
     let from = match &settings.from {
         Some(from) => from.clone(),
-        None => guess_format(inputs.first().map(String::as_str), "markdown", context),
+        None => guess_format(inputs, "markdown", context),
     };
     let to = match &settings.to {
         Some(to) => to.clone(),
@@ -1330,6 +1372,14 @@ fn convert(
     let reader =
         formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?;
     let mut reader_options = reader_options(settings, &from_spec)?;
+    // The program applies `east_asian_line_breaks` after the reader; the
+    // readers of Pandoc do not look at it.
+    let east_asian_line_breaks = reader_options
+        .extensions
+        .contains(Extension::EastAsianLineBreaks);
+    reader_options
+        .extensions
+        .disable(Extension::EastAsianLineBreaks);
     let to_spec = format_spec(&to)?;
     if to_spec.name == "pdf" {
         return Err(subsystem::missing(Subsystem::Pdf));
@@ -1349,28 +1399,47 @@ fn convert(
         )));
     }
     read_named_files(ReadPoint::BeforeTemplate, settings, context)?;
-    if let Some(template) = &settings.template {
-        find_template(template, &to_spec.name, data_dir, settings, context)?;
-    }
+    let template = match &settings.template {
+        Some(name) => Some(find_template(
+            name,
+            &to_spec.name,
+            data_dir,
+            settings,
+            context,
+        )?),
+        None if settings.is_standalone() => Some(crate::template::default_template(
+            &to_spec.name,
+            data_dir,
+            context,
+        )),
+        None => None,
+    };
+    let template = template
+        .map(|text| crate::template::compile(&text, data_dir, context))
+        .transpose()?;
     read_named_files(ReadPoint::AfterTemplate, settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
     let style = settings.syntax_highlighting.as_str();
     if !matches!(style, "none" | "default" | "idiomatic") {
         check_highlight_style(style, |path| context.host().read_file(path))?;
     }
-    let has_template = DATA_FILES.contains(&crate::info::template_name(&to_spec.name).as_str());
-    if settings.is_standalone() && has_template {
+    // The writers of the formats with a default template do not render a
+    // template yet.
+    if settings.is_standalone() && randoc_data::default_template(&to_spec.name).is_some() {
         return Err(subsystem::missing(Subsystem::Templates));
     }
     // Pandoc reads the before-body files, then the after-body files, then the header files.
-    for path in settings
-        .include_before_body
-        .iter()
-        .chain(&settings.include_after_body)
-        .chain(&settings.include_in_header)
-    {
-        let bytes = read_include(path, settings, context)?;
-        check_utf8(path, &bytes)?;
+    let mut includes = Includes::default();
+    for (paths, texts) in [
+        (&settings.include_before_body, &mut includes.before),
+        (&settings.include_after_body, &mut includes.after),
+        (&settings.include_in_header, &mut includes.header),
+    ] {
+        for path in paths {
+            let bytes = read_include(path, settings, context)?;
+            check_utf8(path, &bytes)?;
+            texts.push(String::from_utf8_lossy(&bytes).into_owned());
+        }
     }
     reader_options.abbreviations = abbreviations(settings, data_dir, context)?;
     let file_metadata = read_metadata_files(settings, data_dir, context)?;
@@ -1419,6 +1488,16 @@ fn convert(
         }
     };
 
+    // Pandoc keeps the line breaks for a writer that has the extension
+    // too and keeps the line breaks of the source (`--wrap=preserve`).
+    if east_asian_line_breaks
+        && !(writer_options
+            .extensions
+            .contains(Extension::EastAsianLineBreaks)
+            && settings.wrap == WrapOption::WrapPreserve)
+    {
+        remove_east_asian_line_breaks(&mut doc);
+    }
     apply_metadata(&mut doc, file_metadata, settings);
     add_citation_metadata(&mut doc, settings);
     shift_headings(&mut doc, settings.shift_heading_level_by);
@@ -1432,6 +1511,15 @@ fn convert(
         return Err(subsystem::missing(Subsystem::EmbedResources));
     }
 
+    let mut writer_options = writer_options;
+    writer_options.template = template;
+    let curdir = std::env::current_dir()
+        .map(|dir| dir.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    writer_options.variables = crate::template::variables(settings, inputs, &includes, &curdir);
+    if is_html_format(&to_spec.name) && writer_options.template.is_some() {
+        crate::template::page_title_fallback(&mut writer_options.variables, &doc, context);
+    }
     let bytes = match writer.write(&doc, &writer_options, context)? {
         Output::Text(mut text) => {
             if !settings.is_standalone() && !text.ends_with('\n') {
@@ -1810,16 +1898,20 @@ mod tests {
         let mut context = Context::new(Box::new(host));
         let settings = Settings::default();
         assert_eq!(
-            find_template("t.json", "json", "/u", &settings, &mut context).unwrap(),
-            b"t"
+            find_template("t.json", "json", "/u", &settings, &mut context)
+                .unwrap()
+                .text,
+            "t"
         );
         assert!(matches!(
             context.log(),
             [LogMessage::LoadedResource(name, path)] if name == "t.json" && path == "t.json"
         ));
         assert_eq!(
-            find_template("d.json", "json", "/u", &settings, &mut context).unwrap(),
-            b"d"
+            find_template("d.json", "json", "/u", &settings, &mut context)
+                .unwrap()
+                .text,
+            "d"
         );
         assert_eq!(context.log().len(), 1);
     }
@@ -2203,16 +2295,71 @@ mod tests {
         );
     }
 
+    // Pandoc 3.13 with `-f markdown+east_asian_line_breaks`: `中\n中`, `*中*\n中`
+    // and `中\n`中`` lose the soft break; `中\na`, `ｱ\n中` and `$x$\n中` keep it.
+    #[test]
+    fn soft_breaks_between_wide_characters_go() {
+        let str = |text: &str| Inline::Str(text.to_owned());
+        let para = |inlines: Vec<Inline>| Pandoc {
+            blocks: vec![Block::Para(inlines)],
+            ..Pandoc::default()
+        };
+        let cases = [
+            (vec![str("中"), Inline::SoftBreak, str("中")], 2),
+            (
+                vec![Inline::Emph(vec![str("中")]), Inline::SoftBreak, str("中")],
+                2,
+            ),
+            (
+                vec![
+                    str("中"),
+                    Inline::SoftBreak,
+                    Inline::Code(Default::default(), "中".to_owned()),
+                ],
+                2,
+            ),
+            (vec![str("中"), Inline::SoftBreak, str("a")], 3),
+            (vec![str("ｱ"), Inline::SoftBreak, str("中")], 3),
+            (vec![Inline::SoftBreak, str("中")], 2),
+            (
+                vec![
+                    str("中"),
+                    Inline::SoftBreak,
+                    str("中"),
+                    Inline::SoftBreak,
+                    str("中"),
+                ],
+                3,
+            ),
+        ];
+        for (inlines, expected) in cases {
+            let mut doc = para(inlines.clone());
+            remove_east_asian_line_breaks(&mut doc);
+            assert!(
+                matches!(doc.blocks.first(), Some(Block::Para(result)) if result.len() == expected),
+                "{inlines:?}"
+            );
+        }
+    }
+
     #[test]
     fn guessed_formats_warn_for_unknown_extensions() {
         let mut context = Context::pure();
-        assert_eq!(guess_format(Some("a.xyz"), "html", &mut context), "html");
-        assert_eq!(guess_format(Some("-"), "html", &mut context), "html");
-        assert_eq!(guess_format(Some("a.md"), "html", &mut context), "markdown");
+        let names = |list: &[&str]| list.iter().map(|n| (*n).to_owned()).collect::<Vec<_>>();
+        assert_eq!(
+            guess_format(&names(&["a.xyz", "-"]), "html", &mut context),
+            "html"
+        );
+        assert_eq!(guess_format(&names(&["-"]), "html", &mut context), "html");
+        assert_eq!(guess_format(&names(&[]), "html", &mut context), "html");
+        assert_eq!(
+            guess_format(&names(&["abbr", "b.native", "c.md"]), "html", &mut context),
+            "native"
+        );
         assert_eq!(
             context.log(),
             [LogMessage::CouldNotDeduceFormat(
-                vec![".xyz".to_owned()],
+                names(&[".xyz", ""]),
                 "html".to_owned()
             )]
         );

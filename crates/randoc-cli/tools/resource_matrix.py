@@ -4,7 +4,8 @@
 Usage: resource_matrix.py PANDOC OUT.json [resources|utf8|GROUP [OLD.json ...]]
 
 `resources` records each group except `utf8`. GROUP is one of `base`,
-`lists`, `templates`, `defaults`, `named`, `datadir`, `aux`, `values`. A case that has a record with the
+`lists`, `templates`, `defaults`, `named`, `datadir`, `aux`, `values`, `nested`,
+`inputs`, `numbering`, `review8`, `abbreviations`. A case that has a record with the
 same arguments and files in an OLD.json keeps that record; the oracle runs
 only for the other cases.
 
@@ -535,7 +536,151 @@ def value_form_cases():
                     cases.append(case(line, with_d, sandbox))
         for sandbox in [False, True]:
             cases.append(case([option + "=" + a, option + "=" + b], files, sandbox))
+    # The read order of the key file against the other named files.
+    for value in ["nca.json", "''"]:
+        files = {"d.yaml": "citation-abbreviations: " + value + "\n"}
+        for other in [["--epub-embed-font=n4.ttf"], ["--csl=n.csl"], ["--bibliography=n.bib"],
+                      ["--reference-doc=n.docx"]]:
+            for line in [["-d", "d.yaml"] + other, other + ["-d", "d.yaml"]]:
+                cases.append(case(line, files, True))
     return cases
+
+
+def nested_defaults_cases():
+    """The data folder of a `defaults` key inside a defaults file: the
+    `data-dir` key of that file, `--data-dir` before `-d`, both or none, and
+    a nested file in each data folder."""
+    cases = []
+    data_dir_forms = {
+        "none": ([], ""),
+        "option": (["--data-dir=dd"], ""),
+        "key": ([], "data-dir: dd\n"),
+        "key-after": ([], None),
+        "both": (["--data-dir=ee"], "data-dir: dd\n"),
+    }
+    names = ["n", "n.yaml", "${USERDATA}/defaults/n.yaml", "sub/n"]
+    places = ["dd", "ee", "xdg/pandoc", "cwd", None]
+    for form, (option, key) in data_dir_forms.items():
+        for name in names:
+            for place in places:
+                files = {"dd/keep": "", "ee/keep": "", "xdg/pandoc/keep": ""}
+                local = name.replace("${USERDATA}/defaults/", "")
+                if place == "cwd":
+                    files[local + ("" if local.endswith(".yaml") else ".yaml")] = (
+                        "metadata:\n  who: cwd\n")
+                elif place is not None:
+                    path = place + "/defaults/" + local
+                    files[path + ("" if path.endswith(".yaml") else ".yaml")] = (
+                        "metadata:\n  who: " + place + "\n")
+                listed = "defaults: [" + json.dumps(name) + "]\n"
+                text = listed + "data-dir: dd\n" if key is None else key + listed
+                files["d.yaml"] = text
+                c = case(option + ["-d", "d.yaml"], files)
+                c["env"] = {"XDG_DATA_HOME": "{root}/xdg"}
+                cases.append(c)
+    # A nested name whose candidate is a folder or lies below a file.
+    for name, files in [("a/x", {"a": "", "dd/defaults/a/x.yaml": "{}\n"}),
+                        ("folder", {"folder/keep": "", "dd/defaults/folder.yaml": "{}\n"}),
+                        ("folder", {"folder/keep": "", "folder.yaml": "{}\n"}),
+                        ("a/x", {"a": "", "a.yaml": "{}\n"})]:
+        for top in [False, True]:
+            files = dict(files, **{"d.yaml": "defaults: [" + name + "]\n"})
+            args = ["--data-dir=dd", "-d", name if top else "d.yaml"]
+            cases.append(case(args, files))
+    # Two levels: the inner file has its own `data-dir` key or none.
+    for inner_key in ["", "data-dir: ee\n"]:
+        for place in ["dd", "ee", "xdg/pandoc"]:
+            files = {"dd/keep": "", "ee/keep": "", "xdg/pandoc/keep": "",
+                     "dd/defaults/m.yaml": inner_key + "defaults: [n]\n",
+                     place + "/defaults/n.yaml": "metadata:\n  who: " + place + "\n",
+                     "d.yaml": "data-dir: dd\ndefaults: [m]\n"}
+            c = case(["-d", "d.yaml"], files)
+            c["env"] = {"XDG_DATA_HOME": "{root}/xdg"}
+            cases.append(c)
+    return cases
+
+
+def review_eight_cases():
+    """The Codex findings of review round 8: citation abbreviations as
+    metadata, YAML files in UTF-16 and UTF-32, an empty data folder and the
+    value grammar of the `math-method` key."""
+    cases = []
+    cit = "--citation-abbreviations="
+    for line in [[cit + "a", "-M", "citation-abbreviations=b"],
+                 ["-M", "citation-abbreviations=b", cit + "a"],
+                 [cit + "a", cit + "b"], [cit + "a"], ["-M", "citation-abbreviations=b"],
+                 [cit + "a", "-d", "c.yaml"], ["-d", "c.yaml", "-M", "citation-abbreviations=b"],
+                 ["-d", "m.yaml", cit + "a"]]:
+        cases.append(case(line, {"c.yaml": "citation-abbreviations: k\n",
+                                 "m.yaml": "metadata:\n  citation-abbreviations: m\n"}))
+    body = "x: true\n"
+    encodings = {
+        "bom-only-le": b"\xff\xfe", "bom-only-be": b"\xfe\xff",
+        "utf16le-bom": b"\xff\xfe" + body.encode("utf-16-le"),
+        "utf16be-bom": b"\xfe\xff" + body.encode("utf-16-be"),
+        "utf16le": body.encode("utf-16-le"), "utf16be": body.encode("utf-16-be"),
+        "utf32le": body.encode("utf-32-le"), "utf32be-bom": b"\x00\x00\xfe\xff" + body.encode("utf-32-be"),
+    }
+    for data in encodings.values():
+        # A defaults file in these encodings is row I-CLI-38.
+        cases.append(case(["--metadata-file=d"], {"d": decode(data)}))
+    empty = {"metadata/x": "x: true\n", "defaults/z.yaml": "{}\n", "templates/k.json": ""}
+    for line in [["--metadata-file=x"], ["-d", "z"], ["--template=k"]]:
+        cases.append(case(["--data-dir="] + line, empty))
+    cases.append(case(["--data-dir=", "-f", "markdown"], {"abbreviations": "\udcff\n"}))
+    for value in ["{method: katex, url: null}", "mathjax:x", "{method: mathjax, url: u}", "katex",
+                  "{method: KaTeX}", "{method: 'katex:u'}", "{url: u}", "{method: webtex, url: ''}"]:
+        cases.append(case(["-t", "html", "-d", "d.yaml"],
+                          {"d.yaml": "math-method: " + value + "\n"}))
+    return cases
+
+
+def abbreviation_cases():
+    """The abbreviation list of the Markdown reader: the default list, the
+    file of the data folder and `--abbreviations`, each also empty."""
+    text = "Mr. X, Dr. Y, Zq. W, e.g. V, Prof. U.\n"
+    cases = []
+    for files, extra in [({}, []), ({"xdg/pandoc/abbreviations": "Zq.\n"}, []),
+                         ({"xdg/pandoc/abbreviations": ""}, []),
+                         ({"f": "Zq.\n"}, ["--abbreviations=f"]), ({"f": ""}, ["--abbreviations=f"]),
+                         ({"dd/abbreviations": "Zq.\n"}, ["--data-dir=dd"]),
+                         ({"dd/keep": ""}, ["--data-dir=dd"])]:
+        files = dict(files, **{"in.md": text})
+        c = {"args": ["-f", "markdown", "-t", "native"] + extra + ["in.md"], "files": files,
+             "env": {"XDG_DATA_HOME": "{root}/xdg"}}
+        cases.append(c)
+    return cases
+
+
+def input_format_cases():
+    """The input format from the names of several input files."""
+    files = {"abbr": "Mr.\n", "n.native": '[Para [Str "n"]]\n', "x.md": "# H\n",
+             "g.yaml": "a: b\n", "t.txt": "t\n", "j.json": DOC, "h.html": "<p>h</p>\n",
+             "noext": "*e*\n"}
+    orders = [["abbr", "n.native"], ["abbr", "x.md"], ["g.yaml", "abbr"],
+              ["noext", "abbr"], ["g.yaml", "t.txt"], ["abbr", "g.yaml", "h.html"],
+              ["x.md", "n.native"], ["n.native", "x.md"], ["abbr", "j.json"],
+              ["t.txt", "g.yaml", "noext"], ["h.html", "abbr"], ["abbr"],
+              ["g.yaml", "g.yaml"]]
+    cases = []
+    for order in orders:
+        for log in [[], ["--log=log.json"]]:
+            cases.append({"args": ["-t", "native"] + log + order, "files": files})
+    return cases
+
+
+def numbering_cases():
+    """`--number-offset` and `--number-sections`, as options and as defaults
+    keys, alone, together and in both orders."""
+    files = {"n.md": "# A\n\n## B\n", "no.yaml": "number-offset: [2]\n",
+             "ns.yaml": "number-sections: true\n", "nsf.yaml": "number-sections: false\n",
+             "both.yaml": "number-offset: [2]\nnumber-sections: false\n"}
+    parts = [["--number-offset=2"], ["--number-offset=1,2"], ["--number-offset="],
+             ["-N"], ["--number-sections=false"], ["-d", "no.yaml"], ["-d", "ns.yaml"],
+             ["-d", "nsf.yaml"], ["-d", "both.yaml"]]
+    lines = [[]] + [[p] for p in parts] + [[a, b] for a in parts for b in parts if a != b]
+    return [{"args": ["-f", "markdown", "-t", "html"] + [x for p in line for x in p] + ["n.md"],
+             "files": files} for line in lines]
 
 
 def utf8_cases():
@@ -629,11 +774,17 @@ def main():
         "datadir": data_folder_cases,
         "aux": utf8_rule_cases,
         "values": value_form_cases,
+        "nested": nested_defaults_cases,
+        "inputs": input_format_cases,
+        "numbering": numbering_cases,
+        "review8": review_eight_cases,
+        "abbreviations": abbreviation_cases,
     }
     try:
         if mode == "resources":
             cases = [c for name in ["base", "lists", "templates", "defaults", "named",
-                                    "datadir", "aux", "values"]
+                                    "datadir", "aux", "values", "nested", "inputs",
+                                    "numbering", "review8", "abbreviations"]
                      for c in groups[name]()]
         else:
             cases = groups[mode]()

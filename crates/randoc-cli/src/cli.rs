@@ -270,14 +270,14 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
             s.variables.push((key.to_owned(), value));
         }
         Opt::VariableJson => {
-            let (key, value) = match arg.split_once(':') {
-                Some((key, text)) => {
+            let (key, value) = match split_key_value(arg) {
+                (key, Some(text)) => {
                     let json = parse_json(text).map_err(|message| {
                         option_error(format!("Could not parse '{text}' as JSON:\n{message}"))
                     })?;
                     (key, VarValue::Json(json))
                 }
-                None => (arg, VarValue::Json(serde_json::Value::Bool(true))),
+                (key, None) => (key, VarValue::Json(serde_json::Value::Bool(true))),
             };
             s.variables.push((key.to_owned(), value));
         }
@@ -305,6 +305,8 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
                 .map(read_int)
                 .collect::<Option<Vec<i64>>>()
                 .ok_or_else(|| option_error("could not parse argument of --number-offset"))?;
+            // The option turns on numbering; the defaults key `number-offset` does not.
+            s.number_sections = true;
         }
         Opt::TopLevelDivision => {
             s.top_level_division = match arg {
@@ -482,7 +484,8 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         }
         Opt::IdPrefix => s.identifier_prefix = arg.to_owned(),
         Opt::TitlePrefix => {
-            s.title_prefix = Some(arg.to_owned());
+            s.variables
+                .push(("title-prefix".to_owned(), VarValue::Text(arg.to_owned())));
             s.standalone = true;
         }
         Opt::Css => s.css.push(arg.to_owned()),
@@ -512,7 +515,13 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         Opt::Citeproc => s.filters.push(Filter::Citeproc),
         Opt::Bibliography => s.bibliography.push(arg.to_owned()),
         Opt::Csl => s.csl = Some(arg.to_owned()),
-        Opt::CitationAbbreviations => s.citation_abbreviations_options.push(arg.to_owned()),
+        Opt::CitationAbbreviations => {
+            s.citation_abbreviations_options.push(arg.to_owned());
+            s.metadata.push((
+                "citation-abbreviations".to_owned(),
+                MetaValue::MetaString(arg.to_owned()),
+            ));
+        }
         Opt::Natbib => s.cite_method = CiteMethod::Natbib,
         Opt::Biblatex => s.cite_method = CiteMethod::Biblatex,
         Opt::MathMethod => s.html_math_method = math_method(arg)?,

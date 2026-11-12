@@ -40,15 +40,32 @@ pub fn apply(
     loader: &mut dyn Loader,
     stack: &mut Vec<String>,
 ) -> Result<()> {
+    let data_dir = settings.data_dir.clone();
+    apply_file(settings, name, data_dir.as_deref(), loader, stack)
+}
+
+/// Applies the defaults file `name`, searched in the `defaults` folder of
+/// the user data directory `data_dir` (`None`: the default directory).
+fn apply_file(
+    settings: &mut Settings,
+    name: &str,
+    data_dir: Option<&str>,
+    loader: &mut dyn Loader,
+    stack: &mut Vec<String>,
+) -> Result<()> {
     // Pandoc reads NAME, then NAME.yaml, also when NAME has an extension,
     // first in the working directory and then in the `defaults` folder of
     // the user data directory.
     let names = [name.to_owned(), format!("{name}.yaml")];
-    let data_dir = loader.user_data_dir(settings.data_dir.as_deref());
+    let data_dir = loader.user_data_dir(data_dir);
     let candidates: Vec<String> = names
         .iter()
         .cloned()
-        .chain(names.iter().map(|n| format!("{data_dir}/defaults/{n}")))
+        .chain(
+            names
+                .iter()
+                .map(|n| crate::convert::data_path(&data_dir, &format!("defaults/{n}"))),
+        )
         .collect();
     // Pandoc takes the first candidate that is a regular file. When no
     // candidate is one, it reads NAME itself, so the error is the error of NAME.
@@ -79,7 +96,7 @@ pub fn apply(
         return Err(crate::convert::io_error(name, "withBinaryFile", &error));
     };
     let file = path
-        .strip_prefix(&format!("{data_dir}/defaults/"))
+        .strip_prefix(&crate::convert::data_path(&data_dir, "defaults/"))
         .map_or(path.clone(), |rest| {
             names
                 .iter()
@@ -145,13 +162,29 @@ pub fn apply(
         let key = key.as_str().unwrap_or_default();
         return Err(source.error(key, &format!("Unknown option \"{key}\""), value.mark()));
     }
+    // The files of the `defaults` key, and `${USERDATA}` in their names, use
+    // the data folder of the `data-dir` key of this file, not the folder of
+    // the options and files before it.
+    let own_data_dir = match entries
+        .iter()
+        .find(|(key, _)| key.as_str() == Some("data-dir"))
+    {
+        Some((_, value)) => match decode(value, ValueType::Text)
+            .map_err(|(message, mark)| source.error("data-dir", &message, mark))?
+        {
+            Decoded::Text(text) | Decoded::OptText(Some(text)) => {
+                Some(context.expand_path(&text, None))
+            }
+            _ => None,
+        },
+        None => None,
+    };
     for (key, value) in &entries {
         if key.as_str() == Some("defaults") {
             let decoded = decode(value, ValueType::TextOrList)
                 .map_err(|(message, mark)| source.error("defaults", &message, mark))?;
-            let data_dir = settings.data_dir.clone();
             let names = paths(decoded, &mut |text| {
-                context.expand_path(&text, data_dir.as_deref())
+                context.expand_path(&text, own_data_dir.as_deref())
             });
             // Each file of a chain adds a call, so the nesting limit keeps the
             // chain inside the stack. Pandoc has no limit.
@@ -162,7 +195,13 @@ pub fn apply(
                 )));
             }
             for nested in names {
-                apply(settings, &nested, context.loader, stack)?;
+                apply_file(
+                    settings,
+                    &nested,
+                    own_data_dir.as_deref(),
+                    context.loader,
+                    stack,
+                )?;
             }
         }
     }
@@ -762,10 +801,9 @@ fn set(
                 return Err(("Expecting MapVal".to_owned(), v.mark()));
             };
             for (k, value) in entries {
-                let value = match value {
-                    Node::Scalar { text, .. } => VarValue::Text(text.clone()),
-                    other => VarValue::Json(other.to_json()),
-                };
+                // A value of the key replaces the earlier values, as
+                // `--variable-json` does; a scalar keeps its YAML type.
+                let value = VarValue::Json(value.to_json());
                 s.variables
                     .push((k.scalar_text().unwrap_or_default(), value));
             }
@@ -934,7 +972,10 @@ fn set(
         "identifier-prefix" => s.identifier_prefix = text_value(decoded).unwrap_or_default(),
         "title-prefix" => {
             // The key sets standalone output also when the value is null.
-            s.title_prefix = text_value(decoded);
+            if let Some(text) = text_value(decoded) {
+                s.variables
+                    .push(("title-prefix".to_owned(), VarValue::Text(text)));
+            }
             s.standalone = true;
         }
         "css" => s.css.extend(paths(decoded, path)),
@@ -997,7 +1038,7 @@ fn html_math_method(v: &Node) -> std::result::Result<HtmlMathMethod, KeyError> {
             v.mark(),
         )
     };
-    let spec = match v {
+    let (method, url) = match v {
         Node::Map(fields, _) => {
             let field = |name: &str| {
                 fields
@@ -1009,25 +1050,25 @@ fn html_math_method(v: &Node) -> std::result::Result<HtmlMathMethod, KeyError> {
             let Some(method) = get("method") else {
                 return Err(unknown());
             };
-            if field("url").is_some_and(|url| !is_string(url)) {
+            // A null URL is an absent URL.
+            if field("url").is_some_and(|url| !is_string(url) && !url.is_null()) {
                 return Err(unknown());
             }
-            match get("url") {
-                Some(url) if !url.is_empty() => format!("{method}:{url}"),
-                _ => method.to_owned(),
-            }
+            (method.to_owned(), get("url").unwrap_or_default().to_owned())
         }
-        node if is_string(node) => text(node)?,
+        node if is_string(node) => (text(node)?, String::new()),
         _ => return Err(unknown()),
     };
-    // A defaults file needs the lower-case method name.
-    if spec
-        .split(':')
-        .next()
-        .is_some_and(|m| m.chars().any(char::is_uppercase))
-    {
+    // A defaults file needs the lower-case method name alone: the
+    // `METHOD:URL` form belongs to the option.
+    if method.contains(':') || method.chars().any(char::is_uppercase) {
         return Err(unknown());
     }
+    let spec = if url.is_empty() {
+        method
+    } else {
+        format!("{method}:{url}")
+    };
     math_method(&spec).map_err(|_| unknown())
 }
 

@@ -46,9 +46,9 @@ pub enum Filter {
 /// A value of a template variable.
 #[derive(Debug, Clone, PartialEq)]
 pub enum VarValue {
-    /// A string.
+    /// A string of `-V`: it adds a value to the earlier values.
     Text(String),
-    /// A value from JSON or YAML.
+    /// A value of `--variable-json` or a defaults file: it replaces the earlier values.
     Json(serde_json::Value),
 }
 
@@ -120,7 +120,6 @@ pub struct Settings {
     pub html_q_tags: bool,
     pub email_obfuscation: ObfuscationMethod,
     pub identifier_prefix: String,
-    pub title_prefix: Option<String>,
     pub css: Vec<String>,
     pub epub_subdirectory: String,
     pub epub_cover_image: Option<String>,
@@ -236,7 +235,6 @@ impl Default for Settings {
             html_q_tags: false,
             email_obfuscation: ObfuscationMethod::NoObfuscation,
             identifier_prefix: String::new(),
-            title_prefix: None,
             css: Vec::new(),
             epub_subdirectory: "EPUB".to_owned(),
             epub_cover_image: None,

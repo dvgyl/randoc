@@ -43,9 +43,6 @@ pub fn missing(subsystem: Subsystem) -> Error {
     Error::App(format!("Randoc does not support {feature} yet."))
 }
 
-/// The default templates of Pandoc (BSD-3-Clause), in the bundle format of [`bundle_entry`].
-const TEMPLATES: &[u8] = include_bytes!("../data/templates.bundle");
-
 /// The highlighting styles as `--print-highlight-style` prints them.
 const HIGHLIGHT_STYLES: &[u8] = include_bytes!("../data/highlight-styles.bundle");
 
@@ -76,11 +73,11 @@ pub fn highlight_style(name: &str) -> Option<Vec<u8>> {
 
 /// Returns a default data file of Pandoc.
 ///
-/// Only the templates are embedded. A name that Pandoc does not know gives the
+/// Only the templates of `randoc-data` are embedded. A name that Pandoc does not know gives the
 /// error of Pandoc.
 pub fn default_data_file(name: &str) -> Result<Vec<u8>> {
     let normal = crate::defaults::normalize(name);
-    if let Some(contents) = bundle_entry(TEMPLATES, &normal) {
+    if let Some(contents) = randoc_data::data_file(&normal) {
         return Ok(contents.to_vec());
     }
     if DATA_FILES.contains(&normal.as_str()) {

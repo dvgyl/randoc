@@ -312,7 +312,10 @@ name = "randoc-cli"
 version = "0.1.0"
 dependencies = [
  "randoc",
+ "randoc-data",
  "randoc-harness",
+ "randoc-layout",
+ "randoc-templates",
  "saphyr-parser",
  "serde",
  "serde_json",

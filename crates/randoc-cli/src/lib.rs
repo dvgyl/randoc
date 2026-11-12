@@ -13,6 +13,7 @@ pub mod info;
 pub mod opts;
 pub mod settings;
 pub mod subsystem;
+pub mod template;
 pub mod yaml;
 
 use std::io::Write;

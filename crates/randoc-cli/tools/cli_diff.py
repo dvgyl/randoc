@@ -8,9 +8,9 @@ option with valid values, invalid values and no value, pairs of options, the
 same option twice, and each defaults key in `d.yaml`. Each case has a small
 `json` or `native` input.
 
-The tool copies `target/debug/randoc` to `$TMPDIR/cli-s3b/diff/randoc-bin` and
+The tool copies `target/debug/randoc` to `$TMPDIR/cli-s4/diff/randoc-bin` and
 runs that copy. Each program runs in its own new case folder under
-`$TMPDIR/cli-s3b/diff/`, with `HOME` and `XDG_DATA_HOME` inside that folder.
+`$TMPDIR/cli-s4/diff/`, with `HOME` and `XDG_DATA_HOME` inside that folder.
 At most one Pandoc process and two Randoc processes run at a time.
 
 The comparison uses the exit code, standard output, standard error and the
@@ -36,7 +36,7 @@ import time
 from collections import defaultdict
 
 WT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-DIFF = os.path.join(os.environ["TMPDIR"], "cli-s3b", "diff")
+DIFF = os.path.join(os.environ["TMPDIR"], "cli-s4", "diff")
 ORACLE = os.environ["RANDOC_ORACLE_PANDOC"]
 RANDOC = os.path.join(DIFF, "randoc-bin")
 LIMIT_SECONDS = 30

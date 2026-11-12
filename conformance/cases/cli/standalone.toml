@@ -711,3 +711,116 @@ id = "key-standalone-false-native-then-no-standalone"
 cmd = ["-d", "d.yaml", "--standalone=false"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 files = { "t.txt" = "T\n", "i.txt" = "x\n", "e.xml" = "<x/>\n", "c.png" = "x", "r.docx" = "x", "c.css" = "x", "ab.txt" = "Mr.\n", "d.yaml" = "from: json\nto: native\nstandalone: false\n" }
+
+# Templates: finding, compiling and the variables of the command line (session 4).
+# The `template-html-*` cases wait for the template rendering of the HTML writer.
+
+[[case]]
+id = "template-native-file"
+cmd = ["-f", "json", "-t", "native", "--template=t.tpl", "in.json"]
+files = { "t.tpl" = "x=$x$\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-json-file"
+cmd = ["-f", "json", "-t", "json", "--template=t.tpl", "in.json"]
+files = { "t.tpl" = "x=$x$\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-syntax-error"
+cmd = ["-f", "json", "-t", "native", "--template=bad.tpl", "in.json"]
+files = { "bad.tpl" = "a $if(x)$ b\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-json-syntax-error"
+cmd = ["-f", "json", "-t", "json", "--template=bad.tpl", "in.json"]
+files = { "bad.tpl" = "a $if(x)$ b\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-missing-partial"
+cmd = ["-f", "json", "-t", "native", "--template=pt.tpl", "in.json"]
+files = { "pt.tpl" = "p:$part()$\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-partial-next-to-template"
+cmd = ["-f", "json", "-t", "native", "--template=sub/pt.tpl", "in.json"]
+files = { "sub/pt.tpl" = "p:$part()$|$sub/q()$\n", "sub/part.tpl" = "S\n", "sub/sub/q.tpl" = "Q\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-partial-in-data-dir"
+cmd = ["-f", "json", "-t", "native", "--data-dir=dd", "--template=pt.tpl", "in.json"]
+files = { "pt.tpl" = "p:$part()$\n", "dd/templates/part.tpl" = "D\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-partial-syntax-error"
+cmd = ["-f", "json", "-t", "native", "--template=pt.tpl", "in.json"]
+files = { "pt.tpl" = "p:$part()$\n", "part.tpl" = "$if(x)$\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-missing"
+cmd = ["-f", "json", "-t", "native", "--template=nosuch", "in.json"]
+files = { "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-native-data-dir-default"
+cmd = ["-f", "json", "-t", "native", "-s", "--data-dir=dd", "in.json"]
+files = { "dd/templates/default.native" = "$if(x)$\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-repeated"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-V", "x=1", "-V", "x=2", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-json-replaces"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-V", "x=1", "--variable-json", "x=[2,3]", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-json-then-v"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "--variable-json", "x=1", "-V", "x=2", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-css-after-v"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "--css=a.css", "-V", "css=z", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-includes"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-V", "header-includes=V", "-H", "h.txt", "-B", "h.txt", "-A", "h.txt", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-title-prefix-order"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "--title-prefix=O", "-V", "title-prefix=V", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-environment-override"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-V", "outputfile=OF", "-V", "pandoc-version=PV", "-V", "sourcefile=SF", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-variables-defaults-file"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-V", "x=1", "-d", "d.yaml", "-V", "x=4", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-pagetitle-from-file-name"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-pagetitle-from-variable"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-V", "pagetitle=PV", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-pagetitle-from-metadata"
+cmd = ["-f", "json", "-t", "html", "--template=v.tpl", "-M", "title=MT", "in.json"]
+files = { "v.tpl" = "x=[$for(x)$<$x$>$endfor$] s=[$for(sourcefile)$$sourcefile$;$endfor$] o=$outputfile$ v=$pandoc-version$ p=$pagetitle$ tp=[$for(title-prefix)$$title-prefix$;$endfor$] css=[$for(css)$$css$;$endfor$] h=[$for(header-includes)$$header-includes$;$endfor$] b=[$for(include-before)$$include-before$;$endfor$] a=[$for(include-after)$$include-after$;$endfor$]\n", "h.txt" = "H\n", "d.yaml" = "variables:\n  x: [d1, 1.50]\n", "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }
+
+[[case]]
+id = "template-html-default-pagetitle"
+cmd = ["-f", "json", "-t", "html", "-s", "in.json"]
+files = { "in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}" }

@@ -1049,3 +1049,52 @@ the mutation sample, the conformance cases with `-s`, the coverage of
 `standalone.rs`, the CPU table of the new paths. Requests of the worker to
 the coordinator: the translation data for `abstract-title` (I-HTML-34);
 the default template for `html` and `html4` with `-s` in `convert.rs`.
+
+## Workstream cli (commit 81a4d37 of the branch `ws/cli-2`, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+corrections of review round 8 (the data folder of a nested `defaults`
+key, the format from the first input file with a known extension,
+`--citation-abbreviations` as ordered metadata, metadata files in UTF-16
+and UTF-32, the `math-method` grammar, an empty data folder,
+`--number-offset`, `--variable-json` with `=`); templates (the new module
+`template`: `--template`, the default templates of `randoc-data`, partials,
+`WriterOptions::template` and `WriterOptions::variables`); the default
+abbreviation list `randoc_core::shared::default_abbreviations()` when the
+data folder has no `abbreviations` file (I-MD-08); East Asian line breaks
+in the program. `crates/randoc-cli/data/templates.bundle` is removed.
+New workspace dependencies of `randoc-cli`: `randoc-data`,
+`randoc-templates`, `randoc-layout`. The commit holds a merge of `main`
+(the yaml and markdown commits of batch A), so those changes are equal on
+both sides. The worker continues on the same branch, so this commit (not
+the branch head) is merged.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 81a4d37 (run 23:37:57 to 23:58:30 UTC; worker report): 21002 units, 19454 pass, 1146 fail, 402 skipped; baseline 19375 units, 0 regressions, 79 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Suite `cli/` (gate of 19bc27f): 3565 units, 3486 pass, 79 fail (before: 3535, 3457, 78). `tests/resources.rs`: 3007 cases, 0 differences. Differential run on 9b2e18c: 3548 command lines, 3380 equal, 168 differ in 14 signatures, all recorded rows of level low or scope gaps. |
+| 3. Tests | `cargo test -p randoc-cli` on the merged tree: 80 pass, 0 fail (73 unit tests, 7 integration tests). Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 8 on main 98806b9: Opus REQUEST CHANGES (1 high, 1 medium, 6 low); Codex stopped by its service (its partial report: 1 critical licence finding, corrected on `main` in c494dd5; 2 high, 3 medium, 7 low). The worker corrected each finding with the level medium or higher. |
+| 6. No slowdowns | Not measured. The new loops (`remove_east_asian_line_breaks`, `template::variables`) are linear. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` and `Cargo.lock` merged
+without a conflict). Licence: after the squash,
+`conformance/cases/cli/info.toml` has no completion case (`grep -c` gives
+0), and `conformance/expected/cli/info.json` does not hold the four
+completion records (its only matches are the option lines of the
+`--help` output, unchanged from `main`). Licence scan: the hits are
+program interface texts (error messages of the command line), tokens of
+the native AST format, the CSS of `styles.html` (BSD-3-Clause) in recorded
+output, and the licence text in `crates/randoc-cli/NOTICE.md`.
+
+Open findings: the low rows I-CLI-35 and I-CLI-37 to I-CLI-46, the scope
+gap I-CLI-36, I-CLI-43 (Markdown reader part). Open checks: fuzzing,
+coverage, the mutation sample, `randoc-yaml` for defaults and metadata.
+Requests of the worker to the coordinator: the path of the default
+templates in `THIRD_PARTY_NOTICES.md` (now `crates/randoc-data/data/templates`);
+the text of `LogMessage::NoTitleElement` (I-CLI-35); the East Asian line
+break handling in the Markdown reader (I-CLI-43); closing I-HTMLR-11 and
+I-HTMLR-12 (their 6 units pass); the check of I-CLI-36 in
+`convert::convert` after the HTML writer renders templates.

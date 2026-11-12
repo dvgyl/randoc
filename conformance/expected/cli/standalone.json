@@ -732,6 +732,138 @@
       "exit": 0,
       "stdout": "[]\n",
       "stderr": ""
+    },
+    "template-html-default-pagetitle#cmd": {
+      "key": "52c14f2629e53da8",
+      "exit": 0,
+      "stdout": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=yes\" />\n  <title>in</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n<p>a</p>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "template-html-pagetitle-from-file-name#cmd": {
+      "key": "9856c98520c4f9a5",
+      "exit": 0,
+      "stdout": "x=[] s=[in.json;] o=- v=3.13 p=in tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-pagetitle-from-metadata#cmd": {
+      "key": "9d852e55dad51139",
+      "exit": 0,
+      "stdout": "x=[] s=[in.json;] o=- v=3.13 p=MT tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-pagetitle-from-variable#cmd": {
+      "key": "be6bc0950f0a7efa",
+      "exit": 0,
+      "stdout": "x=[] s=[in.json;] o=- v=3.13 p=PV tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-css-after-v#cmd": {
+      "key": "d53dbc7281482de6",
+      "exit": 0,
+      "stdout": "x=[] s=[in.json;] o=- v=3.13 p=in tp=[] css=[z;a.css;] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-defaults-file#cmd": {
+      "key": "2f445708dd0c2b98",
+      "exit": 0,
+      "stdout": "x=[<d1><1.5><4>] s=[in.json;] o=- v=3.13 p=in tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-environment-override#cmd": {
+      "key": "88983729c70aa5e4",
+      "exit": 0,
+      "stdout": "x=[] s=[SF;in.json;] o=OF v=PV p=SF tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-includes#cmd": {
+      "key": "70239cd240738716",
+      "exit": 0,
+      "stdout": "x=[] s=[in.json;] o=- v=3.13 p=in tp=[] css=[] h=[V;H;] b=[H;] a=[H;]\n",
+      "stderr": ""
+    },
+    "template-html-variables-json-replaces#cmd": {
+      "key": "73b277c945d822b8",
+      "exit": 0,
+      "stdout": "x=[<2><3>] s=[in.json;] o=- v=3.13 p=in tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-json-then-v#cmd": {
+      "key": "2c6404bb5051d8e5",
+      "exit": 0,
+      "stdout": "x=[<1><2>] s=[in.json;] o=- v=3.13 p=in tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-repeated#cmd": {
+      "key": "986829baf517a53e",
+      "exit": 0,
+      "stdout": "x=[<1><2>] s=[in.json;] o=- v=3.13 p=in tp=[] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-html-variables-title-prefix-order#cmd": {
+      "key": "bfa8249618e6f8a3",
+      "exit": 0,
+      "stdout": "x=[] s=[in.json;] o=- v=3.13 p=in tp=[O;V;] css=[] h=[] b=[] a=[]\n",
+      "stderr": ""
+    },
+    "template-json-file#cmd": {
+      "key": "2febf9eb5724fe88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}",
+      "stderr": ""
+    },
+    "template-json-syntax-error#cmd": {
+      "key": "52faed9b5fbacf0c",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "Error compiling template '\"bad.tpl\" (line 2, column 1):\nunexpected end of input\nexpecting \" \", \"\\t\", \"$--\", \"\\n\", \"\\r\\n\", \"\\r\", \"$\", \"${\" or \"$$\"'\n"
+    },
+    "template-native-data-dir-default#cmd": {
+      "key": "ed72b41f2251021a",
+      "exit": 0,
+      "stdout": "Pandoc Meta { unMeta = fromList [] } [ Para [ Str \"a\" ] ]\n",
+      "stderr": ""
+    },
+    "template-native-file#cmd": {
+      "key": "7234cb32125c3033",
+      "exit": 0,
+      "stdout": "Pandoc Meta { unMeta = fromList [] } [ Para [ Str \"a\" ] ]\n",
+      "stderr": ""
+    },
+    "template-native-missing#cmd": {
+      "key": "6f01ba3a4f399512",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/nosuch.native'\n"
+    },
+    "template-native-missing-partial#cmd": {
+      "key": "c1be162754a484a7",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/part.tpl'\n"
+    },
+    "template-native-partial-in-data-dir#cmd": {
+      "key": "a5a9c5f7172c7a20",
+      "exit": 0,
+      "stdout": "Pandoc Meta { unMeta = fromList [] } [ Para [ Str \"a\" ] ]\n",
+      "stderr": ""
+    },
+    "template-native-partial-next-to-template#cmd": {
+      "key": "a586c5c1142697ce",
+      "exit": 0,
+      "stdout": "Pandoc Meta { unMeta = fromList [] } [ Para [ Str \"a\" ] ]\n",
+      "stderr": ""
+    },
+    "template-native-partial-syntax-error#cmd": {
+      "key": "470123ba4df2566a",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "Error compiling template '\"part.tpl\" (line 1, column 8):\nunexpected end of input\nexpecting \"\\n\", \"\\r\\n\", \"\\r\", \"$--\", \"$\", \"${\" or \"$$\"'\n"
+    },
+    "template-native-syntax-error#cmd": {
+      "key": "295ef3e99d9115bb",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "Error compiling template '\"bad.tpl\" (line 2, column 1):\nunexpected end of input\nexpecting \" \", \"\\t\", \"$--\", \"\\n\", \"\\r\\n\", \"\\r\", \"$\", \"${\" or \"$$\"'\n"
     }
   }
 }
