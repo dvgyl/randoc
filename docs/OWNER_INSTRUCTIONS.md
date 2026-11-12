@@ -157,6 +157,15 @@ completely. Its main rules:
     confirms the way in which the coordinator applied instructions 14, 16
     and 17. No time limit for the handoff was given.)
 
+19. "prepare the handoff at the next natural stopping point" (Given in the
+    fourth session at about 04:08 UTC on 2026-11-12. How the coordinator
+    applied it: no new unit started; each running worker got a hard limit
+    of 04:50 UTC to commit its state and to stop; the blocks that had
+    passed `scripts/gate.sh` went into one last merge batch; work that had
+    not passed went to GitHub as `wip/NAME` snapshot branches after a
+    licence scan; then the coordinator measured `main` and wrote the
+    handoff.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,
