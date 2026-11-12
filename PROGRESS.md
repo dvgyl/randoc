@@ -6,11 +6,10 @@ of a session, then run `./init.sh`.
 ## Handoff
 
 Written: 2026-11-12 05:15 UTC, in the fourth session (it started on
-2026-11-11 at 20:34 UTC). This text gives the state at that time. The
-session continued after it: each later merge has a record in
-`docs/MERGE_LOG.md`, and the coordinator records (`decisions.tsv`,
-`units.tsv`) under `/Volumes/Extreme Pro/Randoc/env/store/` are newer than
-this text.
+2026-11-11 at 20:34 UTC). This is the state at the end of the session:
+no worker, no review and no merge runs, and no worktree exists. The
+coordinator records (`decisions.tsv`, `units.tsv`) are under
+`/Volumes/Extreme Pro/Randoc/env/store/`.
 
 Key points:
 
