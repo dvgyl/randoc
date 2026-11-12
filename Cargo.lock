@@ -359,7 +359,10 @@ version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-core",
+ "randoc-data",
  "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
  "serde_json",
 ]
 

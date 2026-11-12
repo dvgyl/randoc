@@ -9,8 +9,8 @@
 use std::io::{BufRead, Write};
 
 use randoc_core::{
-    Context, Extension, FormatSpec, HtmlMathMethod, LogMessage, ObfuscationMethod,
-    ReferenceLocation, WrapOption, WriterOptions,
+    Context, FormatSpec, HtmlMathMethod, LogMessage, ObfuscationMethod, ReferenceLocation,
+    WrapOption, WriterOptions,
 };
 use serde_json::{Value, json};
 
@@ -60,12 +60,10 @@ fn options(fmt: &str, opts: &Value) -> Result<WriterOptions, String> {
             "mathjax" => HtmlMathMethod::MathJax(String::new()),
             "katex" => HtmlMathMethod::KaTex(String::new()),
             "gladtex" => HtmlMathMethod::GladTex,
+            "plain" => HtmlMathMethod::PlainMath,
             "webtex" => HtmlMathMethod::WebTex("https://latex.codecogs.com/png.latex?".into()),
             _ => HtmlMathMethod::MathMl,
         };
-    }
-    if options.extensions.contains(Extension::EmptyParagraphs) {
-        // Kept from the format name.
     }
     Ok(options)
 }

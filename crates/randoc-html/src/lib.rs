@@ -22,6 +22,7 @@
 mod attributes;
 mod html;
 pub mod shared;
+mod standalone;
 mod table;
 
 use std::sync::Arc;

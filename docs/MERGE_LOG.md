@@ -1013,3 +1013,39 @@ conflict). Licence scan: no hit.
 Open findings: the high, medium and low findings of round 3 (in work on
 the branch); new row I-HTMLR-20 (low). Open checks: the fuzz run, coverage,
 mutation tests.
+
+## Workstream html-writer (branch `ws/html-writer-2`, head 789f670, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+corrections of review round 6 (the time of nested section divs:
+`Html::leading_heading_level` walks each div one time); standalone output
+through a template, with the new shared function
+`randoc_core::shared::meta_context` (`meta_to_context`, `normalize_date`)
+and the writer fields of `crates/randoc-html/src/standalone.rs`; `--toc`
+and `--toc-depth`; math through `randoc-math` (`to_mathml`, `to_inlines`).
+New workspace dependencies of `randoc-html`: `randoc-math`,
+`randoc-templates`, and `randoc-data` as a dev dependency.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on the branch head 789f670 (run ended 23:22 UTC; worker report): baseline 19375 units, 0 regressions, 22 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | `tools/joint.py check`: 0 differences in 29,633 cases (668 new). Standalone replay `tools/standalone.py`: 690 cases, 0 differences. `tools/math_matrix.py`: 2,808 cases, 0 differences. |
+| 3. Tests | `cargo test -p randoc-html -p randoc-core` on the merged tree: 372 pass, 0 fail. Coverage of 789f670 (lines): `html.rs` 99.31 %, `table.rs` 99.73 %, `lib.rs` 95.52 %, `standalone.rs` 79.08 % (below 85 %: the KaTeX `math` variable, error paths and the diagnostic output of the replay test are not covered), `meta_context.rs` 91.86 %. Mutation sample: not run. |
+| 4. No panics | Fuzzing: not run (the template path is new). |
+| 5. Reviews | Round 6 on main 98806b9: Opus REQUEST CHANGES (1 medium, 4 low), Codex REQUEST CHANGES (1 new medium on a report claim, the same time finding, 2 low). The worker corrected each finding with the level medium or higher in this branch. No review of the new code (standalone output, math) exists; it is due as the next review of this block. |
+| 6. No slowdowns | Div chains with a div first: 0.06 / 0.13 / 0.29 s at 2,500 / 5,000 / 10,000 levels (before: 0.07 / 0.34 / 1.06 s). The CPU table of the new paths (toc, meta context, math) did not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`crates/randoc-core/src/shared/mod.rs`,
+`docs/ISSUES.md`, `docs/PRIOR_ART.md` and `Cargo.lock` merged without a
+conflict). Licence scan: one hit, 4 shingles of the CSS of `styles.html`
+(a default template, BSD-3-Clause) in the recorded output
+`src/standalone.jsonl`.
+
+Rows closed: I-HTML-28 (medium), I-HTML-01 (scope gap, math, for the
+writer). Open findings: I-HTML-31, I-HTML-32, I-HTML-33 (low), I-HTML-34
+(scope gap: translations), I-HTML-35 (by design). Open checks: fuzzing,
+the mutation sample, the conformance cases with `-s`, the coverage of
+`standalone.rs`, the CPU table of the new paths. Requests of the worker to
+the coordinator: the translation data for `abstract-title` (I-HTML-34);
+the default template for `html` and `html4` with `-s` in `convert.rs`.

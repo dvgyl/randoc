@@ -21,6 +21,7 @@ mod abbreviation_table;
 mod emoji;
 mod entities;
 mod identifiers;
+pub mod meta_context;
 mod nfc;
 #[rustfmt::skip]
 mod nfc_tables;

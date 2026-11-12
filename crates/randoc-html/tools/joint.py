@@ -22,8 +22,13 @@ that the round 5 findings name together (`PRODUCTS`), and the inputs of the
 round 5 reviews (`reviews`). `record` writes `src/joint.jsonl`; the unit
 test `html::tests::the_oracle_matrices_replay_with_no_difference` replays it.
 
+Round 6 adds `round6_cases`: chains of divs with a div first (R6-01) and
+section numbers with quotes (R6-L1). The Opus round 6 files are lists of
+`{id, doc, fmt, opts}` objects.
+
 Usage:
   python3 tools/joint.py record [REVIEW_DIR ...]  # oracle run, writes the data file
+  python3 tools/joint.py add [REVIEW_DIR ...]     # oracle run for the cases that the data file does not have
   python3 tools/joint.py check                    # compares the writer with the data file
   python3 tools/joint.py show                     # as check, and prints 12 differences
 """
@@ -214,6 +219,30 @@ def incremental_cases():
         yield f"incremental {kind} {cls} wrapper={wrapper} {container}", fmt, opts, contain(container, unit)
 
 
+def round6_cases():
+    """R6-01: chains of divs with a div first, with the heading or paragraph at
+    the bottom and a second block at each level. R6-L1: section numbers with
+    `"` and `'`, also long ones that wrap."""
+    para = lambda t: {"t": "Para", "c": [S(t)]}
+    head = lambda lv: {"t": "Header", "c": [lv, A, [S("h")]]}
+    bottoms = {"h1": head(1), "h2": head(2), "para": para("x")}
+    seconds = {"para": para("p"), "h1": head(1), "h2": head(2)}
+    for depth, (bk, bottom), (sk, second), cls, container, secdivs, fmt in itertools.product(
+            [1, 2, 3, 5], bottoms.items(), seconds.items(), [[], ["section"]], ["top", "bq"], [False, True],
+            ["html", "html4"]):
+        block = bottom
+        for _ in range(depth):
+            block = {"t": "Div", "c": [["", cls, []], [block, second]]}
+        opts = {"section_divs": True} if secdivs else {}
+        yield f"round6 chain {depth} {bk} {sk} {cls} {container}", fmt, opts, contain(container, [block])
+    numbers = ['a"b', "a'b", "'", '"7"', "x\"y z", "it's a number text that is long enough to wrap the line here"]
+    for number, place, numbered, fmt in itertools.product(numbers, ["top", "bq", "div"], [False, True],
+                                                         ["html", "html4"]):
+        heading = {"t": "Header", "c": [1, ["", [], [["number", number]]], [S("Heading"), {"t": "Space"}, S("text")]]}
+        opts = {"number_sections": True} if numbered else {}
+        yield f"round6 number {number!r} {place}", fmt, opts, contain(place, [heading, para("t")])
+
+
 def products():
     for product in PRODUCTS:
         keys = list(product)
@@ -238,6 +267,11 @@ def reviews(dirs):
         for f in sorted(os.listdir(d)) if os.path.isdir(d) else []:
             if f.startswith("diffs-") and f.endswith(".json"):
                 data = json.load(open(os.path.join(d, f)))
+                if isinstance(data, list):
+                    for item in data:
+                        if isinstance(item.get("doc"), dict):
+                            yield f"opus6 {f[:-5]} {item['id']}", item["fmt"], item["opts"], item["doc"]["blocks"]
+                    continue
                 for item in data.get("diffs", []) + data.get("wdiffs", []):
                     yield "opus " + item[0], item[2], item[3], item[1]
 
@@ -247,14 +281,17 @@ SUPPORTED = {"incremental", "section_divs", "number_sections", "number_offset", 
 
 
 # Review inputs that show a recorded row of `docs/ISSUES.md`, not a rule of this matrix.
-KNOWN = {"opus wctx-entry-notepara": "I-HTML-29"}
+KNOWN = {"opus wctx-entry-notepara": "I-HTML-29", "opus6 diffs-t9 ": "I-HTML-31", "opus6 diffs-t10 ": "I-HTML-31",
+         "opus6 diffs-t6-2 rand2-40": "I-HTML-31", "opus6 diffs-t6-2 rand2-110": "I-HTML-29",
+         "opus6 diffs-t6-2 rand2-526": "I-HTML-29", "opus6 diffs-t6-3 ": "I-HTML-32",
+         "opus6 diffs-t3 ": "randoc-cli: --number-offset alone"}
 SCOPE_GAP = re.compile(r'"Math"|"t": "Code(Block)?", "c": \[\["(?:[^"\\]|\\.)*", \["')  # I-HTML-01, I-HTML-02
 
 
 def matrix(dirs):
     seen = set()
     rows = ([case_of(c) for c in pairwise()] + [case_of(c) for c in products()] + list(incremental_cases())
-            + list(reviews(dirs)))
+            + list(round6_cases()) + list(reviews(dirs)))
     for name, fmt, opts, blocks in rows:
         if not set(opts) <= SUPPORTED or SCOPE_GAP.search(json.dumps(blocks)):
             continue
@@ -276,9 +313,22 @@ def record(dirs):
     print(f"{len(cases)} cases recorded")
 
 
+def add(dirs):
+    known = {json.dumps(json.loads(line)[1:4], sort_keys=True) for line in open(DATA)}
+    cases = [c for c in matrix(dirs) if json.dumps([c[1], c[2], c[3]], sort_keys=True) not in known]
+    outs = oracle_batch([(n, doc_of(b), f, o) for n, f, o, b in cases], chunk=4000)
+    with open(DATA, "a") as f:
+        for (name, fmt, opts, blocks), out in zip(cases, outs):
+            if out is not None:
+                f.write(json.dumps([name, fmt, opts, blocks, out], ensure_ascii=False, separators=(",", ":")) + "\n")
+    print(f"{len(cases)} cases added")
+
+
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "check"
     if mode == "record":
         record(sys.argv[2:])
+    elif mode == "add":
+        add(sys.argv[2:])
     else:
         replay_check(DATA, mode == "show")

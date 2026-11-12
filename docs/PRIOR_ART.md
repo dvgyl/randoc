@@ -81,6 +81,7 @@ the repository; the behaviour was found with the oracle.
 | HTML tag tokenizer and tag renderer | `tagsoup` 0.14.8 (the version of the Stackage snapshot `lts-24.51` that Pandoc 3.13 builds with) | BSD-3-Clause | Port | `crates/randoc-html-reader/src/tokens.rs` | ADR 13 |
 | Join rules of an inline list, grid rules of a table | `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`) | BSD-3-Clause | Port | `crates/randoc-html-reader/src/text.rs`, `src/table.rs` | ADR 13 |
 | Tree rules of the HTML reader | none: found with oracle probes | not applicable | Observed | `crates/randoc-html-reader/src/parse.rs`, `src/table.rs` | ADR 13 |
+| Rules of the HTML writer (elements, attributes, sections, notes, tables) | none: found with oracle probes | not applicable | Observed | `crates/randoc-html/src/` | none (no reuse) |
 
 Rust dependencies on `main`, pinned by `Cargo.lock`:
 

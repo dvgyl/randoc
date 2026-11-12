@@ -14,35 +14,30 @@ use std::collections::{HashMap, HashSet};
 
 use crate::Version;
 use crate::attributes::{HTML4_HEADING_ATTRIBUTES, HTML5_ATTRIBUTES, SECTION_ATTRIBUTES};
+use crate::standalone::TocEntry;
 use randoc_layout::{Doc, cr, empty, flush, space};
 
 use crate::shared::{Dimension, escape_attribute, escape_text};
 use crate::shared::{lit, words};
 use randoc_core::shared::{stringify, stringify_blocks};
 
-/// Renders a document as an HTML fragment, without a final newline.
+/// Renders a document: through the template of the options, or as an HTML
+/// fragment without a final newline when the options have no template.
 pub(crate) fn write(
     doc: &Pandoc,
     options: &WriterOptions,
     context: &mut Context,
     version: Version,
 ) -> Result<Text> {
-    let mut writer = Html {
+    let mut writer = Html::new(
         options,
         version,
-        max_depth: context.limits.max_nesting_depth,
-        notes: Vec::new(),
-        pending_from: 0,
-        section_numbers: options.number_offset.clone(),
-        flushed: 0,
-        note_groups: 0,
-        block_level: 0,
-        plain_paragraphs: false,
-        incremental: options.incremental,
-        in_link: false,
-        obfuscating: false,
-        min_level: min_heading_level(&doc.blocks),
-        warnings: RefCell::new(Vec::new()),
+        context.limits.max_nesting_depth,
+        min_heading_level(&doc.blocks),
+    );
+    let mut template_context = match options.template {
+        Some(_) => Some(writer.meta_context(&doc.meta)?),
+        None => None,
     };
     let mut body = writer.section_blocks(&doc.blocks, 0)?;
     // The notes that no section has taken go at the end of the document. A
@@ -52,16 +47,25 @@ pub(crate) fn write(
         body += lit("\n");
         body += notes;
     }
-    for warning in writer.warnings.take() {
-        context.report(warning);
-    }
     let width = match options.wrap_text {
         WrapOption::WrapAuto => usize::try_from(options.columns).ok(),
         WrapOption::WrapNone | WrapOption::WrapPreserve => None,
     };
-    let mut out = body.render(width);
-    // Pandoc leaves out the line ends at the end of a fragment.
-    out.truncate(out.trim_end_matches('\n').len());
+    let mut out = match (&options.template, template_context.as_mut()) {
+        (Some(template), Some(fields)) => {
+            writer.add_writer_fields(fields, &doc.meta, body)?;
+            template.render(fields).render(width)
+        }
+        _ => {
+            let mut out = body.render(width);
+            // Pandoc leaves out the line ends at the end of a fragment.
+            out.truncate(out.trim_end_matches('\n').len());
+            out
+        }
+    };
+    for warning in writer.warnings.take() {
+        context.report(warning);
+    }
     if options.prefer_ascii {
         // Pandoc measures line widths before it writes character references.
         out = ascii_references(&out);
@@ -76,7 +80,7 @@ pub(crate) type Attrs = Vec<(String, String)>;
 pub(crate) struct Html<'a> {
     pub(crate) options: &'a WriterOptions,
     pub(crate) version: Version,
-    max_depth: usize,
+    pub(crate) max_depth: usize,
     /// The number and the rendered content of each note, in order. The notes
     /// from `pending_from` on are not yet in the output.
     notes: Vec<(usize, Doc)>,
@@ -107,6 +111,53 @@ pub(crate) struct Html<'a> {
     min_level: i64,
     /// The warnings of the conversion, in order.
     warnings: RefCell<Vec<LogMessage>>,
+    /// The leading heading level of each div that `leading_heading_level` has
+    /// walked, by address. The key is valid because the writer reads only the
+    /// blocks of the input document, which lives for the whole conversion.
+    /// Without it, a chain of divs with a div first takes time that grows with
+    /// the square of the depth (review round 6, R6-01).
+    leading_levels: RefCell<HashMap<*const Block, Option<i64>>>,
+    /// The headings of the section path, for the table of contents. The
+    /// writer collects them only for a template with `--toc`.
+    pub(crate) toc_entries: Vec<TocEntry>,
+    /// The indexes in `toc_entries` of the sections that the writer renders now.
+    toc_open: Vec<usize>,
+    /// `true` when the output has a `q` element (the template variable `quotes`).
+    pub(crate) wrote_q_tags: bool,
+    /// `true` when the document has math (the template variable `math`).
+    pub(crate) wrote_math: bool,
+}
+
+impl<'a> Html<'a> {
+    pub(crate) fn new(
+        options: &'a WriterOptions,
+        version: Version,
+        max_depth: usize,
+        min_level: i64,
+    ) -> Html<'a> {
+        Html {
+            options,
+            version,
+            max_depth,
+            notes: Vec::new(),
+            pending_from: 0,
+            section_numbers: options.number_offset.clone(),
+            flushed: 0,
+            note_groups: 0,
+            block_level: 0,
+            plain_paragraphs: false,
+            incremental: options.incremental,
+            in_link: false,
+            obfuscating: false,
+            min_level,
+            warnings: RefCell::new(Vec::new()),
+            leading_levels: RefCell::new(HashMap::new()),
+            toc_entries: Vec::new(),
+            toc_open: Vec::new(),
+            wrote_q_tags: false,
+            wrote_math: false,
+        }
+    }
 }
 
 impl Html<'_> {
@@ -236,6 +287,17 @@ impl Html<'_> {
         }
     }
 
+    /// As `text`, and escapes `"` and `'` too: Pandoc writes the TeX source
+    /// for MathJax and KaTeX this way.
+    fn quoted_text(&self, text: &str) -> Doc {
+        let escaped = self.escape_hook(&escape_attribute(text, false));
+        if self.wraps() {
+            words(&escaped)
+        } else {
+            lit(&escaped)
+        }
+    }
+
     /// Returns `true` for `--wrap=auto`, the mode with breakable spaces.
     fn wraps(&self) -> bool {
         self.options.wrap_text == WrapOption::WrapAuto
@@ -261,6 +323,64 @@ impl Html<'_> {
         out
     }
 
+    /// Returns the level of the heading at the start of a block: a heading, or a
+    /// div whose first block is such a block. Such a block closes the sections
+    /// of its level and higher levels. The loop does not recurse, and each div
+    /// is walked once in a conversion.
+    fn leading_heading_level(&self, block: &Block) -> Option<i64> {
+        let mut known = self.leading_levels.borrow_mut();
+        let mut walked: Vec<*const Block> = Vec::new();
+        let mut current = block;
+        let level = loop {
+            match current {
+                Block::Header(level, ..) => break Some(*level),
+                Block::Div(_, content) => {
+                    let key: *const Block = current;
+                    if let Some(&level) = known.get(&key) {
+                        break level;
+                    }
+                    walked.push(key);
+                    #[cfg(test)]
+                    crate::table::steps::add(1);
+                    match content.first() {
+                        Some(first) => current = first,
+                        None => break None,
+                    }
+                }
+                _ => break None,
+            }
+        };
+        for key in walked {
+            known.insert(key, level);
+        }
+        level
+    }
+
+    /// Returns, for each block that starts a section, the index where its section
+    /// ends: the next block with a heading at its start of the same level or a lower
+    /// level, or the end of the list. One pass with a stack keeps the time linear.
+    fn section_ends(&self, blocks: &[Block]) -> Vec<usize> {
+        let mut ends = vec![blocks.len(); blocks.len()];
+        // The open sections, from the outermost to the innermost.
+        let mut open: Vec<(usize, i64)> = Vec::new();
+        for (index, block) in blocks.iter().enumerate() {
+            let Some(level) = self.leading_heading_level(block) else {
+                continue;
+            };
+            while let Some(&(start, open_level)) = open.last() {
+                if open_level < level {
+                    break;
+                }
+                if let Some(end) = ends.get_mut(start) {
+                    *end = index;
+                }
+                open.pop();
+            }
+            open.push((index, level));
+        }
+        ends
+    }
+
     // ----- blocks -----
 
     /// Renders blocks and groups each heading with the blocks after it into a section.
@@ -280,7 +400,7 @@ impl Html<'_> {
         extra: &[(String, String)],
     ) -> Result<Doc> {
         let depth = self.enter(depth)?;
-        let ends = section_ends(blocks);
+        let ends = self.section_ends(blocks);
         let mut doc = empty();
         let mut first = true;
         let mut index = 0;
@@ -359,6 +479,7 @@ impl Html<'_> {
             rest: children_blocks,
         } = section;
         let number = self.next_section_number(level, attr);
+        self.open_toc_entry(level, &attr.id, &attr.classes, number.as_ref(), inlines);
         // Pandoc moves the keys `role` and `epub:type` from a heading to its
         // section, and then writes the section element also without
         // `--section-divs`.
@@ -391,6 +512,7 @@ impl Html<'_> {
                 self.flush_notes(&mut body, ReferenceLocation::EndOfBlock, "")?;
             }
             let children = self.section_blocks(children_blocks, depth)?;
+            self.toc_open.pop();
             then_section_children(&mut body, children, children_blocks);
             self.flush_leaf_section_notes(&mut body, children_blocks)?;
             let name = if self.html5() { "section" } else { "div" };
@@ -413,9 +535,35 @@ impl Html<'_> {
             self.flush_notes(&mut header, ReferenceLocation::EndOfBlock, &attr.id)?;
         }
         let children = self.section_units(children_blocks, depth, "\n", extra)?;
+        self.toc_open.pop();
         then_section_children(&mut header, children, children_blocks);
         self.flush_leaf_section_notes(&mut header, children_blocks)?;
         Ok(header)
+    }
+
+    /// Records a section heading for the table of contents. The caller pops
+    /// `toc_open` after the children of the section.
+    fn open_toc_entry(
+        &mut self,
+        level: i64,
+        id: &str,
+        classes: &[Text],
+        number: Option<&SectionNumber>,
+        inlines: &[Inline],
+    ) {
+        if !(self.options.table_of_contents && self.options.template.is_some()) {
+            self.toc_open.push(usize::MAX);
+            return;
+        }
+        self.toc_open.push(self.toc_entries.len());
+        self.toc_entries.push(TocEntry {
+            level,
+            id: id.to_owned(),
+            number: number.map(|n| n.shown.clone()),
+            unlisted: classes.iter().any(|c| c == "unlisted"),
+            inlines: inlines.to_vec(),
+            parent: self.toc_open.iter().rev().nth(1).copied(),
+        });
     }
 
     fn section_classes(&self, level: i64, header: &[Text], div: &[Text]) -> Vec<Text> {
@@ -521,8 +669,9 @@ impl Html<'_> {
             return self.inlines(inlines, depth);
         }
         let attrs = [("class".to_owned(), "header-section-number".to_owned())];
-        // Pandoc writes the number as text, without the presentation selector of U+21A9.
-        let text = escape_text(number, false);
+        // Pandoc escapes the number as an attribute value (also `"` and `'`),
+        // without the presentation selector of U+21A9.
+        let text = escape_attribute(number, false);
         let text = if self.wraps() {
             words(&text)
         } else {
@@ -549,11 +698,24 @@ impl Html<'_> {
             rest,
         } = heading;
         let number = self.next_section_number(level, header);
+        let id = if section.id.is_empty() {
+            &header.id
+        } else {
+            &section.id
+        };
+        let classes: Vec<Text> = header
+            .classes
+            .iter()
+            .chain(&section.classes)
+            .cloned()
+            .collect();
+        self.open_toc_entry(level, id, &classes, number.as_ref(), inlines);
         let mut body = self.header(level, header, Attrs::new(), number.as_ref(), inlines, depth)?;
         if self.block_level == 0 {
             self.flush_notes(&mut body, ReferenceLocation::EndOfBlock, "")?;
         }
         let children = self.section_blocks(rest, depth)?;
+        self.toc_open.pop();
         then_section_children(&mut body, children, rest);
         self.flush_leaf_section_notes(&mut body, rest)?;
         let name = if self.html5() { "section" } else { "div" };
@@ -811,7 +973,7 @@ impl Html<'_> {
         let one_section = || {
             sections
                 && matches!(content.first(), Some(Block::Header(..)))
-                && section_ends(content).first() == Some(&content.len())
+                && self.section_ends(content).first() == Some(&content.len())
         };
         if wrapper_value(attr) == Some("1") && (content.len() == 1 || one_section()) {
             let pairs = attr
@@ -1365,6 +1527,7 @@ impl Html<'_> {
             }
             Inline::Quoted(quote, content) => {
                 if self.options.html_q_tags {
+                    self.wrote_q_tags = true;
                     self.wrapped("q", content, depth)?
                 } else {
                     let (open, close) = match quote {
@@ -1412,7 +1575,7 @@ impl Html<'_> {
                 doc += cr();
                 doc
             }
-            Inline::Math(kind, tex) => self.math(*kind, tex),
+            Inline::Math(kind, tex) => self.math(*kind, tex, depth)?,
             Inline::RawInline(format, text) => self.raw(format, text),
             Inline::Link(attr, content, target) => self.link(attr, content, target, depth)?,
             Inline::Image(attr, content, target) => self.image(attr, content, target),
@@ -1623,15 +1786,17 @@ impl Html<'_> {
         self.void("img", &attrs)
     }
 
-    fn math(&self, kind: MathType, tex: &str) -> Doc {
+    fn math(&mut self, kind: MathType, tex: &str, depth: usize) -> Result<Doc> {
+        self.wrote_math = true;
         let class = match kind {
             MathType::InlineMath => "math inline",
             MathType::DisplayMath => "math display",
         };
         let class_attr = [("class".to_owned(), class.to_owned())];
-        match &self.options.html_math_method {
+        let options = self.options;
+        Ok(match &options.html_math_method {
             HtmlMathMethod::KaTex(_) => {
-                let body = self.text(tex);
+                let body = self.quoted_text(tex);
                 self.inline_element("span", &class_attr, body)
             }
             HtmlMathMethod::MathJax(_) => {
@@ -1639,7 +1804,7 @@ impl Html<'_> {
                     MathType::InlineMath => format!("\\({tex}\\)"),
                     MathType::DisplayMath => format!("\\[{tex}\\]"),
                 };
-                let body = self.text(&text);
+                let body = self.quoted_text(&text);
                 self.inline_element("span", &class_attr, body)
             }
             HtmlMathMethod::GladTex => {
@@ -1667,11 +1832,41 @@ impl Html<'_> {
                 ];
                 self.void("img", &attrs)
             }
-            HtmlMathMethod::PlainMath | HtmlMathMethod::MathMl => {
-                let body = self.text(tex);
-                self.inline_element("span", &class_attr, body)
-            }
-        }
+            HtmlMathMethod::PlainMath => match randoc_math::to_inlines(kind, tex, self.max_depth) {
+                Ok(inlines) => {
+                    let body = self.inlines(&inlines, depth)?;
+                    self.inline_element("span", &class_attr, body)
+                }
+                Err(error) => self.math_as_tex(kind, tex, &class_attr, &error),
+            },
+            HtmlMathMethod::MathMl => match randoc_math::to_mathml(kind, tex, self.max_depth) {
+                Ok(mathml) => lit(&mathml),
+                Err(error) => self.math_as_tex(kind, tex, &class_attr, &error),
+            },
+        })
+    }
+
+    /// Writes a formula that `randoc-math` cannot convert: the TeX source
+    /// with its delimiters, and the warning of Pandoc.
+    fn math_as_tex(
+        &self,
+        kind: MathType,
+        tex: &str,
+        class_attr: &[(String, String)],
+        error: &randoc_math::MathError,
+    ) -> Doc {
+        self.warnings
+            .borrow_mut()
+            .push(LogMessage::CouldNotConvertTexMath(
+                tex.into(),
+                error.detail(tex),
+            ));
+        let delimiter = match kind {
+            MathType::InlineMath => "$",
+            MathType::DisplayMath => "$$",
+        };
+        let body = self.text(&format!("{delimiter}{tex}{delimiter}"));
+        self.inline_element("span", class_attr, body)
     }
 }
 
@@ -1733,9 +1928,9 @@ fn list_difference<T: Clone + Eq + std::hash::Hash>(items: &[T], remove: &[T]) -
         .collect()
 }
 
-/// Returns the level of the heading at the start of a block: a heading, or a
-/// div whose first block is such a block. Such a block closes the sections
-/// of its level and higher levels. The loop does not recurse.
+/// Returns the level of the heading at the start of a block, as
+/// `Html::leading_heading_level` does, with no memory of earlier walks. A
+/// caller that walks each level of one chain uses the method.
 fn leading_heading_level(mut block: &Block) -> Option<i64> {
     loop {
         match block {
@@ -1744,30 +1939,6 @@ fn leading_heading_level(mut block: &Block) -> Option<i64> {
             _ => return None,
         }
     }
-}
-
-/// Returns, for each block that starts a section, the index where its section
-/// ends: the next block with a heading at its start of the same level or a lower
-/// level, or the end of the list. One pass with a stack keeps the time linear.
-fn section_ends(blocks: &[Block]) -> Vec<usize> {
-    let levels: Vec<Option<i64>> = blocks.iter().map(leading_heading_level).collect();
-    let mut ends = vec![blocks.len(); blocks.len()];
-    // The open sections, from the outermost to the innermost.
-    let mut open: Vec<(usize, i64)> = Vec::new();
-    for (index, level) in levels.iter().enumerate() {
-        let Some(level) = level else { continue };
-        while let Some(&(start, open_level)) = open.last() {
-            if open_level < *level {
-                break;
-            }
-            if let Some(end) = ends.get_mut(start) {
-                *end = index;
-            }
-            open.pop();
-        }
-        open.push((index, *level));
-    }
-    ends
 }
 
 /// Returns `true` for a heading attribute that Pandoc moves to the section.
@@ -2241,6 +2412,7 @@ mod tests {
             ("classes.jsonl", 4_900, false),
             ("notes.jsonl", 1_000, true),
             ("joint.jsonl", 26_000, false),
+            ("math.jsonl", 2_800, false),
         ] {
             let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
                 .join("src")
@@ -2277,6 +2449,16 @@ mod tests {
             Some("none") => WrapOption::WrapNone,
             Some("preserve") => WrapOption::WrapPreserve,
             _ => WrapOption::WrapAuto,
+        };
+        options.html_math_method = match opts["math"].as_str() {
+            Some("mathjax") => HtmlMathMethod::MathJax(String::new()),
+            Some("katex") => HtmlMathMethod::KaTex(String::new()),
+            Some("gladtex") => HtmlMathMethod::GladTex,
+            Some("plain") => HtmlMathMethod::PlainMath,
+            Some("webtex") => {
+                HtmlMathMethod::WebTex("https://latex.codecogs.com/png.latex?".into())
+            }
+            _ => HtmlMathMethod::MathMl,
         };
         if opts["email"].as_str() == Some("references") {
             options.email_obfuscation = ObfuscationMethod::ReferenceObfuscation;
@@ -2610,23 +2792,7 @@ mod tests {
     #[test]
     fn many_classes_and_keys_take_one_set_operation_each() {
         let options = WriterOptions::default();
-        let html = Html {
-            options: &options,
-            version: Version::Html5,
-            max_depth: 128,
-            notes: Vec::new(),
-            pending_from: 0,
-            section_numbers: Vec::new(),
-            flushed: 0,
-            note_groups: 0,
-            block_level: 0,
-            plain_paragraphs: false,
-            incremental: false,
-            in_link: false,
-            obfuscating: false,
-            min_level: 1,
-            warnings: RefCell::new(Vec::new()),
-        };
+        let html = Html::new(&options, Version::Html5, 128, 1);
         let count = 40_000;
         let classes = (0..count).map(|i| format!("c{}", i % 30_000)).collect();
         let pairs = (0..count)
@@ -2638,6 +2804,50 @@ mod tests {
         assert_eq!(attrs.len(), 30_001);
         assert_eq!(crate::table::steps::take(), 2 * count);
         assert_eq!(html.warnings.borrow().len(), 10_000);
+    }
+
+    /// Review round 6, R6-01: `Div [Div [ ... ], Para]` on the section path.
+    /// Each div walks its first block for the heading level; with the memory
+    /// of earlier walks, the chain is walked once.
+    #[test]
+    fn a_div_chain_with_a_div_first_walks_each_div_once() {
+        let steps_for = |levels: usize| {
+            std::thread::Builder::new()
+                .stack_size(256 << 20)
+                .spawn(move || {
+                    let mut block = Block::Para(vec![Inline::Str("x".into())]);
+                    for _ in 0..levels {
+                        block = Block::Div(
+                            Attr::default(),
+                            vec![block, Block::Para(vec![Inline::Str("p".into())])],
+                        );
+                    }
+                    let doc = Pandoc {
+                        meta: Default::default(),
+                        blocks: vec![block],
+                    };
+                    let mut context = Context::pure();
+                    context.limits.max_nesting_depth = 4 * levels;
+                    crate::table::steps::take();
+                    let out = write(
+                        &doc,
+                        &WriterOptions::default(),
+                        &mut context,
+                        Version::Html5,
+                    );
+                    let steps = crate::table::steps::take();
+                    assert_eq!(out.map(|o| o.matches("<div>").count()).ok(), Some(levels));
+                    std::mem::forget(doc);
+                    steps
+                })
+                .unwrap()
+                .join()
+                .unwrap()
+        };
+        let small = steps_for(250);
+        let large = steps_for(1_000);
+        // Linear work gives a ratio of 4; the walk at each level gave 16.
+        assert!(large <= small * 5, "{small} steps, then {large} steps");
     }
 
     #[test]

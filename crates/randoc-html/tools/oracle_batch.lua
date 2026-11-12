@@ -15,6 +15,7 @@ for line in io.lines() do
   if o.incremental then wo.incremental = true end
   if o.ascii then wo.prefer_ascii = true end
   if o.email then wo.email_obfuscation = o.email end
+  if o.math then wo.html_math_method = o.math end
   local ok, res = pcall(function()
     local doc = pandoc.read(json.encode(req.doc), "json")
     return pandoc.write(doc, req.fmt, pandoc.WriterOptions(wo))

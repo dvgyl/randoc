@@ -14,8 +14,11 @@ exclude = ["src/*.jsonl"]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
 randoc-layout = { workspace = true }
+randoc-math = { workspace = true }
+randoc-templates = { workspace = true }
 
 [dev-dependencies]
+randoc-data = { workspace = true }
 serde_json = { workspace = true }
 
 [lints]
