@@ -42,6 +42,13 @@ fn resource_reads_follow_the_matrix_of_pandoc() {
     replay(include_str!("data/resources.json"), "resources");
 }
 
+/// Each defaults file and metadata file text of the cases and the matrix
+/// tools (`tools/yaml_texts.py`), read through `randoc-yaml`.
+#[test]
+fn defaults_and_metadata_texts_give_the_result_of_pandoc() {
+    replay(include_str!("data/yaml-texts.json"), "yaml");
+}
+
 #[test]
 fn utf8_errors_in_include_files_name_the_byte_of_pandoc() {
     replay(include_str!("data/utf8-offsets.json"), "utf8");

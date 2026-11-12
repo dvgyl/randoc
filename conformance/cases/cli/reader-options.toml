@@ -360,3 +360,247 @@ input = "<p>中\n中</p>\n<p>中\na</p>\n<p><em>中</em>\n中</p>\n<pre>中\n中
 id = "east-asian-line-breaks-html-reader-off"
 cmd = ["-f", "html", "-t", "native"]
 input = "<p>中\n中</p>\n<p>中\na</p>\n<p><em>中</em>\n中</p>\n<pre>中\n中</pre>\n"
+
+# JSON filters (`--filter`, `-F`, `filters:`). Each filter is a small script
+# of this file: a shell script without other processes, or a Python script.
+
+[[case]]
+id = "filter-shell-changes-the-document"
+cmd = ["-f", "markdown", "-t", "native", "--filter", "./up.sh"]
+input = "a b\n"
+covers = ["opt:filter"]
+[case.files]
+"up.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do
+  printf '%s' "${l//\"c\":\"a\"/\"c\":\"A\"}"
+done
+'''
+
+[[case]]
+id = "filter-python-changes-the-document"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./up.py"]
+input = "a *b*\n\n# c\n"
+covers = ["opt:filter"]
+[case.files]
+"up.py" = '''
+#!/usr/bin/env python3
+import json
+import sys
+
+doc = json.load(sys.stdin)
+
+
+def walk(node):
+    if isinstance(node, dict):
+        if node.get("t") == "Str":
+            node["c"] = node["c"].upper()
+        for value in node.values():
+            walk(value)
+    elif isinstance(node, list):
+        for value in node:
+            walk(value)
+
+
+walk(doc["blocks"])
+doc["blocks"].append({"t": "Para", "c": [{"t": "Str", "c": " ".join(sys.argv[1:])}]})
+json.dump(doc, sys.stdout)
+'''
+
+[[case]]
+id = "filter-argument-html5"
+cmd = ["-f", "markdown", "-t", "html5", "-F", "./arg.sh"]
+input = "a\n"
+[case.files]
+"arg.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do
+  printf '%s' "${l//\"c\":\"a\"/\"c\":\"$# $1\"}"
+done
+'''
+
+[[case]]
+id = "filter-argument-without-extensions"
+cmd = ["-f", "markdown", "-t", "html4+smart-raw_html", "-F", "./arg.sh"]
+input = "a\n"
+[case.files]
+"arg.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do
+  printf '%s' "${l//\"c\":\"a\"/\"c\":\"$# $1\"}"
+done
+'''
+
+[[case]]
+id = "filter-environment"
+cmd = ["-f", "markdown+east_asian_line_breaks-smart", "-t", "native", "--tab-stop=2", "--columns=50", "--indented-code-classes=x", "--default-image-extension=png", "--track-changes=all", "--strip-comments", "-F", "./env.sh"]
+input = "a\n"
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+r=${PANDOC_READER_OPTIONS%%,\"abbreviations\"*}
+t=${PANDOC_READER_OPTIONS#*\"default-image-extension\"}
+r="$PANDOC_VERSION $r $t"
+r=${r//\"/\'}
+while IFS= read -r l || [ -n "$l" ]; do
+  printf '%s' "${l//\"c\":\"a\"/\"c\":\"$r\"}"
+done
+'''
+
+[[case]]
+id = "filter-error-status"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./fail.sh"]
+input = "a\n"
+[case.files]
+"fail.sh" = "#!/bin/sh\necho 'a message' >&2\nexit 3\n"
+
+[[case]]
+id = "filter-killed-by-a-signal"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./kill.sh"]
+input = "a\n"
+[case.files]
+"kill.sh" = "#!/bin/sh\nkill -9 $$\n"
+
+[[case]]
+id = "filter-writes-no-json"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./text.sh"]
+input = "a\n"
+[case.files]
+"text.sh" = "#!/bin/sh\necho 'not json'\n"
+
+[[case]]
+id = "filter-writes-nothing"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./none.sh"]
+input = "a\n"
+[case.files]
+"none.sh" = "#!/bin/sh\n"
+
+[[case]]
+id = "filter-writes-an-object-without-a-version"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./obj.sh"]
+input = "a\n"
+[case.files]
+"obj.sh" = "#!/bin/sh\necho '{}'\n"
+
+[[case]]
+id = "filter-writes-an-old-version"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./old.sh"]
+input = "a\n"
+[case.files]
+"old.sh" = "#!/bin/sh\necho '{\"pandoc-api-version\":[1,22],\"meta\":{},\"blocks\":[]}'\n"
+
+[[case]]
+id = "filter-writes-to-standard-error"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./err.sh"]
+input = "a\n"
+[case.files]
+"err.sh" = '''
+#!/bin/sh
+echo first >&2
+while IFS= read -r l || [ -n "$l" ]; do
+  printf '%s' "$l"
+done
+echo second >&2
+'''
+
+[[case]]
+id = "filter-missing"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./nosuch.sh"]
+input = "a\n"
+
+[[case]]
+id = "filter-missing-name-without-a-slash"
+cmd = ["-f", "markdown", "-t", "native", "-F", "randoc-no-such-filter"]
+input = "a\n"
+
+[[case]]
+id = "filter-name-in-the-working-directory"
+cmd = ["-f", "markdown", "-t", "native", "-F", "same.sh"]
+input = "a\n"
+[case.files]
+"same.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"$l\"; done\n"
+
+[[case]]
+id = "filter-in-the-data-folder"
+cmd = ["-f", "markdown", "-t", "native", "--data-dir=dd", "-F", "inner.sh"]
+input = "a\n"
+[case.files]
+"dd/filters/inner.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"data\\\"}\"; done\n"
+
+[[case]]
+id = "filter-in-the-data-folder-fails"
+cmd = ["-f", "markdown", "-t", "native", "--data-dir=dd", "-F", "./inner.sh"]
+input = "a\n"
+[case.files]
+"dd/filters/inner.sh" = "#!/bin/sh\nexit 1\n"
+
+[[case]]
+id = "filter-without-a-shebang-line"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./plain.sh"]
+input = "a\n"
+[case.files]
+"plain.sh" = "while IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"sh\\\"}\"; done\n"
+
+[[case]]
+id = "filters-run-in-order"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./one.sh", "--filter=./two.sh"]
+input = "a\n"
+[case.files]
+"one.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
+"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+
+[[case]]
+id = "filter-sees-metadata-and-shifted-headings"
+cmd = ["-f", "markdown", "-t", "native", "-s", "-M", "k=v", "--shift-heading-level-by=1", "-F", "./see.py"]
+input = "# h\n\na\n"
+[case.files]
+"see.py" = '''
+#!/usr/bin/env python3
+import json
+import sys
+
+doc = json.load(sys.stdin)
+levels = [str(b["c"][0]) for b in doc["blocks"] if b["t"] == "Header"]
+keys = ",".join(sorted(doc["meta"]))
+doc["blocks"].append({"t": "Para", "c": [{"t": "Str", "c": keys + ";" + ",".join(levels)}]})
+json.dump(doc, sys.stdout)
+'''
+
+[[case]]
+id = "filter-with-sandbox"
+cmd = ["-f", "markdown", "-t", "native", "--sandbox", "-F", "./up.sh"]
+input = "a\n"
+[case.files]
+"up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"A\\\"}\"; done\n"
+
+[[case]]
+id = "filter-before-a-missing-lua-filter"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./up.sh", "-L", "nosuch.lua"]
+input = "a\n"
+[case.files]
+"up.sh" = "#!/bin/sh\necho ran >&2\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"$l\"; done\n"
+
+[[case]]
+id = "filter-after-a-missing-lua-filter"
+cmd = ["-f", "markdown", "-t", "native", "-L", "nosuch.lua", "-F", "./up.sh"]
+input = "a\n"
+[case.files]
+"up.sh" = "#!/bin/sh\necho ran >&2\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"$l\"; done\n"
+
+[[case]]
+id = "filter-in-a-defaults-file"
+cmd = ["-f", "markdown", "-t", "native", "-d", "d.yaml"]
+input = "a\n"
+[case.files]
+"d.yaml" = "filters:\n- ./up.sh\n- type: json\n  path: ./two.sh\n"
+"up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
+"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+
+[[case]]
+id = "filter-in-a-defaults-file-and-an-option"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./two.sh", "-d", "d.yaml"]
+input = "a\n"
+[case.files]
+"d.yaml" = "filters: [./up.sh]\n"
+"up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
+"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"

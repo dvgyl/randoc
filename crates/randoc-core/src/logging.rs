@@ -225,7 +225,7 @@ impl LogMessage {
             NoTitleElement(fallback) => format!(
                 "This document format requires a nonempty <title> element.\n\
                  Defaulting to '{fallback}' as the title.\n\
-                 To specify a title, use 'title' in metadata or --metadata title=\"...\"."
+                 To specify a title, use --variable pagetitle=\"...\"."
             ),
             NoLangSpecified => "No value for 'lang' was specified in the metadata.\n\
                  It is recommended that lang be specified for this format."
@@ -358,6 +358,18 @@ mod tests {
             message.render(),
             "[INFO] No value for 'lang' was specified in the metadata.\n  \
              It is recommended that lang be specified for this format.\n"
+        );
+    }
+
+    #[test]
+    fn no_title_element_matches_pandoc_3_13() {
+        // The `pretty` field of: printf 'hi\n' | pandoc -s -t html --log=/dev/stdout -o /dev/null
+        let message = LogMessage::NoTitleElement("-".into());
+        assert_eq!(
+            message.text(),
+            "This document format requires a nonempty <title> element.\n\
+             Defaulting to '-' as the title.\n\
+             To specify a title, use --variable pagetitle=\"...\"."
         );
     }
 

@@ -133,6 +133,156 @@
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
       "stderr": ""
     },
+    "filter-after-a-missing-lua-filter#cmd": {
+      "key": "115e2141ba4be84f",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
+    },
+    "filter-argument-html5#cmd": {
+      "key": "a346f69d05421a9a",
+      "exit": 0,
+      "stdout": "<p>1 html5</p>\n",
+      "stderr": ""
+    },
+    "filter-argument-without-extensions#cmd": {
+      "key": "2c6c2bc97653d135",
+      "exit": 0,
+      "stdout": "<p>1 html4</p>\n",
+      "stderr": ""
+    },
+    "filter-before-a-missing-lua-filter#cmd": {
+      "key": "679006d78fff61e1",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "ran\nError running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
+    },
+    "filter-environment#cmd": {
+      "key": "a68eea6c9d6aa78d",
+      "exit": 0,
+      "stdout": "[ Para\n    [ Str\n        \"3.13 {'extensions':['all_symbols_escapable','auto_identifiers','backtick_code_blocks','blank_before_blockquote','blank_before_header','bracketed_spans','citations','definition_lists','east_asian_line_breaks','escaped_line_breaks','example_lists','fancy_lists','fenced_code_attributes','fenced_code_blocks','fenced_divs','footnotes','grid_tables','header_attributes','table_attributes','implicit_figures','implicit_header_references','inline_code_attributes','inline_notes','intraword_underscores','latex_macros','line_blocks','link_attributes','markdown_in_html_blocks','multiline_tables','native_divs','native_spans','pandoc_title_block','pipe_tables','raw_attribute','raw_html','raw_tex','shortcut_reference_links','simple_tables','space_in_atx_header','startnum','strikeout','subscript','superscript','task_lists','table_captions','tex_math_dollars','yaml_metadata_block'],'standalone':false,'columns':50,'tab-stop':2,'indented-code-classes':['x'] :'png','track-changes':'all-changes','strip-comments':true,'typst-inputs':[]}\"\n    ]\n]\n",
+      "stderr": ""
+    },
+    "filter-error-status#cmd": {
+      "key": "7b21a1f498f8cd8c",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "a message\nError running filter './fail.sh':\nFilter returned error status 3\n"
+    },
+    "filter-in-a-defaults-file#cmd": {
+      "key": "88af6fdacd1db88c",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-in-a-defaults-file-and-an-option#cmd": {
+      "key": "be174996eff64ae0",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a1\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-in-the-data-folder#cmd": {
+      "key": "d099c7d83c5694ec",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"data\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-in-the-data-folder-fails#cmd": {
+      "key": "31e7be03cf7fade0",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'dd/filters/./inner.sh':\nFilter returned error status 1\n"
+    },
+    "filter-killed-by-a-signal#cmd": {
+      "key": "ea0a9ce0e0b5556d",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter './kill.sh':\nFilter returned error status -9\n"
+    },
+    "filter-missing#cmd": {
+      "key": "b5fe04456dbe831e",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter './nosuch.sh':\nCould not find executable ./nosuch.sh\n"
+    },
+    "filter-missing-name-without-a-slash#cmd": {
+      "key": "2a854d283424f3e6",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'randoc-no-such-filter':\nCould not find executable randoc-no-such-filter\n"
+    },
+    "filter-name-in-the-working-directory#cmd": {
+      "key": "edb4a321ce8c4e3a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-python-changes-the-document#cmd": {
+      "key": "fe675c3fac01b0df",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A\" , Space , Emph [ Str \"B\" ] ]\n, Header 1 ( \"c\" , [] , [] ) [ Str \"C\" ]\n, Para [ Str \"native\" ]\n]\n",
+      "stderr": ""
+    },
+    "filter-sees-metadata-and-shifted-headings#cmd": {
+      "key": "6563ec4836983286",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta { unMeta = fromList [ ( \"k\" , MetaString \"v\" ) ] }\n  [ Header 2 ( \"h\" , [] , [] ) [ Str \"h\" ]\n  , Para [ Str \"a\" ]\n  , Para [ Str \"k;1\" ]\n  ]\n",
+      "stderr": ""
+    },
+    "filter-shell-changes-the-document#cmd": {
+      "key": "fb06b9a9b60bb434",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A\" , Space , Str \"b\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-with-sandbox#cmd": {
+      "key": "5ae597bfaa57d3b5",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-without-a-shebang-line#cmd": {
+      "key": "b165b4ec2b12bff6",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"sh\" ] ]\n",
+      "stderr": ""
+    },
+    "filter-writes-an-object-without-a-version#cmd": {
+      "key": "4daf94763c1f8135",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter './obj.sh':\nError in $: JSON missing pandoc-api-version.\n"
+    },
+    "filter-writes-an-old-version#cmd": {
+      "key": "cd556e86dfb8cbcf",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter './old.sh':\nError in $: Incompatible API versions: encoded with [1,22] but attempted to decode with [1,23,1,2].\n"
+    },
+    "filter-writes-no-json#cmd": {
+      "key": "29c7540d6f7b770e",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter './text.sh':\nUnexpected \"not json\\n\", expecting JSON value\n"
+    },
+    "filter-writes-nothing#cmd": {
+      "key": "59a9b2a8020f5c38",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter './none.sh':\nUnexpected end-of-input, expecting JSON value\n"
+    },
+    "filter-writes-to-standard-error#cmd": {
+      "key": "e01b43e46b1b1530",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] ]\n",
+      "stderr": "first\nsecond\n"
+    },
+    "filters-run-in-order#cmd": {
+      "key": "2da294defe24b872",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
     "indented-code-classes#cmd": {
       "key": "12c1c70fc60e49aa",
       "exit": 0,

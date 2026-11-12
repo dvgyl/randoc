@@ -134,6 +134,11 @@ fn lines<'a>(items: impl IntoIterator<Item = &'a str>) -> String {
     text
 }
 
+/// Sorts extension names in the order of the extension type of Pandoc.
+pub fn sort_extensions(names: &mut [&str]) {
+    names.sort_by_key(|name| EXTENSION_ORDER.iter().position(|n| n == name));
+}
+
 /// Returns the output of `--list-extensions` for a format.
 pub fn list_extensions(format: &str) -> Result<String> {
     // PDF output goes through another writer, so Pandoc has no extensions for `pdf`.

@@ -8,7 +8,9 @@ use randoc::{
 
 use crate::cli::{filter_for, math_method};
 use crate::settings::{Eol, Filter, IpynbOutput, Settings, VarValue};
-use crate::yaml::{self, Mark, Node};
+use randoc_yaml::{Entrance, Kind, Limits, Mark, Node, Value, YamlError};
+
+use crate::node::{NodeExt, parse_json};
 
 /// The system access that loading a defaults file needs.
 pub trait Loader {
@@ -110,41 +112,37 @@ fn apply_file(
             "Error: Circular defaults file reference in '{referrer}'"
         )));
     }
-    let text = yaml::utf8_text(&bytes)
-        .map_err(|(error, valid)| {
-            Error::Parse(format!(
-                "Error parsing {path}:\n{}",
-                yaml::render_error(&path, valid, &error)
-            ))
-        })?
+    let text = crate::node::utf8_text(&bytes)
+        .map_err(|error| Error::Parse(error.report(Entrance::DefaultsFile { name: &path })))?
         .to_owned();
     // Pandoc reads a file that starts with `{` as JSON, whatever its name.
     let json = text.starts_with('{');
     let root = if json {
-        match yaml::parse_json(&text) {
-            Ok(node) => Some(node),
+        match parse_json(&text) {
+            Ok(node) => node,
             Err(message) => return Err(Error::Parse(format!("Error parsing {file}:\n{message}"))),
         }
     } else {
-        yaml::parse(&text, loader.max_depth(), true).map_err(|error| {
-            Error::Parse(format!(
-                "Error parsing {file}:\n{}",
-                yaml::render_error(&file, &text, &error)
-            ))
-        })?
+        let limits = Limits {
+            max_depth: loader.max_depth(),
+            ..Limits::default()
+        };
+        randoc_yaml::parse_single(&text, limits)
+            .map_err(|error| Error::Parse(error.report(Entrance::DefaultsFile { name: &file })))?
     };
     let source = Source {
         file: &file,
         text: &text,
         json,
     };
-    let entries = match root {
-        Some(Node::Map(entries, _)) => entries,
-        other => {
-            let mark = other.map_or(Mark { line: 1, column: 1 }, |node| node.mark());
-            return Err(source.error("", "Expected a mapping", mark));
-        }
+    let Kind::Mapping(mut entries) = root.kind else {
+        return Err(source.error("", "Expected a mapping", root.mark));
     };
+    for (key, value) in &mut entries {
+        if let Some(mark) = empty_value_mark(&text, key, value) {
+            value.mark = mark;
+        }
+    }
     let dir = match path.rfind('/') {
         Some(index) => path[..index].to_owned(),
         None => ".".to_owned(),
@@ -217,6 +215,25 @@ fn apply_file(
     Ok(())
 }
 
+/// Returns the position that Pandoc gives an empty value of a key: the
+/// character after the `:` on the line of the key. `randoc-yaml` puts an
+/// empty value without a tag or an anchor at the next token instead.
+fn empty_value_mark(text: &str, key: &Node, value: &Node) -> Option<Mark> {
+    let empty = matches!(&value.kind, Kind::Scalar { text, style: randoc_yaml::Style::Plain } if text.is_empty());
+    if !empty || value.tag.is_some() {
+        return None;
+    }
+    let line = text.lines().nth(key.mark.line.checked_sub(1)?)?;
+    let start = key.mark.column.checked_sub(1)? + key.as_str()?.chars().count();
+    let colon = line.chars().skip(start).position(|c| c == ':')?;
+    let mark = Mark {
+        line: key.mark.line,
+        column: start + colon + 2,
+    };
+    // A value with an anchor has its mark on the line of the key.
+    (mark.line < value.mark.line).then_some(mark)
+}
+
 /// The text of a defaults file, for the error messages.
 struct Source<'a> {
     file: &'a str,
@@ -250,15 +267,9 @@ impl Source<'_> {
         } else {
             format!("{key}{item}: {message}")
         };
-        let error = yaml::YamlError {
-            message,
-            mark,
-            note: None,
-        };
-        Error::Parse(format!(
-            "Error parsing {file}:\n{}",
-            yaml::render_error(file, self.text, &error)
-        ))
+        Error::Parse(
+            YamlError::at(self.text, mark, message).report(Entrance::DefaultsFile { name: file }),
+        )
     }
 }
 
@@ -344,16 +355,6 @@ pub fn normalize(path: &str) -> String {
     }
 }
 
-/// The kind of a YAML or JSON value, as Aeson names it in a type error.
-fn kind_name(node: &Node) -> &'static str {
-    node.type_name()
-}
-
-/// Returns true for a value that Aeson reads as a JSON string.
-fn is_string(node: &Node) -> bool {
-    matches!(node.resolve(), Some(yaml::Resolved::Str(_)))
-}
-
 /// Returns the JSON text of a value, as Pandoc prints a value that is not a
 /// name in an error, for example `3`, `null` or `["a","b"]`.
 fn json_text(node: &Node) -> String {
@@ -362,11 +363,11 @@ fn json_text(node: &Node) -> String {
 
 fn text(node: &Node) -> std::result::Result<String, KeyError> {
     match node.resolve() {
-        Some(yaml::Resolved::Str(text)) => Ok(text),
+        Value::String(text) => Ok(text.to_owned()),
         _ => Err((
             format!(
                 "parsing Text failed, expected String, but encountered {}",
-                kind_name(node)
+                node.type_name()
             ),
             node.mark(),
         )),
@@ -376,7 +377,7 @@ fn text(node: &Node) -> std::result::Result<String, KeyError> {
 fn boolean(node: &Node) -> std::result::Result<bool, KeyError> {
     node.as_bool().ok_or_else(|| {
         (
-            format!("expected Bool, but encountered {}", kind_name(node)),
+            format!("expected Bool, but encountered {}", node.type_name()),
             node.mark(),
         )
     })
@@ -384,8 +385,8 @@ fn boolean(node: &Node) -> std::result::Result<bool, KeyError> {
 
 fn int(node: &Node) -> std::result::Result<i64, KeyError> {
     match node.resolve() {
-        Some(yaml::Resolved::Int(n)) => Ok(n),
-        Some(yaml::Resolved::Number(text)) => Err((
+        Value::Integer(n) => Ok(n),
+        Value::Float(text) => Err((
             format!(
                 "parsing Int failed, value is either floating or will cause over or underflow {text}"
             ),
@@ -394,7 +395,7 @@ fn int(node: &Node) -> std::result::Result<i64, KeyError> {
         _ => Err((
             format!(
                 "parsing Int failed, expected Number, but encountered {}",
-                kind_name(node)
+                node.type_name()
             ),
             node.mark(),
         )),
@@ -412,12 +413,12 @@ fn at(index: usize, (message, mark): KeyError) -> KeyError {
 
 /// Returns the items of a value that must be a list.
 fn list(node: &Node) -> std::result::Result<&[Node], KeyError> {
-    match node {
-        Node::Seq(items, _) => Ok(items),
-        node => Err((
+    match &node.kind {
+        Kind::Sequence(items) => Ok(items),
+        _ => Err((
             format!(
                 "parsing [] failed, expected Array, but encountered {}",
-                kind_name(node)
+                node.type_name()
             ),
             node.mark(),
         )),
@@ -564,10 +565,10 @@ fn decode(node: &Node, kind: ValueType) -> std::result::Result<Decoded, KeyError
         ValueType::TextOrList | ValueType::OptTextOrList => {
             if null && kind == ValueType::OptTextOrList {
                 Decoded::OptTexts(None)
-            } else if let Node::Seq(items, _) = node {
+            } else if let Kind::Sequence(items) = &node.kind {
                 // Pandoc tries a string first, so a list with an item that is
                 // not a string gives the error of the string attempt.
-                if !items.iter().all(is_string) {
+                if !items.iter().all(NodeExt::is_string) {
                     return Err((
                         "parsing Text failed, expected String, but encountered Array".to_owned(),
                         node.mark(),
@@ -593,17 +594,13 @@ fn decode(node: &Node, kind: ValueType) -> std::result::Result<Decoded, KeyError
                 .collect::<std::result::Result<_, _>>()?,
         ),
         ValueType::Enum(what, names) => match node.resolve() {
-            Some(yaml::Resolved::Str(name)) if names.contains(&name.as_str()) => {
-                Decoded::Name(name)
-            }
+            Value::String(name) if names.contains(&name) => Decoded::Name(name.to_owned()),
             // The JSON text of a string is the string in quotes, as Pandoc prints it.
             _ => return Err((format!("{what} {}", json_text(node)), node.mark())),
         },
         ValueType::Constructor(type_name, names) => match node.resolve() {
-            Some(yaml::Resolved::Str(name)) if names.contains(&name.as_str()) => {
-                Decoded::Name(name)
-            }
-            Some(yaml::Resolved::Str(name)) => {
+            Value::String(name) if names.contains(&name) => Decoded::Name(name.to_owned()),
+            Value::String(name) => {
                 return Err((
                     format!(
                         "When parsing Text.Pandoc.App.Opt.{type_name} expected a String with the tag of a constructor but got {name}."
@@ -615,7 +612,7 @@ fn decode(node: &Node, kind: ValueType) -> std::result::Result<Decoded, KeyError
                 return Err((
                     format!(
                         "When parsing Text.Pandoc.App.Opt.{type_name} expected String but got {}.",
-                        kind_name(node)
+                        node.type_name()
                     ),
                     node.mark(),
                 ));
@@ -626,25 +623,24 @@ fn decode(node: &Node, kind: ValueType) -> std::result::Result<Decoded, KeyError
 }
 
 /// Returns the text of a mapping key as Pandoc keeps it: the source text, so
-/// `~` stays `~`.
+/// `~` stays `~` and `1.0` stays `1.0`.
 fn key_text(key: &Node) -> String {
-    key.as_str()
-        .map_or_else(|| key.scalar_text().unwrap_or_default(), str::to_owned)
+    key.as_str().unwrap_or_default().to_owned()
 }
 
 /// Converts a YAML node of the `metadata` key to a literal metadata value.
 fn meta_value(node: &Node) -> MetaValue {
-    match node {
-        Node::Seq(items, _) => MetaValue::MetaList(items.iter().map(meta_value).collect()),
-        Node::Map(entries, _) => MetaValue::MetaMap(
+    match &node.kind {
+        Kind::Sequence(items) => MetaValue::MetaList(items.iter().map(meta_value).collect()),
+        Kind::Mapping(entries) => MetaValue::MetaMap(
             entries
                 .iter()
                 .map(|(k, v)| (key_text(k), meta_value(v)))
                 .collect(),
         ),
-        node => match node.as_bool() {
+        Kind::Scalar { .. } => match node.as_bool() {
             Some(b) => MetaValue::MetaBool(b),
-            None => MetaValue::MetaString(node.scalar_text().unwrap_or_default()),
+            None => MetaValue::MetaString(node.text_form().unwrap_or_default()),
         },
     }
 }
@@ -658,13 +654,13 @@ fn filter(
         (
             format!(
                 "parsing Filter failed, expected String, but encountered {}",
-                kind_name(node)
+                node.type_name()
             ),
             node.mark(),
         )
     };
-    match node {
-        Node::Map(entries, _) => {
+    match &node.kind {
+        Kind::Mapping(entries) => {
             let field = |name: &str| {
                 entries
                     .iter()
@@ -673,7 +669,7 @@ fn filter(
             };
             let kind = match field("type") {
                 None => None,
-                Some(kind) if is_string(kind) => kind.as_str(),
+                Some(kind) if kind.is_string() => kind.as_str(),
                 Some(_) => return Err(not_a_filter()),
             };
             if kind == Some("citeproc") {
@@ -690,7 +686,7 @@ fn filter(
                 Some(_) => Err(not_a_filter()),
             }
         }
-        node if is_string(node) => {
+        _ if node.is_string() => {
             let path = context.expand_path(&text(node)?, data_dir);
             Ok(if path == "citeproc" {
                 Filter::Citeproc
@@ -779,7 +775,7 @@ fn set(
         "metadata" => {
             // Pandoc ignores a value that is not a mapping. A key replaces the
             // earlier values of the same key.
-            if let Node::Map(entries, _) = v {
+            if let Kind::Mapping(entries) = &v.kind {
                 let keys: std::collections::HashSet<String> =
                     entries.iter().map(|(k, _)| key_text(k)).collect();
                 s.metadata.retain(|(k, _)| !keys.contains(k));
@@ -797,15 +793,14 @@ fn set(
             s.template = opt_path(decoded, path);
         }
         "variables" => {
-            let Node::Map(entries, _) = v else {
+            let Kind::Mapping(entries) = &v.kind else {
                 return Err(("Expecting MapVal".to_owned(), v.mark()));
             };
             for (k, value) in entries {
                 // A value of the key replaces the earlier values, as
                 // `--variable-json` does; a scalar keeps its YAML type.
                 let value = VarValue::Json(value.to_json());
-                s.variables
-                    .push((k.scalar_text().unwrap_or_default(), value));
+                s.variables.push((key_text(k), value));
             }
         }
         "wrap" => {
@@ -873,13 +868,13 @@ fn set(
         "link-images" => s.link_images = flag(&decoded),
         "request-headers" => {
             for (index, item) in list(v)?.iter().enumerate() {
-                let Node::Seq(pair, _) = item else {
+                let Kind::Sequence(pair) = &item.kind else {
                     return Err(at(
                         index,
                         (
                             format!(
                                 "parsing (a, b) failed, expected Array, but encountered {}",
-                                kind_name(item)
+                                item.type_name()
                             ),
                             item.mark(),
                         ),
@@ -1011,9 +1006,9 @@ fn set(
         "ignore-args" => s.ignore_args = flag(&decoded),
         "verbosity" => {
             s.verbosity = match v.resolve() {
-                Some(yaml::Resolved::Str(level)) if level == "ERROR" => Verbosity::Error,
-                Some(yaml::Resolved::Str(level)) if level == "WARNING" => Verbosity::Warning,
-                Some(yaml::Resolved::Str(level)) if level == "INFO" => Verbosity::Info,
+                Value::String("ERROR") => Verbosity::Error,
+                Value::String("WARNING") => Verbosity::Warning,
+                Value::String("INFO") => Verbosity::Info,
                 _ => return Err(("mzero".to_owned(), v.mark())),
             };
         }
@@ -1031,32 +1026,36 @@ fn html_math_method(v: &Node) -> std::result::Result<HtmlMathMethod, KeyError> {
             format!(
                 "Unknown HTML math method {}",
                 match v.resolve() {
-                    Some(yaml::Resolved::Str(name)) => format!("\"{name}\""),
+                    Value::String(name) => format!("\"{name}\""),
                     _ => json_text(v),
                 }
             ),
             v.mark(),
         )
     };
-    let (method, url) = match v {
-        Node::Map(fields, _) => {
+    let (method, url) = match &v.kind {
+        Kind::Mapping(fields) => {
             let field = |name: &str| {
                 fields
                     .iter()
                     .find(|(k, _)| k.as_str() == Some(name))
                     .map(|(_, v)| v)
             };
-            let get = |name: &str| field(name).filter(|v| is_string(v)).and_then(Node::as_str);
+            let get = |name: &str| {
+                field(name)
+                    .filter(|v| v.is_string())
+                    .and_then(NodeExt::as_str)
+            };
             let Some(method) = get("method") else {
                 return Err(unknown());
             };
             // A null URL is an absent URL.
-            if field("url").is_some_and(|url| !is_string(url) && !url.is_null()) {
+            if field("url").is_some_and(|url| !url.is_string() && !url.is_null()) {
                 return Err(unknown());
             }
             (method.to_owned(), get("url").unwrap_or_default().to_owned())
         }
-        node if is_string(node) => (text(node)?, String::new()),
+        _ if v.is_string() => (text(v)?, String::new()),
         _ => return Err(unknown()),
     };
     // A defaults file needs the lower-case method name alone: the

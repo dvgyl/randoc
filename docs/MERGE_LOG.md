@@ -1404,3 +1404,45 @@ conflict). Licence scan: no hit.
 Open findings: I-MATH-01 (scope gap), I-MATH-02, I-MATH-06 (all low);
 the low findings Opus math-R3-L1 to L6, L8 and Codex math-R3-08. Open
 checks: coverage, the mutation sample.
+
+## Workstream cli (branch `ws/cli-2`, head f11f643, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: unit 2 of
+the command line. JSON filters (new module `filter`: the search of the
+filter, the arguments and the environment of the reference, the
+interpreter of a file without `#!`, the error texts, the order with
+`-F`, `-L` and `filters:`). Defaults and metadata files are read with
+`randoc-yaml`: `src/yaml.rs` is removed, the new module `src/node.rs`
+keeps the JSON view of a node, and the root `Cargo.toml` line
+`saphyr-parser` is removed (no crate uses it now). The HTML writer
+renders the template of `randoc-data` with its partials (I-CLI-36
+closed). One message text in `crates/randoc-core` changes
+(`LogMessage::NoTitleElement`, a decision of the coordinator). Rows:
+I-CLI-05 and I-CLI-36 closed; I-CLI-47 and I-CLI-48 new (low); I-CLI-35
+(the level of `NoTitleElement`) is now medium.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on f11f643 (01:43 to 02:14 UTC; worker report): 21817 units, 20278 pass, 1137 fail, 402 skipped; baseline 20243 units, 0 regressions, 35 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | YAML replay: 2833 of 2833 defaults and metadata texts equal (old code: 2828). Filter cases `cli/reader-options/filter*`: 25 of 25 pass. `cli/standalone` and `html-writer`: 2564 units, 2535 pass, 29 fail. |
+| 3. Tests | `cargo test -p randoc-cli` on the merged tree: 79 pass, 0 fail, 0 ignored. New test `defaults_and_metadata_texts_give_the_result_of_pandoc`. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzz `defaults` on f11f643: 900 s, 4,256,750 runs, 0 crashes. Fuzz `args`: 900 s, 1,892,970 runs, 0 crashes. |
+| 5. Reviews | Round 8 findings are corrected on `main`. No review of unit 2 (JSON filters, the move to `randoc-yaml`): due with the next review of this block. |
+| 6. No slowdowns | Not measured. The new loops are linear (worker report). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md`, `Cargo.toml`,
+`Cargo.lock` and `THIRD_PARTY_NOTICES.md` merged without a conflict).
+Licence: after the squash, `conformance/cases/cli/info.toml` has no
+completion case (`grep -c` gives 0). Licence scan: the hits are program
+interface and message texts of the reference (`--version` text, option
+errors, the `lang` warning texts in `crates/randoc-core/src/logging.rs`).
+
+Open findings: I-CLI-35 (medium: ten `template-html` cases fail, because
+`randoc-core` gives `NoTitleElement` the level WARNING and the reference
+gives INFO), I-CLI-02 (Lua filters and citeproc), I-CLI-47, I-CLI-48 and
+the other low rows. The matrix of 300 standalone command lines is not
+done. Requests of the worker to the coordinator: remove the
+`saphyr-parser` lines of `THIRD_PARTY_NOTICES.md` and `docs/PRIOR_ART.md`
+and `third_party/licences/saphyr-parser.txt`. Open checks: coverage, the
+mutation sample.

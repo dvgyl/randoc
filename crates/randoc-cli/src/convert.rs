@@ -14,7 +14,9 @@ use crate::cli::HIGHLIGHT_STYLES;
 use crate::settings::{Eol, Filter, Settings};
 use crate::subsystem::{self, Subsystem};
 use crate::template::{Includes, TemplateText};
-use crate::yaml::{self, Node, Resolved};
+use randoc_yaml::{Entrance, Kind, Limits, Node, Value};
+
+use crate::node::NodeExt;
 
 /// Checks a highlighting style name or a theme file.
 pub fn check_highlight_style(
@@ -31,7 +33,7 @@ pub fn check_highlight_style(
     // The JSON parser of the program keeps the first of two equal keys, as Pandoc does.
     let theme = std::str::from_utf8(&bytes)
         .ok()
-        .and_then(|text| crate::yaml::parse_json(text).ok())
+        .and_then(|text| crate::node::parse_json(text).ok())
         .map(|node| node.to_json());
     match theme {
         Some(theme) if valid_theme(&theme) => Ok(()),
@@ -300,28 +302,26 @@ fn keeps_tabs(reader: &str) -> bool {
 
 /// Converts a YAML metadata node: a string is Markdown text.
 fn yaml_to_meta(node: &Node, context: &mut Context) -> Result<MetaValue> {
-    Ok(match node {
-        Node::Seq(items, _) => MetaValue::MetaList(
+    Ok(match node.resolve() {
+        Value::Sequence(items) => MetaValue::MetaList(
             items
                 .iter()
                 .map(|item| yaml_to_meta(item, context))
                 .collect::<Result<_>>()?,
         ),
-        Node::Map(entries, _) => {
+        Value::Mapping(entries) => {
             let mut map = BTreeMap::new();
             for (key, value) in entries {
                 map.insert(
-                    key.scalar_text().unwrap_or_default(),
+                    key.as_str().unwrap_or_default().to_owned(),
                     yaml_to_meta(value, context)?,
                 );
             }
             MetaValue::MetaMap(map)
         }
-        node => match node.resolve() {
-            Some(Resolved::Bool(b)) => MetaValue::MetaBool(b),
-            Some(Resolved::Null | Resolved::NaN) => MetaValue::MetaString(String::new()),
-            _ => markdown_meta(&node.scalar_text().unwrap_or_default(), context)?,
-        },
+        Value::Bool(b) => MetaValue::MetaBool(b),
+        Value::Null => MetaValue::MetaString(String::new()),
+        _ => markdown_meta(&node.text_form().unwrap_or_default(), context)?,
     })
 }
 
@@ -375,35 +375,26 @@ fn read_metadata_file(path: &str, data_dir: &str, context: &mut Context) -> Resu
             .read_file(&in_data_dir)
             .map_err(|_| Error::CouldNotFindMetadataFile(path.to_owned()))?,
     };
-    let text = yaml::decode_text(&bytes)
-        .map_err(|(error, valid)| {
-            Error::Parse(format!(
-                "Error parsing YAML metadata at \"{path}\" (line 1, column 1):\n{}",
-                yaml::render_error(path, valid, &error)
-            ))
-        })?
-        .replace('\r', "");
-    let depth = context.limits.max_nesting_depth;
-    // Pandoc names the first position of the file in the first line, and
-    // the position of the error in the second line.
-    let root = yaml::parse(&text, depth, false).map_err(|error| {
-        Error::Parse(format!(
-            "Error parsing YAML metadata at \"{path}\" (line 1, column 1):\n{}",
-            yaml::render_error(path, &text, &error)
-        ))
-    })?;
+    let entrance = Entrance::MetadataFile { name: path };
+    let text =
+        crate::node::decode_text(&bytes).map_err(|error| Error::Parse(error.report(entrance)))?;
+    let limits = Limits {
+        max_depth: context.limits.max_nesting_depth,
+        ..Limits::default()
+    };
+    let root =
+        randoc_yaml::parse(&text, limits).map_err(|error| Error::Parse(error.report(entrance)))?;
     let mut meta = Meta::default();
-    match root {
-        None => {}
-        Some(Node::Map(entries, _)) => {
-            for (key, value) in &entries {
+    match &root.kind {
+        Kind::Mapping(entries) => {
+            for (key, value) in entries {
                 let value = yaml_to_meta(value, context)?;
-                meta.insert(key.scalar_text().unwrap_or_default(), value);
+                meta.insert(key.as_str().unwrap_or_default().to_owned(), value);
             }
         }
-        Some(node) if node.is_null() => {}
-        Some(node) => {
-            let mark = node.mark();
+        _ if root.is_null() => {}
+        _ => {
+            let mark = root.mark;
             return Err(Error::Parse(format!(
                 "Error at \"{path}\" (line {}, column {}):\nexpected YAML object",
                 mark.line, mark.column
@@ -885,6 +876,13 @@ impl SandboxHost {
                 .map(|path| data_metadata_file(path, data_dir)),
         );
         permitted.insert(data_abbreviations(data_dir));
+        // `--sandbox` does not limit filters: each place of the filter search is permitted.
+        let path_variable = std::env::var("PATH").unwrap_or_default();
+        for filter in &settings.filters {
+            if let Filter::Json(path) = filter {
+                permitted.extend(crate::filter::candidates(path, data_dir, &path_variable));
+            }
+        }
         SandboxHost { permitted }
     }
 
@@ -911,6 +909,26 @@ impl randoc::Host for SandboxHost {
     /// Shows warnings and info messages on standard error, as without `--sandbox`.
     fn show_log_message(&mut self, message: &LogMessage) {
         randoc::Host::show_log_message(&mut randoc::NativeHost, message);
+    }
+
+    /// Gives the environment to the filter search, as without `--sandbox`.
+    fn environment_variable(&mut self, name: &str) -> Option<randoc::Text> {
+        randoc::Host::environment_variable(&mut randoc::NativeHost, name)
+    }
+
+    /// Sets a variable of the environment of a filter.
+    fn set_environment_variable(&mut self, name: &str, value: Option<&str>) -> std::io::Result<()> {
+        randoc::Host::set_environment_variable(&mut randoc::NativeHost, name, value)
+    }
+
+    /// Runs a filter: Pandoc runs filters also with `--sandbox`.
+    fn run_process(
+        &mut self,
+        program: &str,
+        arguments: &[randoc::Text],
+        input: &[u8],
+    ) -> std::io::Result<randoc::ProcessOutput> {
+        randoc::Host::run_process(&mut randoc::NativeHost, program, arguments, input)
     }
 }
 
@@ -1141,85 +1159,54 @@ fn bibliography_format_known(path: &str) -> bool {
     )
 }
 
-/// Returns the error for the first filter: the error of Pandoc when the filter
-/// is missing, else the error of the missing filter subsystem.
-fn check_filter(
-    filter: &Filter,
-    settings: &Settings,
-    data_dir: &str,
-    context: &mut Context,
-) -> Error {
-    match filter {
-        Filter::Citeproc => {
-            // Pandoc reads the CSL file first.
-            for file in settings.csl.iter() {
-                if !in_resource_path(file, settings, context) {
-                    return Error::ResourceNotFound(file.clone());
-                }
-            }
-            for file in &settings.bibliography {
-                if !in_resource_path(file, settings, context) {
-                    return Error::ResourceNotFound(file.clone());
-                }
-                if !bibliography_format_known(file) {
-                    return Error::App(format!(
-                        "Could not determine bibliography format for {file}"
-                    ));
-                }
-            }
-            for file in settings
-                .citation_abbreviations
-                .iter()
-                .chain(&settings.citation_abbreviations_options)
-            {
-                if !in_resource_path(file, settings, context) {
-                    return Error::ResourceNotFound(file.clone());
-                }
-            }
-            subsystem::missing(Subsystem::Citeproc)
+/// Returns the error for citeproc: the error of Pandoc for a missing file,
+/// else the error of the missing subsystem.
+fn citeproc_error(settings: &Settings, context: &mut Context) -> Error {
+    // Pandoc reads the CSL file first.
+    for file in settings.csl.iter() {
+        if !in_resource_path(file, settings, context) {
+            return Error::ResourceNotFound(file.clone());
         }
-        Filter::Lua(path) => {
-            context.report(LogMessage::RunningFilter(path.clone()));
-            let found = context.host().file_exists(path)
-                || context
-                    .host()
-                    .file_exists(&data_path(data_dir, &format!("filters/{path}")));
-            if found {
-                subsystem::missing(Subsystem::Filters(path.clone()))
-            } else {
-                Error::Filter {
-                    filter: path.clone(),
-                    message: format!("cannot open {path}: No such file or directory"),
-                }
-            }
+    }
+    for file in &settings.bibliography {
+        if !in_resource_path(file, settings, context) {
+            return Error::ResourceNotFound(file.clone());
         }
-        Filter::Json(path) => {
-            context.report(LogMessage::RunningFilter(path.clone()));
-            let found = context.host().file_exists(path)
-                || context
-                    .host()
-                    .file_exists(&data_path(data_dir, &format!("filters/{path}")))
-                || (!path.contains('/') && {
-                    let dirs = context
-                        .host()
-                        .environment_variable("PATH")
-                        .unwrap_or_default();
-                    dirs.split(':')
-                        .filter(|dir| !dir.is_empty())
-                        .any(|dir| context.host().file_exists(&format!("{dir}/{path}")))
-                });
-            if found {
-                subsystem::missing(Subsystem::Filters(path.clone()))
-            } else {
-                Error::Filter {
-                    filter: path.clone(),
-                    message: format!("Could not find executable {path}"),
-                }
-            }
+        if !bibliography_format_known(file) {
+            return Error::App(format!(
+                "Could not determine bibliography format for {file}"
+            ));
+        }
+    }
+    for file in settings
+        .citation_abbreviations
+        .iter()
+        .chain(&settings.citation_abbreviations_options)
+    {
+        if !in_resource_path(file, settings, context) {
+            return Error::ResourceNotFound(file.clone());
+        }
+    }
+    subsystem::missing(Subsystem::Citeproc)
+}
+
+/// Returns the error for a Lua filter: the error of Pandoc for a missing
+/// file, else the error of the missing subsystem.
+fn lua_filter_error(path: &str, data_dir: &str, context: &mut Context) -> Error {
+    context.report(LogMessage::RunningFilter(path.into()));
+    let found = context.host().file_exists(path)
+        || context
+            .host()
+            .file_exists(&data_path(data_dir, &format!("filters/{path}")));
+    if found {
+        subsystem::missing(Subsystem::Filters(path.into()))
+    } else {
+        Error::Filter {
+            filter: path.into(),
+            message: format!("cannot open {path}: No such file or directory"),
         }
     }
 }
-
 /// The output formats that `--embed-resources` changes.
 fn is_html_format(name: &str) -> bool {
     matches!(
@@ -1423,11 +1410,6 @@ fn convert(
     if !matches!(style, "none" | "default" | "idiomatic") {
         check_highlight_style(style, |path| context.host().read_file(path))?;
     }
-    // The writers of the formats with a default template do not render a
-    // template yet.
-    if settings.is_standalone() && randoc_data::default_template(&to_spec.name).is_some() {
-        return Err(subsystem::missing(Subsystem::Templates));
-    }
     // Pandoc reads the before-body files, then the after-body files, then the header files.
     let mut includes = Includes::default();
     for (paths, texts) in [
@@ -1500,10 +1482,28 @@ fn convert(
     }
     apply_metadata(&mut doc, file_metadata, settings);
     add_citation_metadata(&mut doc, settings);
-    shift_headings(&mut doc, settings.shift_heading_level_by);
-    if let Some(filter) = settings.filters.first() {
-        return Err(check_filter(filter, settings, data_dir, context));
+    // A filter gets the reader options as the reader of Pandoc has them.
+    if east_asian_line_breaks {
+        reader_options
+            .extensions
+            .enable(Extension::EastAsianLineBreaks);
     }
+    for filter in &settings.filters {
+        doc = match filter {
+            Filter::Json(path) => crate::filter::run(
+                path,
+                &doc,
+                &to_spec.name,
+                data_dir,
+                &reader_options,
+                context,
+            )?,
+            Filter::Lua(path) => return Err(lua_filter_error(path, data_dir, context)),
+            Filter::Citeproc => return Err(citeproc_error(settings, context)),
+        };
+    }
+    // Pandoc shifts the headings after the filters.
+    shift_headings(&mut doc, settings.shift_heading_level_by);
     if settings.extract_media.is_some() && !context.media.is_empty() {
         return Err(subsystem::missing(Subsystem::ExtractMedia));
     }
