@@ -1683,3 +1683,37 @@ Open findings: grid tables with row spans (I-MDW-02); standalone output
 is half-done (the 330 `options/standalone-*` units fail); I-MDW-05,
 I-MDW-06, I-MDW-14, I-MDW-15 and the other open rows. Open checks:
 fuzzing, coverage, the mutation tests, the CPU table.
+
+## Session 4 of 2026-11-12, last batch of six items (handoff)
+
+Items and commits, in the merge order: `markdown-reader` ef9dae7
+(9257ad5), `latex-reader` 6a8c609 (7284e80), `citeproc` 4150ed1
+(b8b3537), `lua` 13d6f87 (db86a4c), `latex-writer` e50c615 (109cea1),
+`markdown-writer` 4eb413e (aa7379e). No item was left out and no item was
+undone. Conflicts only in the crate and case files of the branches
+`ws/markdown-reader-3` and `ws/latex-reader` (the newer version of the
+branch is taken) and in `docs/ISSUES.md` (see each record).
+
+`merge-ws check` on the final tree (aa7379e) passed on its first run:
+`record` 0 new units, 0 oracle errors; `verify-oracle` 48903 units, 0
+stored results are not current; `scripts/gate.sh` passed (format, lints,
+documentation, tests, harness). After the check,
+`conformance/cases/cli/info.toml` has no completion case and
+`conformance/cases/templates/defaults.toml` has no `fodt-` case.
+
+- Harness before the batch: baseline 40891 units (`spec/baseline.json`).
+- Harness after the batch: 49305 units, 46457 pass, 2446 fail, 0 no
+  result, 0 not recorded, 402 skipped; baseline 40891 units, 0
+  regressions, 5566 new passes. `spec/baseline.json` now has 46457 units.
+- Capability summary: `{"extensions": {"failing": 1, "not_started": 11,
+  "partial": 26, "passing": 52}, "input_formats": {"not_started": 39,
+  "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 24,
+  "passing": 84}, "output_formats": {"failing": 1, "not_started": 59,
+  "partial": 12, "passing": 5}, "units": {"passing": 46457, "total":
+  48903}}`. New: `beamer` passes (417 of 417 units), `latex` is partial
+  (700 of 707 end to end). `markdown_mmd`, `markdown_phpextra` and the
+  extensions `mmd_title_block`, `pandoc_title_block` and
+  `yaml_metadata_block` change from passing to partial only because of
+  the new `options/standalone-*` units of the markdown writer, which fail
+  until the writer renders the template; these are new units, not
+  regressions.
