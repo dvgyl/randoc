@@ -953,3 +953,36 @@ After the check, `conformance/cases/cli/info.toml` has no completion case
   "passing": 87}, "output_formats": {"not_started": 71, "partial": 4,
   "passing": 2}, "units": {"passing": 19911, "total": 21093}}`. The input
   format `latex` is partial (497 of 523 read units pass).
+
+## Licence correction (branch `ws/licence-2`, head f4fb436, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: a licence
+correction from the licence audit of 2026-11-11 (report
+`env/store/reports/licence-audit-s4.md`). The stored results of the three
+FODT cases `fodt-empty`, `fodt-title` and `fodt-many` of
+`templates/defaults` held the styles of the reference ODT of Pandoc
+(GPL-2.0-or-later); the three cases are removed (row I-TPL-05). The inputs
+of the table cases `simple`, `multiline` and `grid` of `native/tables` were
+example tables of the Pandoc manual; new inputs with the same table
+structure replace them, and their stored results are new. Row D6 of
+`PROGRESS.md` records that the old commits still hold the removed text.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | All 9 units of the three changed table cases pass and are in the baseline. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | No new units. 3 FODT cases are removed from the suite `templates`. |
+| 3. Tests | No crate test: the block changes test data and documents only. |
+| 4. No panics | Not applicable (no code). |
+| 5. Reviews | No review round. The licence audit of session 4 found the items. |
+| 6. No slowdowns | Not applicable (no code). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`PROGRESS.md` and `docs/ISSUES.md` merged
+without a conflict). Licence scan: the hits are tokens of the native AST
+format (`AlignDefault`, `RowSpan 1`) in `native/tables.json` and lines of
+the LaTeX default template (BSD-3-Clause, as `docs/ADR.md` records for
+the templates) in `templates/defaults.json`.
+
+Open findings: I-TPL-05 (scope gap). Open checks: a check outside the
+repository that stores only a hash of the FODT results; the 6 test names
+of class E in `spec/pandoc-testsuite.json` (the owner decides).

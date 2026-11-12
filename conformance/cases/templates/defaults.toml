@@ -406,21 +406,6 @@ cmd = ["-f", "json", "-t", "epub3", "-s", "-M", "title=A Title", "-M", "subtitle
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
-id = "fodt-empty"
-cmd = ["-f", "json", "-t", "fodt", "-s"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-
-[[case]]
-id = "fodt-title"
-cmd = ["-f", "json", "-t", "fodt", "-s", "-M", "title=A Title", "-M", "author=Ann Author", "-M", "author=Bob Writer", "-M", "date=2024-01-02"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-
-[[case]]
-id = "fodt-many"
-cmd = ["-f", "json", "-t", "fodt", "-s", "-M", "title=A Title", "-M", "subtitle=Sub", "-M", "author=Ann Author", "-M", "date=2024-01-02", "-M", "abstract=The abstract.", "-M", "keywords=k1", "-M", "keywords=k2", "-M", "lang=en-US", "--toc", "-V", "header-includes=<!-- h1 -->", "-V", "include-before=Before.", "-V", "include-after=After.", "-V", "css=a.css", "-M", "institute=Inst", "-N", "-V", "fontsize=11pt", "-V", "geometry=margin=1in", "-V", "classoption=twocolumn", "-V", "mainfont=Serif", "-V", "linkcolor=blue", "-V", "papersize=a4", "-M", "subject=Subj", "-M", "description=Desc"]
-input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
-
-[[case]]
 id = "gfm-empty"
 cmd = ["-f", "json", "-t", "gfm", "-s"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
