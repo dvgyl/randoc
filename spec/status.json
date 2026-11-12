@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T20:03:00Z",
+  "updated": "2026-11-12T05:15:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,30 +14,30 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 20938,
-    "pass": 19375,
-    "fail": 1161,
+    "units": 49305,
+    "pass": 46457,
+    "fail": 2446,
     "skipped": 402,
-    "baseline_units": 19375,
-    "measured": "2026-11-11T19:58:00Z on 6089e1f (merge check of batch 2)"
+    "baseline_units": 46457,
+    "measured": "2026-11-12 on 8c723ae (merge check of the last batch of session 4)"
   },
   "pandoc_test_suite": {
     "status": "measured",
     "run": 2231,
     "oracle_pass": 2231,
-    "randoc_pass": 282,
+    "randoc_pass": 509,
     "cannot_run_estimate": 1939,
     "details": "spec/pandoc-testsuite.json",
-    "measured": "2026-11-11T20:00:00Z on a896ff4"
+    "measured": "2026-11-12T03:15:00Z on a6fa07a (not measured after the last two batches)"
   },
   "corpus": {
     "status": "measured",
     "documents": 230,
     "units": 690,
     "oracle_pass": 690,
-    "randoc_pass": 79,
+    "randoc_pass": 133,
     "details": "spec/corpus.json",
-    "measured": "2026-11-11T20:00:00Z on a896ff4"
+    "measured": "2026-11-12T03:15:00Z on a6fa07a (not measured after the last two batches)"
   },
   "workstreams": [
     {
@@ -159,9 +159,9 @@
     }
   ],
   "next_tasks": [
-    "Review the major blocks that are on main (both reviewers, resumed where possible), correct each finding with the level medium or higher, and measure main with the harness, the Pandoc test suite and the corpus.",
-    "Connect the parts: templates in the output, the HTML writer with randoc-math, --lua-filter in the program, the Markdown reader and the command line on randoc-yaml, tab expansion, the table cell budget in Limits.",
-    "Finish highlight, latex-writer and markdown-writer; then citeproc units 3 to 6, lua unit 3, the container formats, rst and org, JSON filters."
+    "Close the review loop of each block: merge nothing unverified, verify the corrections with the same reviewers, correct what stays open (markdown-reader, html-reader, latex-reader first); measure main first",
+    "Connect the Lua runtime (--lua-filter through randoc_lua::apply_filter_files, lpeg, the other modules) and citations (citeproc round 2 findings, units 3 to 6, --citeproc)",
+    "The next formats in the order of the demand table: finish the LaTeX reader and the Markdown writer, standalone LaTeX output, the docx reader, rst, typst; highlight"
   ],
   "handoff": "PROGRESS.md, section Handoff"
 }
