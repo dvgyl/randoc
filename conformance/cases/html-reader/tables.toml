@@ -3477,3 +3477,895 @@ input = "<table><tr><td colspan=-9223372036854775807>a</td><th colspan=-92233720
 [[case]]
 id = "rowhead-270"
 input = "<table><tr><th colspan=9223372036854775807><th><td></table>"
+
+[[case]]
+id = "relwidth-001"
+input = "<table><col width=\"1*\"><col width=\"2*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-002"
+input = "<table><col width=\"1*\"><col width=\"3*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-003"
+input = "<table><col width=\"2*\"><col width=\"1*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-004"
+input = "<table><col width=\"2*\"><col width=\"2*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-005"
+input = "<table><col width=\"2*\"><col width=\"3*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-006"
+input = "<table><col width=\"2*\"><col width=\"3*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-007"
+input = "<table><col width=\"2*\"><col width=\"3*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-008"
+input = "<table><col width=\"2*\"><col width=\"3*\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-009"
+input = "<table><col width=\"2*\"><col width=\"3*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-010"
+input = "<table><col width=\"2*\"><col width=\"3*\"><col width=\"10%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-011"
+input = "<table><col width=\"13*\"><col width=\"10%\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-012"
+input = "<table><col width=\"*\"><col width=\"7*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-013"
+input = "<table><col width=\"33%\"><col width=\"1*\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-014"
+input = "<table><col><col width=\"13*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-015"
+input = "<table><col width=\"1*\"><col width=\"10%\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-016"
+input = "<table><col width=\"25.5%\"><col width=\"0*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-017"
+input = "<table><col width=\"*\"><col width=\"3*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-018"
+input = "<table><col width=\"13*\"><col width=\"13*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-019"
+input = "<table><col width=\"1*\"><col width=\"0*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-020"
+input = "<table><col width=\"3*\"><col width=\"25.5%\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-021"
+input = "<table><col width=\"2*\"><col width=\"13*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-022"
+input = "<table><col width=\"33%\"><col width=\"7*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-023"
+input = "<table><col width=\"25.5%\"><col width=\"13*\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-024"
+input = "<table><col width=\"*\"><col width=\"2*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-025"
+input = "<table><col width=\"33%\"><col width=\"*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-026"
+input = "<table><col width=\"0*\"><col width=\"3*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-027"
+input = "<table><col width=\"2*\"><col width=\"25.5%\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-028"
+input = "<table><col width=\"0*\"><col width=\"25.5%\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-029"
+input = "<table><col width=\"1*\"><col width=\"3*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-030"
+input = "<table><col width=\"7*\"><col width=\"25.5%\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-031"
+input = "<table><col width=\"33%\"><col width=\"0*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-032"
+input = "<table><col width=\"*\"><col><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-033"
+input = "<table><col width=\"7*\"><col width=\"1*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-034"
+input = "<table><col width=\"33%\"><col width=\"33%\"><col width=\"10%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-035"
+input = "<table><col width=\"3*\"><col width=\"25.5%\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-036"
+input = "<table><col width=\"3*\"><col width=\"7*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-037"
+input = "<table><col width=\"13*\"><col width=\"10%\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-038"
+input = "<table><col width=\"13*\"><col width=\"*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-039"
+input = "<table><col width=\"25.5%\"><col width=\"10%\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-040"
+input = "<table><col width=\"3*\"><col width=\"2*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-041"
+input = "<table><col width=\"3*\"><col width=\"3*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-042"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-043"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-044"
+input = "<table><col width=\"7*\"><col width=\"10%\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-045"
+input = "<table><col width=\"7*\"><col width=\"25.5%\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-046"
+input = "<table><col width=\"3*\"><col><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-047"
+input = "<table><col width=\"3*\"><col><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-048"
+input = "<table><col width=\"*\"><col width=\"0*\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-049"
+input = "<table><col width=\"10%\"><col width=\"7*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-050"
+input = "<table><col width=\"7*\"><col width=\"*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-051"
+input = "<table><col width=\"0*\"><col width=\"2*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-052"
+input = "<table><col width=\"13*\"><col width=\"33%\"><col width=\"10%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-053"
+input = "<table><col width=\"7*\"><col width=\"10%\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-054"
+input = "<table><col width=\"7*\"><col width=\"7*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-055"
+input = "<table><col width=\"33%\"><col width=\"10%\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-056"
+input = "<table><col width=\"10%\"><col width=\"1*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-057"
+input = "<table><col width=\"1*\"><col width=\"*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-058"
+input = "<table><col width=\"33%\"><col width=\"2*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-059"
+input = "<table><col width=\"25.5%\"><col width=\"1*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-060"
+input = "<table><col width=\"3*\"><col width=\"10%\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-061"
+input = "<table><col width=\"*\"><col width=\"10%\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-062"
+input = "<table><col width=\"2*\"><col width=\"2*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-063"
+input = "<table><col width=\"10%\"><col width=\"33%\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-064"
+input = "<table><col width=\"10%\"><col width=\"2*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-065"
+input = "<table><col width=\"13*\"><col width=\"3*\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-066"
+input = "<table><col width=\"0*\"><col width=\"13*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-067"
+input = "<table><col width=\"1*\"><col width=\"1*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-068"
+input = "<table><col width=\"13*\"><col width=\"1*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-069"
+input = "<table><col width=\"10%\"><col width=\"25.5%\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-070"
+input = "<table><col width=\"2*\"><col width=\"2*\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-071"
+input = "<table><col width=\"10%\"><col width=\"3*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-072"
+input = "<table><col width=\"33%\"><col width=\"1*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-073"
+input = "<table><col width=\"10%\"><col width=\"2*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-074"
+input = "<table><col><col width=\"2*\"><col width=\"10%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-075"
+input = "<table><col width=\"10%\"><col width=\"7*\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-076"
+input = "<table><col width=\"7*\"><col width=\"2*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-077"
+input = "<table><col><col width=\"2*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-078"
+input = "<table><col width=\"25.5%\"><col width=\"13*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-079"
+input = "<table><col width=\"3*\"><col width=\"13*\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-080"
+input = "<table><col width=\"1*\"><col width=\"13*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-081"
+input = "<table><col width=\"*\"><col width=\"7*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-082"
+input = "<table><col width=\"1*\"><col width=\"*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-083"
+input = "<table><col width=\"33%\"><col width=\"1*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-084"
+input = "<table><col width=\"33%\"><col width=\"0*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-085"
+input = "<table><col width=\"1*\"><col width=\"7*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-086"
+input = "<table><col width=\"0*\"><col width=\"7*\"><col width=\"3*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-087"
+input = "<table><col width=\"25.5%\"><col width=\"1*\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-088"
+input = "<table><col width=\"33%\"><col width=\"3*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-089"
+input = "<table><col width=\"33%\"><col width=\"*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-090"
+input = "<table><col width=\"0*\"><col><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-091"
+input = "<table><col width=\"1*\"><col width=\"2*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-092"
+input = "<table><col width=\"25.5%\"><col width=\"25.5%\"><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-093"
+input = "<table><col width=\"1*\"><col><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-094"
+input = "<table><col width=\"7*\"><col width=\"1*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-095"
+input = "<table><col width=\"13*\"><col width=\"33%\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-096"
+input = "<table><col width=\"7*\"><col width=\"7*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-097"
+input = "<table><col width=\"3*\"><col width=\"1*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-098"
+input = "<table><col width=\"*\"><col width=\"2*\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-099"
+input = "<table><col width=\"25.5%\"><col width=\"0*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-100"
+input = "<table><col width=\"10%\"><col width=\"0*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-101"
+input = "<table><col><col width=\"25.5%\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-102"
+input = "<table><col width=\"33%\"><col width=\"1*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-103"
+input = "<table><col><col width=\"0*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-104"
+input = "<table><col width=\"*\"><col width=\"3*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-105"
+input = "<table><col width=\"25.5%\"><col width=\"0*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-106"
+input = "<table><col width=\"2*\"><col width=\"0*\"><col width=\"2*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-107"
+input = "<table><col width=\"0*\"><col width=\"13*\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-108"
+input = "<table><col width=\"33%\"><col width=\"3*\"><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-109"
+input = "<table><col width=\"10%\"><col width=\"1*\"><col width=\"1*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-110"
+input = "<table><col width=\"1*\"><col width=\"33%\"><col width=\"0*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-111"
+input = "<table><col width=\"25.5%\"><col width=\"7*\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-112"
+input = "<table><col width=\"2*\"><col width=\"10%\"><col width=\"13*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-113"
+input = "<table><col width=\"7*\"><col width=\"10%\"><col><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-114"
+input = "<table><col width=\"10%\"><col><col width=\"*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-115"
+input = "<table><col><col width=\"25.5%\"><col width=\"10%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-116"
+input = "<table><col width=\"13*\"><col width=\"7*\"><col width=\"25.5%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-117"
+input = "<table><col width=\"33%\"><col width=\"2*\"><col width=\"10%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-118"
+input = "<table><col width=\"3*\"><col width=\"10%\"><col width=\"33%\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "relwidth-119"
+input = "<table><col width=\"10%\"><col><col width=\"7*\"><tr><td>a</td><td>b</td><td>c</td></tr></table>"
+
+[[case]]
+id = "straytbody-001"
+input = "<table></tbody><tr><td>a</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-002"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></tbody><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-003"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-004"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-005"
+input = "<table></tbody><tr><td>a</td></tr></thead></table>"
+
+[[case]]
+id = "straytbody-006"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></thead><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-007"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></thead><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-008"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></thead></table>"
+
+[[case]]
+id = "straytbody-009"
+input = "<table></tbody><tr><td>a</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-010"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></tfoot><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-011"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></tfoot><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-012"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-013"
+input = "<table></tbody><tr><td>a</td></tr></tr></table>"
+
+[[case]]
+id = "straytbody-014"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></tr><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-015"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></tr><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-016"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></tr></table>"
+
+[[case]]
+id = "straytbody-017"
+input = "<table></tbody><tr><td>a</td></tr></td></table>"
+
+[[case]]
+id = "straytbody-018"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></td><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-019"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></td><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-020"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></td></table>"
+
+[[case]]
+id = "straytbody-021"
+input = "<table></tbody><tr><td>a</td></tr></th></table>"
+
+[[case]]
+id = "straytbody-022"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></th><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-023"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></th><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-024"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></th></table>"
+
+[[case]]
+id = "straytbody-025"
+input = "<table></tbody><tr><td>a</td></tr></caption></table>"
+
+[[case]]
+id = "straytbody-026"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></caption><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-027"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></caption><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-028"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></caption></table>"
+
+[[case]]
+id = "straytbody-029"
+input = "<table></tbody><tr><td>a</td></tr></colgroup></table>"
+
+[[case]]
+id = "straytbody-030"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></colgroup><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-031"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></colgroup><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-032"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></colgroup></table>"
+
+[[case]]
+id = "straytbody-033"
+input = "<table></tbody><tr><td>a</td></tr></col></table>"
+
+[[case]]
+id = "straytbody-034"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></col><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-035"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></col><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-036"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></col></table>"
+
+[[case]]
+id = "straytbody-037"
+input = "<table></tbody><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-038"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody><tr><td>a</td></tr></tbody></tbody><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-039"
+input = "<table><caption>c</caption></tbody><tbody><tr><td>a</td></tr></tbody></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-040"
+input = "<table><tr><th>h</th></tr></tbody><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-041"
+input = "<table></tfoot><tr><td>a</td></tr></col></table>"
+
+[[case]]
+id = "straytbody-042"
+input = "<table><tr><th>h</th></tr></tr><tr><td>a</td></tr></th></table>"
+
+[[case]]
+id = "straytbody-043"
+input = "<table></thead><tr><td>a</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-044"
+input = "<table><thead><tr><th>h</th></tr></thead></col><tr><td>a</td></tr></td><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-045"
+input = "<table><caption>c</caption></td><tbody><tr><td>a</td></tr></tbody></caption><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-046"
+input = "<table><thead><tr><th>h</th></tr></thead></th><tr><td>a</td></tr></caption><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-047"
+input = "<table><tr><th>h</th></tr></thead><tr><td>a</td></tr></col></table>"
+
+[[case]]
+id = "straytbody-048"
+input = "<table><caption>c</caption></thead><tbody><tr><td>a</td></tr></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-049"
+input = "<table><thead><tr><th>h</th></tr></thead></td><tr><td>a</td></tr></colgroup><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-050"
+input = "<table><thead><tr><th>h</th></tr></thead></caption><tr><td>a</td></tr></td><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-051"
+input = "<table><thead><tr><th>h</th></tr></thead><tr><td>a</td></tr></colgroup><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-052"
+input = "<table></tr><tr><td>a</td></tr></td></table>"
+
+[[case]]
+id = "straytbody-053"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody></tbody><tr><td>a</td></tr></tr><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-054"
+input = "<table><tr><th>h</th></tr></col><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-055"
+input = "<table><thead><tr><th>h</th></tr></thead></tfoot><tr><td>a</td></tr></caption><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-056"
+input = "<table><caption>c</caption></caption><tbody><tr><td>a</td></tr></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-057"
+input = "<table><caption>c</caption></caption><tbody><tr><td>a</td></tr></tbody></tfoot><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-058"
+input = "<table></td><tr><td>a</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-059"
+input = "<table><thead><tr><th>h</th></tr></thead></tr><tr><td>a</td></tr></tfoot><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-060"
+input = "<table><tr><th>h</th></tr></tbody></tbody><tr><td>a</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-061"
+input = "<table></tfoot><tr><td>a</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-062"
+input = "<table><tr><th>h</th></tr></tbody></tbody><tr><td>a</td></tr></caption></table>"
+
+[[case]]
+id = "straytbody-063"
+input = "<table><caption>c</caption></thead><tbody><tr><td>a</td></tr></tbody></tfoot><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-064"
+input = "<table><caption>c</caption></tr><tbody><tr><td>a</td></tr></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-065"
+input = "<table><thead><tr><th>h</th></tr></thead></tfoot><tr><td>a</td></tr></th><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-066"
+input = "<table><caption>c</caption><tbody><tr><td>a</td></tr></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-067"
+input = "<table><caption>c</caption><tbody><tr><td>a</td></tr></tbody></col><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-068"
+input = "<table></tbody></tbody><tr><td>a</td></tr></colgroup></table>"
+
+[[case]]
+id = "straytbody-069"
+input = "<table></colgroup><tr><td>a</td></tr></th></table>"
+
+[[case]]
+id = "straytbody-070"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody></tbody><tr><td>a</td></tr></td><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-071"
+input = "<table><thead><tr><th>h</th></tr></thead></tr><tr><td>a</td></tr></tbody><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-072"
+input = "<table><tr><th>h</th></tr></tr><tr><td>a</td></tr></thead></table>"
+
+[[case]]
+id = "straytbody-073"
+input = "<table><tr><th>h</th></tr></tfoot><tr><td>a</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-074"
+input = "<table></thead><tr><td>a</td></tr></table>"
+
+[[case]]
+id = "straytbody-075"
+input = "<table><caption>c</caption></tr><tbody><tr><td>a</td></tr></tbody></caption><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-076"
+input = "<table><thead><tr><th>h</th></tr></thead></colgroup><tr><td>a</td></tr></tr><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-077"
+input = "<table><tr><td>a</td></tr></thead></table>"
+
+[[case]]
+id = "straytbody-078"
+input = "<table><caption>c</caption></col><tbody><tr><td>a</td></tr></tbody></th><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-079"
+input = "<table><thead><tr><th>h</th></tr></thead></tbody></tbody><tr><td>a</td></tr><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-080"
+input = "<table><caption>c</caption></tbody></tbody><tbody><tr><td>a</td></tr></tbody></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-081"
+input = "<table><caption>c</caption><tbody><tr><td>a</td></tr></tbody></tfoot><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-082"
+input = "<table><caption>c</caption></td><tbody><tr><td>a</td></tr></tbody></tr><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-083"
+input = "<table></thead><tr><td>a</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-084"
+input = "<table></tbody></tbody><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-085"
+input = "<table><caption>c</caption></colgroup><tbody><tr><td>a</td></tr></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-086"
+input = "<table></tr><tr><td>a</td></tr></table>"
+
+[[case]]
+id = "straytbody-087"
+input = "<table><tr><th>h</th></tr></colgroup><tr><td>a</td></tr></col></table>"
+
+[[case]]
+id = "straytbody-088"
+input = "<table><caption>c</caption></td><tbody><tr><td>a</td></tr></tbody></th><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-089"
+input = "<table><tr><th>h</th></tr></th><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-090"
+input = "<table><tr><th>h</th></tr></tfoot><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-091"
+input = "<table><tr><th>h</th></tr></tfoot><tr><td>a</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-092"
+input = "<table><caption>c</caption></tfoot><tbody><tr><td>a</td></tr></tbody></tbody></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-093"
+input = "<table><caption>c</caption></th><tbody><tr><td>a</td></tr></tbody></th><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-094"
+input = "<table><tr><th>h</th></tr></tr><tr><td>a</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-095"
+input = "<table><thead><tr><th>h</th></tr></thead></thead><tr><td>a</td></tr></tbody><tr><td>b</td></tr></table>"
+
+[[case]]
+id = "straytbody-096"
+input = "<table><tr><th>h</th></tr><tr><td>a</td></tr></table>"
+
+[[case]]
+id = "straytbody-097"
+input = "<table><tr><td>a</td></tr> </tbody> </table>"
+
+[[case]]
+id = "straytbody-098"
+input = "<table><tr><td>a</td></tr><!-- c --></tbody></table>"
+
+[[case]]
+id = "straytbody-099"
+input = "<table><tr><td>a</td></tr></tbody><tfoot><tr><td>f</td></tr></tfoot></table>"
+
+[[case]]
+id = "straytbody-100"
+input = "<table><tr><td>a</td></tr></tbody><tbody><tr><td>b</td></tr></tbody></table>"
+
+[[case]]
+id = "straytbody-101"
+input = "<table><tr><td>a</td></tr></TBODY></table>"
+
+[[case]]
+id = "straytbody-102"
+input = "<table><tr><td>a</td></tr></tbody>x</table>"
+
+[[case]]
+id = "straytbody-103"
+input = "<table><tr><td>a</td></tr></tbody></tbody></table>"
+
+[[case]]
+id = "straytbody-104"
+input = "<table><tr><td>a</td></tr></tbody><tr><td>b</td></tr></tbody></table>"

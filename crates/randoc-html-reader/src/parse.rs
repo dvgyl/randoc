@@ -387,9 +387,29 @@ impl<'a> Parser<'a> {
     /// Consumes the tokens up to `end` as markup that Pandoc does not read.
     /// The result is the raw text with `raw_html`, or nothing and a message.
     fn skip_raw(&mut self, end: usize) -> Option<Text> {
+        self.skip_raw_escaped(end, false)
+    }
+
+    /// `skip_raw`. With `escape`, the text outside `script` and `style` is
+    /// escaped again, as Pandoc renders the content of a `textarea`.
+    fn skip_raw_escaped(&mut self, end: usize, escape: bool) -> Option<Text> {
         let start = self.pos;
         let mut raw = String::new();
+        let mut raw_text: Option<&str> = None;
         for index in start..end {
+            match self.toks.get(index).map(|token| &token.kind) {
+                Some(TokenKind::Text(text)) if escape && raw_text.is_none() => {
+                    escape_into(text, &mut raw);
+                    continue;
+                }
+                Some(TokenKind::Open(name, _))
+                    if raw_text.is_none() && matches!(name.as_str(), "script" | "style") =>
+                {
+                    raw_text = Some(name.as_str());
+                }
+                Some(TokenKind::Close(name)) if raw_text == Some(name.as_str()) => raw_text = None,
+                _ => {}
+            }
             self.render(index, &mut raw);
         }
         self.pos = end;
@@ -551,7 +571,7 @@ impl<'a> Parser<'a> {
                     "textarea" => self.raw_element_end("textarea"),
                     _ => self.element_end("iframe"),
                 };
-                if let Some(raw) = self.skip_raw(end) {
+                if let Some(raw) = self.skip_raw_escaped(end, name == "textarea") {
                     out.push(Block::RawBlock(Format::new("html"), raw));
                 }
                 Ok(())
@@ -703,7 +723,8 @@ impl<'a> Parser<'a> {
         match name.as_str() {
             "section" | "header" | "aside" => attr.classes.insert(0, name.clone()),
             "main" if attr.get("role").is_none() => {
-                attr.attributes.push(("role".to_owned(), "main".to_owned()));
+                attr.attributes
+                    .insert(0, ("role".to_owned(), "main".to_owned()));
             }
             _ => {}
         }
@@ -1081,21 +1102,42 @@ impl<'a> Parser<'a> {
                             // The title ends at the first open tag. A comment
                             // or a close tag before it is raw HTML.
                             let mut inlines = Inlines::new();
+                            let mut failed = false;
                             loop {
                                 match self.peek() {
+                                    // The close tag of a table cell ends the
+                                    // head, and the title has no value.
+                                    Some(TokenKind::Close(name))
+                                        if name == "td" || name == "th" =>
+                                    {
+                                        return;
+                                    }
                                     Some(TokenKind::Text(text)) => {
                                         self.pos += 1;
                                         self.text(text, &mut inlines);
                                     }
                                     Some(TokenKind::Comment(_)) => self.raw_inline(&mut inlines),
+                                    // The close tag of a block: the title has no value.
+                                    Some(TokenKind::Close(name))
+                                        if is_block_name(name)
+                                            && !matches!(
+                                                name.as_str(),
+                                                "title" | "script" | "style" | "?xml"
+                                            ) =>
+                                    {
+                                        failed = true;
+                                        break;
+                                    }
                                     Some(TokenKind::Close(name)) if name != "title" => {
                                         self.raw_inline(&mut inlines);
                                     }
                                     _ => break,
                                 }
                             }
-                            let title = MetaValue::MetaInlines(inlines.trimmed().0);
-                            self.set_meta("title", title, true);
+                            if !failed {
+                                let title = MetaValue::MetaInlines(inlines.trimmed().0);
+                                self.set_meta("title", title, true);
+                            }
                         }
                         "meta" => {
                             let name = attribute(&clean, "name").unwrap_or_default();

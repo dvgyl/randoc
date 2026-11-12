@@ -1127,3 +1127,42 @@ After the check, `conformance/cases/cli/info.toml` has no completion case.
   "passing": 3}, "units": {"passing": 20243, "total": 21390}}`. The output
   formats `markdown`, `gfm`, `commonmark` and `plain` are not in this
   batch (the item `markdown-writer` is left out).
+
+## Workstream html-reader (branch `ws/html-reader-2`, head 254b702, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+corrections of review round 3 after the crash correction (7f8b193).
+Repeated math scans are now linear (Codex R3-02: 128 KB in 0.04 s;
+before: 12.56 s). The text of a `textarea` is escaped again (Codex
+R3-04). A nested quotation of the other kind is read before the outer
+close (Codex R3-03, 8,307 oracle inputs equal). Relative column widths
+(Codex R3-05), the attribute order of `main` (Codex R3-06), close tags in
+the title (Codex R3-09), stray close tags in tables (Opus R3-02). A
+licence sentence for the tag-name lists in
+`crates/randoc-html-reader/NOTICE.md`. New row I-HTMLR-20 (low).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 254b702 (run ended 01:02 UTC; worker report): baseline 19375 units, 0 regressions, 1094 new passes. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Oracle matrices of the worker: 8,307 quotation inputs, 1,331 width inputs, 202 `main` inputs, 492 stray close tag inputs, 408 title inputs, 122 `textarea` inputs: all equal. `tools/differential.py toml` on the 13 case files: 7,415 inputs, 14 differences, all known rows. |
+| 3. Tests | `cargo test -p randoc-html-reader` on the merged tree: 40 pass, 0 fail, 1 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | The fuzz run of 300 s on 7824b0d: 648,712 runs, 0 crashes. The fuzz run of 900 s: not run. |
+| 5. Reviews | Round 3 on main 98806b9: Opus REQUEST CHANGES (1 critical, 4 high, 7 medium, 5 low); Codex stopped by its service (its partial report has the same findings). This block and 7f8b193 close the critical finding, 3 high and 4 medium findings. |
+| 6. No slowdowns | CPU through the program at 2 sizes for the changed math and quotation paths: linear (math 64 KB 0.024 s, 128 KB 0.042 s). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: `conformance/cases/html-reader/tables.toml` and
+`conformance/expected/html-reader/tables.json`. The first commit of the
+branch (7824b0d) is on `main` as 7f8b193, and `main` has no other change
+in these paths, so the branch version holds the change of `main`; the
+branch version is taken. `docs/ISSUES.md` merged without a conflict.
+Licence scan: hits only in the licence text of
+`crates/randoc-html-reader/NOTICE.md` and in the tag-name lists of
+`src/parse.rs`; both round 3 reviewers confirmed these lists from the
+behaviour of the reference, so they are not copied text.
+
+Open findings: Codex R3-07 (row I-HTMLR-21), Codex R3-08 (I-HTMLR-22),
+Codex R3-10 (I-HTMLR-23) and I-HTMLR-19, all medium and the first item of
+the next unit; the rows for the low findings of round 3 are not written
+yet. Open checks: the fuzz run of 900 s, coverage, the mutation sample,
+the differential sweep on new seeds.

@@ -123,6 +123,10 @@ pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> 
                     skip_blank(parser);
                 }
                 bodies.push((Attr::default(), rows));
+                // Rows without an open `tbody` tag can end with its close tag.
+                if matches!(parser.peek_kind(), Some(TokenKind::Close(name)) if name == "tbody") {
+                    parser.advance();
+                }
             } else {
                 break;
             }
@@ -401,7 +405,7 @@ fn build(
             width: match widths.get(index) {
                 Some(Width::Fraction(value)) => ColWidth::ColWidth(*value),
                 Some(Width::Relative(value)) => {
-                    ColWidth::ColWidth(remaining * value / relative_total)
+                    ColWidth::ColWidth(value * (remaining / relative_total))
                 }
                 _ => default_width,
             },

@@ -4319,3 +4319,763 @@ input = "<p><a href=\"a b\">x</a></p>"
 [[case]]
 id = "base-762"
 input = "<p><a href=\"a b\">x</a></p>"
+
+[[case]]
+id = "titleclose-001"
+from = "html"
+input = "<head><title>a</td>b</title></head>"
+
+[[case]]
+id = "titleclose-002"
+from = "html+raw_html"
+input = "<head><title>a</td>b</title></head>"
+
+[[case]]
+id = "titleclose-003"
+from = "html"
+input = "<head><title>a</td>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-004"
+from = "html+raw_html"
+input = "<head><title>a</td>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-005"
+from = "html"
+input = "<title>a</td>b</title>"
+
+[[case]]
+id = "titleclose-006"
+from = "html+raw_html"
+input = "<title>a</td>b</title>"
+
+[[case]]
+id = "titleclose-007"
+from = "html"
+input = "<head><title></td>b</title></head>"
+
+[[case]]
+id = "titleclose-008"
+from = "html+raw_html"
+input = "<head><title></td>b</title></head>"
+
+[[case]]
+id = "titleclose-009"
+from = "html"
+input = "<head><title>a</td></title></head>"
+
+[[case]]
+id = "titleclose-010"
+from = "html+raw_html"
+input = "<head><title>a</td></title></head>"
+
+[[case]]
+id = "titleclose-011"
+from = "html"
+input = "<head><title>a</td>b</td>c</title></head>"
+
+[[case]]
+id = "titleclose-012"
+from = "html+raw_html"
+input = "<head><title>a</td>b</td>c</title></head>"
+
+[[case]]
+id = "titleclose-013"
+from = "html"
+input = "<head><title>a</th>b</title></head>"
+
+[[case]]
+id = "titleclose-014"
+from = "html+raw_html"
+input = "<head><title>a</th>b</title></head>"
+
+[[case]]
+id = "titleclose-015"
+from = "html"
+input = "<head><title>a</th>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-016"
+from = "html+raw_html"
+input = "<head><title>a</th>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-017"
+from = "html"
+input = "<title>a</th>b</title>"
+
+[[case]]
+id = "titleclose-018"
+from = "html+raw_html"
+input = "<title>a</th>b</title>"
+
+[[case]]
+id = "titleclose-019"
+from = "html"
+input = "<head><title></th>b</title></head>"
+
+[[case]]
+id = "titleclose-020"
+from = "html+raw_html"
+input = "<head><title></th>b</title></head>"
+
+[[case]]
+id = "titleclose-021"
+from = "html"
+input = "<head><title>a</th></title></head>"
+
+[[case]]
+id = "titleclose-022"
+from = "html+raw_html"
+input = "<head><title>a</th></title></head>"
+
+[[case]]
+id = "titleclose-023"
+from = "html"
+input = "<head><title>a</th>b</th>c</title></head>"
+
+[[case]]
+id = "titleclose-024"
+from = "html+raw_html"
+input = "<head><title>a</th>b</th>c</title></head>"
+
+[[case]]
+id = "titleclose-025"
+from = "html+raw_html"
+input = "<title>a</p>b</title>"
+
+[[case]]
+id = "titleclose-026"
+from = "html+raw_html"
+input = "<head><title>a</table>b</table>c</title></head>"
+
+[[case]]
+id = "titleclose-027"
+from = "html"
+input = "<head><title>a</div>b</title></head>"
+
+[[case]]
+id = "titleclose-028"
+from = "html"
+input = "<title>a</b>b</title>"
+
+[[case]]
+id = "titleclose-029"
+from = "html"
+input = "<head><title>a</p>b</title></head>"
+
+[[case]]
+id = "titleclose-030"
+from = "html"
+input = "<head><title></body>b</title></head>"
+
+[[case]]
+id = "titleclose-031"
+from = "html+raw_html"
+input = "<title>a</tr>b</title>"
+
+[[case]]
+id = "titleclose-032"
+from = "html"
+input = "<head><title>a</tr>b</tr>c</title></head>"
+
+[[case]]
+id = "titleclose-033"
+from = "html+raw_html"
+input = "<title>a</b>b</title>"
+
+[[case]]
+id = "titleclose-034"
+from = "html+raw_html"
+input = "<head><title></p>b</title></head>"
+
+[[case]]
+id = "titleclose-035"
+from = "html+raw_html"
+input = "<head><title></html>b</title></head>"
+
+[[case]]
+id = "titleclose-036"
+from = "html"
+input = "<title>a</span>b</title>"
+
+[[case]]
+id = "titleclose-037"
+from = "html"
+input = "<head><title>a</p>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-038"
+from = "html+raw_html"
+input = "<head><title>a</div>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-039"
+from = "html"
+input = "<head><title>a</li>b</li>c</title></head>"
+
+[[case]]
+id = "titleclose-040"
+from = "html+raw_html"
+input = "<head><title>a</tr>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-041"
+from = "html"
+input = "<head><title>a</div>b</div>c</title></head>"
+
+[[case]]
+id = "titleclose-042"
+from = "html"
+input = "<head><title>a</span>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-043"
+from = "html+raw_html"
+input = "<head><title>a</x>b</title></head>"
+
+[[case]]
+id = "titleclose-044"
+from = "html+raw_html"
+input = "<head><title>a</div>b</title></head>"
+
+[[case]]
+id = "titleclose-045"
+from = "html+raw_html"
+input = "<head><title>a</span>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-046"
+from = "html+raw_html"
+input = "<head><title>a</li>b</title></head>"
+
+[[case]]
+id = "titleclose-047"
+from = "html+raw_html"
+input = "<head><title></x>b</title></head>"
+
+[[case]]
+id = "titleclose-048"
+from = "html"
+input = "<head><title>a</html>b</html>c</title></head>"
+
+[[case]]
+id = "titleclose-049"
+from = "html+raw_html"
+input = "<head><title>a</tr>b</tr>c</title></head>"
+
+[[case]]
+id = "titleclose-050"
+from = "html"
+input = "<head><title></html>b</title></head>"
+
+[[case]]
+id = "titleclose-051"
+from = "html+raw_html"
+input = "<head><title>a</x>b</x>c</title></head>"
+
+[[case]]
+id = "titleclose-052"
+from = "html"
+input = "<head><title>a</tr>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-053"
+from = "html+raw_html"
+input = "<title>a</body>b</title>"
+
+[[case]]
+id = "titleclose-054"
+from = "html"
+input = "<head><title>a</p>b</p>c</title></head>"
+
+[[case]]
+id = "titleclose-055"
+from = "html"
+input = "<head><title></span>b</title></head>"
+
+[[case]]
+id = "titleclose-056"
+from = "html"
+input = "<title>a</div>b</title>"
+
+[[case]]
+id = "titleclose-057"
+from = "html"
+input = "<head><title>a</span>b</title></head>"
+
+[[case]]
+id = "titleclose-058"
+from = "html+raw_html"
+input = "<head><title>a</x></title></head>"
+
+[[case]]
+id = "titleclose-059"
+from = "html"
+input = "<head><title>a</b>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-060"
+from = "html"
+input = "<head><title>a</body>b</title></head>"
+
+[[case]]
+id = "titleclose-061"
+from = "html+raw_html"
+input = "<head><title>a</p></title></head>"
+
+[[case]]
+id = "titleclose-062"
+from = "html"
+input = "<head><title>a</b>b</title></head>"
+
+[[case]]
+id = "titleclose-063"
+from = "html"
+input = "<head><title>a</tr></title></head>"
+
+[[case]]
+id = "titleclose-064"
+from = "html"
+input = "<title>a</html>b</title>"
+
+[[case]]
+id = "titleclose-065"
+from = "html+raw_html"
+input = "<head><title></li>b</title></head>"
+
+[[case]]
+id = "titleclose-066"
+from = "html"
+input = "<head><title>a</body>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-067"
+from = "html+raw_html"
+input = "<head><title>a</b>b</title></head>"
+
+[[case]]
+id = "titleclose-068"
+from = "html+raw_html"
+input = "<head><title></tr>b</title></head>"
+
+[[case]]
+id = "titleclose-069"
+from = "html+raw_html"
+input = "<head><title></table>b</title></head>"
+
+[[case]]
+id = "titleclose-070"
+from = "html"
+input = "<head><title></p>b</title></head>"
+
+[[case]]
+id = "titleclose-071"
+from = "html+raw_html"
+input = "<head><title>a</body>b</body>c</title></head>"
+
+[[case]]
+id = "titleclose-072"
+from = "html+raw_html"
+input = "<head><title>a</html>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-073"
+from = "html+raw_html"
+input = "<head><title></body>b</title></head>"
+
+[[case]]
+id = "titleclose-074"
+from = "html+raw_html"
+input = "<head><title>a</html>b</html>c</title></head>"
+
+[[case]]
+id = "titleclose-075"
+from = "html+raw_html"
+input = "<head><title>a</textarea>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-076"
+from = "html+raw_html"
+input = "<head><title>a</q>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-077"
+from = "html"
+input = "<head><title>a</ins>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-078"
+from = "html"
+input = "<head><title>a</embed>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-079"
+from = "html+raw_html"
+input = "<head><title>a</funcsynopsis>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-080"
+from = "html+raw_html"
+input = "<head><title>a</?xml>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-081"
+from = "html+raw_html"
+input = "<head><title>a</orderedlist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-082"
+from = "html+raw_html"
+input = "<head><title>a</x:y>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-083"
+from = "html+raw_html"
+input = "<head><title>a</center>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-084"
+from = "html+raw_html"
+input = "<head><title>a</font>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-085"
+from = "html+raw_html"
+input = "<head><title>a</itemizedlist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-086"
+from = "html+raw_html"
+input = "<head><title>a</tfoot>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-087"
+from = "html+raw_html"
+input = "<head><title>a</meta>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-088"
+from = "html+raw_html"
+input = "<head><title>a</para>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-089"
+from = "html"
+input = "<head><title>a</area>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-090"
+from = "html"
+input = "<head><title>a</programlistingco>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-091"
+from = "html+raw_html"
+input = "<head><title>a</glosslist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-092"
+from = "html+raw_html"
+input = "<head><title>a</classsynopsis>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-093"
+from = "html"
+input = "<head><title>a</pre>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-094"
+from = "html"
+input = "<head><title>a</thead>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-095"
+from = "html+raw_html"
+input = "<head><title>a</hgroup>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-096"
+from = "html+raw_html"
+input = "<head><title>a</programlisting>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-097"
+from = "html"
+input = "<head><title>a</h6>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-098"
+from = "html"
+input = "<head><title>a</center>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-099"
+from = "html"
+input = "<head><title>a</title>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-100"
+from = "html"
+input = "<head><title>a</dir>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-101"
+from = "html+raw_html"
+input = "<head><title>a</article>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-102"
+from = "html"
+input = "<head><title>a</button>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-103"
+from = "html+raw_html"
+input = "<head><title>a</canvas>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-104"
+from = "html+raw_html"
+input = "<head><title>a</informalequation>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-105"
+from = "html+raw_html"
+input = "<head><title>a</svg>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-106"
+from = "html+raw_html"
+input = "<head><title>a</map>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-107"
+from = "html"
+input = "<head><title>a</audio>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-108"
+from = "html"
+input = "<head><title>a</screenshot>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-109"
+from = "html"
+input = "<head><title>a</h1>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-110"
+from = "html"
+input = "<head><title>a</section>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-111"
+from = "html"
+input = "<head><title>a</x:y>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-112"
+from = "html"
+input = "<head><title>a</br>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-113"
+from = "html"
+input = "<head><title>a</equation>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-114"
+from = "html"
+input = "<head><title>a</dd>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-115"
+from = "html"
+input = "<head><title>a</orderedlist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-116"
+from = "html+raw_html"
+input = "<head><title>a</del>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-117"
+from = "html"
+input = "<head><title>a</tip>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-118"
+from = "html+raw_html"
+input = "<head><title>a</section>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-119"
+from = "html+raw_html"
+input = "<head><title>a</h5>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-120"
+from = "html"
+input = "<head><title>a</blockquote>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-121"
+from = "html+raw_html"
+input = "<head><title>a</screenco>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-122"
+from = "html"
+input = "<head><title>a</em>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-123"
+from = "html+raw_html"
+input = "<head><title>a</dd>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-124"
+from = "html+raw_html"
+input = "<head><title>a</h2>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-125"
+from = "html+raw_html"
+input = "<head><title>a</embed>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-126"
+from = "html+raw_html"
+input = "<head><title>a</footer>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-127"
+from = "html+raw_html"
+input = "<head><title>a</sidebar>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-128"
+from = "html+raw_html"
+input = "<head><title>a</area>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-129"
+from = "html+raw_html"
+input = "<head><title>a</colgroup>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-130"
+from = "html+raw_html"
+input = "<head><title>a</pre>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-131"
+from = "html+raw_html"
+input = "<head><title>a</!DOCTYPE>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-132"
+from = "html+raw_html"
+input = "<head><title>a</h4>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-133"
+from = "html"
+input = "<head><title>a</aside>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-134"
+from = "html"
+input = "<head><title>a</glosslist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-135"
+from = "html+raw_html"
+input = "<head><title>a</img>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-136"
+from = "html+raw_html"
+input = "<head><title>a</caption>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-137"
+from = "html"
+input = "<head><title>a</address>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-138"
+from = "html"
+input = "<head><title>a</tfoot>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-139"
+from = "html"
+input = "<head><title>a</progress>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-140"
+from = "html"
+input = "<head><title>a</textarea>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-141"
+from = "html"
+input = "<head><title>a</mediaobject>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-142"
+from = "html"
+input = "<head><title>a</!DOCTYPE>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-143"
+from = "html+raw_html"
+input = "<head><title>a</calloutlist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-144"
+from = "html"
+input = "<head><title>a</main>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-145"
+from = "html"
+input = "<head><title>a</colgroup>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-146"
+from = "html"
+input = "<head><title>a</simpara>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-147"
+from = "html"
+input = "<head><title>a</font>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-148"
+from = "html"
+input = "<head><title>a</?xml>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-149"
+from = "html+raw_html"
+input = "<head><title>a</bibliolist>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-150"
+from = "html"
+input = "<head><title>a</caption>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-151"
+from = "html"
+input = "<head><title>a</isindex>b</title></head><p>p</p>"
+
+[[case]]
+id = "titleclose-152"
+from = "html"
+input = "<head><title>a</a>b</title></head><p>p</p>"

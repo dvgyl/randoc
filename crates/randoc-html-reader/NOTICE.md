@@ -10,6 +10,12 @@ licence. The rest of the crate has the licence `MIT OR Apache-2.0`.
   table (`src/table.rs`): a port of parts of `Text.Pandoc.Builder` of
   `pandoc-types` 1.23.1, BSD-3-Clause.
 
+The tag-name and attribute-name lists of `src/parse.rs` and `src/text.rs`
+hold names that probes of the reference program confirm one by one; the
+Pandoc source was not read. The two reviews of round 3 confirm each list
+(`env/store/reviews/html-reader-opus-r3.md`, section "Licence question",
+and `env/store/reviews/html-reader-codex-r3.md.partial`).
+
 ## `tagsoup` 0.14.8
 
 ```text

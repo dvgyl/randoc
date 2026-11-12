@@ -3,6 +3,8 @@
 
 use randoc_ast::{Attr, Format, Inline, MathType, QuoteType, Text};
 use randoc_core::{Extension, Extensions};
+use std::collections::HashMap;
+use std::rc::Rc;
 
 /// A list of inlines that joins neighbours as the `Inlines` monoid of
 /// `pandoc-types` 1.23.1 does (`Text.Pandoc.Builder`, BSD-3-Clause).
@@ -124,8 +126,8 @@ pub(crate) fn quoted_text_inlines(
     context: Option<QuoteType>,
     out: &mut Inlines,
 ) {
-    let chars: Vec<char> = text.chars().collect();
-    let mut special = Special::new(extensions);
+    let chars: Rc<[char]> = text.chars().collect();
+    let mut special = Special::new(extensions, Rc::clone(&chars), 0);
     special.context = context;
     special.mode = mode;
     convert(&chars, mode, &mut special, 0, out);
@@ -225,16 +227,29 @@ struct Special {
     group_failures: usize,
     /// For each `{` of the text, the index of its `}`. Made on first use.
     brace_ends: Option<Vec<Option<usize>>>,
+    /// For each index of the text, the number of characters before it that
+    /// end a `\text` group (see `group_breaks`). Made on first use.
+    group_breaks: Option<Vec<usize>>,
+    /// The end of each math search, by delimiter kind, index and whether an
+    /// escape led to the index. A later search that reaches the same state
+    /// has the same end, so each state is scanned once.
+    math_ends: HashMap<(usize, usize, bool), MathEnd>,
     /// The `[` groups without an end that a `\ref` search found.
     bracket_failures: usize,
     no_environment_end: Vec<&'static str>,
-    no_quote_close: [bool; 2],
+    /// The close of each quotation of the whole text token. Made on first use.
+    quote_closes: Option<Rc<QuoteCloses>>,
     /// The innermost quotation around this text.
     context: Option<QuoteType>,
     /// The character after the end of this text, in the text around it.
     next: Option<char>,
     /// The mode of the text, also for the text inside a quotation.
     mode: TextMode,
+    /// The whole text token, and the index of this text in it. A quotation
+    /// search reads the whole token, because a nested quotation can end
+    /// after the end of the quotation around it.
+    full: Rc<[char]>,
+    offset: usize,
 }
 
 /// The math delimiter kinds: `$`, `$$`, then `(` and `[` with one and with two
@@ -246,6 +261,7 @@ const MATH_KINDS: usize = 6;
 const MAX_GROUP_FAILURES: usize = 16;
 
 /// The result of a search for the end of math content.
+#[derive(Clone, Copy)]
 enum MathEnd {
     /// The content ends at the first index; the closer ends at the second.
     Found(usize, usize),
@@ -256,7 +272,7 @@ enum MathEnd {
 }
 
 impl Special {
-    fn new(extensions: Extensions) -> Self {
+    fn new(extensions: Extensions, full: Rc<[char]>, offset: usize) -> Self {
         Special {
             dollars: extensions.contains(Extension::TexMathDollars),
             single_backslash: extensions.contains(Extension::TexMathSingleBackslash),
@@ -266,12 +282,16 @@ impl Special {
             math_failed_until: [0; MATH_KINDS],
             group_failures: 0,
             brace_ends: None,
+            group_breaks: None,
+            math_ends: HashMap::new(),
             bracket_failures: 0,
             no_environment_end: Vec::new(),
-            no_quote_close: [false; 2],
+            quote_closes: None,
             context: None,
             next: None,
             mode: TextMode::Normal,
+            full,
+            offset,
         }
     }
 
@@ -360,7 +380,7 @@ impl Special {
         {
             return None;
         }
-        match find_math_end(chars, start, closer, kind == 0) {
+        match self.find_math_end(chars, start, closer, kind) {
             MathEnd::Found(end, next) => Some((collect(chars, start, end), next)),
             MathEnd::Rejected => None,
             MathEnd::FailedUntil(until) => {
@@ -449,6 +469,111 @@ impl Special {
     fn brace_end(&mut self, chars: &[char], at: usize) -> Option<usize> {
         let ends = self.brace_ends.get_or_insert_with(|| brace_ends(chars));
         ends.get(at).copied().flatten().map(|end| end + 1)
+    }
+
+    /// Searches the end of math content of the delimiter kind `kind`. The
+    /// kind `$` adds its rules: the closer has no unescaped space before it
+    /// and no ASCII digit after it.
+    fn find_math_end(
+        &mut self,
+        chars: &[char],
+        start: usize,
+        closer: &[char],
+        kind: usize,
+    ) -> MathEnd {
+        let inline_dollar = kind == 0;
+        let mut at = start;
+        let mut escaped = false;
+        let mut visited = Vec::new();
+        let end = loop {
+            // The start has its own rule (a closer there is no content), so
+            // only a later state has an end that other searches share.
+            if at != start {
+                if let Some(end) = self.math_ends.get(&(kind, at, escaped)) {
+                    break *end;
+                }
+                visited.push((at, escaped));
+            }
+            #[cfg(test)]
+            MATH_STEPS.with(|steps| steps.set(steps.get() + 1));
+            let Some(&c) = chars.get(at) else {
+                break MathEnd::FailedUntil(at);
+            };
+            if chars.get(at..at + closer.len()) == Some(closer) {
+                if at == start {
+                    break MathEnd::Rejected;
+                }
+                if inline_dollar {
+                    let space_before = chars.get(at - 1).is_some_and(|c| is_space(*c));
+                    let digit_after = chars
+                        .get(at + closer.len())
+                        .is_some_and(char::is_ascii_digit);
+                    if (space_before && !escaped) || digit_after {
+                        break MathEnd::Rejected;
+                    }
+                }
+                break MathEnd::Found(at, at + closer.len());
+            }
+            escaped = false;
+            match c {
+                '\r' => break MathEnd::FailedUntil(at),
+                '\n' => {
+                    if starts_blank_line(chars, at) {
+                        break MathEnd::FailedUntil(at);
+                    }
+                    at += 1;
+                }
+                '\\' if chars.get(at + 1..at + 5) == Some(&['t', 'e', 'x', 't']) => {
+                    match self.text_group_end(chars, at + 5) {
+                        Some(end) => at = end,
+                        None => break MathEnd::FailedUntil(at),
+                    }
+                }
+                '\\' => {
+                    if chars.get(at + 1).is_none_or(|c| *c == '\r') {
+                        break MathEnd::FailedUntil(at);
+                    }
+                    at += 2;
+                    escaped = true;
+                }
+                _ => at += 1,
+            }
+        };
+        for (at, escaped) in visited {
+            self.math_ends.insert((kind, at, escaped), end);
+        }
+        end
+    }
+
+    /// Returns the index after the letters, the white space and the adjacent
+    /// balanced brace groups that follow `\text`. `None` when a group has no
+    /// end, a blank line or a carriage return.
+    fn text_group_end(&mut self, chars: &[char], from: usize) -> Option<usize> {
+        let mut at = from;
+        while chars.get(at).is_some_and(char::is_ascii_alphabetic) {
+            at += 1;
+        }
+        let letters_end = at;
+        while chars.get(at).is_some_and(|c| is_space(*c)) {
+            at += 1;
+        }
+        if chars.get(at) != Some(&'{') {
+            return Some(letters_end);
+        }
+        let breaks = self.group_breaks.get_or_insert_with(|| group_breaks(chars));
+        let ends = self.brace_ends.get_or_insert_with(|| brace_ends(chars));
+        loop {
+            #[cfg(test)]
+            MATH_STEPS.with(|steps| steps.set(steps.get() + 1));
+            let end = ends.get(at).copied().flatten()?;
+            if breaks.get(end) != breaks.get(at) {
+                return None;
+            }
+            if chars.get(end + 1) != Some(&'{') {
+                return Some(end + 1);
+            }
+            at = end + 1;
+        }
     }
 
     /// Returns the index after the `]` that closes the `[` at `at`. A brace
@@ -542,10 +667,10 @@ impl Special {
     ) -> Option<(Inline, usize)> {
         let before = index.checked_sub(1).and_then(|at| chars.get(at)).copied();
         let after = chars.get(index + 1).copied().or(self.next);
-        let (kind, slot) = if quote == '"' {
-            (QuoteType::DoubleQuote, 0)
+        let kind = if quote == '"' {
+            QuoteType::DoubleQuote
         } else {
-            (QuoteType::SingleQuote, 1)
+            QuoteType::SingleQuote
         };
         let after_punctuation = before.is_none_or(|c| {
             is_space(c)
@@ -556,32 +681,29 @@ impl Special {
         });
         let opens =
             after_punctuation && after.is_some_and(|c| !is_space(c)) && self.context != Some(kind);
-        let known_failure = self.no_quote_close.get(slot).copied().unwrap_or(true);
-        let mut search = opens && !known_failure && depth < MAX_QUOTE_DEPTH;
-        if search {
-            let mut end = index + 1;
-            while let Some(&c) = chars.get(end) {
-                let closes = c == quote
-                    && (quote == '"' || !chars.get(end + 1).is_some_and(|c| c.is_alphanumeric()));
-                if closes && quote == '\'' && end == index + 1 {
-                    // A single quotation is not empty.
-                    search = false;
-                    break;
-                }
-                if closes {
-                    let mut inner = Inlines::new();
-                    let body = chars.get(index + 1..end).unwrap_or_default();
-                    let mut special = Special::new(Extensions::from_list(&[Extension::Smart]));
-                    special.context = Some(kind);
-                    special.next = Some(quote);
-                    special.mode = self.mode;
-                    convert(body, self.mode, &mut special, depth + 1, &mut inner);
-                    return Some((Inline::Quoted(kind, inner.0), end + 1));
-                }
-                end += 1;
-            }
-            if search && let Some(failed) = self.no_quote_close.get_mut(slot) {
-                *failed = true;
+        if opens && depth < MAX_QUOTE_DEPTH {
+            let table = Rc::clone(
+                self.quote_closes
+                    .get_or_insert_with(|| Rc::new(QuoteCloses::new(&self.full))),
+            );
+            if let Some(end) = table
+                .close(self.offset + index, quote)
+                .map(|close| close - self.offset)
+                .filter(|end| *end < chars.len())
+            {
+                let mut inner = Inlines::new();
+                let body = chars.get(index + 1..end).unwrap_or_default();
+                let mut special = Special::new(
+                    Extensions::from_list(&[Extension::Smart]),
+                    Rc::clone(&self.full),
+                    self.offset + index + 1,
+                );
+                special.quote_closes = Some(table);
+                special.context = Some(kind);
+                special.next = Some(quote);
+                special.mode = self.mode;
+                convert(body, self.mode, &mut special, depth + 1, &mut inner);
+                return Some((Inline::Quoted(kind, inner.0), end + 1));
             }
         }
         let mark = match (quote, opens) {
@@ -590,6 +712,90 @@ impl Special {
             _ => "\u{2019}",
         };
         Some((Inline::Str(mark.to_owned()), index + 1))
+    }
+}
+
+/// Whether the mark at `at` can open a quotation of its kind inside a
+/// quotation of the other kind: after the start, white space or punctuation
+/// that `smart` reads, and before a character that is not white space.
+fn opens_inside(chars: &[char], at: usize) -> bool {
+    let before = at
+        .checked_sub(1)
+        .and_then(|before| chars.get(before))
+        .copied();
+    let after_punctuation = before.is_none_or(|c| {
+        is_space(c)
+            || matches!(
+                c,
+                '-' | '.' | '\'' | '"' | '\u{201c}' | '\u{201d}' | '\u{2018}' | '\u{2019}'
+            )
+    });
+    after_punctuation && chars.get(at + 1).is_some_and(|c| !is_space(*c))
+}
+
+/// For each mark of a text that opens a quotation, the index of its close
+/// mark. A quotation of the other kind inside it is skipped, so that its
+/// marks do not close the outer quotation; such a nested quotation can end
+/// after the end of the quotation around it, and then that one has no close.
+pub(crate) struct QuoteCloses {
+    /// `walk[kind][at]`: the close mark of kind `kind` (0 double, 1 single)
+    /// that a search from `at` finds.
+    walk: [Vec<Option<usize>>; 2],
+    chars_len: usize,
+    single_closes: Vec<bool>,
+}
+
+impl QuoteCloses {
+    fn new(chars: &[char]) -> Self {
+        let length = chars.len();
+        let closes = |at: usize, quote: char| {
+            chars.get(at) == Some(&quote)
+                && (quote == '"' || !chars.get(at + 1).is_some_and(|c| c.is_alphanumeric()))
+        };
+        let single_closes: Vec<bool> = (0..=length).map(|at| closes(at, '\'')).collect();
+        let mut walk = [vec![None; length + 1], vec![None; length + 1]];
+        for at in (0..length).rev() {
+            for (kind, quote, other) in [(0, '"', 1), (1, '\'', 0)] {
+                let found = if closes(at, quote) {
+                    Some(at)
+                } else {
+                    let other_mark = if other == 0 { '"' } else { '\'' };
+                    let nested = (chars.get(at) == Some(&other_mark) && opens_inside(chars, at))
+                        .then(|| Self::close_in(&walk, &single_closes, at, other))
+                        .flatten();
+                    let next = nested.map_or(at + 1, |close| close + 1);
+                    walk[kind].get(next).copied().flatten()
+                };
+                walk[kind][at] = found;
+            }
+        }
+        QuoteCloses {
+            walk,
+            chars_len: length,
+            single_closes,
+        }
+    }
+
+    fn close_in(
+        walk: &[Vec<Option<usize>>; 2],
+        single_closes: &[bool],
+        at: usize,
+        kind: usize,
+    ) -> Option<usize> {
+        // A single quotation is not empty.
+        if kind == 1 && single_closes.get(at + 1).copied().unwrap_or(false) {
+            return None;
+        }
+        walk[kind].get(at + 1).copied().flatten()
+    }
+
+    /// The index of the close mark of the quotation that the mark `quote` at
+    /// `at` opens.
+    fn close(&self, at: usize, quote: char) -> Option<usize> {
+        let kind = usize::from(quote == '\'');
+        (at < self.chars_len)
+            .then(|| Self::close_in(&self.walk, &self.single_closes, at, kind))
+            .flatten()
     }
 }
 
@@ -644,105 +850,47 @@ fn brace_ends(chars: &[char]) -> Vec<Option<usize>> {
     ends
 }
 
-/// Searches the end of math content. `inline_dollar` adds the rules of `$`:
-/// the closer has no unescaped space before it and no ASCII digit after it.
-fn find_math_end(chars: &[char], start: usize, closer: &[char], inline_dollar: bool) -> MathEnd {
-    let mut at = start;
-    let mut escaped_end = None;
-    loop {
-        let Some(&c) = chars.get(at) else {
-            return MathEnd::FailedUntil(at);
-        };
-        if chars.get(at..at + closer.len()) == Some(closer) {
-            if at == start {
-                return MathEnd::Rejected;
-            }
-            if inline_dollar {
-                let space_before = chars.get(at - 1).is_some_and(|c| is_space(*c));
-                let digit_after = chars
-                    .get(at + closer.len())
-                    .is_some_and(char::is_ascii_digit);
-                if (space_before && escaped_end != Some(at)) || digit_after {
-                    return MathEnd::Rejected;
-                }
-            }
-            return MathEnd::Found(at, at + closer.len());
-        }
-        match c {
-            '\r' => return MathEnd::FailedUntil(at),
-            '\n' => {
-                let mut next = at + 1;
-                while chars.get(next).is_some_and(|c| matches!(c, ' ' | '\t')) {
-                    next += 1;
-                }
-                if matches!(chars.get(next), Some('\n' | '\r')) {
-                    return MathEnd::FailedUntil(at);
-                }
-                at += 1;
-            }
-            '\\' if chars.get(at + 1..at + 5) == Some(&['t', 'e', 'x', 't']) => {
-                match text_group_end(chars, at + 5) {
-                    Some(end) => at = end,
-                    None => return MathEnd::FailedUntil(at),
-                }
-            }
-            '\\' => {
-                if chars.get(at + 1).is_none_or(|c| *c == '\r') {
-                    return MathEnd::FailedUntil(at);
-                }
-                at += 2;
-                escaped_end = Some(at);
-            }
-            _ => at += 1,
-        }
+/// Whether the newline at `at` starts a blank line: only spaces and tabs
+/// follow it before the next line break.
+fn starts_blank_line(chars: &[char], at: usize) -> bool {
+    let mut next = at + 1;
+    while chars.get(next).is_some_and(|c| matches!(c, ' ' | '\t')) {
+        next += 1;
     }
+    matches!(chars.get(next), Some('\n' | '\r'))
 }
 
-/// Returns the index after the letters, the white space and the balanced
-/// brace groups that follow `\text`. `None` when the group has no
-/// end, a blank line or a carriage return.
-fn text_group_end(chars: &[char], from: usize) -> Option<usize> {
-    let mut at = from;
-    while chars.get(at).is_some_and(char::is_ascii_alphabetic) {
-        at += 1;
-    }
-    let letters_end = at;
-    while chars.get(at).is_some_and(|c| is_space(*c)) {
-        at += 1;
-    }
-    if chars.get(at) != Some(&'{') {
-        return Some(letters_end);
-    }
-    let mut depth = 0usize;
-    loop {
-        match chars.get(at)? {
-            '{' => depth += 1,
-            '}' => {
-                depth -= 1;
-                if depth == 0 && chars.get(at + 1) != Some(&'{') {
-                    return Some(at + 1);
-                }
-            }
-            '\\' => {
-                if chars.get(at + 1).is_none_or(|c| *c == '\r') {
-                    return None;
-                }
-                at += 1;
-            }
-            '\r' => return None,
-            '\n' => {
-                let mut next = at + 1;
-                while chars.get(next).is_some_and(|c| matches!(c, ' ' | '\t')) {
-                    next += 1;
-                }
-                if matches!(chars.get(next), Some('\n' | '\r')) {
-                    return None;
-                }
-            }
-            _ => {}
+/// For each index of the text, the number of characters before it that end
+/// a `\text` group: a carriage return, a backslash before a carriage return
+/// or at the end, and a newline that starts a blank line. A backslash escapes
+/// the next character, as in `brace_ends`.
+fn group_breaks(chars: &[char]) -> Vec<usize> {
+    let mut breaks = Vec::with_capacity(chars.len() + 1);
+    let mut count = 0;
+    let mut at = 0;
+    while let Some(&c) = chars.get(at) {
+        breaks.push(count);
+        let breaks_group = match c {
+            '\r' => true,
+            '\n' => starts_blank_line(chars, at),
+            '\\' => chars.get(at + 1).is_none_or(|c| *c == '\r'),
+            _ => false,
+        };
+        count += usize::from(breaks_group);
+        if c == '\\' && at + 1 < chars.len() {
+            at += 1;
+            breaks.push(count);
         }
         at += 1;
     }
+    breaks.push(count);
+    breaks
+}
+
+#[cfg(test)]
+thread_local! {
+    /// The steps of the math searches on this thread.
+    pub(crate) static MATH_STEPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
 }
 
 /// Removes the white space at both ends of math content. A space that a
@@ -1031,6 +1179,75 @@ mod tests {
         assert_eq!(
             only_space.wrap_extracting_spaces(Inline::Emph).0,
             vec![Inline::Space, Inline::Emph(vec![]), Inline::Space]
+        );
+    }
+
+    // Pandoc 3.13: an apostrophe inside a nested quotation does not close the
+    // quotation around it. In the second input the nested single quotation
+    // ends at the last mark, after the double quotation, so the double marks
+    // are plain marks.
+    #[test]
+    fn a_nested_quotation_is_read_before_the_outer_close() {
+        let smart = |text: &str| inlines(text, &[Extension::Smart]);
+        let single = |inner| Inline::Quoted(QuoteType::SingleQuote, inner);
+        assert_eq!(
+            smart(r#"'He said "dogs' names".'"#),
+            vec![single(vec![
+                word("He"),
+                Inline::Space,
+                word("said"),
+                Inline::Space,
+                Inline::Quoted(
+                    QuoteType::DoubleQuote,
+                    vec![word("dogs\u{2019}"), Inline::Space, word("names")]
+                ),
+                word("."),
+            ])]
+        );
+        assert_eq!(
+            smart(r#"'x "'a" y'"#),
+            vec![single(vec![
+                word("x"),
+                Inline::Space,
+                word("\u{201c}\u{2019}a\u{201d}"),
+                Inline::Space,
+                word("y"),
+            ])]
+        );
+    }
+
+    fn rejected_groups(count: usize) -> String {
+        format!("{}{}$2", r"$\text{".repeat(count), "}".repeat(count))
+    }
+
+    fn math_steps(text: &str) -> u64 {
+        MATH_STEPS.with(|steps| steps.set(0));
+        inlines(text, &[Extension::TexMathDollars]);
+        MATH_STEPS.with(std::cell::Cell::get)
+    }
+
+    // Each dollar starts a search that the digit after the last dollar
+    // rejects. Pandoc 3.13 gives one `Str` for each count.
+    #[test]
+    fn a_rejected_math_search_is_not_scanned_again() {
+        let text = rejected_groups(3);
+        assert_eq!(
+            inlines(&text, &[Extension::TexMathDollars]),
+            vec![word(&text)]
+        );
+        let (small, large) = (
+            math_steps(&rejected_groups(500)),
+            math_steps(&rejected_groups(2000)),
+        );
+        assert!(
+            large <= small * 6,
+            "{small} steps for 500 groups, {large} for 2000"
+        );
+        let escapes = |count: usize| format!("${}$2", r"\$".repeat(count));
+        let (small, large) = (math_steps(&escapes(500)), math_steps(&escapes(2000)));
+        assert!(
+            large <= small * 6,
+            "{small} steps for 500 escapes, {large} for 2000"
         );
     }
 

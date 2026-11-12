@@ -1319,3 +1319,1148 @@ input = "<p><img src=\"i.png\" role=\"note\">x</img></p>"
 [[case]]
 id = "attrs-300"
 input = "<p><img src=\"i.png\" hidden>x</img></p>"
+
+[[case]]
+id = "nestedquote-001"
+from = "html+smart"
+input = "<p>'He said \"dogs' names\".'</p>"
+
+[[case]]
+id = "nestedquote-002"
+from = "html+smart"
+input = "<p>\"He said 'dogs\" names'.\"</p>"
+
+[[case]]
+id = "nestedquote-003"
+from = "html+smart"
+input = "<p>'a \"b 'c' d\" e'</p>"
+
+[[case]]
+id = "nestedquote-004"
+from = "html+smart"
+input = "<p>\"a 'b \"c\" d' e\"</p>"
+
+[[case]]
+id = "nestedquote-005"
+from = "html+smart"
+input = "<p>'a \"b' c\"</p>"
+
+[[case]]
+id = "nestedquote-006"
+from = "html+smart"
+input = "<p>\"a 'b\" c'</p>"
+
+[[case]]
+id = "nestedquote-007"
+from = "html+smart"
+input = "<p>'a \"b\" c</p>"
+
+[[case]]
+id = "nestedquote-008"
+from = "html+smart"
+input = "<p>'a \"b c'</p>"
+
+[[case]]
+id = "nestedquote-009"
+from = "html+smart"
+input = "<p>\"a 'b c\"</p>"
+
+[[case]]
+id = "nestedquote-010"
+from = "html+smart"
+input = "<p>\"'a\"</p>"
+
+[[case]]
+id = "nestedquote-011"
+from = "html+smart"
+input = "<p>\"'a b\"</p>"
+
+[[case]]
+id = "nestedquote-012"
+from = "html+smart"
+input = "<p>'x \"'a\" y'</p>"
+
+[[case]]
+id = "nestedquote-013"
+from = "html+smart"
+input = "<p>'x \"'a' y</p>"
+
+[[case]]
+id = "nestedquote-014"
+from = "html+smart"
+input = "<p>\"x ''a' y\"</p>"
+
+[[case]]
+id = "nestedquote-015"
+from = "html+smart"
+input = "<p>\"x '\"a' y\"</p>"
+
+[[case]]
+id = "nestedquote-016"
+from = "html+smart"
+input = "<p>'x \"-a\" y'</p>"
+
+[[case]]
+id = "nestedquote-017"
+from = "html+smart"
+input = "<p>'x \"\u2019a\" y'</p>"
+
+[[case]]
+id = "nestedquote-018"
+from = "html+smart"
+input = "<p>'x \"''a\" y'</p>"
+
+[[case]]
+id = "nestedquote-019"
+from = "html+smart"
+input = "<p>'x \"'' y'</p>"
+
+[[case]]
+id = "nestedquote-020"
+from = "html+smart"
+input = "<p>'He  \"\"dogs'' \" x'.</p>"
+
+[[case]]
+id = "nestedquote-021"
+from = "html+smart"
+input = "<p>\"He \" '' -' x\".</p>"
+
+[[case]]
+id = "nestedquote-022"
+from = "html+smart"
+input = "<p>\"He ' ' '' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-023"
+from = "html+smart"
+input = "<p>'He 'x'\" 'it's\" x'.</p>"
+
+[[case]]
+id = "nestedquote-024"
+from = "html+smart"
+input = "<p>\"He ''a\"y\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-025"
+from = "html+smart"
+input = "<p>\"He .''\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-026"
+from = "html+smart"
+input = "<p>\"He \"y\"'it's ' x\".</p>"
+
+[[case]]
+id = "nestedquote-027"
+from = "html+smart"
+input = "<p>\"He -' -' x\".</p>"
+
+[[case]]
+id = "nestedquote-028"
+from = "html+smart"
+input = "<p>\"He \" ''.' x\".</p>"
+
+[[case]]
+id = "nestedquote-029"
+from = "html+smart"
+input = "<p>'He '\"\"  '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-030"
+from = "html+smart"
+input = "<p>\"He .'\"\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-031"
+from = "html+smart"
+input = "<p>'He a\"it's' \" x'.</p>"
+
+[[case]]
+id = "nestedquote-032"
+from = "html+smart"
+input = "<p>\"He \"y\"'dogs'\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-033"
+from = "html+smart"
+input = "<p>'He \" \"\" '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-034"
+from = "html+smart"
+input = "<p>\"He ' '..' x\".</p>"
+
+[[case]]
+id = "nestedquote-035"
+from = "html+smart"
+input = "<p>'He  \"\"'\"y\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-036"
+from = "html+smart"
+input = "<p>'He  '\"\" '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-037"
+from = "html+smart"
+input = "<p>\"He \"y\"'dogs'.' x\".</p>"
+
+[[case]]
+id = "nestedquote-038"
+from = "html+smart"
+input = "<p>\"He ' '\"y\"' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-039"
+from = "html+smart"
+input = "<p>\"He ' '.'' x\".</p>"
+
+[[case]]
+id = "nestedquote-040"
+from = "html+smart"
+input = "<p>\"He \"y\"' 'it's' x\".</p>"
+
+[[case]]
+id = "nestedquote-041"
+from = "html+smart"
+input = "<p>\"He \"''\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-042"
+from = "html+smart"
+input = "<p>\"He -' \"a' x\".</p>"
+
+[[case]]
+id = "nestedquote-043"
+from = "html+smart"
+input = "<p>'He \"y\"\"\"y\"' \" x'.</p>"
+
+[[case]]
+id = "nestedquote-044"
+from = "html+smart"
+input = "<p>'He ' \"--\" x'.</p>"
+
+[[case]]
+id = "nestedquote-045"
+from = "html+smart"
+input = "<p>\"He -'it'sdogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-046"
+from = "html+smart"
+input = "<p>'He \"y\"\"it'sdogs'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-047"
+from = "html+smart"
+input = "<p>\"He  '' \"a' x\".</p>"
+
+[[case]]
+id = "nestedquote-048"
+from = "html+smart"
+input = "<p>\"He ''. '' x\".</p>"
+
+[[case]]
+id = "nestedquote-049"
+from = "html+smart"
+input = "<p>'He a\" '-\" x'.</p>"
+
+[[case]]
+id = "nestedquote-050"
+from = "html+smart"
+input = "<p>'He '\" \" '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-051"
+from = "html+smart"
+input = "<p>'He \"y\"\".\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-052"
+from = "html+smart"
+input = "<p>\"He \" ' '-' x\".</p>"
+
+[[case]]
+id = "nestedquote-053"
+from = "html+smart"
+input = "<p>'He  \"\" .\" x'.</p>"
+
+[[case]]
+id = "nestedquote-054"
+from = "html+smart"
+input = "<p>'He -\"a-\" x'.</p>"
+
+[[case]]
+id = "nestedquote-055"
+from = "html+smart"
+input = "<p>'He  \"dogs' '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-056"
+from = "html+smart"
+input = "<p>'He \" \"'  \"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-057"
+from = "html+smart"
+input = "<p>\"He \"y\"'\"y\"dogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-058"
+from = "html+smart"
+input = "<p>\"He \" '\" \"y\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-059"
+from = "html+smart"
+input = "<p>\"He ''\"  ' x\".</p>"
+
+[[case]]
+id = "nestedquote-060"
+from = "html+smart"
+input = "<p>\"He dogs''\"y\"' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-061"
+from = "html+smart"
+input = "<p>\"He \"' it's' x\".</p>"
+
+[[case]]
+id = "nestedquote-062"
+from = "html+smart"
+input = "<p>\"He \" 'a '' x\".</p>"
+
+[[case]]
+id = "nestedquote-063"
+from = "html+smart"
+input = "<p>\"He 'x''\"\"y\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-064"
+from = "html+smart"
+input = "<p>'He 'x'\" \".\" x'.</p>"
+
+[[case]]
+id = "nestedquote-065"
+from = "html+smart"
+input = "<p>\"He  '\" .' x\".</p>"
+
+[[case]]
+id = "nestedquote-066"
+from = "html+smart"
+input = "<p>'He dogs'\"' \"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-067"
+from = "html+smart"
+input = "<p>'He  \"it's'x'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-068"
+from = "html+smart"
+input = "<p>'He 'x'\". \" x'.</p>"
+
+[[case]]
+id = "nestedquote-069"
+from = "html+smart"
+input = "<p>\"He it's''x' \"' x\".</p>"
+
+[[case]]
+id = "nestedquote-070"
+from = "html+smart"
+input = "<p>'He ' \"dogs'\" \" x'.</p>"
+
+[[case]]
+id = "nestedquote-071"
+from = "html+smart"
+input = "<p>'He \" \"'\" \" x'.</p>"
+
+[[case]]
+id = "nestedquote-072"
+from = "html+smart"
+input = "<p>\"He dogs''.it's' x\".</p>"
+
+[[case]]
+id = "nestedquote-073"
+from = "html+smart"
+input = "<p>\"He -''it's' x\".</p>"
+
+[[case]]
+id = "nestedquote-074"
+from = "html+smart"
+input = "<p>'He -\"a.\" x'.</p>"
+
+[[case]]
+id = "nestedquote-075"
+from = "html+smart"
+input = "<p>\"He dogs''\"dogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-076"
+from = "html+smart"
+input = "<p>\"He it's'-'x'' x\".</p>"
+
+[[case]]
+id = "nestedquote-077"
+from = "html+smart"
+input = "<p>\"He '' \"a' x\".</p>"
+
+[[case]]
+id = "nestedquote-078"
+from = "html+smart"
+input = "<p>\"He  \"'..' x\".</p>"
+
+[[case]]
+id = "nestedquote-079"
+from = "html+smart"
+input = "<p>\"He  ''.' x\".</p>"
+
+[[case]]
+id = "nestedquote-080"
+from = "html+smart"
+input = "<p>\"He ' ''' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-081"
+from = "html+smart"
+input = "<p>\"He \" ''x'dogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-082"
+from = "html+smart"
+input = "<p>\"He \"' '-' x\".</p>"
+
+[[case]]
+id = "nestedquote-083"
+from = "html+smart"
+input = "<p>\"He \" 'dogs'.' x\".</p>"
+
+[[case]]
+id = "nestedquote-084"
+from = "html+smart"
+input = "<p>'He  \"\"a\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-085"
+from = "html+smart"
+input = "<p>\"He a' '\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-086"
+from = "html+smart"
+input = "<p>'He  \"\"'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-087"
+from = "html+smart"
+input = "<p>'He .\" -\" x'.</p>"
+
+[[case]]
+id = "nestedquote-088"
+from = "html+smart"
+input = "<p>\"He .'\".' x\".</p>"
+
+[[case]]
+id = "nestedquote-089"
+from = "html+smart"
+input = "<p>'He it's\"a\"y\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-090"
+from = "html+smart"
+input = "<p>\"He a'' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-091"
+from = "html+smart"
+input = "<p>\"He ' 'it's'' x\".</p>"
+
+[[case]]
+id = "nestedquote-092"
+from = "html+smart"
+input = "<p>\"He  \"'\" ' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-093"
+from = "html+smart"
+input = "<p>\"He  \"'' \" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-094"
+from = "html+smart"
+input = "<p>'He dogs'\"\"y\" '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-095"
+from = "html+smart"
+input = "<p>'He ' \" 'x'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-096"
+from = "html+smart"
+input = "<p>\"He -'\"y\"\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-097"
+from = "html+smart"
+input = "<p>\"He  \"'. '' x\".</p>"
+
+[[case]]
+id = "nestedquote-098"
+from = "html+smart"
+input = "<p>'He \" \" ''\" x'.</p>"
+
+[[case]]
+id = "nestedquote-099"
+from = "html+smart"
+input = "<p>'He .\"'x'a\" x'.</p>"
+
+[[case]]
+id = "nestedquote-100"
+from = "html+smart"
+input = "<p>'He 'x'\"dogs'-\" x'.</p>"
+
+[[case]]
+id = "nestedquote-101"
+from = "html+smart"
+input = "<p>'He '\" \"\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-102"
+from = "html+smart"
+input = "<p>\"He \"y\"'.'' x\".</p>"
+
+[[case]]
+id = "nestedquote-103"
+from = "html+smart"
+input = "<p>\"He -'' \" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-104"
+from = "html+smart"
+input = "<p>\"He \"y\"'-a' x\".</p>"
+
+[[case]]
+id = "nestedquote-105"
+from = "html+smart"
+input = "<p>'He \"\"\" it's\" x'.</p>"
+
+[[case]]
+id = "nestedquote-106"
+from = "html+smart"
+input = "<p>\"He a'..' x\".</p>"
+
+[[case]]
+id = "nestedquote-107"
+from = "html+smart"
+input = "<p>'He '\".\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-108"
+from = "html+smart"
+input = "<p>\"He \"' \".' x\".</p>"
+
+[[case]]
+id = "nestedquote-109"
+from = "html+smart"
+input = "<p>'He \"y\"\"\"y\"\" \" x'.</p>"
+
+[[case]]
+id = "nestedquote-110"
+from = "html+smart"
+input = "<p>'He a\".'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-111"
+from = "html+smart"
+input = "<p>'He .\" \"it's\" x'.</p>"
+
+[[case]]
+id = "nestedquote-112"
+from = "html+smart"
+input = "<p>\"He dogs''\"y\"\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-113"
+from = "html+smart"
+input = "<p>\"He \"'-\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-114"
+from = "html+smart"
+input = "<p>'He 'x'\"  \"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-115"
+from = "html+smart"
+input = "<p>'He  \". \"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-116"
+from = "html+smart"
+input = "<p>\"He .'\"\"y\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-117"
+from = "html+smart"
+input = "<p>\"He .''  ' x\".</p>"
+
+[[case]]
+id = "nestedquote-118"
+from = "html+smart"
+input = "<p>'He  \"-'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-119"
+from = "html+smart"
+input = "<p>\"He '''x'a' x\".</p>"
+
+[[case]]
+id = "nestedquote-120"
+from = "html+smart"
+input = "<p>\"He \" '\"y\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-121"
+from = "html+smart"
+input = "<p>\"He a'dogs'\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-122"
+from = "html+smart"
+input = "<p>'He .\"  '\" x'.</p>"
+
+[[case]]
+id = "nestedquote-123"
+from = "html+smart"
+input = "<p>\"He it's'.dogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-124"
+from = "html+smart"
+input = "<p>'He  \"\"\"\"y\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-125"
+from = "html+smart"
+input = "<p>'He  \"it'sit's\" x'.</p>"
+
+[[case]]
+id = "nestedquote-126"
+from = "html+smart"
+input = "<p>'He -\"'x'.\" x'.</p>"
+
+[[case]]
+id = "nestedquote-127"
+from = "html+smart"
+input = "<p>'He a\"dogs'\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-128"
+from = "html+smart"
+input = "<p>'He \"\"dogs'dogs'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-129"
+from = "html+smart"
+input = "<p>'He dogs'\"' a\" x'.</p>"
+
+[[case]]
+id = "nestedquote-130"
+from = "html+smart"
+input = "<p>\"He .'a'x'' x\".</p>"
+
+[[case]]
+id = "nestedquote-131"
+from = "html+smart"
+input = "<p>\"He ' '\"it's' x\".</p>"
+
+[[case]]
+id = "nestedquote-132"
+from = "html+smart"
+input = "<p>'He  \"dogs'\" \" x'.</p>"
+
+[[case]]
+id = "nestedquote-133"
+from = "html+smart"
+input = "<p>'He  '\"\"y\".\" x'.</p>"
+
+[[case]]
+id = "nestedquote-134"
+from = "html+smart"
+input = "<p>\"He \"'' dogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-135"
+from = "html+smart"
+input = "<p>'He .\" '-\" x'.</p>"
+
+[[case]]
+id = "nestedquote-136"
+from = "html+smart"
+input = "<p>\"He .'\"y\" '' x\".</p>"
+
+[[case]]
+id = "nestedquote-137"
+from = "html+smart"
+input = "<p>'He \" \"'x'-\" x'.</p>"
+
+[[case]]
+id = "nestedquote-138"
+from = "html+smart"
+input = "<p>'He \"y\"\" \"\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-139"
+from = "html+smart"
+input = "<p>'He  \"\" ' \" x'.</p>"
+
+[[case]]
+id = "nestedquote-140"
+from = "html+smart"
+input = "<p>\"He a' \"\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-141"
+from = "html+smart"
+input = "<p>'He -\" ''x'\" x'.</p>"
+
+[[case]]
+id = "nestedquote-142"
+from = "html+smart"
+input = "<p>\"He  ' ''x'' x\".</p>"
+
+[[case]]
+id = "nestedquote-143"
+from = "html+smart"
+input = "<p>'He 'x'\"-it's\" x'.</p>"
+
+[[case]]
+id = "nestedquote-144"
+from = "html+smart"
+input = "<p>\"He ''dogs'\"y\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-145"
+from = "html+smart"
+input = "<p>\"He 'x''- ' x\".</p>"
+
+[[case]]
+id = "nestedquote-146"
+from = "html+smart"
+input = "<p>\"He  '' 'a' x\".</p>"
+
+[[case]]
+id = "nestedquote-147"
+from = "html+smart"
+input = "<p>\"He '' \"\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-148"
+from = "html+smart"
+input = "<p>\"He -'-a' x\".</p>"
+
+[[case]]
+id = "nestedquote-149"
+from = "html+smart"
+input = "<p>\"He \" '\" -' x\".</p>"
+
+[[case]]
+id = "nestedquote-150"
+from = "html+smart"
+input = "<p>\"He  \"'\"\" ' x\".</p>"
+
+[[case]]
+id = "nestedquote-151"
+from = "html+smart"
+input = "<p>'He dogs'\"'x' \"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-152"
+from = "html+smart"
+input = "<p>\"He .'. \"' x\".</p>"
+
+[[case]]
+id = "nestedquote-153"
+from = "html+smart"
+input = "<p>\"He it's'-\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-154"
+from = "html+smart"
+input = "<p>'He \" \" \".\" x'.</p>"
+
+[[case]]
+id = "nestedquote-155"
+from = "html+smart"
+input = "<p>\"He dogs''' 'x'' x\".</p>"
+
+[[case]]
+id = "nestedquote-156"
+from = "html+smart"
+input = "<p>\"He -'it'sa' x\".</p>"
+
+[[case]]
+id = "nestedquote-157"
+from = "html+smart"
+input = "<p>'He  \"\"dogs'\"y\"\" x'.</p>"
+
+[[case]]
+id = "nestedquote-158"
+from = "html+smart"
+input = "<p>\"He dogs''-\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-159"
+from = "html+smart"
+input = "<p>'He \" \"'-\" x'.</p>"
+
+[[case]]
+id = "nestedquote-160"
+from = "html+smart"
+input = "<p>\"He  '' ' \"' x\".</p>"
+
+[[case]]
+id = "nestedquote-161"
+from = "html+smart"
+input = "<p>'He -\"'a\" x'.</p>"
+
+[[case]]
+id = "nestedquote-162"
+from = "html+smart"
+input = "<p>\"He ' '\" \"y\"' x\".</p>"
+
+[[case]]
+id = "nestedquote-163"
+from = "html+smart"
+input = "<p>\"He a'' ' ' x\".</p>"
+
+[[case]]
+id = "nestedquote-164"
+from = "html+smart"
+input = "<p>'He a\"\"y\"' \" x'.</p>"
+
+[[case]]
+id = "nestedquote-165"
+from = "html+smart"
+input = "<p>\"He \" '''x'' x\".</p>"
+
+[[case]]
+id = "nestedquote-166"
+from = "html+smart"
+input = "<p>'He -\"' a\" x'.</p>"
+
+[[case]]
+id = "nestedquote-167"
+from = "html+smart"
+input = "<p>\"He ''dogs'dogs'' x\".</p>"
+
+[[case]]
+id = "nestedquote-168"
+from = "html+smart"
+input = "<p>\"He .'' -' x\".</p>"
+
+[[case]]
+id = "nestedquote-169"
+from = "html+smart"
+input = "<p>\"He \" 'it's \"' x\".</p>"
+
+[[case]]
+id = "nestedquote-170"
+from = "html+smart"
+input = "<p>b</em><em>1\"</p>"
+
+[[case]]
+id = "nestedquote-171"
+from = "html+smart"
+input = "<p>\"\u2019a\"'<em>b\"a.</em>-</p>"
+
+[[case]]
+id = "nestedquote-172"
+from = "html+smart"
+input = "<p> ba<em>\"-'\"<em>-<em>1</p>"
+
+[[case]]
+id = "nestedquote-173"
+from = "html+smart"
+input = "<p>b</em>a11b</p>"
+
+[[case]]
+id = "nestedquote-174"
+from = "html+smart"
+input = "<p>b</em> </p>"
+
+[[case]]
+id = "nestedquote-175"
+from = "html+smart"
+input = "<p>.\u20191.-</em></p>"
+
+[[case]]
+id = "nestedquote-176"
+from = "html+smart"
+input = "<p></em>\u2019\u2019a1''</em></p>"
+
+[[case]]
+id = "nestedquote-177"
+from = "html+smart"
+input = "<p>1'bb.'.--</em></p>"
+
+[[case]]
+id = "nestedquote-178"
+from = "html+smart"
+input = "<p>\u2019'<em> </p>"
+
+[[case]]
+id = "nestedquote-179"
+from = "html+smart"
+input = "<p>1'b<em></em>b'.\u2019\u2019\u2019</p>"
+
+[[case]]
+id = "nestedquote-180"
+from = "html+smart"
+input = "<p>b-.'</em>\"1</p>"
+
+[[case]]
+id = "nestedquote-181"
+from = "html+smart"
+input = "<p>\u2019</em>a .' '''</p>"
+
+[[case]]
+id = "nestedquote-182"
+from = "html+smart"
+input = "<p>.''- bb<em></p>"
+
+[[case]]
+id = "nestedquote-183"
+from = "html+smart"
+input = "<p><em>.-a</em>..</p>"
+
+[[case]]
+id = "nestedquote-184"
+from = "html+smart"
+input = "<p> -1b1</em>1\"</p>"
+
+[[case]]
+id = "nestedquote-185"
+from = "html+smart"
+input = "<p>b ' </em>b\"</em>-</p>"
+
+[[case]]
+id = "nestedquote-186"
+from = "html+smart"
+input = "<p> bab-\"\". </p>"
+
+[[case]]
+id = "nestedquote-187"
+from = "html+smart"
+input = "<p>\u2019'' b \"</p>"
+
+[[case]]
+id = "nestedquote-188"
+from = "html+smart"
+input = "<p> -.b'a</p>"
+
+[[case]]
+id = "nestedquote-189"
+from = "html+smart"
+input = "<p>11\u2019''-b<em> b-</p>"
+
+[[case]]
+id = "nestedquote-190"
+from = "html+smart"
+input = "<p>-b '</em>b\u2019</em></p>"
+
+[[case]]
+id = "nestedquote-191"
+from = "html+smart"
+input = "<p>b</em>''a\u2019</p>"
+
+[[case]]
+id = "nestedquote-192"
+from = "html+smart"
+input = "<p></em>b b'-b</p>"
+
+[[case]]
+id = "nestedquote-193"
+from = "html+smart"
+input = "<p>.1\".bb\" a' </p>"
+
+[[case]]
+id = "nestedquote-194"
+from = "html+smart"
+input = "<p>b <em>aaa\u2019ba</p>"
+
+[[case]]
+id = "nestedquote-195"
+from = "html+smart"
+input = "<p>b'-<em>'1</em>'\u2019 </p>"
+
+[[case]]
+id = "nestedquote-196"
+from = "html+smart"
+input = "<p>.a<em></em>\u2019 \"</p>"
+
+[[case]]
+id = "nestedquote-197"
+from = "html+smart"
+input = "<p>'<em>1' b1-<em>.aa</p>"
+
+[[case]]
+id = "nestedquote-198"
+from = "html+smart"
+input = "<p>11 . .-\u2019\u2019</p>"
+
+[[case]]
+id = "nestedquote-199"
+from = "html+smart"
+input = "<p>'aa1.1</em></em></p>"
+
+[[case]]
+id = "nestedquote-200"
+from = "html+smart"
+input = "<p>.<em>.-.</em>b</p>"
+
+[[case]]
+id = "nestedquote-201"
+from = "html+smart"
+input = "<p>b\"</em>\u2019<em>\"</p>"
+
+[[case]]
+id = "nestedquote-202"
+from = "html+smart"
+input = "<p>.  a</p>"
+
+[[case]]
+id = "nestedquote-203"
+from = "html+smart"
+input = "<p>.1.\u2019</p>"
+
+[[case]]
+id = "nestedquote-204"
+from = "html+smart"
+input = "<p>1<em>--</p>"
+
+[[case]]
+id = "nestedquote-205"
+from = "html+smart"
+input = "<p>\"</em>  '\u2019b''1</p>"
+
+[[case]]
+id = "nestedquote-206"
+from = "html+smart"
+input = "<p> .--</p>"
+
+[[case]]
+id = "nestedquote-207"
+from = "html+smart"
+input = "<p>aa.1\u2019\u2019<em></p>"
+
+[[case]]
+id = "nestedquote-208"
+from = "html+smart"
+input = "<p>\u2019-.\u2019 \u2019-'\u2019-</p>"
+
+[[case]]
+id = "nestedquote-209"
+from = "html+smart"
+input = "<p>\"\u2019.a\u2019-</em>bb</p>"
+
+[[case]]
+id = "nestedquote-210"
+from = "html+smart"
+input = "<p>.</em>bab<em> - <em>'.</p>"
+
+[[case]]
+id = "nestedquote-211"
+from = "html+smart"
+input = "<p><em></em>'.a-\u2019\u2019</em>b-</p>"
+
+[[case]]
+id = "nestedquote-212"
+from = "html+smart"
+input = "<p>--\u2019<em></p>"
+
+[[case]]
+id = "nestedquote-213"
+from = "html+smart"
+input = "<p>b\u2019 b</em>b1-a</p>"
+
+[[case]]
+id = "nestedquote-214"
+from = "html+smart"
+input = "<p>.\"  -'-</p>"
+
+[[case]]
+id = "nestedquote-215"
+from = "html+smart"
+input = "<p>-</em>a</em></p>"
+
+[[case]]
+id = "nestedquote-216"
+from = "html+smart"
+input = "<p>.ba \"<em>1b</p>"
+
+[[case]]
+id = "nestedquote-217"
+from = "html+smart"
+input = "<p>'b\"\"a</em></em><em> </em> a</p>"
+
+[[case]]
+id = "nestedquote-218"
+from = "html+smart"
+input = "<p>\u2019'1\u2019-.b--.\u2019-</p>"
+
+[[case]]
+id = "nestedquote-219"
+from = "html+smart"
+input = "<p></em>11a</p>"
+
+[[case]]
+id = "nestedquote-220"
+from = "html+smart"
+input = "<p>bb1\u2019a </p>"
+
+[[case]]
+id = "nestedquote-221"
+from = "html+smart"
+input = "<p>\u20191'<em>.-ba</p>"
+
+[[case]]
+id = "nestedquote-222"
+from = "html+smart"
+input = "<p>\".a1<em>-1..1-</p>"
+
+[[case]]
+id = "nestedquote-223"
+from = "html+smart"
+input = "<p>\"1</em> '<em></em></em>b</p>"
+
+[[case]]
+id = "nestedquote-224"
+from = "html+smart"
+input = "<p>b'-  </em></em></p>"
+
+[[case]]
+id = "nestedquote-225"
+from = "html+smart"
+input = "<p>.a\u2019. b</p>"
+
+[[case]]
+id = "nestedquote-226"
+from = "html+smart"
+input = "<p>.\u2019<em>ba-\u2019''a</p>"
+
+[[case]]
+id = "nestedquote-227"
+from = "html+smart"
+input = "<p>\u2019' ba\u2019b-\"</p>"
+
+[[case]]
+id = "nestedquote-228"
+from = "html+smart"
+input = "<p>-.1'<em>b\"<em>1'.</p>"
+
+[[case]]
+id = "nestedquote-229"
+from = "html+smart"
+input = "<p></em>1\u2019</em>b\"'a\"1\u2019</p>"

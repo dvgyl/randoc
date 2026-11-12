@@ -2514,3 +2514,1113 @@ input = "<div class=\"line-block\">a\n<br>\nb\n</div>"
 [[case]]
 id = "lbnewline-006"
 input = "<div class=\"line-block\">a<span>\n</span>b</div>"
+
+[[case]]
+id = "textarea-001"
+from = "html+raw_html"
+input = "<textarea>&amp;amp;</textarea>"
+
+[[case]]
+id = "textarea-002"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&amp;amp;</textarea></p>"
+
+[[case]]
+id = "textarea-003"
+from = "html+raw_html"
+input = "<textarea>&lt;b&gt;</textarea>"
+
+[[case]]
+id = "textarea-004"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&lt;b&gt;</textarea></p>"
+
+[[case]]
+id = "textarea-005"
+from = "html+raw_html"
+input = "<textarea>a&b</textarea>"
+
+[[case]]
+id = "textarea-006"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a&b</textarea></p>"
+
+[[case]]
+id = "textarea-007"
+from = "html+raw_html"
+input = "<textarea>a<b</textarea>"
+
+[[case]]
+id = "textarea-008"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a<b</textarea></p>"
+
+[[case]]
+id = "textarea-009"
+from = "html+raw_html"
+input = "<textarea>a>b</textarea>"
+
+[[case]]
+id = "textarea-010"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a>b</textarea></p>"
+
+[[case]]
+id = "textarea-011"
+from = "html+raw_html"
+input = "<textarea>a\"b</textarea>"
+
+[[case]]
+id = "textarea-012"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a\"b</textarea></p>"
+
+[[case]]
+id = "textarea-013"
+from = "html+raw_html"
+input = "<textarea>a'b</textarea>"
+
+[[case]]
+id = "textarea-014"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a'b</textarea></p>"
+
+[[case]]
+id = "textarea-015"
+from = "html+raw_html"
+input = "<textarea>&quot;</textarea>"
+
+[[case]]
+id = "textarea-016"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&quot;</textarea></p>"
+
+[[case]]
+id = "textarea-017"
+from = "html+raw_html"
+input = "<textarea>&#39;</textarea>"
+
+[[case]]
+id = "textarea-018"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&#39;</textarea></p>"
+
+[[case]]
+id = "textarea-019"
+from = "html+raw_html"
+input = "<textarea>&nbsp;</textarea>"
+
+[[case]]
+id = "textarea-020"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&nbsp;</textarea></p>"
+
+[[case]]
+id = "textarea-021"
+from = "html+raw_html"
+input = "<textarea>&copy;</textarea>"
+
+[[case]]
+id = "textarea-022"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&copy;</textarea></p>"
+
+[[case]]
+id = "textarea-023"
+from = "html+raw_html"
+input = "<textarea>&#x41;</textarea>"
+
+[[case]]
+id = "textarea-024"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&#x41;</textarea></p>"
+
+[[case]]
+id = "textarea-025"
+from = "html+raw_html"
+input = "<textarea>&#60;</textarea>"
+
+[[case]]
+id = "textarea-026"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&#60;</textarea></p>"
+
+[[case]]
+id = "textarea-027"
+from = "html+raw_html"
+input = "<textarea>&gt;</textarea>"
+
+[[case]]
+id = "textarea-028"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&gt;</textarea></p>"
+
+[[case]]
+id = "textarea-029"
+from = "html+raw_html"
+input = "<textarea><b>x</b></textarea>"
+
+[[case]]
+id = "textarea-030"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\"><b>x</b></textarea></p>"
+
+[[case]]
+id = "textarea-031"
+from = "html+raw_html"
+input = "<textarea>a\nb</textarea>"
+
+[[case]]
+id = "textarea-032"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a\nb</textarea></p>"
+
+[[case]]
+id = "textarea-033"
+from = "html+raw_html"
+input = "<textarea>&amp</textarea>"
+
+[[case]]
+id = "textarea-034"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&amp</textarea></p>"
+
+[[case]]
+id = "textarea-035"
+from = "html+raw_html"
+input = "<textarea>&unknown;</textarea>"
+
+[[case]]
+id = "textarea-036"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&unknown;</textarea></p>"
+
+[[case]]
+id = "textarea-037"
+from = "html+raw_html"
+input = "<textarea>x&lt;/textarea&gt;y</textarea>"
+
+[[case]]
+id = "textarea-038"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">x&lt;/textarea&gt;y</textarea></p>"
+
+[[case]]
+id = "textarea-039"
+from = "html+raw_html"
+input = "<textarea>\u00e9</textarea>"
+
+[[case]]
+id = "textarea-040"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">\u00e9</textarea></p>"
+
+[[case]]
+id = "textarea-041"
+from = "html+raw_html"
+input = "<textarea>&#x1F600;</textarea>"
+
+[[case]]
+id = "textarea-042"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&#x1F600;</textarea></p>"
+
+[[case]]
+id = "textarea-043"
+from = "html+raw_html"
+input = "<textarea>&#0;</textarea>"
+
+[[case]]
+id = "textarea-044"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&#0;</textarea></p>"
+
+[[case]]
+id = "textarea-045"
+from = "html+raw_html"
+input = "<textarea>&#13;</textarea>"
+
+[[case]]
+id = "textarea-046"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">&#13;</textarea></p>"
+
+[[case]]
+id = "textarea-047"
+from = "html+raw_html"
+input = "<textarea>a &amp; b <!-- c --> d</textarea>"
+
+[[case]]
+id = "textarea-048"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\">a &amp; b <!-- c --> d</textarea></p>"
+
+[[case]]
+id = "textarea-049"
+from = "html+raw_html"
+input = "<textarea><![CDATA[x]]></textarea>"
+
+[[case]]
+id = "textarea-050"
+from = "html+raw_html"
+input = "<p>x<textarea name=\"n&amp;\"><![CDATA[x]]></textarea></p>"
+
+[[case]]
+id = "textarea-051"
+from = "html+raw_html"
+input = "<textarea title='a\"b'>x</textarea>"
+
+[[case]]
+id = "textarea-052"
+from = "html"
+input = "<textarea>&amp;amp;</textarea>"
+
+[[case]]
+id = "textarea-053"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&amp;amp;</textarea></p>"
+
+[[case]]
+id = "textarea-054"
+from = "html"
+input = "<textarea>&lt;b&gt;</textarea>"
+
+[[case]]
+id = "textarea-055"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&lt;b&gt;</textarea></p>"
+
+[[case]]
+id = "textarea-056"
+from = "html"
+input = "<textarea>a&b</textarea>"
+
+[[case]]
+id = "textarea-057"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a&b</textarea></p>"
+
+[[case]]
+id = "textarea-058"
+from = "html"
+input = "<textarea>a<b</textarea>"
+
+[[case]]
+id = "textarea-059"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a<b</textarea></p>"
+
+[[case]]
+id = "textarea-060"
+from = "html"
+input = "<textarea>a>b</textarea>"
+
+[[case]]
+id = "textarea-061"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a>b</textarea></p>"
+
+[[case]]
+id = "textarea-062"
+from = "html"
+input = "<textarea>a\"b</textarea>"
+
+[[case]]
+id = "textarea-063"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a\"b</textarea></p>"
+
+[[case]]
+id = "textarea-064"
+from = "html"
+input = "<textarea>a'b</textarea>"
+
+[[case]]
+id = "textarea-065"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a'b</textarea></p>"
+
+[[case]]
+id = "textarea-066"
+from = "html"
+input = "<textarea>&quot;</textarea>"
+
+[[case]]
+id = "textarea-067"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&quot;</textarea></p>"
+
+[[case]]
+id = "textarea-068"
+from = "html"
+input = "<textarea>&#39;</textarea>"
+
+[[case]]
+id = "textarea-069"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&#39;</textarea></p>"
+
+[[case]]
+id = "textarea-070"
+from = "html"
+input = "<textarea>&nbsp;</textarea>"
+
+[[case]]
+id = "textarea-071"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&nbsp;</textarea></p>"
+
+[[case]]
+id = "textarea-072"
+from = "html"
+input = "<textarea>&copy;</textarea>"
+
+[[case]]
+id = "textarea-073"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&copy;</textarea></p>"
+
+[[case]]
+id = "textarea-074"
+from = "html"
+input = "<textarea>&#x41;</textarea>"
+
+[[case]]
+id = "textarea-075"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&#x41;</textarea></p>"
+
+[[case]]
+id = "textarea-076"
+from = "html"
+input = "<textarea>&#60;</textarea>"
+
+[[case]]
+id = "textarea-077"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&#60;</textarea></p>"
+
+[[case]]
+id = "textarea-078"
+from = "html"
+input = "<textarea>&gt;</textarea>"
+
+[[case]]
+id = "textarea-079"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&gt;</textarea></p>"
+
+[[case]]
+id = "textarea-080"
+from = "html"
+input = "<textarea><b>x</b></textarea>"
+
+[[case]]
+id = "textarea-081"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\"><b>x</b></textarea></p>"
+
+[[case]]
+id = "textarea-082"
+from = "html"
+input = "<textarea>a\nb</textarea>"
+
+[[case]]
+id = "textarea-083"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a\nb</textarea></p>"
+
+[[case]]
+id = "textarea-084"
+from = "html"
+input = "<textarea>&amp</textarea>"
+
+[[case]]
+id = "textarea-085"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&amp</textarea></p>"
+
+[[case]]
+id = "textarea-086"
+from = "html"
+input = "<textarea>&unknown;</textarea>"
+
+[[case]]
+id = "textarea-087"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&unknown;</textarea></p>"
+
+[[case]]
+id = "textarea-088"
+from = "html"
+input = "<textarea>x&lt;/textarea&gt;y</textarea>"
+
+[[case]]
+id = "textarea-089"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">x&lt;/textarea&gt;y</textarea></p>"
+
+[[case]]
+id = "textarea-090"
+from = "html"
+input = "<textarea>\u00e9</textarea>"
+
+[[case]]
+id = "textarea-091"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">\u00e9</textarea></p>"
+
+[[case]]
+id = "textarea-092"
+from = "html"
+input = "<textarea>&#x1F600;</textarea>"
+
+[[case]]
+id = "textarea-093"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&#x1F600;</textarea></p>"
+
+[[case]]
+id = "textarea-094"
+from = "html"
+input = "<textarea>&#0;</textarea>"
+
+[[case]]
+id = "textarea-095"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&#0;</textarea></p>"
+
+[[case]]
+id = "textarea-096"
+from = "html"
+input = "<textarea>&#13;</textarea>"
+
+[[case]]
+id = "textarea-097"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">&#13;</textarea></p>"
+
+[[case]]
+id = "textarea-098"
+from = "html"
+input = "<textarea>a &amp; b <!-- c --> d</textarea>"
+
+[[case]]
+id = "textarea-099"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\">a &amp; b <!-- c --> d</textarea></p>"
+
+[[case]]
+id = "textarea-100"
+from = "html"
+input = "<textarea><![CDATA[x]]></textarea>"
+
+[[case]]
+id = "textarea-101"
+from = "html"
+input = "<p>x<textarea name=\"n&amp;\"><![CDATA[x]]></textarea></p>"
+
+[[case]]
+id = "textarea-102"
+from = "html"
+input = "<textarea title='a\"b'>x</textarea>"
+
+[[case]]
+id = "textarea-103"
+from = "html+raw_html"
+input = "<textarea>a&amp;b<i>&lt;</i></textarea>"
+
+[[case]]
+id = "textarea-104"
+from = "html+raw_html"
+input = "<textarea>a&amp;b<i>&lt;</i>"
+
+[[case]]
+id = "textarea-105"
+from = "html+raw_html"
+input = "<textarea>x<script>a&amp;b</script>y</textarea>"
+
+[[case]]
+id = "textarea-106"
+from = "html+raw_html"
+input = "<textarea>x<script>a&amp;b</script>y"
+
+[[case]]
+id = "textarea-107"
+from = "html+raw_html"
+input = "<textarea><style>&amp;</style></textarea>"
+
+[[case]]
+id = "textarea-108"
+from = "html+raw_html"
+input = "<textarea><style>&amp;</style>"
+
+[[case]]
+id = "textarea-109"
+from = "html+raw_html"
+input = "<textarea>a<b>&amp;</b></textarea>"
+
+[[case]]
+id = "textarea-110"
+from = "html+raw_html"
+input = "<textarea>a<b>&amp;</b>"
+
+[[case]]
+id = "textarea-111"
+from = "html"
+input = "<textarea>a&amp;b<i>&lt;</i></textarea>"
+
+[[case]]
+id = "textarea-112"
+from = "html"
+input = "<textarea>a&amp;b<i>&lt;</i>"
+
+[[case]]
+id = "textarea-113"
+from = "html"
+input = "<textarea>x<script>a&amp;b</script>y</textarea>"
+
+[[case]]
+id = "textarea-114"
+from = "html"
+input = "<textarea>x<script>a&amp;b</script>y"
+
+[[case]]
+id = "textarea-115"
+from = "html"
+input = "<textarea><style>&amp;</style></textarea>"
+
+[[case]]
+id = "textarea-116"
+from = "html"
+input = "<textarea><style>&amp;</style>"
+
+[[case]]
+id = "textarea-117"
+from = "html"
+input = "<textarea>a<b>&amp;</b></textarea>"
+
+[[case]]
+id = "textarea-118"
+from = "html"
+input = "<textarea>a<b>&amp;</b>"
+
+[[case]]
+id = "textarea-119"
+from = "html+raw_html"
+input = "<style>a&amp;b</style>"
+
+[[case]]
+id = "textarea-120"
+from = "html+raw_html"
+input = "<p><style>a&amp;b</style></p>"
+
+[[case]]
+id = "textarea-121"
+from = "html+raw_html"
+input = "<textarea><style>a&amp;b</style>&amp;</textarea>"
+
+[[case]]
+id = "textarea-122"
+from = "html+raw_html"
+input = "<textarea><script>a&lt;b</script>&lt;</textarea>"
+
+[[case]]
+id = "mainattr-001"
+from = "html"
+input = "<main id=\"m\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-002"
+from = "html"
+input = "<main class=\"c\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-003"
+from = "html"
+input = "<main class=\"c\" data-x=\"y\">x</main>"
+
+[[case]]
+id = "mainattr-004"
+from = "html"
+input = "<main hidden id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-005"
+from = "html"
+input = "<main title=\"t\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-006"
+from = "html-native_divs"
+input = "<main x=\"1\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-007"
+from = "html-native_divs"
+input = "<main role=\"r\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-008"
+from = "html"
+input = "<main dir=\"rtl\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-009"
+from = "html"
+input = "<main style=\"color:red\" hidden>x</main>"
+
+[[case]]
+id = "mainattr-010"
+from = "html-native_divs"
+input = "<main lang=\"en\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-011"
+from = "html"
+input = "<main lang=\"en\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-012"
+from = "html-native_divs"
+input = "<main x=\"1\" hidden>x</main>"
+
+[[case]]
+id = "mainattr-013"
+from = "html"
+input = "<main x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-014"
+from = "html-native_divs"
+input = "<main lang=\"en\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-015"
+from = "html-native_divs"
+input = "<main role=\"r\" hidden>x</main>"
+
+[[case]]
+id = "mainattr-016"
+from = "html"
+input = "<main title=\"t\" data-x=\"y\">x</main>"
+
+[[case]]
+id = "mainattr-017"
+from = "html-native_divs"
+input = "<main x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-018"
+from = "html-native_divs"
+input = "<main style=\"color:red\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-019"
+from = "html"
+input = "<main hidden x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-020"
+from = "html-native_divs"
+input = "<main data-x=\"y\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-021"
+from = "html"
+input = "<main hidden title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-022"
+from = "html-native_divs"
+input = "<main title=\"t\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-023"
+from = "html-native_divs"
+input = "<main id=\"m\" data-x=\"y\">x</main>"
+
+[[case]]
+id = "mainattr-024"
+from = "html-native_divs"
+input = "<main class=\"c\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-025"
+from = "html"
+input = "<main role=\"r\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-026"
+from = "html-native_divs"
+input = "<main x=\"1\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-027"
+from = "html"
+input = "<main role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-028"
+from = "html"
+input = "<main hidden class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-029"
+from = "html-native_divs"
+input = "<main id=\"m\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-030"
+from = "html"
+input = "<main dir=\"rtl\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-031"
+from = "html"
+input = "<main hidden style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-032"
+from = "html-native_divs"
+input = "<main role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-033"
+from = "html-native_divs"
+input = "<main data-x=\"y\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-034"
+from = "html"
+input = "<main title=\"t\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-035"
+from = "html-native_divs"
+input = "<main title=\"t\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-036"
+from = "html"
+input = "<main title=\"t\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-037"
+from = "html"
+input = "<main style=\"color:red\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-038"
+from = "html"
+input = "<main style=\"color:red\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-039"
+from = "html"
+input = "<main style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-040"
+from = "html-native_divs"
+input = "<main role=\"r\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-041"
+from = "html"
+input = "<main x=\"1\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-042"
+from = "html"
+input = "<main title=\"t\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-043"
+from = "html"
+input = "<main data-x=\"y\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-044"
+from = "html-native_divs"
+input = "<main dir=\"rtl\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-045"
+from = "html-native_divs"
+input = "<main style=\"color:red\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-046"
+from = "html-native_divs"
+input = "<main hidden style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-047"
+from = "html-native_divs"
+input = "<main data-x=\"y\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-048"
+from = "html-native_divs"
+input = "<main role=\"r\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-049"
+from = "html"
+input = "<main title=\"t\" hidden>x</main>"
+
+[[case]]
+id = "mainattr-050"
+from = "html-native_divs"
+input = "<main id=\"m\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-051"
+from = "html-native_divs"
+input = "<main lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-052"
+from = "html-native_divs"
+input = "<main role=\"r\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-053"
+from = "html-native_divs"
+input = "<main x=\"1\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-054"
+from = "html"
+input = "<main x=\"1\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-055"
+from = "html-native_divs"
+input = "<main lang=\"en\" hidden>x</main>"
+
+[[case]]
+id = "mainattr-056"
+from = "html-native_divs"
+input = "<main lang=\"en\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-057"
+from = "html"
+input = "<main title=\"t\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-058"
+from = "html-native_divs"
+input = "<main id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-059"
+from = "html-native_divs"
+input = "<main id=\"m\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-060"
+from = "html-native_divs"
+input = "<main data-x=\"y\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-061"
+from = "html"
+input = "<main style=\"color:red\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-062"
+from = "html-native_divs"
+input = "<main class=\"c\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-063"
+from = "html"
+input = "<main role=\"r\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-064"
+from = "html-native_divs"
+input = "<main class=\"c\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-065"
+from = "html-native_divs"
+input = "<main dir=\"rtl\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-066"
+from = "html-native_divs"
+input = "<main x=\"1\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-067"
+from = "html-native_divs"
+input = "<main hidden title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-068"
+from = "html-native_divs"
+input = "<main id=\"m\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-069"
+from = "html-native_divs"
+input = "<main lang=\"en\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-070"
+from = "html"
+input = "<main x=\"1\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-071"
+from = "html-native_divs"
+input = "<main lang=\"en\" data-x=\"y\">x</main>"
+
+[[case]]
+id = "mainattr-072"
+from = "html-native_divs"
+input = "<main class=\"c\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-073"
+from = "html"
+input = "<main style=\"color:red\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-074"
+from = "html-native_divs"
+input = "<main style=\"color:red\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-075"
+from = "html-native_divs"
+input = "<main role=\"r\" data-x=\"y\">x</main>"
+
+[[case]]
+id = "mainattr-076"
+from = "html-native_divs"
+input = "<main id=\"m\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-077"
+from = "html-native_divs"
+input = "<main data-x=\"y\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-078"
+from = "html-native_divs"
+input = "<main hidden class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-079"
+from = "html-native_divs"
+input = "<main style=\"color:red\" data-x=\"y\">x</main>"
+
+[[case]]
+id = "mainattr-080"
+from = "html"
+input = "<main hidden role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-081"
+from = "html-native_divs"
+input = "<main title=\"t\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-082"
+from = "html"
+input = "<main style=\"color:red\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-083"
+from = "html"
+input = "<main title=\"t\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-084"
+from = "html"
+input = "<main title=\"t\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-085"
+from = "html-native_divs"
+input = "<main title=\"t\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-086"
+from = "html-native_divs"
+input = "<main title=\"t\" lang=\"en\">x</main>"
+
+[[case]]
+id = "mainattr-087"
+from = "html-native_divs"
+input = "<main lang=\"en\" title=\"t\">x</main>"
+
+[[case]]
+id = "mainattr-088"
+from = "html-native_divs"
+input = "<main hidden id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-089"
+from = "html-native_divs"
+input = "<main dir=\"rtl\" style=\"color:red\">x</main>"
+
+[[case]]
+id = "mainattr-090"
+from = "html"
+input = "<main role=\"r\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-091"
+from = "html-native_divs"
+input = "<main title=\"t\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-092"
+from = "html-native_divs"
+input = "<main data-x=\"y\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-093"
+from = "html-native_divs"
+input = "<main style=\"color:red\" id=\"m\">x</main>"
+
+[[case]]
+id = "mainattr-094"
+from = "html"
+input = "<main dir=\"rtl\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-095"
+from = "html"
+input = "<main lang=\"en\" role=\"r\">x</main>"
+
+[[case]]
+id = "mainattr-096"
+from = "html-native_divs"
+input = "<main role=\"r\" x=\"1\">x</main>"
+
+[[case]]
+id = "mainattr-097"
+from = "html-native_divs"
+input = "<main lang=\"en\" class=\"c\">x</main>"
+
+[[case]]
+id = "mainattr-098"
+from = "html"
+input = "<main class=\"c\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-099"
+from = "html"
+input = "<main style=\"color:red\" dir=\"rtl\">x</main>"
+
+[[case]]
+id = "mainattr-100"
+from = "html"
+input = "<main role=\"r\" id=\"m\">x</main>"
