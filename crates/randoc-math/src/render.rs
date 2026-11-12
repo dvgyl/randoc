@@ -6,6 +6,7 @@ use randoc_ast::{Attr, Inline};
 
 use crate::symbols::{ACCENT_SYMBOLS, SYMBOLS, VARIANTS};
 use crate::tree::{Aligns, Alphabet, Class, Exp, Row, Wrap};
+use crate::unprintable::UNPRINTABLE;
 
 /// Large operators that take their scripts above and below in display math.
 const LIMIT_OPS: &[&str] = &[
@@ -87,36 +88,21 @@ fn escape_char(c: char, out: &mut String) {
 }
 
 /// Reports whether the oracle writes `c` as a character reference: a control
-/// character, a format character, a line or paragraph separator, or a
-/// private-use character.
+/// character, or a character of the table `UNPRINTABLE`.
 fn not_printable(c: char) -> bool {
+    let code = u32::from(c);
     c.is_control()
-        || matches!(
-            c,
-            '\u{ad}'
-                | '\u{600}'..='\u{605}'
-                | '\u{61c}'
-                | '\u{6dd}'
-                | '\u{70f}'
-                | '\u{890}'..='\u{891}'
-                | '\u{8e2}'
-                | '\u{180e}'
-                | '\u{200b}'..='\u{200f}'
-                | '\u{2028}'..='\u{202e}'
-                | '\u{2060}'..='\u{2064}'
-                | '\u{2066}'..='\u{206f}'
-                | '\u{e000}'..='\u{f8ff}'
-                | '\u{feff}'
-                | '\u{fff9}'..='\u{fffb}'
-                | '\u{110bd}'
-                | '\u{110cd}'
-                | '\u{13430}'..='\u{1343f}'
-                | '\u{1bca0}'..='\u{1bca3}'
-                | '\u{1d173}'..='\u{1d17a}'
-                | '\u{e0001}'
-                | '\u{e0020}'..='\u{e007f}'
-                | '\u{f0000}'..='\u{10ffff}'
-        )
+        || UNPRINTABLE
+            .binary_search_by(|&(start, end)| {
+                if end < code {
+                    std::cmp::Ordering::Less
+                } else if start > code {
+                    std::cmp::Ordering::Greater
+                } else {
+                    std::cmp::Ordering::Equal
+                }
+            })
+            .is_ok()
 }
 
 /// The character pairs of a `mathvariant` value.
@@ -299,6 +285,7 @@ impl MathMl {
                 self.list(items);
                 self.style = outer;
             }
+            Exp::Limits(base) => self.exp(base, class, last),
             Exp::Sized(percent, delimiter) => self.sized(percent, delimiter),
             Exp::Display(on, body) => {
                 let attrs = if *on {
@@ -518,7 +505,7 @@ impl MathMl {
 fn has_limits(base: &Exp) -> bool {
     match base {
         Exp::Sym(Class::Op, text) => LIMIT_OPS.contains(&text.as_str()),
-        Exp::Sym(Class::FuncLimits, _) => true,
+        Exp::Sym(Class::FuncLimits, _) | Exp::Limits(_) => true,
         _ => false,
     }
 }
@@ -538,18 +525,33 @@ fn str_(text: impl Into<String>) -> Inline {
 }
 
 /// Appends one item of text in the alphabet `style`.
+/// Each space of the text is a `Space` (text of a class command).
 fn leaf(text: &str, style: Option<&Alphabet>, out: &mut Vec<Inline>) {
-    let Some(style) = style else {
-        out.push(str_(text));
-        return;
-    };
-    let text: String = if style.inline_chars {
-        let pairs = variant_chars(style.other);
-        text.chars().map(|c| variant_char(pairs, c)).collect()
-    } else {
-        text.to_string()
-    };
-    wrap(style.wrap, vec![str_(text)], out);
+    let pairs = style
+        .filter(|style| style.inline_chars)
+        .map_or(&[][..], |style| variant_chars(style.other));
+    let mut inner = Vec::new();
+    // A space after a `Space` adds none, as in text.
+    let plain = style.is_none_or(|style| style.wrap == Wrap::Plain);
+    let mut after_space = plain && ends_with_space(out);
+    for (i, word) in text.split(' ').enumerate() {
+        if i > 0 && !after_space {
+            inner.push(Inline::Space);
+            after_space = true;
+        }
+        if !word.is_empty() {
+            after_space = false;
+            inner.push(str_(
+                word.chars()
+                    .map(|c| variant_char(pairs, c))
+                    .collect::<String>(),
+            ));
+        }
+    }
+    match style {
+        None => out.append(&mut inner),
+        Some(style) => wrap(style.wrap, inner, out),
+    }
 }
 
 /// Appends `inner` in the element of `kind`.
@@ -725,6 +727,7 @@ fn exp_inlines(
             }
         }
         Exp::Styled(alphabet, items) => list(items, Some(alphabet), out)?,
+        Exp::Limits(base) => exp_inlines(base, style, out)?,
         Exp::Sized(_, delimiter) => match delimiter.as_ref() {
             Exp::Sym(_, text) => leaf(text, style, out),
             _ => return Err(Unsupported),

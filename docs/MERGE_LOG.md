@@ -1374,3 +1374,33 @@ reference).
 Open findings: I-LTXR-07 (medium), I-LTXR-08 (medium), I-LTXR-09 (low),
 I-LTXR-10 (low), I-LTXR-11 (high). Open checks: the fuzz run of 900 s,
 coverage, the mutation tests.
+
+## Workstream math (branch `ws/math-2`, head 3f1c845, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+corrections of review round 3 (each finding with the level medium or
+higher; Opus math-R3-01 to R3-04, Codex math-R3-01 to R3-07), each one
+rule from an oracle matrix, with 11,050 new rows in `tests/oracle.tsv`;
+the new table `src/unprintable.rs` (711 ranges from probes of the
+reference); and the warning text of the reference: the detail now shows
+the line and the column of the problem and the `expecting` lines of the
+reference. The warning text of this crate changes, so units of the
+suites `html-writer` and `markdown-writer` with a stored warning text of
+the reference can move from fail to pass.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on 3f1c845 (02:27 to 02:48 UTC; worker report): baseline 19911 units, 0 regressions. The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Pair run, seed 4: 237,552 formulas, 0 wrong conversions. Replay: 46,954 formulas, MathML equal 45,272, inline equal 45,549. Warning matrix: 1,216 formulas, MathML-channel warnings equal 1,700 of 1,798; replay warnings equal 29,162 of 31,961 (26,634 before). |
+| 3. Tests | `cargo test -p randoc-math -p randoc-html -p randoc-markdown-writer` on the merged tree: 329 pass, 0 fail, 3 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzz `convert` on 3f1c845: 901 s, 1,634,921 runs, 0 crashes. |
+| 5. Reviews | Round 3 on main 98806b9: Opus REQUEST CHANGES (1 high, 3 medium, 8 low), Codex REQUEST CHANGES (3 high, 4 medium, 3 low). The worker corrected each finding with the level medium or higher; the verification by the reviewers is due. |
+| 6. No slowdowns | `\newcommand\f[1]{#1}` and `\f%` 33,326 times: 0.05 s and 17 MB in a debug build (14.7 s before). CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan: no hit.
+
+Open findings: I-MATH-01 (scope gap), I-MATH-02, I-MATH-06 (all low);
+the low findings Opus math-R3-L1 to L6, L8 and Codex math-R3-08. Open
+checks: coverage, the mutation sample.

@@ -15,6 +15,7 @@ mod parse;
 mod render;
 mod symbols;
 mod tree;
+mod unprintable;
 
 use randoc_ast::{Inline, MathType};
 
@@ -43,24 +44,45 @@ impl MathError {
     /// use randoc_ast::MathType;
     /// let err = randoc_math::to_inlines(MathType::InlineMath, r"\frac{a}{b}", 128).unwrap_err();
     /// assert_eq!(err.detail(r"\frac{a}{b}"), "");
-    /// // The oracle adds an `expecting ...` line here; the crate does not
-    /// // have it yet (row I-MATH-02 of `docs/ISSUES.md`).
+    /// // The oracle adds the list of what it expects at the place.
     /// let err = randoc_math::to_mathml(MathType::InlineMath, "x^", 128).unwrap_err();
-    /// assert_eq!(err.detail("x^"), "  x^\n    ^\n  unexpected eof");
+    /// assert!(err.detail("x^").starts_with("  x^\n    ^\n  unexpected eof\n  expecting \"%\""));
     /// ```
     pub fn detail(&self, tex: &str) -> String {
         match self {
             MathError::Unsupported => String::new(),
             MathError::Parse { column, message } => {
-                // The oracle shows 40 characters of the formula, with at most
-                // 19 of them before the place of the problem.
-                let start = column.saturating_sub(19);
-                let shown: String = tex.chars().skip(start).take(40).collect();
-                let caret = " ".repeat(column - start);
+                let (line, place) = parsec_place(tex, *column);
+                // The oracle shows 40 characters of the line, with at most
+                // 19 columns before the place of the problem.
+                let start = place.saturating_sub(19);
+                let text = tex.split('\n').nth(line).unwrap_or_default();
+                let shown: String = text.chars().skip(start).take(40).collect();
+                let caret = " ".repeat(place - start);
                 format!("  {shown}\n  {caret}^\n  {message}")
             }
         }
     }
+}
+
+/// The line (from 0) and the column (from 0) that the oracle reports for the
+/// character offset `offset` of `tex`. The oracle parses the formula with no
+/// white space at its start, and a tab moves the column to the next multiple
+/// of 8. It shows the line of the original formula.
+fn parsec_place(tex: &str, offset: usize) -> (usize, usize) {
+    let lead = tex
+        .chars()
+        .take_while(|c| matches!(c, ' ' | '\t' | '\n' | '\r'))
+        .count();
+    let (mut line, mut place) = (0, 0);
+    for c in tex.chars().skip(lead).take(offset.saturating_sub(lead)) {
+        match c {
+            '\n' => (line, place) = (line + 1, 0),
+            '\t' => place += 8 - place % 8,
+            _ => place += 1,
+        }
+    }
+    (line, place)
 }
 
 fn parse(tex: &str, max_depth: usize) -> Result<Vec<tree::Exp>, MathError> {
@@ -351,6 +373,20 @@ mod tests {
         ("", "\\not\\Pi", ""),
         ("", "\\text{$x$}", ""),
         ("", "\u{b}\u{85}\u{200b}", ""),
+        ("\\newcommand\\f[1]{#1}", "\\f%", "\n"),
+        ("\\newcommand\\f[1]{#1}", "\\f%", "\nx"),
+        ("\\newcommand\\f{%{\n}", "{%}\n", "x"),
+        ("", "\\text{\\% }", ""),
+        ("\\text{", "\\{ ", "}"),
+        ("", "a\\mathrel{\\text{ and }}", ""),
+        ("", "\\mathbin{\\textbf{ a }}", ""),
+        ("", "\\mathop{ab}_n", ""),
+        ("", "\\mathop{\\text{ a }}^n", ""),
+        ("", "\\operatorname*{{a}b}_n", ""),
+        ("\\substack{", "a\\\\ [2pt]", "}"),
+        ("", "\\text{$\\tag{1}x$}", ""),
+        ("\\newcommand\\f[1][{]}]{#1}", "\\f", ""),
+        ("", "\u{378}\u{e0100}", ""),
     ];
 
     /// The step count (characters that the parser and the macro reader
@@ -429,6 +465,34 @@ mod tests {
         assert_eq!(
             far.detail(&long),
             format!("  {shown}\n  {}^\n  m", " ".repeat(19))
+        );
+    }
+
+    /// The oracle shows the line of the problem. It counts the columns
+    /// after the white space at the start of the formula, with a tab to the
+    /// next multiple of 8.
+    #[test]
+    fn the_detail_shows_the_line_and_the_column_of_the_oracle() {
+        let at = |column: usize, tex: &str| {
+            MathError::Parse {
+                column,
+                message: "m".into(),
+            }
+            .detail(tex)
+        };
+        assert_eq!(
+            at(6, "\ta\t\tx^"),
+            format!("  \ta\t\tx^\n  {}^\n  m", " ".repeat(18))
+        );
+        assert_eq!(
+            at(7, "{x\n\ta\t\t"),
+            format!("  \n  {}^\n  m", " ".repeat(19))
+        );
+        assert_eq!(at(3, "\nx^"), "  \n    ^\n  m");
+        assert_eq!(at(10, "  \n  \\foo\nz"), "    \\foo\n  ^\n  m");
+        assert_eq!(
+            at(12, "\ta\t\t\\frac{a}"),
+            format!("  frac{{a}}\n  {}^\n  m", " ".repeat(19))
         );
     }
 }

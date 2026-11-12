@@ -2,7 +2,8 @@
 """The differential run: many formulas through the oracle and through Randoc.
 
 Usage: diffrun.py record DIR      write DIR/formulas.txt and DIR/oracle.tsv
-       diffrun.py pairs DIR       the same for the pair run (see `pairs`)
+       diffrun.py pairs DIR       the same for the pair run (see `pairs`);
+                                  RANDOC_MATH_SEED selects the atoms (3)
        diffrun.py count           print the sizes of both runs
        diffrun.py table DIR       group DIR/diff.tsv by cause, print the table
 
@@ -119,7 +120,7 @@ def pair_classes():
 def pairs():
     """Each ordered pair of two classes, with 3 atoms of each class (9
     formulas), in each place of `PAIR_PLACES`, in inline and display math."""
-    rng = random.Random(3)
+    rng = random.Random(int(os.environ.get("RANDOC_MATH_SEED", "3")))
     classes = pair_classes()
     names = sorted(classes)
     seen = set()

@@ -146,6 +146,9 @@ pub(crate) enum Exp {
     Text(Option<&'static Alphabet>, String),
     /// A subtree in a math alphabet.
     Styled(&'static Alphabet, Vec<Exp>),
+    /// A base that takes its scripts above and below in display math, for
+    /// example `\operatorname*` with a name that is not plain text.
+    Limits(Box<Exp>),
     /// A delimiter with a fixed size, for example `\big(`: the size in percent.
     Sized(&'static str, Box<Exp>),
     /// `<mstyle displaystyle="...">`, for example `\dfrac`.

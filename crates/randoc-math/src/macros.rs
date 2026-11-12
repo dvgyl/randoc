@@ -62,9 +62,11 @@ impl<'a> Reader<'a> {
                     }
                     self.pos += 1;
                 }
-                _ => return,
+                _ => break,
             }
         }
+        // A failed search after this skip counts the comment as read.
+        self.reach = self.reach.max(self.pos);
     }
 
     fn eat(&mut self, c: char) -> bool {
@@ -108,6 +110,15 @@ impl<'a> Reader<'a> {
         loop {
             self.reach = self.reach.max(i);
             let c = *self.chars.get(i)?;
+            // A comment runs to the line end, also after a backslash: the
+            // oracle reads `\%` here as the start of a comment.
+            if c == '%' || (c == '\\' && self.chars.get(i + 1) == Some(&'%')) {
+                while self.chars.get(i).is_some_and(|c| *c != '\n') {
+                    i += 1;
+                }
+                i += 1;
+                continue;
+            }
             if c == '\\' {
                 i += 2;
                 continue;
@@ -188,15 +199,17 @@ impl<'a> Reader<'a> {
         self.skip_space();
         let mut params = 0;
         let mut default = None;
+        // Braces do not protect a `]` in the brackets of a definition.
         if !operator && self.peek() == Some('[') {
-            let count = self.delimited('[', ']')?;
-            let [digit] = count.as_slice() else {
+            let count = self.bracket_argument()?;
+            let mut digits = count.iter().filter(|c| !crate::parse::is_tex_space(**c));
+            let (Some(digit), None) = (digits.next(), digits.next()) else {
                 return None;
             };
             params = usize::try_from(digit.to_digit(10)?).ok()?;
             self.skip_space();
             if self.peek() == Some('[') {
-                default = Some(self.delimited('[', ']')?);
+                default = Some(self.bracket_argument()?);
                 self.skip_space();
             }
         }

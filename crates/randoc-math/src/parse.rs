@@ -44,6 +44,31 @@ const EXPECTING_DELIMITER: &str = r#"expecting "%", "\\label", "\\tag", "\\nonum
 /// missing.
 const EXPECTING_COLUMNS: &str = r#"expecting "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", white space or "{""#;
 
+/// The line that the oracle adds for eof in a group after an item.
+const EXPECTING_BRACE_AFTER: &str = r#"expecting "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~", white space or "}""#;
+/// The line that the oracle adds for eof in a group with no item.
+const EXPECTING_BRACE_START: &str = r#"expecting white space, "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or "}""#;
+/// The line that the oracle adds for an unexpected character at the top level after an item.
+const EXPECTING_END_AFTER: &str = r#"expecting "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or end of input"#;
+/// The line that the oracle adds for an unexpected character at the top level with no item.
+const EXPECTING_END_START: &str = r#"expecting "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or end of input"#;
+/// The line that the oracle adds for eof in a cell of an environment.
+const EXPECTING_CELL: &str = r#"expecting "\\", "\\end", "\\\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~", "&" or white space"#;
+/// The line that the oracle adds for an unexpected character in math in text.
+const EXPECTING_DOLLAR: &str = r#"expecting "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or "$""#;
+/// The line that the oracle adds for eof in brackets.
+const EXPECTING_BRACKET: &str = r#"expecting "\\", "]", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or white space"#;
+/// The line that the oracle adds for eof where a command needs an argument.
+const EXPECTING_ARGUMENT: &str = r#"expecting "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "\\" or "{""#;
+/// The line that the oracle adds for eof where a script needs its argument.
+const EXPECTING_SCRIPT: &str = r#"expecting "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "{", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~", white space or "\\operatorname""#;
+/// The line that the oracle adds for eof in text.
+const EXPECTING_TEXT: &str = r#"expecting text, "}", "\\", "{", "$", "$$", "\\(" or "\\[""#;
+
+/// The line that the oracle adds for the end of a list right after a style
+/// command.
+const EXPECTING_STYLE: &str = r#"expecting letter, "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "{", "\\operatorname", digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\", "\\hyperref", "``", "''", "`", "~" or "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~""#;
+
 /// The line that the oracle adds for an environment that it does not know.
 const EXPECTING_ENVIRONMENT: &str = r#"expecting white space or "Bmatrix", "Vmatrix", "align", "alignat", "aligned", "alignedat", "array", "bmatrix", "cases", "eqnarray", "equation", "flalign", "flaligned", "gather", "gathered", "matrix", "multline", "multlined", "pmatrix", "smallmatrix", "split", "vmatrix""#;
 
@@ -178,7 +203,7 @@ static ALPHABETS: &[(&str, Alphabet)] = &[
 /// The text commands that set a style, sorted by name. `\text`, `\textrm`
 /// and `\mbox` set no style.
 static TEXT_STYLES: &[(&str, Alphabet)] = &[
-    ("textbf", alphabet("bold", "bold", Wrap::Strong, false)),
+    ("textbf", BOLD),
     ("textit", alphabet("italic", "italic", Wrap::Emph, false)),
     (
         "textsf",
@@ -511,6 +536,7 @@ impl Parser {
             return Ok(false);
         };
         self.pos += len;
+        let after_name = self.pos;
         self.skip_space();
         if let Some(len) = self.style_command() {
             let name = self
@@ -522,7 +548,11 @@ impl Parser {
             return self.unknown(&name);
         }
         if self.at_list_end(stop) {
-            return self.unexpected();
+            return match self.peek() {
+                _ if self.pos != after_name => self.unexpected(),
+                None => self.fail(format!("unexpected eof\n  {EXPECTING_STYLE}")),
+                Some(c) => self.fail(format!("unexpected \"{c}\"\n  {EXPECTING_STYLE}")),
+            };
         }
         Ok(true)
     }
@@ -559,7 +589,17 @@ impl Parser {
             self.skip_space();
             match self.peek() {
                 None if matches!(stop, Stop::End | Stop::Right) => break,
-                None => return self.fail("unexpected eof"),
+                None => {
+                    let start = items.is_empty() && over.is_none();
+                    let expecting = match stop {
+                        Stop::Brace if start => EXPECTING_BRACE_START,
+                        Stop::Brace => EXPECTING_BRACE_AFTER,
+                        Stop::Bracket => EXPECTING_BRACKET,
+                        Stop::Cell => EXPECTING_CELL,
+                        _ => return self.fail("unexpected eof"),
+                    };
+                    return self.fail(format!("unexpected eof\n  {expecting}"));
+                }
                 Some('}') if stop == Stop::Brace => {
                     self.pos += 1;
                     break;
@@ -573,7 +613,21 @@ impl Parser {
                     break;
                 }
                 Some('&') if stop == Stop::Cell => break,
-                Some('}' | '&' | '$' | '#' | '"') => return self.unexpected(),
+                Some(c @ ('}' | '&' | '$' | '#' | '"')) => {
+                    let start = items.is_empty() && over.is_none();
+                    return match stop {
+                        Stop::End if start => {
+                            self.fail(format!("unexpected '{c}'\n  {EXPECTING_END_START}"))
+                        }
+                        Stop::End => {
+                            self.fail(format!("unexpected '{c}'\n  {EXPECTING_END_AFTER}"))
+                        }
+                        Stop::Dollar => {
+                            self.fail(format!("unexpected \"{c}\"\n  {EXPECTING_DOLLAR}"))
+                        }
+                        _ => self.unexpected(),
+                    };
+                }
                 Some('\\') => {
                     if stop == Stop::Cell && (self.peek_at(1) == Some('\\') || self.at_word("end"))
                     {
@@ -715,6 +769,9 @@ impl Parser {
     /// its own arguments, or scripts with no base.
     fn script_argument(&mut self) -> Parsed<Exp> {
         self.skip_space();
+        if self.peek().is_none() {
+            return self.fail(format!("unexpected eof\n  {EXPECTING_SCRIPT}"));
+        }
         let decimal =
             self.peek() == Some('.') && self.peek_at(1).is_some_and(|c| c.is_ascii_digit());
         match self.peek() {
@@ -786,6 +843,23 @@ impl Parser {
     fn argument(&mut self) -> Parsed<Exp> {
         self.skip_space();
         let start = self.pos;
+        if self.peek().is_none() {
+            // Right after a command name the oracle names the command.
+            let letters = self.chars[..start]
+                .iter()
+                .rev()
+                .take_while(|c| c.is_ascii_alphabetic())
+                .count();
+            let name_start = start - letters;
+            let found =
+                if letters > 0 && name_start > 0 && self.chars.get(name_start - 1) == Some(&'\\') {
+                    let name: String = self.chars[name_start..start].iter().collect();
+                    format!("unexpected control sequence \\{name}")
+                } else {
+                    "unexpected eof".to_string()
+                };
+            return self.fail(format!("{found}\n  {EXPECTING_ARGUMENT}"));
+        }
         let exp = self.expression()?;
         if self.chars.get(start) == Some(&'\\') {
             let mut end = start + 1;
@@ -1046,16 +1120,13 @@ impl Parser {
             }
             "mathop" => {
                 let (start, depth) = (self.pos, self.depth);
-                match self.argument() {
-                    Ok(Exp::Sym(class, text))
-                        if !matches!(class, Class::Func | Class::FuncLimits) =>
-                    {
-                        Exp::Sym(Class::Op, text)
-                    }
-                    Ok(Exp::Text(_, text)) => Exp::Sym(Class::Op, text),
-                    _ => {
+                let arg = self.argument().ok();
+                match arg.as_ref().and_then(|arg| classed(Class::Op, arg)) {
+                    Some(exp) => exp,
+                    // A name of letters is a function name.
+                    None => {
                         (self.pos, self.depth) = (start, depth);
-                        self.operator(Class::FuncLimits, false)?
+                        self.operator(Class::Func, false)?
                     }
                 }
             }
@@ -1136,7 +1207,7 @@ impl Parser {
                     return self.unexpected();
                 }
                 self.pos += 1;
-                let rows = self.rows(Stop::Brace, false)?;
+                let rows = self.rows(Stop::Brace, true)?;
                 Exp::Table {
                     aligns: Aligns::All("center"),
                     rows,
@@ -1301,13 +1372,26 @@ impl Parser {
         self.pos += 1;
         let mut name = String::new();
         match self.operator_text(&mut name)? {
-            Some(shape) if !(upright && shape.grouped) => return Ok(Exp::Sym(class, name)),
+            Some(shape) if !(upright && shape.grouped) => {
+                // The name of a function with limits keeps its limits.
+                let class = if LIMIT_FUNCS.contains(&name.as_str()) {
+                    Class::FuncLimits
+                } else {
+                    class
+                };
+                return Ok(Exp::Sym(class, name));
+            }
             // `\operatorname` with a group of other than one item beside
             // other items is upright math, as `\mathrm` is.
             Some(_) => {
                 (self.pos, self.depth) = (start, depth);
                 let arg = self.argument()?;
-                return Ok(Exp::Styled(&NORMAL, flatten(arg)));
+                let styled = Exp::Styled(&NORMAL, flatten(arg));
+                return Ok(if class == Class::FuncLimits {
+                    Exp::Limits(boxed(styled))
+                } else {
+                    styled
+                });
             }
             None => {}
         }
@@ -1419,16 +1503,13 @@ impl Parser {
             _ => Class::Ord,
         };
         let arg = self.argument()?;
-        Ok(match arg {
-            Exp::Sym(old, text) if !matches!(old, Class::Func | Class::FuncLimits) => {
-                Exp::Sym(class, text)
-            }
-            Exp::Text(_, text) => Exp::Sym(class, text),
-            Exp::Num(_) | Exp::Sym(..) | Exp::Group(_) | Exp::PaddedText(_) | Exp::Styled(..) => {
-                arg
-            }
-            _ => return self.fail("this argument of a class command has no conversion"),
-        })
+        if let Some(exp) = classed(class, &arg) {
+            return Ok(exp);
+        }
+        match arg {
+            Exp::Num(_) | Exp::Sym(..) | Exp::Group(_) | Exp::Styled(..) => Ok(arg),
+            _ => self.fail("this argument of a class command has no conversion"),
+        }
     }
 
     /// `\bmod`, `\mod`, `\pmod` and `\pod` with their argument.
@@ -1533,7 +1614,7 @@ impl Parser {
         };
         loop {
             let Some(c) = self.peek() else {
-                return self.fail("unexpected eof");
+                return self.fail(format!("unexpected eof\n  {EXPECTING_TEXT}"));
             };
             self.pos += 1;
             match c {
@@ -1545,8 +1626,17 @@ impl Parser {
                 '$' => {
                     flush(&mut text, pieces);
                     // Math in text cannot start with white space or a comment.
-                    if self.peek().is_some_and(|c| c == '%' || is_tex_space(c)) {
-                        return self.unexpected();
+                    if let Some(c) = self.peek().filter(|c| *c == '%' || is_tex_space(*c)) {
+                        return self.fail(format!("unexpected \"{c}\"\n  {EXPECTING_DOLLAR}"));
+                    }
+                    // Nor with a command that the oracle reads as white space.
+                    if ["label", "tag", "nonumber", "allowbreak"]
+                        .iter()
+                        .any(|name| self.at_word(name))
+                    {
+                        self.pos += 1;
+                        let name = self.control_name()?;
+                        return self.unknown(&name);
                     }
                     let math = self.list(Stop::Dollar)?;
                     if math.is_empty() {
@@ -1589,6 +1679,12 @@ impl Parser {
                     if let Some(width) = width {
                         flush(&mut text, pieces);
                         pieces.push(Exp::Space(width));
+                    } else {
+                        // The oracle reads an escaped character as a
+                        // control word: the white space after it goes.
+                        while self.peek().is_some_and(is_tex_space) {
+                            self.pos += 1;
+                        }
                     }
                 }
                 '~' => text.push('\u{a0}'),
@@ -1859,6 +1955,26 @@ pub(crate) fn single(mut items: Vec<Exp>) -> Exp {
         return exp;
     }
     Exp::Group(items)
+}
+
+/// The argument of a class command as one symbol of `class`: a symbol, or
+/// text with its edge spaces and its style. `None`: the argument keeps its
+/// own items.
+fn classed(class: Class, arg: &Exp) -> Option<Exp> {
+    match arg {
+        Exp::Sym(old, text) if !matches!(old, Class::Func | Class::FuncLimits) => {
+            Some(Exp::Sym(class, text.clone()))
+        }
+        Exp::Text(None, text) => Some(Exp::Sym(class, text.clone())),
+        Exp::Text(Some(style), text) => {
+            Some(Exp::Styled(style, vec![Exp::Sym(class, text.clone())]))
+        }
+        Exp::PaddedText(items) => items.iter().find_map(|item| match item {
+            Exp::Text(..) => classed(class, item),
+            _ => None,
+        }),
+        _ => None,
+    }
 }
 
 fn flatten(exp: Exp) -> Vec<Exp> {
