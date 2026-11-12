@@ -1098,3 +1098,32 @@ the text of `LogMessage::NoTitleElement` (I-CLI-35); the East Asian line
 break handling in the Markdown reader (I-CLI-43); closing I-HTMLR-11 and
 I-HTMLR-12 (their 6 units pass); the check of I-CLI-36 in
 `convert::convert` after the HTML writer renders templates.
+
+## Session 4 of 2026-11-12, batch of five items
+
+Items and commits, in the merge order: `licence-2` f4fb436 (4fd5203),
+`html-reader` 7824b0d (7f8b193), `html-writer` 789f670 (24b5136), `cli`
+81a4d37 (f6d82a9). The item `markdown-writer` 682724e is left out: the
+squash gave a conflict in `crates/randoc-html/src/html.rs` that is not
+purely additive (both sides changed the start of `html::write`: `main`
+has `Html::new` and the template context of `html-writer`, the branch has
+the new `write_blocks` with an `Html { .. }` literal). The branch must
+merge `main` and resolve the conflict. No item was undone.
+
+`merge-ws check` on the final tree (f6d82a9) passed on its first run
+(00:30 to 01:21 UTC): `record` 0 new units, 0 oracle errors;
+`verify-oracle` 21390 units, 0 stored results are not current;
+`scripts/gate.sh` passed (format, lints, documentation, tests, harness).
+After the check, `conformance/cases/cli/info.toml` has no completion case.
+
+- Harness before the batch: baseline 19911 units (`spec/baseline.json`).
+- Harness after the batch: 21792 units, 20243 pass, 1147 fail, 0 no
+  result, 0 not recorded, 402 skipped; baseline 19911 units, 0
+  regressions, 332 new passes. `spec/baseline.json` now has 20243 units.
+- Capability summary: `{"extensions": {"failing": 1, "not_started": 11,
+  "partial": 8, "passing": 70}, "input_formats": {"not_started": 39,
+  "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 22,
+  "passing": 86}, "output_formats": {"not_started": 71, "partial": 3,
+  "passing": 3}, "units": {"passing": 20243, "total": 21390}}`. The output
+  formats `markdown`, `gfm`, `commonmark` and `plain` are not in this
+  batch (the item `markdown-writer` is left out).
