@@ -467,38 +467,82 @@ impl Inl<'_> {
     /// One pass over the tags of the text matches each opening tag.
     fn span_close(&mut self, open: usize) -> Option<usize> {
         if self.ix.tables.borrow().spans.is_none() {
-            let spans = self.widened(Self::span_matches);
+            let spans = self.widened(|inl| inl.span_tags(0, |_, _| false));
             self.ix.tables.borrow_mut().spans = Some(spans);
         }
-        let close = *self.ix.tables.borrow().spans.as_ref()?.get(&open)?;
-        (close < self.s.hi).then_some(close)
+        let close = self.ix.tables.borrow().spans.as_ref()?.get(&open).copied();
+        #[cfg(test)]
+        crate::check_cache(&close, || {
+            let mut plain = None;
+            self.widened(|inl| {
+                inl.span_tags(open, |o, c| {
+                    if o == open {
+                        plain = Some(c);
+                    }
+                    o == open
+                })
+            });
+            plain
+        });
+        close.filter(|c| *c < self.s.hi)
     }
 
-    fn span_matches(&mut self) -> HashMap<usize, usize> {
-        {
-            let mut matches = HashMap::new();
-            let mut stack: Vec<usize> = Vec::new();
-            let mut k = 0;
-            while let Some(lt) = self.find(Find::Char('<'), k) {
-                let window = self.tag_window(lt);
-                let lower = window.to_ascii_lowercase();
-                if let Some(len) = html_tag_len(&window) {
+    /// Matches the `<span>` tags from `from` on, with the token boundaries of
+    /// the inline parse: a tag in an escape, a code span, a math span, a
+    /// comment or an attribute value does not count. `done` gets each
+    /// opening tag and the start of its closing tag; the scan stops when it
+    /// returns true.
+    fn span_tags(
+        &mut self,
+        from: usize,
+        mut done: impl FnMut(usize, usize) -> bool,
+    ) -> HashMap<usize, usize> {
+        let mut matches = HashMap::new();
+        let mut stack: Vec<usize> = Vec::new();
+        let mut k = from;
+        while let Some(&c) = self.s.get(k) {
+            crate::step(1);
+            match c {
+                '\\' => k += 2,
+                '`' => {
+                    let mut n = 0;
+                    while self.s.get(k + n) == Some(&'`') {
+                        n += 1;
+                    }
+                    k = self.code_closer(k, n).map_or(k + n, |end| end + n);
+                }
+                '$' if self.ext(Extension::TexMathDollars) => {
+                    let saved = self.i;
+                    self.i = k;
+                    let math = self.dollar_math().is_some();
+                    k = if math { self.i } else { k + 1 };
+                    self.i = saved;
+                }
+                '<' => {
+                    let window = self.tag_window(k);
+                    let lower = window.to_ascii_lowercase();
+                    let Some(len) = html_tag_len(&window) else {
+                        k += 1;
+                        continue;
+                    };
                     if lower.starts_with("</span") {
                         if let Some(o) = stack.pop() {
-                            matches.insert(o, lt);
+                            matches.insert(o, k);
+                            if done(o, k) {
+                                break;
+                            }
                         }
                     } else if lower.starts_with("<span")
                         && !window.get(..len).is_some_and(|t| t.ends_with("/>"))
                     {
-                        stack.push(lt);
+                        stack.push(k);
                     }
-                    k = lt + window.get(..len).map_or(1, |t| t.chars().count());
-                } else {
-                    k = lt + 1;
+                    k += window.get(..len).map_or(1, |t| t.chars().count());
                 }
+                _ => k += 1,
             }
-            matches
         }
+        matches
     }
 
     fn build_brackets(&mut self) -> Vec<u32> {

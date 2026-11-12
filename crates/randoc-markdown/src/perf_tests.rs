@@ -66,6 +66,12 @@ const PATTERNS: &[(&str, &str)] = &[
     ("headings with citations", "@d\n\n# @t\n\n"),
     ("loose items before sublists", "- a\n\n  - s\n"),
     ("citations before note brackets", "@b [^x] "),
+    ("div tags with code closers", "<div>`</div>` "),
+    ("div tags with math closers", "<div>$</div>$ "),
+    ("div tags with escaped closers", "<div>\\</div> "),
+    ("div lines with fences", "<div>\n```\n"),
+    ("span tags with code closers", "<span>`</span>` "),
+    ("span tags with math closers", "<span>$</span>$ "),
 ];
 
 /// Returns the work count of one read with the program depth limit.

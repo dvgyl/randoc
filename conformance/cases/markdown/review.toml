@@ -1732,3 +1732,123 @@ input = "---\na: \"x\\r\"\nb: \"y\\r\\n\"\nc: \"\\n\\r\"\n---\n"
 [[case]]
 id = "s4-metadata-second-document-is-text"
 input = "---\n--- x\n---\n"
+
+[[case]]
+id = "s4b-adjacent-empty-div-then-div"
+input = "<div></div><div>Kept text</div>\n"
+
+[[case]]
+id = "s4b-adjacent-empty-p-then-p"
+input = "<p></p><p>Kept text</p>\n"
+
+[[case]]
+id = "s4b-adjacent-section-text"
+input = "<section>One</section><section>Two</section>\n"
+
+[[case]]
+id = "s4b-adjacent-div-then-p-lines"
+input = "<div></div><p>\nKept text\n</p>\n"
+
+[[case]]
+id = "s4b-div-closer-in-backtick-fence"
+input = "<div>\n```\n</div>\n```\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-tilde-fence"
+input = "<div>\n~~~\n</div>\n~~~\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-item-fence"
+input = "<div>\n- ```\n  </div>\n  ```\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-quote-fence"
+input = "<div>\n> ```\n> </div>\n> ```\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-after-open-fence"
+input = "<div>\n```\n</div>\nafter\n"
+
+[[case]]
+id = "s4b-div-closer-in-code-span"
+input = "<div>\nUse `</div>` here.\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-after-open-backtick"
+input = "<div>\nA `tick\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-math"
+input = "<div>\nSee $</div>$ now.\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-after-spaced-dollar"
+input = "<div>\n$ </div>$\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-escaped"
+input = "<div>\nA \\</div> b\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-comment"
+input = "<div>\n<!-- </div> -->\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-comment-lines"
+input = "<div>\n<!--\n</div>\n-->\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-attribute"
+input = "<div>\n<b title=\"</div>\">bold</b>\n</div>\n"
+
+[[case]]
+id = "s4b-section-closer-in-fence"
+input = "<section>\n```\n</section>\n```\n</section>\n"
+
+[[case]]
+id = "s4b-p-closer-in-code-span"
+input = "<p>a `</p>` b</p>\n"
+
+[[case]]
+id = "s4b-span-closer-in-code-span"
+input = "<span>`</span>`</span>\n"
+
+[[case]]
+id = "s4b-span-closer-in-math"
+input = "<span>$</span>$</span>\n"
+
+[[case]]
+id = "s4b-span-closer-escaped"
+input = "<span>a \\</span> b</span>\n"
+
+[[case]]
+id = "s4b-span-closer-in-comment"
+input = "<span><!-- </span> --></span>\n"
+
+[[case]]
+id = "s4b-span-closer-after-open-backtick"
+input = "<span>`a</span>\n"
+
+[[case]]
+id = "s4b-div-closer-in-indented-code"
+input = "<div>\n    </div>\n</div>\n"
+
+[[case]]
+id = "s4b-div-closer-in-indented-code-after-blank"
+input = "<div>\n\n    shown\n    </div>\n\n</div>\n"
+
+[[case]]
+id = "s4b-section-closer-in-indented-code"
+input = "<section>\n\n    </section>\n\n</section>\n"
+
+[[case]]
+id = "s4b-section-indented-content-closes"
+input = "<section>\n    text\n\n    </section>\n</section>\n"
+
+[[case]]
+id = "s4b-div-indented-after-paragraph-closes"
+input = "<div>\ntext\n    </div>\nafter\n"
+
+[[case]]
+id = "s4b-nested-div-closer-in-indented-code"
+input = "<div>\n<div>\n    </div>\n</div>\n</div>\n"

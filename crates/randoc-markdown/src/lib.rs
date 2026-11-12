@@ -12,6 +12,8 @@
 
 mod block;
 #[cfg(test)]
+mod cache_tests;
+#[cfg(test)]
 mod conformance_tests;
 #[cfg(test)]
 mod depth_tests;
@@ -30,6 +32,27 @@ use randoc_core::{Context, LogMessage, Reader, ReaderOptions, Result, Sources};
 thread_local! {
     /// The work counter of the time tests.
     pub(crate) static STEPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+#[cfg(test)]
+thread_local! {
+    /// The number of cache answers that differ from the plain scan, or
+    /// `None` when the cache test does not run: the plain scans take
+    /// quadratic time.
+    pub(crate) static CACHE_MISMATCHES: std::cell::Cell<Option<u64>> = const { std::cell::Cell::new(None) };
+}
+
+/// Runs `plain` when the cache test runs, without counting its steps, and
+/// counts a mismatch when it differs from `cached`.
+#[cfg(test)]
+pub(crate) fn check_cache<T: PartialEq>(cached: &T, plain: impl FnOnce() -> T) {
+    let Some(count) = CACHE_MISMATCHES.with(std::cell::Cell::get) else {
+        return;
+    };
+    let steps = STEPS.with(std::cell::Cell::get);
+    let differs = plain() != *cached;
+    STEPS.with(|s| s.set(steps));
+    CACHE_MISMATCHES.with(|m| m.set(Some(count + u64::from(differs))));
 }
 
 /// Counts `n` units of work. Only test builds count.

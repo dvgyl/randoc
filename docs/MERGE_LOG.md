@@ -1303,3 +1303,37 @@ and `conformance/cases/templates/defaults.toml` has no `fodt-` case.
   `commonmark_x`, `plain` and `markdown_strict` are partial;
   `markdown_github`, `markdown_mmd` and `markdown_phpextra` pass; `markua`
   fails (0 of 1 unit).
+
+## Workstream markdown-reader (commit dc2b736 of the branch `ws/markdown-reader-3`, one squashed commit, session 4 of 2026-11-12)
+
+Merged as a small block under owner instruction 17. Content: the
+correction of the two CRITICAL findings of review round 3 that are on
+`main` (Codex markdown-reader-R3-01: the HTML closer cache lost document
+text, because a remainder line reused the key of its line; Codex R3-02:
+the HTML closer indices counted literal tags inside code, math, escapes,
+comments and attribute values). The cache key is now the shared text and
+the position in it, and the closer scans skip these tokens. In test
+builds, `cache_tests.rs` compares each cached answer with a plain scan on
+24,000 generated inputs. The worker continues on the same branch, so this
+commit (not the branch head) is merged. New row I-MD-57 (high, open) for
+the other findings of round 3 (the branch already used I-MD-54 to I-MD-56).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | The gate script passed on dc2b736 (worker statement in the launch message; the worker report has no section for this commit). The merged tree is checked at the end of the batch. |
+| 2. Measured progress | Matrix `differ.py matrix closer` (commit message): 302 of 1,004 inputs differed on 3d61cbb, 108 now, none new (rows I-MD-54, I-MD-55). |
+| 3. Tests | `cargo test -p randoc-markdown` on the merged tree: 40 pass, 0 fail, 3 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing on dc2b736: not run. |
+| 5. Reviews | Round 3 on main a0b9535: Codex REQUEST CHANGES (2 critical, 15 high, 3 medium), Opus REQUEST CHANGES (1 high, 4 medium, 8 low). This commit closes the two critical findings; the other findings are in work on the same branch. |
+| 6. No slowdowns | CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan: hits only in the HTML tag list of
+`src/block.rs` and generic character tests of `src/block.rs` and
+`src/inline.rs` (code fragments, not copied text).
+
+Open findings: I-MD-56 (high, Codex R3-03: superlinear time on many HTML
+elements on one line), I-MD-57 (high: the other 15 high and 7 medium
+findings of round 3), I-MD-54 and I-MD-55 (low). Open checks: fuzzing,
+coverage, the mutation sample.

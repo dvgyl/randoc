@@ -2,7 +2,7 @@
 """Differential runs of the Markdown reader against the oracle.
 
 Usage:
-  differ.py matrix raw|blocktag|lazy OUT_DIR
+  differ.py matrix raw|blocktag|lazy|closer OUT_DIR
   differ.py random COUNT SEED OUT_DIR [wide]
   differ.py rerun OUT_DIR
 
@@ -200,6 +200,59 @@ def lazy_matrix():
                         "from": ext,
                         "input": tpl.replace("{l}", line),
                     }
+                )
+    return cases
+
+
+def closer_matrix():
+    """Closing tags in tokens of the content, and elements next to each other."""
+    tokens = {
+        "fence": "```\n{c}\n```",
+        "tilde": "~~~\n{c}\n~~~",
+        "open-fence": "```\n{c}",
+        "item-fence": "- ```\n  {c}\n  ```",
+        "quote-fence": "> ```\n> {c}\n> ```",
+        "code": "a `{c}` b",
+        "code2": "a ``x {c} ` y`` b",
+        "open-code": "a `{c}",
+        "math": "${c}$",
+        "space-math": "$ {c}$",
+        "escape": "a \\{c} b",
+        "comment": "<!-- {c} -->",
+        "comment-mid": "a <!-- {c} --> b",
+        "comment-lines": "<!--\n{c}\n-->",
+        "open-comment": "<!-- {c}",
+        "attr": "<b title=\"{c}\">t</b>",
+        "indented": "    {c}",
+        "blank-indented": "\n    {c}\n",
+        "text": "a {c} b",
+    }
+    elements = ["div", "section", "p", "span"]
+    cases = []
+    for el in elements:
+        for tid, tok in tokens.items():
+            body = tok.replace("{c}", f"</{el}>")
+            forms = {
+                "lines": f"<{el}>\n{body}\n</{el}>\n",
+                "inline": f"<{el}>{body}</{el}>\n",
+                "after": f"<{el}>\n{body}\n</{el}>\nz\n",
+            }
+            for fid, text in forms.items():
+                for ext in ["markdown", "markdown-markdown_in_html_blocks", "markdown_phpextra"]:
+                    cases.append({"id": f"cl-{el}-{tid}-{fid}-{ext}", "from": ext, "input": text})
+    names = ["div", "p", "section", "span", "em", "blockquote", "ul", "pre"]
+    shapes = {
+        "empty": "<{a}></{a}><{b}>x</{b}>\n",
+        "text": "<{a}>w</{a}><{b}>x</{b}>\n",
+        "space": "<{a}></{a}> <{b}>x</{b}>\n",
+        "after": "<{a}></{a}><{b}>x</{b}>y\n",
+        "lines": "<{a}></{a}><{b}>\nx\n</{b}>\n",
+    }
+    for a in names:
+        for b in names:
+            for sid, shape in shapes.items():
+                cases.append(
+                    {"id": f"adj-{a}-{b}-{sid}", "from": "markdown", "input": shape.format(a=a, b=b)}
                 )
     return cases
 
@@ -497,7 +550,12 @@ def main():
         rerun(sys.argv[2])
         return
     if cmd == "matrix":
-        cases = {"raw": raw_matrix, "blocktag": blocktag_matrix, "lazy": lazy_matrix}[sys.argv[2]]()
+        cases = {
+            "raw": raw_matrix,
+            "blocktag": blocktag_matrix,
+            "lazy": lazy_matrix,
+            "closer": closer_matrix,
+        }[sys.argv[2]]()
         run(cases, sys.argv[3])
     elif cmd == "random":
         wide = sys.argv[5:] == ["wide"]

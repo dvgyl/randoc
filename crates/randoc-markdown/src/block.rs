@@ -82,6 +82,14 @@ impl Ln {
         self.off.get() + self.spaces.get()
     }
 
+    /// Names the shared text of the line. With `text_start` it names a
+    /// position of the input, also for a line that a parse made from the
+    /// rest of a line. A cache keeps the text alive, so no later text can
+    /// reuse the name.
+    fn src_id(&self) -> usize {
+        Rc::as_ptr(&self.src).cast::<u8>() as usize
+    }
+
     /// Returns true when the line has only spaces and tabs.
     fn is_blank(&self) -> bool {
         self.blank
@@ -154,10 +162,13 @@ pub(crate) struct Parser {
     /// For the opening fence of a div (line number and offset), the number
     /// of lines to its closing fence, or `None` when it has no closer.
     div_close: HashMap<(u32, usize), Option<usize>>,
-    /// For an HTML element that opens at the start of a line (line number,
-    /// offset, tag name), the line distance and byte position of its closing
-    /// tag, or `None` when it has no closer.
-    html_close: HashMap<(u32, usize, Text), Option<(usize, usize)>>,
+    /// For an HTML element (`Ln::src_id` and the position of its opening
+    /// tag in that text, tag name): the line distance to its closing tag,
+    /// the `Ln::src_id` of that line and the byte position of the tag in
+    /// its shared text, or `None` when it has no closer.
+    html_close: HashMap<HtmlOpener, Option<HtmlCloser>>,
+    /// The texts that the keys of `html_close` name.
+    kept_sources: Vec<Rc<str>>,
     idset: IdentifierSet,
     pub examples: HashMap<Text, i64>,
     example_count: i64,
@@ -653,6 +664,284 @@ pub(crate) fn html_tag_len(s: &str) -> Option<usize> {
     None
 }
 
+/// An opening tag of an HTML element: the `Ln::src_id` of its line, the
+/// position of the tag in that text, and the tag name.
+type HtmlOpener = (usize, usize, Text);
+
+/// The closing tag of an HTML element: the line distance from the opening
+/// tag, the `Ln::src_id` of its line, and its position in that text.
+type HtmlCloser = (usize, usize, usize);
+
+/// The closing tag search of an HTML element whose content is Markdown.
+/// Pandoc finds the closer with the parser of the content, so a tag in a
+/// token that holds literal text does not count: a fenced code block, a
+/// code span, a math span, an escape, a comment, a quoted attribute, or
+/// an indented code block.
+#[derive(Clone, Copy)]
+struct CloserScan<'a> {
+    name: &'a str,
+    raw_html: bool,
+    math: bool,
+    /// The index of the first content line when the tag line has no
+    /// content after the tag: an indented line there starts a code block.
+    first_line: Option<usize>,
+    /// The spaces that each content line loses before its blocks start.
+    content_indent: usize,
+    /// The element is a native div: its content starts with no spaces lost.
+    native_div: bool,
+}
+
+impl<'a> CloserScan<'a> {
+    fn new(
+        parser: &Parser,
+        name: &'a str,
+        first_line: Option<usize>,
+        content_indent: usize,
+    ) -> Self {
+        CloserScan {
+            name,
+            raw_html: parser.ext(Extension::RawHtml),
+            math: parser.ext(Extension::TexMathDollars),
+            first_line,
+            content_indent,
+            native_div: name == "div" && parser.ext(Extension::NativeDivs),
+        }
+    }
+
+    /// Returns the closer of the element that opens in `lines[0]`, as the
+    /// line index and the byte position in its text. `found` gets the
+    /// position of each opening tag and its closer, or `None` when it has
+    /// no closer.
+    fn run(
+        self,
+        lines: &[Ln],
+        mut found: impl FnMut((usize, usize), Option<(usize, usize)>),
+    ) -> Option<(usize, usize)> {
+        let mut stack: Vec<(usize, usize)> = Vec::new();
+        let mut fence: Option<(char, usize)> = None;
+        let mut no_fence_closer = FenceMemo::default();
+        let mut comment_until: Option<usize> = None;
+        let mut no_comment_end_from: Option<usize> = None;
+        let mut code_may_start = false;
+        for (j, line) in lines.iter().enumerate() {
+            let t = line.t();
+            crate::step(t.len() + 1);
+            let mut i = 0;
+            let code_line = (code_may_start || self.first_line == Some(j))
+                && !line.is_blank()
+                && line.indent() >= 4 + self.content_indent;
+            code_may_start = j > 0 && (line.is_blank() || code_line);
+            let mut bare_open = false;
+            if code_line && fence.is_none() && comment_until.is_none() {
+                continue;
+            }
+            if let Some(end_line) = comment_until {
+                if j < end_line {
+                    continue;
+                }
+                comment_until = None;
+                i = t.find("-->").map_or(t.len(), |k| k + 3);
+            } else if let Some((c, n)) = fence {
+                if closes_fence(t, c, n) {
+                    fence = None;
+                }
+                continue;
+            } else if j > 0
+                && let Some((c, n, _, _)) = fence_open(container_content(t))
+                && !no_fence_closer.has_no_closer(c, j, n)
+            {
+                if lines.get(j + 1..).is_some_and(|rest| {
+                    rest.iter().any(|l| {
+                        crate::step(1);
+                        closes_fence(l.t(), c, n)
+                    })
+                }) {
+                    fence = Some((c, n));
+                    continue;
+                }
+                no_fence_closer.no_closer(c, j, n);
+            }
+            let bytes = t.as_bytes();
+            let mut no_code_closer: HashSet<usize> = HashSet::new();
+            let mut no_dollar = false;
+            while let Some(&b) = bytes.get(i) {
+                crate::step(1);
+                match b {
+                    b'\\' => i += 2,
+                    b'`' => {
+                        let n = bytes
+                            .get(i..)
+                            .unwrap_or(&[])
+                            .iter()
+                            .take_while(|c| **c == b'`')
+                            .count();
+                        i += n;
+                        if !no_code_closer.contains(&n) {
+                            match backtick_run(bytes, i, n) {
+                                Some(end) => i = end,
+                                None => {
+                                    no_code_closer.insert(n);
+                                }
+                            }
+                        }
+                    }
+                    b'$' if self.math && !no_dollar => match math_end(bytes, i) {
+                        Ok(end) => i = end,
+                        Err(none_after) => {
+                            no_dollar = none_after;
+                            i += 1;
+                        }
+                    },
+                    b'<' => {
+                        let rest = t.get(i..).unwrap_or("");
+                        match self.tag_at(rest) {
+                            Some(Tag::Close) => {
+                                if let Some(open) = stack.pop() {
+                                    found(open, Some((j, i)));
+                                    if stack.is_empty() {
+                                        return Some((j, i));
+                                    }
+                                }
+                                i += self.name.len() + 2;
+                            }
+                            Some(Tag::Open) => {
+                                let len = html_tag_len(rest);
+                                // A nested div with no content after its tag
+                                // can start with an indented code block.
+                                bare_open = self.native_div
+                                    && len.is_some_and(|n| rest.get(n..).is_some_and(blank));
+                                stack.push((j, i));
+                                i += len.unwrap_or(self.name.len() + 1);
+                            }
+                            None if self.raw_html
+                                && rest.starts_with("<!--")
+                                && starts_comment_or_pi(rest) =>
+                            {
+                                if let Some(k) = rest.get(4..).and_then(|r| r.find("-->")) {
+                                    i += k + 7;
+                                } else if no_comment_end_from.is_none_or(|from| j < from)
+                                    && let Some(k) = lines.get(j + 1..).and_then(|rest| {
+                                        rest.iter().position(|l| {
+                                            crate::step(1);
+                                            l.t().contains("-->")
+                                        })
+                                    })
+                                {
+                                    comment_until = Some(j + 1 + k);
+                                    break;
+                                } else {
+                                    no_comment_end_from = Some(j);
+                                    i += 1;
+                                }
+                            }
+                            None => i += html_tag_len(rest).unwrap_or(1),
+                        }
+                    }
+                    _ => i += 1,
+                }
+            }
+            if stack.is_empty() {
+                return None;
+            }
+            code_may_start |= bare_open;
+        }
+        for open in stack {
+            found(open, None);
+        }
+        None
+    }
+
+    /// Tells whether `s` starts with an opening or a closing tag of the
+    /// element.
+    fn tag_at(self, s: &str) -> Option<Tag> {
+        let (closing, rest) = match s.strip_prefix("</") {
+            Some(rest) => (true, rest),
+            None => (false, s.strip_prefix('<')?),
+        };
+        let name = rest.get(..self.name.len())?;
+        if !name.eq_ignore_ascii_case(self.name) {
+            return None;
+        }
+        if closing {
+            return Some(Tag::Close);
+        }
+        let next = rest.get(self.name.len()..).and_then(|r| r.chars().next());
+        matches!(next, None | Some(' ' | '>' | '/' | '\t')).then_some(Tag::Open)
+    }
+}
+
+/// A tag of the element that a `CloserScan` searches.
+#[derive(Clone, Copy)]
+enum Tag {
+    Open,
+    Close,
+}
+
+/// Returns the end of the math span that starts with the `$` at `i`. The
+/// error tells whether no `$` follows, so that no later `$` starts one.
+fn math_end(bytes: &[u8], i: usize) -> std::result::Result<usize, bool> {
+    let space = |b: Option<&u8>| matches!(b, None | Some(b' ' | b'\t'));
+    if bytes.get(i + 1) == Some(&b'$') {
+        let body = bytes.get(i + 2..).unwrap_or(&[]);
+        return body
+            .windows(2)
+            .position(|w| w == b"$$")
+            .map(|k| i + k + 4)
+            .ok_or(false);
+    }
+    if space(bytes.get(i + 1)) {
+        return Err(false);
+    }
+    let k = i
+        + 1
+        + bytes
+            .get(i + 1..)
+            .unwrap_or(&[])
+            .iter()
+            .position(|c| *c == b'$')
+            .ok_or(true)?;
+    let ends =
+        k > i + 1 && !space(bytes.get(k - 1)) && !bytes.get(k + 1).is_some_and(u8::is_ascii_digit);
+    if ends { Ok(k + 1) } else { Err(false) }
+}
+
+/// Makes a line from `rest`, the end of `lines[at]`, that shares its text
+/// when it can: a cache keyed by the shared text then knows the line.
+fn rest_line(lines: &[Ln], at: usize, rest: &str, n: u32) -> Ln {
+    lines
+        .get(at)
+        .map_or_else(|| Ln::new(rest, n), |line| line.tail(rest, n))
+}
+
+/// Returns the text of a line after its block quote and list markers.
+fn container_content(t: &str) -> &str {
+    let mut s = t;
+    loop {
+        let u = s.trim_start_matches(' ');
+        if let Some(r) = u.strip_prefix('>') {
+            s = r.strip_prefix(' ').unwrap_or(r);
+            continue;
+        }
+        let digits = u.len() - u.trim_start_matches(|c: char| c.is_ascii_digit()).len();
+        let marker = if digits > 0 {
+            u.get(digits..)
+                .and_then(|r| r.strip_prefix('.').or_else(|| r.strip_prefix(')')))
+        } else {
+            u.strip_prefix(['-', '*', '+'])
+        };
+        match marker.and_then(|r| r.strip_prefix(' ')) {
+            Some(r) => s = r,
+            None => return s,
+        }
+    }
+}
+
+/// Tells whether the line `t` closes a fence of `n` or more characters `c`.
+fn closes_fence(t: &str, c: char, n: usize) -> bool {
+    let tt = container_content(t).trim_matches(SPACE);
+    tt.len() - tt.trim_start_matches(c).len() >= n && tt.trim_start_matches(c).is_empty()
+}
+
 impl Parser {
     pub(crate) fn new(options: &ReaderOptions, source: &str, max_depth: usize) -> Self {
         let abbreviations = options.abbreviations.clone();
@@ -674,6 +963,7 @@ impl Parser {
             end_blank: false,
             div_close: HashMap::new(),
             html_close: HashMap::new(),
+            kept_sources: Vec::new(),
             idset: IdentifierSet::new(),
             examples: HashMap::new(),
             example_count: 0,
@@ -2343,66 +2633,57 @@ impl Parser {
     }
 
     /// Finds the closing tag of the element `name` that opens at the start of
-    /// `lines[0]`. One pass with a stack of open tags finds the closer of each
-    /// element in it that opens at the start of a line.
-    fn html_closer(&mut self, lines: &[Ln], name: &str) -> Option<(usize, usize)> {
+    /// `lines[0]`: the line index and the byte position in its text. One
+    /// pass finds the closer of each element in it that opens at the start
+    /// of a line, so a nested element does not search again.
+    fn html_closer(&mut self, scan: CloserScan<'_>, lines: &[Ln]) -> Option<(usize, usize)> {
         let first = lines.first()?;
-        let key = |line: &Ln| (line.n != 0).then(|| (line.n, line.text_start(), name.to_string()));
-        if let Some(k) = key(first)
-            && let Some(found) = self.html_close.get(&k)
-        {
-            // The cache holds a position in the shared text: a line can lose
-            // leading spaces after the pass that found its tag.
-            let (distance, position) = (*found)?;
-            let start = lines.get(distance)?.off.get();
-            return Some((distance, position.checked_sub(start)?));
-        }
-        let open_pat = format!("<{name}");
-        let close_pat = format!("</{name}");
-        let mut stack: Vec<(usize, bool)> = Vec::new();
-        for (j, line) in lines.iter().enumerate() {
-            crate::step(line.t().len());
-            let lower = line.t().to_ascii_lowercase();
-            let start = indent(&lower);
-            let mut events: Vec<(usize, bool)> = Vec::new();
-            for (pos, _) in lower.match_indices(&open_pat) {
-                let next = lower
-                    .get(pos + open_pat.len()..)
-                    .and_then(|r| r.chars().next());
-                if matches!(next, None | Some(' ' | '>' | '/' | '\t')) {
-                    events.push((pos, true));
+        let name = scan.name;
+        let key = |line: &Ln| (line.src_id(), line.text_start(), name.to_string());
+        let cached = self
+            .html_close
+            .get(&key(first))
+            .and_then(|found| match found {
+                None => Some(None),
+                // The position is in the shared text of the closing line: a line
+                // can lose leading spaces after the pass that found its tag.
+                Some((distance, src, position)) => {
+                    let line = lines.get(*distance).filter(|l| l.src_id() == *src)?;
+                    Some(Some((*distance, position.checked_sub(line.off.get())?)))
                 }
-            }
-            for (pos, _) in lower.match_indices(&close_pat) {
-                events.push((pos, false));
-            }
-            events.sort_unstable();
-            for (pos, opens) in events {
-                if opens {
-                    stack.push((j, pos == start));
-                    continue;
+            });
+        let found = match cached {
+            Some(found) => found,
+            None => {
+                let mut results = Vec::new();
+                let found = scan.run(lines, |open, close| results.push((open, close)));
+                for ((open, open_pos), close) in results {
+                    let Some(opener) = lines.get(open) else {
+                        continue;
+                    };
+                    let value = close.and_then(|(j, pos)| {
+                        let line = lines.get(j)?;
+                        Some((j - open, line.src_id(), line.off.get() + pos))
+                    });
+                    self.kept_sources.push(Rc::clone(&opener.src));
+                    if let Some((j, _)) = close
+                        && let Some(line) = lines.get(j)
+                    {
+                        self.kept_sources.push(Rc::clone(&line.src));
+                    }
+                    let k = (
+                        opener.src_id(),
+                        opener.off.get() + open_pos,
+                        name.to_string(),
+                    );
+                    self.html_close.insert(k, value);
                 }
-                let Some((open_line, at_start)) = stack.pop() else {
-                    continue;
-                };
-                if at_start && let Some(k) = lines.get(open_line).and_then(key) {
-                    self.html_close
-                        .insert(k, Some((j - open_line, line.off.get() + pos)));
-                }
-                if stack.is_empty() {
-                    return Some((j, pos));
-                }
+                found
             }
-            if stack.is_empty() {
-                return None;
-            }
-        }
-        for (open_line, at_start) in stack {
-            if at_start && let Some(k) = lines.get(open_line).and_then(key) {
-                self.html_close.insert(k, None);
-            }
-        }
-        None
+        };
+        #[cfg(test)]
+        crate::check_cache(&found, || scan.run(lines, |_, _| {}));
+        found
     }
 
     fn html_block(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Result<Option<usize>> {
@@ -2450,14 +2731,21 @@ impl Parser {
             }
             k
         };
-        let joined: Vec<&str> = lines
-            .get(..block_end)
-            .unwrap_or(&[])
-            .iter()
-            .map(|l| l.t())
-            .collect();
-        let joined = joined.join("\n");
-        crate::step(joined.len());
+        // One line is not copied: a line with many elements reads each one
+        // from the shared text.
+        let joined: std::borrow::Cow<'_, str> = if block_end <= 1 {
+            std::borrow::Cow::Borrowed(first.t())
+        } else {
+            let parts: Vec<&str> = lines
+                .get(..block_end)
+                .unwrap_or(&[])
+                .iter()
+                .map(|l| l.t())
+                .collect();
+            let joined = parts.join("\n");
+            crate::step(joined.len());
+            std::borrow::Cow::Owned(joined)
+        };
         let start = joined.len() - joined.trim_start_matches(' ').len();
         let text = joined.get(start..).unwrap_or("");
         if raw_token {
@@ -2563,7 +2851,9 @@ impl Parser {
                 .filter(|line| !line.is_blank())
                 .map_or(0, Ln::indent)
         };
-        let closer = self.html_closer(lines, &name);
+        let first_line = blank(first_rest).then_some(tag_lines + 1);
+        let scan = CloserScan::new(self, &name, first_line, content_indent);
+        let closer = self.html_closer(scan, lines);
         if closer.is_none() {
             // No closing tag follows: the element holds the rest of the lines.
             // Consecutive opening tags on the first line nest without copies.
@@ -2598,7 +2888,12 @@ impl Parser {
                 }
                 self.blocks_open(following, true)
             } else {
-                let mut inner = vec![Ln::new(text, first_n_of(lines, tag_lines))];
+                let mut inner = vec![rest_line(
+                    lines,
+                    tag_lines,
+                    text,
+                    first_n_of(lines, tag_lines),
+                )];
                 inner.extend(following.iter().cloned());
                 self.blocks_open(&inner, true)
             };
@@ -2638,9 +2933,13 @@ impl Parser {
             if !blank(first_rest) {
                 inner.push(Ln::new(first_rest.trim_start_matches(SPACE), first_n));
             }
-            let before_blank = lines
-                .get(close_line)
-                .is_none_or(|l| blank(l.t().get(..close_pos).unwrap_or("")));
+            // Spaces before the closing tag of a native div end its content
+            // like text does: the last paragraph is a Plain.
+            let spaced_div_closer = |before: &str| native_div && !before.is_empty();
+            let before_blank = lines.get(close_line).is_none_or(|l| {
+                let before = l.t().get(..close_pos).unwrap_or("");
+                blank(before) && !spaced_div_closer(before)
+            });
             if !blank(first_rest) || !before_blank {
                 inner.extend(
                     lines
@@ -2655,6 +2954,8 @@ impl Parser {
                 if !blank(before) {
                     inner.push(Ln::new(before, line.n));
                     closer_own_line = false;
+                } else if spaced_div_closer(before) {
+                    closer_own_line = false;
                 }
             }
         }
@@ -2665,7 +2966,7 @@ impl Parser {
         let tag_end = close_text.find('>').map_or(close_text.len(), |k| k + 1);
         let close = Some((
             close_text.get(..tag_end).unwrap_or("").to_string(),
-            close_text.get(tag_end..).unwrap_or("").to_string(),
+            close_text.get(tag_end..).unwrap_or(""),
         ));
         let j = close_line + 1;
         // When the content is a run of whole lines, it is a slice of the
@@ -2695,10 +2996,15 @@ impl Parser {
             }
         }
         if let Some((_, rest)) = close
-            && !blank(&rest)
+            && !blank(rest)
         {
             let n = lines.get(j.saturating_sub(1)).map_or(0, |l| l.n);
-            let mut more = vec![Ln::new(rest.trim_start_matches(SPACE), n)];
+            let mut more = vec![rest_line(
+                lines,
+                close_line,
+                rest.trim_start_matches(SPACE),
+                n,
+            )];
             let mut k = j;
             while let Some(line) = lines.get(k) {
                 if line.is_blank() {
@@ -2727,7 +3033,12 @@ impl Parser {
             return Ok(tag_lines + 1);
         }
         let n = lines.get(tag_lines).map_or(0, |l| l.n);
-        let mut more = vec![Ln::new(rest.trim_start_matches(SPACE), n)];
+        let mut more = vec![rest_line(
+            lines,
+            tag_lines,
+            rest.trim_start_matches(SPACE),
+            n,
+        )];
         more.extend(lines.get(tag_lines + 1..).unwrap_or(&[]).iter().cloned());
         let mut sub = Vec::new();
         let used = self.block_at(&more, 0, false, &mut FenceMemo::default(), &mut sub)?;
