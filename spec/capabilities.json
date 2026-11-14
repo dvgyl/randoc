@@ -620,12 +620,12 @@
     },
     "csljson": {
       "end_to_end": {
-        "passing": 102,
-        "total": 102
+        "passing": 186,
+        "total": 186
       },
       "read": {
-        "passing": 78,
-        "total": 78
+        "passing": 162,
+        "total": 162
       },
       "status": "passing"
     },
@@ -684,7 +684,7 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 9772,
+        "passing": 9773,
         "total": 10216
       },
       "read": {
@@ -753,12 +753,12 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 209,
-        "total": 209
+        "passing": 585,
+        "total": 585
       },
       "read": {
-        "passing": 209,
-        "total": 209
+        "passing": 585,
+        "total": 585
       },
       "status": "passing"
     },
@@ -825,8 +825,8 @@
     "ascii": {
       "status": "partial",
       "units": {
-        "passing": 9,
-        "total": 21
+        "passing": 36,
+        "total": 48
       }
     },
     "base-header-level": {
@@ -870,15 +870,15 @@
     "citeproc": {
       "status": "partial",
       "units": {
-        "passing": 5,
-        "total": 12
+        "passing": 6,
+        "total": 13
       }
     },
     "columns": {
       "status": "partial",
       "units": {
-        "passing": 747,
-        "total": 757
+        "passing": 760,
+        "total": 770
       }
     },
     "completion": {
@@ -896,17 +896,17 @@
       }
     },
     "css": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 10,
-        "total": 11
+        "passing": 28,
+        "total": 28
       }
     },
     "data-dir": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 12,
-        "total": 13
+        "passing": 20,
+        "total": 20
       }
     },
     "default-image-extension": {
@@ -954,8 +954,8 @@
     "eol": {
       "status": "passing",
       "units": {
-        "passing": 26,
-        "total": 26
+        "passing": 39,
+        "total": 39
       }
     },
     "epub-chapter-level": {
@@ -1066,15 +1066,15 @@
     "html-q-tags": {
       "status": "passing",
       "units": {
-        "passing": 10,
-        "total": 10
+        "passing": 21,
+        "total": 21
       }
     },
     "id-prefix": {
       "status": "passing",
       "units": {
-        "passing": 15,
-        "total": 15
+        "passing": 25,
+        "total": 25
       }
     },
     "ignore-args": {
@@ -1213,8 +1213,8 @@
     "lua-filter": {
       "status": "partial",
       "units": {
-        "passing": 1,
-        "total": 8
+        "passing": 59,
+        "total": 60
       }
     },
     "markdown-headings": {
@@ -1234,29 +1234,29 @@
     "mathjax": {
       "status": "passing",
       "units": {
-        "passing": 5,
-        "total": 5
+        "passing": 19,
+        "total": 19
       }
     },
     "mathml": {
       "status": "passing",
       "units": {
-        "passing": 5,
-        "total": 5
+        "passing": 20,
+        "total": 20
       }
     },
     "metadata": {
       "status": "partial",
       "units": {
-        "passing": 22,
-        "total": 28
+        "passing": 36,
+        "total": 42
       }
     },
     "metadata-file": {
       "status": "passing",
       "units": {
-        "passing": 46,
-        "total": 46
+        "passing": 47,
+        "total": 47
       }
     },
     "natbib": {
@@ -1283,8 +1283,8 @@
     "number-offset": {
       "status": "passing",
       "units": {
-        "passing": 14,
-        "total": 14
+        "passing": 30,
+        "total": 30
       }
     },
     "number-sections": {
@@ -1346,8 +1346,8 @@
     "quiet": {
       "status": "partial",
       "units": {
-        "passing": 8,
-        "total": 9
+        "passing": 10,
+        "total": 11
       }
     },
     "reference-doc": {
@@ -1374,29 +1374,29 @@
     "request-header": {
       "status": "passing",
       "units": {
-        "passing": 3,
-        "total": 3
+        "passing": 5,
+        "total": 5
       }
     },
     "resource-path": {
       "status": "passing",
       "units": {
-        "passing": 93,
-        "total": 93
+        "passing": 94,
+        "total": 94
       }
     },
     "sandbox": {
       "status": "partial",
       "units": {
-        "passing": 78,
-        "total": 82
+        "passing": 83,
+        "total": 86
       }
     },
     "section-divs": {
       "status": "passing",
       "units": {
-        "passing": 16,
-        "total": 16
+        "passing": 32,
+        "total": 32
       }
     },
     "self-contained": {
@@ -1409,8 +1409,8 @@
     "shift-heading-level-by": {
       "status": "passing",
       "units": {
-        "passing": 21,
-        "total": 21
+        "passing": 23,
+        "total": 23
       }
     },
     "slide-level": {
@@ -1472,14 +1472,14 @@
     "template": {
       "status": "partial",
       "units": {
-        "passing": 590,
-        "total": 814
+        "passing": 629,
+        "total": 844
       }
     },
     "title-prefix": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 2,
+        "passing": 3,
         "total": 3
       }
     },
@@ -1493,15 +1493,15 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 30,
-        "total": 101
+        "passing": 72,
+        "total": 143
       }
     },
     "toc-depth": {
       "status": "passing",
       "units": {
-        "passing": 16,
-        "total": 16
+        "passing": 41,
+        "total": 41
       }
     },
     "top-level-division": {
@@ -1514,8 +1514,8 @@
     "trace": {
       "status": "passing",
       "units": {
-        "passing": 4,
-        "total": 4
+        "passing": 5,
+        "total": 5
       }
     },
     "track-changes": {
@@ -1540,17 +1540,17 @@
       }
     },
     "variable-json": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 5,
-        "total": 7
+        "passing": 26,
+        "total": 26
       }
     },
     "verbose": {
       "status": "passing",
       "units": {
-        "passing": 6,
-        "total": 6
+        "passing": 7,
+        "total": 7
       }
     },
     "version": {
@@ -1561,17 +1561,17 @@
       }
     },
     "webtex": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 3,
-        "total": 5
+        "passing": 21,
+        "total": 21
       }
     },
     "wrap": {
       "status": "passing",
       "units": {
-        "passing": 94,
-        "total": 94
+        "passing": 111,
+        "total": 111
       }
     }
   },
@@ -1654,13 +1654,13 @@
     },
     "csljson": {
       "end_to_end": {
-        "passing": 167,
-        "total": 167
+        "passing": 627,
+        "total": 627
       },
       "status": "passing",
       "write": {
-        "passing": 135,
-        "total": 135
+        "passing": 577,
+        "total": 577
       }
     },
     "djot": {
@@ -1715,12 +1715,12 @@
     },
     "html": {
       "end_to_end": {
-        "passing": 513,
+        "passing": 514,
         "total": 520
       },
       "status": "partial",
       "write": {
-        "passing": 516,
+        "passing": 517,
         "total": 520
       }
     },
@@ -1974,8 +1974,8 @@
     },
     "options": {
       "not_started": 1,
-      "partial": 24,
-      "passing": 84
+      "partial": 19,
+      "passing": 89
     },
     "output_formats": {
       "failing": 1,
@@ -1984,8 +1984,8 @@
       "passing": 5
     },
     "units": {
-      "passing": 46457,
-      "total": 48903
+      "passing": 48194,
+      "total": 50617
     }
   }
 }
