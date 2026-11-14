@@ -1,8 +1,8 @@
 //! The tree rules. Each rule was found with Pandoc 3.13 as a black box.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
-use randoc_ast::walk::{walk_blocks_mut, walk_inlines_mut};
+use randoc_ast::walk::walk_inlines_mut;
 use randoc_ast::{
     Alignment, Attr, Block, Caption, Cell, Citation, CitationMode, ColSpec, ColWidth, Format,
     Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MathType, Meta, MetaValue, QuoteType,
@@ -34,12 +34,8 @@ type R<T> = Result<T, Stop>;
 pub(crate) const MAX_EXPANSION_DEPTH: u32 = 100;
 /// The longest optional argument of `\cites` that the lookahead accepts.
 const MAX_OPTION_TOKENS: usize = 256;
-/// The number of tokens that all macro expansions together can make:
-/// `MAX_EXPANDED_TOKENS` and `EXPANDED_PER_INPUT_TOKEN` for each token of
-/// the input, so that a long document with a common macro reads, and a
-/// macro that doubles stops in time linear in the input.
+/// The largest number of tokens that all macro expansions together can make.
 pub(crate) const MAX_EXPANDED_TOKENS: usize = 1_000_000;
-pub(crate) const EXPANDED_PER_INPUT_TOKEN: usize = 20;
 /// The step budget: the rounds of all parser loops together stay below
 /// `ROUNDS_PER_TOKEN` rounds for each token of the input and of the
 /// expansions, plus `BASE_ROUNDS`.
@@ -81,6 +77,8 @@ enum Until {
     Quote(QuoteType),
     /// At the `]` of an optional argument.
     Bracket,
+    /// At the end of a table cell.
+    Cell,
 }
 
 /// The state of the guard of one parser loop: the consumed count at the
@@ -88,25 +86,10 @@ enum Until {
 #[derive(Default)]
 struct Rounds(Option<usize>);
 
-/// The longest pending macro expansion that an environment with a
-/// fallback copies, so that the copies stay linear in the input.
-const MAX_SNAPSHOT_PENDING: usize = 4096;
-
-/// The parser state at the `\begin` of an environment with a fallback.
-#[derive(Clone)]
-struct Snapshot {
-    position: usize,
-    pending: Vec<Tok>,
-    recorders: Vec<usize>,
-    quote_kinds: usize,
-    /// The source line and column of the `\begin`; `None` for a token of a
-    /// macro expansion. Copies of tokens keep the source positions.
-    source_position: Option<(u32, u32)>,
-}
-
 /// The state of a figure or a table environment.
 #[derive(Debug, Default)]
 struct Float {
+    figure: bool,
     caption: Option<(Option<Vec<Inline>>, Vec<Inline>)>,
     label: Option<Text>,
 }
@@ -116,13 +99,6 @@ pub(crate) struct Parser<'c> {
     position: usize,
     /// Tokens of macro expansions, in reverse order: the last one is next.
     pending: Vec<Tok>,
-    /// For the pending tokens from the bottom: the `\fi` count minus the
-    /// count of words that start with `if` below each token, and the
-    /// minimum of that count up to the token. With it, a conditional in
-    /// `pending` finds in constant time that no `\fi` closes it.
-    fi_profile: Vec<(i64, i64)>,
-    /// The entries of `fi_profile` below this length are current.
-    profile_valid: usize,
     macros: HashMap<Text, Macro>,
     environments: HashMap<Text, EnvironmentMacro>,
     extensions: Extensions,
@@ -150,16 +126,9 @@ pub(crate) struct Parser<'c> {
     pub(crate) source_name: Text,
     /// The depth of `with_tokens`: rules that read a copy of tokens.
     copies: usize,
-    /// The source positions of the tables that failed as tables.
-    failed_tables: HashSet<(u32, u32)>,
-    /// The input positions of the `\begin` tokens that have their `\end`.
-    closed_begins: HashSet<usize>,
-    /// The copy depth of the table cell that is read now, or 0. An
-    /// environment that a cell ends inside is an error there.
-    cell_copies: usize,
-    /// The depth at which a `}` is a stray closer: 0, or the depth of the
-    /// table cell that is read now.
-    top_depth: usize,
+    /// The depth of lists and tables. Pandoc gives no parse error for a
+    /// missing argument group there.
+    lenient: usize,
     /// True in the preamble. Pandoc gives no parse error for a missing
     /// argument group there, but it does for a definition without a name.
     in_preamble: bool,
@@ -183,7 +152,6 @@ impl<'c> Parser<'c> {
     pub(crate) fn new(input: &str, extensions: Extensions, context: &'c mut Context) -> Self {
         let tokens = tokenize(input);
         let conditionals = match_conditionals(&tokens);
-        let closed_begins = match_environments(&tokens);
         let has = |name: &str| tokens.iter().any(|tok| tok.is_word(name));
         let level_offset = if has("part") {
             2
@@ -197,8 +165,6 @@ impl<'c> Parser<'c> {
             tokens,
             position: 0,
             pending: Vec::new(),
-            fi_profile: Vec::new(),
-            profile_valid: 0,
             macros: HashMap::new(),
             environments: HashMap::new(),
             extensions,
@@ -218,10 +184,7 @@ impl<'c> Parser<'c> {
             rounds: 0,
             source_name: Text::new(),
             copies: 0,
-            failed_tables: HashSet::new(),
-            closed_begins,
-            cell_copies: 0,
-            top_depth: 0,
+            lenient: 0,
             in_preamble: false,
             scanned: std::cell::Cell::new(0),
             quote_kinds: Vec::new(),
@@ -257,10 +220,7 @@ impl<'c> Parser<'c> {
             return None;
         }
         let tok = match self.pending.pop() {
-            Some(tok) => {
-                self.profile_valid = self.profile_valid.min(self.pending.len());
-                tok
-            }
+            Some(tok) => tok,
             None => {
                 self.position = self.raw_position();
                 let tok = self.tokens.get(self.position)?.clone();
@@ -438,7 +398,7 @@ impl<'c> Parser<'c> {
             }
         }
         self.expanded += out.len();
-        if self.expanded > MAX_EXPANDED_TOKENS + EXPANDED_PER_INPUT_TOKEN * self.input_tokens {
+        if self.expanded > MAX_EXPANDED_TOKENS {
             return Err(Stop::Loop(name.to_owned()));
         }
         for tok in &mut out {
@@ -600,9 +560,6 @@ impl<'c> Parser<'c> {
         if self.pending.is_empty() {
             return Ok(self.conditional_in_input(value));
         }
-        if !self.fi_in_pending() {
-            return Ok(false);
-        }
         let Some((else_at, fi_at)) = self.branches_ahead() else {
             return Ok(false);
         };
@@ -695,44 +652,6 @@ impl<'c> Parser<'c> {
         None
     }
 
-    /// False when no `\fi` in `pending` closes the conditional on its top.
-    /// It updates the profile of the tokens pushed since the last call, so
-    /// that repeated conditionals without `\fi` take linear time.
-    fn fi_in_pending(&mut self) -> bool {
-        let weight = |tok: &Tok| match &tok.kind {
-            Kind::Word(word) if word == "fi" => 1,
-            Kind::Word(word) if word.starts_with("if") => -1,
-            _ => 0,
-        };
-        let keep = self.profile_valid.min(self.pending.len());
-        self.fi_profile.truncate(keep);
-        for index in keep..self.pending.len() {
-            let entry = match index
-                .checked_sub(1)
-                .and_then(|below| Some((self.fi_profile.get(below)?, self.pending.get(below)?)))
-            {
-                Some((&(count, minimum), tok)) => {
-                    let count = count + weight(tok);
-                    (count, minimum.min(count))
-                }
-                None => (0, 0),
-            };
-            self.fi_profile.push(entry);
-        }
-        self.profile_valid = self.pending.len();
-        let Some(top) = self.pending.len().checked_sub(1) else {
-            return false;
-        };
-        match (
-            top.checked_sub(1)
-                .and_then(|below| self.fi_profile.get(below)),
-            self.fi_profile.get(top),
-        ) {
-            (Some(&(_, minimum)), Some(&(count, _))) => minimum < count,
-            _ => false,
-        }
-    }
-
     /// The tokens from the next one on, counted as the work of a lookahead rule.
     fn scan(&self) -> impl Iterator<Item = &Tok> + Clone + '_ {
         self.ahead()
@@ -742,11 +661,6 @@ impl<'c> Parser<'c> {
     /// The name of `\begin{NAME}` when the next token is `\begin`.
     fn environment_name_ahead(&self) -> Option<Text> {
         name_in(self.ahead().skip(1).take(64))
-    }
-
-    /// The name of `{NAME}` after a `\begin` that was consumed.
-    fn environment_name_ahead_of_argument(&self) -> Option<Text> {
-        name_in(self.ahead().take(64))
     }
 
     /// The tokens up to the `\end{NAME}` that closes the environment, which
@@ -777,37 +691,6 @@ impl<'c> Parser<'c> {
             }
         }
         (body, false)
-    }
-
-    /// The tokens of a math environment up to its `\end{NAME}`, which it
-    /// consumes, and false when the input ends before that `\end`. Macros
-    /// expand, also into the `\end`, as in Pandoc.
-    fn math_body_tokens(&mut self, name: &str) -> R<(Vec<Tok>, bool)> {
-        let mut nesting = 0usize;
-        let mut body = Vec::new();
-        let mut rounds = Rounds::default();
-        while let Some(kind) = self.peek_kind()? {
-            self.round(&mut rounds)?;
-            if let Kind::Word(word) = &kind
-                && (word == "begin" || word == "end")
-                && self.environment_name_ahead().as_deref() == Some(name)
-            {
-                if word == "end" && nesting == 0 {
-                    self.bump();
-                    self.argument_tokens();
-                    return Ok((body, true));
-                }
-                if word == "begin" {
-                    nesting += 1;
-                } else {
-                    nesting -= 1;
-                }
-            }
-            if let Some(tok) = self.bump() {
-                body.push(tok);
-            }
-        }
-        Ok((body, false))
     }
 
     fn peek_kind(&mut self) -> R<Option<Kind>> {
@@ -936,27 +819,18 @@ impl<'c> Parser<'c> {
             let saved_tokens = std::mem::replace(&mut parser.tokens, tokens);
             let saved_position = std::mem::replace(&mut parser.position, 0);
             let saved_pending = std::mem::take(&mut parser.pending);
-            let saved_profile = std::mem::take(&mut parser.fi_profile);
-            let saved_valid = std::mem::replace(&mut parser.profile_valid, 0);
             let saved_finished = std::mem::replace(&mut parser.finished, false);
             let saved_conditionals =
                 std::mem::replace(&mut parser.conditionals, match_conditionals(&parser.tokens));
             let saved_skips = std::mem::take(&mut parser.skips);
-            let saved_begins = std::mem::replace(
-                &mut parser.closed_begins,
-                match_environments(&parser.tokens),
-            );
             parser.copies += 1;
             let result = run(parser);
             parser.copies -= 1;
             parser.conditionals = saved_conditionals;
             parser.skips = saved_skips;
-            parser.closed_begins = saved_begins;
             parser.tokens = saved_tokens;
             parser.position = saved_position;
             parser.pending = saved_pending;
-            parser.fi_profile = saved_profile;
-            parser.profile_valid = saved_valid;
             parser.finished = saved_finished;
             result
         })
@@ -987,7 +861,7 @@ impl<'c> Parser<'c> {
             } else {
                 self.nested(|parser| parser.inlines(Until::Close))?.0
             };
-            self.close_group()?;
+            self.close_group();
             return Ok(inlines);
         }
         let tokens = self.argument_tokens().unwrap_or_default();
@@ -1024,7 +898,7 @@ impl<'c> Parser<'c> {
             } else {
                 self.nested(|parser| parser.blocks(End::Close))?
             };
-            self.close_group()?;
+            self.close_group();
             return Ok(blocks);
         }
         let tokens = self.argument_tokens().unwrap_or_default();
@@ -1041,16 +915,9 @@ impl<'c> Parser<'c> {
         }
     }
 
-    /// Consumes the `}` of a group. Pandoc stops when the input ends inside
-    /// the group.
-    fn close_group(&mut self) -> R<()> {
-        match self.peek_raw() {
-            Some(tok) if tok.kind == Kind::Close => {
-                self.bump();
-                Ok(())
-            }
-            None => self.ends_inside("unexpected ()"),
-            Some(_) => Ok(()),
+    fn close_group(&mut self) {
+        if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Close) {
+            self.bump();
         }
     }
 
@@ -1070,12 +937,6 @@ impl<'c> Parser<'c> {
 
     fn blocks(&mut self, end: End) -> R<Vec<Block>> {
         let mut blocks = Vec::new();
-        self.blocks_into(&mut blocks, end)?;
-        Ok(blocks)
-    }
-
-    /// The blocks up to `end`. On an error, `blocks` holds the blocks before it.
-    fn blocks_into(&mut self, blocks: &mut Vec<Block>, end: End) -> R<()> {
         let mut rounds = Rounds::default();
         while let Some(kind) = self.peek_kind()? {
             self.round(&mut rounds)?;
@@ -1087,7 +948,7 @@ impl<'c> Parser<'c> {
                     self.bump();
                 }
                 Kind::Close if end == End::Close => break,
-                Kind::Close if let End::Environment(name) | End::Item(name) = end => {
+                Kind::Close if let End::Environment(name) = end => {
                     let message = format!("unexpected }}\nexpecting \\end{{{name}}}");
                     return Err(self
                         .peek_raw()
@@ -1095,7 +956,7 @@ impl<'c> Parser<'c> {
                             self.error_at(tok, &message)
                         }));
                 }
-                Kind::Close if self.depth == self.top_depth => return Err(self.unexpected()),
+                Kind::Close if self.depth == 0 => return Err(self.unexpected()),
                 Kind::Close => {
                     self.bump();
                 }
@@ -1105,73 +966,37 @@ impl<'c> Parser<'c> {
                     {
                         break;
                     }
-                    return Err(self.stray_end(end));
+                    self.bump();
+                    self.argument_tokens();
                 }
                 Kind::Word(name) if name == "item" && matches!(end, End::Item(_)) => break,
                 Kind::Word(name) if name == "begin" => {
                     let environment = self.environment_name_ahead().unwrap_or_default();
                     if is_inline_environment(&environment) {
-                        self.paragraph(blocks)?;
+                        self.paragraph(&mut blocks)?;
                     } else {
-                        let mut parsed = Vec::new();
-                        self.nested(|parser| parser.environment(&environment, &mut parsed))?;
-                        blocks.extend(parsed);
+                        self.nested(|parser| parser.environment(&environment, &mut blocks))?;
                     }
                 }
-                Kind::Word(name) if self.block_command(&name, blocks)? => {}
+                Kind::Word(name) if self.block_command(&name, &mut blocks)? => {}
                 Kind::Open if self.group_holds_block() => {
                     self.bump();
                     let inner = self.nested(|parser| parser.blocks(End::Close))?;
-                    self.close_group()?;
+                    self.close_group();
                     blocks.extend(inner);
                 }
-                _ => self.paragraph(blocks)?,
+                _ => self.paragraph(&mut blocks)?,
             }
         }
-        Ok(())
-    }
-
-    /// The parse error of Pandoc for an `\end` that closes no open
-    /// environment: inside an environment it names the environment after
-    /// the `\end{...}`; at the top level it shows the token.
-    fn stray_end(&mut self, end: End) -> Stop {
-        match end {
-            End::Environment(name) | End::Item(name) => {
-                self.bump();
-                let expecting = format!("expecting \\end{{{name}}}");
-                self.skip_spaces();
-                match self.peek_raw() {
-                    Some(tok) if tok.kind != Kind::Open => {
-                        self.error_at(tok, &format!("unexpected {}\n{expecting}", tok.text))
-                    }
-                    _ => {
-                        self.argument_tokens();
-                        let SourcePos { line, column, .. } = self.position_of_next();
-                        self.error_at_position(line, column, &expecting)
-                    }
-                }
-            }
-            End::Input if self.copies == 0 => self.unexpected(),
-            End::Input | End::Close => self.unexpected_word(),
-        }
-    }
-
-    /// `unexpected \NAME` at the next token.
-    fn unexpected_word(&self) -> Stop {
-        self.peek_raw()
-            .map_or(Stop::Unexpected(Text::new()), |tok| {
-                self.error_at(tok, &format!("unexpected {}", tok.text))
-            })
+        Ok(blocks)
     }
 
     /// A paragraph. It consumes one token at least, so that each loop
     /// that calls it ends.
     fn paragraph(&mut self, blocks: &mut Vec<Block>) -> R<()> {
         let before = self.bumps;
-        let mut inlines = Inlines::default();
-        let read = self.inlines_into(&mut inlines, Until::Paragraph);
+        let mut inlines = self.inlines(Until::Paragraph)?;
         inlines.flush_into(blocks);
-        read?;
         if self.bumps == before {
             self.bump();
         }
@@ -1291,17 +1116,6 @@ impl<'c> Parser<'c> {
     /// `\newcommand` and the other macro definitions.
     fn definition(&mut self, command: &str, pos: SourcePos) -> R<()> {
         self.skip_word_spaces();
-        if command == "global" {
-            // Pandoc accepts only a `\def` or a `\let` form after `\global`.
-            return match self.peek_raw().map(|tok| tok.kind.clone()) {
-                Some(Kind::Word(word)) if is_def_word(&word) || word == "let" => {
-                    let tok = self.bump();
-                    let pos = tok.map_or(pos, |tok| SourcePos::new("", tok.line, tok.column));
-                    self.definition(&word, pos)
-                }
-                _ => Err(self.unexpected_word()),
-            };
-        }
         self.star();
         match command {
             "let" => {
@@ -1325,7 +1139,7 @@ impl<'c> Parser<'c> {
                 });
                 self.macros.insert(name, definition);
             }
-            _ if is_def_word(command) => {
+            "def" => {
                 let name = self.defined_name();
                 let mut parameters = 0;
                 while let Some(tok) = self.peek_raw() {
@@ -1417,108 +1231,19 @@ impl<'c> Parser<'c> {
 
     // Environments.
 
-    /// An environment. For a list, a table and an environment that Pandoc
-    /// does not know, a parse error inside does not stop the document, as
-    /// in Pandoc: the reader reads the environment again with the next rule
-    /// of a chain (a table as an unknown environment, then the source text
-    /// as raw TeX, which only `raw_tex` keeps).
     fn environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
-        let raw_tex = self.extensions.contains(Extension::RawTex);
-        if raw_tex && !is_known_environment(name) {
-            return self.raw_environment(name, blocks);
-        }
-        if !falls_back(name) {
-            return self.known_environment(name, blocks);
-        }
-        let start = self.snapshot();
-        let failed = start.as_ref().and_then(|s| s.source_position);
-        let mut tabular_failed = failed.is_some_and(|p| self.failed_tables.contains(&p));
-        if !tabular_failed {
-            let Some(snapshot) = start.clone() else {
-                return self.known_environment(name, blocks);
-            };
-            let mut parsed = Vec::new();
-            match self.known_environment(name, &mut parsed) {
-                Ok(()) => {
-                    blocks.extend(parsed);
-                    return Ok(());
-                }
-                Err(Stop::Unexpected(_)) => self.restore(snapshot),
-                Err(other) => return Err(other),
+        if self.extensions.contains(Extension::RawTex) && !is_known_environment(name) {
+            self.start_record();
+            self.bump();
+            self.argument_tokens();
+            let (_, closed) = self.environment_body_tokens(name);
+            let raw = self.stop_record();
+            if !closed {
+                self.unclosed(name)?;
             }
-            tabular_failed = is_tabular(name);
-            if let Some(position) = failed.filter(|_| tabular_failed) {
-                self.failed_tables.insert(position);
-            }
+            blocks.push(Block::RawBlock(Format::new("latex"), raw));
+            return Ok(());
         }
-        if tabular_failed && !raw_tex {
-            // The memory of failed tables keeps nested failed tables from
-            // reading their content once for each rule of the chain.
-            if let Some(snapshot) = start.filter(|s| s.source_position.is_some()) {
-                let mut parsed = Vec::new();
-                match self.div_environment(name, &mut parsed) {
-                    Ok(()) => {
-                        blocks.extend(parsed);
-                        return Ok(());
-                    }
-                    Err(Stop::Unexpected(_)) => self.restore(snapshot),
-                    Err(other) => return Err(other),
-                }
-            }
-        }
-        let mut raw = Vec::new();
-        self.raw_environment(name, &mut raw)?;
-        if raw_tex {
-            blocks.extend(raw);
-        }
-        Ok(())
-    }
-
-    /// The source text of an environment as a `RawBlock`.
-    fn raw_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
-        self.start_record();
-        self.bump();
-        self.argument_tokens();
-        let (_, closed) = self.environment_body_tokens(name);
-        let raw = self.stop_record();
-        if !closed {
-            self.unclosed(name)?;
-        }
-        blocks.push(Block::RawBlock(Format::new("latex"), raw));
-        Ok(())
-    }
-
-    /// The state that a failed environment must give back, or `None` when
-    /// it is too large to copy (a long macro expansion is pending).
-    fn snapshot(&self) -> Option<Snapshot> {
-        if self.pending.len() > MAX_SNAPSHOT_PENDING {
-            return None;
-        }
-        Some(Snapshot {
-            position: self.position,
-            pending: self.pending.clone(),
-            recorders: self.recorders.iter().map(Text::len).collect(),
-            quote_kinds: self.quote_kinds.len(),
-            source_position: self
-                .peek_raw()
-                .filter(|tok| tok.depth == 0)
-                .map(|tok| (tok.line, tok.column)),
-        })
-    }
-
-    fn restore(&mut self, snapshot: Snapshot) {
-        self.position = snapshot.position;
-        self.pending = snapshot.pending;
-        self.profile_valid = 0;
-        self.recorders.truncate(snapshot.recorders.len());
-        for (record, len) in self.recorders.iter_mut().zip(snapshot.recorders) {
-            record.truncate(len);
-        }
-        self.quote_kinds.truncate(snapshot.quote_kinds);
-    }
-
-    /// An environment by the rule of its name.
-    fn known_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
         self.bump();
         self.argument_tokens();
         match name {
@@ -1558,47 +1283,25 @@ impl<'c> Parser<'c> {
                 }
             }
             "figure" | "figure*" => blocks.push(self.figure(name)?),
-            "tikzpicture" => {
-                let (_, closed) = self.environment_body_tokens(name);
-                if !closed {
-                    self.unclosed(name)?;
-                }
-                return Ok(());
-            }
             "table" | "table*" => blocks.extend(self.table_float(name)?),
             _ if is_tabular(name) => {
                 if name != "tabular" && name != "longtable" {
                     self.argument_tokens();
                 }
-                blocks.push(self.tabular(name)?);
+                blocks.push(self.tabular()?);
             }
-            _ => return self.div_body(name, blocks),
+            _ => {
+                self.bracket_tokens();
+                if name == "minipage" {
+                    self.argument_tokens();
+                }
+                let content = self.blocks(End::Environment(name))?;
+                blocks.push(Block::Div(
+                    Attr::new("", vec![name.to_owned()], vec![]),
+                    content,
+                ));
+            }
         }
-        self.close_environment(name)
-    }
-
-    /// An environment read as a `Div` with its name as the class, from its
-    /// `\begin`.
-    fn div_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
-        self.bump();
-        self.argument_tokens();
-        self.div_body(name, blocks)
-    }
-
-    fn div_body(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
-        self.bracket_tokens();
-        if name == "minipage" {
-            self.argument_tokens();
-        }
-        let content = self.blocks(End::Environment(name))?;
-        blocks.push(Block::Div(
-            Attr::new("", vec![name.to_owned()], vec![]),
-            content,
-        ));
-        self.close_environment(name)
-    }
-
-    fn close_environment(&mut self, name: &str) -> R<()> {
         if self.peek_raw().is_none() {
             self.unclosed(name)?;
         }
@@ -1611,19 +1314,16 @@ impl<'c> Parser<'c> {
     /// reads a copy of tokens, such as a title, has no such error: its
     /// copy ends before the input does.
     fn unclosed(&self, name: &str) -> R<()> {
-        self.ends_inside(&format!(
-            "unexpected end of input\nexpecting \\end{{{name}}}"
-        ))
-    }
-
-    /// The error of Pandoc for a construct that the input ends inside.
-    fn ends_inside(&self, message: &str) -> R<()> {
-        if self.copies > self.cell_copies {
+        if self.copies > 0 {
             return Ok(());
         }
         let lines = self.input.matches('\n').count() + usize::from(!self.input.ends_with('\n'));
         let line = u32::try_from(lines + 1).unwrap_or(u32::MAX);
-        Err(self.error_at_position(line, 2, message))
+        Err(self.error_at_position(
+            line,
+            2,
+            &format!("unexpected end of input\nexpecting \\end{{{name}}}"),
+        ))
     }
 
     fn end_environment(&mut self) {
@@ -1636,6 +1336,13 @@ impl<'c> Parser<'c> {
     /// A list. A list without items, or a description item without a
     /// term, makes a `Div` with the class of the environment, as in Pandoc.
     fn list(&mut self, name: &str, attributes: ListAttributes) -> R<Block> {
+        self.lenient += 1;
+        let list = self.list_items(name, attributes);
+        self.lenient -= 1;
+        list
+    }
+
+    fn list_items(&mut self, name: &str, attributes: ListAttributes) -> R<Block> {
         let mut items = Vec::new();
         let mut terms = Vec::new();
         let mut lead = Vec::new();
@@ -1716,7 +1423,10 @@ impl<'c> Parser<'c> {
 
     fn figure(&mut self, name: &str) -> R<Block> {
         let placement = self.bracket_tokens().map(|tokens| tokens_text(&tokens));
-        self.floats.push(Float::default());
+        self.floats.push(Float {
+            figure: true,
+            ..Float::default()
+        });
         let content = self.blocks(End::Environment(name));
         let float = self.floats.pop().unwrap_or_default();
         let content = content?;
@@ -1734,19 +1444,7 @@ impl<'c> Parser<'c> {
             },
             None => Caption::default(),
         };
-        let mut content = content;
-        walk_blocks_mut(&mut content, |block| {
-            if let Block::Para(inlines) = block
-                && let [Inline::Image(attr, _, target)] = inlines.as_slice()
-            {
-                *block = Block::Plain(vec![Inline::Image(
-                    attr.clone(),
-                    Vec::new(),
-                    target.clone(),
-                )]);
-            }
-        });
-        Ok(Block::Figure(attr, caption, content))
+        Ok(Block::Figure(attr, caption, plain_paragraphs(content)))
     }
 
     fn table_float(&mut self, name: &str) -> R<Vec<Block>> {
@@ -1771,47 +1469,58 @@ impl<'c> Parser<'c> {
         Ok(content)
     }
 
-    /// A tabular environment, read in place up to its `\end`. As in Pandoc,
-    /// the rows end at `\\` and the cells at `&` also inside a group, but
-    /// not inside a nested environment, and each cell is read alone.
-    fn tabular(&mut self, name: &str) -> R<Block> {
+    /// A tabular environment, read in place up to its `\end`.
+    fn tabular(&mut self) -> R<Block> {
+        self.lenient += 1;
+        let table = self.tabular_rows();
+        self.lenient -= 1;
+        table
+    }
+
+    fn tabular_rows(&mut self) -> R<Block> {
         self.bracket_tokens();
         let spec = self.argument_tokens().unwrap_or_default();
         let aligns = column_alignments(&spec);
         let mut rows = Vec::new();
         let mut head_rows = None;
-        let mut rounds = Rounds::default();
+        let mut rows_rounds = Rounds::default();
         loop {
-            self.round(&mut rounds)?;
+            self.round(&mut rows_rounds)?;
             if self.skip_rules()? && !rows.is_empty() && head_rows.is_none() {
                 head_rows = Some(rows.len());
             }
-            if self.peek_raw().is_none() || self.at_end_of(name) {
+            if self.peek_raw().is_none_or(|tok| tok.is_word("end")) {
                 break;
             }
+            let before = self.bumps;
             let mut cells = Vec::new();
-            for tokens in self.row_tokens(name) {
-                cells.push(self.cell(tokens)?);
+            let mut cell_rounds = Rounds::default();
+            loop {
+                self.round(&mut cell_rounds)?;
+                cells.push(self.cell()?);
+                match self.peek_raw().map(|tok| &tok.kind) {
+                    Some(Kind::Tab) => {
+                        self.bump();
+                    }
+                    Some(Kind::Symbol('\\')) => {
+                        self.bump();
+                        self.star();
+                        self.bracket_tokens();
+                        break;
+                    }
+                    _ => break,
+                }
             }
-            rows.push(cells);
-        }
-        let columns = aligns.len();
-        if rows.iter().any(|cells| cells.len() > columns) {
-            return Err(Stop::Unexpected(Text::from(
-                "a row has more cells than the table has columns",
-            )));
-        }
-        let simple = rows
-            .iter()
-            .flatten()
-            .all(|cell| matches!(cell.content.as_slice(), [] | [Block::Para(_)]));
-        let mut rows: Vec<Row> = rows
-            .into_iter()
-            .map(|cells| Row {
+            if self.bumps == before {
+                // A token that ends a cell but no row, such as a stray `}`.
+                self.bump();
+                continue;
+            }
+            rows.push(Row {
                 attr: Attr::default(),
-                cells: fit_row(cells, columns, simple),
-            })
-            .collect();
+                cells,
+            });
+        }
         let head = match head_rows {
             Some(count) if count < rows.len() => rows.drain(..count).collect(),
             _ => Vec::new(),
@@ -1835,91 +1544,6 @@ impl<'c> Parser<'c> {
             }],
             ..Table::default()
         })))
-    }
-
-    /// True when the next tokens are `\end{NAME}`.
-    fn at_end_of(&self, name: &str) -> bool {
-        self.peek_raw().is_some_and(|tok| tok.is_word("end"))
-            && self.environment_name_ahead().as_deref() == Some(name)
-    }
-
-    /// The tokens of the cells of one row, up to its `\\` (which it
-    /// consumes with a star and an option) or the `\end` of the table.
-    /// An environment that has its `\end` is one unit of a cell.
-    fn row_tokens(&mut self, name: &str) -> Vec<Vec<Tok>> {
-        let mut cells = vec![Vec::new()];
-        let mut open: Vec<Text> = Vec::new();
-        while let Some(tok) = self.peek_raw() {
-            match &tok.kind {
-                Kind::Word(word) if word == "begin" && self.begin_is_closed() => {
-                    open.push(self.environment_name_ahead().unwrap_or_default());
-                }
-                Kind::Word(word) if word == "end" => {
-                    let ahead = self.environment_name_ahead();
-                    if open.is_empty() && ahead.as_deref() == Some(name) {
-                        break;
-                    }
-                    if open.last() == ahead.as_ref() {
-                        open.pop();
-                    }
-                }
-                Kind::Tab if open.is_empty() => {
-                    self.bump();
-                    cells.push(Vec::new());
-                    continue;
-                }
-                Kind::Symbol('\\') if open.is_empty() => {
-                    self.bump();
-                    self.star();
-                    self.bracket_tokens();
-                    break;
-                }
-                _ => {}
-            }
-            if let (Some(tok), Some(cell)) = (self.bump(), cells.last_mut()) {
-                cell.push(tok);
-            }
-        }
-        cells
-    }
-
-    /// True when the next `\begin` has its `\end` in the input. A token of a
-    /// macro expansion counts as closed.
-    fn begin_is_closed(&self) -> bool {
-        !self.pending.is_empty() || self.closed_begins.contains(&self.raw_position())
-    }
-
-    /// One cell. A parse error inside ends the cell: the cell keeps the
-    /// blocks before the error, as in Pandoc.
-    fn cell(&mut self, tokens: Vec<Tok>) -> R<Cell> {
-        self.with_tokens(tokens, |parser| {
-            let saved = (parser.cell_copies, parser.top_depth);
-            (parser.cell_copies, parser.top_depth) = (parser.copies, parser.depth);
-            let cell = parser.cell_content();
-            (parser.cell_copies, parser.top_depth) = saved;
-            cell
-        })
-    }
-
-    fn cell_content(&mut self) -> R<Cell> {
-        let mut cell = Cell::default();
-        self.skip_spaces();
-        if self.peek_kind()? == Some(Kind::Word("multicolumn".into())) {
-            self.bump();
-            let span = self.argument_text();
-            let spec = self.argument_tokens().unwrap_or_default();
-            cell.col_span = span.trim().parse().unwrap_or(1);
-            cell.align = column_alignments(&spec)
-                .first()
-                .copied()
-                .unwrap_or(Alignment::AlignDefault);
-            let content = self.argument_tokens().unwrap_or_default();
-            self.unread(content);
-        }
-        match self.blocks_into(&mut cell.content, End::Input) {
-            Ok(()) | Err(Stop::Unexpected(_)) => Ok(cell),
-            Err(other) => Err(other),
-        }
     }
 
     /// Skips the spaces and the rules between rows. Returns true when a
@@ -1948,25 +1572,45 @@ impl<'c> Parser<'c> {
         }
     }
 
+    /// One cell, up to `&`, `\\` or `\end`.
+    fn cell(&mut self) -> R<Cell> {
+        self.skip_spaces();
+        let mut cell = Cell::default();
+        let mut inlines = Inlines::default();
+        if self.peek_kind()? == Some(Kind::Word("multicolumn".into())) {
+            self.bump();
+            let span = self.argument_text();
+            let spec = self.argument_tokens().unwrap_or_default();
+            cell.col_span = span.trim().parse().unwrap_or(1);
+            cell.align = column_alignments(&spec)
+                .first()
+                .copied()
+                .unwrap_or(Alignment::AlignDefault);
+            inlines.append(Inlines(self.argument_inlines()?));
+        }
+        inlines.append(self.nested(|parser| parser.inlines(Until::Cell))?);
+        let inlines = inlines.trimmed();
+        if !inlines.is_empty() {
+            cell.content = vec![Block::Plain(inlines)];
+        }
+        Ok(cell)
+    }
+
     // Inlines.
 
     fn inlines(&mut self, until: Until) -> R<Inlines> {
         let mut out = Inlines::default();
-        self.inlines_into(&mut out, until)?;
-        Ok(out)
-    }
-
-    /// The inlines up to `until`. On an error, `out` holds the inlines before it.
-    fn inlines_into(&mut self, out: &mut Inlines, until: Until) -> R<()> {
         let mut rounds = Rounds::default();
         while let Some(kind) = self.peek_kind()? {
             self.round(&mut rounds)?;
             match (until, &kind) {
-                (Until::Close | Until::Quote(_) | Until::Bracket, Kind::Close) => {
+                (Until::Close | Until::Quote(_) | Until::Bracket | Until::Cell, Kind::Close) => {
                     break;
                 }
                 (Until::Bracket, Kind::Other(']')) => break,
-                (Until::Paragraph, Kind::Close) if self.depth == self.top_depth => {
+                (Until::Cell, Kind::Tab | Kind::Symbol('\\')) => break,
+                (Until::Cell, Kind::Word(name)) if name == "end" => break,
+                (Until::Paragraph, Kind::Close) if self.depth == 0 => {
                     return Err(self.unexpected());
                 }
                 (Until::Paragraph, Kind::Close) => break,
@@ -1991,9 +1635,9 @@ impl<'c> Parser<'c> {
                 }
                 _ => {}
             }
-            self.inline(out, until)?;
+            self.inline(&mut out, until)?;
         }
-        Ok(())
+        Ok(out)
     }
 
     fn next_is_other_after(&self, c: char) -> bool {
@@ -2028,7 +1672,9 @@ impl<'c> Parser<'c> {
             Kind::Tilde => out.push_str(NBSP),
             Kind::Open => {
                 let inner = self.nested(|parser| parser.inlines(Until::Close))?;
-                self.close_group()?;
+                if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Close) {
+                    self.bump();
+                }
                 if !inner.0.is_empty() {
                     out.push(Inline::Span(Attr::default(), inner.0));
                 }
@@ -2042,18 +1688,6 @@ impl<'c> Parser<'c> {
             Kind::Symbol(c) => self.symbol(c, out)?,
             Kind::Verb(text) => out.push(Inline::Code(Attr::default(), text)),
             Kind::Verbatim(text) => out.push(Inline::Code(Attr::default(), text)),
-            Kind::Word(ref name) if name == "end" => {
-                return Err(self.error_at(&tok, "unexpected \\end"));
-            }
-            Kind::Word(ref name)
-                if name == "begin"
-                    && matches!(until, Until::Close | Until::Bracket)
-                    && self
-                        .environment_name_ahead_of_argument()
-                        .is_none_or(|environment| !is_inline_environment(&environment)) =>
-            {
-                return Err(self.error_at(&tok, "unexpected \\begin"));
-            }
             Kind::Word(name) if self.is_active_definition(&name) => {
                 self.definition(&name, SourcePos::new("", tok.line, tok.column))?;
             }
@@ -2269,9 +1903,7 @@ impl<'c> Parser<'c> {
     /// A macro definition as raw TeX, when `latex_macros` is off.
     fn definition_raw(&mut self) -> Text {
         self.start_record();
-        let is_def = self
-            .peek_raw()
-            .is_some_and(|tok| matches!(&tok.kind, Kind::Word(word) if is_def_word(word)));
+        let is_def = self.peek_raw().is_some_and(|tok| tok.is_word("def"));
         if is_def {
             self.bump();
             while let Some(tok) = self.peek_raw() {
@@ -2328,10 +1960,16 @@ impl<'c> Parser<'c> {
     ) -> R<()> {
         self.skip_word_spaces();
         let rest = self.inlines(match until {
-            Until::Paragraph => until,
+            Until::Paragraph | Until::Cell => until,
             _ => Until::Close,
         })?;
-        push_extracting_spaces(out, rest.0, wrap);
+        // A cell drops the spaces at its end, also inside the declaration.
+        let content = if until == Until::Cell {
+            rest.trimmed()
+        } else {
+            rest.0
+        };
+        out.push(wrap(content));
         Ok(())
     }
 
@@ -2484,10 +2122,18 @@ impl<'c> Parser<'c> {
                         }
                     }
                 }
-                let alt = vec![Inline::Str("image".into())];
+                let in_figure = self.floats.last().is_some_and(|float| float.figure);
+                let alt = if in_figure {
+                    Vec::new()
+                } else {
+                    vec![Inline::Str("image".into())]
+                };
                 out.push(Inline::Image(attr, alt, Target::new(path, "")));
             }
             "centering" | "noindent" if !self.raw_tex() => self.skip_group(),
+            "par" if !self.raw_tex() => {
+                self.skip_word_spaces();
+            }
             "c" | "v" | "u" | "H" | "r" | "k" | "d" | "b" => {
                 let accent = name.chars().next().unwrap_or('b');
                 self.accent(accent, out);
@@ -2610,31 +2256,16 @@ impl<'c> Parser<'c> {
             return Stop::Unexpected(Text::new());
         };
         let shown = match &tok.kind {
-            Kind::Word(name) => {
-                format!(
-                    "(CtrlSeq \"{name}\") \"{}\"",
-                    tok.text.replace('\\', "\\\\")
-                )
-            }
+            Kind::Word(name) => format!("CtrlSeq \"{name}\""),
             _ => format!("Symbol \"{}\"", tok.text),
         };
         let (line, column) = (tok.line, tok.column);
-        let source = if self.source_name.is_empty() {
-            Text::new()
-        } else {
-            format!("\"{}\" ", self.source_name)
-        };
-        let message = format!(
-            "unexpected Tok {source}(line {line}, column {column}) {shown}\nexpecting end of input"
-        );
-        // Pandoc names no file and shows no source line for an error at the
-        // first token of the input.
-        if (line, column) == (1, 1) && self.pending.is_empty() {
-            return Stop::Unexpected(format!(
-                "Error at \"source\" (line 1, column 1):\n{message}"
-            ));
-        }
-        self.error_at(tok, &message)
+        self.error_at(
+            tok,
+            &format!(
+                "unexpected Tok (line {line}, column {column}) {shown}\nexpecting end of input"
+            ),
+        )
     }
 
     /// A parse error at `tok`, with the source line and a caret, as Pandoc
@@ -2669,13 +2300,12 @@ impl<'c> Parser<'c> {
         let Some(rule) = argument_rule(name) else {
             return Ok(());
         };
-        if self.in_preamble && rule == ArgumentRule::Group {
+        if self.lenient > 0 || (self.in_preamble && rule == ArgumentRule::Group) {
             return Ok(());
         }
         let mut tokens = self.scan().skip(skip).peekable();
         let blank = |tok: &&Tok| matches!(tok.kind, Kind::Space | Kind::Newline | Kind::Comment);
-        if !matches!(name, "begin" | "let")
-            && !is_def_word(name)
+        if !matches!(name, "begin" | "def" | "let")
             && tokens
                 .peek()
                 .is_some_and(|tok| tok.kind == Kind::Other('*'))
@@ -2838,7 +2468,7 @@ impl<'c> Parser<'c> {
     }
 
     fn inline_environment(&mut self, name: &str, out: &mut Inlines) -> R<()> {
-        let (body, closed) = self.math_body_tokens(name)?;
+        let (body, closed) = self.environment_body_tokens(name);
         if !closed {
             self.unclosed(name)?;
         }
@@ -3100,53 +2730,6 @@ fn push_extracting_spaces(
 
 /// The `\else` and the `\fi` of each word that starts with `if`, in one
 /// pass with a stack.
-/// The positions of the `\begin{NAME}` tokens that have their `\end{NAME}`.
-fn match_environments(tokens: &[Tok]) -> HashSet<usize> {
-    let mut open: HashMap<Text, Vec<usize>> = HashMap::new();
-    let mut closed = HashSet::new();
-    for (index, tok) in tokens.iter().enumerate() {
-        let begins = tok.is_word("begin");
-        if !begins && !tok.is_word("end") {
-            continue;
-        }
-        let Some(name) = name_in(tokens[index + 1..].iter().take(64)) else {
-            continue;
-        };
-        let stack = open.entry(name).or_default();
-        if begins {
-            stack.push(index);
-        } else if let Some(begin) = stack.pop() {
-            closed.insert(begin);
-        }
-    }
-    closed
-}
-
-/// The cells of a row with the column count of the table: Pandoc drops
-/// the cells after the last column and adds empty cells to a short row.
-/// In a table where each cell holds one paragraph at most, the paragraphs
-/// are plain.
-fn fit_row(cells: Vec<Cell>, columns: usize, simple: bool) -> Vec<Cell> {
-    let mut used = 0usize;
-    let mut fitted = Vec::with_capacity(columns);
-    for mut cell in cells {
-        if used >= columns {
-            break;
-        }
-        let span = usize::try_from(cell.col_span.max(1))
-            .unwrap_or(1)
-            .min(columns - used);
-        cell.col_span = i64::try_from(span).unwrap_or(1);
-        used += span;
-        if simple && let [Block::Para(inlines)] = cell.content.as_mut_slice() {
-            cell.content = vec![Block::Plain(std::mem::take(inlines))];
-        }
-        fitted.push(cell);
-    }
-    fitted.resize_with(fitted.len() + columns.saturating_sub(used), Cell::default);
-    fitted
-}
-
 fn match_conditionals(tokens: &[Tok]) -> HashMap<usize, (Option<usize>, usize)> {
     let mut open: Vec<(usize, Option<usize>)> = Vec::new();
     let mut matches = HashMap::new();
@@ -3378,6 +2961,16 @@ fn code_attributes<'a>(name: &str, body: &'a str) -> (Attr, &'a str) {
     (attr, rest)
 }
 
+fn plain_paragraphs(blocks: Vec<Block>) -> Vec<Block> {
+    blocks
+        .into_iter()
+        .map(|block| match block {
+            Block::Para(inlines) => Block::Plain(inlines),
+            block => block,
+        })
+        .collect()
+}
+
 fn letter_symbol(name: &str) -> Option<&'static str> {
     Some(match name {
         "ss" => "\u{df}",
@@ -3506,7 +3099,7 @@ fn argument_rule(name: &str) -> Option<ArgumentRule> {
         return Some(ArgumentRule::Group);
     }
     match name {
-        "def" | "gdef" | "edef" | "xdef" | "let" => Some(ArgumentRule::Name),
+        "def" | "let" => Some(ArgumentRule::Name),
         "newcommand" | "renewcommand" | "providecommand" | "DeclareMathOperator" => {
             Some(ArgumentRule::NameOrGroup)
         }
@@ -3565,19 +3158,10 @@ fn is_definition(name: &str) -> bool {
             | "renewcommand"
             | "providecommand"
             | "def"
-            | "gdef"
-            | "edef"
-            | "xdef"
-            | "global"
             | "let"
             | "newenvironment"
             | "renewenvironment"
     )
-}
-
-/// The TeX primitives that define a macro with a parameter text.
-fn is_def_word(name: &str) -> bool {
-    matches!(name, "def" | "gdef" | "edef" | "xdef")
 }
 
 fn is_tabular(name: &str) -> bool {
@@ -3631,38 +3215,6 @@ pub(crate) const BLOCK_ENVIRONMENTS: &[&str] = &[
     "tabularx",
     "longtable",
 ];
-
-/// The environments that Pandoc reads again with a fallback rule after a
-/// parse error inside: lists, tables and each environment that Pandoc does
-/// not know. A parse error in other environments stops the document.
-fn falls_back(name: &str) -> bool {
-    matches!(name, "itemize" | "enumerate" | "description")
-        || is_tabular(name)
-        || !matches!(
-            name,
-            "document"
-                | "abstract"
-                | "quote"
-                | "quotation"
-                | "verse"
-                | "center"
-                | "minipage"
-                | "figure"
-                | "figure*"
-                | "table"
-                | "verbatim"
-                | "Verbatim"
-                | "lstlisting"
-                | "minted"
-                | "comment"
-                | "proof"
-                | "subfigure"
-                | "alltt"
-                | "otherlanguage"
-                | "sloppypar"
-                | "letter"
-        )
-}
 
 fn is_inline_environment(name: &str) -> bool {
     INLINE_ENVIRONMENTS.contains(&name)

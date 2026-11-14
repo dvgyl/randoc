@@ -202,13 +202,6 @@ impl Tokenizer {
         let letters = self.count_while(1, |c| c.is_ascii_alphabetic());
         if letters == 0 {
             match self.peek(1) {
-                Some('\n') => {
-                    // Pandoc counts the newline of `\` at the end of a line
-                    // as a column, so its later lines are one line lower.
-                    let (line, column) = (self.line, self.column);
-                    self.take(Kind::Symbol('\n'), 2);
-                    (self.line, self.column) = (line, column + 2);
-                }
                 Some(symbol) => self.take(Kind::Symbol(symbol), 2),
                 None => self.take(Kind::Other('\\'), 1),
             }
@@ -217,11 +210,6 @@ impl Tokenizer {
         let name: Text = self.chars[self.index + 1..self.index + 1 + letters]
             .iter()
             .collect();
-        if name == "par" {
-            // `\par` is a paragraph break, as a blank line is.
-            self.take(Kind::Par, letters + 1);
-            return;
-        }
         self.take(Kind::Word(name.clone()), letters + 1);
         match name.as_str() {
             "verb" => self.verb(),
