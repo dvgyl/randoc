@@ -144,7 +144,10 @@ mod tests {
             "\\begin{tabular}{ll}a & }b\\\\ c\\end{tabular}",
             "\\begin{tabular}{lc}a & \\multicof}\\caption{c}\\end{figure}",
         ] {
-            assert!(convert(input, "latex").is_ok(), "{input}");
+            assert!(
+                matches!(convert(input, "latex"), Ok(_) | Err(Error::Parse(_))),
+                "{input}"
+            );
         }
     }
 
@@ -195,7 +198,10 @@ mod tests {
             "\\iffalse \\label| \\fi",
             "\\documentclass{article}\\label|\\begin{document}x\\end{document}",
         ] {
-            assert!(convert(input, "latex").is_ok(), "{input}");
+            assert!(
+                matches!(convert(input, "latex"), Ok(_) | Err(Error::Parse(_))),
+                "{input}"
+            );
         }
     }
 

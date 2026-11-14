@@ -1909,3 +1909,39 @@ Open findings: I-MD-31 (medium part), I-MD-60 and I-MD-72 (medium), the
 low rows. Open checks: the worker report, the gate run of f749931 (only
 rows of `docs/ISSUES.md` differ from 0d00527), the verification of
 round 3, fuzzing, coverage, the mutation sample.
+
+## Workstream latex-reader (branch `ws/latex-reader-4`, commit a048f35, one squashed commit, session 5 of 2026-11-12, batch B)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit a048f35 only (`git log
+--format='%h %s' main..a048f35` gives one commit: a048f35 "read parse
+errors, tables and figures as Pandoc does"). Content: the parse-error
+fallback of the reference in lists, tables and unknown environments
+(new suite `latex-reader/errors`); table cells read alone; the errors
+of a stray end and of an unclosed group; the plain rule of figures;
+`\global`; `\par`; macro expansion in math; an expansion budget; a
+linear check for a missing `\fi`. No row of `docs/ISSUES.md` changes.
+
+The worker was stopped by a usage limit and has not written its report
+section. The gate evidence comes from the inbox line of a048f35
+(`env/store/inbox/latex-reader.log`, 07:11:58 UTC) and from the commit
+list above.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on a048f35. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Inbox line only; no numbers. New suite `latex-reader/errors`. |
+| 3. Tests | `cargo test -p randoc-latex-reader` on the merged tree: 19 pass, 0 fail, 1 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 1 (both reviewers) requested changes with 25 high findings. The worker corrects them now; they are open. |
+| 6. No slowdowns | Not measured. The missing-`\fi` check is linear (inbox line). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. Licence scan of a048f35: no hit.
+
+Open findings: the 25 high findings of review round 1 are open, and they
+are NOT yet rows of `docs/ISSUES.md`. Each one must be a row at the end
+of this unit. No critical finding is known. The existing rows I-LTXR-01
+to I-LTXR-15. Open checks: the worker report, the rows of the 25 high
+findings, the verification of round 1, fuzzing, coverage, the mutation
+sample.
