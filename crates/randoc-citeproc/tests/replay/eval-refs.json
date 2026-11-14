@@ -1,0 +1,7 @@
+[
+{"id":"book1","type":"book","title":"the art of small gardens","publisher":"Leaf Press","page":"12-19","volume":"3","container-title":"Garden Studies","URL":"example.org/a","language":"en-GB","note":"first note"},
+{"id":"art2","type":"article-journal","title":"A \"quoted\" study of <i>moss</i>","container-title":"Journal of Moss","page":"321-328","issue":"4","DOI":"10.1/xyz","title-short":"Moss study"},
+{"id":"ch3","type":"chapter","title":"chapter title","page":"1100-1108","edition":"2nd","number":"42a","language":"de"},
+{"id":"bare4","type":"webpage"},
+{"id":"num5","type":"report","number":"7","page":"5","volume":"12-14","collection-title":"Series Name"}
+]

@@ -16,20 +16,26 @@
 //! - [`reference`](mod@reference): the reference model and its CSL JSON form.
 //! - [`markup`]: the markup inside CSL JSON strings.
 //! - [`csljson`]: the reader and the writer of the format `csljson`.
+//! - [`case_transform`]: the text cases of CSL output (unit 3).
+//! - [`eval`]: the evaluation of one citation (unit 3, part).
+//! - [`output`]: the output tree of evaluation and its rendering as inlines (unit 3).
 //!
 //! Errors have the texts of the oracle. A broken style gives
 //! `randoc_core::Error::App` (exit code 4), as in Pandoc.
 
 mod case_fold;
+pub mod case_transform;
 pub mod csljson;
 mod element;
 mod error;
+pub mod eval;
 mod haskell;
 pub mod json;
 pub mod lang;
 pub mod loader;
 pub mod locale;
 pub mod markup;
+pub mod output;
 pub mod reference;
 mod style;
 pub mod types;

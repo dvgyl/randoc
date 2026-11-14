@@ -2072,3 +2072,39 @@ Request of the worker: `THIRD_PARTY_NOTICES.md` line 28 names
 `randoc-markdown` as the user of `saphyr-parser`, but the user is
 `randoc-cli` (I-MD-65, shared file). Open checks: the verification of
 round 3, a mutation sample with the conformance suite.
+
+## Workstream citeproc (branch `ws/citeproc-3`, commit ecb6687, one squashed commit, session 5 of 2026-11-14, batch C)
+
+Merged as a small block under owner instruction 17. `main` holds the
+earlier commit f515c1d of the branch as b95fb95 (batch B); this record
+holds the commits after f515c1d up to ecb6687. Content (the commits of
+`git log --format='%h %s' main..ecb6687` after f515c1d): def8193 ports
+the text cases of CSL output (`src/case_transform.rs`); 2a3051e merges
+`main` 4146317; 7e79f38 ports the output tree and its rendering as
+inlines (`src/output.rs`: `Output`, `renderOutput`, `addFormatting`,
+`addDelimiters`, `fixPunct`); ecb6687 evaluates `text`, `group` and
+`choose` for one citation without locator, position or disambiguation
+(`src/eval.rs`). Rows: no change in this part.
+
+The gate evidence comes from the inbox lines of 2a3051e, 7e79f38 and
+ecb6687 (`env/store/inbox/citeproc.log`, 21:09:11, 21:55:54 and
+22:20:27 UTC), the commit list above and the top section of
+`env/store/reports/citeproc.md` (in progress, 22:30 UTC).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on ecb6687. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Inbox lines and report: 162 oracle text-case results (`tests/text_case.rs`), 60 oracle citations (`tests/output.rs`), 35 oracle citations (`tests/eval.rs`). |
+| 3. Tests | `cargo test -p randoc-citeproc` on the merged tree: 92 pass, 0 fail, 4 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Report: fuzzing on def8193 code (2026-11-12, 900 s each): `csljson_read`, `style_parse`, `locale_parse`, 0 crashes. Not run on the new modules. |
+| 5. Reviews | Round 2 requested changes; its findings are corrected on `main`. No review of the new modules yet. |
+| 6. No slowdowns | Not measured. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: two, in `crates/randoc-citeproc/src/lib.rs` and `crates/randoc-citeproc/tests/depth.rs` (`main` holds an earlier state of the branch); the versions of ecb6687 are taken, so the crate is equal to ecb6687. `docs/ISSUES.md` merged without a conflict. Licence scan of ecb6687: no hit.
+
+Open findings: none with the level medium or higher; I-CITE-15 and the
+other low rows. The modules `names`, `date`, sorting, disambiguation,
+collapsing, positions and locators are not ported. Open checks: a
+review of the new modules, fuzzing of the new modules, coverage, the
+mutation sample.

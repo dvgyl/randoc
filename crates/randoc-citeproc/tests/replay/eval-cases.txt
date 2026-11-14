@@ -1,0 +1,35 @@
+book1		<text variable="title"/>
+book1		<text variable="title" text-case="title"/>
+ch3		<text variable="title" text-case="title"/>
+art2		<text variable="title"/>
+art2		<text variable="title" form="short"/>
+book1		<text variable="title" form="short"/>
+book1		<group delimiter=", "><text variable="publisher"/><text variable="volume"/></group>
+bare4		<group delimiter=", " prefix="[" suffix="]"><text variable="publisher"/><text value="x"/></group>
+bare4		<group delimiter=", "><text value="always"/><group prefix="(" suffix=")"><text variable="publisher"/></group></group>
+book1		<choose><if type="book"><text value="B"/></if><else><text value="other"/></else></choose>
+art2		<choose><if type="book chapter"><text value="B"/></if><else-if variable="DOI"><text variable="DOI"/></else-if><else><text value="other"/></else></choose>
+num5		<choose><if is-numeric="number"><text value="numeric"/></if><else><text value="not"/></else></choose>
+ch3		<choose><if is-numeric="number"><text value="numeric"/></if><else><text value="not"/></else></choose>
+num5		<choose><if is-numeric="volume"><text value="v-numeric"/></if><else><text value="v-not"/></else></choose>
+bare4		<choose><if variable="title publisher" match="any"><text value="has"/></if><else><text value="none"/></else></choose>
+book1		<choose><if variable="title publisher" match="all"><text value="both"/></if><else><text value="no"/></else></choose>
+book1		<choose><if type="article" match="none"><text value="not article"/></if></choose>
+book1		<text variable="page"/>
+art2		<text variable="page"/>
+ch3		<text variable="page"/>
+book1		<text variable="page-first"/>
+book1		<text variable="URL"/>
+art2		<text variable="DOI" prefix="doi: "/>
+book1		<text variable="id"/> <text variable="type"/>
+book1		<text macro="m"/>
+bare4		<group delimiter="; "><text macro="m"/><text value="after"/></group>
+book1		<text term="test-term"/>
+book1		<text term="test-term" form="short"/>
+book1		<text term="test-term" form="verb-short"/>
+book1		<text term="missing-term"/>
+num5		<group delimiter=" "><text variable="collection-title" font-style="italic"/><text variable="number" prefix="no. "/></group>
+art2		<group delimiter=", "><text variable="container-title" font-style="italic"/><text variable="issue" prefix="(" suffix=")"/><text variable="page"/></group>
+ch3		<text variable="edition" suffix=" ed."/>
+book1		<text variable="note" quotes="true" suffix="."/>
+missing		<text variable="title"/>

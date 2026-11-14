@@ -1,0 +1,60 @@
+	<text value="plain"/>
+	<text value="it" font-style="italic"/>
+	<text value="ob" font-style="oblique"/>
+	<text value="nf" font-style="normal"/>
+	<text value="b" font-weight="bold"/>
+	<text value="lt" font-weight="light"/>
+	<text value="sc" font-variant="small-caps"/>
+	<text value="u" text-decoration="underline"/>
+	<text value="nd" text-decoration="none"/>
+	<text value="up" vertical-align="sup"/>
+	<text value="dn" vertical-align="sub"/>
+	<text value="bl" vertical-align="baseline"/>
+	<text value="q" quotes="true"/>
+	<text value="q" quotes="true" suffix="."/>
+	<text value="q, inner" quotes="true" suffix=","/>
+	<text value="ends." quotes="true" suffix="."/>
+	<text value="A.B.C." strip-periods="true"/>
+	<text value="x" prefix="(" suffix=")"/>
+	<group delimiter=", "><text value="a"/><text value="b"/><text value=".c"/></group>
+	<group delimiter="; " prefix="[" suffix="]"><text value="a" font-style="italic"/><text value="b" font-weight="bold"/></group>
+prefix="(" suffix=")"	<text value="z"/>
+prefix="(" suffix=")"	<text value="z" font-style="italic" prefix="&lt;" suffix="&gt;"/>
+suffix="."	<text value="done." />
+suffix="."	<text value="q" quotes="true"/>
+	<group><text value="Hello!"/><text value=". next"/></group>
+	<text value="end." suffix="."/>
+	<text value="what?" suffix=","/>
+	<text value="a:" suffix="!"/>
+	<text value="a;" suffix=":"/>
+	<text value="a," suffix=","/>
+	<text value="a " suffix=" "/>
+	<group><text value="x "/><text value=". y"/></group>
+	<group><text value="x "/><text value=", y"/></group>
+	<text value="&lt;i&gt;x&lt;/i&gt; and &lt;b&gt;y&lt;/b&gt;"/>
+	<text value="&quot;quoted&quot; word"/>
+	<text value="a &lt;span class=&quot;nocase&quot;&gt;NC&lt;/span&gt; b"/>
+	<text value="&lt;sc&gt;sm&lt;/sc&gt; &lt;sup&gt;2&lt;/sup&gt;"/>
+	<text value="the art of war" text-case="title" font-style="italic"/>
+	<text value="blk" display="block"/>
+	<text value="ind" display="indent"/>
+	<text value="lm" display="left-margin"/>
+	<group quotes="true"><text value="in" quotes="true"/></group>
+	<group quotes="true"><text value="a"/><group quotes="true"><text value="b" quotes="true"/></group></group>
+	<text value="x" suffix=" "/>
+	<text value="漢字" font-style="italic"/>
+	<text value="漢字 a" font-style="italic"/>
+	<group font-style="italic"><text value="漢字"/></group>
+	<text value="x" prefix=". "/>
+	<group delimiter=" "><text value="A"/><text value=""/><text value="B"/></group>
+	<text value="x" prefix="&lt;i&gt;see&lt;/i&gt; "/>
+	<group delimiter=", " font-weight="bold" prefix="p " suffix=" s"><text value="one"/><text value="two" quotes="true"/></group>
+	<text value="it's l'été"/>
+	<text value="a ; b ? c ! d « e »"/>
+	<text value="x" quotes="true" font-style="italic" text-decoration="underline"/>
+delimiter="; "	<text value="w" suffix=";"/>
+	<group delimiter=","><text value="a"/><text value=",b"/></group>
+	<text value="  lead"/>
+	<text value="q" quotes="true" suffix=".."/>
+	<group><text value="q" quotes="true"/><text value=".,x"/></group>
+	<group font-style="italic"><text value="q" quotes="true"/><text value="..x"/></group>

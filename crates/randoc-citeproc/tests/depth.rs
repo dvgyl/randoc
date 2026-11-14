@@ -303,3 +303,72 @@ fn the_style_parser_at_the_program_limit_fits_the_conversion_stack() {
         .unwrap();
     assert!(result.is_ok());
 }
+
+#[test]
+fn deep_inlines_in_a_text_case_give_the_depth_error() {
+    use randoc_ast::Inline;
+    use randoc_citeproc::case_transform::add_text_case;
+    use randoc_citeproc::types::TextCase;
+    for (levels, ok) in [(120, true), (1_000, false)] {
+        let result = on_small_stack(move || {
+            let mut inlines = vec![Inline::Str("word".into())];
+            for _ in 0..levels {
+                inlines = vec![
+                    Inline::Emph(inlines),
+                    Inline::Space,
+                    Inline::Str("x".into()),
+                ];
+            }
+            add_text_case(None, TextCase::TitleCase, inlines, 128).is_ok()
+        });
+        assert_eq!(result, ok, "{levels} levels");
+    }
+}
+
+#[test]
+fn deep_output_gives_the_depth_error() {
+    use randoc_ast::Inline;
+    use randoc_citeproc::output::{self, Output, RenderOptions};
+    use randoc_citeproc::types::{Formatting, Locale};
+    for (levels, ok) in [(120, true), (1_000, false)] {
+        let result = on_small_stack(move || {
+            let italic = Formatting {
+                font_style: Some(randoc_citeproc::types::FontStyle::Italic),
+                ..Formatting::default()
+            };
+            let mut tree = Output::Literal(vec![Inline::Str("x".into())]);
+            for _ in 0..levels {
+                tree = Output::Formatted(Box::new(italic.clone()), vec![tree]);
+            }
+            let locale = Locale::default();
+            let tree_ok =
+                output::render_output(RenderOptions::default(), &locale, &tree, 128).is_ok();
+            let mut inlines = vec![Inline::Str("x".into())];
+            for _ in 0..levels {
+                inlines = vec![Inline::Emph(inlines)];
+            }
+            let literal = Output::Literal(inlines.clone());
+            let literal_ok =
+                output::render_output(RenderOptions::default(), &locale, &literal, 128).is_ok();
+            let finish_ok = output::finish(&locale, inlines, 128).is_ok();
+            (tree_ok, literal_ok, finish_ok)
+        });
+        assert_eq!(result, (ok, ok, ok), "{levels} levels");
+    }
+}
+
+#[test]
+fn a_macro_cycle_gives_the_depth_error_in_evaluation() {
+    // I-CITE-02: the oracle does not end for this style.
+    let result = on_small_stack(|| {
+        let style_text = format!(
+            "<style {NS}><macro name=\"m\"><group><text macro=\"m\"/></group></macro><citation><layout><text macro=\"m\"/></layout></citation></style>"
+        );
+        let style = randoc_citeproc::parse_style(&mut Context::pure(), &style_text).unwrap();
+        let reference = randoc_citeproc::reference::Reference::default();
+        let locale = randoc_citeproc::types::Locale::default();
+        randoc_citeproc::eval::eval_citation(&style, &locale, &[("a", Some(&reference))], 128)
+            .map(|_| ())
+    });
+    assert_eq!(result, Err(randoc_citeproc::eval::EvalError::TooDeep));
+}

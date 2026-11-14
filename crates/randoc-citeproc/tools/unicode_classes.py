@@ -3,7 +3,8 @@
 parser and the name particles, from the Unicode Character Database of Python.
 
 Haskell `isAlphaNum` selects the general categories L* and N*; `isLower`
-selects the general category Ll. Rust `char::is_alphanumeric` and
+selects Ll; `isUpper` selects Lu and Lt; `isLetter` selects L*;
+`isPunctuation` selects P*. Rust `char::is_alphanumeric` and
 `char::is_lowercase` use other properties.
 
 Usage: python3 -I crates/randoc-citeproc/tools/unicode_classes.py OUTPUT_FILE
@@ -53,6 +54,30 @@ pub fn is_lower(c: char) -> bool {{
     in_ranges(&LOWER, c)
 }}
 
+/// Haskell `isUpper`: the general categories Lu and Lt.
+pub fn is_upper(c: char) -> bool {{
+    if c.is_ascii() {{
+        return c.is_ascii_uppercase();
+    }}
+    in_ranges(&UPPER, c)
+}}
+
+/// Haskell `isLetter`: the general categories L*.
+pub fn is_letter(c: char) -> bool {{
+    if c.is_ascii() {{
+        return c.is_ascii_alphabetic();
+    }}
+    in_ranges(&LETTER, c)
+}}
+
+/// Haskell `isPunctuation`: the general categories P*.
+pub fn is_punctuation(c: char) -> bool {{
+    if c.is_ascii() {{
+        return c.is_ascii_punctuation() && !"$+<=>^`|~".contains(c);
+    }}
+    in_ranges(&PUNCTUATION, c)
+}}
+
 fn in_ranges(ranges: &[(u32, u32)], c: char) -> bool {{
     let c = u32::from(c);
     let index = ranges.partition_point(|(_, last)| *last < c);
@@ -74,6 +99,10 @@ mod tests {
         assert!(!is_lower('\\u{AA}') && !is_lower('\\u{24D0}'));
         assert!(ALPHA_NUM.windows(2).all(|w| w[0].1 < w[1].0));
         assert!(LOWER.windows(2).all(|w| w[0].1 < w[1].0));
+        assert!(is_upper('A') && is_upper('\\u{1C5}') && !is_upper('a') && !is_upper('1'));
+        assert!(is_letter('\\u{E9}') && !is_letter('\\u{B2}') && !is_letter('_'));
+        assert!(is_punctuation('_') && is_punctuation('\\u{2014}') && !is_punctuation('$'));
+        assert!(!is_punctuation('+') && is_punctuation('!') && !is_punctuation('\\u{2C6}'));
     }
 }
 """
@@ -82,9 +111,15 @@ mod tests {
 def main():
     alpha = ranges(lambda cat: cat[0] in "LN")
     lower = ranges(lambda cat: cat == "Ll")
+    upper = ranges(lambda cat: cat in ("Lu", "Lt"))
+    letter = ranges(lambda cat: cat[0] == "L")
+    punctuation = ranges(lambda cat: cat[0] == "P")
     text = "\n".join([HEADER,
                       table("ALPHA_NUM", "The ranges of the categories L* and N*.", alpha), "",
-                      table("LOWER", "The ranges of the category Ll.", lower), TESTS])
+                      table("LOWER", "The ranges of the category Ll.", lower), "",
+                      table("UPPER", "The ranges of the categories Lu and Lt.", upper), "",
+                      table("LETTER", "The ranges of the categories L*.", letter), "",
+                      table("PUNCTUATION", "The ranges of the categories P*.", punctuation), TESTS])
     with open(sys.argv[1], "w", encoding="utf-8") as out:
         out.write(text)
 

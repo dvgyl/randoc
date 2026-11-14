@@ -233,10 +233,10 @@ fn haskell_pad2(value: i64) -> String {
 /// An inline list with the joining rules of `Text.Pandoc.Builder`: adjacent
 /// strings join, and adjacent spaces and breaks become one.
 #[derive(Default)]
-struct Inlines(Vec<Inline>);
+pub(crate) struct Inlines(pub(crate) Vec<Inline>);
 
 impl Inlines {
-    fn push(&mut self, inline: Inline) {
+    pub(crate) fn push(&mut self, inline: Inline) {
         let Some(last) = self.0.pop() else {
             self.0.push(inline);
             return;
@@ -267,7 +267,7 @@ impl Inlines {
         self.0.push(joined);
     }
 
-    fn extend(&mut self, inlines: Vec<Inline>) {
+    pub(crate) fn extend(&mut self, inlines: Vec<Inline>) {
         let mut rest = inlines.into_iter();
         if let Some(first) = rest.next() {
             self.push(first);
@@ -276,7 +276,7 @@ impl Inlines {
     }
 
     /// `B.text`: words become `Str`, white space becomes `Space` or `SoftBreak`.
-    fn text(&mut self, text: &str) {
+    pub(crate) fn text(&mut self, text: &str) {
         let is_space = |c: char| matches!(c, ' ' | '\t' | '\n' | '\r');
         let mut pieces = Vec::new();
         let mut rest = text;
