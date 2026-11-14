@@ -1909,3 +1909,23 @@ Open findings: I-MD-31 (medium part), I-MD-60 and I-MD-72 (medium), the
 low rows. Open checks: the worker report, the gate run of f749931 (only
 rows of `docs/ISSUES.md` differ from 0d00527), the verification of
 round 3, fuzzing, coverage, the mutation sample.
+
+## Workstream latex-reader (branch `ws/latex-reader-4`, commit a048f35), session 5 of 2026-11-12, batch B: merged and reverted
+
+The merge agent merged a048f35 as d4b88c5 and undid it with `git revert`
+(6a37e63) before the push; the revert also removes the record of
+d4b88c5. Cause: in `merge-ws check`, step "tests without the conformance
+suite", the watchdog stopped the test program of `randoc-latex-reader`
+at 4.0 GB (`env/tmp/watchdog-events.log`, 22:03:55 UTC). Alone, the
+test `tests::deep_nesting_gives_a_result_or_the_depth_error` needs 4.4
+GB and the watchdog stops it again (22:06:23 UTC). The test is the same
+on `main` 4146317, where the gate passed; a048f35 is the only change of
+the crate in this batch. The whole test program with one thread: 4.16
+GB maximum resident set size. Before the revert, `cargo test -p
+randoc-latex-reader` passed once on the merged tree (19 pass, 1
+ignored), because the watchdog did not sample the peak.
+
+Open findings of the branch: the memory use of deep nesting (above);
+the 25 high findings of review round 1 (both reviewers), which are not
+yet rows of `docs/ISSUES.md`. The worker must correct the memory use
+and merge again.
