@@ -16,8 +16,6 @@ pub enum Subsystem {
     Templates,
     /// Syntax highlighting (`--print-highlight-style`, `--syntax-definition`).
     Highlighting(String),
-    /// Lua and JSON filters.
-    Filters(String),
     /// Citation processing (`--citeproc`, `--bibliography`).
     Citeproc,
     /// PDF output with a PDF engine.
@@ -34,7 +32,6 @@ pub fn missing(subsystem: Subsystem) -> Error {
         Subsystem::DataFiles(name) => format!("the default data file '{name}'"),
         Subsystem::Templates => "templates and standalone output".to_owned(),
         Subsystem::Highlighting(name) => format!("syntax highlighting ('{name}')"),
-        Subsystem::Filters(name) => format!("filters ('{name}')"),
         Subsystem::Citeproc => "citation processing".to_owned(),
         Subsystem::Pdf => "PDF output".to_owned(),
         Subsystem::ExtractMedia => "--extract-media".to_owned(),

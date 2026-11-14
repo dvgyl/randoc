@@ -1783,3 +1783,51 @@ Conflicts in the merge: none. Licence scan of 7d6c7a2: no hit.
 Open findings: none known for this block. Open checks: the worker
 report, the gate run of 7d6c7a2, the two reviews, fuzzing, coverage,
 the mutation tests, the CPU table.
+
+## Workstream cli (branch `ws/cli-3`, commit 547f593, one squashed commit, session 5 of 2026-11-12, batch B)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit 547f593 only. Content (the
+commits of `git log --format='%h %s' main..547f593`): 13b660f gives
+`NoTitleElement` the level INFO from a level matrix of each emitted
+message (`crates/randoc-core/src/logging.rs`, test `tests/levels.rs`);
+7fdba7f runs Lua filters through `randoc-lua` behind the Cargo feature
+`lua` (the default; new module `src/lua.rs`, suite `cli/lua-filter`);
+a52bf09 gives `--mathjax`, `--katex` and `--webtex` without a URL the
+default URL and adds the html standalone matrix; 3c3e390 removes the
+notices of `saphyr-parser` (the rows of `THIRD_PARTY_NOTICES.md` and
+`docs/PRIOR_ART.md`, and `third_party/licences/saphyr-parser.txt`);
+547f593 keeps the KaTeX script of Pandoc out of the standalone matrix.
+The shared files change with the permission of the coordinator. In
+`crates/randoc-core`, this commit changes only `src/logging.rs`; the
+diff to `main` has no change of the writer trait. New dependency of the
+program: `randoc-cli` on `randoc-lua` (optional, feature `lua`).
+Rows: I-CLI-02 (now citeproc only), I-CLI-19 and I-CLI-35 (now low)
+changed; I-CLI-49 (scope gap of Lua filters), I-CLI-50 and I-CLI-51
+(low) new.
+
+The worker was stopped by a usage limit and has not written its report
+section. The gate evidence comes from the inbox line of 547f593
+(`env/store/inbox/cli.log`, 07:17:11) and from the commit list above.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 547f593; baseline 46457, 0 regressions, 375 new passes. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Inbox line: 10 `template-html` units pass (I-CLI-35); suite `cli/lua-filter`, 52 cases; html and html4 standalone matrix, 300 cases. |
+| 3. Tests | `cargo test -p randoc-cli -p randoc-core` on the merged tree: 162 pass, 0 fail, 0 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | No review of this unit yet; round 9 of `cli` follows. |
+| 6. No slowdowns | Not measured. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. After the merge, `THIRD_PARTY_NOTICES.md`,
+`docs/PRIOR_ART.md` and `Cargo.lock` have no line with `saphyr`.
+Licence scan: 51 hits, each one a program interface or message text of
+the reference (option errors, the `--version` text, the `lang` warning
+texts in `crates/randoc-core/src/logging.rs`, help texts) or reference
+output in `conformance/expected/cli/standalone.json`; at most 0.7 % of
+a file; accepted, as in the record of `ws/cli-2`.
+
+Open findings: I-CLI-02 (citeproc), I-CLI-49 (Lua filter scope gap),
+I-CLI-50, I-CLI-51 and the other low rows. Open checks: the worker
+report, round 9 of the reviews, fuzzing, coverage, the mutation sample.

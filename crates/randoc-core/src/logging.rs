@@ -138,6 +138,7 @@ impl LogMessage {
             | Extracting(..)
             | LoadedResource(..)
             | ScriptingInfo(..)
+            | NoTitleElement(..)
             | NoLangSpecified
             | UnusualConversion(..)
             | UnexpectedXmlElement(..)
@@ -371,6 +372,8 @@ mod tests {
              Defaulting to '-' as the title.\n\
              To specify a title, use --variable pagetitle=\"...\"."
         );
+        // The `verbosity` field of the same log.
+        assert_eq!(message.level(), Verbosity::Info);
     }
 
     #[test]

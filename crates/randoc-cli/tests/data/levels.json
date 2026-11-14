@@ -1,0 +1,406 @@
+[
+ {
+  "target": "SkippedContent",
+  "args": [
+   "-f",
+   "html",
+   "-t",
+   "json"
+  ],
+  "stdin": "<p>a</p><script>b</script>\n",
+  "files": {},
+  "oracle": [
+   [
+    "SkippedContent",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "SkippedContent",
+  "args": [
+   "-f",
+   "html",
+   "-t",
+   "json"
+  ],
+  "stdin": "<p>a<object>b</object></p>\n",
+  "files": {},
+  "oracle": [
+   [
+    "SkippedContent",
+    "INFO"
+   ],
+   [
+    "SkippedContent",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "DuplicateLinkReference",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json"
+  ],
+  "stdin": "[k]: one\n[k]: two\n\n[k]\n",
+  "files": {},
+  "oracle": [
+   [
+    "DuplicateLinkReference",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "DuplicateNoteReference",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json"
+  ],
+  "stdin": "x[^n]\n\n[^n]: one\n\n[^n]: two\n",
+  "files": {},
+  "oracle": [
+   [
+    "DuplicateNoteReference",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "NoteDefinedButNotUsed",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json"
+  ],
+  "stdin": "x\n\n[^u]: unused\n",
+  "files": {},
+  "oracle": [
+   [
+    "NoteDefinedButNotUsed",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "DuplicateIdentifier",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json"
+  ],
+  "stdin": "# One {#h}\n\n# Two {#h}\n",
+  "files": {},
+  "oracle": [
+   [
+    "DuplicateIdentifier",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "ReferenceNotFound",
+  "args": [
+   "-f",
+   "html",
+   "-t",
+   "json"
+  ],
+  "stdin": "<p>x<a href=\"#gone\" role=\"doc-noteref\">9</a></p>\n",
+  "files": {},
+  "oracle": [
+   [
+    "ReferenceNotFound",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "CouldNotLoadIncludeFile",
+  "args": [
+   "-f",
+   "latex",
+   "-t",
+   "json"
+  ],
+  "stdin": "\\input{absentfile}\n",
+  "files": {},
+  "oracle": [
+   [
+    "CouldNotLoadIncludeFile",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "MacroAlreadyDefined",
+  "args": [
+   "-f",
+   "latex",
+   "-t",
+   "json"
+  ],
+  "stdin": "\\newcommand{\\q}{1}\\newcommand{\\q}{2}\n",
+  "files": {},
+  "oracle": [
+   [
+    "MacroAlreadyDefined",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "CouldNotConvertTexMath",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "html"
+  ],
+  "stdin": "$x^$\n",
+  "files": {},
+  "oracle": [
+   [
+    "CouldNotConvertTeXMath",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "LoadedResource",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "html",
+   "-s",
+   "-M",
+   "title=t",
+   "-H",
+   "head.html"
+  ],
+  "stdin": "x\n",
+  "files": {
+   "head.html": "3c6d6574613e0a"
+  },
+  "oracle": [
+   [
+    "LoadedResource",
+    "INFO"
+   ],
+   [
+    "NoLangSpecified",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "NoTitleElement",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "html",
+   "-s"
+  ],
+  "stdin": "x\n",
+  "files": {},
+  "oracle": [
+   [
+    "NoLangSpecified",
+    "INFO"
+   ],
+   [
+    "NoTitleElement",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "NoTitleElement",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "html5",
+   "-s"
+  ],
+  "stdin": "",
+  "files": {},
+  "oracle": [
+   [
+    "NoLangSpecified",
+    "INFO"
+   ],
+   [
+    "NoTitleElement",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "Deprecated",
+  "args": [
+   "-f",
+   "markdown_github",
+   "-t",
+   "json"
+  ],
+  "stdin": "x\n",
+  "files": {},
+  "oracle": [
+   [
+    "Deprecated",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "Deprecated",
+  "args": [
+   "-f",
+   "json",
+   "-t",
+   "markdown_github"
+  ],
+  "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+  "files": {},
+  "oracle": [
+   [
+    "Deprecated",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "CouldNotDeduceFormat",
+  "args": [
+   "-t",
+   "json",
+   "in.qqq"
+  ],
+  "stdin": null,
+  "files": {
+   "in.qqq": "780a"
+  },
+  "oracle": [
+   [
+    "CouldNotDeduceFormat",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "RunningFilter",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json",
+   "--verbose",
+   "--filter",
+   "same.sh"
+  ],
+  "stdin": "x\n",
+  "files": {
+   "same.sh": "6361740a"
+  },
+  "oracle": [
+   [
+    "RunningFilter",
+    "INFO"
+   ],
+   [
+    "FilterCompleted",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "FilterCompleted",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json",
+   "--verbose",
+   "--filter",
+   "same.sh"
+  ],
+  "stdin": "x\n",
+  "files": {
+   "same.sh": "6361740a"
+  },
+  "oracle": [
+   [
+    "RunningFilter",
+    "INFO"
+   ],
+   [
+    "FilterCompleted",
+    "INFO"
+   ]
+  ]
+ },
+ {
+  "target": "DuplicateAttribute",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "html"
+  ],
+  "stdin": "[a]{k=1 k=2}\n",
+  "files": {},
+  "oracle": [
+   [
+    "DuplicateAttribute",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "NotUtf8Encoded",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json",
+   "bad.md"
+  ],
+  "stdin": null,
+  "files": {
+   "bad.md": "61ff620a"
+  },
+  "oracle": [
+   [
+    "NotUTF8Encoded",
+    "WARNING"
+   ]
+  ]
+ },
+ {
+  "target": "UnclosedDiv",
+  "args": [
+   "-f",
+   "markdown",
+   "-t",
+   "json"
+  ],
+  "stdin": "::: box\ntext\n",
+  "files": {},
+  "oracle": [
+   [
+    "UnclosedDiv",
+    "WARNING"
+   ]
+  ]
+ }
+]

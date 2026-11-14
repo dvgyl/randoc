@@ -1190,23 +1190,6 @@ fn citeproc_error(settings: &Settings, context: &mut Context) -> Error {
     subsystem::missing(Subsystem::Citeproc)
 }
 
-/// Returns the error for a Lua filter: the error of Pandoc for a missing
-/// file, else the error of the missing subsystem.
-fn lua_filter_error(path: &str, data_dir: &str, context: &mut Context) -> Error {
-    context.report(LogMessage::RunningFilter(path.into()));
-    let found = context.host().file_exists(path)
-        || context
-            .host()
-            .file_exists(&data_path(data_dir, &format!("filters/{path}")));
-    if found {
-        subsystem::missing(Subsystem::Filters(path.into()))
-    } else {
-        Error::Filter {
-            filter: path.into(),
-            message: format!("cannot open {path}: No such file or directory"),
-        }
-    }
-}
 /// The output formats that `--embed-resources` changes.
 fn is_html_format(name: &str) -> bool {
     matches!(
@@ -1498,7 +1481,10 @@ fn convert(
                 &reader_options,
                 context,
             )?,
-            Filter::Lua(path) => return Err(lua_filter_error(path, data_dir, context)),
+            Filter::Lua(path) => {
+                crate::lua::run(path, &mut doc, &to_spec.name, settings, data_dir, context)?;
+                doc
+            }
             Filter::Citeproc => return Err(citeproc_error(settings, context)),
         };
     }
@@ -2035,21 +2021,11 @@ mod tests {
     fn found_files_reach_the_subsystem_errors() {
         let files = [
             ("in.json", EMPTY),
-            ("f.lua", ""),
             ("r.xyz", ""),
             ("t.json", "$body$"),
             ("h", "x"),
             ("ab", "Mr.\n\nDr.\n"),
         ];
-        let (result, _) = convert_files(&files, &["in.json"], |s| {
-            s.filters = vec![Filter::Lua("f.lua".to_owned())]
-        });
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("filters ('f.lua')")
-        );
         let (result, _) = convert_files(&files, &["in.json"], |s| {
             s.filters = vec![Filter::Citeproc];
             s.bibliography = vec!["r.xyz".to_owned()];

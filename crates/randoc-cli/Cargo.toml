@@ -12,12 +12,18 @@ authors.workspace = true
 name = "randoc"
 path = "src/main.rs"
 
+[features]
+default = ["lua"]
+lua = ["dep:randoc-lua"]
+
 [dependencies]
 randoc = { workspace = true }
 randoc-data = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-templates = { workspace = true }
 randoc-yaml = { workspace = true }
+# Lua filters; a WebAssembly build turns the feature off (ADR 11).
+randoc-lua = { workspace = true, optional = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
 

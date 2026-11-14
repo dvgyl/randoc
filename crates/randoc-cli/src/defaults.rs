@@ -667,12 +667,14 @@ fn filter(
                     .find(|(k, _)| k.as_str() == Some(name))
                     .map(|(_, v)| v)
             };
-            let kind = match field("type") {
-                None => None,
-                Some(kind) if kind.is_string() => kind.as_str(),
-                Some(_) => return Err(not_a_filter()),
+            // A map without `type` is an error in Pandoc 3.13.
+            let Some(kind) = field("type")
+                .filter(|kind| kind.is_string())
+                .and_then(|kind| kind.as_str())
+            else {
+                return Err(not_a_filter());
             };
-            if kind == Some("citeproc") {
+            if kind == "citeproc" {
                 return Ok(Filter::Citeproc);
             }
             let path = match field("path").map(text) {
@@ -680,10 +682,9 @@ fn filter(
                 _ => return Err(not_a_filter()),
             };
             match kind {
-                Some("lua") => Ok(Filter::Lua(path)),
-                Some("json") => Ok(Filter::Json(path)),
-                None => Ok(filter_for(&path)),
-                Some(_) => Err(not_a_filter()),
+                "lua" => Ok(Filter::Lua(path)),
+                "json" => Ok(Filter::Json(path)),
+                _ => Err(not_a_filter()),
             }
         }
         _ if node.is_string() => {
@@ -1053,9 +1054,9 @@ fn html_math_method(v: &Node) -> std::result::Result<HtmlMathMethod, KeyError> {
             if field("url").is_some_and(|url| !url.is_string() && !url.is_null()) {
                 return Err(unknown());
             }
-            (method.to_owned(), get("url").unwrap_or_default().to_owned())
+            (method.to_owned(), get("url").map(str::to_owned))
         }
-        _ if v.is_string() => (text(v)?, String::new()),
+        _ if v.is_string() => (text(v)?, None),
         _ => return Err(unknown()),
     };
     // A defaults file needs the lower-case method name alone: the
@@ -1063,10 +1064,10 @@ fn html_math_method(v: &Node) -> std::result::Result<HtmlMathMethod, KeyError> {
     if method.contains(':') || method.chars().any(char::is_uppercase) {
         return Err(unknown());
     }
-    let spec = if url.is_empty() {
-        method
-    } else {
-        format!("{method}:{url}")
+    // Without a URL the method gets its default URL; an empty URL stays.
+    let spec = match url {
+        Some(url) => format!("{method}:{url}"),
+        None => method,
     };
     math_method(&spec).map_err(|_| unknown())
 }
@@ -1182,7 +1183,7 @@ syntax-definitions: [s.xml]\ndpi: 300\neol: crlf\ncolumns: 60\npreserve-tabs: tr
 pdf-engine: typst\npdf-engine-opts: [-x]\nreference-doc: r\nself-contained: true\n\
 link-images: true\nrequest-headers: [[A, b]]\nno-check-certificate: true\nabbreviations: ab\n\
 indented-code-classes: [py]\ndefault-image-extension: .png\n\
-filters: [citeproc, f.lua, g, {type: citeproc}, {type: lua, path: x}, {type: json, path: y.lua}, {path: z.lua}]\n\
+filters: [citeproc, f.lua, g, {type: citeproc}, {type: lua, path: x}, {type: json, path: y.lua}, {type: lua, path: z.lua}]\n\
 shift-heading-level-by: -1\ntrack-changes: reject\nstrip-comments: true\nreference-links: true\n\
 reference-location: section\nfigure-caption-position: above\ntable-caption-position: below\n\
 markdown-headings: setext\nlist-tables: true\nlistings: true\nincremental: true\nslide-level: 2\n\
@@ -1196,6 +1197,9 @@ verbosity: ERROR\nfail-if-warnings: true\nlog-file: l\n";
         let s = settings.unwrap();
         assert_eq!(s.input_files, Some(vec!["a".to_owned(), "b".to_owned()]));
         assert_eq!(s.filters.len(), 7);
+        // Pandoc 3.13: `parsing Filter failed, expected String, but encountered Object`.
+        let (settings, _) = load(&[("p.yaml", "filters: [{path: z.lua}]\n")], "p.yaml");
+        assert!(settings.is_err());
         let (settings, _) = load(&[("c.yaml", "citeproc: true\n")], "c.yaml");
         assert_eq!(settings.unwrap().filters, [Filter::Citeproc]);
         let (settings, _) = load(&[("c.yaml", "citeproc: false\n")], "c.yaml");

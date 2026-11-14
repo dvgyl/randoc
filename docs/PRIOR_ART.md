@@ -102,7 +102,6 @@ replaces it.
 | --- | --- | --- | --- | --- |
 | Syntax highlighting engine | `skylighting-core` 0.15 | BSD-3-Clause | Port | `ws/highlight` |
 | 63 KDE syntax definitions with a permissive licence | `skylighting-core` 0.15 `xml/` (from KDE syntax-highlighting) | MIT, BSD, Apache-2.0 and others; one row for each file on the branch | Data | `ws/highlight` |
-| YAML event parser | `saphyr-parser` (version in the branch `Cargo.lock`) | MIT OR Apache-2.0 | Dependency, until the reader moves to `randoc-yaml` | `ws/markdown-reader` |
 | CommonMark specification examples | `commonmark-spec` 0.31.2 | CC-BY-SA-4.0 | Not in the repository: `tools/commonmark-spec/run.py` downloads the file and stores only numbers | `ws/commonmark-reader` |
 | CSL processor: types, style parser, locale parser, locale merge (later units: evaluation, output) | `citeproc` 0.14.1.1 (Hackage, SHA-256 `e5a353f975c32169979b4c9e158d3edb9e57a5f653fab8ff0505a2067e2b1b4b`) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
 | BCP 47 language tag (`Lang`, `parseLang`, `renderLang`) | `unicode-collation` 0.1.3.7 `src/Text/Collate/Lang.hs` (code only; no data file) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |

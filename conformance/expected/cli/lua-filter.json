@@ -1,0 +1,317 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "json-then-lua#cmd": {
+      "key": "b34178dbdf84b750",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-after-metadata#cmd": {
+      "key": "7730863dfaf3e4ef",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList\n          [ ( \"f\" , MetaInlines [ Str \"1\" ] )\n          , ( \"k\" , MetaString \"v\" )\n          ]\n    }\n  [ Header 1 ( \"h\" , [] , [] ) [ Str \"h\" ]\n  , Para [ Str \"a\" ]\n  , Para [ Str \"f,k;1\" ]\n  ]\n",
+      "stderr": ""
+    },
+    "lua-before-citeproc-error#cmd": {
+      "key": "e3c96116b8914134",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'e.lua':\ne.lua:1: before citeproc\nstack traceback:\n\te.lua:1: in main chunk\n"
+    },
+    "lua-before-shift-heading-level#cmd": {
+      "key": "6795ce6cc518f8d7",
+      "exit": 0,
+      "stdout": "[ Header 2 ( \"h\" , [] , [] ) [ Str \"h\" ]\n, Para [ Str \"a\" ]\n, Para [ Str \";1\" ]\n]\n",
+      "stderr": ""
+    },
+    "lua-data-dir#cmd": {
+      "key": "c73737dc2a9ad594",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"dd/filters/a.lua\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-data-dir-folder#cmd": {
+      "key": "366e4134404ff0b0",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"dd/filters/s/a.lua\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-defaults-data-dir#cmd": {
+      "key": "d26edbf82a5ab856",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"dd/filters/a.lua\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-defaults-json-filter-named-lua#cmd": {
+      "key": "90dddedb27ee8c96",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"j\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-defaults-map#cmd": {
+      "key": "e98a42dbbe9a5ddc",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-defaults-map-without-type#cmd": {
+      "key": "7a95f3674dc8bd39",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d.yaml:\nd.yaml:2:3: filters[0]: parsing Filter failed, expected String, but encountered Object\n  |\n2 | - path: one.lua\n  |   ^\n"
+    },
+    "lua-defaults-string#cmd": {
+      "key": "fe4bfd9832e18f52",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-defaults-then-option#cmd": {
+      "key": "94661d748c8f1a3e",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a1\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-directory#cmd": {
+      "key": "13c09ab1ecae911e",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'sub':\ncannot read sub: Is a directory\n"
+    },
+    "lua-error-stops-the-next-filter#cmd": {
+      "key": "7ecf73e2dea4c2b7",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'e.lua':\ne.lua:1: first\nstack traceback:\n\te.lua:1: in main chunk\n"
+    },
+    "lua-extension-is-not-needed#cmd": {
+      "key": "00963022d5136c85",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"txt\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-format#cmd": {
+      "key": "23a39103f320f4d3",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"native\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-format-from-output-file#cmd": {
+      "key": "0d022b9e096d4f14",
+      "exit": 0,
+      "stdout": "a\n\nmarkdown\\_strict\n",
+      "stderr": ""
+    },
+    "lua-format-without-extensions#cmd": {
+      "key": "5fd0e1289246033d",
+      "exit": 0,
+      "stdout": "<p>a</p>\n<p>html5</p>\n",
+      "stderr": ""
+    },
+    "lua-heading-shift-sees-filter-headings#cmd": {
+      "key": "0cf1848a5a6643c0",
+      "exit": 0,
+      "stdout": "[ Header 2 ( \"h\" , [] , [] ) [ Str \"h\" ]\n, Para [ Str \"a\" ]\n, Header 3 ( \"\" , [] , [] ) [ Str \"n\" ]\n]\n",
+      "stderr": ""
+    },
+    "lua-metadata-change-reaches-the-writer#cmd": {
+      "key": "838ec282188bfc3a",
+      "exit": 0,
+      "stdout": "Pandoc\n  Meta\n    { unMeta = fromList [ ( \"added\" , MetaString \"yes\" ) ] }\n  [ Para [ Str \"a\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-missing-in-both#cmd": {
+      "key": "c5f2e2e47fdf81fb",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'b.lua':\ncannot open b.lua: No such file or directory\n"
+    },
+    "lua-missing-verbose#cmd": {
+      "key": "5025a49992376024",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "[INFO] Running filter nosuch.lua\nError running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
+    },
+    "lua-option-then-defaults#cmd": {
+      "key": "39b4b1d058a040a2",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-path#cmd": {
+      "key": "e86bc034b23cae01",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"aL\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-path-before-data-dir#cmd": {
+      "key": "de1a8b4985044466",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"cwd\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-path-dot-slash#cmd": {
+      "key": "998db53daccf1dcf",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"./a.lua\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-path-in-a-folder#cmd": {
+      "key": "aec7123780dced9a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"aS\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-path-long-option#cmd": {
+      "key": "0d266d0c169748fd",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"aL\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-print#cmd": {
+      "key": "3e230c6143d978bd",
+      "exit": 0,
+      "stdout": "printed\n",
+      "stderr": ""
+    },
+    "lua-run-time-error#cmd": {
+      "key": "3da8e9da63b1647c",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'e.lua':\ne.lua:2: stop here\nstack traceback:\n\te.lua:2: in function 'Para'\n"
+    },
+    "lua-run-time-error-at-load#cmd": {
+      "key": "ce1004f451042815",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'e.lua':\ne.lua:2: attempt to index a nil value (local 't')\nstack traceback:\n"
+    },
+    "lua-sandbox-data-dir#cmd": {
+      "key": "d504e2f81ebd0836",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"dd\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-sandbox-libraries#cmd": {
+      "key": "6743a58d6170a6c3",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"tabletabletabletable\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-sandbox-missing#cmd": {
+      "key": "4cf4b12ffa4aa2d7",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
+    },
+    "lua-sandbox-reads-a-file#cmd": {
+      "key": "957e55d86755df5a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"secret\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-script-file#cmd": {
+      "key": "a736537c9673c5db",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"sub/../g.lua\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-standard-error#cmd": {
+      "key": "dfea3425b5e221db",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] ]\n",
+      "stderr": "from the filter\na\n"
+    },
+    "lua-state-data-dir#cmd": {
+      "key": "b90c17f76b809103",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"dd\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-state-files#cmd": {
+      "key": "8b6fa14e5b33b5ef",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ]\n, Para [ Str \"a\" ]\n, Para [ Str \"in.json,in.json;-;WARNING;false;x,y,.;nil\" ]\n]\n",
+      "stderr": ""
+    },
+    "lua-state-missing-data-dir#cmd": {
+      "key": "13e7e967581777c3",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"nodir\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-state-quiet-trace#cmd": {
+      "key": "377bef4059ecf51b",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"-;nil;ERROR;true;.;nil\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-state-request-headers#cmd": {
+      "key": "d1b144e93f61695a",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ]\n, Para [ Str \"A=b,User-Agent=pandoc/3.13\" ]\n]\n",
+      "stderr": ""
+    },
+    "lua-state-standard-input#cmd": {
+      "key": "f2911b7d5ab7bfc8",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ]\n, Para [ Str \"-;nil;WARNING;false;.;nil\" ]\n]\n",
+      "stderr": ""
+    },
+    "lua-state-user-agent#cmd": {
+      "key": "3ed09803385874f6",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"User-Agent=me\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-syntax-error#cmd": {
+      "key": "cb949bcfb8e0d224",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'e.lua':\ne.lua:2: <name> or '...' expected near <eof>\n"
+    },
+    "lua-then-json#cmd": {
+      "key": "fb3e06691381fe9e",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-two-filters-in-order#cmd": {
+      "key": "725b789da7cce14f",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a12\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-two-filters-reversed#cmd": {
+      "key": "74cc6b84394085ff",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a1\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-versions#cmd": {
+      "key": "b27f835726dd4eca",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] , Para [ Str \"3.13 1.23.1.2 userdata\" ] ]\n",
+      "stderr": ""
+    },
+    "lua-warn-quiet#cmd": {
+      "key": "f5148e0bd423d0aa",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a\" ] ]\n",
+      "stderr": "still shown\n"
+    },
+    "lua-wrong-return-value#cmd": {
+      "key": "cc88ff11a40a3a4c",
+      "exit": 83,
+      "stdout": "",
+      "stderr": "Error running filter 'e.lua':\nBlock, list of Blocks, or compatible element expected, got number\n"
+    },
+    "lua-wrong-return-value-inline#cmd": {
+      "key": "718eb7f1cce6d88f",
+      "exit": 0,
+      "stdout": "[ Para [] ]\n",
+      "stderr": ""
+    }
+  }
+}

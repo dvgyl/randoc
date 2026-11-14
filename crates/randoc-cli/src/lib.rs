@@ -11,6 +11,7 @@ mod data_files;
 pub mod defaults;
 mod filter;
 pub mod info;
+mod lua;
 mod node;
 pub mod opts;
 pub mod settings;

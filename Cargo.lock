@@ -311,6 +311,7 @@ dependencies = [
  "randoc-data",
  "randoc-harness",
  "randoc-layout",
+ "randoc-lua",
  "randoc-templates",
  "randoc-yaml",
  "serde",

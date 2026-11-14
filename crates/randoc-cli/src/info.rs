@@ -109,13 +109,19 @@ fn version_head(program: &str) -> String {
 
 /// Returns the text of `--version` or `-v` as a separate argument.
 ///
-/// Randoc has no server mode and no Lua engine yet.
+/// Randoc has no server mode. It has Lua with the Cargo feature `lua`.
 pub fn version_text(program: &str, user_data_dir: &str) -> String {
     format!(
-        "{}Features: -server -lua\nUser data directory: {user_data_dir}\n{COPYRIGHT}",
+        "{}Features: -server {LUA_FEATURE}\nUser data directory: {user_data_dir}\n{COPYRIGHT}",
         version_head(program)
     )
 }
+
+const LUA_FEATURE: &str = if cfg!(feature = "lua") {
+    "+lua"
+} else {
+    "-lua"
+};
 
 /// Returns the text of a version option that the parser finds, for example `-sv`.
 pub fn short_version_text(program: &str, user_data_dir: &str) -> String {
@@ -282,7 +288,7 @@ mod tests {
         let mut lines = text.lines();
         assert_eq!(lines.next(), Some("pandoc 3.13"));
         assert!(lines.next().is_some_and(|l| l.starts_with("Randoc ")));
-        assert_eq!(lines.next(), Some("Features: -server -lua"));
+        assert_eq!(lines.next(), Some("Features: -server +lua"));
         assert_eq!(lines.next(), Some("User data directory: /h"));
         assert!(version_text("randoc", "/h").starts_with("randoc "));
         assert!(!short_version_text("pandoc", "/h").contains("Features"));

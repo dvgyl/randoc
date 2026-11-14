@@ -1,0 +1,449 @@
+# Lua filters (`--lua-filter`, `-L`, a Lua item of `filters:`) with own small filters.
+
+# The search of the filter file: the path, then `filters/` of the user data folder.
+
+[[case]]
+id = "lua-path"
+cmd = ["-f", "json", "-t", "native", "-L", "a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('aL') end\nend\n"
+
+[[case]]
+id = "lua-path-long-option"
+cmd = ["-f", "json", "-t", "native", "--lua-filter=a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('aL') end\nend\n"
+
+[[case]]
+id = "lua-path-in-a-folder"
+cmd = ["-f", "json", "-t", "native", "-L", "sub/a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"sub/a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('aS') end\nend\n"
+
+[[case]]
+id = "lua-path-dot-slash"
+cmd = ["-f", "json", "-t", "native", "-L", "./a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"a.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(PANDOC_SCRIPT_FILE)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-data-dir"
+cmd = ["-f", "json", "-t", "native", "--data-dir=dd", "-L", "a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"dd/filters/a.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(PANDOC_SCRIPT_FILE)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-data-dir-folder"
+cmd = ["-f", "json", "-t", "native", "--data-dir=dd", "-L", "s/a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"dd/filters/s/a.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(PANDOC_SCRIPT_FILE)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-path-before-data-dir"
+cmd = ["-f", "json", "-t", "native", "--data-dir=dd", "-L", "a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('cwd') end\nend\n"
+"dd/filters/a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('dd') end\nend\n"
+
+[[case]]
+id = "lua-missing-in-both"
+cmd = ["-f", "json", "-t", "native", "--data-dir=dd", "-L", "b.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"dd/filters/a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('dd') end\nend\n"
+
+[[case]]
+id = "lua-missing-verbose"
+cmd = ["-f", "json", "-t", "native", "--verbose", "-L", "nosuch.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+
+[[case]]
+id = "lua-directory"
+cmd = ["-f", "json", "-t", "native", "-L", "sub"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"sub/keep.lua" = ""
+
+[[case]]
+id = "lua-extension-is-not-needed"
+cmd = ["-f", "json", "-t", "native", "-L", "a.txt"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"a.txt" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('txt') end\nend\n"
+
+# The order of Lua filters, JSON filters and the filters of a defaults file.
+
+[[case]]
+id = "lua-two-filters-in-order"
+cmd = ["-f", "json", "-t", "native", "-L", "one.lua", "-L", "two.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
+
+[[case]]
+id = "lua-two-filters-reversed"
+cmd = ["-f", "json", "-t", "native", "-L", "two.lua", "-L", "one.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
+
+[[case]]
+id = "lua-then-json"
+cmd = ["-f", "json", "-t", "native", "-L", "one.lua", "-F", "./two.sh"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+
+[[case]]
+id = "json-then-lua"
+cmd = ["-f", "json", "-t", "native", "-F", "./one.sh", "-L", "two.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"one.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
+"two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
+
+[[case]]
+id = "lua-defaults-string"
+cmd = ["-f", "json", "-t", "native", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "filters:\n- one.lua\n- two.lua\n"
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
+
+[[case]]
+id = "lua-defaults-map"
+cmd = ["-f", "json", "-t", "native", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "filters:\n- type: lua\n  path: one.flt\n- type: json\n  path: ./two.sh\n"
+"one.flt" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+
+[[case]]
+id = "lua-defaults-map-without-type"
+cmd = ["-f", "json", "-t", "native", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "filters:\n- path: one.lua\n"
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+
+[[case]]
+id = "lua-defaults-then-option"
+cmd = ["-f", "json", "-t", "native", "-L", "two.lua", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "filters: [one.lua]\n"
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
+
+[[case]]
+id = "lua-option-then-defaults"
+cmd = ["-f", "json", "-t", "native", "-d", "d.yaml", "-L", "two.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "filters: [one.lua]\n"
+"one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
+"two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
+
+[[case]]
+id = "lua-defaults-data-dir"
+cmd = ["-f", "json", "-t", "native", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "data-dir: dd\nfilters: [a.lua]\n"
+"dd/filters/a.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(PANDOC_SCRIPT_FILE)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-defaults-json-filter-named-lua"
+cmd = ["-f", "json", "-t", "native", "-d", "d.yaml"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"d.yaml" = "filters:\n- type: json\n  path: ./x.lua\n"
+"x.lua" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"j\\\"}\"; done\n"
+
+# The globals of a filter.
+
+[[case]]
+id = "lua-format"
+cmd = ["-f", "json", "-t", "native", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(FORMAT)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-format-without-extensions"
+cmd = ["-f", "json", "-t", "html5+smart-raw_html", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(FORMAT)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-format-from-output-file"
+cmd = ["-f", "json", "-o", "-", "-t", "markdown_strict", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(FORMAT)}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-versions"
+cmd = ["-f", "json", "-t", "native", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(tostring(PANDOC_VERSION) .. ' ' .. tostring(PANDOC_API_VERSION) .. ' ' .. type(PANDOC_VERSION))}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-script-file"
+cmd = ["-f", "json", "-t", "native", "-L", "sub/../g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(PANDOC_SCRIPT_FILE)}))\n  return doc\nend\n"
+"sub/keep.lua" = ""
+
+[[case]]
+id = "lua-state-standard-input"
+cmd = ["-f", "json", "-t", "native", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(table.concat(PANDOC_STATE.input_files, ',') .. ';' .. tostring(PANDOC_STATE.output_file) .. ';' .. PANDOC_STATE.verbosity .. ';' .. tostring(PANDOC_STATE.trace) .. ';' .. table.concat(PANDOC_STATE.resource_path, ',') .. ';' .. tostring(PANDOC_STATE.source_url))}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-state-files"
+cmd = ["-f", "json", "-t", "native", "-o", "-", "--resource-path=x:y", "-L", "g.lua", "in.json", "in.json"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(table.concat(PANDOC_STATE.input_files, ',') .. ';' .. tostring(PANDOC_STATE.output_file) .. ';' .. PANDOC_STATE.verbosity .. ';' .. tostring(PANDOC_STATE.trace) .. ';' .. table.concat(PANDOC_STATE.resource_path, ',') .. ';' .. tostring(PANDOC_STATE.source_url))}))\n  return doc\nend\n"
+"in.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+
+[[case]]
+id = "lua-state-quiet-trace"
+cmd = ["-f", "json", "-t", "native", "--quiet", "--trace", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(table.concat(PANDOC_STATE.input_files, ',') .. ';' .. tostring(PANDOC_STATE.output_file) .. ';' .. PANDOC_STATE.verbosity .. ';' .. tostring(PANDOC_STATE.trace) .. ';' .. table.concat(PANDOC_STATE.resource_path, ',') .. ';' .. tostring(PANDOC_STATE.source_url))}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-state-request-headers"
+cmd = ["-f", "json", "-t", "native", "--request-header=A:b", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str((function() local t = {} for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t + 1] = p[1] .. '=' .. p[2] end return table.concat(t, ',') end)())}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-state-user-agent"
+cmd = ["-f", "json", "-t", "native", "--request-header=User-Agent:me", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str((function() local t = {} for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t + 1] = p[1] .. '=' .. p[2] end return table.concat(t, ',') end)())}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-state-data-dir"
+cmd = ["-f", "json", "-t", "native", "--data-dir=dd", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(tostring(PANDOC_STATE.user_data_dir))}))\n  return doc\nend\n"
+"dd/keep.lua" = ""
+
+[[case]]
+id = "lua-state-missing-data-dir"
+cmd = ["-f", "json", "-t", "native", "--data-dir=nodir", "-L", "g.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"g.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(tostring(PANDOC_STATE.user_data_dir))}))\n  return doc\nend\n"
+
+# Error texts and exit codes.
+
+[[case]]
+id = "lua-syntax-error"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "function Para(\n"
+
+[[case]]
+id = "lua-run-time-error"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "function Para(p)\n  error('stop here')\nend\n"
+
+[[case]]
+id = "lua-run-time-error-at-load"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "local t = nil\nprint(t.x)\n"
+
+[[case]]
+id = "lua-wrong-return-value"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "function Para(p)\n  return 42\nend\n"
+
+[[case]]
+id = "lua-wrong-return-value-inline"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "function Str(s)\n  return {}, 1\nend\n"
+
+[[case]]
+id = "lua-error-stops-the-next-filter"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua", "-L", "one.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "error('first')\n"
+"one.lua" = "io.stderr:write('second ran\\n')\n"
+
+# The standard error and the standard output of a filter.
+
+[[case]]
+id = "lua-standard-error"
+cmd = ["-f", "json", "-t", "native", "-L", "w.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"w.lua" = "io.stderr:write('from the filter\\n')\nfunction Str(s)\n  io.stderr:write(s.text .. '\\n')\nend\n"
+
+[[case]]
+id = "lua-print"
+cmd = ["-f", "json", "-t", "native", "-o", "out.txt", "-L", "w.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"w.lua" = "print('printed')\n"
+
+[[case]]
+id = "lua-warn-quiet"
+cmd = ["-f", "json", "-t", "native", "--quiet", "-L", "w.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"w.lua" = "io.stderr:write('still shown\\n')\n"
+
+# The time of the filters: after the metadata options, before the shift of the headings.
+
+[[case]]
+id = "lua-before-shift-heading-level"
+cmd = ["-f", "json", "-t", "native", "--shift-heading-level-by=1", "-L", "see.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"h\",[],[]],[{\"t\":\"Str\",\"c\":\"h\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"see.lua" = "function Pandoc(doc)\n  local levels = {}\n  for _, b in ipairs(doc.blocks) do\n    if b.t == 'Header' then levels[#levels + 1] = tostring(b.level) end\n  end\n  local keys = {}\n  for k in pairs(doc.meta) do keys[#keys + 1] = k end\n  table.sort(keys)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(table.concat(keys, ',') .. ';' .. table.concat(levels, ','))}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-after-metadata"
+cmd = ["-f", "json", "-t", "native", "-s", "-M", "k=v", "--metadata-file=m.yaml", "-L", "see.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"h\",[],[]],[{\"t\":\"Str\",\"c\":\"h\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"see.lua" = "function Pandoc(doc)\n  local levels = {}\n  for _, b in ipairs(doc.blocks) do\n    if b.t == 'Header' then levels[#levels + 1] = tostring(b.level) end\n  end\n  local keys = {}\n  for k in pairs(doc.meta) do keys[#keys + 1] = k end\n  table.sort(keys)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(table.concat(keys, ',') .. ';' .. table.concat(levels, ','))}))\n  return doc\nend\n"
+"m.yaml" = "f: 1\n"
+
+[[case]]
+id = "lua-heading-shift-sees-filter-headings"
+cmd = ["-f", "json", "-t", "native", "--shift-heading-level-by=1", "-L", "add.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"h\",[],[]],[{\"t\":\"Str\",\"c\":\"h\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"add.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Header(2, 'n'))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-before-citeproc-error"
+cmd = ["-f", "json", "-t", "native", "-L", "e.lua", "--citeproc"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"e.lua" = "error('before citeproc')\n"
+
+[[case]]
+id = "lua-metadata-change-reaches-the-writer"
+cmd = ["-f", "json", "-t", "native", "-s", "-L", "m.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"m.lua" = "function Meta(m)\n  m.added = pandoc.MetaString('yes')\n  return m\nend\n"
+
+# Under `--sandbox` the filter runs in full mode (ADR 11).
+
+[[case]]
+id = "lua-sandbox-reads-a-file"
+cmd = ["-f", "json", "-t", "native", "--sandbox", "-L", "r.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"r.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(io.open('data.txt'):read('l'))}))\n  return doc\nend\n"
+"data.txt" = "secret\n"
+
+[[case]]
+id = "lua-sandbox-data-dir"
+cmd = ["-f", "json", "-t", "native", "--sandbox", "--data-dir=dd", "-L", "a.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"dd/filters/a.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('dd') end\nend\n"
+
+[[case]]
+id = "lua-sandbox-libraries"
+cmd = ["-f", "json", "-t", "native", "--sandbox", "-L", "l.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]
+[case.files]
+"l.lua" = "function Pandoc(doc)\n  doc.blocks:insert(pandoc.Para({pandoc.Str(type(io) .. type(os) .. type(debug) .. type(package))}))\n  return doc\nend\n"
+
+[[case]]
+id = "lua-sandbox-missing"
+cmd = ["-f", "json", "-t", "native", "--sandbox", "-L", "nosuch.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
+covers = ["opt:lua-filter"]

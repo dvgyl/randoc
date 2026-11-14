@@ -206,11 +206,23 @@ pub fn metadata_value(value: Option<&str>) -> MetaValue {
     }
 }
 
+/// The URL of a math method that the command line gives without a URL.
+/// An empty URL that the command line gives stays empty.
+fn default_math_url(method: &str) -> String {
+    match method {
+        "mathjax" => "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "katex" => "https://cdn.jsdelivr.net/npm/katex@latest/dist/",
+        "webtex" => "https://latex.codecogs.com/png.latex?",
+        _ => "",
+    }
+    .to_owned()
+}
+
 /// Parses the argument of `--math-method`, for example `mathjax:URL`.
 pub fn math_method(text: &str) -> Result<HtmlMathMethod> {
     let (name, url) = match text.split_once(':') {
         Some((name, url)) => (name, url.to_owned()),
-        None => (text, String::new()),
+        None => (text, default_math_url(text)),
     };
     Ok(match name {
         "plain" => HtmlMathMethod::PlainMath,
@@ -531,15 +543,21 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         }
         Opt::Webtex => {
             deprecated(env, "webtex", "--math-method=webtex[:URL]");
-            s.html_math_method = HtmlMathMethod::WebTex(arg.to_owned());
+            s.html_math_method = HtmlMathMethod::WebTex(
+                value.map_or_else(|| default_math_url("webtex"), str::to_owned),
+            );
         }
         Opt::Mathjax => {
             deprecated(env, "mathjax", "--math-method=mathjax[:URL]");
-            s.html_math_method = HtmlMathMethod::MathJax(arg.to_owned());
+            s.html_math_method = HtmlMathMethod::MathJax(
+                value.map_or_else(|| default_math_url("mathjax"), str::to_owned),
+            );
         }
         Opt::Katex => {
             deprecated(env, "katex", "--math-method=katex[:URL]");
-            s.html_math_method = HtmlMathMethod::KaTex(arg.to_owned());
+            s.html_math_method = HtmlMathMethod::KaTex(
+                value.map_or_else(|| default_math_url("katex"), str::to_owned),
+            );
         }
         Opt::Gladtex => {
             deprecated(env, "gladtex", "--math-method=gladtex[:URL]");
@@ -1000,12 +1018,16 @@ mod tests {
         };
         assert_eq!(math_method("plain").ok(), Some(HtmlMathMethod::PlainMath));
         assert_eq!(math_method("gladtex").ok(), Some(HtmlMathMethod::GladTex));
+        // Pandoc 3.13: `--math-method=webtex` uses the codecogs service,
+        // `--math-method=katex:` the empty URL.
         assert_eq!(
             math_method("webtex").ok(),
-            Some(HtmlMathMethod::WebTex(String::new()))
+            Some(HtmlMathMethod::WebTex(
+                "https://latex.codecogs.com/png.latex?".to_owned()
+            ))
         );
         assert_eq!(
-            math_method("katex").ok(),
+            math_method("katex:").ok(),
             Some(HtmlMathMethod::KaTex(String::new()))
         );
         assert_eq!(s(Opt::Wrap, "auto").wrap, WrapOption::WrapAuto);
@@ -1076,6 +1098,17 @@ mod tests {
         assert_eq!(
             run(Opt::Mathml, None).1.html_math_method,
             HtmlMathMethod::MathMl
+        );
+        // Pandoc 3.13: `--mathjax` gives the default script, `--mathjax=` an empty one.
+        assert_eq!(
+            run(Opt::Mathjax, None).1.html_math_method,
+            HtmlMathMethod::MathJax(
+                "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js".to_owned()
+            )
+        );
+        assert_eq!(
+            run(Opt::Katex, Some("")).1.html_math_method,
+            HtmlMathMethod::KaTex(String::new())
         );
         assert_eq!(
             run(Opt::Gladtex, None).1.html_math_method,
