@@ -1750,3 +1750,36 @@ Conflicts in the merge: none. Licence scan of `ws/harness-speed`
 Open findings: none known for this block. Open checks: the worker
 report, the two reviews, fuzzing, coverage, the mutation tests, the CPU
 table.
+
+## Workstream harness-speed (branch `ws/harness-speed`, commit 7d6c7a2, one squashed commit, session 5 of 2026-11-12, batch B)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit 7d6c7a2 only (on top of
+f56b1d1, which is on `main`). Content: the test tool, no code of the
+product. `randoc-harness` makes no folder for a file at the top of the
+work folder of a unit (`crates/randoc-harness/src/exec.rs`).
+
+The worker was stopped by a usage limit and has not written its report
+section. The gate evidence comes from `git log --format='%h %s'
+main..7d6c7a2` (one new commit, 7d6c7a2) and from the inbox file
+`env/store/inbox/harness-speed.log`, whose last line names f56b1d1, not
+7d6c7a2. The coordinator permits the merge without a gate line of
+7d6c7a2: its gate run did not end for time reasons, and the verdict
+comparison of all 49305 units ran on 7d6c7a2 with 0 differences. The
+merge check of this batch is its gate.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | No gate line of 7d6c7a2 (see above). The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Verdict comparison of all 49305 units on 7d6c7a2 (coordinator): 0 differences. |
+| 3. Tests | `cargo test -p randoc-harness` on the merged tree: 40 pass, 0 fail. Coverage and the mutation tests: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | No review round yet; the two reviews of this block follow when its unit ends. |
+| 6. No slowdowns | The wall time of `merge-ws check`: see the batch record. CPU table: not run. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. Licence scan of 7d6c7a2: no hit.
+
+Open findings: none known for this block. Open checks: the worker
+report, the gate run of 7d6c7a2, the two reviews, fuzzing, coverage,
+the mutation tests, the CPU table.

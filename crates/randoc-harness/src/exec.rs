@@ -122,7 +122,7 @@ impl Program {
                 ));
             }
             let path = work_dir.join(name);
-            if let Some(parent) = path.parent() {
+            if let Some(parent) = path.parent().filter(|parent| *parent != work_dir) {
                 fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
             }
             fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))?;
@@ -239,11 +239,12 @@ mod tests {
         fs::write(dir.join("stale.txt"), "x").unwrap();
         let mut files = BTreeMap::new();
         files.insert("sub/a.txt".to_owned(), b"A".to_vec());
-        let script = "echo $SOURCE_DATE_EPOCH $TZ $LANG; echo $0; cat sub/a.txt; ls";
+        files.insert("b.txt".to_owned(), b"B".to_vec());
+        let script = "echo $SOURCE_DATE_EPOCH $TZ $LANG; echo $0; cat sub/a.txt b.txt; ls";
         let outcome = shell(20_000).run(&sh(script), b"", &files, &dir).unwrap();
         assert_eq!(
             String::from_utf8(outcome.stdout_bytes()).unwrap(),
-            "1700000000 UTC en_US.UTF-8\npandoc\nAsub\n"
+            "1700000000 UTC en_US.UTF-8\npandoc\nABb.txt\nsub\n"
         );
         fs::remove_dir_all(&dir).unwrap();
     }
