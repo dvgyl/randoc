@@ -203,6 +203,13 @@ completely. Its main rules:
     measurements as a task of a Sonnet agent. No time limit for the handoff
     was given.)
 
+21. "sorry hit the 5 hour limit, please continue" (Given in the fifth
+    session on 2026-11-14 at about 20:50 UTC. The usage limit of the
+    account had stopped each agent on 2026-11-12 at about 07:20 UTC. The
+    coordinator pushed the merge batch that had passed its check alone,
+    resumed the stopped workers with new time limits and continued with
+    the same tasks.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,
