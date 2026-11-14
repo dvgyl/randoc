@@ -5,12 +5,14 @@
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 
+use crate::haskell;
 use crate::json::{self, DecodeError, Json};
 use crate::markup::{self, Markup, TooDeep};
 use crate::style::haskell_words;
 use crate::unicode_class::{is_alpha_num, is_lower};
 
-/// A variable name. Two names that differ only in case are equal.
+/// A variable name. Two names that differ only in case are equal: they
+/// compare with full Unicode case folding, as the upstream `CI Text` does.
 #[derive(Debug, Clone)]
 pub struct Variable {
     original: String,
@@ -22,7 +24,7 @@ impl Variable {
     pub fn new(name: &str) -> Variable {
         Variable {
             original: name.to_owned(),
-            folded: name.to_lowercase(),
+            folded: crate::case_fold::fold(name),
         }
     }
 
@@ -290,17 +292,14 @@ fn add_field(
             )?;
         }
         "note" => {
-            let (fields, rest) = parse_note(json::text(value)?);
-            // A note field can hold a note field again: `note: note: x`.
-            let inner = max_depth.checked_sub(1).ok_or(ReadError::TooDeep)?;
-            for (name, field) in consolidate_names(fields) {
-                add_field(reference, Variable::new(&name), &field, inner)?;
-            }
-            if !rest.is_empty() {
-                reference
-                    .variables
-                    .insert(Variable::new("note"), Val::Text(rest.to_owned()));
-            }
+            let text = json::text(value)?;
+            let all = NoteRange {
+                start: 0,
+                end: text.len(),
+                no_newline: false,
+                no_brace: false,
+            };
+            add_note(reference, text, all, max_depth)?;
         }
         _ => {
             let parsed = match variable.kind() {
@@ -346,29 +345,117 @@ fn read_string(value: &Json) -> Result<String, DecodeError> {
     }
 }
 
-/// `parseNote`: fields such as `issued: 2001` at the start of a note.
-fn parse_note(text: &str) -> (Vec<(String, String)>, &str) {
+/// A part of a note text. The flags say that the part holds no newline or
+/// no `}`, so a search for one can stop at once.
+#[derive(Debug, Clone, Copy)]
+struct NoteRange {
+    start: usize,
+    end: usize,
+    no_newline: bool,
+    no_brace: bool,
+}
+
+/// The fields of a note and its rest. A note field can hold a note field
+/// again (`note: note: x`): each level reads a part of the one text, so the
+/// work is linear in the text length.
+fn add_note(
+    reference: &mut Reference<Vec<Markup>>,
+    text: &str,
+    range: NoteRange,
+    max_depth: usize,
+) -> Result<(), ReadError> {
+    let (fields, rest) = parse_note(text, range);
+    let inner = max_depth.checked_sub(1).ok_or(ReadError::TooDeep)?;
+    for field in consolidate_names(text, fields) {
+        match field {
+            NoteField::Note(range) => add_note(reference, text, range, inner)?,
+            NoteField::Other(name, value) => {
+                add_field(reference, Variable::new(name), &value, inner)?;
+            }
+        }
+    }
+    let rest = &text[rest..range.end];
+    if !rest.is_empty() {
+        reference
+            .variables
+            .insert(Variable::new("note"), Val::Text(rest.to_owned()));
+    }
+    Ok(())
+}
+
+/// Finds `needle` in the range, or gives `None` at once when a flag says that
+/// the range has none.
+fn find_in(text: &str, start: usize, end: usize, needle: char, absent: bool) -> Option<usize> {
+    if absent {
+        return None;
+    }
+    let found = text[start..end].find(needle).map(|at| start + at);
+    #[cfg(test)]
+    NOTE_SCAN.with(|count| count.set(count.get() + found.unwrap_or(end) - start));
+    found
+}
+
+#[cfg(test)]
+thread_local! {
+    /// The bytes that note searches examine, for the step-count test.
+    static NOTE_SCAN: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+/// The range of `text[start..end]` without the white space at its ends (`T.strip`).
+fn strip_range(text: &str, start: usize, end: usize) -> (usize, usize) {
+    let part = &text[start..end];
+    let lead = part.len() - part.trim_start_matches(haskell::is_space).len();
+    let stripped = haskell::strip(part);
+    (start + lead, start + lead + stripped.len())
+}
+
+/// `parseNote`: fields such as `issued: 2001` at the start of a note. Gives
+/// each field name with the range of its value, and the start of the rest.
+fn parse_note(text: &str, range: NoteRange) -> (Vec<(&str, NoteRange)>, usize) {
     let mut fields = Vec::new();
-    let mut rest = text;
+    let mut at = range.start;
+    let end = range.end;
     loop {
+        let rest = &text[at..end];
         if let Some(after) = rest.strip_prefix("{:")
             && let Some((name, after)) = variable_name(after)
             && let Some(after) = after.strip_prefix(':')
-            && let Some(close) = after.find('}')
         {
-            fields.push((name.to_owned(), after[..close].trim().to_owned()));
-            rest = &after[close + 1..];
-            continue;
+            let value_start = end - after.len();
+            if let Some(close) = find_in(text, value_start, end, '}', range.no_brace) {
+                let (start, stop) = strip_range(text, value_start, close);
+                fields.push((
+                    name,
+                    NoteRange {
+                        start,
+                        end: stop,
+                        no_brace: true,
+                        ..range
+                    },
+                ));
+                at = close + 1;
+                continue;
+            }
         }
         if let Some((name, after)) = variable_name(rest)
             && let Some(after) = after.strip_prefix(':')
         {
-            let line_end = after.find('\n').unwrap_or(after.len());
-            fields.push((name.to_owned(), after[..line_end].trim().to_owned()));
-            rest = after.get(line_end + 1..).unwrap_or("");
+            let value_start = end - after.len();
+            let line_end = find_in(text, value_start, end, '\n', range.no_newline).unwrap_or(end);
+            let (start, stop) = strip_range(text, value_start, line_end);
+            fields.push((
+                name,
+                NoteRange {
+                    start,
+                    end: stop,
+                    no_newline: true,
+                    ..range
+                },
+            ));
+            at = (line_end + 1).min(end);
             continue;
         }
-        return (fields, rest);
+        return (fields, at);
     }
 }
 
@@ -385,23 +472,34 @@ fn variable_name(text: &str) -> Option<(&str, &str)> {
     (end > 0).then(|| text.split_at(end))
 }
 
+/// A field of a note, after `consolidateNameVariables`.
+enum NoteField<'a> {
+    /// A note inside the note.
+    Note(NoteRange),
+    /// Another variable with its value.
+    Other(&'a str, Json),
+}
+
 /// `consolidateNameVariables`: each name variable gives one array of all its values.
-fn consolidate_names(fields: Vec<(String, String)>) -> Vec<(String, Json)> {
-    let mut out: Vec<(String, Json)> = Vec::new();
+fn consolidate_names<'a>(text: &str, fields: Vec<(&'a str, NoteRange)>) -> Vec<NoteField<'a>> {
+    let mut out: Vec<NoteField<'a>> = Vec::new();
     let mut name_index: BTreeMap<Variable, usize> = BTreeMap::new();
-    for (name, value) in fields {
-        let variable = Variable::new(&name);
-        if variable.kind() == VariableType::Name {
+    for (name, range) in fields {
+        let variable = Variable::new(name);
+        let value = || Json::String(text[range.start..range.end].to_owned());
+        if variable.folded == "note" {
+            out.push(NoteField::Note(range));
+        } else if variable.kind() == VariableType::Name {
             if let Some(index) = name_index.get(&variable) {
-                if let Json::Array(items) = &mut out[*index].1 {
-                    items.push(Json::String(value));
+                if let Some(NoteField::Other(_, Json::Array(items))) = out.get_mut(*index) {
+                    items.push(value());
                 }
             } else {
                 name_index.insert(variable, out.len());
-                out.push((name, Json::Array(vec![Json::String(value)])));
+                out.push(NoteField::Other(name, Json::Array(vec![value()])));
             }
         } else {
-            out.push((name, Json::String(value)));
+            out.push(NoteField::Other(name, value()));
         }
     }
     out
@@ -434,8 +532,8 @@ fn read_name(value: &Json) -> Result<Name, DecodeError> {
         json::optional(object, key).map_or(Ok(false), as_bool)
     };
     Ok(Name {
-        family: field("family")?.map(|t| remove_outer_quotes(&t).to_owned()),
-        given: field("given")?.map(|t| remove_outer_quotes(&t).to_owned()),
+        family: field("family")?.map(|t| remove_outer_quotes(&t)),
+        given: field("given")?.map(|t| remove_outer_quotes(&t)),
         dropping_particle: field("dropping-particle")?,
         non_dropping_particle: field("non-dropping-particle")?,
         suffix: field("suffix")?,
@@ -449,10 +547,14 @@ fn fix_apostrophes(text: &str) -> String {
     text.replace('\'', "\u{2019}")
 }
 
-fn remove_outer_quotes(text: &str) -> &str {
-    text.strip_prefix('"')
-        .and_then(|t| t.strip_suffix('"'))
-        .unwrap_or(text)
+/// `removeOuterQuotes`: a text that starts and ends with `"` loses both
+/// ends; the one-character text `"` becomes empty.
+fn remove_outer_quotes(text: &str) -> String {
+    if text.starts_with('"') && text.ends_with('"') {
+        drop_ends(text)
+    } else {
+        text.to_owned()
+    }
 }
 
 /// `asBool`.
@@ -460,8 +562,7 @@ fn as_bool(value: &Json) -> Result<bool, DecodeError> {
     match value {
         Json::String(text) => Ok(text == "true"),
         Json::Bool(value) => Ok(*value),
-        Json::Number(json::Number::Int(value)) => Ok(*value == 1),
-        Json::Number(json::Number::Float(value)) => Ok(*value == 1.0),
+        Json::Number(number) => Ok(number.is_one()),
         other => Err(DecodeError::mismatch("Bool", other)),
     }
 }
@@ -475,30 +576,13 @@ fn as_int(value: &Json) -> Result<i64, DecodeError> {
     }
 }
 
-/// `readAsInt`: an optional minus sign and ASCII digits. Large numbers wrap, as a Haskell `Int` does.
-pub fn read_as_int(text: &str) -> Option<i64> {
-    let (negative, digits) = match text.strip_prefix('-') {
-        Some(digits) => (true, digits),
-        None => (false, text),
-    };
-    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
-        return None;
-    }
-    let value = digits.bytes().fold(0i64, |acc, b| {
-        acc.wrapping_mul(10).wrapping_add(i64::from(b - b'0'))
-    });
-    Some(if negative {
-        value.wrapping_neg()
-    } else {
-        value
-    })
-}
+pub use crate::types::read_as_int;
 
 /// The cheater syntax of a name: `Family || Given`.
 fn cheater_name(text: &str) -> Name {
     let mut parts = text.split("||");
-    let family = parts.next().map(|t| t.trim().to_owned());
-    let given = parts.next().map(|t| t.trim().to_owned());
+    let family = parts.next().map(|t| haskell::strip(t).to_owned());
+    let given = parts.next().map(|t| haskell::strip(t).to_owned());
     extract_particles(Name {
         family,
         given,
@@ -543,11 +627,11 @@ fn extract_suffix(mut name: Name) -> Name {
     }
     if let Some(rest) = after.strip_prefix(",!") {
         name.given = Some(before.to_owned());
-        name.suffix = Some(rest.trim().to_owned());
+        name.suffix = Some(haskell::strip(rest).to_owned());
         name.comma_suffix = true;
     } else {
         name.given = Some(before.to_owned());
-        name.suffix = Some(after[1..].trim().to_owned());
+        name.suffix = Some(haskell::strip(&after[1..]).to_owned());
     }
     name
 }
@@ -684,7 +768,7 @@ pub fn raw_date_edtf(text: &str) -> Option<Date> {
 }
 
 fn raw_date_iso(raw: &str) -> Option<Date> {
-    let ranges: Vec<&str> = raw.split('/').map(str::trim).collect();
+    let ranges: Vec<&str> = raw.split('/').map(haskell::strip).collect();
     let circa = ranges.iter().any(|r| r.ends_with('~'));
     let parts = ranges
         .iter()
@@ -761,7 +845,7 @@ fn raw_date_old(raw: &str) -> Option<Date> {
     let parts = raw
         .split('-')
         .map(|range| {
-            let pieces: Vec<&str> = range.trim().split([' ', '/', ',']).collect();
+            let pieces: Vec<&str> = haskell::strip(range).split([' ', '/', ',']).collect();
             match pieces.as_slice() {
                 [m, d, y] => {
                     let y = read_as_int(y)?;
@@ -862,12 +946,94 @@ pub enum JsonOut {
     Object(BTreeMap<String, JsonOut>),
 }
 
+/// Drops the children on the heap: the derived drop recurses once for each level.
+impl Drop for JsonOut {
+    fn drop(&mut self) {
+        let mut pending = take_children(self);
+        while let Some(mut value) = pending.pop() {
+            pending.append(&mut take_children(&mut value));
+        }
+    }
+}
+
+fn take_children(value: &mut JsonOut) -> Vec<JsonOut> {
+    match value {
+        JsonOut::Array(items) => std::mem::take(items),
+        JsonOut::Object(fields) => std::mem::take(fields).into_values().collect(),
+        JsonOut::Bool(_) | JsonOut::Int(_) | JsonOut::String(_) => Vec::new(),
+    }
+}
+
 /// Writes a value as `aeson-pretty` does with sorted keys: an indent of two
 /// spaces, one entry on each line, and no final newline.
+///
+/// The walk keeps its pending work on the heap, so a deep value cannot
+/// overflow the stack.
 pub fn write_pretty(value: &JsonOut) -> String {
     let mut out = String::new();
-    pretty(value, 0, &mut out);
+    let mut work = vec![Pretty::Value(value, 0)];
+    while let Some(step) = work.pop() {
+        match step {
+            Pretty::Entry { first, key, level } => {
+                if !first {
+                    out.push(',');
+                }
+                newline(&mut out, level);
+                if let Some(key) = key {
+                    json::write_string(&mut out, key);
+                    out.push_str(": ");
+                }
+            }
+            Pretty::Close(close, level) => {
+                newline(&mut out, level);
+                out.push(close);
+            }
+            Pretty::Value(value, level) => match value {
+                JsonOut::Bool(value) => out.push_str(if *value { "true" } else { "false" }),
+                JsonOut::Int(value) => out.push_str(&value.to_string()),
+                JsonOut::String(text) => json::write_string(&mut out, text),
+                JsonOut::Array(items) if items.is_empty() => out.push_str("[]"),
+                JsonOut::Object(fields) if fields.is_empty() => out.push_str("{}"),
+                JsonOut::Array(items) => {
+                    out.push('[');
+                    work.push(Pretty::Close(']', level));
+                    for (index, item) in items.iter().enumerate().rev() {
+                        work.push(Pretty::Value(item, level + 1));
+                        work.push(Pretty::Entry {
+                            first: index == 0,
+                            key: None,
+                            level: level + 1,
+                        });
+                    }
+                }
+                JsonOut::Object(fields) => {
+                    out.push('{');
+                    work.push(Pretty::Close('}', level));
+                    for (index, (key, item)) in fields.iter().enumerate().rev() {
+                        work.push(Pretty::Value(item, level + 1));
+                        work.push(Pretty::Entry {
+                            first: index == 0,
+                            key: Some(key),
+                            level: level + 1,
+                        });
+                    }
+                }
+            },
+        }
+    }
     out
+}
+
+/// Pending work of [`write_pretty`].
+enum Pretty<'a> {
+    Value(&'a JsonOut, usize),
+    /// The separator, the line break and the key before an entry.
+    Entry {
+        first: bool,
+        key: Option<&'a str>,
+        level: usize,
+    },
+    Close(char, usize),
 }
 
 fn newline(out: &mut String, level: usize) {
@@ -877,45 +1043,61 @@ fn newline(out: &mut String, level: usize) {
     }
 }
 
-fn pretty(value: &JsonOut, level: usize, out: &mut String) {
-    match value {
-        JsonOut::Bool(value) => out.push_str(if *value { "true" } else { "false" }),
-        JsonOut::Int(value) => out.push_str(&value.to_string()),
-        JsonOut::String(text) => json::write_string(out, text),
-        JsonOut::Array(items) if items.is_empty() => out.push_str("[]"),
-        JsonOut::Array(items) => {
-            out.push('[');
-            for (index, item) in items.iter().enumerate() {
-                if index > 0 {
-                    out.push(',');
-                }
-                newline(out, level + 1);
-                pretty(item, level + 1, out);
-            }
-            newline(out, level);
-            out.push(']');
-        }
-        JsonOut::Object(fields) if fields.is_empty() => out.push_str("{}"),
-        JsonOut::Object(fields) => {
-            out.push('{');
-            for (index, (key, item)) in fields.iter().enumerate() {
-                if index > 0 {
-                    out.push(',');
-                }
-                newline(out, level + 1);
-                json::write_string(out, key);
-                out.push_str(": ");
-                pretty(item, level + 1, out);
-            }
-            newline(out, level);
-            out.push('}');
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn note_scan(note: &str) -> (usize, Reference<Vec<Markup>>) {
+        NOTE_SCAN.with(|count| count.set(0));
+        let mut object = BTreeMap::new();
+        object.insert("note".to_owned(), Json::String(note.to_owned()));
+        let reference = read_reference(&Json::Object(object), 1_000_000).unwrap();
+        (NOTE_SCAN.with(std::cell::Cell::get), reference)
+    }
+
+    #[test]
+    fn nested_notes_read_in_linear_steps() {
+        // Codex citeproc-R2-08: each level once copied and searched the rest.
+        let forms: [fn(usize) -> String; 3] = [
+            |n| format!("{}x", "note: ".repeat(n)),
+            |n| format!("{}x{}", "{:note:".repeat(n), "}".repeat(n)),
+            |n| format!("{}x\ny", "note: {:note:".repeat(n)),
+        ];
+        for form in forms {
+            let result = std::thread::Builder::new()
+                .stack_size(256 << 20)
+                .spawn(move || {
+                    let (small, _) = note_scan(&form(1_000));
+                    let (large, reference) = note_scan(&form(4_000));
+                    (small, large, reference.variables.len())
+                })
+                .unwrap()
+                .join()
+                .unwrap();
+            let (small, large, variables) = result;
+            assert!(variables >= 1);
+            assert!(
+                large <= 5 * small.max(1) + 100,
+                "{small} then {large} bytes"
+            );
+            assert!(large <= 4 * form(4_000).len(), "{large} bytes");
+        }
+    }
+
+    #[test]
+    fn nested_notes_keep_their_fields() {
+        let (_, reference) = note_scan("note: note: x");
+        assert_eq!(
+            reference.variables.get(&Variable::new("note")),
+            Some(&Val::Text("x".into()))
+        );
+        let (_, reference) = note_scan("{:note:title: T\nrest}tail");
+        assert!(reference.variables.contains_key(&Variable::new("title")));
+        assert_eq!(
+            reference.variables.get(&Variable::new("note")),
+            Some(&Val::Text("tail".into()))
+        );
+    }
 
     fn parts(date: &Date) -> Vec<Vec<i64>> {
         date.parts.iter().map(|p| p.0.clone()).collect()

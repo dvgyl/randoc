@@ -18,6 +18,7 @@ use randoc_ast::{
 use randoc_core::shared::stringify_meta;
 use randoc_core::{Context, Error, Reader, ReaderOptions, Result, Sources, Writer, WriterOptions};
 
+use crate::haskell;
 use crate::json::{self, DecodeError, Json};
 use crate::markup::{self, Markup, Style};
 use crate::reference::{self, Date, DateParts, JsonOut, Name, ReadError, Reference, Val, Variable};
@@ -362,8 +363,9 @@ fn write(doc: &Pandoc, _: &WriterOptions, context: &mut Context) -> Result<Text>
     };
     let mut out = Vec::new();
     for item in items {
-        if let MetaValue::MetaMap(map) = item {
-            let reference = meta_to_reference(map, max_depth)?;
+        if let MetaValue::MetaMap(map) = item
+            && let Some(reference) = meta_to_reference(map, max_depth)?
+        {
             out.push(reference::reference_to_json(&reference, &|m: &Vec<
                 Markup,
             >| {
@@ -388,16 +390,25 @@ fn too_deep() -> Error {
     Error::App("the references are nested too deeply".into())
 }
 
+/// A reference from its metadata map, or `None` when the map has no `id`
+/// with a text value: the oracle drops such an entry.
 fn meta_to_reference(
     map: &BTreeMap<Text, MetaValue>,
     max_depth: usize,
-) -> Result<Reference<Vec<Markup>>> {
+) -> Result<Option<Reference<Vec<Markup>>>> {
     let mut reference = Reference::default();
+    let mut has_id = false;
     for (key, value) in map {
         let key = output_key(key);
         match key.as_str() {
-            "id" => reference.id = stringify_meta(value),
-            "type" => reference.kind = stringify_meta(value),
+            "id" => match meta_text(value) {
+                Some(id) => {
+                    reference.id = id;
+                    has_id = true;
+                }
+                None => has_id = false,
+            },
+            "type" => reference.kind = meta_text(value).unwrap_or_default(),
             _ => {
                 let value = match writer_kind(&key) {
                     WriterKind::Names => Val::Names(meta_to_names(value)),
@@ -408,7 +419,23 @@ fn meta_to_reference(
             }
         }
     }
-    Ok(reference)
+    Ok(has_id.then_some(reference))
+}
+
+/// The text of a metadata value as the oracle reads a typed field: the
+/// plain text of a string, inlines or blocks; the texts of a list joined by
+/// a space; nothing for a Boolean, a map, or a list that holds one.
+fn meta_text(value: &MetaValue) -> Option<String> {
+    match value {
+        MetaValue::MetaString(_) | MetaValue::MetaInlines(_) | MetaValue::MetaBlocks(_) => {
+            Some(stringify_meta(value))
+        }
+        MetaValue::MetaBool(_) | MetaValue::MetaMap(_) => None,
+        MetaValue::MetaList(items) => {
+            let texts = items.iter().map(meta_text).collect::<Option<Vec<_>>>()?;
+            Some(texts.join(" "))
+        }
+    }
 }
 
 /// How the writer reads a metadata value.
@@ -454,7 +481,7 @@ fn meta_to_name(value: &MetaValue) -> Option<Name> {
     match value {
         MetaValue::MetaBool(_) => None,
         MetaValue::MetaMap(map) => {
-            let text = |key: &str| map.get(key).map(stringify_meta);
+            let text = |key: &str| map.get(key).and_then(meta_text);
             let flag = |key: &str| map.get(key).is_some_and(is_true);
             Some(Name {
                 family: text("family"),
@@ -468,7 +495,7 @@ fn meta_to_name(value: &MetaValue) -> Option<Name> {
             })
         }
         other => Some(Name {
-            literal: Some(stringify_meta(other)),
+            literal: Some(meta_text(other)?),
             ..Name::default()
         }),
     }
@@ -477,13 +504,25 @@ fn meta_to_name(value: &MetaValue) -> Option<Name> {
 fn is_true(value: &MetaValue) -> bool {
     match value {
         MetaValue::MetaBool(value) => *value,
-        other => stringify_meta(other) == "true",
+        other => meta_text(other).is_some_and(|text| text == "true"),
     }
 }
 
-/// `read`: an integer with optional white space around it.
 fn read_int(value: &MetaValue) -> Option<i64> {
-    stringify_meta(value).trim().parse().ok()
+    haskell::read_int(&meta_text(value)?)
+}
+
+/// The date parts of a `date-parts` list: each item that is a list gives one date.
+fn meta_date_parts(dates: &[MetaValue]) -> Vec<DateParts> {
+    dates
+        .iter()
+        .filter_map(|date| match date {
+            MetaValue::MetaList(parts) => Some(DateParts(
+                parts.iter().map(|p| read_int(p).unwrap_or(0)).collect(),
+            )),
+            _ => None,
+        })
+        .collect()
 }
 
 fn meta_to_date(value: &MetaValue) -> Date {
@@ -492,26 +531,27 @@ fn meta_to_date(value: &MetaValue) -> Date {
             reference::raw_date_edtf(&stringify_meta(value)).unwrap_or_default()
         }
         MetaValue::MetaMap(map) => {
-            if let Some(raw) = map.get("raw") {
-                return reference::raw_date_edtf(&stringify_meta(raw)).unwrap_or_default();
+            if let Some(raw) = map.get("raw").and_then(meta_text) {
+                return reference::raw_date_edtf(&raw).unwrap_or_default();
             }
+            let season = map.get("season").and_then(read_int);
             let parts = match map.get("date-parts") {
-                Some(MetaValue::MetaList(dates)) => dates
-                    .iter()
-                    .map(|date| match date {
-                        MetaValue::MetaList(parts) => Some(DateParts(
-                            parts.iter().map(|p| read_int(p).unwrap_or(0)).collect(),
-                        )),
-                        _ => None,
-                    })
-                    .collect::<Option<Vec<_>>>()
-                    .unwrap_or_default(),
+                Some(MetaValue::MetaList(dates)) => meta_date_parts(dates),
                 Some(_) => Vec::new(),
                 None => {
-                    let parts: Vec<i64> = ["year", "month", "day"]
-                        .iter()
-                        .map_while(|key| map.get(*key).and_then(read_int))
-                        .collect();
+                    // With no month, the season gives the month: 20 plus the season.
+                    let month = map
+                        .get("month")
+                        .and_then(read_int)
+                        .or_else(|| season.map(|s| s.wrapping_add(20)));
+                    let parts: Vec<i64> = [
+                        map.get("year").and_then(read_int),
+                        month,
+                        map.get("day").and_then(read_int),
+                    ]
+                    .into_iter()
+                    .map_while(|part| part)
+                    .collect();
                     if parts.is_empty() {
                         Vec::new()
                     } else {
@@ -522,11 +562,15 @@ fn meta_to_date(value: &MetaValue) -> Date {
             Date {
                 parts,
                 circa: map.get("circa").is_some_and(is_true),
-                season: map.get("season").and_then(read_int),
-                literal: map.get("literal").map(stringify_meta),
+                season,
+                literal: map.get("literal").and_then(meta_text),
             }
         }
-        MetaValue::MetaList(_) | MetaValue::MetaBool(_) => Date::default(),
+        MetaValue::MetaList(dates) => Date {
+            parts: meta_date_parts(dates),
+            ..Date::default()
+        },
+        MetaValue::MetaBool(_) => Date::default(),
     }
 }
 

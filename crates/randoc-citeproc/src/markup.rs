@@ -371,16 +371,124 @@ fn add_narrow_space(text: &mut String) {
 
 /// Renders markup as a CSL JSON string (`renderCslJson False` with the
 /// default locale).
+///
+/// The walk keeps its pending work on the heap, so a deep tree cannot
+/// overflow the stack.
 pub fn render(markup: &[Markup]) -> String {
+    const NORMAL_STYLE: &str = "<span style=\"font-style:normal;\">";
     let mut out = String::new();
-    let context = Context {
+    let top = Context {
         outer_quotes: true,
         italics: true,
         bold: true,
         small_caps: true,
     };
-    for part in markup {
-        render_one(part, context, &mut out);
+    let mut work: Vec<Step<'_>> = markup.iter().rev().map(|m| Step::Node(m, top)).collect();
+    while let Some(step) = work.pop() {
+        let (markup, c) = match step {
+            Step::Close(close) => {
+                out.push_str(close);
+                continue;
+            }
+            Step::Node(markup, c) => (markup, c),
+        };
+        let (parts, inner, close) = match markup {
+            Markup::Text(text) => {
+                let mut chars = text.chars();
+                match (chars.next().and_then(superscript), chars.next()) {
+                    (Some(base), None) => {
+                        out.push_str("<sup>");
+                        out.push_str(base);
+                        out.push_str("</sup>");
+                    }
+                    _ => out.push_str(text),
+                }
+                continue;
+            }
+            Markup::Styled(style, parts) => {
+                let (open, inner, close): (&str, Context, &str) = match style {
+                    Style::Quoted if c.outer_quotes => (
+                        "\u{201C}",
+                        Context {
+                            outer_quotes: false,
+                            ..c
+                        },
+                        "\u{201D}",
+                    ),
+                    Style::Quoted => (
+                        "\u{2018}",
+                        Context {
+                            outer_quotes: true,
+                            ..c
+                        },
+                        "\u{2019}",
+                    ),
+                    Style::Normal if c.italics => ("", c, ""),
+                    Style::NoCase => ("", c, ""),
+                    Style::Normal => (NORMAL_STYLE, c, "</span>"),
+                    Style::Italic if c.italics => (
+                        "<i>",
+                        Context {
+                            italics: false,
+                            ..c
+                        },
+                        "</i>",
+                    ),
+                    Style::Italic => (NORMAL_STYLE, Context { italics: true, ..c }, "</span>"),
+                    Style::Bold if c.bold => ("<b>", Context { bold: false, ..c }, "</b>"),
+                    Style::Bold => (
+                        "<span style=\"font-weight:normal;\">",
+                        Context { bold: true, ..c },
+                        "</span>",
+                    ),
+                    Style::Underline => ("<u>", c, "</u>"),
+                    Style::NoDecoration => {
+                        out.push_str("<span style=\"");
+                        if !c.small_caps {
+                            out.push_str("font-variant:normal;");
+                        }
+                        if !c.bold {
+                            out.push_str("font-weight:normal;");
+                        }
+                        if !c.italics {
+                            out.push_str("font-style:normal;");
+                        }
+                        ("\">", c, "</span>")
+                    }
+                    Style::SmallCaps if c.small_caps => (
+                        "<span style=\"font-variant:small-caps;\">",
+                        Context {
+                            small_caps: false,
+                            ..c
+                        },
+                        "</span>",
+                    ),
+                    Style::SmallCaps => (
+                        "<span style=\"font-variant:normal;\">",
+                        Context {
+                            small_caps: true,
+                            ..c
+                        },
+                        "</span>",
+                    ),
+                    Style::Superscript => ("<sup>", c, "</sup>"),
+                    Style::Subscript => ("<sub>", c, "</sub>"),
+                    Style::Baseline => ("<span class=\"baseline\">", c, "</span>"),
+                };
+                out.push_str(open);
+                (parts, inner, close)
+            }
+            Markup::Div(class, parts) => {
+                out.push_str(&format!("<div class=\"csl-{class}\">"));
+                (parts, c, "</div>")
+            }
+            Markup::Link(url, parts) => {
+                out.push_str(&format!("<a href=\"{url}\">"));
+                (parts, c, "</a>")
+            }
+        };
+        work.push(Step::Close(close));
+        work.extend(parts.iter().rev().map(|m| Step::Node(m, inner)));
     }
     out
 }
@@ -393,129 +501,28 @@ struct Context {
     small_caps: bool,
 }
 
-fn render_all(parts: &[Markup], context: Context, out: &mut String) {
-    for part in parts {
-        render_one(part, context, out);
+/// Pending work of [`render`].
+enum Step<'a> {
+    Node(&'a Markup, Context),
+    Close(&'static str),
+}
+
+/// Drops the children on the heap: the derived drop recurses once for each level.
+impl Drop for Markup {
+    fn drop(&mut self) {
+        let mut pending = take_children(self);
+        while let Some(mut markup) = pending.pop() {
+            pending.append(&mut take_children(&mut markup));
+        }
     }
 }
 
-fn wrap(out: &mut String, open: &str, parts: &[Markup], context: Context, close: &str) {
-    out.push_str(open);
-    render_all(parts, context, out);
-    out.push_str(close);
-}
-
-fn render_one(markup: &Markup, c: Context, out: &mut String) {
-    const NORMAL_STYLE: &str = "<span style=\"font-style:normal;\">";
+fn take_children(markup: &mut Markup) -> Vec<Markup> {
     match markup {
-        Markup::Text(text) => {
-            let mut chars = text.chars();
-            match (chars.next().and_then(superscript), chars.next()) {
-                (Some(base), None) => {
-                    out.push_str("<sup>");
-                    out.push_str(base);
-                    out.push_str("</sup>");
-                }
-                _ => out.push_str(text),
-            }
+        Markup::Text(_) => Vec::new(),
+        Markup::Styled(_, parts) | Markup::Div(_, parts) | Markup::Link(_, parts) => {
+            std::mem::take(parts)
         }
-        Markup::Styled(style, parts) => match style {
-            Style::Quoted if c.outer_quotes => {
-                let inner = Context {
-                    outer_quotes: false,
-                    ..c
-                };
-                wrap(out, "\u{201C}", parts, inner, "\u{201D}");
-            }
-            Style::Quoted => {
-                let inner = Context {
-                    outer_quotes: true,
-                    ..c
-                };
-                wrap(out, "\u{2018}", parts, inner, "\u{2019}");
-            }
-            Style::Normal if c.italics => render_all(parts, c, out),
-            Style::Normal => wrap(out, NORMAL_STYLE, parts, c, "</span>"),
-            Style::Italic if c.italics => {
-                wrap(
-                    out,
-                    "<i>",
-                    parts,
-                    Context {
-                        italics: false,
-                        ..c
-                    },
-                    "</i>",
-                );
-            }
-            Style::Italic => {
-                wrap(
-                    out,
-                    NORMAL_STYLE,
-                    parts,
-                    Context { italics: true, ..c },
-                    "</span>",
-                );
-            }
-            Style::Bold if c.bold => {
-                wrap(out, "<b>", parts, Context { bold: false, ..c }, "</b>");
-            }
-            Style::Bold => wrap(
-                out,
-                "<span style=\"font-weight:normal;\">",
-                parts,
-                Context { bold: true, ..c },
-                "</span>",
-            ),
-            Style::Underline => wrap(out, "<u>", parts, c, "</u>"),
-            Style::NoDecoration => {
-                out.push_str("<span style=\"");
-                if !c.small_caps {
-                    out.push_str("font-variant:normal;");
-                }
-                if !c.bold {
-                    out.push_str("font-weight:normal;");
-                }
-                if !c.italics {
-                    out.push_str("font-style:normal;");
-                }
-                wrap(out, "\">", parts, c, "</span>");
-            }
-            Style::SmallCaps if c.small_caps => wrap(
-                out,
-                "<span style=\"font-variant:small-caps;\">",
-                parts,
-                Context {
-                    small_caps: false,
-                    ..c
-                },
-                "</span>",
-            ),
-            Style::SmallCaps => wrap(
-                out,
-                "<span style=\"font-variant:normal;\">",
-                parts,
-                Context {
-                    small_caps: true,
-                    ..c
-                },
-                "</span>",
-            ),
-            Style::Superscript => wrap(out, "<sup>", parts, c, "</sup>"),
-            Style::Subscript => wrap(out, "<sub>", parts, c, "</sub>"),
-            Style::Baseline => wrap(out, "<span class=\"baseline\">", parts, c, "</span>"),
-            Style::NoCase => render_all(parts, c, out),
-        },
-        Markup::Div(class, parts) => {
-            wrap(
-                out,
-                &format!("<div class=\"csl-{class}\">"),
-                parts,
-                c,
-                "</div>",
-            );
-        }
-        Markup::Link(url, parts) => wrap(out, &format!("<a href=\"{url}\">"), parts, c, "</a>"),
     }
 }
 

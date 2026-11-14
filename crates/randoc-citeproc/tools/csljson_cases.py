@@ -285,6 +285,103 @@ INLINES = {
 }
 
 
+# Writer: the typed text of metadata values (Codex citeproc-R2-02, R2-10,
+# R2-17; Opus citeproc-R2-01, R2-02). Each value form in each typed position.
+META_VALUES = {
+    "str": S("a b"),
+    "str-empty": S(""),
+    "bool-t": "MetaBool True",
+    "bool-f": "MetaBool False",
+    "map": ref(("k", S("v"))),
+    "map-empty": "MetaMap (fromList [])",
+    "list": f"MetaList [{S('F')},{S('G')}]",
+    "list-empty": "MetaList []",
+    "list-one": f"MetaList [{S('F')}]",
+    "list-bool": "MetaList [MetaBool True]",
+    "list-mixed": f"MetaList [{S('F')},MetaBool True,MetaInlines [Emph [Str \"e\"]]]",
+    "list-map": f"MetaList [{ref(('k', S('v')))}]",
+    "list-nested": f"MetaList [MetaList [{S('F')},{S('G')}],{S('H')}]",
+    "list-inl": "MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]]",
+    "inl": "MetaInlines [Str \"a\",Space,Emph [Str \"b\"]]",
+    "inl-empty": "MetaInlines []",
+    "blk": "MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]]",
+}
+META_POSITIONS = {
+    "id": lambda v: [("id", v)],
+    "type": lambda v: [("id", S("a")), ("type", v)],
+    "title": lambda v: [("id", S("a")), ("title", v)],
+    "family": lambda v: [("id", S("a")), ("author", f"MetaList [{ref(('family', v))}]")],
+    "author": lambda v: [("id", S("a")), ("author", v)],
+    "author-list": lambda v: [("id", S("a")), ("author", f"MetaList [{v}]")],
+    "comma": lambda v: [("id", S("a")), ("author", f"MetaList [{ref(('comma-suffix', v), ('family', S('F')))}]")],
+    "issued": lambda v: [("id", S("a")), ("issued", v)],
+    "literal": lambda v: [("id", S("a")), ("issued", ref(("literal", v)))],
+    "raw": lambda v: [("id", S("a")), ("issued", ref(("raw", v)))],
+    "circa": lambda v: [("id", S("a")), ("issued", ref(("circa", v), ("date-parts", f"MetaList [MetaList [{S('2001')}]]")))],
+    "year": lambda v: [("id", S("a")), ("issued", ref(("year", v)))],
+    "season": lambda v: [("id", S("a")), ("issued", ref(("season", v), ("year", S("2001"))))],
+    "date-parts": lambda v: [("id", S("a")), ("issued", ref(("date-parts", v)))],
+    "date-item": lambda v: [("id", S("a")), ("issued", ref(("date-parts", f"MetaList [{v},MetaList [{S('2002')}]]")))],
+    "date-part": lambda v: [("id", S("a")), ("issued", ref(("date-parts", f"MetaList [MetaList [{S('2001')},{v}]]")))],
+}
+META_INTS = ["1", "+1", "-1", "- 1", "(1)", "(-1)", " 7 ", "0x1F", "0X1f", "0o17", "0b1",
+             "1e3", "1.0", "1_0", "01", "9223372036854775807", "9223372036854775808",
+             "18446744073709551617", "-9223372036854775809", "\u0661", "", "x", "1x", "( 1 )",
+             "--1", "0x", "1 2", "\t3\n"]
+
+
+def meta_cases():
+    cases = [(f"{pos}={name}", native_doc("MetaList [" + ref(*make(value)) + "]"))
+             for pos, make in META_POSITIONS.items() for name, value in META_VALUES.items()]
+    for n, text in enumerate(META_INTS):
+        for pos, fields in [("year", [("year", S(text))]),
+                            ("part", [("date-parts", f"MetaList [MetaList [{S(text)}]]")]),
+                            ("season", [("season", S(text)), ("year", S("1"))])]:
+            cases.append((f"int-{pos}-{n:02}", native_doc("MetaList [" + ref(("id", S("a")), ("issued", ref(*fields))) + "]")))
+    for month in [None, "3"]:
+        for season in ["1", "4", "5", "0", "x"]:
+            for day in [None, "9"]:
+                fields = [("year", S("2001")), ("season", S(season))]
+                fields += [("month", S(month))] if month else []
+                fields += [("day", S(day))] if day else []
+                fields.sort()
+                case_id = f"season-{month or 'none'}-{season}-{day or 'none'}"
+                cases.append((case_id, native_doc("MetaList [" + ref(("id", S("a")), ("issued", ref(*fields))) + "]")))
+    return cases
+
+
+# Reader: Haskell white space, outer quotes and nested notes (Codex
+# citeproc-R2-08, R2-09, R2-14).
+def reader_rules():
+    cases = []
+    for n, ch in enumerate(["\u2028", "\u2029", "\u0085", "\u00a0", "\u3000", "\u200b", "\t"]):
+        cases += [(f"trim-note-{n}", items_json(item(note=f"title: {ch}x{ch}"))),
+                  (f"trim-cheater-{n}", items_json(item(author=[f"{ch}F{ch} || {ch}G{ch}"]))),
+                  (f"trim-raw-{n}", items_json(item(issued={"raw": f"{ch}2001{ch}/{ch}2002"}))),
+                  (f"trim-suffix-{n}", items_json(item(author=[{"family": "F", "given": f"G,{ch}Jr.{ch}"}])))]
+    cases += [("quote-one-given", items_json(item(author=[{"given": "\""}]))),
+              ("quote-one-family", items_json(item(author=[{"family": "\""}]))),
+              ("quote-two", items_json(item(author=[{"given": "\"\"", "family": "\"x\""}]))),
+              ("note-nested", items_json(item(note="note: note: x"))),
+              ("note-brace", items_json(item(note="{:note:title: T\nrest}tail"))),
+              ("note-names", items_json(item(note="author: A\nauthor: B\nnote: author: C"))),
+              ("note-unclosed", items_json(item(note="{:note:note: x"))),
+              ("note-deep", items_json(item(note="note: " * 100 + "x")))]
+    # Numbers keep their decimal value (Codex citeproc-R2-01, Opus citeproc-R2-04).
+    for n, number in enumerate(["1e-324", "9007199254740993.0", "1e400", "12345678901234567890",
+                                "9223372036854775808", "-9223372036854775808.0", "0.05", "1234567.5",
+                                "12345678.5", "1.0e3", "10E+2", "-0.0", "1.5", "100.5"]):
+        cases.append((f"number-id-{n:02}", f'[{{"id":{number}}}]'))
+        cases.append((f"number-volume-{n:02}", f'[{{"id":"k","volume":{number}}}]'))
+        cases.append((f"number-flag-{n:02}", f'[{{"id":"k","author":[{{"family":"F","comma-suffix":{number}}}]}}]'))
+    # Keys compare with full case folding (Codex citeproc-R2-06).
+    for name, key in [("sharp-s", "\u00df"), ("ligature", "\ufb00"), ("final-sigma", "\u03c2"),
+                      ("long-s", "\u017f"), ("kelvin", "\u212a"), ("dotted-i", "\u0130")]:
+        cases.append((f"fold-{name}", json.dumps([{"id": "k", "ss": "x", "ff": "y", "\u03c3": "z", "s": "w",
+                                                   "k": "v", "i\u0307": "u", key: "folded"}], ensure_ascii=False)))
+    return cases
+
+
 def element_doc(kind, body):
     return native_doc("MetaList [" + ref(("id", S("a")), ("title", f"Meta{kind} [{body}]")) + "]")
 
@@ -318,6 +415,10 @@ def main():
                 ['from = "native"', 'to = ["csljson"]'], list(WRITER.items()))
     write_cases(out / "elements.toml", "The writer: each Block and Inline kind in a metadata field.",
                 ['from = "native"', 'to = ["csljson"]'], ELEMENTS)
+    write_cases(out / "metadata.toml", "The writer: the typed text of each metadata value form.",
+                ['from = "native"', 'to = ["csljson"]'], meta_cases())
+    write_cases(out / "rules.toml", "The reader: white space, outer quotes and nested notes.",
+                ['from = "csljson"', 'to = ["csljson"]'], reader_rules())
 
 
 main()

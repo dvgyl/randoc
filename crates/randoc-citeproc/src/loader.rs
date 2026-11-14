@@ -80,31 +80,59 @@ fn haskell_io_text(error: &std::io::Error) -> String {
     }
 }
 
-/// The path of a `file:` URL: the part after `file:`, `file://` or
-/// `file://localhost`, with percent escapes decoded.
+/// The path of a `file:` URL as the oracle reads it (oracle matrix in
+/// `tests/loader.rs`): characters that a URI does not allow are escaped
+/// (a space gives `%20`), the authority, the query and the fragment go, and
+/// percent escapes stay as they are. `None` for a text that is not a
+/// `file:` URL or not a valid URI (a `%` without two hex digits).
 fn file_url_path(url: &str) -> Option<String> {
     let rest = url.strip_prefix("file:")?;
-    let rest = match rest.strip_prefix("//") {
-        Some(after) => after.strip_prefix("localhost").unwrap_or(after),
-        None => rest,
+    let mut escaped = String::with_capacity(rest.len());
+    for c in rest.chars() {
+        if c.is_ascii_alphanumeric() || ":/?#[]@!$&'()*+,;=-._~%".contains(c) {
+            escaped.push(c);
+        } else {
+            for byte in c.encode_utf8(&mut [0; 4]).bytes() {
+                escaped.push_str(&format!("%{byte:02X}"));
+            }
+        }
+    }
+    let bytes = escaped.as_bytes();
+    let valid_escapes = bytes.iter().enumerate().all(|(i, b)| {
+        *b != b'%'
+            || (bytes.get(i + 1).is_some_and(u8::is_ascii_hexdigit)
+                && bytes.get(i + 2).is_some_and(u8::is_ascii_hexdigit))
+    });
+    if !valid_escapes {
+        return None;
+    }
+    let path = match escaped.strip_prefix("//") {
+        Some(after) => &after[after.find('/').unwrap_or(after.len())..],
+        None => escaped.as_str(),
     };
-    let bytes = rest.as_bytes();
+    let end = path.find(['?', '#']).unwrap_or(path.len());
+    Some(path[..end].to_owned())
+}
+
+/// Haskell `unEscapeString`: each `%` with two hex digits gives its byte.
+fn unescape(text: &str) -> String {
+    let bytes = text.as_bytes();
     let mut out = Vec::with_capacity(bytes.len());
     let mut i = 0;
-    while i < bytes.len() {
-        let hex = |b: Option<&u8>| b.and_then(|b| char::from(*b).to_digit(16));
-        match (bytes[i], hex(bytes.get(i + 1)), hex(bytes.get(i + 2))) {
+    while let Some(&byte) = bytes.get(i) {
+        let hex = |at: usize| bytes.get(at).and_then(|b| char::from(*b).to_digit(16));
+        match (byte, hex(i + 1), hex(i + 2)) {
             (b'%', Some(high), Some(low)) => {
                 out.push(u8::try_from(high * 16 + low).unwrap_or(b'%'));
                 i += 3;
             }
-            (byte, _, _) => {
+            _ => {
                 out.push(byte);
                 i += 1;
             }
         }
     }
-    Some(String::from_utf8_lossy(&out).into_owned())
+    String::from_utf8_lossy(&out).into_owned()
 }
 
 /// Parses a style. A dependent style gets its independent parent through
@@ -112,6 +140,11 @@ fn file_url_path(url: &str) -> Option<String> {
 /// with no file or network access gives an error.
 ///
 /// This is the function for `pandoc.utils.citeproc` and `--citeproc`.
+///
+/// The parser recurses once for each level of the XML tree, up to
+/// `context.limits.max_nesting_depth`. A debug build uses about 5 KB of
+/// stack for each level, so the program limit of 16,384 levels needs the
+/// conversion thread of the program (1 GB of stack), not a 2 MB thread.
 pub fn parse_style(context: &mut Context, text: &str) -> Result<Style, Error> {
     let max_depth = context.limits.max_nesting_depth;
     let parsed = style::parse_style(text, max_depth, &mut |href: &str| {
@@ -128,7 +161,14 @@ fn read_parent(context: &mut Context, href: &str) -> Result<String, Error> {
     }
     match file_url_path(href) {
         Some(path) => read_style_file(context, &path),
-        None => read_style_file(context, href),
+        // A plain path loses its percent escapes; an error names the link.
+        None => {
+            let path = unescape(href);
+            match read_style_file(context, &path) {
+                Err(Error::ResourceNotFound(_)) => Err(Error::ResourceNotFound(href.to_owned())),
+                other => other,
+            }
+        }
     }
 }
 

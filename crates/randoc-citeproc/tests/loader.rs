@@ -23,7 +23,13 @@ fn load(folder: &str, path: &str) -> (i32, String) {
     std::env::set_current_dir(folder).unwrap();
     match randoc_citeproc::read_style(&mut context, path) {
         Ok(_) => (0, "ok".into()),
-        Err(error) => (error.exit_code(), error.to_string().replace(folder, "D")),
+        Err(error) => (
+            error.exit_code(),
+            error
+                .to_string()
+                .replace(folder, "D")
+                .replace(&folder.replace(' ', "%20"), "D"),
+        ),
     }
 }
 
@@ -33,7 +39,19 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
     std::fs::create_dir_all(folder.join("dir")).unwrap();
     let folder = folder.to_str().unwrap().to_owned();
     std::fs::write(format!("{folder}/parent.csl"), PARENT).unwrap();
-    let parents: [(&str, String, i32, &str); 14] = [
+    std::fs::create_dir_all(format!("{folder}/sp ace")).unwrap();
+    std::fs::write(format!("{folder}/sp ace/p.csl"), PARENT).unwrap();
+    // A `file:` URL keeps its percent escapes, and a space becomes `%20`, so
+    // an absolute URL fails when the folder name has a space.
+    let (abs_code, abs_text) = if folder.contains(' ') {
+        (
+            1,
+            "D/parent.csl: withBinaryFile: does not exist (No such file or directory)",
+        )
+    } else {
+        (0, "ok")
+    };
+    let parents: [(&str, String, i32, &str); 22] = [
         ("rel", "parent.csl".into(), 0, "ok"),
         (
             "rel-missing",
@@ -61,7 +79,12 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
             "File 'dir' not found in resource path",
         ),
         ("file-rel", "file:parent.csl".into(), 0, "ok"),
-        ("file-abs", format!("file://{folder}/parent.csl"), 0, "ok"),
+        (
+            "file-abs",
+            format!("file://{folder}/parent.csl"),
+            abs_code,
+            abs_text,
+        ),
         (
             "file-abs-missing",
             "file:///nonexistent/p.csl".into(),
@@ -71,21 +94,49 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
         (
             "file-localhost",
             format!("file://localhost{folder}/parent.csl"),
-            0,
-            "ok",
+            abs_code,
+            abs_text,
         ),
         (
             "file-one-slash",
             format!("file:{folder}/parent.csl"),
-            0,
-            "ok",
+            abs_code,
+            abs_text,
         ),
         (
             "file-encoded",
             format!("file://{folder}/par%65nt.csl"),
-            0,
-            "ok",
+            1,
+            "D/par%65nt.csl: withBinaryFile: does not exist (No such file or directory)",
         ),
+        (
+            "file-rel-space",
+            "file:sp ace/p.csl".into(),
+            99,
+            "File 'sp%20ace/p.csl' not found in resource path",
+        ),
+        (
+            "file-rel-escape",
+            "file:par%65nt.csl".into(),
+            99,
+            "File 'par%65nt.csl' not found in resource path",
+        ),
+        (
+            "file-host",
+            "file://dir/parent.csl".into(),
+            1,
+            "/parent.csl: withBinaryFile: does not exist (No such file or directory)",
+        ),
+        ("file-fragment", "file:parent.csl#x".into(), 0, "ok"),
+        ("file-query", "file:parent.csl?x".into(), 0, "ok"),
+        (
+            "file-bad-escape",
+            "file:par%zz.csl".into(),
+            99,
+            "File 'file:par%zz.csl' not found in resource path",
+        ),
+        ("plain-space", "sp ace/p.csl".into(), 0, "ok"),
+        ("plain-escape", "sp%20ace/p.csl".into(), 0, "ok"),
         (
             "file-dir",
             "file:dir".into(),

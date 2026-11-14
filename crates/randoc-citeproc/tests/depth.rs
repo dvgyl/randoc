@@ -224,3 +224,82 @@ fn deep_inlines_in_references_give_the_depth_error() {
         assert_eq!(result, ok, "{levels} levels");
     }
 }
+
+fn nested_markup(levels: usize) -> Vec<randoc_citeproc::markup::Markup> {
+    use randoc_citeproc::markup::{Markup, Style};
+    let mut markup = vec![Markup::Text("x".into())];
+    for level in 0..levels {
+        let style = if level % 2 == 0 {
+            Style::Bold
+        } else {
+            Style::Quoted
+        };
+        markup = vec![Markup::Styled(style, markup)];
+    }
+    markup
+}
+
+#[test]
+fn deep_markup_renders_and_drops_on_a_small_stack() {
+    for levels in [10_000, 100_000] {
+        let length = on_small_stack(move || {
+            let markup = nested_markup(levels);
+            randoc_citeproc::markup::render(&markup).len()
+        });
+        // Each bold level gives `<b>` and `</b>` or a normal-weight span; each
+        // quote level gives two three-byte quotation marks.
+        assert!(length > levels * 6, "{levels} levels: {length} bytes");
+    }
+}
+
+#[test]
+fn shallow_markup_renders_as_before() {
+    let text = on_small_stack(|| randoc_citeproc::markup::render(&nested_markup(4)));
+    assert_eq!(
+        text,
+        "\u{201C}<b>\u{2018}<span style=\"font-weight:normal;\">x</span>\u{2019}</b>\u{201D}"
+    );
+}
+
+fn nested_json(levels: usize) -> randoc_citeproc::reference::JsonOut {
+    use randoc_citeproc::reference::JsonOut;
+    let mut value = JsonOut::String("x".into());
+    for level in 0..levels {
+        value = if level % 2 == 0 {
+            JsonOut::Array(vec![value])
+        } else {
+            JsonOut::Object([("k".to_owned(), value)].into_iter().collect())
+        };
+    }
+    value
+}
+
+#[test]
+fn deep_json_values_write_and_drop_on_a_small_stack() {
+    // The indentation makes the text grow with the square of the depth, so
+    // the write uses 4,000 levels (the old code failed at about 2,966).
+    let text = on_small_stack(|| randoc_citeproc::reference::write_pretty(&nested_json(4_000)));
+    assert_eq!(text.matches('[').count(), 2_000);
+    assert!(text.ends_with("\n}"));
+    assert!(text.starts_with("{\n  \"k\": [\n    {"));
+    for levels in [10_000, 100_000] {
+        on_small_stack(move || drop(nested_json(levels)));
+    }
+}
+
+#[test]
+fn the_style_parser_at_the_program_limit_fits_the_conversion_stack() {
+    let inner = nested("<group>", "</group>", 16_000, "<text value=\"x\"/>");
+    let style = style_with_layout(&inner);
+    let result = std::thread::Builder::new()
+        .stack_size(1 << 30)
+        .spawn(move || {
+            let mut context = Context::pure();
+            context.limits.max_nesting_depth = 16_384;
+            randoc_citeproc::parse_style(&mut context, &style).map(|_| ())
+        })
+        .unwrap()
+        .join()
+        .unwrap();
+    assert!(result.is_ok());
+}

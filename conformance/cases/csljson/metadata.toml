@@ -1,0 +1,1508 @@
+# The writer: the typed text of each metadata value form.
+from = "native"
+to = ["csljson"]
+
+
+[[case]]
+id = "id=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a b\")])])]}) []\n"
+
+[[case]]
+id = "id=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"\")])])]}) []\n"
+
+[[case]]
+id = "id=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaBool True)])])]}) []\n"
+
+[[case]]
+id = "id=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaBool False)])])]}) []\n"
+
+[[case]]
+id = "id=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaMap (fromList [(\"k\",MetaString \"v\")]))])])]}) []\n"
+
+[[case]]
+id = "id=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaMap (fromList []))])])]}) []\n"
+
+[[case]]
+id = "id=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaString \"F\",MetaString \"G\"])])])]}) []\n"
+
+[[case]]
+id = "id=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [])])])]}) []\n"
+
+[[case]]
+id = "id=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaString \"F\"])])])]}) []\n"
+
+[[case]]
+id = "id=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaBool True])])])]}) []\n"
+
+[[case]]
+id = "id=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])])])]}) []\n"
+
+[[case]]
+id = "id=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])]}) []\n"
+
+[[case]]
+id = "id=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])])])]}) []\n"
+
+[[case]]
+id = "id=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])])])]}) []\n"
+
+[[case]]
+id = "id=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "id=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaInlines [])])])]}) []\n"
+
+[[case]]
+id = "id=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "type=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaString \"a b\")])])]}) []\n"
+
+[[case]]
+id = "type=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaString \"\")])])]}) []\n"
+
+[[case]]
+id = "type=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaBool True)])])]}) []\n"
+
+[[case]]
+id = "type=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaBool False)])])]}) []\n"
+
+[[case]]
+id = "type=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaMap (fromList [(\"k\",MetaString \"v\")]))])])]}) []\n"
+
+[[case]]
+id = "type=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaMap (fromList []))])])]}) []\n"
+
+[[case]]
+id = "type=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaString \"F\",MetaString \"G\"])])])]}) []\n"
+
+[[case]]
+id = "type=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [])])])]}) []\n"
+
+[[case]]
+id = "type=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaString \"F\"])])])]}) []\n"
+
+[[case]]
+id = "type=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaBool True])])])]}) []\n"
+
+[[case]]
+id = "type=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])])])]}) []\n"
+
+[[case]]
+id = "type=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])]}) []\n"
+
+[[case]]
+id = "type=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])])])]}) []\n"
+
+[[case]]
+id = "type=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])])])]}) []\n"
+
+[[case]]
+id = "type=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "type=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaInlines [])])])]}) []\n"
+
+[[case]]
+id = "type=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"type\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "title=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaString \"a b\")])])]}) []\n"
+
+[[case]]
+id = "title=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaString \"\")])])]}) []\n"
+
+[[case]]
+id = "title=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBool True)])])]}) []\n"
+
+[[case]]
+id = "title=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBool False)])])]}) []\n"
+
+[[case]]
+id = "title=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaMap (fromList [(\"k\",MetaString \"v\")]))])])]}) []\n"
+
+[[case]]
+id = "title=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaMap (fromList []))])])]}) []\n"
+
+[[case]]
+id = "title=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaString \"F\",MetaString \"G\"])])])]}) []\n"
+
+[[case]]
+id = "title=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [])])])]}) []\n"
+
+[[case]]
+id = "title=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaString \"F\"])])])]}) []\n"
+
+[[case]]
+id = "title=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaBool True])])])]}) []\n"
+
+[[case]]
+id = "title=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])])])]}) []\n"
+
+[[case]]
+id = "title=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])]}) []\n"
+
+[[case]]
+id = "title=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])])])]}) []\n"
+
+[[case]]
+id = "title=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])])])]}) []\n"
+
+[[case]]
+id = "title=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "title=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [])])])]}) []\n"
+
+[[case]]
+id = "title=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "family=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaString \"a b\")])])])])]}) []\n"
+
+[[case]]
+id = "family=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaString \"\")])])])])]}) []\n"
+
+[[case]]
+id = "family=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaBool True)])])])])]}) []\n"
+
+[[case]]
+id = "family=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaBool False)])])])])]}) []\n"
+
+[[case]]
+id = "family=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaMap (fromList [(\"k\",MetaString \"v\")]))])])])])]}) []\n"
+
+[[case]]
+id = "family=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaMap (fromList []))])])])])]}) []\n"
+
+[[case]]
+id = "family=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaString \"F\",MetaString \"G\"])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaString \"F\"])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaBool True])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])])])])])]}) []\n"
+
+[[case]]
+id = "family=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])])])])])]}) []\n"
+
+[[case]]
+id = "family=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])])])])])]}) []\n"
+
+[[case]]
+id = "family=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaInlines [])])])])])]}) []\n"
+
+[[case]]
+id = "family=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"family\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])])])])])]}) []\n"
+
+[[case]]
+id = "author=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaString \"a b\")])])]}) []\n"
+
+[[case]]
+id = "author=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaString \"\")])])]}) []\n"
+
+[[case]]
+id = "author=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaBool True)])])]}) []\n"
+
+[[case]]
+id = "author=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaBool False)])])]}) []\n"
+
+[[case]]
+id = "author=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaMap (fromList [(\"k\",MetaString \"v\")]))])])]}) []\n"
+
+[[case]]
+id = "author=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaMap (fromList []))])])]}) []\n"
+
+[[case]]
+id = "author=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaString \"F\",MetaString \"G\"])])])]}) []\n"
+
+[[case]]
+id = "author=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [])])])]}) []\n"
+
+[[case]]
+id = "author=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaString \"F\"])])])]}) []\n"
+
+[[case]]
+id = "author=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaBool True])])])]}) []\n"
+
+[[case]]
+id = "author=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])])])]}) []\n"
+
+[[case]]
+id = "author=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])]}) []\n"
+
+[[case]]
+id = "author=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])])])]}) []\n"
+
+[[case]]
+id = "author=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])])])]}) []\n"
+
+[[case]]
+id = "author=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "author=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaInlines [])])])]}) []\n"
+
+[[case]]
+id = "author=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "author-list=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaString \"a b\"])])])]}) []\n"
+
+[[case]]
+id = "author-list=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaString \"\"])])])]}) []\n"
+
+[[case]]
+id = "author-list=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaBool True])])])]}) []\n"
+
+[[case]]
+id = "author-list=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaBool False])])])]}) []\n"
+
+[[case]]
+id = "author-list=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])]}) []\n"
+
+[[case]]
+id = "author-list=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [])])])])]}) []\n"
+
+[[case]]
+id = "author-list=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"]])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList []])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaString \"F\"]])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaBool True]])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]]])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])]])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"]])])])]}) []\n"
+
+[[case]]
+id = "author-list=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]]])])])]}) []\n"
+
+[[case]]
+id = "author-list=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaInlines [Str \"a\",Space,Emph [Str \"b\"]]])])])]}) []\n"
+
+[[case]]
+id = "author-list=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaInlines []])])])]}) []\n"
+
+[[case]]
+id = "author-list=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]]])])])]}) []\n"
+
+[[case]]
+id = "comma=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaString \"a b\"),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaString \"\"),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaBool True),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaBool False),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaMap (fromList [(\"k\",MetaString \"v\")])),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaMap (fromList [])),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaString \"F\",MetaString \"G\"]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList []),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaString \"F\"]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaBool True]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaInlines []),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "comma=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"author\",MetaList [MetaMap (fromList [(\"comma-suffix\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]]),(\"family\",MetaString \"F\")])])])])]}) []\n"
+
+[[case]]
+id = "issued=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaString \"a b\")])])]}) []\n"
+
+[[case]]
+id = "issued=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaString \"\")])])]}) []\n"
+
+[[case]]
+id = "issued=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaBool True)])])]}) []\n"
+
+[[case]]
+id = "issued=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaBool False)])])]}) []\n"
+
+[[case]]
+id = "issued=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"k\",MetaString \"v\")]))])])]}) []\n"
+
+[[case]]
+id = "issued=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList []))])])]}) []\n"
+
+[[case]]
+id = "issued=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaString \"F\",MetaString \"G\"])])])]}) []\n"
+
+[[case]]
+id = "issued=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [])])])]}) []\n"
+
+[[case]]
+id = "issued=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaString \"F\"])])])]}) []\n"
+
+[[case]]
+id = "issued=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaBool True])])])]}) []\n"
+
+[[case]]
+id = "issued=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])])])]}) []\n"
+
+[[case]]
+id = "issued=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])])])]}) []\n"
+
+[[case]]
+id = "issued=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])])])]}) []\n"
+
+[[case]]
+id = "issued=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])])])]}) []\n"
+
+[[case]]
+id = "issued=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "issued=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaInlines [])])])]}) []\n"
+
+[[case]]
+id = "issued=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])])])]}) []\n"
+
+[[case]]
+id = "literal=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaString \"a b\")]))])])]}) []\n"
+
+[[case]]
+id = "literal=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaString \"\")]))])])]}) []\n"
+
+[[case]]
+id = "literal=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaBool True)]))])])]}) []\n"
+
+[[case]]
+id = "literal=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaBool False)]))])])]}) []\n"
+
+[[case]]
+id = "literal=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaMap (fromList [(\"k\",MetaString \"v\")]))]))])])]}) []\n"
+
+[[case]]
+id = "literal=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaMap (fromList []))]))])])]}) []\n"
+
+[[case]]
+id = "literal=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaString \"F\",MetaString \"G\"])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaString \"F\"])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaBool True])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])]))])])]}) []\n"
+
+[[case]]
+id = "literal=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "literal=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "literal=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaInlines [])]))])])]}) []\n"
+
+[[case]]
+id = "literal=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"literal\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "raw=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaString \"a b\")]))])])]}) []\n"
+
+[[case]]
+id = "raw=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaString \"\")]))])])]}) []\n"
+
+[[case]]
+id = "raw=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaBool True)]))])])]}) []\n"
+
+[[case]]
+id = "raw=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaBool False)]))])])]}) []\n"
+
+[[case]]
+id = "raw=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaMap (fromList [(\"k\",MetaString \"v\")]))]))])])]}) []\n"
+
+[[case]]
+id = "raw=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaMap (fromList []))]))])])]}) []\n"
+
+[[case]]
+id = "raw=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaString \"F\",MetaString \"G\"])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaString \"F\"])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaBool True])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])]))])])]}) []\n"
+
+[[case]]
+id = "raw=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "raw=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "raw=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaInlines [])]))])])]}) []\n"
+
+[[case]]
+id = "raw=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"raw\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaString \"a b\"),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaString \"\"),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaBool True),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaBool False),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaMap (fromList [(\"k\",MetaString \"v\")])),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaMap (fromList [])),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaString \"F\",MetaString \"G\"]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList []),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaString \"F\"]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaBool True]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaInlines []),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "circa=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"circa\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]]),(\"date-parts\",MetaList [MetaList [MetaString \"2001\"]])]))])])]}) []\n"
+
+[[case]]
+id = "year=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"a b\")]))])])]}) []\n"
+
+[[case]]
+id = "year=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"\")]))])])]}) []\n"
+
+[[case]]
+id = "year=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaBool True)]))])])]}) []\n"
+
+[[case]]
+id = "year=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaBool False)]))])])]}) []\n"
+
+[[case]]
+id = "year=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaMap (fromList [(\"k\",MetaString \"v\")]))]))])])]}) []\n"
+
+[[case]]
+id = "year=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaMap (fromList []))]))])])]}) []\n"
+
+[[case]]
+id = "year=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaString \"F\",MetaString \"G\"])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaString \"F\"])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaBool True])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])]))])])]}) []\n"
+
+[[case]]
+id = "year=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "year=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "year=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaInlines [])]))])])]}) []\n"
+
+[[case]]
+id = "year=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "season=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"a b\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaBool True),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaBool False),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaMap (fromList [(\"k\",MetaString \"v\")])),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaMap (fromList [])),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaString \"F\",MetaString \"G\"]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList []),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaString \"F\"]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaBool True]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaInlines []),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]]),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaString \"a b\")]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaString \"\")]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaBool True)]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaBool False)]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaMap (fromList [(\"k\",MetaString \"v\")]))]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaMap (fromList []))]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaString \"F\",MetaString \"G\"])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaString \"F\"])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaBool True])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaInlines [])]))])])]}) []\n"
+
+[[case]]
+id = "date-parts=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaString \"a b\",MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaString \"\",MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaBool True,MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaBool False,MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")]),MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaMap (fromList []),MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"F\"],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaBool True],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaInlines [Str \"a\",Space,Emph [Str \"b\"]],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaInlines [],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-item=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]],MetaList [MetaString \"2002\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=str"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaString \"a b\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=str-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaString \"\"]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=bool-t"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaBool True]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=bool-f"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaBool False]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaMap (fromList [(\"k\",MetaString \"v\")])]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=map-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaMap (fromList [])]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaString \"F\",MetaString \"G\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList []]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-one"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaString \"F\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-bool"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaBool True]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-mixed"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaString \"F\",MetaBool True,MetaInlines [Emph [Str \"e\"]]]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-map"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaMap (fromList [(\"k\",MetaString \"v\")])]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-nested"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaList [MetaString \"F\",MetaString \"G\"],MetaString \"H\"]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=list-inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaList [MetaInlines [Str \"x\",Space,Str \"y\"],MetaBlocks [Para [Str \"z\"]]]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=inl"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaInlines [Str \"a\",Space,Emph [Str \"b\"]]]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=inl-empty"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaInlines []]])]))])])]}) []\n"
+
+[[case]]
+id = "date-part=blk"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"2001\",MetaBlocks [Para [Str \"a\"],Para [Str \"b\"]]]])]))])])]}) []\n"
+
+[[case]]
+id = "int-year-00"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-00"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"1\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-00"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-01"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"+1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-01"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"+1\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-01"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"+1\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-02"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"-1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-02"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"-1\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-02"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"-1\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-03"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"- 1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-03"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"- 1\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-03"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"- 1\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-04"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"(1)\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-04"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"(1)\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-04"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"(1)\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-05"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"(-1)\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-05"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"(-1)\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-05"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"(-1)\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-06"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \" 7 \")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-06"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \" 7 \"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-06"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \" 7 \"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-07"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"0x1F\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-07"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"0x1F\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-07"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"0x1F\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-08"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"0X1f\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-08"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"0X1f\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-08"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"0X1f\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-09"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"0o17\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-09"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"0o17\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-09"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"0o17\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-10"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"0b1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-10"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"0b1\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-10"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"0b1\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-11"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"1e3\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-11"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"1e3\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-11"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1e3\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-12"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"1.0\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-12"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"1.0\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-12"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1.0\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-13"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"1_0\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-13"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"1_0\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-13"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1_0\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-14"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"01\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-14"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"01\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-14"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"01\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-15"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"9223372036854775807\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-15"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"9223372036854775807\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-15"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"9223372036854775807\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-16"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"9223372036854775808\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-16"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"9223372036854775808\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-16"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"9223372036854775808\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-17"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"18446744073709551617\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-17"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"18446744073709551617\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-17"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"18446744073709551617\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-18"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"-9223372036854775809\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-18"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"-9223372036854775809\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-18"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"-9223372036854775809\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-19"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"١\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-19"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"١\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-19"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"١\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-20"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-20"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-20"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-21"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"x\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-21"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"x\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-21"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"x\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-22"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"1x\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-22"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"1x\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-22"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1x\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-23"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"( 1 )\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-23"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"( 1 )\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-23"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"( 1 )\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-24"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"--1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-24"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"--1\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-24"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"--1\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-25"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"0x\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-25"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"0x\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-25"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"0x\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-26"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"1 2\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-26"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"1 2\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-26"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1 2\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "int-year-27"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"year\",MetaString \"\\t3\\n\")]))])])]}) []\n"
+
+[[case]]
+id = "int-part-27"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"date-parts\",MetaList [MetaList [MetaString \"\\t3\\n\"]])]))])])]}) []\n"
+
+[[case]]
+id = "int-season-27"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"\\t3\\n\"),(\"year\",MetaString \"1\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-1-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"1\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-1-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"season\",MetaString \"1\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-4-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"4\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-4-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"season\",MetaString \"4\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-5-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"5\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-5-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"season\",MetaString \"5\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-0-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"0\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-0-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"season\",MetaString \"0\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-x-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"season\",MetaString \"x\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-none-x-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"season\",MetaString \"x\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-1-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"month\",MetaString \"3\"),(\"season\",MetaString \"1\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-1-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"month\",MetaString \"3\"),(\"season\",MetaString \"1\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-4-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"month\",MetaString \"3\"),(\"season\",MetaString \"4\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-4-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"month\",MetaString \"3\"),(\"season\",MetaString \"4\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-5-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"month\",MetaString \"3\"),(\"season\",MetaString \"5\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-5-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"month\",MetaString \"3\"),(\"season\",MetaString \"5\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-0-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"month\",MetaString \"3\"),(\"season\",MetaString \"0\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-0-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"month\",MetaString \"3\"),(\"season\",MetaString \"0\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-x-none"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"month\",MetaString \"3\"),(\"season\",MetaString \"x\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"
+
+[[case]]
+id = "season-3-x-9"
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"issued\",MetaMap (fromList [(\"day\",MetaString \"9\"),(\"month\",MetaString \"3\"),(\"season\",MetaString \"x\"),(\"year\",MetaString \"2001\")]))])])]}) []\n"

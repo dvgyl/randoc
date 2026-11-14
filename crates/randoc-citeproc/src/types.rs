@@ -20,7 +20,7 @@ impl Variable {
     pub fn new(name: &str) -> Variable {
         Variable {
             original: name.to_owned(),
-            folded: fold_case(name),
+            folded: crate::case_fold::fold(name),
         }
     }
 
@@ -28,20 +28,6 @@ impl Variable {
     pub fn as_str(&self) -> &str {
         &self.original
     }
-}
-
-/// Case folding for the comparison of variable names. Lower case plus the
-/// folds of full case folding that differ from lower case for common letters.
-fn fold_case(text: &str) -> String {
-    let mut out = String::with_capacity(text.len());
-    for c in text.chars() {
-        match c {
-            'ß' | 'ẞ' => out.push_str("ss"),
-            'ς' => out.push('σ'),
-            _ => out.extend(c.to_lowercase()),
-        }
-    }
-    out
 }
 
 impl PartialEq for Variable {

@@ -1,0 +1,340 @@
+# The reader: white space, outer quotes and nested notes.
+from = "csljson"
+to = ["csljson"]
+
+
+[[case]]
+id = "trim-note-0"
+input = "[{\"id\": \"k\", \"note\": \"title:  x \"}]"
+
+[[case]]
+id = "trim-cheater-0"
+input = "[{\"id\": \"k\", \"author\": [\" F  ||  G \"]}]"
+
+[[case]]
+id = "trim-raw-0"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \" 2001 / 2002\"}}]"
+
+[[case]]
+id = "trim-suffix-0"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G, Jr. \"}]}]"
+
+[[case]]
+id = "trim-note-1"
+input = "[{\"id\": \"k\", \"note\": \"title:  x \"}]"
+
+[[case]]
+id = "trim-cheater-1"
+input = "[{\"id\": \"k\", \"author\": [\" F  ||  G \"]}]"
+
+[[case]]
+id = "trim-raw-1"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \" 2001 / 2002\"}}]"
+
+[[case]]
+id = "trim-suffix-1"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G, Jr. \"}]}]"
+
+[[case]]
+id = "trim-note-2"
+input = "[{\"id\": \"k\", \"note\": \"title: x\"}]"
+
+[[case]]
+id = "trim-cheater-2"
+input = "[{\"id\": \"k\", \"author\": [\"F || G\"]}]"
+
+[[case]]
+id = "trim-raw-2"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \"2001/2002\"}}]"
+
+[[case]]
+id = "trim-suffix-2"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G,Jr.\"}]}]"
+
+[[case]]
+id = "trim-note-3"
+input = "[{\"id\": \"k\", \"note\": \"title:  x \"}]"
+
+[[case]]
+id = "trim-cheater-3"
+input = "[{\"id\": \"k\", \"author\": [\" F  ||  G \"]}]"
+
+[[case]]
+id = "trim-raw-3"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \" 2001 / 2002\"}}]"
+
+[[case]]
+id = "trim-suffix-3"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G, Jr. \"}]}]"
+
+[[case]]
+id = "trim-note-4"
+input = "[{\"id\": \"k\", \"note\": \"title: 　x　\"}]"
+
+[[case]]
+id = "trim-cheater-4"
+input = "[{\"id\": \"k\", \"author\": [\"　F　 || 　G　\"]}]"
+
+[[case]]
+id = "trim-raw-4"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \"　2001　/　2002\"}}]"
+
+[[case]]
+id = "trim-suffix-4"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G,　Jr.　\"}]}]"
+
+[[case]]
+id = "trim-note-5"
+input = "[{\"id\": \"k\", \"note\": \"title: ​x​\"}]"
+
+[[case]]
+id = "trim-cheater-5"
+input = "[{\"id\": \"k\", \"author\": [\"​F​ || ​G​\"]}]"
+
+[[case]]
+id = "trim-raw-5"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \"​2001​/​2002\"}}]"
+
+[[case]]
+id = "trim-suffix-5"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G,​Jr.​\"}]}]"
+
+[[case]]
+id = "trim-note-6"
+input = "[{\"id\": \"k\", \"note\": \"title: \\tx\\t\"}]"
+
+[[case]]
+id = "trim-cheater-6"
+input = "[{\"id\": \"k\", \"author\": [\"\\tF\\t || \\tG\\t\"]}]"
+
+[[case]]
+id = "trim-raw-6"
+input = "[{\"id\": \"k\", \"issued\": {\"raw\": \"\\t2001\\t/\\t2002\"}}]"
+
+[[case]]
+id = "trim-suffix-6"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"F\", \"given\": \"G,\\tJr.\\t\"}]}]"
+
+[[case]]
+id = "quote-one-given"
+input = "[{\"id\": \"k\", \"author\": [{\"given\": \"\\\"\"}]}]"
+
+[[case]]
+id = "quote-one-family"
+input = "[{\"id\": \"k\", \"author\": [{\"family\": \"\\\"\"}]}]"
+
+[[case]]
+id = "quote-two"
+input = "[{\"id\": \"k\", \"author\": [{\"given\": \"\\\"\\\"\", \"family\": \"\\\"x\\\"\"}]}]"
+
+[[case]]
+id = "note-nested"
+input = "[{\"id\": \"k\", \"note\": \"note: note: x\"}]"
+
+[[case]]
+id = "note-brace"
+input = "[{\"id\": \"k\", \"note\": \"{:note:title: T\\nrest}tail\"}]"
+
+[[case]]
+id = "note-names"
+input = "[{\"id\": \"k\", \"note\": \"author: A\\nauthor: B\\nnote: author: C\"}]"
+
+[[case]]
+id = "note-unclosed"
+input = "[{\"id\": \"k\", \"note\": \"{:note:note: x\"}]"
+
+[[case]]
+id = "note-deep"
+input = "[{\"id\": \"k\", \"note\": \"note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: note: x\"}]"
+
+[[case]]
+id = "number-id-00"
+input = "[{\"id\":1e-324}]"
+
+[[case]]
+id = "number-volume-00"
+input = "[{\"id\":\"k\",\"volume\":1e-324}]"
+
+[[case]]
+id = "number-flag-00"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":1e-324}]}]"
+
+[[case]]
+id = "number-id-01"
+input = "[{\"id\":9007199254740993.0}]"
+
+[[case]]
+id = "number-volume-01"
+input = "[{\"id\":\"k\",\"volume\":9007199254740993.0}]"
+
+[[case]]
+id = "number-flag-01"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":9007199254740993.0}]}]"
+
+[[case]]
+id = "number-id-02"
+input = "[{\"id\":1e400}]"
+
+[[case]]
+id = "number-volume-02"
+input = "[{\"id\":\"k\",\"volume\":1e400}]"
+
+[[case]]
+id = "number-flag-02"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":1e400}]}]"
+
+[[case]]
+id = "number-id-03"
+input = "[{\"id\":12345678901234567890}]"
+
+[[case]]
+id = "number-volume-03"
+input = "[{\"id\":\"k\",\"volume\":12345678901234567890}]"
+
+[[case]]
+id = "number-flag-03"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":12345678901234567890}]}]"
+
+[[case]]
+id = "number-id-04"
+input = "[{\"id\":9223372036854775808}]"
+
+[[case]]
+id = "number-volume-04"
+input = "[{\"id\":\"k\",\"volume\":9223372036854775808}]"
+
+[[case]]
+id = "number-flag-04"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":9223372036854775808}]}]"
+
+[[case]]
+id = "number-id-05"
+input = "[{\"id\":-9223372036854775808.0}]"
+
+[[case]]
+id = "number-volume-05"
+input = "[{\"id\":\"k\",\"volume\":-9223372036854775808.0}]"
+
+[[case]]
+id = "number-flag-05"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":-9223372036854775808.0}]}]"
+
+[[case]]
+id = "number-id-06"
+input = "[{\"id\":0.05}]"
+
+[[case]]
+id = "number-volume-06"
+input = "[{\"id\":\"k\",\"volume\":0.05}]"
+
+[[case]]
+id = "number-flag-06"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":0.05}]}]"
+
+[[case]]
+id = "number-id-07"
+input = "[{\"id\":1234567.5}]"
+
+[[case]]
+id = "number-volume-07"
+input = "[{\"id\":\"k\",\"volume\":1234567.5}]"
+
+[[case]]
+id = "number-flag-07"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":1234567.5}]}]"
+
+[[case]]
+id = "number-id-08"
+input = "[{\"id\":12345678.5}]"
+
+[[case]]
+id = "number-volume-08"
+input = "[{\"id\":\"k\",\"volume\":12345678.5}]"
+
+[[case]]
+id = "number-flag-08"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":12345678.5}]}]"
+
+[[case]]
+id = "number-id-09"
+input = "[{\"id\":1.0e3}]"
+
+[[case]]
+id = "number-volume-09"
+input = "[{\"id\":\"k\",\"volume\":1.0e3}]"
+
+[[case]]
+id = "number-flag-09"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":1.0e3}]}]"
+
+[[case]]
+id = "number-id-10"
+input = "[{\"id\":10E+2}]"
+
+[[case]]
+id = "number-volume-10"
+input = "[{\"id\":\"k\",\"volume\":10E+2}]"
+
+[[case]]
+id = "number-flag-10"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":10E+2}]}]"
+
+[[case]]
+id = "number-id-11"
+input = "[{\"id\":-0.0}]"
+
+[[case]]
+id = "number-volume-11"
+input = "[{\"id\":\"k\",\"volume\":-0.0}]"
+
+[[case]]
+id = "number-flag-11"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":-0.0}]}]"
+
+[[case]]
+id = "number-id-12"
+input = "[{\"id\":1.5}]"
+
+[[case]]
+id = "number-volume-12"
+input = "[{\"id\":\"k\",\"volume\":1.5}]"
+
+[[case]]
+id = "number-flag-12"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":1.5}]}]"
+
+[[case]]
+id = "number-id-13"
+input = "[{\"id\":100.5}]"
+
+[[case]]
+id = "number-volume-13"
+input = "[{\"id\":\"k\",\"volume\":100.5}]"
+
+[[case]]
+id = "number-flag-13"
+input = "[{\"id\":\"k\",\"author\":[{\"family\":\"F\",\"comma-suffix\":100.5}]}]"
+
+[[case]]
+id = "fold-sharp-s"
+input = "[{\"id\": \"k\", \"ss\": \"x\", \"ff\": \"y\", \"σ\": \"z\", \"s\": \"w\", \"k\": \"v\", \"i̇\": \"u\", \"ß\": \"folded\"}]"
+
+[[case]]
+id = "fold-ligature"
+input = "[{\"id\": \"k\", \"ss\": \"x\", \"ff\": \"y\", \"σ\": \"z\", \"s\": \"w\", \"k\": \"v\", \"i̇\": \"u\", \"ﬀ\": \"folded\"}]"
+
+[[case]]
+id = "fold-final-sigma"
+input = "[{\"id\": \"k\", \"ss\": \"x\", \"ff\": \"y\", \"σ\": \"z\", \"s\": \"w\", \"k\": \"v\", \"i̇\": \"u\", \"ς\": \"folded\"}]"
+
+[[case]]
+id = "fold-long-s"
+input = "[{\"id\": \"k\", \"ss\": \"x\", \"ff\": \"y\", \"σ\": \"z\", \"s\": \"w\", \"k\": \"v\", \"i̇\": \"u\", \"ſ\": \"folded\"}]"
+
+[[case]]
+id = "fold-kelvin"
+input = "[{\"id\": \"k\", \"ss\": \"x\", \"ff\": \"y\", \"σ\": \"z\", \"s\": \"w\", \"k\": \"v\", \"i̇\": \"u\", \"K\": \"folded\"}]"
+
+[[case]]
+id = "fold-dotted-i"
+input = "[{\"id\": \"k\", \"ss\": \"x\", \"ff\": \"y\", \"σ\": \"z\", \"s\": \"w\", \"k\": \"v\", \"i̇\": \"u\", \"İ\": \"folded\"}]"

@@ -27,12 +27,119 @@ pub enum Json {
 }
 
 /// A JSON number.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Number {
     /// A number with no fraction and no exponent that fits in 64 bits.
     Int(i64),
-    /// Each other number.
-    Float(f64),
+    /// Each other number, with its exact decimal value (`Scientific`).
+    Decimal(Decimal),
+}
+
+/// An exact decimal number: `0.DIGITS` times ten to the power `exponent`,
+/// the form of `toDecimalDigits`. `digits` has no zero at its ends; it is
+/// empty for zero.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Decimal {
+    negative: bool,
+    digits: String,
+    exponent: i64,
+}
+
+/// The largest exponent that a decimal keeps; a larger one saturates.
+const MAX_EXPONENT: i64 = 1 << 62;
+
+impl Decimal {
+    /// Reads the text of a JSON number. The JSON parser has checked its syntax.
+    fn parse(text: &str) -> Decimal {
+        let (negative, text) = match text.strip_prefix('-') {
+            Some(rest) => (true, rest),
+            None => (false, text),
+        };
+        let (mantissa, exponent) = match text.find(['e', 'E']) {
+            Some(at) => (&text[..at], &text[at + 1..]),
+            None => (text, "0"),
+        };
+        let exponent = exponent.strip_prefix('+').unwrap_or(exponent);
+        let exponent = exponent
+            .parse::<i64>()
+            .unwrap_or(if exponent.starts_with('-') {
+                -MAX_EXPONENT
+            } else {
+                MAX_EXPONENT
+            })
+            .clamp(-MAX_EXPONENT, MAX_EXPONENT);
+        let (whole, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
+        let all: String = whole.chars().chain(fraction.chars()).collect();
+        let leading = all.len() - all.trim_start_matches('0').len();
+        let digits = all.trim_matches('0').to_owned();
+        let point = i64::try_from(whole.len()).unwrap_or(MAX_EXPONENT)
+            - i64::try_from(leading).unwrap_or(0);
+        Decimal {
+            negative: negative && !digits.is_empty(),
+            exponent: if digits.is_empty() {
+                0
+            } else {
+                exponent.saturating_add(point)
+            },
+            digits,
+        }
+    }
+
+    /// The value as a 64-bit integer, or `None` when it has a fraction or
+    /// does not fit (`toBoundedInteger`).
+    fn to_i64(&self) -> Option<i64> {
+        if self.digits.is_empty() {
+            return Some(0);
+        }
+        let length = i64::try_from(self.digits.len()).ok()?;
+        if self.exponent < length || self.exponent > 19 {
+            return None;
+        }
+        let mut value: i128 = self.digits.parse().ok()?;
+        for _ in length..self.exponent {
+            value *= 10;
+        }
+        if self.negative {
+            value = -value;
+        }
+        i64::try_from(value).ok()
+    }
+
+    /// The text of Haskell `show` of a `Scientific`.
+    fn show(&self) -> String {
+        let digits = if self.digits.is_empty() {
+            "0"
+        } else {
+            &self.digits
+        };
+        let e = self.exponent;
+        let mut out = String::from(if self.negative { "-" } else { "" });
+        if !(0..=7).contains(&e) {
+            let (first, rest) = digits.split_at(1);
+            out.push_str(first);
+            out.push('.');
+            out.push_str(if rest.is_empty() { "0" } else { rest });
+            out.push('e');
+            out.push_str(&(e - 1).to_string());
+        } else if e == 0 {
+            out.push_str("0.");
+            out.push_str(digits);
+        } else {
+            let e = usize::try_from(e).unwrap_or(0);
+            let whole = digits.get(..e).unwrap_or(digits);
+            out.push_str(whole);
+            out.extend(std::iter::repeat_n('0', e.saturating_sub(digits.len())));
+            out.push('.');
+            let fraction = digits.get(e..).unwrap_or("");
+            out.push_str(if fraction.is_empty() { "0" } else { fraction });
+        }
+        out
+    }
+
+    /// The value is exactly one.
+    fn is_one(&self) -> bool {
+        !self.negative && self.digits == "1" && self.exponent == 1
+    }
 }
 
 impl Json {
@@ -52,21 +159,23 @@ impl Json {
 impl Number {
     /// The value as a Haskell `Int`, as `aeson` converts it: a whole number
     /// in the range of 64 bits.
-    pub fn to_int(self) -> Result<i64, DecodeError> {
+    pub fn to_int(&self) -> Result<i64, DecodeError> {
         match self {
-            Number::Int(value) => Ok(value),
-            Number::Float(value)
-                if value.fract() == 0.0
-                    && (-9_223_372_036_854_775_808.0..9_223_372_036_854_775_808.0)
-                        .contains(&value) =>
-            {
-                #[allow(clippy::cast_possible_truncation)]
-                Ok(value as i64)
-            }
-            Number::Float(value) => Err(DecodeError::new(format!(
-                "parsing Int failed, value is either floating or will cause over or underflow {}",
-                randoc_ast::json::show_double(value)
-            ))),
+            Number::Int(value) => Ok(*value),
+            Number::Decimal(decimal) => decimal.to_i64().ok_or_else(|| {
+                DecodeError::new(format!(
+                    "parsing Int failed, value is either floating or will cause over or underflow {}",
+                    decimal.show()
+                ))
+            }),
+        }
+    }
+
+    /// The value is exactly one (`asBool` reads it as true).
+    pub fn is_one(&self) -> bool {
+        match self {
+            Number::Int(value) => *value == 1,
+            Number::Decimal(decimal) => decimal.is_one(),
         }
     }
 }
@@ -96,11 +205,11 @@ impl Json {
 
 impl Number {
     /// Reads the text of a JSON number: a whole number without fraction and
-    /// exponent that fits in 64 bits is an `Int`, each other number a `Float`.
+    /// exponent that fits in 64 bits is an `Int`, each other number a `Decimal`.
     fn parse(text: &str) -> Number {
         match text.parse::<i64>() {
             Ok(value) => Number::Int(value),
-            Err(_) => Number::Float(text.parse::<f64>().unwrap_or(f64::NAN)),
+            Err(_) => Number::Decimal(Decimal::parse(text)),
         }
     }
 }
@@ -258,21 +367,49 @@ mod tests {
         assert_eq!(DecodeError::new("m").to_string(), "Error in $: m");
     }
 
-    #[test]
-    fn numbers_convert_to_int_as_aeson_does() {
-        assert_eq!(Number::Float(1000.0).to_int(), Ok(1000));
-        assert_eq!(
-            Number::Float(1.5).to_int().unwrap_err().message,
-            "parsing Int failed, value is either floating or will cause over or underflow 1.5"
-        );
-        assert_eq!(
-            Number::Float(1e30).to_int().unwrap_err().message,
-            "parsing Int failed, value is either floating or will cause over or underflow 1.0e30"
-        );
-        let Json::Number(big) = parse("18446744073709551615") else {
+    fn number(text: &str) -> Number {
+        let Json::Number(number) = parse(text) else {
             panic!("number")
         };
-        assert!(big.to_int().is_err());
+        number
+    }
+
+    #[test]
+    fn numbers_convert_to_int_as_aeson_does() {
+        // From the oracle (Codex citeproc-R2-01, Opus citeproc-R2-04).
+        let cases = [
+            ("1000.0", Ok(1000)),
+            ("1e3", Ok(1000)),
+            ("10E+2", Ok(1000)),
+            ("-0.0", Ok(0)),
+            ("0e5", Ok(0)),
+            ("9007199254740993.0", Ok(9_007_199_254_740_993)),
+            ("-9223372036854775808.0", Ok(i64::MIN)),
+            ("1.5", Err("1.5")),
+            ("1e30", Err("1.0e30")),
+            ("1e-324", Err("1.0e-324")),
+            ("1e400", Err("1.0e400")),
+            ("12345678901234567890", Err("1.234567890123456789e19")),
+            ("9223372036854775808", Err("9.223372036854775808e18")),
+            ("0.05", Err("5.0e-2")),
+            ("0.5", Err("0.5")),
+            ("-2.25", Err("-2.25")),
+            ("1234567.5", Err("1234567.5")),
+            ("12345678.5", Err("1.23456785e7")),
+            ("100.5", Err("100.5")),
+        ];
+        for (text, expected) in cases {
+            let result = number(text).to_int().map_err(|error| error.message);
+            let expected = expected.map_err(|shown| {
+                format!(
+                    "parsing Int failed, value is either floating or will cause over or underflow {shown}"
+                )
+            });
+            assert_eq!(result, expected, "{text}");
+        }
+        assert!(number("1.0").is_one());
+        assert!(number("10e-1").is_one());
+        assert!(!number("1.5").is_one());
     }
 
     #[test]

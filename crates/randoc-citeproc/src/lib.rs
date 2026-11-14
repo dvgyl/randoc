@@ -20,9 +20,11 @@
 //! Errors have the texts of the oracle. A broken style gives
 //! `randoc_core::Error::App` (exit code 4), as in Pandoc.
 
+mod case_fold;
 pub mod csljson;
 mod element;
 mod error;
+mod haskell;
 pub mod json;
 pub mod lang;
 pub mod loader;

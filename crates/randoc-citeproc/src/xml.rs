@@ -3,7 +3,7 @@
 //! after `CiteprocXMLError: `. The texts come from the oracle matrix in
 //! `tests/replay/parse-errors.txt`.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use quick_xml::Reader;
 use quick_xml::errors::{Error as QuickError, IllFormedError, SyntaxError};
@@ -108,8 +108,9 @@ struct Parser<'a> {
     entity_bytes: usize,
     /// A document type declaration was read.
     seen_doctype: bool,
-    /// The entities that are expanding now, innermost last.
-    expanding: Vec<String>,
+    /// The entities that are expanding now. A set, so that the cycle check
+    /// does not scan the chain.
+    expanding: BTreeSet<String>,
 }
 
 /// The configuration of `quick-xml` for a document and for the replacement text of an entity.
@@ -144,7 +145,7 @@ impl<'a> Parser<'a> {
             entities: BTreeMap::new(),
             entity_bytes: 0,
             seen_doctype: false,
-            expanding: Vec::new(),
+            expanding: BTreeSet::new(),
         }
     }
 
@@ -493,7 +494,7 @@ impl<'a> Parser<'a> {
     /// inside itself, or deeper than the depth limit, is unresolved.
     fn replacement(&mut self, name: &str) -> Result<String, ValueError> {
         let unresolved = || ValueError::Unresolved(name.to_owned());
-        if self.expanding.iter().any(|n| n == name) || self.expanding.len() >= self.max_depth {
+        if self.expanding.contains(name) || self.expanding.len() >= self.max_depth {
             return Err(unresolved());
         }
         let value = self.entities.get(name).cloned().ok_or_else(unresolved)?;
@@ -510,9 +511,9 @@ impl<'a> Parser<'a> {
         if !value.contains(['<', '&']) {
             return self.text(&value, start, end);
         }
-        self.expanding.push(name.to_owned());
+        self.expanding.insert(name.to_owned());
         let result = self.fragment(&value, start, end);
-        self.expanding.pop();
+        self.expanding.remove(name);
         result.map_err(|error| match error {
             FragmentError::Keep(error) => error,
             FragmentError::Unresolved => unresolved(name),
@@ -582,9 +583,9 @@ impl<'a> Parser<'a> {
         if !value.contains(['<', '&']) {
             return Ok(value);
         }
-        self.expanding.push(name.to_owned());
+        self.expanding.insert(name.to_owned());
         let result = self.attribute_fragment(name, &value);
-        self.expanding.pop();
+        self.expanding.remove(name);
         result
     }
 
@@ -797,25 +798,32 @@ type SubsetError = (usize, &'static [&'static str]);
 
 /// Reads the internal subset of a document type declaration from byte `at`
 /// of `body` (the text between `<!DOCTYPE` and the final `>`). Each byte is
-/// read once or twice, so time is linear. The grammar comes from an oracle
-/// matrix (`tests/replay/parse-errors.txt`, cases `dtd-*`):
+/// read once or twice, so time is linear. The grammar comes from oracle
+/// matrices (`tests/replay/parse-errors.txt`, cases `dtd-*`):
 ///
 /// - `<!ENTITY NAME "VALUE">` defines an entity. After the name, another
-///   form is skipped to the next `>` and defines nothing. A missing name is
-///   an error.
-/// - Each other `<` is skipped to the next `>`, and other text to the next
-///   `<` or `]`.
+///   form is skipped as markup and defines nothing. A missing name is an
+///   error.
+/// - `<!--` skips through the next `-->`; with no `-->`, it is markup.
+/// - Other markup `<...>` skips to its `>`, over quoted strings. A `<` or a
+///   `]` before that `>` is an error.
+/// - Other text skips to the next `<` or `]`; a `>` in it is an error.
 ///
 /// The upstream parser is recursive, so each error shows the position of
-/// the first item of the subset.
+/// the first markup item of the subset, or the place of the error when text
+/// comes before any markup.
 fn parse_subset(body: &str, start: usize) -> Result<Vec<(String, String)>, SubsetError> {
     const DOCTYPE: &[&str] = &["DOCTYPE"];
+    let mut first_markup: Option<usize> = None;
     let mut at = start;
     let mut entities = Vec::new();
+    // A search for `-->` that failed once fails at each later position too.
+    let mut no_comment_end = false;
     loop {
         let rest = &body[at..];
+        let fail = (first_markup.unwrap_or(at), DOCTYPE);
         match rest.as_bytes().first() {
-            None => return Err((start, DOCTYPE)),
+            None => return Err(fail),
             Some(b']') => {
                 let after = at + 1 + (rest[1..].len() - rest[1..].trim_start().len());
                 return if after == body.len() {
@@ -825,28 +833,61 @@ fn parse_subset(body: &str, start: usize) -> Result<Vec<(String, String)>, Subse
                 };
             }
             Some(b'<') => {
-                let (entity, length) = match rest.strip_prefix("<!ENTITY") {
-                    Some(declaration) => entity_declaration(declaration).ok_or((start, DOCTYPE))?,
-                    None => (None, rest.find('>').ok_or((start, DOCTYPE))?),
+                first_markup.get_or_insert(at);
+                let fail = (first_markup.unwrap_or(at), DOCTYPE);
+                let comment_end = match rest.strip_prefix("<!--") {
+                    Some(comment) if !no_comment_end => {
+                        let end = comment.find("-->");
+                        no_comment_end = end.is_none();
+                        step(end.unwrap_or(comment.len()));
+                        end.map(|end| 4 + end + 3)
+                    }
+                    _ => None,
                 };
-                let length = if entity.is_some() {
-                    length
-                } else {
-                    // Skip to the next `>` from the end of the part that was read.
-                    let skipped = rest[length..].find('>').ok_or((start, DOCTYPE))?;
-                    length + skipped + 1
+                let length = match (comment_end, rest.strip_prefix("<!ENTITY")) {
+                    (Some(length), _) => length,
+                    (None, Some(declaration)) => {
+                        let (entity, length) = entity_declaration(declaration).ok_or(fail)?;
+                        if entity.is_some() {
+                            entities.extend(entity);
+                            length
+                        } else {
+                            length + skip_markup(&rest[length..]).ok_or(fail)?
+                        }
+                    }
+                    (None, None) => 1 + skip_markup(&rest[1..]).ok_or(fail)?,
                 };
-                entities.extend(entity);
                 step(length);
                 at += length;
             }
             Some(_) => {
-                let length = rest.find(['<', ']']).unwrap_or(rest.len());
+                let length = rest.find(['<', ']', '>']).unwrap_or(rest.len());
+                if rest[length..].starts_with('>') {
+                    return Err((first_markup.unwrap_or(at + length), DOCTYPE));
+                }
                 step(length);
                 at += length;
             }
         }
     }
+}
+
+/// The length of markup up to and including its `>`, over quoted strings.
+/// `None` for a `<` or a `]` before the `>`, an unclosed quote, or no `>`.
+fn skip_markup(text: &str) -> Option<usize> {
+    let mut at = 0;
+    while let Some(found) = text[at..].find(['"', '\'', '>', '<', ']']) {
+        let index = at + found;
+        match text.as_bytes().get(index) {
+            Some(b'>') => return Some(index + 1),
+            Some(&quote @ (b'"' | b'\'')) => {
+                let close = text[index + 1..].find(char::from(quote))?;
+                at = index + 1 + close + 1;
+            }
+            _ => return None,
+        }
+    }
+    None
 }
 
 fn skip_space(text: &str) -> &str {

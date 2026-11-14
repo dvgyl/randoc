@@ -1831,3 +1831,40 @@ a file; accepted, as in the record of `ws/cli-2`.
 Open findings: I-CLI-02 (citeproc), I-CLI-49 (Lua filter scope gap),
 I-CLI-50, I-CLI-51 and the other low rows. Open checks: the worker
 report, round 9 of the reviews, fuzzing, coverage, the mutation sample.
+
+## Workstream citeproc (branch `ws/citeproc-3`, commit f515c1d, one squashed commit, session 5 of 2026-11-12, batch B)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit f515c1d only. Content (the
+commits of `git log --format='%h %s' main..f515c1d`): 07840c4 renders
+and pretty-prints deep trees without recursion; 2a85f30 reads typed
+metadata, notes and white space as the oracle does (suites
+`csljson/metadata` and `csljson/rules`); 8463af9 keeps exact JSON
+numbers, adds full case folding (`src/case_fold.rs`), DTD tokens and
+file URLs; f515c1d records the low findings of round 2 and closes the
+corrected rows. Rows: I-CITE-06, I-CITE-09 and I-CITE-13 closed;
+I-CITE-14 (round 2) now says that each high and medium finding is
+corrected; I-CITE-15 new (low).
+
+The worker was stopped by a usage limit and has not written its report
+section. The gate evidence comes from the inbox lines of 2a85f30 and
+f515c1d (`env/store/inbox/citeproc.log`, 06:16:19 and 07:12:43) and
+from the commit list above.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on f515c1d. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Inbox lines: suites `csljson/metadata` and `csljson/rules`; XML parse-error matrix `tests/replay/parse-errors.txt`, 189 cases (I-CITE-05). |
+| 3. Tests | `cargo test -p randoc-citeproc` on the merged tree: 86 pass, 0 fail, 4 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 2 requested changes; the verification of the corrections follows. |
+| 6. No slowdowns | Not measured. Deep trees and nested notes are now linear and without recursion (commit messages). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan of f515c1d: no hit.
+
+Open findings: none with the level medium or higher, until the
+verification of round 2 (I-CITE-14); I-CITE-15 and the other low rows.
+Open checks: the worker report, the verification of round 2, fuzzing,
+coverage, the mutation sample.
