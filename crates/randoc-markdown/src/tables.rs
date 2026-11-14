@@ -184,13 +184,14 @@ fn caption_at(lines: &[&str]) -> Option<(String, usize)> {
         .strip_prefix("Table:")
         .or_else(|| body.strip_prefix("table:"))
         .or_else(|| body.strip_prefix(':'))?;
-    let mut parts = vec![text.trim_matches(SPACE)];
+    // Spaces at the end of a line stay: two of them make a line break.
+    let mut parts = vec![text.trim_start_matches(SPACE)];
     let mut used = 1;
     for line in rest(lines, 1) {
         if is_blank(line) {
             break;
         }
-        parts.push(line.trim_matches(SPACE));
+        parts.push(line.trim_start_matches(SPACE));
         used += 1;
     }
     Some((parts.join("\n").trim_matches(SPACE).to_string(), used))
@@ -766,6 +767,12 @@ struct Grid {
     rows: Vec<Vec<char>>,
     /// For each line, true when `=` and `:` count as `-` in the line: the top line and each `=` separator line.
     rules: Vec<bool>,
+    /// For each display column, the sorted lines where the column holds a character other than `|`.
+    marks: Vec<Vec<usize>>,
+    /// For each display column, the sorted lines where the column holds `|` or `+`.
+    verticals: Vec<Vec<usize>>,
+    /// For each line, the sorted display columns that hold neither `+` nor a horizontal border character.
+    breaks: Vec<Vec<usize>>,
 }
 
 /// A traced cell: its bottom line and right column, and the row and column borders that the trace found.
@@ -781,6 +788,39 @@ struct Trace {
 }
 
 impl Grid {
+    /// Builds the grid and its indexes from the lines of display columns.
+    fn new(rows: Vec<Vec<char>>, rules: Vec<bool>) -> Grid {
+        let width = rows.iter().map(Vec::len).max().unwrap_or(0);
+        let mut grid = Grid {
+            rows,
+            rules,
+            marks: vec![Vec::new(); width],
+            verticals: vec![Vec::new(); width],
+            breaks: Vec::new(),
+        };
+        for (y, row) in grid.rows.iter().enumerate() {
+            let mut breaks = Vec::new();
+            for (x, c) in row.iter().enumerate() {
+                crate::step(1);
+                if *c != '|'
+                    && let Some(list) = grid.marks.get_mut(x)
+                {
+                    list.push(y);
+                }
+                if matches!(c, '|' | '+')
+                    && let Some(list) = grid.verticals.get_mut(x)
+                {
+                    list.push(y);
+                }
+                if *c != '+' && !grid.is_horizontal(y, x) {
+                    breaks.push(x);
+                }
+            }
+            grid.breaks.push(breaks);
+        }
+        grid
+    }
+
     /// Returns the character at a line and a display column, or None past the end of the line.
     fn at(&self, y: usize, x: usize) -> Option<char> {
         self.rows.get(y).and_then(|row| row.get(x)).copied()
@@ -803,6 +843,7 @@ impl Grid {
         let width = self.rows.get(top).map_or(0, Vec::len);
         let mut col_borders = Vec::new();
         for right in left + 1..width {
+            crate::step(1);
             if self.at(top, right) == Some('+') {
                 col_borders.push(right);
                 if let Some(mut trace) = self.scan_down(top, left, right) {
@@ -818,24 +859,23 @@ impl Grid {
 
     /// Follows the right border down from a corner until a bottom border closes the cell. A position past the end of the line counts as a vertical border.
     fn scan_down(&self, top: usize, left: usize, right: usize) -> Option<Trace> {
+        let marks = self.marks.get(right)?;
+        let first = marks.partition_point(|y| *y <= top);
         let mut row_borders = Vec::new();
-        for bottom in top + 1..self.rows.len() {
-            match self.at(bottom, right) {
-                Some('+') => {
-                    row_borders.push(bottom);
-                    if let Some((col_borders, left_rows)) = self.scan_left(top, left, bottom, right)
-                    {
-                        row_borders.extend(left_rows);
-                        return Some(Trace {
-                            bottom,
-                            right,
-                            row_borders,
-                            col_borders,
-                        });
-                    }
-                }
-                Some('|') | None => {}
-                Some(_) => return None,
+        for &bottom in marks.get(first..)? {
+            crate::step(1);
+            if self.at(bottom, right) != Some('+') {
+                return None;
+            }
+            row_borders.push(bottom);
+            if let Some((col_borders, left_rows)) = self.scan_left(top, left, bottom, right) {
+                row_borders.extend(left_rows);
+                return Some(Trace {
+                    bottom,
+                    right,
+                    row_borders,
+                    col_borders,
+                });
             }
         }
         None
@@ -849,36 +889,55 @@ impl Grid {
         bottom: usize,
         right: usize,
     ) -> Option<(Vec<usize>, Vec<usize>)> {
-        let mut col_borders = Vec::new();
-        for x in left + 1..right {
-            if self.at(bottom, x) == Some('+') {
-                col_borders.push(x);
-            } else if !self.is_horizontal(bottom, x) {
-                return None;
-            }
-        }
-        if self.at(bottom, left) != Some('+') {
+        crate::step(1);
+        if self.at(bottom, left) != Some('+') || self.row_len(bottom) < right {
             return None;
         }
-        let mut row_borders = Vec::new();
-        for y in top + 1..bottom {
-            match self.at(y, left) {
-                Some('+') => row_borders.push(y),
-                Some('|') => {}
-                _ => return None,
-            }
+        let breaks = self.breaks.get(bottom)?;
+        if breaks
+            .get(breaks.partition_point(|x| *x <= left))
+            .is_some_and(|x| *x < right)
+        {
+            return None;
         }
+        let verticals = self.verticals.get(left)?;
+        let from = verticals.partition_point(|y| *y <= top);
+        let to = verticals.partition_point(|y| *y < bottom);
+        if to.saturating_sub(from) != bottom.saturating_sub(top + 1) {
+            return None;
+        }
+        let col_borders = (left + 1..right)
+            .filter(|x| {
+                crate::step(1);
+                self.at(bottom, *x) == Some('+')
+            })
+            .collect();
+        let row_borders = verticals
+            .get(from..to)?
+            .iter()
+            .copied()
+            .filter(|y| {
+                crate::step(1);
+                self.at(*y, left) == Some('+')
+            })
+            .collect();
         Some((col_borders, row_borders))
+    }
+
+    fn row_len(&self, y: usize) -> usize {
+        self.rows.get(y).map_or(0, Vec::len)
     }
 
     /// Returns the text inside a cell, one line for each grid line, without trailing spaces.
     fn cell_text(&self, cell: &GridCell) -> String {
         let lines: Vec<String> = (cell.top + 1..cell.bottom)
             .map(|y| {
-                let text: String = (cell.left + 1..cell.right)
-                    .filter_map(|x| self.at(y, x))
-                    .filter(|c| *c != WIDE_FILL)
-                    .collect();
+                let row = self.rows.get(y).map_or(&[][..], Vec::as_slice);
+                let inside = row
+                    .get(cell.left + 1..cell.right.min(row.len()))
+                    .unwrap_or(&[]);
+                crate::step(inside.len() + 1);
+                let text: String = inside.iter().filter(|c| **c != WIDE_FILL).collect();
                 text.trim_end_matches(SPACE).to_string()
             })
             .collect();
@@ -964,8 +1023,8 @@ fn grid_table(
         return None;
     }
     let texts = texts.get(..=last_border)?;
-    let grid = Grid {
-        rows: texts
+    let grid = Grid::new(
+        texts
             .iter()
             .map(|text| {
                 let mut row = Vec::new();
@@ -979,12 +1038,12 @@ fn grid_table(
                 row
             })
             .collect(),
-        rules: texts
+        texts
             .iter()
             .enumerate()
             .map(|(y, text)| y == 0 || is_rule_line(text, '='))
             .collect(),
-    };
+    );
     let (cells, ys, xs) = grid_cells(&grid);
     if cells.is_empty() {
         return None;
@@ -1030,22 +1089,30 @@ fn grid_table(
             (row, left, built)
         })
         .collect();
-    // Pandoc fills each grid position that no cell covers with an empty cell.
+    // Pandoc fills each grid position that no cell covers with an empty
+    // cell. Each row keeps the column ranges of its cells, so that a large
+    // cell costs one range for each row and not one mark for each position.
     let width = xs.len().saturating_sub(1);
-    let mut covered = vec![false; ys.len().saturating_sub(1) * width];
+    let mut ranges: Vec<Vec<(usize, usize)>> = vec![Vec::new(); ys.len().saturating_sub(1)];
     for (row, left, cell) in &built {
         let rows = usize::try_from(cell.row_span).unwrap_or(1);
         let cols = usize::try_from(cell.col_span).unwrap_or(1);
-        for y in *row..row + rows {
-            for x in *left..left + cols {
-                if let Some(slot) = covered.get_mut(y * width + x) {
-                    *slot = true;
-                }
-            }
+        for list in ranges.iter_mut().skip(*row).take(rows) {
+            crate::step(1);
+            list.push((*left, left + cols));
         }
     }
-    for (index, _) in covered.iter().enumerate().filter(|(_, slot)| !**slot) {
-        built.push((index / width.max(1), index % width.max(1), Cell::default()));
+    for (y, list) in ranges.iter_mut().enumerate() {
+        list.sort_unstable();
+        let mut x = 0;
+        for &(start, end) in list.iter().chain(std::iter::once(&(width, width))) {
+            while x < start.min(width) {
+                crate::step(1);
+                built.push((y, x, Cell::default()));
+                x += 1;
+            }
+            x = x.max(end);
+        }
     }
     built.sort_by_key(|(row, left, _)| (*row, *left));
     // Pandoc keeps paragraphs only when some cell has more than a single paragraph.

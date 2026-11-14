@@ -533,14 +533,14 @@ impl Inl<'_> {
                         k += 1;
                         continue;
                     };
-                    if lower.starts_with("</span") {
+                    if names_tag(&lower, "</span") {
                         if let Some(o) = stack.pop() {
                             matches.insert(o, k);
                             if done(o, k) {
                                 break;
                             }
                         }
-                    } else if lower.starts_with("<span")
+                    } else if names_tag(&lower, "<span")
                         && !window.get(..len).is_some_and(|t| t.ends_with("/>"))
                     {
                         stack.push(k);
@@ -1325,13 +1325,25 @@ impl Inl<'_> {
                     k += 1;
                     let value = match self.s.get(k).copied() {
                         Some(q @ ('"' | '\'')) => {
-                            let end = self.find(Find::Unescaped(q), k + 1)?;
+                            // A backslash escapes only a character of the
+                            // escape set of the flavor; a quoted value then
+                            // decodes character references.
+                            let kind = if self.escapable(q) {
+                                Find::Unescaped(q)
+                            } else {
+                                Find::Char(q)
+                            };
+                            let end = self.find(kind, k + 1)?;
                             let mut v = Text::new();
                             let mut j = k + 1;
                             while j < end {
                                 let ch = *self.s.get(j)?;
-                                if ch == '\\' && j + 1 < end {
-                                    v.push(*self.s.get(j + 1)?);
+                                let next = self.s.get(j + 1).copied();
+                                if ch == '\\'
+                                    && j + 1 < end
+                                    && next.is_some_and(|n| self.escapable(n))
+                                {
+                                    v.push(next?);
                                     j += 2;
                                 } else {
                                     v.push(ch);
@@ -1339,18 +1351,28 @@ impl Inl<'_> {
                                 }
                             }
                             k = end + 1;
-                            v
+                            decode_entities(&v)
                         }
                         _ => {
-                            let vstart = k;
-                            while self
-                                .s
-                                .get(k)
-                                .is_some_and(|c| !c.is_whitespace() && *c != '}')
-                            {
-                                k += 1;
+                            let mut v = Text::new();
+                            while let Some(&ch) = self.s.get(k) {
+                                if ch.is_whitespace() || ch == '}' {
+                                    break;
+                                }
+                                let next = self.s.get(k + 1).copied();
+                                if ch == '\\'
+                                    && next.is_some_and(|n| {
+                                        n.is_ascii_punctuation() && self.escapable(n)
+                                    })
+                                {
+                                    v.push(next?);
+                                    k += 2;
+                                } else {
+                                    v.push(ch);
+                                    k += 1;
+                                }
                             }
-                            self.text(vstart, k)
+                            v
                         }
                     };
                     match key.as_str() {
@@ -1553,14 +1575,15 @@ impl Inl<'_> {
                 Target::new(escape_uri(url.trim_matches(SPACE)), ""),
             )]);
         }
-        let label = self.text(open + 1, close);
-        if let Some(out) = self.reference_link(image, open, close, &label) {
+        if let Some(out) = self.reference_link(image, open, close) {
             return Some(out);
         }
         if !image
             && self.ext(Extension::Citations)
-            && label.contains('@')
-            && let Some(cites) = self.citations(&label)
+            && self
+                .find(Find::Char('@'), open + 1)
+                .is_some_and(|at| at < close)
+            && let Some(cites) = self.citations(&self.text(open + 1, close))
         {
             let raw = self.text(self.i, close + 1);
             self.i = close + 1;
@@ -1782,23 +1805,16 @@ impl Inl<'_> {
         Some(vec![link])
     }
 
-    fn reference_link(
-        &mut self,
-        image: bool,
-        open: usize,
-        close: usize,
-        label: &str,
-    ) -> Option<Vec<Inline>> {
+    fn reference_link(&mut self, image: bool, open: usize, close: usize) -> Option<Vec<Inline>> {
         if self.in_link && !image {
             return None;
         }
-        let mut key_text = label.to_string();
+        let mut key_range = open + 1..close;
         let mut explicit = false;
         let mut k = close + 1;
         if let Some((start, end)) = self.second_label(close) {
-            let second = self.text(start + 1, end);
-            if !second.is_empty() {
-                key_text = second;
+            if end > start + 1 {
+                key_range = start + 1..end;
             }
             explicit = true;
             k = end + 1;
@@ -1806,7 +1822,11 @@ impl Inl<'_> {
         if !explicit && !self.ext(Extension::ShortcutReferenceLinks) {
             return None;
         }
-        let key = normalize_key(&key_text);
+        // Each level of nested brackets would copy its label otherwise.
+        if !self.may_be_key(key_range.clone()) {
+            return None;
+        }
+        let key = normalize_key(&self.text(key_range.start, key_range.end));
         let found = self.p.refs.get(&key).cloned().or_else(|| {
             self.p
                 .header_refs
@@ -1816,6 +1836,23 @@ impl Inl<'_> {
         let (target, attr) = found?;
         self.i = k;
         Some(vec![self.make_link(image, open + 1..close, target, attr)])
+    }
+
+    /// Tells whether the text of `range` can name a known reference: a key
+    /// has at least as many characters as the label has outside white space.
+    fn may_be_key(&self, range: Range<usize>) -> bool {
+        let longest = self.p.longest_key;
+        let mut count = 0;
+        for c in self.s.get(range).unwrap_or(&[]) {
+            crate::step(1);
+            if !c.is_whitespace() {
+                count += 1;
+                if count > longest {
+                    return false;
+                }
+            }
+        }
+        true
     }
 
     /// Returns the brackets of the label of a reference link after the
@@ -2138,7 +2175,7 @@ impl Inl<'_> {
         let len = html_tag_len(&rest)?;
         let tag = rest.get(..len)?.to_string();
         if self.ext(Extension::NativeSpans)
-            && tag.to_ascii_lowercase().starts_with("<span")
+            && names_tag(&tag.to_ascii_lowercase(), "<span")
             && !tag.ends_with("/>")
         {
             let tag_end = self.i + tag.chars().count();
@@ -2389,6 +2426,16 @@ impl Inl<'_> {
 }
 
 /// Makes a span, or `Underline` or `SmallCaps` for the classes that Pandoc maps to them.
+/// Tells whether the lowercase tag text `lower` starts with `start` (`<span`
+/// or `</span`) and the tag name ends there.
+fn names_tag(lower: &str, start: &str) -> bool {
+    lower.strip_prefix(start).is_some_and(|rest| {
+        rest.chars()
+            .next()
+            .is_none_or(|c| c.is_whitespace() || matches!(c, '/' | '>'))
+    })
+}
+
 fn make_span(attr: Attr, inner: Vec<Inline>) -> Inline {
     if attr.id.is_empty() && attr.attributes.is_empty() {
         match attr.classes.as_slice() {
@@ -2646,7 +2693,7 @@ pub(crate) fn unescape(s: &str) -> Text {
 
 /// Parses an attribute block `{#id .class key=value}` at the start of `s`.
 /// Returns the attributes and the byte length of the block.
-pub(crate) fn parse_attributes(s: &str) -> Option<(Attr, usize)> {
+pub(crate) fn parse_attributes(s: &str, escapable: impl Fn(u8) -> bool) -> Option<(Attr, usize)> {
     let body = s.strip_prefix('{')?;
     let mut attr = Attr::default();
     let mut k = 0;
@@ -2707,7 +2754,7 @@ pub(crate) fn parse_attributes(s: &str) -> Option<(Attr, usize)> {
                         let mut v = Text::new();
                         loop {
                             match bytes.get(k)? {
-                                b'\\' if bytes.get(k + 1).is_some() => {
+                                b'\\' if bytes.get(k + 1).is_some_and(|b| escapable(*b)) => {
                                     let ch = body.get(k + 1..)?.chars().next()?;
                                     v.push(ch);
                                     k += 1 + ch.len_utf8();
@@ -2721,17 +2768,26 @@ pub(crate) fn parse_attributes(s: &str) -> Option<(Attr, usize)> {
                             }
                         }
                         k += 1;
-                        v
+                        // A quoted value decodes character references; an
+                        // unquoted value keeps them as text.
+                        decode_entities(&v)
                     }
                     _ => {
-                        let vstart = k;
-                        while bytes
-                            .get(k)
-                            .is_some_and(|b| !b.is_ascii_whitespace() && *b != b'}')
-                        {
-                            k += 1;
+                        let mut v = Text::new();
+                        while let Some(&b) = bytes.get(k) {
+                            if b.is_ascii_whitespace() || b == b'}' {
+                                break;
+                            }
+                            let escaped =
+                                b == b'\\' && bytes.get(k + 1).is_some_and(|b| escapable(*b));
+                            if escaped {
+                                k += 1;
+                            }
+                            let ch = body.get(k..)?.chars().next()?;
+                            v.push(ch);
+                            k += ch.len_utf8();
                         }
-                        body.get(vstart..k)?.to_string()
+                        v
                     }
                 };
                 match key.as_str() {
@@ -2890,7 +2946,9 @@ mod tests {
 
     #[test]
     fn attributes_parse() {
-        let (attr, used) = parse_attributes("{#a .b c=d e=\"f g\"} x").unwrap_or_default();
+        let (attr, used) =
+            parse_attributes("{#a .b c=d e=\"f g\"} x", |b| b.is_ascii_punctuation())
+                .unwrap_or_default();
         assert_eq!(used, 19);
         assert_eq!(attr.id, "a");
         assert_eq!(attr.classes, vec!["b"]);
@@ -2898,8 +2956,8 @@ mod tests {
             attr.attributes,
             vec![("c".into(), "d".into()), ("e".into(), "f g".into())]
         );
-        assert!(parse_attributes("{a b}").is_none());
-        assert!(parse_attributes("{#}").is_none());
+        assert!(parse_attributes("{a b}", |b| b.is_ascii_punctuation()).is_none());
+        assert!(parse_attributes("{#}", |b| b.is_ascii_punctuation()).is_none());
     }
 
     #[test]

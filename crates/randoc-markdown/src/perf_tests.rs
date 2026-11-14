@@ -216,6 +216,48 @@ const ROUND_3_FORMS: &[Round3Form] = &[
     ("comments before text on many lines", "markdown", |n| {
         "<!--x-->x\n\n".repeat(n)
     }),
+    ("nested brackets with no link", "markdown", |n| {
+        format!("{}x{}", "[".repeat(n), "]".repeat(n))
+    }),
+    ("nested brackets with a reference", "markdown", |n| {
+        format!("{}x{}\n\n[x]: u\n", "[".repeat(n), "]".repeat(n))
+    }),
+    (
+        "closed html divs before paragraphs on one line",
+        "markdown",
+        |n| "<div></div><p></p>".repeat(n),
+    ),
+    ("html divs with comments on one line", "markdown", |n| {
+        "<div><!-- c --> ".repeat(n)
+    }),
+    ("headings with open code spans", "markdown", |n| {
+        format!("# `a\n{}", "# ``b\n".repeat(n))
+    }),
+    (
+        "paragraphs with open code spans before fences",
+        "markdown",
+        |n| format!("`a\n{}", "``b\n```\n".repeat(n)),
+    ),
+    ("ragged grid tables", "markdown", |n| {
+        format!(
+            "{}+\n{}+{}+\n",
+            "+-".repeat(n),
+            "+\n".repeat(n),
+            "-".repeat(2 * n - 1)
+        )
+    }),
+    (
+        "grid tables with one wide cell under many columns",
+        "markdown",
+        |n| {
+            format!(
+                "{}+\n|{}|\n{}+\n",
+                "+-".repeat(n),
+                " ".repeat(2 * n - 1),
+                "+-".repeat(n)
+            )
+        },
+    ),
     ("fenced divs in metadata", "markdown", |n| {
         format!(
             "---\nkey: \"{}x\\n{}\"\n---\n",

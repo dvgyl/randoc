@@ -5,6 +5,7 @@ Usage:
   differ.py matrix raw|blocktag|lazy|closer|abbrev OUT_DIR
   differ.py random COUNT SEED OUT_DIR [wide]
   differ.py rerun OUT_DIR
+  differ.py toml OUT_FILE MATRIX...
 
 Each command writes OUT_DIR/cases.json, runs the oracle once for all cases
 (`pandoc lua oracle.lua`), runs `target/debug/randoc -t json` for each case,
@@ -442,6 +443,260 @@ def random_doc(rng, wide):
     return sep.join(parts) + "\n"
 
 
+def span_name_matrix():
+    """Codex R3-08: tag names that start with `span`."""
+    names = ["span", "span-box", "spanx", "span.x", "span_y", "SPAN", "Span-a", "span:a"]
+    cases = []
+    for ext in ["markdown", "markdown-native_spans", "markdown_phpextra"]:
+        for a in names:
+            for b in names:
+                cases.append({"id": f"sn-{a}-{b}-{ext}", "from": ext, "input": f"<{a}>x</{b}>\n"})
+            cases.append({"id": f"sn-{a}-attr-{ext}", "from": ext, "input": f'<{a} class="c">x</{a}>\n'})
+            cases.append({"id": f"sn-{a}-nest-{ext}", "from": ext, "input": f"a <{a}>x <span>y</span></{a}> b\n"})
+    return cases
+
+
+ATTR_FORMS = {
+    "bare": "a", "sq-empty": "a=''", "dq-empty": 'a=""', "sq": "a='b'", "dq": 'a="b"',
+    "unq": "a=b", "upper": 'A="b"', "sq-amp": "a='&amp;'", "dq-lt": 'a="&lt;"',
+    "sq-dq": "a='x\"y'", "dq-sq": 'a="x\'y"', "spaced": 'a  =  "b"', "two": "a='b' c",
+    "unq-amp": "a=&quot;", "num": "a='&#65;'", "gt": "a='>'", "tab": "a='x\ty'",
+}
+
+
+def raw_tag_matrix():
+    """Codex R3-09: the text of a raw start tag with each attribute form."""
+    cases = []
+    for name in ["p", "div", "x-y"]:
+        for aid, attr in ATTR_FORMS.items():
+            forms = {
+                "empty": f"<{name} {attr}></{name}>\n",
+                "text": f"<{name} {attr}>x</{name}>\n",
+                "lines": f"<{name} {attr}>\nx\n</{name}>\n",
+            }
+            for fid, text in forms.items():
+                for ext in ["markdown", "markdown-markdown_in_html_blocks", "markdown-native_divs", "markdown_phpextra"]:
+                    cases.append({"id": f"rt-{name}-{aid}-{fid}-{ext}", "from": ext, "input": text})
+    return cases
+
+
+def caption_matrix():
+    """Codex R3-10: line breaks and spaces in table captions."""
+    tables = {
+        "pipe": "x|y\n-|-\n1|2",
+        "simple": "  x   y\n ---  ---\n  1   2",
+        "grid": "+---+---+\n| x | y |\n+===+===+\n| 1 | 2 |\n+---+---+",
+        "multi": "-------\n x   y\n--- ---\n 1   2\n-------",
+    }
+    captions = {
+        "two-spaces": "a  \nb", "three-spaces": "a   \nb", "one-space": "a \nb", "backslash": "a\\\nb",
+        "end-spaces": "a b  ", "mid-spaces": "a  b", "tab": "a\t\nb", "plain": "a\nb",
+        "lines": "a  \nb  \nc", "emph": "*a*  \nb",
+    }
+    cases = []
+    for tid, table in tables.items():
+        for cid, cap in captions.items():
+            for prefix in [": ", "Table: ", "table: "]:
+                pid = prefix.strip(": ") or "colon"
+                cases.append({"id": f"cap-{tid}-{cid}-{pid}-before", "from": "markdown", "input": f"{prefix}{cap}\n\n{table}\n"})
+                cases.append({"id": f"cap-{tid}-{cid}-{pid}-after", "from": "markdown", "input": f"{table}\n\n{prefix}{cap}\n"})
+    return cases
+
+
+def div_comment_matrix():
+    """Codex R3-11: fence lines inside comments and processing instructions of a div."""
+    raws = {
+        "comment-open": "<!--\n{f}\n-->", "comment-one": "<!-- {f} -->", "comment-tail": "<!-- a\n{f} -->",
+        "pi": "<?x\n{f}\n?>", "comment-after-text": "t <!--\n{f}\n-->", "comment-indented": "  <!--\n{f}\n-->",
+        "two-comments": "<!--\n{f}\n-->\n<!--\n{f}\n-->", "open-no-end": "<!--\n{f}",
+    }
+    fences = {"open": "::: b", "close": ":::", "long": "::::", "attr": "::: {.c}"}
+    cases = []
+    for rid, raw in raws.items():
+        for fid, fence in fences.items():
+            body = raw.replace("{f}", fence)
+            forms = {"plain": f"::: a\n{body}\n:::\n", "after": f"::: a\n{body}\n:::\n\nz\n", "nested": f"::: a\n::: n\n{body}\n:::\n:::\n"}
+            for form, text in forms.items():
+                for ext in ["markdown", "markdown-raw_html"]:
+                    cases.append({"id": f"dc-{rid}-{fid}-{form}-{ext}", "from": ext, "input": text})
+    return cases
+
+
+def meta_image_matrix():
+    """Codex R3-14: images alone in a paragraph of a metadata value."""
+    values = {
+        "dq": '"![x](u)\\n"', "dq-no-nl": '"![x](u)"', "block": "|\n  ![x](u)\n", "block-two": "|\n  ![x](u)\n\n  ![y](v)\n",
+        "attr": '"![x](u){.c}\\n"', "text": '"t ![x](u)\\n"', "list": '\n  - "![x](u)\\n"\n  - b', "map": '\n  k: "![x](u)\\n"',
+        "empty-alt": '"![](u)\\n"', "two-para": '"a\\n\\n![x](u)\\n"',
+    }
+    cases = []
+    for vid, value in values.items():
+        for key in ["a", "title", "abstract"]:
+            text = f"---\n{key}: {value}\n---\n"
+            cases.append({"id": f"mi-{vid}-{key}", "from": "markdown", "input": text})
+            cases.append({"id": f"mi-{vid}-{key}-body", "from": "markdown", "input": text + "\n![b](w)\n"})
+    return cases
+
+
+def html_attr_case_matrix():
+    """Codex R3-15: the case of attribute names of native divs and spans."""
+    attrs = ["ID=x", "Id=x", "iD=x", "CLASS=c", "Class='a b'", "ID=x CLASS=c", "DATA-X=1", "Style=s", "id=x ID=y", "class=a CLASS=b", "TITLE=t"]
+    cases = []
+    for attr in attrs:
+        aid = attr.replace("=", "-").replace(" ", "_").replace("'", "")
+        for ext in ["markdown", "markdown_phpextra"]:
+            cases.append({"id": f"ac-div-{aid}-{ext}", "from": ext, "input": f"<div {attr}></div>\n"})
+            cases.append({"id": f"ac-divx-{aid}-{ext}", "from": ext, "input": f"<div {attr}>\nx\n</div>\n"})
+            cases.append({"id": f"ac-span-{aid}-{ext}", "from": ext, "input": f"<span {attr}>x</span>\n"})
+            cases.append({"id": f"ac-p-{aid}-{ext}", "from": ext, "input": f"<p {attr}>x</p>\n"})
+    return cases
+
+
+def attr_value_matrix():
+    """Codex R3-20: character references and escapes in attribute values."""
+    values = {
+        "dq-lt": '"&lt;"', "dq-amp": '"&amp;"', "dq-num": '"&#65;"', "dq-hex": '"&#x41;"', "dq-bad": '"&zz;"',
+        "dq-bs-a": '"\\a"', "dq-bs-q": '"\\""', "dq-bs-bs": '"\\\\"', "dq-bs-star": '"\\*"', "dq-bs-brace": '"\\}"',
+        "sq-lt": "'&lt;'", "sq-bs-a": "'\\a'", "sq-bs-q": "'\\''",
+        "unq-lt": "&lt;", "unq-bs-star": "\\*", "unq-bs-a": "\\a", "unq-amp": "&amp;", "unq-bs-bs": "\\\\",
+    }
+    hosts = {
+        "span": "[x]{{a={v}}}", "link": "[x](u){{a={v}}}", "image": "![x](u){{a={v}}}", "code": "`c`{{a={v}}}",
+        "heading": "# h {{a={v}}}", "div": "::: {{a={v}}}\nx\n:::", "fence": "```{{a={v}}}\nc\n```",
+        "id": "[x]{{#{v}}}", "class": "[x]{{.c a={v} b=1}}",
+    }
+    cases = []
+    for vid, v in values.items():
+        for hid, host in hosts.items():
+            cases.append({"id": f"av-{hid}-{vid}", "from": "markdown", "input": host.format(v=v) + "\n"})
+    return cases
+
+
+def quote_in_item_matrix():
+    """Opus R3-01: a list marker after a block quote line in a list item."""
+    cases = []
+    for outer in ["-", "*", "1."]:
+        pad = " " * (len(outer) + 1)
+        for inner in ["-", "*", "+", "1.", "2)", "a.", "#."]:
+            for indent in sorted({len(outer) + 1, len(outer) + 2, 4}):
+                for quote in ["> a", "> a\n" + pad + "> b"]:
+                    qid = "two" if "\n" in quote else "one"
+                    sp = " " * indent
+                    text = f"{outer} {quote}\n{sp}{inner} sub\n"
+                    for ext in ["markdown", "markdown_phpextra", "markdown_strict", "markdown_github"]:
+                        cases.append({"id": f"qi-{outer}-{inner}-{indent}-{qid}-{ext}", "from": ext, "input": text})
+            cases.append({"id": f"qi-{outer}-{inner}-blank", "from": "markdown", "input": f"{outer} > a\n\n{pad}{inner} sub\n"})
+            cases.append({"id": f"qi-{outer}-{inner}-rule", "from": "markdown", "input": f"{outer} > a\n{pad}- - -\n"})
+    return cases
+
+
+def heading_span_matrix():
+    """Codex R3-17: a heading line that opens an inline construct with its end on the next line."""
+    forms = {
+        "code": "`a\nb`", "code2": "``a\nb``", "math": "$a\nb$", "dmath": "$$a\nb$$", "link": "[a\nb](u)",
+        "emph": "*a\nb*", "span": "[a\nb]{.c}", "html": "<span>a\nb</span>", "note": "^[a\nb]", "quote": "\"a\nb\"",
+        "code-open": "`a\nb", "tag": "<b\nc>", "comment": "<!--a\nb-->", "code-end": "a `b\nc` d",
+        "code-heading": "`a\n# b`", "code-hashes": "`a\nb` #", "code-three": "`a\nb\nc`", "code-other-run": "`a\n``b``\nc`",
+    }
+    cases = []
+    for fid, form in forms.items():
+        for lead in ["# ", "## ", "# x "]:
+            lid = str(len(lead))
+            for after in ["", "\n\nz"]:
+                aid = "z" if after else "end"
+                for ext in ["markdown", "markdown_strict", "markdown_phpextra"]:
+                    cases.append({"id": f"hs-{fid}-{lid}-{aid}-{ext}", "from": ext, "input": f"{lead}{form}{after}\n"})
+    return cases
+
+
+def fallback_attr_matrix():
+    """Codex R3-19: attributes after an undefined reference."""
+    attrs = ['{a="\\"}b"}', '{a="}"}', "{a='}'}", '{.c}', '{#i}', '{a="x"}b"}', '{a=\\}}', '{a="b\\\\"}c}']
+    labels = ["[x]", "[x][y]", "[x] [y]", "[x][]", "![x]"]
+    cases = []
+    for ai, attr in enumerate(attrs):
+        for li, label in enumerate(labels):
+            for ext in ["markdown", "markdown_phpextra", "markdown_mmd", "markdown-bracketed_spans", "markdown-link_attributes"]:
+                cases.append({"id": f"fa-{ai}-{li}-{ext}", "from": ext, "input": f"{label}{attr} t\n"})
+    return cases
+
+
+def foreign_marker_matrix():
+    """Opus R3-02: a marker that the flavor does not read, at the content indentation of an item."""
+    cases = []
+    for outer in ["-", "1."]:
+        for marker in ["a.", "A)", "(1)", "i.", "(@)", "#.", "1)", "b)"]:
+            for indent in [2, 3]:
+                for tail in ["", "\n\n" + ("2." if outer == "1." else "-") + " next"]:
+                    tid = "next" if tail else "end"
+                    text = f"{outer} item\n{' ' * indent}{marker} b{tail}\n"
+                    for ext in ["markdown_strict", "markdown_phpextra", "markdown_mmd", "markdown_github", "markdown"]:
+                        cases.append({"id": f"fm-{outer}-{marker}-{indent}-{tid}-{ext}", "from": ext, "input": text})
+    return cases
+
+
+def github_fence_matrix():
+    """Opus R3-03: fences with attributes in a flavor without fenced code attributes."""
+    openers = ["```{.c}", "```{.c .d}", "``` {.c}", "```{#i}", "~~~{.c}", "```py {.c}"]
+    afters = {"para": "\n\ny\n", "fence": "\n\n```\nz\n```\n", "lang": "\n\n```py\nz\n```\n", "end": "\n"}
+    cases = []
+    for oi, opener in enumerate(openers):
+        close = opener[:3]
+        for aid, after in afters.items():
+            text = f"{opener}\nx\n{close}{after}"
+            for ext in ["markdown_github", "markdown_strict", "markdown_phpextra", "markdown-fenced_code_attributes"]:
+                cases.append({"id": f"gf-{oi}-{aid}-{ext}", "from": ext, "input": text})
+    return cases
+
+
+def nested_bracket_matrix():
+    """Opus R3-05: a link or a span inside a superscript, a note or a link."""
+    inner = {"link": "[1](#r1)", "span": "[x]{.c}", "small": "[s t]{.smallcaps}", "ref": "[r]", "cite": "[@k]", "img": "![i](u)"}
+    outer = {"sup": "^{i}^", "sub": "~{i}~", "link": "[{i}](u)", "note": "^[{i}]", "emph": "*{i}*", "span": "[{i}]{{.o}}", "strong": "**{i}**"}
+    cases = []
+    for iid, i in inner.items():
+        for oid, o in outer.items():
+            text = "a " + o.format(i=i) + " b\n\n[r]: v\n"
+            cases.append({"id": f"nb-{oid}-{iid}", "from": "markdown", "input": text})
+    return cases
+
+
+S5_MATRICES = {
+    "span-name": span_name_matrix,
+    "raw-tag": raw_tag_matrix,
+    "caption": caption_matrix,
+    "div-comment": div_comment_matrix,
+    "meta-image": meta_image_matrix,
+    "attr-case": html_attr_case_matrix,
+    "attr-value": attr_value_matrix,
+    "quote-item": quote_in_item_matrix,
+    "heading-span": heading_span_matrix,
+    "fallback-attr": fallback_attr_matrix,
+    "foreign-marker": foreign_marker_matrix,
+    "github-fence": github_fence_matrix,
+    "nested-bracket": nested_bracket_matrix,
+}
+
+
+def toml_string(text):
+    return json.dumps(text, ensure_ascii=False)
+
+
+def write_toml(names, path):
+    """Writes the cases of the matrices `names` as one harness case file."""
+    lines = [
+        "# Replay data of the session 5 oracle matrices (tools/differ.py toml).",
+        'from = "markdown"',
+        "to = []",
+        "",
+    ]
+    for name in names:
+        for case in S5_MATRICES[name]():
+            lines += ["[[case]]", f"id = {toml_string(case['id'])}", f"from = {toml_string(case['from'])}", f"input = {toml_string(case['input'])}", ""]
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
+
 def random_cases(count, seed, wide):
     rng = random.Random(seed)
     cases = []
@@ -572,8 +827,11 @@ def main():
             "lazy": lazy_matrix,
             "closer": closer_matrix,
             "abbrev": abbrev_matrix,
+            **S5_MATRICES,
         }[sys.argv[2]]()
         run(cases, sys.argv[3])
+    elif cmd == "toml":
+        write_toml(sys.argv[3:], sys.argv[2])
     elif cmd == "random":
         wide = sys.argv[5:] == ["wide"]
         run(random_cases(int(sys.argv[2]), int(sys.argv[3]), wide), sys.argv[4])

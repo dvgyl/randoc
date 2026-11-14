@@ -1868,3 +1868,44 @@ Open findings: none with the level medium or higher, until the
 verification of round 2 (I-CITE-14); I-CITE-15 and the other low rows.
 Open checks: the worker report, the verification of round 2, fuzzing,
 coverage, the mutation sample.
+
+## Workstream markdown-reader (branch `ws/markdown-reader-4`, commit f749931, one squashed commit, session 5 of 2026-11-12, batch B)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit f749931 only. Content (the
+commits of `git log --format='%h %s' main..f749931`): 098db17 makes the
+scans of nested brackets, ragged grid tables and element rests linear
+(I-MD-56, I-MD-57, I-MD-58); 0d00527 corrects the conformance findings
+of review round 3 from oracle matrices (new replay data
+`tests/matrix_replay.json`, tool `tools/matrix_replay.py`); f749931
+closes the round 3 rows and records the low findings. Rows: I-MD-32,
+I-MD-56, I-MD-57, I-MD-58 and I-MD-59 closed; I-MD-31 changed (part of
+it is medium); I-MD-60 and I-MD-72 new (medium); I-MD-61 to I-MD-71,
+I-MD-73 and I-MD-74 new (low).
+
+The worker was stopped by a usage limit and has not written its report
+section. The gate evidence comes from the inbox line of 0d00527
+(`env/store/inbox/markdown-reader.log`, 07:06 UTC) and from the commit
+list above. The gate line names 0d00527, not f749931; f749931 adds only
+rows of `docs/ISSUES.md`, and the coordinator permits the merge.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 0d00527. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Inbox line: the eight high and three medium conformance findings of review round 3 are corrected, with matrix replay data. |
+| 3. Tests | `cargo test -p randoc-markdown` on the merged tree: 41 pass, 0 fail, 3 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 3 requested changes; the verification of the corrections follows. |
+| 6. No slowdowns | Three scans are now linear (098db17). Not measured by the merge agent. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan: 17 hits in `src/block.rs`, `src/inline.rs` and
+`src/tables.rs` (at most 0.1 % of a file); each hit is a short code
+expression (`c == ' ' || c ==`), a list of HTML tag names (facts of the
+format) or a small table of test input; accepted. No other hit.
+
+Open findings: I-MD-31 (medium part), I-MD-60 and I-MD-72 (medium), the
+low rows. Open checks: the worker report, the gate run of f749931 (only
+rows of `docs/ISSUES.md` differ from 0d00527), the verification of
+round 3, fuzzing, coverage, the mutation sample.

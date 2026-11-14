@@ -33,6 +33,10 @@ fn deep_inputs(n: usize) -> Vec<(&'static str, String)> {
             format!("{}x\n", "</p>".repeat(n)),
         ),
         (
+            "html divs with comments on one line",
+            format!("{}x\n", "<div><!-- c --> ".repeat(n)),
+        ),
+        (
             "html div lines",
             format!("{}x\n{}", "<div>\n".repeat(n), "</div>\n".repeat(n)),
         ),
@@ -51,6 +55,10 @@ fn deep_inputs(n: usize) -> Vec<(&'static str, String)> {
         (
             "spans",
             format!("{}x{}\n", "[".repeat(n), "]{.c}".repeat(n)),
+        ),
+        (
+            "brackets",
+            format!("{}x{}\n\n[x]: u\n", "[".repeat(n), "]".repeat(n)),
         ),
         (
             "images",

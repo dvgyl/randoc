@@ -261,3 +261,48 @@ fn yaml_replay_matches_the_oracle() {
         );
     });
 }
+
+/// Replays the oracle matrices of session 5 (`tests/matrix_replay.json`,
+/// written by `tools/matrix_replay.py`). Each case gives the oracle tree,
+/// except the cases that the file marks as known differences.
+#[test]
+fn matrix_replay_matches_the_oracle() {
+    on_big_stack(|| {
+        let text = std::fs::read_to_string(crate_dir().join("tests/matrix_replay.json"))
+            .unwrap_or_default();
+        let cases: Vec<serde_json::Value> = serde_json::from_str(&text).unwrap_or_default();
+        let mut failures = Vec::new();
+        let mut known = 0;
+        for case in &cases {
+            let from = case["from"].as_str().unwrap_or("markdown");
+            let input = case["input"].as_str().unwrap_or("");
+            let (out, _, _) = run_case(from, input);
+            let got: serde_json::Value = serde_json::from_str(&out).unwrap_or_default();
+            if got["blocks"] == case["doc"]["blocks"] && got["meta"] == case["doc"]["meta"] {
+                continue;
+            }
+            if case["known"].as_bool() == Some(true) {
+                known += 1;
+            } else {
+                failures.push(format!("{} {from} {input:?}", case["id"]));
+            }
+        }
+        eprintln!(
+            "matrix replay: {} cases, {known} known differences",
+            cases.len()
+        );
+        assert!(cases.len() >= 1000, "replay data missing: {}", cases.len());
+        assert!(
+            failures.is_empty(),
+            "{} of {} differ:\n{}",
+            failures.len(),
+            cases.len(),
+            failures
+                .iter()
+                .take(30)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join("\n")
+        );
+    });
+}
