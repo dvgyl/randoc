@@ -2036,3 +2036,39 @@ and `NativeHost::environment` in `randoc-core` keep the data loss and
 the panic for other callers; LPeg 1.1.0 is not in `env/research`. Open
 checks: the verification of round 3, fuzzing, coverage, the mutation
 sample.
+
+## Workstream markdown-reader (branch `ws/markdown-reader-4`, commit 2640d8b, one squashed commit, session 5 of 2026-11-14, batch C)
+
+Merged as a small block under owner instruction 17. `main` holds the
+earlier commit f749931 of the branch as 52e5f01 (batch B); this record
+holds the commit 2640d8b only. Content: 2640d8b removes the arm `n ==
+open` of `code_span_lines`; the mutation sample found that the mutant
+`n == open` to `!=` gives the same results (an equivalent mutant), so
+the arm changes nothing. Rows: no change.
+
+The gate evidence comes from the inbox line of 2640d8b
+(`env/store/inbox/markdown-reader.log`, 2026-11-14T21:33Z), from `git
+log --format='%h %s' main..2640d8b` (it also lists 098db17, 0d00527 and
+f749931, which `main` holds as 52e5f01) and from the top section of
+`env/store/reports/markdown-reader.md` (2026-11-14 21:35 UTC).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 2640d8b (baseline 46457 units, 0 regressions). The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | No new behaviour (a refactor). Report: harness `--filter markdown/` 1443 units, 1406 pass, 37 fail, 0 regressions. |
+| 3. Tests | `cargo test -p randoc-markdown` on the merged tree: 41 pass, 0 fail, 3 ignored. Report: coverage 96.27 % of lines; mutation sample 11 mutants tested, 7 caught, 3 time-outs (detected), 1 missed (the equivalent mutant that this commit removes). |
+| 4. No panics | Report: fuzz target `markdown_read` 901 s, 1,276,961 runs, 0 crashes, peak 872 MB. |
+| 5. Reviews | Round 3 requested changes; I-MD-60 and I-MD-31 (medium) stay open; the verification follows. |
+| 6. No slowdowns | Report: CPU time at 25,000 and 50,000 repetitions for 11 forms; the form "quote in item" grows with a ratio of 2.25 from 50,000 to 100,000 (318 MB). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: one, in `crates/randoc-markdown/src/block.rs` (`main` holds an earlier state of the branch); the version of 2640d8b is taken (`git checkout 2640d8b -- PATH`), so the crate is equal to 2640d8b. Licence scan of 2640d8b: only the
+known classes (short code expressions in `src/block.rs` and
+`src/inline.rs`, small tables of test input in `src/tables.rs`);
+accepted.
+
+Open findings: I-MD-31, I-MD-60 and I-MD-72 (medium), the low rows.
+Request of the worker: `THIRD_PARTY_NOTICES.md` line 28 names
+`randoc-markdown` as the user of `saphyr-parser`, but the user is
+`randoc-cli` (I-MD-65, shared file). Open checks: the verification of
+round 3, a mutation sample with the conformance suite.

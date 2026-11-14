@@ -960,7 +960,6 @@ fn code_span_lines(text: &str, next: &[Ln]) -> usize {
         }
         match open_code_run(line.t(), Some(open)) {
             None => return k + 1,
-            Some(n) if n == open => {}
             Some(n) => open = n,
         }
     }
