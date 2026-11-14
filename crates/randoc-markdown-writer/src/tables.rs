@@ -140,15 +140,18 @@ impl W<'_> {
             .all(|cell| is_simple_cell(cell));
         let no_widths = g.widths.iter().all(|w| *w == 0.0);
         let plain_ok = rows_ok && !g.has_spans && columns > 0;
+        // Only grid and pipe tables can show a table foot.
+        let no_foot = g.foot_start.is_none();
         let (kind, indented) = if !plain_ok {
             (None, false)
-        } else if g.foot_start.is_some() && self.has(Extension::GridTables) {
+        } else if !no_foot && self.has(Extension::GridTables) {
             (Some(Kind::Grid), false)
-        } else if all_simple && no_widths && self.has(Extension::SimpleTables) {
+        } else if all_simple && no_widths && no_foot && self.has(Extension::SimpleTables) {
             (Some(Kind::Simple), true)
         } else if all_simple && no_widths && self.has(Extension::PipeTables) {
             (Some(Kind::Pipe), false)
-        } else if self.has(Extension::MultilineTables)
+        } else if no_foot
+            && self.has(Extension::MultilineTables)
             && g.head
                 .iter()
                 .chain(g.body.iter())
@@ -164,16 +167,12 @@ impl W<'_> {
             (None, false)
         };
         let Some(kind) = kind else {
-            if self.has(Extension::RawHtml) && !self.plain() {
-                return Ok(self.html_blocks(std::slice::from_ref(block))? + blankline());
+            if self.has(Extension::RawHtml) {
+                // A blank line would end the HTML block in Markdown.
+                let html = self.html_text(std::slice::from_ref(block))?;
+                return Ok(literal(html.replace("\n\n", "\n&#10;")) + blankline());
             }
-            let mut out = empty();
-            for row in g.head.iter().chain(g.body.iter()) {
-                for cell in row {
-                    out += self.block_list(&cell.content)?;
-                }
-            }
-            return Ok(out + blankline());
+            return Ok(literal("[TABLE]") + self.caption_doc(table)?);
         };
         let lines = match kind {
             Kind::Simple => self.simple_lines(&g)?,
@@ -182,28 +181,36 @@ impl W<'_> {
             Kind::Grid => self.grid_lines(&g)?,
         };
         let body = literal(lines.join("\n")) + cr();
-        let parts = caption_parts(table);
-        let mut caption = empty();
-        for (index, part) in parts.iter().enumerate() {
-            if index > 0 {
-                caption += randoc_layout::space();
-            }
-            caption += self.inline_list(part, index == 0)?;
-        }
-        if !parts.is_empty() && !table.attr.is_empty() && !self.plain() {
-            caption += literal(format!(" {}", crate::inlines::attr_text(&table.attr)));
-        }
-        let caption_doc = if parts.is_empty() {
-            blankline()
-        } else if self.has(Extension::TableCaptions) {
-            blankline() + literal(": ") + caption + blankline()
-        } else {
-            blankline() + caption + blankline()
-        };
+        let caption_doc = self.caption_doc(table)?;
         Ok(if indented {
             cr() + nest(2, body + caption_doc) + blankline()
         } else {
             body + caption_doc
+        })
+    }
+
+    /// Builds the caption that follows a table, with the blank lines around
+    /// it: the paragraphs of the caption joined by line breaks, then the
+    /// attributes of the table.
+    fn caption_doc(&mut self, table: &Table) -> Result<Doc> {
+        let parts = caption_parts(table);
+        if parts.is_empty() {
+            return Ok(blankline());
+        }
+        let mut caption = empty();
+        for (index, part) in parts.iter().enumerate() {
+            if index > 0 {
+                caption += self.line_break();
+            }
+            caption += self.inline_list(part, index == 0)?;
+        }
+        if !table.attr.is_empty() {
+            caption += literal(format!(" {}", crate::inlines::attr_text(&table.attr)));
+        }
+        Ok(if self.has(Extension::TableCaptions) {
+            blankline() + literal(": ") + caption + blankline()
+        } else {
+            blankline() + caption + blankline()
         })
     }
 

@@ -1151,6 +1151,37 @@ def define_cases():
                         c("%s-%s-%s%s%s" % (kind, al_name, w_name, cap_name, h_name),
                           [Table(head, body(), al, w, cap)])
 
+    # Each table form and the fallback when no form fits: with and without a
+    # caption, with each table extension and raw HTML off.
+    no_forms = "-simple_tables-multiline_tables-grid_tables-pipe_tables"
+    fallback_to = [
+        "markdown", "markdown" + no_forms, "markdown" + no_forms + "-raw_html", "markdown-grid_tables",
+        "markdown-grid_tables-raw_html", "markdown-grid_tables-pipe_tables", "markdown-table_captions",
+        "gfm", "gfm-pipe_tables", "gfm-raw_html", "gfm-pipe_tables-raw_html", "commonmark", "commonmark-raw_html",
+        "commonmark_x-pipe_tables-raw_html", "markdown_strict-raw_html", "plain", "plain-grid_tables",
+        "plain" + no_forms, "plain+raw_html" + no_forms, "plain-table_captions" + no_forms,
+    ]
+    shapes = {
+        "simple": dict(head=[["h1", "h2"]], body=[["a", "b"]]),
+        "widths": dict(head=[["h1", "h2"]], body=[["a", "b"]], widths=[0.3, 0.7]),
+        "break": dict(head=[["h1", "h2"]], body=[["a", [Plain("x", LB, "y")]]]),
+        "paras": dict(head=[["h1", "h2"]], body=[["a", [Para("x"), Para("y")]]]),
+        "list": dict(head=[["h1", "h2"]], body=[["a", [BL(["x"])]]]),
+        "foot": dict(head=[["h1", "h2"]], body=[["a", "b"]], foot=[["f", "g"]]),
+        "foot-break": dict(head=[["h1", "h2"]], body=[["a", [Plain("x", LB, "y")]]], foot=[["f", "g"]]),
+    }
+    captions = {
+        "": {},
+        "-cap": dict(caption="c d"),
+        "-cap-attr": dict(caption="c d", attr=A("t", ["k"], [("x", "1")])),
+        "-cap-paras": dict(caption=[Para("c"), Para("d")]),
+    }
+    for shape, parts in shapes.items():
+        for cap_name, cap in captions.items():
+            c("fallback-%s%s" % (shape, cap_name), [Table(**{**parts, **cap})], to=fallback_to)
+    c("fallback-in-list", [BL([[Table([["h1", "h2"]], [["a", [BL(["x"])]]], caption="c")]])],
+      to=["commonmark-raw_html", "markdown-grid_tables-raw_html", "plain-grid_tables"])
+
     # ---------------------------------------------------------- edge matrix
     c = suite("edges", "Spaces at the edges of inline containers, spaces before list markers, block separation.",
               ["markdown", "gfm", "commonmark", "plain"])
@@ -1567,6 +1598,29 @@ def define_cases():
     for loc in ["block", "section", "document"]:
         c("reference-location-" + loc, secs, to=["markdown", "gfm", "commonmark_x"], args=["--reference-location=" + loc])
     c("reference-location-section-links", secs, to=["markdown", "gfm"], args=["--reference-links", "--reference-location=section"])
+    # The reference form `[text]`, `[text][]` or `[text][label]` of a link or
+    # an image before each kind of next inline.
+    firsts = {
+        "link": [Link("x", "u")],
+        "image": [Image("x", "u")],
+        "numbered": [Link("a", "u1"), SP, Link("a", "u2")],
+        "emph": [Emph(Link("x", "u"))],
+    }
+    follows = {
+        "end": [], "link": [Link("y", "v")], "image": [Image("y", "v")], "same": [Link("x", "u")],
+        "bracket": [Str("[z]")], "paren": [Str("(z)")], "colon": [Str(":z")], "brace": [Str("{z}")],
+        "close": [Str("]")], "word": [Str("z")], "span": [Span(A("", ["c"]), "y")], "note": [Note(Para("n"))],
+        "code": [Code("k")], "quoted": [Q2("q")], "cite": [Cite([cit("k")], Str("[@k]"))],
+        "raw-bracket": [RawI("html", "[")], "raw-paren": [RawI("html", "(")], "raw-word": [RawI("html", "a")],
+        "space-link": [SP, Link("y", "v")], "soft-link": [SB, Link("y", "v")], "break-link": [LB, Link("y", "v")],
+        "space-image": [SP, Image("y", "v")], "space-bracket": [SP, Str("[z")],
+        "space-paren": [SP, Str("(z)")], "space-colon": [SP, Str(":z")], "space-cite": [SP, Cite([cit("k")], Str("[@k]"))],
+        "space-raw-bracket": [SP, RawI("html", "[")], "space-span-link": [SP, Span(A(), Link("y", "v"))],
+    }
+    ref_to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+    for fname, first in firsts.items():
+        for nname, rest in follows.items():
+            c("reference-form-%s-%s" % (fname, nname), [Para("w", SP, *(first + rest))], to=ref_to, args=["--reference-links"])
     heads = [H(1, "One"), Para("p"), H(2, "Two"), H(3, "Three")]
     c("setext", heads, to=["markdown", "gfm", "commonmark", "markdown_strict"], args=["--markdown-headings=setext"])
     c("setext-attr", [H(1, "One", A("x")), H(2, I("a", LB, "b"))], to=["markdown", "gfm", "commonmark"], args=["--markdown-headings=setext"])

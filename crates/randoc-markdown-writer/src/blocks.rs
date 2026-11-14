@@ -958,6 +958,64 @@ mod tests {
         assert_eq!(text, "a\n: b\n\n<!-- -->\n\nc\n: d");
     }
 
+    fn write_with(format: &str, input: &str, reference_links: bool) -> String {
+        let doc = randoc_ast::json::from_json(input).unwrap_or_default();
+        let mut options = WriterOptions::default();
+        let (base, changes) = format.split_once('-').unwrap_or((format, ""));
+        options.extensions = default_extensions(base);
+        for name in changes.split('-').filter(|n| !n.is_empty()) {
+            if let Some(extension) = randoc_core::Extension::from_name(name) {
+                options.extensions.disable(extension);
+            }
+        }
+        options.reference_links = reference_links;
+        let result = crate::writer(base).map(|w| w.write(&doc, &options, &mut Context::pure()));
+        let Some(Ok(Output::Text(text))) = result else {
+            unreachable!("the writer gives text for {format}")
+        };
+        text
+    }
+
+    #[test]
+    fn a_table_with_no_form_keeps_its_caption() {
+        // `pandoc -f json -t commonmark-raw_html` and `-t plain-grid_tables`.
+        let input = r#"{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Table","c":[
+            ["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"c"}]}]],
+            [[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],
+            [[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,
+            [{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]}]]]]]]],
+            [["",[],[]],[]]]}]}"#;
+        assert_eq!(
+            write_with("commonmark-raw_html", input, false),
+            "[TABLE]\n\nc"
+        );
+        assert_eq!(
+            write_with("plain-grid_tables", input, false),
+            "[TABLE]\n\n: c"
+        );
+    }
+
+    #[test]
+    fn adjacent_reference_links_keep_their_text() {
+        // `pandoc -f json -t markdown --reference-links`.
+        let link = |text: &str, url: &str| {
+            format!(r#"{{"t":"Link","c":[["",[],[]],[{{"t":"Str","c":"{text}"}}],["{url}",""]]}}"#)
+        };
+        let input = format!(
+            r#"{{"pandoc-api-version":[1,23,1,2],"meta":{{}},"blocks":[{{"t":"Para","c":[{},{}]}}]}}"#,
+            link("x", "u"),
+            link("y", "v")
+        );
+        assert_eq!(
+            write_with("markdown", &input, true),
+            "[x][][y]\n\n  [x]: u\n  [y]: v"
+        );
+        assert_eq!(
+            write_with("markdown-shortcut_reference_links", &input, true),
+            "[x][][y][]\n\n  [x]: u\n  [y]: v"
+        );
+    }
+
     #[test]
     fn absurd_sizes_do_not_exhaust_memory() {
         // Found by the fuzz target: a column width of 4e30 made a run of

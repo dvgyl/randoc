@@ -12,9 +12,14 @@ impl W<'_> {
     /// Renders blocks with the HTML writer, for example a table that no
     /// Markdown table form can show.
     pub(crate) fn html_blocks(&self, blocks: &[Block]) -> Result<Doc> {
+        self.html_text(blocks).map(literal)
+    }
+
+    /// Renders blocks with the HTML writer and returns the text.
+    pub(crate) fn html_text(&self, blocks: &[Block]) -> Result<Text> {
         let mut context = Context::pure();
         context.limits.max_nesting_depth = self.max_depth.saturating_sub(self.depth);
-        randoc_html::render_blocks(blocks, self.opts, &mut context).map(literal)
+        randoc_html::render_blocks(blocks, self.opts, &mut context)
     }
 }
 

@@ -171,6 +171,12 @@ impl<'a> W<'a> {
         self.ext.contains(extension)
     }
 
+    /// Returns `true` when a reference whose label is its text can take the
+    /// shortcut form `[text]`. The CommonMark variants have no extension for it.
+    pub(crate) fn shortcut_references(&self) -> bool {
+        self.variant == Variant::Commonmark || self.has(Extension::ShortcutReferenceLinks)
+    }
+
     /// Renders a document at the line width of the options, from column 0.
     pub(crate) fn render_alone(&self, doc: Doc) -> Text {
         doc.render(line_width(self.opts))

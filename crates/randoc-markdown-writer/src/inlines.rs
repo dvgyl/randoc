@@ -10,6 +10,29 @@ use randoc_core::shared::stringify;
 
 use crate::{LinkRef, Variant, W};
 
+/// Returns `true` when the inlines after a shortcut reference `[text]` would
+/// change its meaning: a link, a citation or a bracket text next to it, or a
+/// parenthesis or a colon right after it.
+fn continues_reference(rest: &[Inline]) -> bool {
+    fn opens_bracket(inline: &Inline) -> bool {
+        match inline {
+            Inline::Link(..) | Inline::Cite(..) => true,
+            Inline::Str(text) | Inline::RawInline(_, text) => text.starts_with('['),
+            _ => false,
+        }
+    }
+    match rest {
+        [
+            Inline::Space | Inline::SoftBreak | Inline::LineBreak,
+            next,
+            ..,
+        ] => opens_bracket(next),
+        [Inline::Str(text) | Inline::RawInline(_, text), ..] => text.starts_with(['[', '(', ':']),
+        [next, ..] => opens_bracket(next),
+        [] => false,
+    }
+}
+
 /// Returns the parts of the brace form of attributes: `#id`, `.class`, `key="value"`.
 fn attr_parts(attr: &Attr) -> Vec<Text> {
     let mut parts = Vec::new();
@@ -159,7 +182,7 @@ impl W<'_> {
                     }
                 }
                 Inline::LineBreak => self.line_break(),
-                other => self.inline(other)?,
+                other => self.inline(other, &inlines[index + 1..])?,
             };
             let doc = match (inline, next) {
                 (Inline::Math(MathType::InlineMath, _), Some(Inline::Str(s)))
@@ -203,7 +226,7 @@ impl W<'_> {
         }
     }
 
-    fn line_break(&self) -> Doc {
+    pub(crate) fn line_break(&self) -> Doc {
         if self.in_heading && self.variant == Variant::Commonmark && !self.plain() {
             return literal("\\") + cr();
         }
@@ -220,7 +243,7 @@ impl W<'_> {
         }
     }
 
-    fn inline(&mut self, inline: &Inline) -> Result<Doc> {
+    fn inline(&mut self, inline: &Inline, rest: &[Inline]) -> Result<Doc> {
         let plain = self.plain();
         Ok(match inline {
             Inline::Str(_) | Inline::Space | Inline::SoftBreak | Inline::LineBreak => empty(),
@@ -283,7 +306,10 @@ impl W<'_> {
                 let name = format.as_str().to_lowercase();
                 self.raw_inline(&name, text)
             }
-            Inline::Link(attr, content, target) => self.link(attr, content, target)?,
+            Inline::Link(attr, content, target) => {
+                let collapsed = !self.shortcut_references() || continues_reference(rest);
+                self.link(attr, content, target, collapsed)?
+            }
             Inline::Image(attr, content, target) => self.image(attr, content, target)?,
             Inline::Note(blocks) => {
                 let slot = self.notes.len();
@@ -649,7 +675,15 @@ impl W<'_> {
         Ok(key + space() + literal("[") + group + literal("]"))
     }
 
-    fn link(&mut self, attr: &Attr, content: &[Inline], target: &Target) -> Result<Doc> {
+    /// Writes a link. `collapsed` asks for the `[text][]` form of a
+    /// reference whose label is its text.
+    fn link(
+        &mut self,
+        attr: &Attr,
+        content: &[Inline],
+        target: &Target,
+        collapsed: bool,
+    ) -> Result<Doc> {
         if self.plain() {
             let inner = self.inline_list(content, false)?;
             if self.opts.reference_links {
@@ -691,10 +725,12 @@ impl W<'_> {
         if self.opts.reference_links {
             let label_text = inner.render(None);
             let label = self.add_reference(&label_text, target, &attrs);
-            return Ok(if label == label_text {
-                literal("[") + inner + literal("]")
-            } else {
+            return Ok(if label != label_text {
                 literal("[") + inner + literal(format!("][{label}]"))
+            } else if collapsed {
+                literal("[") + inner + literal("][]")
+            } else {
+                literal("[") + inner + literal("]")
             });
         }
         let attrs = if attrs.is_empty() {
@@ -752,10 +788,12 @@ impl W<'_> {
         if self.opts.reference_links {
             let label_text = inner.render(None);
             let label = self.add_reference(&label_text, target, &attrs);
-            return if label == label_text {
+            return if label != label_text {
+                literal("![") + inner + literal(format!("][{label}]"))
+            } else if self.shortcut_references() {
                 literal("![") + inner + literal("]")
             } else {
-                literal("![") + inner + literal(format!("][{label}]"))
+                literal("![") + inner + literal("][]")
             };
         }
         let attrs = if attrs.is_empty() {

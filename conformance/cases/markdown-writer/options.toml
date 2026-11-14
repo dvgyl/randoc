@@ -254,6 +254,678 @@ args = ["--reference-links", "--reference-location=section"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[1,["",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n1"}]}]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"l"}],["u",""]]}]},{"t":"Header","c":[1,["",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Para","c":[{"t":"Str","c":"y"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n2"}]}]}]}]}'
 
 [[case]]
+id = "reference-form-link-end"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-same"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"[z]"}]}]}'
+
+[[case]]
+id = "reference-form-link-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-link-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-link-brace"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"{z}"}]}]}'
+
+[[case]]
+id = "reference-form-link-close"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"]"}]}]}'
+
+[[case]]
+id = "reference-form-link-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"z"}]}]}'
+
+[[case]]
+id = "reference-form-link-span"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Span","c":[["",["c"],[]],[{"t":"Str","c":"y"}]]}]}]}'
+
+[[case]]
+id = "reference-form-link-note"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]}]}]}'
+
+[[case]]
+id = "reference-form-link-code"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Code","c":[["",[],[]],"k"]}]}]}'
+
+[[case]]
+id = "reference-form-link-quoted"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"q"}]]}]}]}'
+
+[[case]]
+id = "reference-form-link-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-link-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-link-raw-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"RawInline","c":["html","("]}]}]}'
+
+[[case]]
+id = "reference-form-link-raw-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"RawInline","c":["html","a"]}]}]}'
+
+[[case]]
+id = "reference-form-link-space-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-soft-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"SoftBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-break-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"LineBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-space-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-link-space-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Str","c":"[z"}]}]}'
+
+[[case]]
+id = "reference-form-link-space-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-link-space-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-link-space-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-link-space-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-link-space-span-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Span","c":[["",[],[]],[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]]}]}]}'
+
+[[case]]
+id = "reference-form-image-end"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-same"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"[z]"}]}]}'
+
+[[case]]
+id = "reference-form-image-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-image-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-image-brace"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"{z}"}]}]}'
+
+[[case]]
+id = "reference-form-image-close"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"]"}]}]}'
+
+[[case]]
+id = "reference-form-image-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Str","c":"z"}]}]}'
+
+[[case]]
+id = "reference-form-image-span"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Span","c":[["",["c"],[]],[{"t":"Str","c":"y"}]]}]}]}'
+
+[[case]]
+id = "reference-form-image-note"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]}]}]}'
+
+[[case]]
+id = "reference-form-image-code"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Code","c":[["",[],[]],"k"]}]}]}'
+
+[[case]]
+id = "reference-form-image-quoted"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"q"}]]}]}]}'
+
+[[case]]
+id = "reference-form-image-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-image-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-image-raw-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"RawInline","c":["html","("]}]}]}'
+
+[[case]]
+id = "reference-form-image-raw-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"RawInline","c":["html","a"]}]}]}'
+
+[[case]]
+id = "reference-form-image-space-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-soft-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"SoftBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-break-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"LineBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-space-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-image-space-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Str","c":"[z"}]}]}'
+
+[[case]]
+id = "reference-form-image-space-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-image-space-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-image-space-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-image-space-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-image-space-span-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]},{"t":"Space"},{"t":"Span","c":[["",[],[]],[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-end"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-same"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Str","c":"[z]"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-brace"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Str","c":"{z}"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-close"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Str","c":"]"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Str","c":"z"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-span"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Span","c":[["",["c"],[]],[{"t":"Str","c":"y"}]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-note"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-code"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Code","c":[["",[],[]],"k"]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-quoted"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"q"}]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-raw-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"RawInline","c":["html","("]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-raw-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"RawInline","c":["html","a"]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-soft-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"SoftBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-break-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"LineBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Str","c":"[z"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-numbered-space-span-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u1",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u2",""]]},{"t":"Space"},{"t":"Span","c":[["",[],[]],[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-end"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}]}'
+
+[[case]]
+id = "reference-form-emph-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-same"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Str","c":"[z]"}]}]}'
+
+[[case]]
+id = "reference-form-emph-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-emph-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-emph-brace"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Str","c":"{z}"}]}]}'
+
+[[case]]
+id = "reference-form-emph-close"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Str","c":"]"}]}]}'
+
+[[case]]
+id = "reference-form-emph-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Str","c":"z"}]}]}'
+
+[[case]]
+id = "reference-form-emph-span"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Span","c":[["",["c"],[]],[{"t":"Str","c":"y"}]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-note"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]}]}]}'
+
+[[case]]
+id = "reference-form-emph-code"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Code","c":[["",[],[]],"k"]}]}]}'
+
+[[case]]
+id = "reference-form-emph-quoted"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"q"}]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-emph-raw-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"RawInline","c":["html","("]}]}]}'
+
+[[case]]
+id = "reference-form-emph-raw-word"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"RawInline","c":["html","a"]}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-soft-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"SoftBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-break-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"LineBreak"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-image"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Str","c":"[z"}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-paren"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Str","c":"(z)"}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-colon"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Str","c":":z"}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-cite"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Cite","c":[[{"citationId":"k","citationPrefix":[],"citationSuffix":[],"citationMode":{"t":"NormalCitation"},"citationNoteNum":1,"citationHash":0}],[{"t":"Str","c":"[@k]"}]]}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-raw-bracket"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"RawInline","c":["html","["]}]}]}'
+
+[[case]]
+id = "reference-form-emph-space-span-link"
+to = ["markdown", "markdown-shortcut_reference_links", "gfm", "commonmark", "markdown_strict", "plain"]
+args = ["--reference-links"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"w"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Space"},{"t":"Span","c":[["",[],[]],[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"y"}],["v",""]]}]]}]}]}'
+
+[[case]]
 id = "setext"
 to = ["markdown", "gfm", "commonmark", "markdown_strict"]
 args = ["--markdown-headings=setext"]

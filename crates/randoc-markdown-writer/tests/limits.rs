@@ -167,7 +167,10 @@ fn deep_documents_give_the_depth_error_on_a_small_stack() {
                 let doc = nested_blocks(wrap, depth);
                 for format in FORMATS {
                     let result = write(&doc, format, &mut Context::pure());
-                    assert!(result.is_err(), "{name} {depth} {format}");
+                    // `markua` has no table form and no raw HTML, so a table
+                    // is the placeholder `[TABLE]`, as in Pandoc.
+                    let placeholder = name == "table" && *format == "markua";
+                    assert!(result.is_err() || placeholder, "{name} {depth} {format}");
                 }
                 std::mem::forget(doc);
             }

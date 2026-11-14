@@ -1955,3 +1955,38 @@ options 89 passing, 19 partial, 1 not started; output formats 5
 passing, 12 partial, 1 failing, 59 not started; units 48194 of 50617
 passing. `spec/baseline.json` and `spec/capabilities.json` are updated
 in the next commit.
+
+## Workstream markdown-writer (branch `ws/markdown-writer-3`, commit 7227395, one squashed commit, session 5 of 2026-11-14, batch C)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit 7227395 only. Content (the
+commits of `git log --format='%h %s' main..7227395`): 7227395 corrects
+the two critical findings of review round 1. Codex R1-01: a table that
+has no table form in the output format lost its caption; the writer now
+writes HTML (with `raw_html`) or `[TABLE]` and the caption. I-MDW-06
+(critical part) and Codex R1-12: the writer lost the visible text of a
+reference link that another link or a bracket follows; it now writes
+`[text][]` there. Rows: I-MDW-06 changed (the critical part is
+corrected; open, high, for the CommonMark block references); I-MDW-02
+changed (open, low).
+
+The gate evidence comes from the inbox line of 7227395
+(`env/store/inbox/markdown-writer.log`, 21:40 UTC), the commit list
+above and the top section of `env/store/reports/markdown-writer.md`.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 7227395. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Report: replay suites `table-forms/fallback-*` (29 cases, 1376 units) and `options/reference-form-*` (112 cases, 1235 units); oracle matrices of 552 + 42 and 950 + 119 probes, 0 differences after the change. |
+| 3. Tests | `cargo test -p randoc-markdown-writer` on the merged tree: 19 pass, 0 fail, 1 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Fuzzing: not run. |
+| 5. Reviews | Round 1 (both reviewers) requested changes; the two critical findings are corrected; the other findings are in work. |
+| 6. No slowdowns | Not measured (Codex R1-02 and Opus R1-09, time of nested tables and inlines, are open). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` merged without a
+conflict). Licence scan of 7227395: no hit.
+
+Open findings: I-MDW-06 (high), the high and medium findings of round 1
+that are in work, the low rows. Open checks: fuzzing, coverage, the
+mutation sample, the time tables.
