@@ -175,7 +175,7 @@ fn haskell_type_name(value: &Value) -> &'static str {
 pub(crate) fn metatable_name(table: &Table) -> Option<String> {
     let metatable = table.metatable()?;
     match metatable.raw_get::<Value>("__name") {
-        Ok(Value::String(name)) => Some(name.to_string_lossy()),
+        Ok(Value::String(name)) => Some(name.text()),
         _ => None,
     }
 }
@@ -190,7 +190,7 @@ pub(crate) fn described_type(value: &Value) -> String {
                 return name.to_string();
             }
             match userdata.type_name() {
-                Ok(name) => name.to_string_lossy(),
+                Ok(name) => name.text(),
                 Err(_) => "userdata".to_string(),
             }
         }
@@ -213,6 +213,9 @@ pub(crate) fn mismatch(expected: &str, value: &Value) -> PeekError {
 /// (`Cx::convert_inner_objects`), so a tree that a script builds level by
 /// level stays far below the bound.
 pub(crate) const MAX_ACTIVE_OBJECTS: usize = 24;
+
+/// The metamethods that convert a table to an object with Lua code.
+const CONVERTERS: [&str; 2] = ["__toinline", "__toblock"];
 
 /// The addresses of the objects with changed properties that the
 /// conversions read now, outermost first. It finds an object that contains
@@ -272,14 +275,50 @@ pub(crate) struct Cx<'a> {
     pub(crate) max_depth: usize,
 }
 
+/// The text of bytes as Pandoc decodes a Lua string: a valid UTF-8 sequence
+/// gives its character, and each other byte gives one U+FFFD. (The
+/// conversion of the Rust library gives one U+FFFD for each maximal
+/// invalid part: `"\xE2\xA0"` gives one, Pandoc two.)
+pub(crate) fn text_from_bytes(bytes: &[u8]) -> Text {
+    let mut text = String::with_capacity(bytes.len());
+    let mut rest = bytes;
+    loop {
+        match std::str::from_utf8(rest) {
+            Ok(valid) => {
+                text.push_str(valid);
+                return text;
+            }
+            Err(error) => {
+                let (valid, invalid) = rest.split_at(error.valid_up_to());
+                text.push_str(std::str::from_utf8(valid).unwrap_or_default());
+                let count = error.error_len().unwrap_or(invalid.len());
+                text.extend(std::iter::repeat_n('\u{FFFD}', count));
+                rest = invalid.get(count..).unwrap_or_default();
+            }
+        }
+    }
+}
+
+/// The text of a Lua string, with the decoder of Pandoc.
+pub(crate) trait LuaText {
+    /// See [`text_from_bytes`].
+    fn text(&self) -> Text;
+}
+
+impl LuaText for mlua::LuaString {
+    fn text(&self) -> Text {
+        text_from_bytes(&self.as_bytes())
+    }
+}
+
 impl Cx<'_> {
     /// Reads a string. Lua converts a number to a string, as `lua_tolstring`
     /// does.
     pub(crate) fn text(&self, value: &Value) -> Peek<Text> {
         match value {
-            Value::String(text) => Ok(text.to_string_lossy()),
+            Value::String(text) => Ok(text.text()),
             Value::Integer(_) | Value::Number(_) => match self.lua.coerce_string(value.clone())? {
-                Some(text) => Ok(text.to_string_lossy()),
+                Some(text) => Ok(text.text()),
                 None => Err(mismatch("string", value)),
             },
             _ => Err(mismatch("string", value)),
@@ -292,7 +331,7 @@ impl Cx<'_> {
         let found = match value {
             Value::Integer(number) => Some(*number),
             Value::Number(number) => float_to_integer(*number),
-            Value::String(text) => read_integer(&text.to_string_lossy()),
+            Value::String(text) => read_integer(&text.text()),
             _ => None,
         };
         found.ok_or_else(|| mismatch("Integral", value))
@@ -303,7 +342,7 @@ impl Cx<'_> {
         let found = match value {
             Value::Integer(number) => Some(*number as f64),
             Value::Number(number) => Some(*number),
-            Value::String(text) => read_double(&text.to_string_lossy()),
+            Value::String(text) => read_double(&text.text()),
             _ => None,
         };
         found.ok_or_else(|| mismatch("RealFloat", value))
@@ -428,10 +467,19 @@ impl Cx<'_> {
             return Ok(done);
         }
         if outermost {
+            let Some(order) = self.inner_objects(&cache)? else {
+                // A converter of Lua code can give a new value at each
+                // call, so each occurrence converts again, in order.
+                return self.apply_cache(node, address, &cache);
+            };
             self.set_converted(Some(HashMap::new()));
-            let result = self
-                .convert_inner_objects(&cache)
-                .and_then(|()| self.apply_cache(node, address, &cache));
+            for value in &order {
+                if let Some(type_name) = with_node(value, Node::type_name) {
+                    // The error, if any, comes again from the outer conversion.
+                    let _ = self.object(type_name, value);
+                }
+            }
+            let result = self.apply_cache(node, address, &cache);
             self.set_converted(None);
             return result;
         }
@@ -456,19 +504,20 @@ impl Cx<'_> {
         for pair in cache.pairs::<Value, Value>() {
             let (key, cached) = pair?;
             let Value::String(key) = key else { continue };
-            node = set_property(self, node, &key.to_string_lossy(), &cached)?;
+            node = set_property(self, node, &key.text(), &cached)?;
         }
         check_node(self, &node)?;
         Ok(node)
     }
 
-    /// Converts the objects with changed properties inside the cached
-    /// values of an object, the innermost first, so that the conversion of
-    /// each outer object finds its inner objects done and does not recurse
-    /// for each level. A search on the heap finds them. An inner object
-    /// that gives an error is left out: the conversion that reads it gives
-    /// the error.
-    fn convert_inner_objects(&self, cache: &Table) -> Peek<()> {
+    /// The objects with changed properties inside the cached values of an
+    /// object, the innermost first. The outer conversion converts them first
+    /// and keeps each result, so that the conversion of each outer object
+    /// finds its inner objects done and does not recurse for each level. A
+    /// search on the heap finds them. The shortcut is correct only when the
+    /// conversion runs no Lua code: `None` when a table has a converter
+    /// (`__toinline` or `__toblock`).
+    fn inner_objects(&self, cache: &Table) -> Peek<Option<Vec<Value>>> {
         let mut seen = HashSet::new();
         let mut order = Vec::new();
         // A value, its depth in changed objects, and whether its inner
@@ -494,6 +543,13 @@ impl Cx<'_> {
                     if !seen.insert(table.to_pointer() as usize) {
                         continue;
                     }
+                    if let Some(metatable) = table.metatable()
+                        && CONVERTERS.iter().any(|name| {
+                            !matches!(metatable.raw_get::<Value>(*name), Ok(Value::Nil))
+                        })
+                    {
+                        return Ok(None);
+                    }
                     for pair in table.pairs::<Value, Value>() {
                         let (_, item) = pair?;
                         if matches!(item, Value::Table(_) | Value::UserData(_)) {
@@ -504,13 +560,7 @@ impl Cx<'_> {
                 _ => {}
             }
         }
-        for value in &order {
-            if let Some(type_name) = with_node(value, Node::type_name) {
-                // The error, if any, comes again from the outer conversion.
-                let _ = self.object(type_name, value);
-            }
-        }
-        Ok(())
+        Ok(Some(order))
     }
 
     /// Reads an `Inline` object.
@@ -569,7 +619,7 @@ impl Cx<'_> {
     /// Reads a value that can stand for one inline.
     pub(crate) fn inline_fuzzy(&self, value: &Value) -> Peek<Inline> {
         let read = || match value {
-            Value::String(text) => Ok(Inline::Str(text.to_string_lossy())),
+            Value::String(text) => Ok(Inline::Str(text.text())),
             Value::Table(_) => or_else(self.inline_metamethod(value), || self.inline(value)),
             Value::UserData(_) => or_else(self.inline(value), || self.inline_metamethod(value)),
             _ => Err(mismatch("Inline-ish", value)),
@@ -580,7 +630,7 @@ impl Cx<'_> {
     /// Reads a value that can stand for a list of inlines.
     pub(crate) fn inlines_fuzzy(&self, value: &Value) -> Peek<Vec<Inline>> {
         match value {
-            Value::String(text) => Ok(text_to_inlines(&text.to_string_lossy())),
+            Value::String(text) => Ok(text_to_inlines(&text.text())),
             Value::Table(_) => or_else(self.inline_metamethod(value).map(|x| vec![x]), || {
                 self.list(value, |item| self.inline_fuzzy(item))
             }),
@@ -676,7 +726,7 @@ impl Cx<'_> {
     /// or a table.
     pub(crate) fn attr(&self, value: &Value) -> Peek<Attr> {
         let read = || match value {
-            Value::String(text) => Ok(Attr::new(text.to_string_lossy(), Vec::new(), Vec::new())),
+            Value::String(text) => Ok(Attr::new(text.text(), Vec::new(), Vec::new())),
             Value::UserData(_) => match self.object("Attr", value)? {
                 Node::Attr(attr) => Ok(attr),
                 _ => Err(mismatch("Attr", value)),
@@ -694,7 +744,7 @@ impl Cx<'_> {
     pub(crate) fn attr_arguments(&self, id: &Value, classes: &Value, pairs: &Value) -> Peek<Attr> {
         match id {
             Value::String(text) => Ok(Attr::new(
-                text.to_string_lossy(),
+                text.text(),
                 optional(self.list(classes, |class| self.text(class)))?.unwrap_or_default(),
                 optional(self.attribute_list(pairs))?.unwrap_or_default(),
             )),
@@ -944,7 +994,7 @@ impl Cx<'_> {
         }
         let read = || match value {
             Value::Boolean(flag) => Ok(MetaValue::MetaBool(*flag)),
-            Value::String(text) => Ok(MetaValue::MetaString(text.to_string_lossy())),
+            Value::String(text) => Ok(MetaValue::MetaString(text.text())),
             Value::Integer(number) => Ok(MetaValue::MetaString(number.to_string())),
             Value::Number(number) => Ok(MetaValue::MetaString(randoc_ast::json::show_double(
                 *number,

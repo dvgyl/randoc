@@ -3,14 +3,14 @@
 use std::cell::Cell;
 
 use mlua::{Function, Lua, MultiValue, Table, Value, Variadic};
-use randoc_ast::{Attr, Block, Inline, Text};
+use randoc_ast::{Attr, Block, Inline, MetaValue, Pandoc, Text};
 use randoc_core::shared::{stringify, stringify_blocks, stringify_meta};
 
 use crate::construct::{CONSTRUCTORS, Call, construct, version};
 use crate::object::{
     METAMETHODS, Node, TYPE_SPECS, cache_of, ensure_cache, new_object, set_node, with_node,
 };
-use crate::peek::{Cx, Peek, PeekError, is_none_or_nil, mismatch, none, retrieving};
+use crate::peek::{Cx, LuaText, Peek, PeekError, is_none_or_nil, mismatch, none, retrieving};
 use crate::properties::get_property;
 use crate::push::{self, METATABLE_PREFIX};
 use crate::runtime;
@@ -177,11 +177,11 @@ fn type_tables(lua: &Lua) -> mlua::Result<Table> {
 /// error, without the frames of the prelude.
 fn traceback(lua: &Lua, error: Value) -> mlua::Result<String> {
     let message = match &error {
-        Value::String(text) => text.to_string_lossy(),
+        Value::String(text) => text.text(),
         Value::Error(error) => runtime::message(error),
         other => other.to_string()?,
     };
-    let full = lua.traceback(Some(&message), 2)?.to_string_lossy();
+    let full = lua.traceback(Some(&message), 2)?.text();
     let Some(frames) = full.strip_prefix(message.as_str()) else {
         return Ok(full);
     };
@@ -209,7 +209,7 @@ fn argument(arguments: &[Value], index: usize) -> Value {
 
 fn name_argument(arguments: &[Value], index: usize) -> Peek<String> {
     match arguments.get(index) {
-        Some(Value::String(name)) => Ok(name.to_string_lossy()),
+        Some(Value::String(name)) => Ok(name.text()),
         _ => Err(PeekError::Thrown("internal error: no name".to_string())),
     }
 }
@@ -479,7 +479,7 @@ fn attributes(cx: &Cx, arguments: &[Value]) -> Peek<Vec<Value>> {
         }
         "index" => match &key {
             Value::String(name) => {
-                let name = name.to_string_lossy();
+                let name = name.text();
                 match pairs.iter().find(|(k, _)| *k == name) {
                     Some((_, value)) => Ok(vec![push::text(lua, value)?]),
                     None => Ok(vec![Value::Nil]),
@@ -544,7 +544,7 @@ fn set_attribute(
     let fail = |message: &str| Err(PeekError::Thrown(message.to_string()));
     match key {
         Value::String(name) => {
-            let name = name.to_string_lossy();
+            let name = name.text();
             let position = pairs.iter().position(|(k, _)| *k == name);
             match (position, new) {
                 (Some(index), None) => {
@@ -659,7 +659,7 @@ fn stringify_value(cx: &Cx, value: &Value) -> Peek<String> {
     match node {
         Some(Node::Inline(inline)) => Ok(stringify(&[inline])),
         Some(Node::Block(block)) => Ok(stringify_blocks(&[block])),
-        Some(Node::Pandoc(doc)) => Ok(stringify_blocks(&doc.blocks)),
+        Some(Node::Pandoc(doc)) => Ok(stringify_document(&doc)),
         Some(Node::Cell(cell)) => Ok(stringify_blocks(&cell.content)),
         Some(Node::Citation(_) | Node::Attr(_)) => Ok(String::new()),
         Some(_) => Err(PeekError::Thrown(
@@ -674,6 +674,26 @@ fn stringify_value(cx: &Cx, value: &Value) -> Peek<String> {
             Ok(stringify_meta(&meta))
         }
     }
+}
+
+/// The text of a document as `stringify` of Pandoc gives it: the inlines and
+/// blocks of the metadata values in key order, then the blocks. A string or a
+/// boolean of the metadata gives no text, because Pandoc collects only the
+/// inline elements of the document.
+fn stringify_document(doc: &Pandoc) -> String {
+    let mut text = String::new();
+    let mut stack: Vec<&MetaValue> = doc.meta.0.values().rev().collect();
+    while let Some(value) = stack.pop() {
+        match value {
+            MetaValue::MetaMap(map) => stack.extend(map.values().rev()),
+            MetaValue::MetaList(values) => stack.extend(values.iter().rev()),
+            MetaValue::MetaInlines(inlines) => text.push_str(&stringify(inlines)),
+            MetaValue::MetaBlocks(blocks) => text.push_str(&stringify_blocks(blocks)),
+            MetaValue::MetaString(_) | MetaValue::MetaBool(_) => {}
+        }
+    }
+    text.push_str(&stringify_blocks(&doc.blocks));
+    text
 }
 
 /// Makes the list `PANDOC_STATE.FIELD` from strings.

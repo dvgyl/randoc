@@ -35,6 +35,7 @@ mod json;
 mod module;
 mod normalize;
 mod object;
+mod os;
 mod path;
 mod peek;
 mod properties;

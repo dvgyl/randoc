@@ -751,6 +751,66 @@ GROUPS["changed-chains"] = [
      "c.content:insert(P.Para'y') d.content = {c} return s1 == tostring(d), #tostring(d)"),
 ]
 
+
+GROUPS["stringify-document"] = [
+    ("document", "return P.utils.stringify(document)"),
+    ("meta kinds", "local d = P.Pandoc({P.Para{t'body'}}, {s = 'plain', b = false, l = {'ls', true, P.Inlines{t'in'}}, "
+     "m = {k = 'mv', i = P.Inlines{t'mi'}}, bl = P.Blocks{P.Para{t'blk'}, P.Para{t'blk2'}}}) return P.utils.stringify(d)"),
+    ("meta order", "local d = P.Pandoc({}, {zz = P.Inlines{t'last'}, aa = P.Inlines{t'first'}, mm = {P.Inlines{t'a'}, P.Inlines{t'b'}}}) "
+     "return P.utils.stringify(d)"),
+    ("meta only", "return P.utils.stringify(P.Pandoc({}, {title = P.Inlines{t'T', P.Space(), P.Emph{t'x'}}}))"),
+    ("meta table", "return P.utils.stringify(document.meta)"),
+    ("sha1 document", "return P.utils.sha1(P.utils.stringify(document))"),
+]
+
+DECODER_SEQUENCES = [
+    "\\226\\160", "\\240\\159\\152", "\\225\\128", "\\195", "\\255", "\\128\\128", "\\192\\175",
+    "\\237\\160\\128", "\\244\\144\\128\\128", "\\226\\40\\161", "\\248\\136\\128\\128\\128",
+    "a\\226\\130b\\195", "\\226\\130\\172\\226", "\\239\\191", "\\244\\143\\191\\191\\244\\143",
+]
+
+GROUPS["lua-text-decoding"] = [
+    (f"Str {seq}", f"return P.Str('<{seq}>').text, P.utils.stringify(P.Str('{seq}'))")
+    for seq in DECODER_SEQUENCES
+] + [
+    (f"json {seq}", f"return P.json.encode('{seq}'), P.json.encode({{['{seq}'] = 1}})")
+    for seq in DECODER_SEQUENCES[:6]
+] + [
+    (f"meta {seq}", f"local m = P.Meta{{k = '{seq}'}} return m.k, P.MetaString('{seq}')")
+    for seq in DECODER_SEQUENCES[:6]
+] + [
+    (f"attr {seq}", f"return P.Attr('{seq}', {{'{seq}'}}, {{k = '{seq}'}}).identifier, P.Code('{seq}').text")
+    for seq in DECODER_SEQUENCES[:6]
+]
+
+GROUPS["converter-order"] = [
+    ("shared converter", "local n = 0 local c = setmetatable({}, {__toinline = function() n = n + 1 return P.Str(tostring(n)) end}) "
+     "local e = P.Emph{} e.content = {c} local p = P.Para{} p.content = {e, e} return tostring(p)"),
+    ("two converters", "local n = 0 local a, b = P.Emph{}, P.Strong{} "
+     "a.content = {setmetatable({}, {__toinline = function() n = n + 1 return P.Str('a' .. n) end})} "
+     "b.content = {setmetatable({}, {__toinline = function() n = n + 1 return P.Str('b' .. n) end})} "
+     "local p = P.Para{} p.content = {a, b} return tostring(p)"),
+    ("block converter", "local n = 0 local c = setmetatable({}, {__toblock = function() n = n + 1 return P.Para{P.Str(tostring(n))} end}) "
+     "local d = P.Div{} d.content = {c, c} local o = P.Div{} o.content = {d, d} return tostring(o)"),
+    ("pure shared", "local c = P.Div{} c.content:insert(P.Para'x') local d = P.Div{} d.content = {c, c} return tostring(d)"),
+]
+
+import random as _random
+_rng = _random.Random(20261114)
+_ALPHABET = [0x00, 0x5A, 0xD8, 0xDB, 0xDC, 0xDE, 0xFE, 0xFF, 0x61, 0x10]
+_ENCODINGS = ["UTF-16BE", "UTF-16LE", "UTF-16", "UTF-32BE", "UTF-32LE", "UTF-32"]
+_IGNORE_INPUTS = []
+for _ in range(120):
+    data = bytes(_rng.choice(_ALPHABET) for _ in range(_rng.randint(1, 9)))
+    _IGNORE_INPUTS.append((data, _rng.choice(_ENCODINGS) + _rng.choice(["//IGNORE", "//IGNORE", ""])))
+
+GROUPS["encoding-recovery"] = [
+    (f"fromencoding {data.hex()} {name}",
+     "local s = P.text.fromencoding('" + "".join(f"\\{b:03d}" for b in data) + f"', {lua_string(name)}) "
+     "return (s:gsub('[^\\1-\\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>'))")
+    for data, name in _IGNORE_INPUTS
+]
+
 RAW_FILTERS = {
     "raw-bom": "﻿function Pandoc(d) d.meta.r = 'ok' return d end\n",
     "raw-bom-shebang": "﻿#!/usr/bin/env pandoc lua\nfunction Pandoc(d) d.meta.r = 'ok' return d end\n",

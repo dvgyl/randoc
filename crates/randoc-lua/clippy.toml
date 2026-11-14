@@ -1,0 +1,8 @@
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+allow-dbg-in-tests = true
+disallowed-methods = [
+    { path = "mlua::LuaString::to_string_lossy", reason = "use `peek::LuaText::text`: Pandoc gives one U+FFFD for each invalid byte" },
+    { path = "mlua::LuaString::to_str", reason = "use `peek::LuaText::text`: Pandoc gives one U+FFFD for each invalid byte" },
+]

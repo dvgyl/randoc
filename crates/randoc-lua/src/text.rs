@@ -320,26 +320,34 @@ impl Encoding {
                     (Order::Mark, [0xFE, 0xFF, rest @ ..]) => (false, rest),
                     _ => (order == Order::Little, bytes),
                 };
-                let mut units = Vec::with_capacity(bytes.len() / 2);
-                for pair in bytes.chunks(2) {
-                    match pair {
-                        [a, b] if little => units.push(u16::from_le_bytes([*a, *b])),
-                        [a, b] => units.push(u16::from_be_bytes([*a, *b])),
-                        _ => fail(pair.first().copied().unwrap_or(0))?,
+                // A byte that starts no valid unit is skipped alone, so
+                // that the next unit can start one byte later.
+                let unit = |index: usize| {
+                    let pair = <[u8; 2]>::try_from(bytes.get(index..index + 2)?).ok()?;
+                    Some(if little {
+                        u16::from_le_bytes(pair)
+                    } else {
+                        u16::from_be_bytes(pair)
+                    })
+                };
+                let mut index = 0;
+                while let Some(&first) = bytes.get(index) {
+                    let (decoded, width) = match unit(index) {
+                        Some(high @ 0xD800..=0xDBFF) => match unit(index + 2) {
+                            Some(low @ 0xDC00..=0xDFFF) => (
+                                char::decode_utf16([high, low]).next().and_then(Result::ok),
+                                4,
+                            ),
+                            _ => (None, 1),
+                        },
+                        Some(code) => (char::from_u32(u32::from(code)), 2),
+                        None => (None, 1),
+                    };
+                    match decoded {
+                        Some(c) => text.push(c),
+                        None => fail(first)?,
                     }
-                }
-                for c in char::decode_utf16(units) {
-                    match c {
-                        Ok(c) => text.push(c),
-                        Err(error) => {
-                            let unit = error.unpaired_surrogate();
-                            fail(if little {
-                                unit as u8
-                            } else {
-                                (unit >> 8) as u8
-                            })?;
-                        }
-                    }
+                    index += if decoded.is_some() { width } else { 1 };
                 }
             }
             Kind::Utf32(order) => {
@@ -348,19 +356,27 @@ impl Encoding {
                     (Order::Mark, [0, 0, 0xFE, 0xFF, rest @ ..]) => (false, rest),
                     _ => (order == Order::Little, bytes),
                 };
-                for chunk in bytes.chunks(4) {
-                    let Ok(quad) = <[u8; 4]>::try_from(chunk) else {
-                        fail(chunk.first().copied().unwrap_or(0))?;
-                        continue;
-                    };
-                    let code = if little {
-                        u32::from_le_bytes(quad)
-                    } else {
-                        u32::from_be_bytes(quad)
-                    };
-                    match char::from_u32(code) {
-                        Some(c) => text.push(c),
-                        None => fail(quad[0])?,
+                let mut index = 0;
+                while let Some(&first) = bytes.get(index) {
+                    let decoded = bytes
+                        .get(index..index + 4)
+                        .and_then(|quad| <[u8; 4]>::try_from(quad).ok())
+                        .and_then(|quad| {
+                            char::from_u32(if little {
+                                u32::from_le_bytes(quad)
+                            } else {
+                                u32::from_be_bytes(quad)
+                            })
+                        });
+                    match decoded {
+                        Some(c) => {
+                            text.push(c);
+                            index += 4;
+                        }
+                        None => {
+                            fail(first)?;
+                            index += 1;
+                        }
                     }
                 }
             }

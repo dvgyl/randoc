@@ -1990,3 +1990,49 @@ conflict). Licence scan of 7227395: no hit.
 Open findings: I-MDW-06 (high), the high and medium findings of round 1
 that are in work, the low rows. Open checks: fuzzing, coverage, the
 mutation sample, the time tables.
+
+## Workstream lua (branch `ws/lua-3`, commit 40920d1, one squashed commit, session 5 of 2026-11-14, batch C)
+
+Merged as a small block under owner instruction 17. The worker continues
+on the branch; this record holds the commit 40920d1 only. Content (the
+commits of `git log --format='%h %s' main..40920d1`): 40920d1 corrects
+the findings of review round 3. A file copy onto itself emptied the file
+(Opus R3-01, Codex R3-01): the new module `src/os.rs` copies through a
+temporary file and a rename. The environment enumeration could panic
+for a variable that is not UTF-8 (Codex R3-03): `vars_os`. Also:
+`stringify` of a document, the Lua string decoder (U+FFFD), the options
+`cwd` and `env` of commands, the time of `with_environment`, `io.popen`
+and `os.execute` in `with_environment`, the standard error of pipes,
+`warn`, the converter order, argument errors and the UTF-16 recovery.
+A crate `clippy.toml` forbids the lossy Lua string functions. Rows:
+I-LUA-15 raised to medium; I-LUA-05, I-LUA-06, I-LUA-09, I-LUA-14 and
+I-CONTRACTS-02 changed; I-LUA-16 to I-LUA-26 new (low).
+`THIRD_PARTY_NOTICES.md`: one new row (`hslua-module-system` 1.3.0,
+MIT).
+
+The gate evidence comes from the inbox line of 40920d1
+(`env/store/inbox/lua.log`, 2026-11-14T22:03:16Z), the commit list
+above and the top section of `env/store/reports/lua.md` (in progress).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 40920d1. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Report: matrix groups `system-files` (11 new probes), `lua-text-decoding` (33), `system-arguments` (20), `encoding-recovery` (120 generated inputs) and others; system matrix 162 probes, modules matrix 2815 probes. |
+| 3. Tests | `cargo test -p randoc-lua` on the merged tree: 44 pass, 0 fail, 4 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | The environment panic is corrected (test `an_environment_that_is_not_utf8_gives_the_text_of_pandoc`). Fuzzing: not run. |
+| 5. Reviews | Round 3 (both reviewers) requested changes; the corrections are in this block; the verification follows. |
+| 6. No slowdowns | Test `with_environment_needs_linear_time`. No other measurement. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none (`docs/ISSUES.md` and
+`THIRD_PARTY_NOTICES.md` merged without a conflict). Licence scan of
+40920d1: 21 hits in `NOTICE.md` (licence text), `src/prelude.lua` and
+`tools/module-matrix.py` (lists of API and format names) and
+`tests/replay/modules-expected.txt` (native output forms); accepted.
+
+Open findings: I-LUA-11 and I-LUA-15 (medium), the low rows. Requests of
+the worker to the coordinator (in the report): `NativeHost::copy_file`
+and `NativeHost::environment` in `randoc-core` keep the data loss and
+the panic for other callers; LPeg 1.1.0 is not in `env/research`. Open
+checks: the verification of round 3, fuzzing, coverage, the mutation
+sample.

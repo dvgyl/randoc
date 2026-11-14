@@ -13,7 +13,9 @@ use randoc_ast::{Block, Inline, Pandoc};
 
 use crate::construct::Call;
 use crate::object::{Node, with_node};
-use crate::peek::{Cx, Peek, PeekError, depth_message, described_type, is_none_or_nil, none};
+use crate::peek::{
+    Cx, LuaText, Peek, PeekError, depth_message, described_type, is_none_or_nil, none,
+};
 use crate::push;
 use crate::runtime;
 
@@ -133,7 +135,7 @@ fn to_json(cx: &Cx, value: &Value, depth: usize) -> Result<Json, Fail> {
         Value::Boolean(flag) => Json::Bool(*flag),
         Value::Integer(number) => Json::Number(*number as f64),
         Value::Number(number) => Json::Number(*number),
-        Value::String(text) => Json::String(text.to_string_lossy()),
+        Value::String(text) => Json::String(text.text()),
         Value::UserData(_) => {
             let thrown = |error: PeekError| Fail::Error(error.thrown());
             let type_name = with_node(value, Node::type_name).unwrap_or("");
@@ -163,7 +165,7 @@ fn table_json(cx: &Cx, table: &Table, depth: usize) -> Result<Json, Fail> {
     if let Some(metatable) = table.metatable() {
         let name: Value = metatable.raw_get("__name")?;
         let list_name = match &name {
-            Value::String(name) => Some(name.to_string_lossy()),
+            Value::String(name) => Some(name.text()),
             _ => None,
         };
         let value = Value::Table(table.clone());
@@ -193,7 +195,7 @@ fn table_json(cx: &Cx, table: &Table, depth: usize) -> Result<Json, Fail> {
                 Fail::Error(PeekError::Thrown(message))
             })?;
             return Ok(Json::Raw(match result {
-                Value::String(text) => text.to_string_lossy(),
+                Value::String(text) => text.text(),
                 other => other.to_string()?,
             }));
         }
@@ -214,7 +216,7 @@ fn table_json(cx: &Cx, table: &Table, depth: usize) -> Result<Json, Fail> {
     for pair in table.pairs::<Value, Value>() {
         let (key, item) = pair?;
         let key = match &key {
-            Value::String(text) => text.to_string_lossy(),
+            Value::String(text) => text.text(),
             Value::Integer(_) | Value::Number(_) => key.to_string()?,
             other => return Err(Fail::Key(described_type(other))),
         };

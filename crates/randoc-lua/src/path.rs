@@ -120,7 +120,7 @@ fn split_file_name(path: &str) -> (&str, &str) {
     )
 }
 
-fn take_directory(path: &str) -> String {
+pub(crate) fn take_directory(path: &str) -> String {
     drop_trailing_separator(split_file_name(path).0).to_string()
 }
 

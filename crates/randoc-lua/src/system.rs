@@ -9,17 +9,20 @@
 
 use std::io;
 
-use mlua::{Table, Value};
+use mlua::Value;
 use randoc_core::{Host, PathKind, Timestamp};
 
 use crate::construct::Call;
-use crate::peek::{Cx, Peek, PeekError, is_none_or_nil};
+use crate::os::{self, ErrorStream, Os, ProcessOptions, Variables};
+use crate::peek::{Cx, Peek, PeekError, is_none_or_nil, mismatch, retrieving};
 use crate::push;
 
-/// Runs the operation `name` of the prelude with its Lua arguments.
+/// Runs the operation `name` of the prelude with its Lua arguments. The
+/// files use `host`; the copy, the environment and the processes use `os`.
 pub(crate) fn call(
     cx: &Cx,
     host: &mut dyn Host,
+    os: &mut Os,
     name: &str,
     arguments: &[Value],
 ) -> Peek<Vec<Value>> {
@@ -40,21 +43,26 @@ pub(crate) fn call(
             let file = path(0, "filepath")?;
             let bytes = host
                 .read_file(&file)
-                .map_err(|e| ghc_error(&file, "withBinaryFile", &e, true))?;
+                .map_err(|e| ghc_error(Some(&file), "withBinaryFile", &e, true))?;
             Ok(vec![Value::String(lua.create_string(bytes)?)])
         }
         "write_file" => {
             let file = path(0, "filepath")?;
             let contents = call.required(1, "contents", |v| bytes(cx, v))?;
             host.write_file(&file, &contents)
-                .map_err(|e| ghc_error(&file, "withBinaryFile", &e, false))?;
+                .map_err(|e| ghc_error(Some(&file), "withBinaryFile", &e, false))?;
             Ok(Vec::new())
         }
         "list_directory" => {
             let directory = call.optional(0, "directory", |v| cx.text(v))?;
             let directory = directory.unwrap_or_else(|| ".".to_string());
             let names = host.list_directory(&directory).map_err(|e| {
-                ghc_error(&directory, "getDirectoryContents:openDirStream", &e, false)
+                ghc_error(
+                    Some(&directory),
+                    "getDirectoryContents:openDirStream",
+                    &e,
+                    false,
+                )
             })?;
             let names = names
                 .iter()
@@ -65,13 +73,13 @@ pub(crate) fn call(
         "make_directory" => {
             let directory = path(0, "dirname")?;
             host.create_directory(&directory, truthy(1))
-                .map_err(|e| ghc_error(&directory, "createDirectory", &e, false))?;
+                .map_err(|e| ghc_error(Some(&directory), "createDirectory", &e, false))?;
             Ok(Vec::new())
         }
         "remove" => {
             let file = path(0, "filename")?;
             host.remove_file(&file)
-                .map_err(|e| ghc_error(&file, "removeLink", &e, false))?;
+                .map_err(|e| ghc_error(Some(&file), "removeLink", &e, false))?;
             Ok(Vec::new())
         }
         "remove_directory" => {
@@ -83,20 +91,27 @@ pub(crate) fn call(
                 } else {
                     "removeDirectory"
                 };
-                ghc_error(&directory, operation, &e, false)
+                ghc_error(Some(&directory), operation, &e, false)
             })?;
             Ok(Vec::new())
         }
         "rename" => {
             let old = path(0, "old")?;
             let new = path(1, "new")?;
+            // GHC names the operation by the kind of the source.
+            let directory = host.path_kind(&old, false).ok() == Some(PathKind::Directory);
             host.rename(&old, &new).map_err(|e| {
-                if e.kind() == io::ErrorKind::IsADirectory {
-                    ghc_error(&new, "renameFile", &e, true)
+                if e.kind() == io::ErrorKind::IsADirectory && !directory {
+                    ghc_error(Some(&new), "renameFile", &e, true)
                 } else {
+                    let operation = if directory {
+                        "renameDirectory"
+                    } else {
+                        "renameFile"
+                    };
                     ghc_error(
-                        "",
-                        &format!("renameFile:renamePath:rename '{old}' to '{new}'"),
+                        None,
+                        &format!("{operation}:renamePath:rename '{old}' to '{new}'"),
                         &e,
                         false,
                     )
@@ -107,26 +122,21 @@ pub(crate) fn call(
         "copy" => {
             let source = path(0, "source")?;
             let target = path(1, "target")?;
-            host.copy_file(&source, &target).map_err(|e| {
-                let stem = "copyFile:atomicCopyFileContents:withReplacementFile";
-                if e.kind() == io::ErrorKind::NotFound {
-                    ghc_error(
-                        &source,
-                        &format!("{stem}:copyFileToHandle:openFdAt"),
-                        &e,
-                        false,
-                    )
-                } else {
-                    ghc_error(&target, &format!("{stem}:renameFile"), &e, true)
-                }
+            os::copy_file(&source, &target).map_err(|failure| {
+                ghc_error(
+                    failure.path.as_deref(),
+                    &failure.operation,
+                    &failure.error,
+                    true,
+                )
             })?;
             Ok(Vec::new())
         }
         "times" => {
             let file = path(0, "filepath")?;
-            let times = host
-                .path_times(&file)
-                .map_err(|e| ghc_error(&file, "getModificationTime:getFileStatus", &e, false))?;
+            let times = host.path_times(&file).map_err(|e| {
+                ghc_error(Some(&file), "getModificationTime:getFileStatus", &e, false)
+            })?;
             Ok(vec![
                 push::text(lua, &iso_time(&times.modified))?,
                 push::text(lua, &iso_time(&times.accessed))?,
@@ -135,50 +145,66 @@ pub(crate) fn call(
         "get_working_directory" => {
             let directory = host
                 .working_directory()
-                .map_err(|e| ghc_error("", "getCurrentDirectory", &e, false))?;
+                .map_err(|e| ghc_error(None, "getCurrentDirectory", &e, false))?;
             text(&directory)
         }
         "set_working_directory" => {
             let directory = path(0, "directory")?;
             host.set_working_directory(&directory)
-                .map_err(|e| ghc_error(&directory, "changeWorkingDirectory", &e, false))?;
+                .map_err(|e| ghc_error(Some(&directory), "changeWorkingDirectory", &e, false))?;
             Ok(Vec::new())
         }
         "environment" => {
             let table = lua.create_table()?;
-            let variables = host
-                .environment()
-                .map_err(|e| ghc_error("", "getEnvironment", &e, false))?;
-            for (variable, value) in variables {
+            for (variable, value) in os.variables() {
                 table.set(variable, value)?;
             }
             Ok(vec![Value::Table(table)])
         }
         "getenv" => {
             let variable = path(0, "name")?;
-            Ok(vec![match host.environment_variable(&variable) {
-                Some(value) => push::text(lua, &value)?,
+            Ok(vec![match os.variable(&variable) {
+                Some(value) => Value::String(lua.create_string(value)?),
                 None => Value::Nil,
             }])
         }
-        "set_environment" => {
-            let Value::Table(wanted) = call.argument(0) else {
-                return Err(PeekError::Thrown("table expected".into()));
-            };
-            set_environment(cx, host, &wanted)?;
+        "shell_command" => text(&os.shell_command(&path(0, "command")?)),
+        "with_working_directory" => {
+            let directory = path(0, "directory")?;
+            callback(&call, 1)?;
+            let old = host
+                .working_directory()
+                .map_err(|e| ghc_error(None, "getCurrentDirectory", &e, false))?;
+            host.set_working_directory(&directory)
+                .map_err(|e| ghc_error(Some(&directory), "changeWorkingDirectory", &e, false))?;
+            text(&old)
+        }
+        "with_environment" => {
+            let wanted = call.required(0, "environment", |v| string_pairs(cx, v))?;
+            callback(&call, 1)?;
+            os.enter(set_env_semantics(wanted)?);
             Ok(Vec::new())
         }
-        "temporary_directory" => {
-            let parent = match call.argument(0) {
-                value if is_none_or_nil(&value) => host
-                    .environment_variable("TMPDIR")
-                    .unwrap_or_else(|| "/tmp".to_string()),
-                value => cx.text(&value)?,
+        "leave_environment" => {
+            os.leave();
+            Ok(Vec::new())
+        }
+        "with_temporary_directory" => {
+            // Without a third argument the parent is the temporary
+            // directory of the system.
+            let (parent, template, function) = if arguments.len() < 3 {
+                (None, path(0, "templ")?, 1)
+            } else {
+                (Some(path(0, "parent_dir")?), path(1, "templ")?, 2)
             };
-            let template = path(1, "templ")?;
+            callback(&call, function)?;
+            let parent = parent.unwrap_or_else(|| {
+                os.variable_text("TMPDIR")
+                    .unwrap_or_else(|| "/tmp".to_string())
+            });
             let directory = host
                 .create_temporary_directory(&parent, &template)
-                .map_err(|e| ghc_error(&parent, "createTempDirectory", &e, false))?;
+                .map_err(|e| ghc_error(Some(&parent), "createTempDirectory", &e, false))?;
             text(&directory)
         }
         "remove_tree" => {
@@ -192,7 +218,7 @@ pub(crate) fn call(
             let kind = call.optional(1, "type", |v| cx.text(v))?;
             let mut found =
                 |follow: bool| host.path_kind(&file, follow).unwrap_or(PathKind::Missing);
-            let exists = match kind.as_deref() {
+            let exists = match kind.map(|kind| kind.to_lowercase()).as_deref() {
                 None => found(true) != PathKind::Missing,
                 Some("directory") => found(true) == PathKind::Directory,
                 Some("file") => found(true) == PathKind::File,
@@ -208,18 +234,30 @@ pub(crate) fn call(
         "command" | "pipe" => {
             let program = path(0, "command")?;
             let arguments = call.required(1, "args", |v| cx.list(v, |item| cx.text(item)))?;
-            let input = if name == "pipe" {
-                call.required(2, "input", |v| bytes(cx, v))?
+            let (input, options, errors, operation) = if name == "pipe" {
+                let input = call.required(2, "input", |v| bytes(cx, v))?;
+                (
+                    input,
+                    ProcessOptions::default(),
+                    ErrorStream::Inherit,
+                    "createProcess",
+                )
             } else {
-                call.optional(2, "input", |v| bytes(cx, v))?
-                    .unwrap_or_default()
+                let input = call.optional(2, "input", |v| bytes(cx, v))?;
+                let options = call.optional(3, "opts", |v| process_options(cx, v))?;
+                (
+                    input.unwrap_or_default(),
+                    options.unwrap_or_default(),
+                    ErrorStream::Capture,
+                    "readCreateProcessWithExitCode",
+                )
             };
-            let output = host
-                .run_process(&program, &arguments, &input)
+            let output = os
+                .run_process(&program, &arguments, &input, &options, errors)
                 .map_err(|e| {
                     ghc_error(
-                        &program,
-                        "readCreateProcessWithExitCode: posix_spawnp",
+                        Some(&program),
+                        &format!("{operation}: posix_spawnp"),
                         &e,
                         false,
                     )
@@ -243,7 +281,7 @@ pub(crate) fn call(
                 i64::try_from(time.as_nanos().saturating_mul(1000)).unwrap_or(i64::MAX);
             Ok(vec![Value::Integer(picoseconds)])
         }
-        "xdg" => xdg(cx, host, &call),
+        "xdg" => xdg(cx, os, &call),
         other => Err(PeekError::Thrown(format!(
             "internal error: unknown function {other}"
         ))),
@@ -253,10 +291,26 @@ pub(crate) fn call(
 /// The name of the Haskell function in the messages of argument errors.
 fn haskell_name(name: &str) -> &str {
     match name {
-        "make_directory" => "mkdir",
         "command" => "cmd",
+        "copy" => "cp",
+        "list_directory" => "ls",
+        "make_directory" => "mkdir",
+        "remove" => "rm",
+        "remove_directory" => "rmdir",
+        "with_environment" => "with_env",
+        "with_temporary_directory" => "with_tmpdir",
+        "with_working_directory" => "with_wd",
         other => other,
     }
+}
+
+/// Checks that argument `index` is a function, as the callback of the
+/// `with_*` functions must be.
+fn callback(call: &Call, index: usize) -> Peek<()> {
+    call.required(index, "callback", |value| match value {
+        Value::Function(_) => Ok(()),
+        other => Err(mismatch("function", other)),
+    })
 }
 
 /// The bytes of a string or a number argument.
@@ -264,26 +318,69 @@ fn bytes(cx: &Cx, value: &Value) -> Peek<Vec<u8>> {
     match value {
         Value::String(text) => Ok(text.as_bytes().to_vec()),
         Value::Integer(_) | Value::Number(_) => Ok(cx.text(value)?.into_bytes()),
-        _ => Err(crate::peek::mismatch("string", value)),
+        _ => Err(mismatch("string", value)),
     }
 }
 
-/// Replaces the whole environment with the string pairs of a table, as
-/// `with_environment` needs.
-fn set_environment(cx: &Cx, host: &mut dyn Host, wanted: &Table) -> Peek<()> {
-    let fail = |e: io::Error| PeekError::Thrown(e.to_string());
-    for (variable, _) in host.environment().map_err(fail)? {
-        host.set_environment_variable(&variable, None)
-            .map_err(fail)?;
+/// The string keys and values of a table, as `peekKeyValuePairs` of HsLua
+/// reads them.
+fn string_pairs(cx: &Cx, value: &Value) -> Peek<Vec<(String, String)>> {
+    let Value::Table(table) = value else {
+        return Err(mismatch("table", value));
+    };
+    let mut pairs = Vec::new();
+    for pair in table.pairs::<Value, Value>() {
+        let (key, value) = pair?;
+        let read = || {
+            let key = retrieving("key", cx.text(&key))?;
+            let value = retrieving("value", cx.text(&value))?;
+            Ok((key, value))
+        };
+        pairs.push(retrieving("key-value pair", read())?);
     }
-    for pair in wanted.pairs::<Value, Value>() {
-        let (variable, value) = pair?;
-        let variable = cx.text(&variable)?;
-        let value = cx.text(&value)?;
-        host.set_environment_variable(&variable, Some(&value))
-            .map_err(fail)?;
+    Ok(pairs)
+}
+
+/// The environment that `setEnv` of GHC makes from the pairs: an empty
+/// value removes the variable, a NUL character ends a name or a value, and
+/// an empty name or a name with `=` is an error.
+fn set_env_semantics(pairs: Vec<(String, String)>) -> Peek<Variables> {
+    let mut variables = Variables::new();
+    for (name, value) in pairs {
+        if name.is_empty() || name.contains('=') {
+            return Err(PeekError::Thrown("setEnv: invalid argument".into()));
+        }
+        if value.is_empty() {
+            continue;
+        }
+        let before_nul = |text: &str| text.split('\0').next().unwrap_or_default().to_string();
+        variables.insert(before_nul(&name), before_nul(&value));
     }
-    Ok(())
+    Ok(variables)
+}
+
+/// The options table of `pandoc.system.command`: `env` and `cwd`.
+fn process_options(cx: &Cx, value: &Value) -> Peek<ProcessOptions> {
+    let Value::Table(table) = value else {
+        return Err(mismatch("table", value));
+    };
+    let field = |name: &str| -> Peek<Value> { Ok(table.raw_get(name)?) };
+    let environment = match field("env")? {
+        Value::Nil => None,
+        value => Some(within_field("env", string_pairs(cx, &value))?),
+    };
+    let cwd = match field("cwd")? {
+        Value::Nil => None,
+        value => Some(within_field("cwd", cx.text(&value))?),
+    };
+    Ok(ProcessOptions {
+        cwd,
+        environment: environment.map(|pairs| pairs.into_iter().collect()),
+    })
+}
+
+fn within_field<T>(name: &str, result: Peek<T>) -> Peek<T> {
+    retrieving(&format!("raw field '{name}'"), result)
 }
 
 /// The message of an input or output error as GHC shows it:
@@ -291,7 +388,7 @@ fn set_environment(cx: &Cx, host: &mut dyn Host, wanted: &Table) -> Peek<()> {
 /// directory` for some operations (`own_directory_text`); else the reason is
 /// the text of the C library.
 fn ghc_error(
-    path: &str,
+    path: Option<&str>,
     operation: &str,
     error: &io::Error,
     own_directory_text: bool,
@@ -316,11 +413,7 @@ fn ghc_error(
             None => shown,
         }
     };
-    let prefix = if path.is_empty() {
-        String::new()
-    } else {
-        format!("{path}: ")
-    };
+    let prefix = path.map(|path| format!("{path}: ")).unwrap_or_default();
     PeekError::Thrown(format!("{prefix}{operation}: {kind} ({reason})"))
 }
 
@@ -367,7 +460,7 @@ fn civil_from_days(days: i64) -> (i64, i64, i64) {
 
 /// `pandoc.system.xdg`: the directories of the XDG Base Directory
 /// Specification from the environment.
-fn xdg(cx: &Cx, host: &mut dyn Host, call: &Call) -> Peek<Vec<Value>> {
+fn xdg(cx: &Cx, os: &Os, call: &Call) -> Peek<Vec<Value>> {
     let lua = cx.lua;
     let key = call.required(0, "xdg_directory_type", |v| {
         let wanted: String = cx
@@ -385,8 +478,8 @@ fn xdg(cx: &Cx, host: &mut dyn Host, call: &Call) -> Peek<Vec<Value>> {
         }
     })?;
     let file = call.optional(1, "filepath", |v| cx.text(v))?;
-    let home = host.environment_variable("HOME").unwrap_or_default();
-    let mut variable = |name: &str| host.environment_variable(name);
+    let home = os.variable_text("HOME").unwrap_or_default();
+    let mut variable = |name: &str| os.variable_text(name);
     let single = |name: &str, default: &str, variable: &mut dyn FnMut(&str) -> Option<String>| {
         let base = match variable(name) {
             Some(value) if value.starts_with('/') => value,

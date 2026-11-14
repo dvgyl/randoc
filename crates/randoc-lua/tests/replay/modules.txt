@@ -3853,6 +3853,381 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter stringify-document empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('document', function() return P.utils.stringify(document) end)
+  probe('meta kinds', function() local d = P.Pandoc({P.Para{t'body'}}, {s = 'plain', b = false, l = {'ls', true, P.Inlines{t'in'}}, m = {k = 'mv', i = P.Inlines{t'mi'}}, bl = P.Blocks{P.Para{t'blk'}, P.Para{t'blk2'}}}) return P.utils.stringify(d) end)
+  probe('meta order', function() local d = P.Pandoc({}, {zz = P.Inlines{t'last'}, aa = P.Inlines{t'first'}, mm = {P.Inlines{t'a'}, P.Inlines{t'b'}}}) return P.utils.stringify(d) end)
+  probe('meta only', function() return P.utils.stringify(P.Pandoc({}, {title = P.Inlines{t'T', P.Space(), P.Emph{t'x'}}})) end)
+  probe('meta table', function() return P.utils.stringify(document.meta) end)
+  probe('sha1 document', function() return P.utils.sha1(P.utils.stringify(document)) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter lua-text-decoding empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('Str \092226\092160', function() return P.Str('<\226\160>').text, P.utils.stringify(P.Str('\226\160')) end)
+  probe('Str \092240\092159\092152', function() return P.Str('<\240\159\152>').text, P.utils.stringify(P.Str('\240\159\152')) end)
+  probe('Str \092225\092128', function() return P.Str('<\225\128>').text, P.utils.stringify(P.Str('\225\128')) end)
+  probe('Str \092195', function() return P.Str('<\195>').text, P.utils.stringify(P.Str('\195')) end)
+  probe('Str \092255', function() return P.Str('<\255>').text, P.utils.stringify(P.Str('\255')) end)
+  probe('Str \092128\092128', function() return P.Str('<\128\128>').text, P.utils.stringify(P.Str('\128\128')) end)
+  probe('Str \092192\092175', function() return P.Str('<\192\175>').text, P.utils.stringify(P.Str('\192\175')) end)
+  probe('Str \092237\092160\092128', function() return P.Str('<\237\160\128>').text, P.utils.stringify(P.Str('\237\160\128')) end)
+  probe('Str \092244\092144\092128\092128', function() return P.Str('<\244\144\128\128>').text, P.utils.stringify(P.Str('\244\144\128\128')) end)
+  probe('Str \092226\09240\092161', function() return P.Str('<\226\40\161>').text, P.utils.stringify(P.Str('\226\40\161')) end)
+  probe('Str \092248\092136\092128\092128\092128', function() return P.Str('<\248\136\128\128\128>').text, P.utils.stringify(P.Str('\248\136\128\128\128')) end)
+  probe('Str a\092226\092130b\092195', function() return P.Str('<a\226\130b\195>').text, P.utils.stringify(P.Str('a\226\130b\195')) end)
+  probe('Str \092226\092130\092172\092226', function() return P.Str('<\226\130\172\226>').text, P.utils.stringify(P.Str('\226\130\172\226')) end)
+  probe('Str \092239\092191', function() return P.Str('<\239\191>').text, P.utils.stringify(P.Str('\239\191')) end)
+  probe('Str \092244\092143\092191\092191\092244\092143', function() return P.Str('<\244\143\191\191\244\143>').text, P.utils.stringify(P.Str('\244\143\191\191\244\143')) end)
+  probe('json \092226\092160', function() return P.json.encode('\226\160'), P.json.encode({['\226\160'] = 1}) end)
+  probe('json \092240\092159\092152', function() return P.json.encode('\240\159\152'), P.json.encode({['\240\159\152'] = 1}) end)
+  probe('json \092225\092128', function() return P.json.encode('\225\128'), P.json.encode({['\225\128'] = 1}) end)
+  probe('json \092195', function() return P.json.encode('\195'), P.json.encode({['\195'] = 1}) end)
+  probe('json \092255', function() return P.json.encode('\255'), P.json.encode({['\255'] = 1}) end)
+  probe('json \092128\092128', function() return P.json.encode('\128\128'), P.json.encode({['\128\128'] = 1}) end)
+  probe('meta \092226\092160', function() local m = P.Meta{k = '\226\160'} return m.k, P.MetaString('\226\160') end)
+  probe('meta \092240\092159\092152', function() local m = P.Meta{k = '\240\159\152'} return m.k, P.MetaString('\240\159\152') end)
+  probe('meta \092225\092128', function() local m = P.Meta{k = '\225\128'} return m.k, P.MetaString('\225\128') end)
+  probe('meta \092195', function() local m = P.Meta{k = '\195'} return m.k, P.MetaString('\195') end)
+  probe('meta \092255', function() local m = P.Meta{k = '\255'} return m.k, P.MetaString('\255') end)
+  probe('meta \092128\092128', function() local m = P.Meta{k = '\128\128'} return m.k, P.MetaString('\128\128') end)
+  probe('attr \092226\092160', function() return P.Attr('\226\160', {'\226\160'}, {k = '\226\160'}).identifier, P.Code('\226\160').text end)
+  probe('attr \092240\092159\092152', function() return P.Attr('\240\159\152', {'\240\159\152'}, {k = '\240\159\152'}).identifier, P.Code('\240\159\152').text end)
+  probe('attr \092225\092128', function() return P.Attr('\225\128', {'\225\128'}, {k = '\225\128'}).identifier, P.Code('\225\128').text end)
+  probe('attr \092195', function() return P.Attr('\195', {'\195'}, {k = '\195'}).identifier, P.Code('\195').text end)
+  probe('attr \092255', function() return P.Attr('\255', {'\255'}, {k = '\255'}).identifier, P.Code('\255').text end)
+  probe('attr \092128\092128', function() return P.Attr('\128\128', {'\128\128'}, {k = '\128\128'}).identifier, P.Code('\128\128').text end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter converter-order empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('shared converter', function() local n = 0 local c = setmetatable({}, {__toinline = function() n = n + 1 return P.Str(tostring(n)) end}) local e = P.Emph{} e.content = {c} local p = P.Para{} p.content = {e, e} return tostring(p) end)
+  probe('two converters', function() local n = 0 local a, b = P.Emph{}, P.Strong{} a.content = {setmetatable({}, {__toinline = function() n = n + 1 return P.Str('a' .. n) end})} b.content = {setmetatable({}, {__toinline = function() n = n + 1 return P.Str('b' .. n) end})} local p = P.Para{} p.content = {a, b} return tostring(p) end)
+  probe('block converter', function() local n = 0 local c = setmetatable({}, {__toblock = function() n = n + 1 return P.Para{P.Str(tostring(n))} end}) local d = P.Div{} d.content = {c, c} local o = P.Div{} o.content = {d, d} return tostring(o) end)
+  probe('pure shared', function() local c = P.Div{} c.content:insert(P.Para'x') local d = P.Div{} d.content = {c, c} return tostring(d) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter encoding-recovery empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('fromencoding db61 UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\219\097', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8ff00ffdbfed800fe UTF-32LE', function() local s = P.text.fromencoding('\216\255\000\255\219\254\216\000\254', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fefedcdbdbffd86110 UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\254\254\220\219\219\255\216\097\016', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding feffdc5a UTF-32//IGNORE', function() local s = P.text.fromencoding('\254\255\220\090', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8fffed8105a UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\216\255\254\216\016\090', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding de61 UTF-16LE', function() local s = P.text.fromencoding('\222\097', 'UTF-16LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8ffdcd8d8fe UTF-32//IGNORE', function() local s = P.text.fromencoding('\216\255\220\216\216\254', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbd800 UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\219\216\000', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61fedefe10d8de10 UTF-16', function() local s = P.text.fromencoding('\097\254\222\254\016\216\222\016', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61dbffffd8de UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\097\219\255\255\216\222', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffdbff61dedcdb1010 UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\255\219\255\097\222\220\219\016\016', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00fededb UTF-32BE', function() local s = P.text.fromencoding('\000\254\222\219', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d861dc61deded8 UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\216\097\220\097\222\222\216', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8fffe5a5adbff UTF-16LE', function() local s = P.text.fromencoding('\216\255\254\090\090\219\255', 'UTF-16LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d86110dc UTF-32//IGNORE', function() local s = P.text.fromencoding('\216\097\016\220', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5a0000dcde5affde UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\090\000\000\220\222\090\255\222', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dc005a UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\220\000\090', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffdc61105a UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\255\220\097\016\090', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dcde00dc6100 UTF-32', function() local s = P.text.fromencoding('\220\222\000\220\097\000', 'UTF-32') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dcdcd8d8d8fed810dc UTF-16LE', function() local s = P.text.fromencoding('\220\220\216\216\216\254\216\016\220', 'UTF-16LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fe00 UTF-32//IGNORE', function() local s = P.text.fromencoding('\254\000', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbdc00dcdc UTF-32BE', function() local s = P.text.fromencoding('\219\220\000\220\220', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8 UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\216', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding defedcdcdcfe UTF-32', function() local s = P.text.fromencoding('\222\254\220\220\220\254', 'UTF-32') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ded8dcff6161ff UTF-32BE', function() local s = P.text.fromencoding('\222\216\220\255\097\097\255', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fffefe UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\255\254\254', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10d8fffe UTF-32//IGNORE', function() local s = P.text.fromencoding('\016\216\255\254', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10 UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\016', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ff5a10de UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\255\090\016\222', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\219', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db61 UTF-16//IGNORE', function() local s = P.text.fromencoding('\219\097', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dcdcd8fe5a UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\220\220\216\254\090', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5a00fedcde5affde UTF-32//IGNORE', function() local s = P.text.fromencoding('\090\000\254\220\222\090\255\222', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10ff61ffd8 UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\016\255\097\255\216', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\219', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dc5a UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\220\090', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5adbfe UTF-16//IGNORE', function() local s = P.text.fromencoding('\090\219\254', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10fe6161fedc5a00db UTF-16//IGNORE', function() local s = P.text.fromencoding('\016\254\097\097\254\220\090\000\219', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5aff5afe5affffde UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\090\255\090\254\090\255\255\222', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffd810de UTF-32LE', function() local s = P.text.fromencoding('\255\216\016\222', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61db61 UTF-16//IGNORE', function() local s = P.text.fromencoding('\097\219\097', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffdcdcdb10de UTF-32BE', function() local s = P.text.fromencoding('\255\220\220\219\016\222', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db5a5a61d85ade UTF-32BE', function() local s = P.text.fromencoding('\219\090\090\097\216\090\222', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db5a105a00dcde UTF-16//IGNORE', function() local s = P.text.fromencoding('\219\090\016\090\000\220\222', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 1061defe UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\016\097\222\254', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10 UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\016', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61fedcfe6110 UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\097\254\220\254\097\016', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ff UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\255', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding deff0010 UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\222\255\000\016', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d800 UTF-16BE', function() local s = P.text.fromencoding('\216\000', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61fffedbdbfffe00de UTF-32//IGNORE', function() local s = P.text.fromencoding('\097\255\254\219\219\255\254\000\222', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10fed810dcdedbfe61 UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\016\254\216\016\220\222\219\254\097', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dcfed8 UTF-32//IGNORE', function() local s = P.text.fromencoding('\220\254\216', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding de5a UTF-16BE', function() local s = P.text.fromencoding('\222\090', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8 UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\216', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fedbd8dbffdcdc61dc UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\254\219\216\219\255\220\220\097\220', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5adbdcfedbd85a61db UTF-32//IGNORE', function() local s = P.text.fromencoding('\090\219\220\254\219\216\090\097\219', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10fede UTF-16BE', function() local s = P.text.fromencoding('\016\254\222', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffde6110dede6100db UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\255\222\097\016\222\222\097\000\219', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61dc UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\097\220', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8 UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\216', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 005adcff UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\000\090\220\255', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbd8defffefe UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\219\216\222\255\254\254', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dc00dc61ffff UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\220\000\220\097\255\255', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dcff610061 UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\220\255\097\000\097', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61feff61dc UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\097\254\255\097\220', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 6161ff00 UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\097\097\255\000', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d810fffefe UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\216\016\255\254\254', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61defefefe5afedcff UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\097\222\254\254\254\090\254\220\255', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5ade61de61 UTF-16', function() local s = P.text.fromencoding('\090\222\097\222\097', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00005afeffd8de UTF-32LE', function() local s = P.text.fromencoding('\000\000\090\254\255\216\222', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ff5ad8fedbfedcff UTF-16//IGNORE', function() local s = P.text.fromencoding('\255\090\216\254\219\254\220\255', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding de1000de6100 UTF-32//IGNORE', function() local s = P.text.fromencoding('\222\016\000\222\097\000', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbd8ffdcdcff UTF-16BE', function() local s = P.text.fromencoding('\219\216\255\220\220\255', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dc UTF-16//IGNORE', function() local s = P.text.fromencoding('\220', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding de6100d8dbd8de UTF-16BE', function() local s = P.text.fromencoding('\222\097\000\216\219\216\222', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dcff10d810dc5a UTF-16//IGNORE', function() local s = P.text.fromencoding('\220\255\016\216\016\220\090', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffde10 UTF-32BE', function() local s = P.text.fromencoding('\255\222\016', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5a00615adbffff UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\090\000\097\090\219\255\255', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding de615a UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\222\097\090', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbfededeff UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\219\254\222\222\255', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fe61 UTF-32BE//IGNORE', function() local s = P.text.fromencoding('\254\097', 'UTF-32BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ff10dbffdb5a UTF-32LE', function() local s = P.text.fromencoding('\255\016\219\255\219\090', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db61db UTF-16', function() local s = P.text.fromencoding('\219\097\219', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fedcdeffdbd8105ad8 UTF-16', function() local s = P.text.fromencoding('\254\220\222\255\219\216\016\090\216', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding de UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\222', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10dc61dbfe UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\016\220\097\219\254', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbdcd8db00dc UTF-16', function() local s = P.text.fromencoding('\219\220\216\219\000\220', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbdb UTF-32LE', function() local s = P.text.fromencoding('\219\219', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5a UTF-32//IGNORE', function() local s = P.text.fromencoding('\090', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10de00fe UTF-16BE', function() local s = P.text.fromencoding('\016\222\000\254', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10fefe00fed800db UTF-32', function() local s = P.text.fromencoding('\016\254\254\000\254\216\000\219', 'UTF-32') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10dedb UTF-32//IGNORE', function() local s = P.text.fromencoding('\016\222\219', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ffff61ff UTF-16//IGNORE', function() local s = P.text.fromencoding('\255\255\097\255', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10ff61dbfedb5adb UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\016\255\097\219\254\219\090\219', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8fedbd8d8ff UTF-16', function() local s = P.text.fromencoding('\216\254\219\216\216\255', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8ded800fed8fedcff UTF-16LE', function() local s = P.text.fromencoding('\216\222\216\000\254\216\254\220\255', 'UTF-16LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00ff10fe61dc UTF-32//IGNORE', function() local s = P.text.fromencoding('\000\255\016\254\097\220', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00ff UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\000\255', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00dcd8d8 UTF-16//IGNORE', function() local s = P.text.fromencoding('\000\220\216\216', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbdcdc UTF-32LE', function() local s = P.text.fromencoding('\219\220\220', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10d8fe5affdefeff UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\016\216\254\090\255\222\254\255', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fedb5a UTF-32BE', function() local s = P.text.fromencoding('\254\219\090', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fe10fedcfede10 UTF-32', function() local s = P.text.fromencoding('\254\016\254\220\254\222\016', 'UTF-32') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 61dedb UTF-32BE', function() local s = P.text.fromencoding('\097\222\219', 'UTF-32BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 10 UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\016', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5ad8de0061 UTF-16//IGNORE', function() local s = P.text.fromencoding('\090\216\222\000\097', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding dbdbffd8db61 UTF-16//IGNORE', function() local s = P.text.fromencoding('\219\219\255\216\219\097', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fe6100d8db1000 UTF-16', function() local s = P.text.fromencoding('\254\097\000\216\219\016\000', 'UTF-16') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding fed8 UTF-16//IGNORE', function() local s = P.text.fromencoding('\254\216', 'UTF-16//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ded8610010d8fe UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\222\216\097\000\016\216\254', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db UTF-16LE//IGNORE', function() local s = P.text.fromencoding('\219', 'UTF-16LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding feff1061db61 UTF-32//IGNORE', function() local s = P.text.fromencoding('\254\255\016\097\219\097', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00 UTF-16LE', function() local s = P.text.fromencoding('\000', 'UTF-16LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding db UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\219', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 00fe UTF-16BE//IGNORE', function() local s = P.text.fromencoding('\000\254', 'UTF-16BE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding d8 UTF-32//IGNORE', function() local s = P.text.fromencoding('\216', 'UTF-32//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 5affdbdc UTF-32LE', function() local s = P.text.fromencoding('\090\255\219\220', 'UTF-32LE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding 6161 UTF-32LE//IGNORE', function() local s = P.text.fromencoding('\097\097', 'UTF-32LE//IGNORE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+  probe('fromencoding ff61dc10deffdcde5a UTF-16BE', function() local s = P.text.fromencoding('\255\097\220\016\222\255\220\222\090', 'UTF-16BE') return (s:gsub('[^\1-\127]', function(c) return '<' .. c:byte() .. '>' end):gsub('%z', '<0>')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter raw-bom empty small
 ﻿function Pandoc(d) d.meta.r = 'ok' return d end
 @@@ filter raw-bom-shebang empty small

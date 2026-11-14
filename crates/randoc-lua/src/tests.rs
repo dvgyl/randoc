@@ -1239,8 +1239,17 @@ fn path_and_table_functions_need_linear_time() {
 
 /// A folder of the tests under the temporary folder of the session. The
 /// tests never remove it.
+/// The name of a file chunk in a Lua message (`luaO_chunkid` with
+/// `LUA_IDSIZE` 60): a long path keeps its last 56 characters after `...`.
+fn short_source(path: &str) -> String {
+    match path.len().checked_sub(56) {
+        Some(start) if path.len() > 59 => format!("...{}", &path[start..]),
+        _ => path.to_string(),
+    }
+}
+
 fn scratch_folder(name: &str) -> std::path::PathBuf {
-    let folder = std::env::temp_dir().join("lua-s4").join(name);
+    let folder = std::env::temp_dir().join("lua-s5").join(name);
     std::fs::create_dir_all(&folder).unwrap();
     folder
 }
@@ -1348,16 +1357,157 @@ fn filter_files_give_the_results_and_errors_of_pandoc() {
         ),
         (
             vec![bad.as_str()],
-            format!("Error running filter '{bad}':\n{bad}:2: ')' expected near <eof>"),
+            format!(
+                "Error running filter '{bad}':\n{}:2: ')' expected near <eof>",
+                short_source(&bad)
+            ),
         ),
         (
             vec![a.as_str(), err.as_str()],
             format!(
-                "Error running filter '{err}':\n{err}:1: boom\nstack traceback:\n\t{err}:1: in function 'Str'"
+                "Error running filter '{err}':\n{short}:1: boom\nstack traceback:\n\t{short}:1: in function 'Str'",
+                short = short_source(&err)
             ),
         ),
     ];
     for (paths, text) in failures {
         assert_eq!(run(&paths).unwrap_err(), (83, text), "{paths:?}");
     }
+}
+
+/// Runs the ignored test `name` of this binary in a child process with the
+/// extra environment variable `RANDOC_LUA_CHILD`, so that a test can set
+/// environment bytes and read the standard error of the filter without a
+/// change of the environment of this process.
+fn run_child_test(name: &str, extra: &[(&str, &std::ffi::OsStr)]) -> std::process::Output {
+    let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+    command
+        .args([
+            "--exact",
+            name,
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1",
+        ])
+        .env("RANDOC_LUA_CHILD", "1");
+    for (variable, value) in extra {
+        command.env(variable, value);
+    }
+    let output = command.output().unwrap();
+    assert!(output.status.success(), "{output:?}");
+    output
+}
+
+fn in_child() -> bool {
+    std::env::var_os("RANDOC_LUA_CHILD").is_some()
+}
+
+/// Runs `source` as a filter on an empty document with a native context,
+/// as `pandoc --lua-filter` does.
+fn run_native_filter(source: &str) {
+    let filter = LuaFilter {
+        path: "child.lua",
+        source: source.as_bytes(),
+    };
+    let mut doc = Pandoc::default();
+    apply_filter(&mut doc, &filter, &environment(), &mut Context::native()).unwrap();
+}
+
+#[test]
+#[ignore = "runs only as the child of the test below"]
+fn child_reads_an_environment_that_is_not_utf8() {
+    if in_child() {
+        run_native_filter(
+            "local e = pandoc.system.environment() \
+             io.stderr:write('[', e.LUAS5_RAW, '][', tostring(os.getenv('LUAS5_RAW') == '\\255'), ']\\n')",
+        );
+    }
+}
+
+/// Codex lua-R3-03: a variable that is not UTF-8 gave a panic. Oracle probe
+/// of session 5: `environment()` gives one U+FFFD for the byte FF, and
+/// `os.getenv` gives the byte itself.
+#[cfg(unix)]
+#[test]
+fn an_environment_that_is_not_utf8_gives_the_text_of_pandoc() {
+    use std::os::unix::ffi::OsStrExt;
+    let raw = std::ffi::OsStr::from_bytes(b"\xFF");
+    let output = run_child_test(
+        "tests::child_reads_an_environment_that_is_not_utf8",
+        &[("LUAS5_RAW", raw)],
+    );
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("[\u{FFFD}][true]"), "{stderr}");
+}
+
+#[test]
+#[ignore = "runs only as the child of the test below"]
+fn child_runs_pipe_and_warn() {
+    if in_child() {
+        run_native_filter(
+            "pandoc.pipe('sh', {'-c', 'echo pipe-err >&2'}, '')\n\
+             local _, _, e = pandoc.system.command('sh', {'-c', 'echo cmd-err >&2'})\n\
+             io.stderr:write('captured ', e)\n\
+             warn('@on')\nwarn('two ', 'parts')\nwarn('@off')\nwarn('quiet')\n",
+        );
+    }
+}
+
+/// Opus lua-R3-06 and lua-R3-07, with the standard error of
+/// `pandoc --lua-filter` (oracle probe of session 5): `pandoc.pipe` lets the
+/// child write to the standard error, `command` captures it, and `warn`
+/// gives a scripting warning at the position of the caller.
+#[test]
+fn pipe_and_warn_write_the_standard_error_of_pandoc() {
+    let output = run_child_test("tests::child_runs_pipe_and_warn", &[]);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let expected = "pipe-err\ncaptured cmd-err\nLua warning: two parts\n\
+        [WARNING] Scripting warning at child.lua line 5 column 1: two parts\n\
+        [WARNING] Scripting warning at child.lua line 7 column 1: quiet\n";
+    assert!(stderr.contains(expected), "{stderr}");
+}
+
+/// Opus lua-R3-03: Pandoc gives one U+FFFD for each byte that is not part
+/// of a valid sequence (oracle matrix group `lua-text-decoding`).
+#[test]
+fn each_invalid_byte_gives_one_replacement_character() {
+    use crate::peek::text_from_bytes;
+    for (bytes, expected) in [
+        (&b"\xE2\xA0"[..], "\u{FFFD}\u{FFFD}"),
+        (b"\xF0\x9F\x98", "\u{FFFD}\u{FFFD}\u{FFFD}"),
+        (b"a\xE2\x82b\xC3", "a\u{FFFD}\u{FFFD}b\u{FFFD}"),
+        (b"\xED\xA0\x80", "\u{FFFD}\u{FFFD}\u{FFFD}"),
+        (b"\xE2\x82\xAC\xE2", "\u{20AC}\u{FFFD}"),
+        (b"plain", "plain"),
+    ] {
+        assert_eq!(text_from_bytes(bytes), expected, "{bytes:?}");
+    }
+}
+
+/// Codex lua-R3-04: each call of `with_environment` with a new name made
+/// each later call slower. The time of N calls must grow linearly (order
+/// 21a: the minimum of 5 runs at two sizes, a factor 10 for a size factor
+/// of 4).
+#[test]
+fn with_environment_needs_linear_time() {
+    let seconds = |count: usize| {
+        let code = format!(
+            "(function() local S, t = pandoc.system, os.clock() for i = 1, {count} do \
+             S.with_environment({{['X_GROW_' .. i] = 'x'}}, function() end) end \
+             return os.clock() - t end)()"
+        );
+        (0..5)
+            .map(|_| {
+                system_probe(Mode::Full, &code, &mut Context::pure())
+                    .parse::<f64>()
+                    .unwrap()
+            })
+            .fold(f64::INFINITY, f64::min)
+    };
+    let small = seconds(500).max(1e-4);
+    let large = seconds(2000);
+    assert!(
+        large / small < 10.0,
+        "500 calls {small} s, 2000 calls {large} s"
+    );
 }

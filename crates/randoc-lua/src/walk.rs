@@ -18,7 +18,7 @@ use mlua::{Function, MultiValue, ObjectLike, Value};
 use randoc_ast::{Block, Caption, Cell, Inline, Meta, MetaValue, Pandoc, Row};
 
 use crate::object::{Node, block_tag, inline_tag};
-use crate::peek::{Cx, Peek, PeekError, depth_message, lua_type_name};
+use crate::peek::{Cx, LuaText, Peek, PeekError, depth_message, lua_type_name};
 use crate::push;
 
 /// The registry name of the Lua function that calls a function with a
@@ -438,7 +438,7 @@ fn call(cx: &Cx, function: &Function, argument: Value) -> Peek<(Value, bool)> {
             Ok((first, descend))
         }
         _ => Err(PeekError::Thrown(match results.next() {
-            Some(Value::String(message)) => message.to_string_lossy(),
+            Some(Value::String(message)) => message.text(),
             _ => "the filter failed with an error that is not a string".to_string(),
         })),
     }

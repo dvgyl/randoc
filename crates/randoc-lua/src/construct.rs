@@ -11,7 +11,9 @@ use randoc_ast::{
 };
 
 use crate::object::{Node, new_object};
-use crate::peek::{Cx, Peek, PeekError, all_choices, is_none_or_nil, none, retrieving, within};
+use crate::peek::{
+    Cx, LuaText, Peek, PeekError, all_choices, is_none_or_nil, none, retrieving, within,
+};
 use crate::push;
 
 /// The arguments of one call of a function of the `pandoc` module.
@@ -495,7 +497,7 @@ pub(crate) fn version(cx: &Cx, value: &Value) -> Peek<Vec<i64>> {
     };
     let read = || match value {
         Value::String(text) => {
-            let text = text.to_string_lossy();
+            let text = text.text();
             parse(&text)
                 .ok_or_else(|| PeekError::failure(format!("could not parse as Version: {text}")))
         }

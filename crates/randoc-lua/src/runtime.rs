@@ -113,6 +113,10 @@ fn use_environment_locale() {
 }
 
 /// One Lua 5.4.8 state.
+///
+/// The first state of a process sets the character locale of the whole
+/// process (`LC_CTYPE`) from the environment, in both modes, as Pandoc runs
+/// Lua in that locale. A program that embeds the crate gets that change.
 pub struct LuaRuntime {
     lua: Lua,
     mode: Mode,

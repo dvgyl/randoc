@@ -2,10 +2,11 @@
 
 use mlua::{Function, Lua, MultiValue, Table, Value, Variadic};
 use randoc_ast::{Pandoc, Text};
-use randoc_core::{Context, Error};
+use randoc_core::{Context, Error, LogMessage, SourcePos};
 
 use crate::module;
-use crate::peek::{Cx, Peek, PeekError, mismatch, retrieving};
+use crate::os::Os;
+use crate::peek::{Cx, LuaText, Peek, PeekError, mismatch, retrieving};
 use crate::runtime::{self, LuaRuntime, Mode, RuntimeLimits};
 use crate::system;
 use crate::walk::{CALL_TRACED, Filter, apply_fully, check_document};
@@ -72,7 +73,8 @@ impl FilterEnvironment {
 
 /// Applies one Lua filter file to a document.
 ///
-/// The filter runs in a new Lua state, as in Pandoc. An error of the
+/// The filter runs in a new Lua state, as in Pandoc ([`LuaRuntime`] sets
+/// the character locale of the process). An error of the
 /// filter is [`Error::Filter`], which has the exit code 83. After an error
 /// the document can hold a part of the changes.
 ///
@@ -95,21 +97,40 @@ pub fn apply_filter(
         module::install(lua, max_depth)?;
         set_globals(lua, filter, environment)?;
         lua.scope(|scope| {
+            let native: Table = lua.named_registry_value(module::NATIVE)?;
+            let report =
+                scope.create_function_mut(|lua, (message, show): (mlua::LuaString, bool)| {
+                    if show {
+                        // The default warning function of Lua writes this line.
+                        let mut line = b"Lua warning: ".to_vec();
+                        line.extend_from_slice(&message.as_bytes());
+                        line.push(b'\n');
+                        let _ = std::io::Write::write_all(&mut std::io::stderr(), &line);
+                    }
+                    context.report(LogMessage::ScriptingWarning(
+                        message.text(),
+                        caller_position(lua),
+                    ));
+                    Ok(())
+                })?;
+            native.get::<Function>("install_warn")?.call::<()>(report)?;
             // ADR 11: restricted mode has no function with file access. In
             // full mode the system functions use a native host of their own,
             // also when the conversion has a restricted host, because Pandoc
             // permits them with `--sandbox` (row I-CONTRACTS-03).
             if environment.mode == Mode::Full {
-                let native: Table = lua.named_registry_value(module::NATIVE)?;
-                let system = scope.create_function(|lua, arguments: Variadic<Value>| {
-                    let cx = Cx { lua, max_depth };
-                    let (name, rest) = match arguments.split_first() {
-                        Some((Value::String(name), rest)) => (name.to_string_lossy(), rest),
-                        _ => (String::new(), &arguments[..0]),
-                    };
-                    let result = system::call(&cx, &mut randoc_core::NativeHost, &name, rest);
-                    system_result(lua, result)
-                })?;
+                let mut os = Os::default();
+                let system =
+                    scope.create_function_mut(move |lua, arguments: Variadic<Value>| {
+                        let cx = Cx { lua, max_depth };
+                        let (name, rest) = match arguments.split_first() {
+                            Some((Value::String(name), rest)) => (name.text(), rest),
+                            _ => (String::new(), &arguments[..0]),
+                        };
+                        let result =
+                            system::call(&cx, &mut randoc_core::NativeHost, &mut os, &name, rest);
+                        system_result(lua, result)
+                    })?;
                 let add: Function = native.get("system_functions")?;
                 add.call::<()>(system)?;
             }
@@ -126,6 +147,19 @@ pub fn apply_filter(
         filter: filter.path.to_string(),
         message: error.text(),
     })
+}
+
+/// The position of the Lua code that called `warn`, as Pandoc shows it:
+/// the chunk name without its `@`, the line, and column 1. Level 0 is the
+/// Rust function and level 1 the `warn` of the prelude.
+fn caller_position(lua: &Lua) -> Option<SourcePos> {
+    lua.inspect_stack(2, |debug| {
+        let source = debug.source().source?.into_owned();
+        let line = u32::try_from(debug.current_line()?).ok()?;
+        let source = source.strip_prefix('@').unwrap_or(&source).to_string();
+        Some(SourcePos::new(source, line, 1))
+    })
+    .flatten()
 }
 
 /// Applies Lua filter files to a document in their order, as
@@ -297,7 +331,7 @@ fn load_filters(cx: &Cx, filter: &LuaFilter, mode: Mode) -> Peek<Vec<Filter>> {
     let mut results = call_traced.call::<MultiValue>(chunk)?.into_iter();
     if results.next() != Some(Value::Boolean(true)) {
         return Err(PeekError::Thrown(match results.next() {
-            Some(Value::String(message)) => message.to_string_lossy(),
+            Some(Value::String(message)) => message.text(),
             _ => "the filter failed with an error that is not a string".to_string(),
         }));
     }

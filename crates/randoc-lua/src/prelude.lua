@@ -534,6 +534,27 @@ local function refused(name)
 end
 pandoc.pipe = refused('pandoc.pipe')
 pandoc.path.exists = refused('pandoc.path.exists')
+-- `warn` of Lua, which Pandoc also reports as a scripting warning at the
+-- position of the caller. `@on` and `@off` turn the text `Lua warning: ...`
+-- of Lua itself on and off; a control message gives no report.
+function native.install_warn(report)
+  local select, type, concat, on = select, type, table.concat, false
+  function warn(...)
+    local count = select('#', ...)
+    for index = 1, math.max(count, 1) do
+      local kind = index <= count and type((select(index, ...))) or 'no value'
+      if kind ~= 'string' and kind ~= 'number' then
+        error(("bad argument #%d to 'warn' (string expected, got %s)"):format(index, kind), 2)
+      end
+    end
+    local message = concat({ ... })
+    if count == 1 and message:sub(1, 1) == '@' then
+      if message == '@on' then on = true elseif message == '@off' then on = false end
+    else
+      report(message, on)
+    end
+  end
+end
 function native.system_functions(system_call)
   local system = pandoc.system
   local pack, unpack, select, type, setmetatable = table.pack, table.unpack, select, type, setmetatable
@@ -555,9 +576,9 @@ function native.system_functions(system_call)
     if type(result) == 'table' then setmetatable(result, filepath_list) end
     return result
   end
-  local set_directory, set_environment = op('set_working_directory'), op('set_environment')
-  local temporary_directory, remove_tree = op('temporary_directory'), op('remove_tree')
-  local get_directory, environment = system.get_working_directory, system.environment
+  local set_directory, remove_tree = op('set_working_directory'), op('remove_tree')
+  local enter_directory, enter_environment = op('with_working_directory'), op('with_environment')
+  local leave_environment, make_temporary = op('leave_environment'), op('with_temporary_directory')
   -- Runs `callback` and then `restore`, also after an error of the callback.
   local function finally(restore, callback, ...)
     local results = pack(pcall(callback, ...))
@@ -565,26 +586,45 @@ function native.system_functions(system_call)
     if not results[1] then error(results[2], 0) end
     return unpack(results, 2, results.n)
   end
-  function system.with_working_directory(directory, callback)
-    local old = get_directory()
-    set_directory(directory)
-    return finally(function() set_directory(old) end, callback)
+  function system.with_working_directory(...)
+    local old = enter_directory(...)
+    local directory, callback = ...
+    return finally(function() set_directory(old) end, callback, directory)
   end
-  function system.with_environment(variables, callback)
-    local old = environment()
-    set_environment(variables)
-    return finally(function() set_environment(old) end, callback)
+  -- Pandoc changes the environment of its process; Randoc keeps the
+  -- replacement in Rust (`os.rs`). While it is active, `os.getenv` reads it,
+  -- and `io.popen` and `os.execute` give it to the shell.
+  local getenv_of = op('getenv')
+  local shell_command = op('shell_command')
+  local stock_getenv, stock_popen, stock_execute = os.getenv, io.popen, os.execute
+  local function replaced_getenv(...)
+    local name = ...
+    if type(name) ~= 'string' and type(name) ~= 'number' then return stock_getenv(...) end
+    return getenv_of(name)
+  end
+  local function replaced_popen(command, ...)
+    if type(command) ~= 'string' then return stock_popen(command, ...) end
+    return stock_popen(shell_command(command), ...)
+  end
+  local function replaced_execute(...)
+    local command = ...
+    if type(command) ~= 'string' then return stock_execute(...) end
+    return stock_execute(shell_command(command))
+  end
+  function system.with_environment(...)
+    enter_environment(...)
+    local _, callback = ...
+    local outer_getenv, outer_popen, outer_execute = os.getenv, io.popen, os.execute
+    os.getenv, io.popen, os.execute = replaced_getenv, replaced_popen, replaced_execute
+    return finally(function()
+      leave_environment()
+      os.getenv, io.popen, os.execute = outer_getenv, outer_popen, outer_execute
+    end, callback)
   end
   function system.with_temporary_directory(...)
-    local parent, template, callback = ...
-    if select('#', ...) < 3 then parent, template, callback = nil, ... end
-    local directory = temporary_directory(parent, template)
+    local directory = make_temporary(...)
+    local callback = select(select('#', ...) < 3 and 2 or 3, ...)
     return finally(function() remove_tree(directory) end, callback, directory)
-  end
-  local getenv = os.getenv
-  function os.getenv(name)
-    if type(name) ~= 'string' and type(name) ~= 'number' then return getenv(name) end
-    return check(system_call('getenv', name))
   end
   pandoc.path.exists = op('exists')
   local pipe_error = {

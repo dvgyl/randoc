@@ -5,10 +5,10 @@
 Usage (from the root of the worktree, after `. env.sh`):
 
     python3 -I crates/randoc-lua/tools/system-matrix.py
-    TMPDIR="$TMPDIR/lua-s4" python3 -I crates/randoc-lua/tools/record-replay.py system
+    TMPDIR="$TMPDIR/lua-s5" python3 -I crates/randoc-lua/tools/record-replay.py system
 
 The script writes `crates/randoc-lua/tests/replay/system.txt`. Each filter
-makes a temporary directory under `$TMPDIR/lua-s4` with
+makes a temporary directory under `$TMPDIR/lua-s5` with
 `with_temporary_directory`, works only inside it with relative paths, and
 starts only the programs `echo`, `cat`, `true`, `false` and `sh -c` with
 one of them. The directory path in a result is replaced by `TMP`.
@@ -63,7 +63,7 @@ local function sorted(list) table.sort(list) return list end
 
 FOOTER = r"""
 function Pandoc(document)
-  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
   S.make_directory(parent, true)
   S.with_temporary_directory(parent, 'matrix', function(directory)
     S.with_working_directory(directory, function()
@@ -120,7 +120,27 @@ GROUPS["system-files"] = [
     ("exists", "return P.path.exists('a'), P.path.exists('a', 'directory'), P.path.exists('a', 'file'), "
      "P.path.exists('a/f', 'file'), P.path.exists('a/f', 'directory'), P.path.exists('nope'), "
      "P.path.exists('a', 'symlink'), P.path.exists('nope', 'file')"),
+    ("copy self", "S.write_file('cs', 'keep') S.copy('cs', 'cs') return S.read_file('cs')"),
+    ("copy self dot", "S.copy('cs', './cs') return S.read_file('cs')"),
+    ("copy self parent", "S.copy('cs', 'a/../cs') return S.read_file('cs')"),
+    ("copy self twice", "S.copy('cs', 'cs') S.copy('cs', 'cs') return S.read_file('cs')"),
+    ("copy missing folder", "return S.copy('cs', 'nodir/x')"),
+    ("copy missing both", "return S.copy('nope', 'nodir/x')"),
+    ("copy folder source", "return S.copy('a', 'x2'), P.path.exists('x2')"),
+    ("copy onto folder", "return S.copy('cs', 'a')"),
+    ("copy empty source", "return S.copy('', 'x3')"),
+    ("copy failed keeps", "S.write_file('ck', 'old') pcall(S.copy, 'nope', 'ck') return S.read_file('ck')"),
+    ("copy leaves no file", "local l = {} for _, n in ipairs(S.list_directory('.')) do "
+     "if n:sub(1, 1) == '.' and n:sub(1, 2) ~= '._' then l[#l + 1] = n end end return #l"),
+    ("read empty path", "return S.read_file('')"),
+    ("write empty path", "return S.write_file('', 'x')"),
+    ("mkdir empty path", "return S.make_directory('')"),
     ("exists bad type", "return P.path.exists('a', 'pipe')"),
+    ("exists type case", "return P.path.exists('a', 'DIRECTORY'), P.path.exists('a', 'Directory'), P.path.exists('a', 'FILE'), "
+     "P.path.exists('a/f', 'File')"),
+    ("exists bad type case", "return P.path.exists('a', 'PIPE')"),
+    ("rename folder over folder", "S.make_directory('r3') S.make_directory('r4') S.write_file('r4/f', '') return S.rename('r3', 'r4')"),
+    ("rename folder over file", "S.make_directory('r5') S.write_file('r6', '') return S.rename('r5', 'r6')"),
     ("exists number", "return P.path.exists(5)"),
 ]
 
@@ -157,6 +177,34 @@ GROUPS["system-environment"] = [
     ("with_env command", "return S.with_environment({X_PROBE = 'seen'}, function() "
      "return S.command('sh', {'-c', 'echo $X_PROBE'}) end)"),
     ("getenv missing", "return os.getenv('X_PROBE_NEVER_SET')"),
+    ("with_env bad name", "return S.with_environment({['A=B'] = 'x'}, function() return 1 end)"),
+    ("with_env bad name after", "return os.getenv('PATH') ~= nil, os.getenv('HOME') ~= nil"),
+    ("with_env empty name", "return S.with_environment({[''] = 'x'}, function() return 1 end)"),
+    ("with_env table value", "return S.with_environment({A = {}}, function() return 1 end)"),
+    ("with_env bool value", "return S.with_environment({A = true}, function() return 1 end)"),
+    ("with_env bad after", "return os.getenv('PATH') ~= nil"),
+    ("with_env nested failure", "return S.with_environment({X_PROBE = 'kept'}, function() "
+     "pcall(S.with_environment, {X = {}}, function() end) return os.getenv('X_PROBE') end)"),
+    ("with_env nested", "return S.with_environment({X_PROBE = 'outer'}, function() "
+     "local inner = S.with_environment({Y_PROBE = 'inner'}, function() return os.getenv('X_PROBE'), os.getenv('Y_PROBE') end) "
+     "return inner, os.getenv('X_PROBE'), os.getenv('Y_PROBE') end)"),
+    ("with_env empty value", "return S.with_environment({E = '', F = 'f'}, function() return os.getenv('E'), S.environment().E, os.getenv('F') end)"),
+    ("with_env nul value", "return S.with_environment({E = 'a\\0b'}, function() return os.getenv('E') end)"),
+    ("with_env nul name", "return S.with_environment({['A\\0B'] = 'x'}, function() return os.getenv('A') end)"),
+    ("with_env number key", "return S.with_environment({[1] = 'x'}, function() return S.environment()['1'] end)"),
+    ("with_env number value", "return S.with_environment({A = 1.5}, function() return os.getenv('A') end)"),
+    ("with_env not table", "return S.with_environment(1, function() end)"),
+    ("with_env no callback", "return S.with_environment({})"),
+    ("with_env callback table", "return S.with_environment({}, setmetatable({}, {__call = function() return 1 end}))"),
+    ("with_env bad bytes", "return S.with_environment({X = '\\255\\226\\160'}, function() return os.getenv('X'), S.environment().X end)"),
+    ("with_env popen", "return S.with_environment({XQ = 'seen', PATH = os.getenv('PATH')}, function() "
+     "local f = io.popen('echo \"[$XQ]\"') local r = f:read('a') f:close() return r end)"),
+    ("with_env popen quote", "return S.with_environment({XQ = \"it's\", PATH = os.getenv('PATH')}, function() "
+     "local f = io.popen(\"printf '%s' \\\"$XQ\\\"\") local r = f:read('a') f:close() return r end)"),
+    ("with_env execute", "return S.with_environment({XQ = 'seen'}, function() return os.execute('test \"$XQ\" = seen') end)"),
+    ("with_env execute after", "return os.execute('test -z \"$XQ\"')"),
+    ("with_env many", "for i = 1, 200 do S.with_environment({['X_GROW_' .. i] = 'x'}, function() end) end "
+     "local n = 0 for k in pairs(S.environment()) do if k:find('X_GROW_') then n = n + 1 end end return n"),
     ("xdg config", "return S.with_environment({HOME = '/h'}, function() return S.xdg('config'), S.xdg('data', 'x/y'), "
      "S.xdg('datadirs'), S.xdg('configdirs'), S.xdg('cache'), S.xdg('state') end)"),
     ("xdg variables", "return S.with_environment({HOME = '/h', XDG_CONFIG_HOME = 'rel', XDG_DATA_DIRS = '/a::/b', "
@@ -183,6 +231,19 @@ GROUPS["system-processes"] = [
     ("command none", "return S.command()"),
     ("command in folder", "S.make_directory('cw') return S.with_working_directory('cw', function() "
      "return S.command('sh', {'-c', 'pwd'}) end)"),
+    ("command cwd", "S.make_directory('cwo') S.write_file('cwo/same.txt', 'inside') S.write_file('same.txt', 'outside') "
+     "return S.command('cat', {'same.txt'}, '', {cwd = 'cwo'})"),
+    ("command env", "return S.command('sh', {'-c', 'echo [$VO][$HOME]'}, '', {env = {VO = 'inside'}})"),
+    ("command env empty", "return S.command('sh', {'-c', 'echo [$VO]'}, '', {env = {}})"),
+    ("command env bad", "return S.command('true', {}, '', {env = {A = {}}})"),
+    ("command cwd bad", "return S.command('true', {}, '', {cwd = {}})"),
+    ("command opts bad", "return S.command('true', {}, '', 5)"),
+    ("command opts other", "return S.command('true', {}, '', {other = 1})"),
+    ("command env in with_env", "return S.with_environment({VO = 'outer'}, function() "
+     "return S.command('sh', {'-c', 'echo [$VO]'}, '', {env = {W = '1'}}), S.command('sh', {'-c', 'echo [$VO]'}) end)"),
+    ("command nil input opts", "return S.command('cat', {}, nil, {env = {}})"),
+    ("pipe stderr", "return P.pipe('sh', {'-c', 'echo out'}, '')"),
+    ("pipe missing", "return P.pipe('no-such-program-x', {}, '')"),
     ("pipe cat", "return P.pipe('cat', {}, 'pi')"),
     ("pipe echo", "return P.pipe('echo', {'x', 'y'}, '')"),
     ("pipe false", "return P.pipe('false', {}, '')"),
@@ -191,6 +252,29 @@ GROUPS["system-processes"] = [
     ("pipe error text", "local ok, e = pcall(P.pipe, 'sh', {'-c', 'echo o; exit 2'}, '') return tostring(e)"),
     ("pipe no input", "return P.pipe('true', {})"),
     ("pipe none", "return P.pipe()"),
+]
+
+GROUPS["system-arguments"] = [
+    ("wd no callback", "return S.with_working_directory('.')"),
+    ("wd bad dir", "return S.with_working_directory({}, function() end)"),
+    ("wd callback argument", "return S.with_working_directory('.', function(...) return select('#', ...), ... end)"),
+    ("tmp no callback", "return S.with_temporary_directory('x')"),
+    ("tmp nil parent", "return S.with_temporary_directory(nil, 'tq', function() return 1 end)"),
+    ("tmp bad templ", "return S.with_temporary_directory({}, function() end)"),
+    ("ls bad", "return S.list_directory({})"),
+    ("rm none", "return S.remove()"),
+    ("rmdir none", "return S.remove_directory()"),
+    ("cp none", "return S.copy()"),
+    ("cp one", "return S.copy('x')"),
+    ("rename none", "return S.rename()"),
+    ("times none", "return S.times()"),
+    ("read none", "return S.read_file()"),
+    ("write none", "return S.write_file()"),
+    ("mkdir none", "return S.make_directory()"),
+    ("exists none", "return P.path.exists()"),
+    ("xdg none", "return S.xdg()"),
+    ("getwd extra", "return type(S.get_working_directory(1))"),
+    ("env extra", "return type(S.environment(1))"),
 ]
 
 GROUPS["system-cputime"] = [

@@ -82,12 +82,30 @@ local function run()
   probe('rmdir empty', function() S.make_directory('e') return S.remove_directory('e'), P.path.exists('e') end)
   probe('rmdir empty recursive', function() S.make_directory('e2') return S.remove_directory('e2', true), P.path.exists('e2') end)
   probe('exists', function() return P.path.exists('a'), P.path.exists('a', 'directory'), P.path.exists('a', 'file'), P.path.exists('a/f', 'file'), P.path.exists('a/f', 'directory'), P.path.exists('nope'), P.path.exists('a', 'symlink'), P.path.exists('nope', 'file') end)
+  probe('copy self', function() S.write_file('cs', 'keep') S.copy('cs', 'cs') return S.read_file('cs') end)
+  probe('copy self dot', function() S.copy('cs', './cs') return S.read_file('cs') end)
+  probe('copy self parent', function() S.copy('cs', 'a/../cs') return S.read_file('cs') end)
+  probe('copy self twice', function() S.copy('cs', 'cs') S.copy('cs', 'cs') return S.read_file('cs') end)
+  probe('copy missing folder', function() return S.copy('cs', 'nodir/x') end)
+  probe('copy missing both', function() return S.copy('nope', 'nodir/x') end)
+  probe('copy folder source', function() return S.copy('a', 'x2'), P.path.exists('x2') end)
+  probe('copy onto folder', function() return S.copy('cs', 'a') end)
+  probe('copy empty source', function() return S.copy('', 'x3') end)
+  probe('copy failed keeps', function() S.write_file('ck', 'old') pcall(S.copy, 'nope', 'ck') return S.read_file('ck') end)
+  probe('copy leaves no file', function() local l = {} for _, n in ipairs(S.list_directory('.')) do if n:sub(1, 1) == '.' and n:sub(1, 2) ~= '._' then l[#l + 1] = n end end return #l end)
+  probe('read empty path', function() return S.read_file('') end)
+  probe('write empty path', function() return S.write_file('', 'x') end)
+  probe('mkdir empty path', function() return S.make_directory('') end)
   probe('exists bad type', function() return P.path.exists('a', 'pipe') end)
+  probe('exists type case', function() return P.path.exists('a', 'DIRECTORY'), P.path.exists('a', 'Directory'), P.path.exists('a', 'FILE'), P.path.exists('a/f', 'File') end)
+  probe('exists bad type case', function() return P.path.exists('a', 'PIPE') end)
+  probe('rename folder over folder', function() S.make_directory('r3') S.make_directory('r4') S.write_file('r4/f', '') return S.rename('r3', 'r4') end)
+  probe('rename folder over file', function() S.make_directory('r5') S.write_file('r6', '') return S.rename('r5', 'r6') end)
   probe('exists number', function() return P.path.exists(5) end)
 end
 
 function Pandoc(document)
-  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
   S.make_directory(parent, true)
   S.with_temporary_directory(parent, 'matrix', function(directory)
     S.with_working_directory(directory, function()
@@ -151,7 +169,7 @@ local function run()
 end
 
 function Pandoc(document)
-  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
   S.make_directory(parent, true)
   S.with_temporary_directory(parent, 'matrix', function(directory)
     S.with_working_directory(directory, function()
@@ -211,6 +229,28 @@ local function run()
   probe('with_env results', function() return select('#', S.with_environment({}, function() end)) end)
   probe('with_env command', function() return S.with_environment({X_PROBE = 'seen'}, function() return S.command('sh', {'-c', 'echo $X_PROBE'}) end) end)
   probe('getenv missing', function() return os.getenv('X_PROBE_NEVER_SET') end)
+  probe('with_env bad name', function() return S.with_environment({['A=B'] = 'x'}, function() return 1 end) end)
+  probe('with_env bad name after', function() return os.getenv('PATH') ~= nil, os.getenv('HOME') ~= nil end)
+  probe('with_env empty name', function() return S.with_environment({[''] = 'x'}, function() return 1 end) end)
+  probe('with_env table value', function() return S.with_environment({A = {}}, function() return 1 end) end)
+  probe('with_env bool value', function() return S.with_environment({A = true}, function() return 1 end) end)
+  probe('with_env bad after', function() return os.getenv('PATH') ~= nil end)
+  probe('with_env nested failure', function() return S.with_environment({X_PROBE = 'kept'}, function() pcall(S.with_environment, {X = {}}, function() end) return os.getenv('X_PROBE') end) end)
+  probe('with_env nested', function() return S.with_environment({X_PROBE = 'outer'}, function() local inner = S.with_environment({Y_PROBE = 'inner'}, function() return os.getenv('X_PROBE'), os.getenv('Y_PROBE') end) return inner, os.getenv('X_PROBE'), os.getenv('Y_PROBE') end) end)
+  probe('with_env empty value', function() return S.with_environment({E = '', F = 'f'}, function() return os.getenv('E'), S.environment().E, os.getenv('F') end) end)
+  probe('with_env nul value', function() return S.with_environment({E = 'a\0b'}, function() return os.getenv('E') end) end)
+  probe('with_env nul name', function() return S.with_environment({['A\0B'] = 'x'}, function() return os.getenv('A') end) end)
+  probe('with_env number key', function() return S.with_environment({[1] = 'x'}, function() return S.environment()['1'] end) end)
+  probe('with_env number value', function() return S.with_environment({A = 1.5}, function() return os.getenv('A') end) end)
+  probe('with_env not table', function() return S.with_environment(1, function() end) end)
+  probe('with_env no callback', function() return S.with_environment({}) end)
+  probe('with_env callback table', function() return S.with_environment({}, setmetatable({}, {__call = function() return 1 end})) end)
+  probe('with_env bad bytes', function() return S.with_environment({X = '\255\226\160'}, function() return os.getenv('X'), S.environment().X end) end)
+  probe('with_env popen', function() return S.with_environment({XQ = 'seen', PATH = os.getenv('PATH')}, function() local f = io.popen('echo "[$XQ]"') local r = f:read('a') f:close() return r end) end)
+  probe('with_env popen quote', function() return S.with_environment({XQ = "it's", PATH = os.getenv('PATH')}, function() local f = io.popen("printf '%s' \"$XQ\"") local r = f:read('a') f:close() return r end) end)
+  probe('with_env execute', function() return S.with_environment({XQ = 'seen'}, function() return os.execute('test "$XQ" = seen') end) end)
+  probe('with_env execute after', function() return os.execute('test -z "$XQ"') end)
+  probe('with_env many', function() for i = 1, 200 do S.with_environment({['X_GROW_' .. i] = 'x'}, function() end) end local n = 0 for k in pairs(S.environment()) do if k:find('X_GROW_') then n = n + 1 end end return n end)
   probe('xdg config', function() return S.with_environment({HOME = '/h'}, function() return S.xdg('config'), S.xdg('data', 'x/y'), S.xdg('datadirs'), S.xdg('configdirs'), S.xdg('cache'), S.xdg('state') end) end)
   probe('xdg variables', function() return S.with_environment({HOME = '/h', XDG_CONFIG_HOME = 'rel', XDG_DATA_DIRS = '/a::/b', XDG_CACHE_HOME = '/c'}, function() return S.xdg('config'), S.xdg('datadirs'), S.xdg('cache', '/abs'), S.xdg('CONFIG_DIRS'), S.xdg('XDG_CACHE'), S.xdg('cache', 'f') end) end)
   probe('xdg names', function() return S.with_environment({HOME = '/h'}, function() return S.xdg('Config'), S.xdg('XDGDATA'), S.xdg('xdg_state_') end) end)
@@ -220,7 +260,7 @@ local function run()
 end
 
 function Pandoc(document)
-  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
   S.make_directory(parent, true)
   S.with_temporary_directory(parent, 'matrix', function(directory)
     S.with_working_directory(directory, function()
@@ -281,6 +321,17 @@ local function run()
   probe('command args string', function() return S.command('true', 'x') end)
   probe('command none', function() return S.command() end)
   probe('command in folder', function() S.make_directory('cw') return S.with_working_directory('cw', function() return S.command('sh', {'-c', 'pwd'}) end) end)
+  probe('command cwd', function() S.make_directory('cwo') S.write_file('cwo/same.txt', 'inside') S.write_file('same.txt', 'outside') return S.command('cat', {'same.txt'}, '', {cwd = 'cwo'}) end)
+  probe('command env', function() return S.command('sh', {'-c', 'echo [$VO][$HOME]'}, '', {env = {VO = 'inside'}}) end)
+  probe('command env empty', function() return S.command('sh', {'-c', 'echo [$VO]'}, '', {env = {}}) end)
+  probe('command env bad', function() return S.command('true', {}, '', {env = {A = {}}}) end)
+  probe('command cwd bad', function() return S.command('true', {}, '', {cwd = {}}) end)
+  probe('command opts bad', function() return S.command('true', {}, '', 5) end)
+  probe('command opts other', function() return S.command('true', {}, '', {other = 1}) end)
+  probe('command env in with_env', function() return S.with_environment({VO = 'outer'}, function() return S.command('sh', {'-c', 'echo [$VO]'}, '', {env = {W = '1'}}), S.command('sh', {'-c', 'echo [$VO]'}) end) end)
+  probe('command nil input opts', function() return S.command('cat', {}, nil, {env = {}}) end)
+  probe('pipe stderr', function() return P.pipe('sh', {'-c', 'echo out'}, '') end)
+  probe('pipe missing', function() return P.pipe('no-such-program-x', {}, '') end)
   probe('pipe cat', function() return P.pipe('cat', {}, 'pi') end)
   probe('pipe echo', function() return P.pipe('echo', {'x', 'y'}, '') end)
   probe('pipe false', function() return P.pipe('false', {}, '') end)
@@ -291,7 +342,79 @@ local function run()
 end
 
 function Pandoc(document)
-  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
+  S.make_directory(parent, true)
+  S.with_temporary_directory(parent, 'matrix', function(directory)
+    S.with_working_directory(directory, function()
+      here = S.get_working_directory()
+      run()
+    end)
+  end)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter system-arguments empty small
+
+local P, S = pandoc, pandoc.system
+local log = {}
+local here = ''
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  if kind == 'string' then
+    local text = here ~= '' and value:gsub(here:gsub('%p', '%%%0'), 'TMP') or value
+    return '"' .. text:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 4 then
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    local mt = getmetatable(value)
+    local name = type(mt) == 'table' and rawget(mt, '__name')
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises `PandocError` objects (row I-LUA-10): the text is compared.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  log[#log + 1] = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+end
+local function sorted(list) table.sort(list) return list end
+
+local function run()
+  probe('wd no callback', function() return S.with_working_directory('.') end)
+  probe('wd bad dir', function() return S.with_working_directory({}, function() end) end)
+  probe('wd callback argument', function() return S.with_working_directory('.', function(...) return select('#', ...), ... end) end)
+  probe('tmp no callback', function() return S.with_temporary_directory('x') end)
+  probe('tmp nil parent', function() return S.with_temporary_directory(nil, 'tq', function() return 1 end) end)
+  probe('tmp bad templ', function() return S.with_temporary_directory({}, function() end) end)
+  probe('ls bad', function() return S.list_directory({}) end)
+  probe('rm none', function() return S.remove() end)
+  probe('rmdir none', function() return S.remove_directory() end)
+  probe('cp none', function() return S.copy() end)
+  probe('cp one', function() return S.copy('x') end)
+  probe('rename none', function() return S.rename() end)
+  probe('times none', function() return S.times() end)
+  probe('read none', function() return S.read_file() end)
+  probe('write none', function() return S.write_file() end)
+  probe('mkdir none', function() return S.make_directory() end)
+  probe('exists none', function() return P.path.exists() end)
+  probe('xdg none', function() return S.xdg() end)
+  probe('getwd extra', function() return type(S.get_working_directory(1)) end)
+  probe('env extra', function() return type(S.environment(1)) end)
+end
+
+function Pandoc(document)
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
   S.make_directory(parent, true)
   S.with_temporary_directory(parent, 'matrix', function(directory)
     S.with_working_directory(directory, function()
@@ -344,7 +467,7 @@ local function run()
 end
 
 function Pandoc(document)
-  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s4'
+  local parent = (os.getenv('TMPDIR') or '/tmp'):gsub('/$', '') .. '/lua-s5'
   S.make_directory(parent, true)
   S.with_temporary_directory(parent, 'matrix', function(directory)
     S.with_working_directory(directory, function()

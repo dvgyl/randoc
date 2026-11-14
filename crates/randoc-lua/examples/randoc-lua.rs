@@ -36,7 +36,7 @@ fn run(args: &[String]) -> Result<(), Error> {
                 path: file,
                 source: &source,
             };
-            let mut context = Context::pure();
+            let mut context = Context::native();
             apply_filter(
                 &mut doc,
                 &filter,
