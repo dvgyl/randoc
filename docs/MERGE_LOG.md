@@ -1929,3 +1929,29 @@ Open findings of the branch: the memory use of deep nesting (above);
 the 25 high findings of review round 1 (both reviewers), which are not
 yet rows of `docs/ISSUES.md`. The worker must correct the memory use
 and merge again.
+
+## Session 5 of 2026-11-12, batch B (five blocks; four merged, one reverted)
+
+Blocks: harness-speed 7d6c7a2 (052eb5b), cli 547f593 (fef04d5),
+citeproc f515c1d (b95fb95), markdown-reader f749931 (52e5f01),
+latex-reader a048f35 (d4b88c5, reverted by 6a37e63; see its record).
+The workers were stopped by a usage limit; no worker report section
+exists; the records use the inbox lines and the commit lists.
+
+`merge-ws check`, first run: the watchdog stopped the test program of
+`randoc-latex-reader` at 4.0 GB (step "tests without the conformance
+suite"). Second run, after the revert: passed. Gate times: format
+22:10:55, lints 22:11:07, documentation 22:12:21, tests 22:12:44,
+conformance harness 22:26:05, end 22:32:50 UTC (about 22 minutes).
+
+| Harness | Units | Pass | Fail | Skipped | Regressions | New passes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Before (`main` 4146317) | 49305 | 46457 | 2446 | 402 | 0 | 0 |
+| After | 51037 | 48194 | 2423 | 420 | 0 | 1737 |
+
+Capability summary: extensions 52 passing, 26 partial, 1 failing, 11
+not started; input formats 4 passing, 9 partial, 39 not started;
+options 89 passing, 19 partial, 1 not started; output formats 5
+passing, 12 partial, 1 failing, 59 not started; units 48194 of 50617
+passing. `spec/baseline.json` and `spec/capabilities.json` are updated
+in the next commit.
