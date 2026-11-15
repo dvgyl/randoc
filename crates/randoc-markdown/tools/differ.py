@@ -661,7 +661,166 @@ def nested_bracket_matrix():
     return cases
 
 
+def attr_newline_matrix():
+    """Codex R4-05: a line break inside a quoted attribute value. No value
+    has a tab: `pandoc.read` keeps a tab that the command line expands."""
+    values = {
+        "break": "a\nb", "indent": "a\n   b", "end-spaces": "a  \nb", "space-both": "a \n b",
+        "first": "\nb", "space-first": " \nb", "last": "a\n", "two": "a\nb\nc", "escape": "a\\\nb",
+        "quote": '\\"\nb', "ref": "a&#10;b",
+    }
+    hosts = {
+        "span": "[x]{{{k}={v}}}", "link": "[x](u){{{k}={v}}}", "image": "t ![x](u){{{k}={v}}}",
+        "code": "`c`{{{k}={v}}}", "item": "- [x]{{{k}={v}}}", "quote": "> [x]{{{k}={v}}}",
+    }
+    cases = []
+    for vid, raw in values.items():
+        for q in ['"', "'"]:
+            if q in raw:
+                continue
+            for key in ["a", "id", "class"]:
+                for hid, host in hosts.items():
+                    v = q + raw + q
+                    if hid == "item":
+                        v = v.replace("\n", "\n  ")
+                    elif hid == "quote":
+                        v = v.replace("\n", "\n> ")
+                    qid = "dq" if q == '"' else "sq"
+                    text = host.format(k=key, v=v) + "\n"
+                    cases.append({"id": f"an-{hid}-{key}-{vid}-{qid}", "from": "markdown", "input": text})
+    return cases
+
+
+def caption_deflist_matrix():
+    """Codex R4-04: a caption with a colon after a paragraph, before a table."""
+    tables = {
+        "pipe": "x|y\n-|-",
+        "pipe-body": "x|y\n-|-\n1|2",
+        "simple": "  x   y\n ---  ---\n  1   2",
+        "grid": "+---+---+\n| x | y |\n+===+===+\n| 1 | 2 |\n+---+---+",
+        "multi": "-------\n x   y\n--- ---\n 1   2\n-------",
+    }
+    heads = {
+        "loose": "t\n\n: d", "tight": "t\n: d", "two-defs": "t\n\n: d\n\n: e", "more": "t\n\n: d\n  e",
+        "indent": "t\n\n:   d", "table-word": "t\n\nTable: d", "tilde": "t\n\n~ d", "two-terms": "t\nu\n\n: d",
+        "after-list": "- a\n\n: d", "term-def-then": "s\n\n: c\n\nt\n\n: d",
+    }
+    cases = []
+    for hid, head in heads.items():
+        for tid, table in tables.items():
+            for sep in ["\n\n", "\n"]:
+                sid = "blank" if sep == "\n\n" else "next"
+                for ext in ["markdown", "markdown-table_captions", "markdown_phpextra", "markdown-definition_lists"]:
+                    cases.append({"id": f"cd-{hid}-{tid}-{sid}-{ext}", "from": ext, "input": head + sep + table + "\n"})
+    return cases
+
+
+def meta_reference_matrix():
+    """Codex R4-03 and R4-06: references, notes and errors in metadata values."""
+    values = {
+        "ref": "'[r]'", "full": "'[x][r]'", "collapsed": "'[r][]'", "image": "'![r]'", "undefined": "'[q]'",
+        "note": "'t[^n]'", "inline-note": "'t^[i]'", "cite": "'@k'", "block": "|\n  [r]\n", "list": "\n  - '[r]'",
+        "map": "\n  k: '[r]'", "own-def": "|\n  [s]\n\n  [s]: w\n", "example": "'(@e)'", "heading": "|\n  # h [r]\n",
+    }
+    places = {
+        "after": "---\na: {v}\n---\n\n{d}\n",
+        "before": "{d}\n\n---\na: {v}\n---\n",
+        "body": "---\na: {v}\n---\n\nb [r] t[^n] @k (@e)\n\n{d}\n",
+        "end": "b\n\n---\na: {v}\n---\n\n{d}\n",
+        "title": "---\ntitle: {v}\n---\n\n{d}\n",
+    }
+    defs = "[r]: u\n\n[^n]: note\n\n(@e) ex"
+    cases = []
+    for vid, v in values.items():
+        for pid, place in places.items():
+            cases.append({"id": f"mr-{vid}-{pid}", "from": "markdown", "input": place.format(v=v, d=defs)})
+    errors = {
+        "flow": '"t\\n\\n---\\nx: [\\n---\\n"', "block": "|\n  t\n\n  ---\n  x: [\n  ---\n",
+        "inline": '"---\\nx: [\\n---\\n"', "list": '\n  - "t\\n\\n---\\nx: [\\n---\\n"',
+        "good": '"t\\n\\n---\\nx: 1\\n---\\n"', "warn": '"::: x\\nb\\n"',
+    }
+    for eid, v in errors.items():
+        cases.append({"id": f"me-{eid}", "from": "markdown", "input": f"---\na: {v}\n---\n"})
+    return cases
+
+
+def token_boundary_matrix():
+    """Codex R4-01, R4-07, R3-17 and Opus R3-03: tokens that hold literal
+    text (code, math, comments, tags) at the end of a heading or a
+    paragraph line, and the lines that they take."""
+    tokens = {
+        "comment": "<!--`-->", "tag": "<span a='`'>", "math": "$`$", "auto": "<http://x/`>", "dest": "[a](u`)",
+        "escape": "\\`", "pi": "<?x `?>", "code": "`a`", "open": "`", "open2": "``", "dmath": "$$`$$",
+        "comment-open": "<!--", "math-open": "$a", "dmath-open": "$$a",
+    }
+    nexts = {
+        "code": "`p`", "close": "p`", "close2": "p``", "comment": "<!--`-->p", "heading": "# q`", "fence": "```\nc\n```",
+        "comment-end": "p-->", "math-end": "b$", "dmath-end": "b$$", "quote": "> q`", "item": "- q`",
+    }
+    cases = []
+    for tid, tok in tokens.items():
+        for nid, nxt in nexts.items():
+            for hid, host in {"heading": "# {t}h\n{n}\n", "para": "p {t}\n{n}\n", "para-two": "p\n{t}h\n{n}\n\nz\n"}.items():
+                text = host.format(t=tok, n=nxt)
+                for ext in ["markdown", "markdown_strict", "markdown-tex_math_dollars", "markdown-raw_html"]:
+                    cases.append({"id": f"tb-{hid}-{tid}-{nid}-{ext}", "from": ext, "input": text})
+    spans = {
+        "balanced": "p ````a\n```b\nc````\n\n```\nx\n```\n", "fence-in-code": "p `a\n```\nb`\n",
+        "fence-after-open": "p `a\n```\nb\n```\n", "comment-blank": "# <!--a\n\nb-->\n", "code-blank": "# `a\n\nb`\n",
+        "math-lines": "# $a\nb\nc$\n", "mixed": "# `a ``b\nc``\n", "two-headings": "# `a\n# ``a\n# ```a\n",
+        "pi-lines": "p <?x\n# y\n?>\n", "code-then-comment": "# `a\nb` <!--\nc\n-->\n",
+    }
+    for sid, text in spans.items():
+        for ext in ["markdown", "markdown_strict", "markdown_phpextra"]:
+            cases.append({"id": f"tb-span-{sid}-{ext}", "from": ext, "input": text})
+    return cases
+
+
+def heading_escape_matrix():
+    """I-MD-12: a backslash or an escaped character at the end of a heading text."""
+    texts = [
+        "\\#", "a \\#", "a\\#", "a \\##", "a \\#\\#", "a \\# \\#", "\\##", "a#", "a\\\\#", "a \\\\#",
+        "a \\", "a\\", "a \\\\", "a\\\\", "a\\\\\\", "\\", "\\\\", "a \\*", "a \\}", "a \\\\ ", "a \\ ",
+        "a \\#{#i}", "a \\# {#i}", "a {#i} \\#", "a \\[i]", "`a \\`", "a \\&", "a\\~", "a {#i}", "a [i]", "a [i] \\#", "a \\[i\\]", "a {#i} [j]",
+    ]
+    # No tab after a backslash: `pandoc.read` keeps the tab that the command line expands.
+    closers = {"none": "", "sp": " #", "sp2": " ##", "tight": "#", "wide": "   ###   "}
+    exts = [
+        "markdown", "markdown-escaped_line_breaks", "markdown-all_symbols_escapable",
+        "markdown-space_in_atx_header", "markdown-header_attributes", "markdown_strict",
+        "markdown_phpextra", "markdown_mmd", "markdown_github",
+    ]
+    cases = []
+    for ti, text in enumerate(texts):
+        forms = {f"atx{n}-{cid}": f"{'#' * n} {text}{c}\n" for n in (1, 2, 6) for cid, c in closers.items()}
+        forms["tight1"] = f"#{text}\n"
+        forms["setext1"] = f"{text}\n===\n"
+        forms["setext2"] = f"{text}\n---\n"
+        forms["next"] = f"# {text}\nz\n"
+        for fid, form in forms.items():
+            for ext in exts:
+                cases.append({"id": f"he-{ti}-{fid}-{ext}", "from": ext, "input": form})
+    return cases
+
+
+def title_author_matrix():
+    """I-MD-12: empty and separator-only author lines of a title block."""
+    authors = ["%", "% ", "% ;", "% a;", "% ;a", "% a; ;b", "% a;;b", "% a\n  b", "% a;\n  ;", "% \n  a", "% ; ;"]
+    titles = {"t": "% T\n", "none": "%\n"}
+    dates = {"d": "% D\n", "end": "", "empty": "%\n"}
+    cases = []
+    for ai, author in enumerate(authors):
+        for tid, title in titles.items():
+            for did, date in dates.items():
+                for ext in ["markdown", "markdown_phpextra-pandoc_title_block+pandoc_title_block"]:
+                    eid = "md" if ext == "markdown" else "php"
+                    cases.append({"id": f"ta-{ai}-{tid}-{did}-{eid}", "from": ext, "input": f"{title}{author}\n{date}\nx\n"})
+    return cases
+
+
 S5_MATRICES = {
+    "heading-escape": heading_escape_matrix,
+    "title-author": title_author_matrix,
     "span-name": span_name_matrix,
     "raw-tag": raw_tag_matrix,
     "caption": caption_matrix,
@@ -675,6 +834,10 @@ S5_MATRICES = {
     "foreign-marker": foreign_marker_matrix,
     "github-fence": github_fence_matrix,
     "nested-bracket": nested_bracket_matrix,
+    "attr-newline": attr_newline_matrix,
+    "caption-deflist": caption_deflist_matrix,
+    "meta-reference": meta_reference_matrix,
+    "token-boundary": token_boundary_matrix,
 }
 
 

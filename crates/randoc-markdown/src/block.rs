@@ -236,15 +236,46 @@ fn ends_with_escape(s: &str) -> bool {
     (s.len() - s.trim_end_matches('\\').len()) % 2 == 1
 }
 
-/// Removes the spaces at the end of `s`, but keeps the space of a final
-/// escaped space (`\ `), which is a nonbreaking space.
-fn trim_end_unescaped(s: &str) -> &str {
-    let trimmed = s.trim_end_matches(SPACE);
-    if ends_with_escape(trimmed) {
+/// Removes the characters of `strip` at the end of `s`, but keeps the
+/// first removed character when a backslash escapes it: an escaped space
+/// is a nonbreaking space and an escaped `#` is text, not a closing hash.
+fn trim_end_unescaped<'a>(s: &'a str, strip: &[char]) -> &'a str {
+    let trimmed = s.trim_end_matches(strip);
+    if trimmed.len() < s.len() && ends_with_escape(trimmed) {
         s.get(..trimmed.len() + 1).unwrap_or(trimmed)
     } else {
         trimmed
     }
+}
+
+/// Splits the author field of a title block. A `;` or a line break ends
+/// an author, and the spaces and line breaks after a `;` belong to it, so
+/// `a;` gives two authors, the second one empty.
+fn title_block_authors(field: &str) -> impl Iterator<Item = &str> {
+    let mut rest = Some(field.trim_matches(SPACE));
+    std::iter::from_fn(move || {
+        let s = rest?;
+        match s.find([';', '\n']) {
+            Some(k) => {
+                let after = s.get(k + 1..).unwrap_or("");
+                rest = Some(if s.get(k..k + 1) == Some(";") {
+                    after.trim_start_matches(SPACE)
+                } else {
+                    after
+                });
+                Some(s.get(..k).unwrap_or("").trim_matches(SPACE))
+            }
+            None => {
+                rest = None;
+                Some(s.trim_matches(SPACE))
+            }
+        }
+    })
+}
+
+/// Removes the closing hashes of an ATX heading and the spaces before them.
+fn strip_closing_hashes(text: &str) -> &str {
+    trim_end_unescaped(trim_end_unescaped(text, &['#']), &SPACE)
 }
 
 fn blank(s: &str) -> bool {
@@ -289,8 +320,6 @@ fn expand_tabs(line: &str, tab_stop: usize) -> Text {
 /// a later search for `n` or more of the same character finds none either.
 #[derive(Default)]
 struct FenceMemo {
-    /// For backticks and tildes: the line of the search and the run length.
-    failed: [Option<(usize, usize)>; 2],
     /// For a comment and a processing instruction: the line where the last
     /// search for the line of its end started, and the line that it found.
     raw_ends: [Option<(usize, Option<usize>)>; 2],
@@ -309,6 +338,47 @@ struct Tokens {
     /// The address of the slice, which names it while it is parsed.
     base: usize,
     len: usize,
+    fences: Rc<RefCell<FenceFailures>>,
+}
+
+/// Which closing line a fence search looks for: the closer of a fenced
+/// code block, or the closer that an HTML closer scan skips to.
+#[derive(Clone, Copy)]
+enum FenceSearch {
+    Block,
+    Closer,
+}
+
+/// The last failed search for a closing fence of each search kind and
+/// fence character, in lines of the token index: the opener line, the run
+/// length and the end of the lines that the search read. The parts of a
+/// slice share it, so that nested containers that each hold the same
+/// unclosed fence make one search, not one at each level.
+#[derive(Default)]
+struct FenceFailures([Option<(usize, usize, usize)>; 4]);
+
+impl FenceFailures {
+    fn slot(search: FenceSearch, c: char) -> usize {
+        2 * usize::from(matches!(search, FenceSearch::Closer)) + usize::from(c == '~')
+    }
+
+    /// Tells whether an earlier search proves that no line after `from`
+    /// and before `end` closes a fence of `n` characters `c`.
+    fn covers(&self, search: FenceSearch, c: char, from: usize, n: usize, end: usize) -> bool {
+        self.0
+            .get(Self::slot(search, c))
+            .copied()
+            .flatten()
+            .is_some_and(|(line, len, read_to)| from >= line && n >= len && end <= read_to)
+    }
+
+    fn record(&mut self, search: FenceSearch, c: char, from: usize, n: usize, end: usize) {
+        if let Some(slot) = self.0.get_mut(Self::slot(search, c))
+            && slot.is_none_or(|(_, len, read_to)| n <= len && end >= read_to)
+        {
+            *slot = Some((from, n, end));
+        }
+    }
 }
 
 impl Tokens {
@@ -347,29 +417,8 @@ impl Tokens {
             offset,
             base: lines.as_ptr() as usize,
             len: lines.len(),
+            fences: Rc::clone(&self.fences),
         })
-    }
-}
-
-impl FenceMemo {
-    fn slot(c: char) -> usize {
-        usize::from(c == '~')
-    }
-
-    fn has_no_closer(&self, c: char, at: usize, n: usize) -> bool {
-        self.failed
-            .get(Self::slot(c))
-            .copied()
-            .flatten()
-            .is_some_and(|(line, len)| at >= line && n >= len)
-    }
-
-    fn no_closer(&mut self, c: char, at: usize, n: usize) {
-        if let Some(slot) = self.failed.get_mut(Self::slot(c))
-            && slot.is_none_or(|(_, len)| n <= len)
-        {
-            *slot = Some((at, n));
-        }
     }
 }
 
@@ -833,7 +882,7 @@ impl<'a> CloserScan<'a> {
     ) -> Option<(usize, usize)> {
         let mut stack: Vec<(usize, usize)> = Vec::new();
         let mut fence: Option<(char, usize)> = None;
-        let mut no_fence_closer = FenceMemo::default();
+        let mut no_fence_closer = tokens.fences.borrow_mut();
         let mut index = tokens.index.borrow_mut();
         let off = tokens.offset;
         let view = View { lines, at: off };
@@ -878,18 +927,30 @@ impl<'a> CloserScan<'a> {
                 continue;
             } else if j > 0
                 && let Some((c, n, _, _)) = fence_open(container_content(t))
-                && !no_fence_closer.has_no_closer(c, j, n)
             {
-                if lines.get(j + 1..).is_some_and(|rest| {
-                    rest.iter().any(|l| {
-                        crate::step(1);
-                        closes_fence(l.t(), c, n)
+                let end = off + lines.len();
+                let closer_below = |count: bool| {
+                    lines.get(j + 1..).is_some_and(|rest| {
+                        rest.iter().any(|l| {
+                            if count {
+                                crate::step(1);
+                            }
+                            closes_fence(l.t(), c, n)
+                        })
                     })
-                }) {
-                    fence = Some((c, n));
-                    continue;
+                };
+                let known = no_fence_closer.covers(FenceSearch::Closer, c, off + j, n, end);
+                #[cfg(test)]
+                if known {
+                    crate::check_cache(&false, || closer_below(false));
                 }
-                no_fence_closer.no_closer(c, j, n);
+                if !known {
+                    if closer_below(true) {
+                        fence = Some((c, n));
+                        continue;
+                    }
+                    no_fence_closer.record(FenceSearch::Closer, c, off + j, n, end);
+                }
             }
             let bytes = t.as_bytes();
             // Only tags of the element precede position `i` on the line.
@@ -1105,6 +1166,15 @@ fn container_content(t: &str) -> &str {
 }
 
 /// Tells whether the line `t` closes a fence of `n` or more characters `c`.
+/// Tells whether the line `t` closes a fenced code block of `n` characters `c`.
+fn closes_code_fence(t: &str, c: char, n: usize) -> bool {
+    if indent(t) >= 4 {
+        return false;
+    }
+    let tt = t.trim_matches(SPACE);
+    tt.len() - tt.trim_start_matches(c).len() >= n && tt.trim_start_matches(c).is_empty()
+}
+
 fn closes_fence(t: &str, c: char, n: usize) -> bool {
     let tt = container_content(t).trim_matches(SPACE);
     tt.len() - tt.trim_start_matches(c).len() >= n && tt.trim_start_matches(c).is_empty()
@@ -1198,12 +1268,20 @@ impl Parser {
         }
         let rest = lines.get(start..).unwrap_or(&[]);
         let blocks = self.blocks(rest)?;
-        let blocks = self.resolve_document(blocks);
+        // The metadata text is read after all references are known, but
+        // before the text of the body: its headings, notes and citations
+        // count first.
         let mut meta = std::mem::take(&mut self.meta);
+        for value in meta.0.values_mut() {
+            self.assign_meta_header_ids(value);
+        }
+        let mut blocks = blocks;
+        self.assign_header_ids(&mut blocks);
         for (key, value) in std::mem::take(&mut meta.0) {
             let value = self.resolve_meta(value);
             meta.insert(key, value);
         }
+        let blocks = self.resolve_document(blocks);
         let mut doc = Pandoc { meta, blocks };
         if self.ext(Extension::Smart) {
             let mark = format!("{}.", crate::inline::ESCAPED_PERIOD);
@@ -1252,15 +1330,10 @@ impl Parser {
             self.meta.insert("title", value);
         }
         if let Some(authors) = it.next() {
-            let list: Vec<MetaValue> = authors
-                .split([';', '\n'])
-                .map(str::trim)
-                .filter(|a| !a.is_empty())
+            let list = title_block_authors(&authors)
                 .map(|a| MetaValue::MetaInlines(vec![placeholder(a)]))
                 .collect();
-            if !list.is_empty() {
-                self.meta.insert("author", MetaValue::MetaList(list));
-            }
+            self.meta.insert("author", MetaValue::MetaList(list));
         }
         if let Some(date) = it.next()
             && !date.is_empty()
@@ -1807,7 +1880,20 @@ impl Parser {
     ) -> Option<usize> {
         let first = lines.first()?;
         let (c, n, ind, info) = fence_open(first.t())?;
-        if fences.has_no_closer(c, at, n) {
+        let (from, end) = (
+            fences.tokens.offset + at,
+            fences.tokens.offset + at + lines.len(),
+        );
+        if fences
+            .tokens
+            .fences
+            .borrow()
+            .covers(FenceSearch::Block, c, from, n, end)
+        {
+            #[cfg(test)]
+            crate::check_cache(&false, || {
+                lines.iter().skip(1).any(|l| closes_code_fence(l.t(), c, n))
+            });
             return None;
         }
         let enabled = if c == '`' {
@@ -1850,21 +1936,17 @@ impl Parser {
         while let Some(line) = lines.get(j) {
             crate::step(1);
             let t = line.t();
-            let ti = indent(t);
-            if ti < 4 {
-                let tt = t.trim_matches(SPACE);
-                let m = tt.len() - tt.trim_start_matches(c).len();
-                if m >= n && tt.trim_start_matches(c).is_empty() {
-                    closed = true;
-                    j += 1;
-                    break;
-                }
+            if closes_code_fence(t, c, n) {
+                closed = true;
+                j += 1;
+                break;
             }
             body.push(dedent(t, ind));
             j += 1;
         }
         if !closed {
-            fences.no_closer(c, at, n);
+            let mut failures = fences.tokens.fences.borrow_mut();
+            failures.record(FenceSearch::Block, c, from, n, end);
             return None;
         }
         let text = body.join("\n");
@@ -1918,7 +2000,7 @@ impl Parser {
     // ----- headers -----
 
     fn atx(&self, s: &str) -> Option<(i64, Text)> {
-        let t = s.trim_end_matches(SPACE);
+        let t = trim_end_unescaped(s, &SPACE);
         let level = t.len() - t.trim_start_matches('#').len();
         if level == 0 || indent(s) > 0 {
             return None;
@@ -1929,7 +2011,7 @@ impl Parser {
         }
         Some((
             i64::try_from(level).unwrap_or(1),
-            rest.trim_matches(SPACE).to_string(),
+            rest.trim_start_matches(SPACE).to_string(),
         ))
     }
 
@@ -1974,12 +2056,16 @@ impl Parser {
             if first.indent() >= 4 || first.t().trim_start_matches(SPACE).starts_with('>') {
                 return None;
             }
-            (level, first.t().trim_matches(SPACE).to_string(), 2)
+            (
+                level,
+                trim_end_unescaped(first.t().trim_start_matches(SPACE), &SPACE).to_string(),
+                2,
+            )
         };
-        let (text, attr) = self.header_attr(&content);
         let atx = used == 1 || self.atx(first.t()).is_some();
+        let (text, attr) = self.header_attr(&content, atx);
         let text = if atx {
-            trim_end_unescaped(text.trim_end_matches('#')).to_string()
+            strip_closing_hashes(&text).to_string()
         } else {
             text
         };
@@ -2008,23 +2094,32 @@ impl Parser {
                 && self.ext(Extension::LinkAttributes))
     }
 
-    fn header_attr(&self, content: &str) -> (Text, Attr) {
+    /// Splits the attributes from the text of a heading. An attribute
+    /// block must end the text before closing hashes; an identifier of
+    /// `mmd_header_identifiers` must end it after them.
+    fn header_attr(&self, content: &str, atx: bool) -> (Text, Attr) {
         if self.ext(Extension::HeaderAttributes)
             && content.ends_with('}')
             && let Some(open) = content.rfind('{')
             && !self.inline_takes_attr(content.get(..open).unwrap_or(""))
             && let Some(attr) = self.parse_attr(content.get(open..).unwrap_or(""))
         {
-            let text = trim_end_unescaped(content.get(..open).unwrap_or(""));
+            let text = trim_end_unescaped(content.get(..open).unwrap_or(""), &SPACE);
             return (text.to_string(), attr);
         }
+        let mmd = if atx {
+            strip_closing_hashes(content)
+        } else {
+            content
+        };
         if self.ext(Extension::MmdHeaderIdentifiers)
-            && content.ends_with(']')
-            && let Some(open) = content.rfind('[')
+            && mmd.ends_with(']')
+            && let Some(open) = mmd.rfind('[')
+            && !ends_with_escape(mmd.get(..open).unwrap_or(""))
         {
-            let id = content.get(open + 1..content.len() - 1).unwrap_or("");
+            let id = mmd.get(open + 1..mmd.len() - 1).unwrap_or("");
             if !id.is_empty() && !id.contains([' ', '[', ']']) {
-                let text = content.get(..open).unwrap_or("").trim_end_matches(SPACE);
+                let text = mmd.get(..open).unwrap_or("").trim_end_matches(SPACE);
                 return (text.to_string(), Attr::new(id, vec![], vec![]));
             }
         }
@@ -2657,6 +2752,20 @@ impl Parser {
             }
             if lines.get(k).and_then(|l| self.def_marker(l.t())).is_none() {
                 break;
+            }
+            // The first definition after a blank line is the caption of a
+            // table that follows it: the term is then a paragraph.
+            if j == 0
+                && loose
+                && self.ext(Extension::TableCaptions)
+                && lines
+                    .get(k)
+                    .is_some_and(|l| l.t().trim_start_matches(' ').starts_with(':'))
+                && self
+                    .without_effects(|p| p.table(lines.get(k..).unwrap_or(&[]), &mut Vec::new()))
+                    .is_some()
+            {
+                return Ok(None);
             }
             let mut defs = Vec::new();
             while let Some(first) = lines.get(k).and_then(|l| self.def_marker(l.t())) {
@@ -3647,7 +3756,15 @@ impl Parser {
         let source = self.source.clone();
         let max_depth = self.max_depth.saturating_sub(self.depth);
         let first_line = lines.get(1).map_or(1, |l| l.n);
-        let mut markdown = |s: &str| -> Vec<Block> { self.sub_document(s) };
+        let mut markdown = |s: &str| {
+            self.sub_document(s)
+                .map_err(|error| crate::yaml::YamlError {
+                    message: match error {
+                        Error::Parse(message) => message,
+                        other => other.to_string(),
+                    },
+                })
+        };
         let fields =
             crate::yaml::parse_yaml_metadata(&body, &source, first_line, max_depth, &mut markdown);
         match fields {
@@ -3664,24 +3781,37 @@ impl Parser {
         }
     }
 
-    /// Parses a string of a metadata field as blocks with the main reader state.
-    fn sub_document(&mut self, text: &str) -> Vec<Block> {
+    /// Parses a string of a metadata field as blocks with the main reader
+    /// state. The inline text stays unread until the end of the document,
+    /// so that it can use the references and notes of later lines. Pandoc
+    /// names the string `SOURCE_chunk` and counts its lines from 1.
+    fn sub_document(&mut self, text: &str) -> Result<Vec<Block>> {
         // Some blocks need the line break at the end of their line, so one
         // line without it is a paragraph.
         if !text.contains('\n') && self.needs_line_end(text) {
-            let para = Block::Para(vec![placeholder(text.trim_matches(SPACE))]);
-            return self.resolve_blocks(vec![para]);
+            return Ok(vec![Block::Para(vec![placeholder(
+                text.trim_matches(SPACE),
+            )])]);
         }
-        let mut lines: Vec<Ln> = text
+        let lines: Vec<Ln> = text
             .split('\n')
-            .map(|t| Ln::new(expand_tabs(t, 4), 0))
+            .enumerate()
+            .map(|(i, t)| Ln::new(expand_tabs(t, 4), u32::try_from(i + 1).unwrap_or(u32::MAX)))
             .collect();
-        if text.ends_with('\n') {
-            lines.pop();
-            lines.push(Ln::new("", 0));
-        }
-        let blocks = self.blocks(&lines).unwrap_or_default();
-        self.resolve_blocks(blocks)
+        let content = lines
+            .iter()
+            .rposition(|l| !l.is_blank())
+            .map_or(0, |k| k + 1);
+        let chunk = format!("{}_chunk", self.source);
+        let source = std::mem::replace(&mut self.source, chunk);
+        let end_line = std::mem::replace(
+            &mut self.end_line,
+            u32::try_from(content).unwrap_or(u32::MAX).saturating_add(3),
+        );
+        let blocks = self.blocks(&lines);
+        self.source = source;
+        self.end_line = end_line;
+        blocks
     }
 
     // ----- references and notes -----
@@ -3962,8 +4092,7 @@ impl Parser {
 
     // ----- the inline phase -----
 
-    fn resolve_document(&mut self, mut blocks: Vec<Block>) -> Vec<Block> {
-        self.assign_header_ids(&mut blocks);
+    fn resolve_document(&mut self, blocks: Vec<Block>) -> Vec<Block> {
         let blocks = self.resolve_blocks(blocks);
         let mut unused: Vec<(Text, SourcePos)> = Vec::new();
         let mut seen = HashSet::new();
@@ -4058,6 +4187,17 @@ impl Parser {
         self.log.truncate(log);
         (self.emphasis_failures, self.block_tag_cuts) = counts;
         out
+    }
+
+    fn assign_meta_header_ids(&mut self, value: &mut MetaValue) {
+        match value {
+            MetaValue::MetaBlocks(xs) => self.assign_header_ids(xs),
+            MetaValue::MetaList(xs) => xs.iter_mut().for_each(|x| self.assign_meta_header_ids(x)),
+            MetaValue::MetaMap(map) => map
+                .values_mut()
+                .for_each(|x| self.assign_meta_header_ids(x)),
+            _ => {}
+        }
     }
 
     fn assign_header_ids(&mut self, blocks: &mut [Block]) {

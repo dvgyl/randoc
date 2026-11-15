@@ -28,7 +28,7 @@ pub(crate) type MetaFields = Vec<(Text, MetaValue)>;
 ///
 /// `markdown` parses a string as Markdown blocks. It must parse the string as
 /// given, without an added final newline: Pandoc does not read the last line
-/// of `"- a"` as a list item.
+/// of `"- a"` as a list item. Its error ends the conversion.
 ///
 /// Returns `Ok(None)` when the block is valid YAML but its top level is not a
 /// mapping or null; Pandoc then reads the lines as ordinary Markdown. Returns
@@ -38,7 +38,7 @@ pub(crate) fn parse_yaml_metadata(
     source_name: &str,
     first_line: u32,
     max_depth: usize,
-    markdown: &mut dyn FnMut(&str) -> Vec<Block>,
+    markdown: &mut dyn FnMut(&str) -> Result<Vec<Block>, YamlError>,
 ) -> Result<Option<MetaFields>, YamlError> {
     // Pandoc parses the YAML from the opening line on, so that the line
     // numbers of an error count from that line.
@@ -86,7 +86,7 @@ fn with_path(path: &str, message: &str) -> String {
 
 /// Converts the node tree to metadata values.
 struct Converter<'m> {
-    markdown: &'m mut dyn FnMut(&str) -> Vec<Block>,
+    markdown: &'m mut dyn FnMut(&str) -> Result<Vec<Block>, YamlError>,
     max_depth: usize,
     /// The YAML text, for the source line of an error.
     yaml: &'m str,
@@ -161,10 +161,10 @@ impl Converter<'_> {
         // it reads the string.
         let text = &text.replace('\r', "");
         if blocks {
-            return Ok(MetaValue::MetaBlocks((self.markdown)(text)));
+            return Ok(MetaValue::MetaBlocks((self.markdown)(text)?));
         }
         let start = text.trim_start_matches([' ', '\t', '\n']);
-        let blocks = (self.markdown)(start);
+        let blocks = (self.markdown)(start)?;
         let inlines = blocks_to_inlines(&blocks, self.max_depth)
             .ok_or_else(|| self.error(node, "maximum nesting depth exceeded"))?;
         Ok(MetaValue::MetaInlines(inlines))
@@ -324,11 +324,12 @@ mod tests {
     }
 
     /// One paragraph of one `Str`, or one paragraph for each part between blank lines.
-    fn fake(text: &str) -> Vec<Block> {
-        text.split("\n\n")
+    fn fake(text: &str) -> Result<Vec<Block>, YamlError> {
+        Ok(text
+            .split("\n\n")
             .filter(|part| !part.trim().is_empty())
             .map(|part| Block::Para(vec![s(part.trim())]))
-            .collect()
+            .collect())
     }
 
     fn parse(text: &str) -> Result<Option<MetaFields>, String> {
@@ -376,7 +377,7 @@ mod tests {
         let mut seen = Vec::new();
         let mut record = |text: &str| {
             seen.push(text.to_string());
-            Vec::new()
+            Ok(Vec::new())
         };
         let result = parse_yaml_metadata("t: \"  x  \"\n", "", 2, 50, &mut record);
         assert!(result.is_ok());

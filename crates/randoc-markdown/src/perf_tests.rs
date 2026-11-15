@@ -457,6 +457,25 @@ fn an_unclosed_code_span_in_20000_containers_is_linear() {
 }
 
 #[test]
+fn nested_containers_with_unclosed_fences_grow_linearly() {
+    const FORMS: &[(&str, &str)] = &[
+        ("markdown", "<section>\n```a\n"),
+        ("markdown", "<div>\n~~~\n"),
+        ("markdown", "<div>\n````\n"),
+        ("markdown", "x\n<div>\n```\n"),
+        ("markdown-markdown_in_html_blocks", "<section>\n```a\n"),
+    ];
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let slow = faster_than_linear(FORMS, 100, 2000);
+        assert!(slow.is_empty(), "faster than linear: {slow:?}");
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the unclosed fence step test failed"
+    );
+}
+
+#[test]
 fn headings_with_distinct_unmatched_code_grow_linearly() {
     let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
         let make = |n| -> String {

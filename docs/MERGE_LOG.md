@@ -2808,3 +2808,52 @@ requests to the coordinator: the depth check of R7b-04 also in
 `meta_to_context` of `randoc-core`, and one indentation of the math
 warning detail in `randoc-core`. Not run: coverage, the mutation
 sample.
+
+**markdown-reader**: branch `ws/markdown-reader-6`, commits
+`4ecf200..e6eb175` (one commit). The state of `4ecf200` goes to `main`
+in batch E as `baf721b`. The commit `e6eb175` keeps an escaped character
+at the end of a heading (`# \#` keeps `#`). One helper,
+`trim_end_unescaped`, serves the closing hashes, the line end of ATX and
+Setext headings, and the text before an attribute block. An identifier
+of `mmd_header_identifiers` is read after the closing hashes. The author
+field of a title block keeps empty authors. It closes I-MD-12.
+
+Gate: `06:50 UTC e6eb175 gate passed: CRITICAL I-MD-12 escaped characters
+at the end of a heading (`# \#` keeps `#`), mmd identifiers after
+closing hashes, empty title-block authors; replay matrices
+heading-escape and title-author, 0 differ`. The worker ran the gate. It
+passed in the second run. The first run failed in a wall-time test of
+another crate, `settings::tests::repeated_resource_paths_take_linear_time`
+of `randoc-cli`. Since batch D, `main` has a step-count test instead.
+
+Measured by the worker: matrix `heading-escape`, 5,643 cases: 811
+differ before, 0 after. Matrix `title-author`, 132 cases: 108 differ
+before, 0 after. `cargo test -p randoc-markdown`: 46 pass, 3 ignored.
+
+Review state: The table of review round 4 (Codex, on `main` `a2fbf7d`)
+gives row I-MD-12 the level critical (for the input `# \#` Randoc gave
+a `LineBreak` and the reference gives `Str "#"`). This block corrects
+it. With this block and the block `baf721b` (Codex R3-02), no finding
+with the level critical is open in the Markdown reader. Still open from
+round 4: 4 high and 3 medium findings, the counterexamples of R3-12 and
+R3-15, and the new row I-MD-76 (high); the worker continues with them.
+No Opus review of round 4 ran. The verification by both reviewers is
+due after the high findings.
+
+Open: I-MD-76 (high); 4 high and 3 medium findings of round 4; the
+counterexamples of R3-12 and R3-15.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+Addition of the coordinator: the block holds the commits to `2aab7d7`
+(gate pass of the worker at 08:00 UTC). The final answer of the worker
+says: `2e48206` applies the corrections of R4-03, R4-04 and R4-06 from
+the patch of the stopped unit 5 (R4-05 was in `4ecf200`); `2aab7d7`
+gives nested containers one memory of failed fence searches for row
+I-MD-76, with a plain scan in the cache test and a step test at two
+sizes for 5 forms. Replay matrices of I-MD-12: `heading-escape` (5,643
+cases, 0 differ) and `title-author` (132 cases, 0 differ). Open: R4-01
+(28 rest cases), R4-07, I-MD-60, one form of I-MD-76 at the level
+medium (`markdown_phpextra` with a `markdown="1"` div and a fence line),
+the counterexamples of R3-12 and R3-15. Not run: fuzzing, coverage, the
+mutation sample, the differential run.
