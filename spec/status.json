@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T00:56:00Z",
+  "updated": "2026-11-15T11:10:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,30 +14,30 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 57176,
-    "pass": 54488,
-    "fail": 2268,
+    "units": 61366,
+    "pass": 59513,
+    "fail": 1433,
     "skipped": 420,
-    "baseline_units": 54488,
-    "measured": "2026-11-15 on e3455ba (merge check of batch D of session 5)"
+    "baseline_units": 59513,
+    "measured": "2026-11-15 on d1d5d9e (merge check of batch H of session 6)"
   },
   "pandoc_test_suite": {
     "status": "measured",
     "run": 2231,
     "oracle_pass": 2231,
-    "randoc_pass": 607,
+    "randoc_pass": 646,
     "cannot_run_estimate": 1939,
     "details": "spec/pandoc-testsuite.json",
-    "measured": "2026-11-15 on e3455ba"
+    "measured": "2026-11-15 on 669fc05"
   },
   "corpus": {
     "status": "measured",
     "documents": 230,
     "units": 690,
     "oracle_pass": 690,
-    "randoc_pass": 159,
+    "randoc_pass": 162,
     "details": "spec/corpus.json",
-    "measured": "2026-11-15 on e3455ba"
+    "measured": "2026-11-15 on 669fc05"
   },
   "workstreams": [
     {
@@ -159,9 +159,9 @@
     }
   ],
   "next_tasks": [
-    "Close the review loop of each block: merge nothing unverified, verify the corrections with the same reviewers, correct what stays open (markdown-reader, html-reader, latex-reader first); measure main first",
-    "Connect the Lua runtime (--lua-filter through randoc_lua::apply_filter_files, lpeg, the other modules) and citations (citeproc round 2 findings, units 3 to 6, --citeproc)",
-    "The next formats in the order of the demand table: finish the LaTeX reader and the Markdown writer, standalone LaTeX output, the docx reader, rst, typst; highlight"
+    "Close the review loop: correct the open findings of the last reviews (the Markdown writer round 2, the command line round 10, the HTML reader, the Markdown reader), then the verification by both reviewers for each block; the short units for commonmark, math and yaml; the licence audit scripts of session 4",
+    "Connect what the libraries have: pandoc.read and pandoc.write, custom readers and writers and the interpreter mode in the command line; citeproc unit 4, then --citeproc; standalone output of the LaTeX writer",
+    "The next formats: the shared contracts (randoc-core, randoc-templates, randoc-layout), then the docx reader, the rst reader, the typst writer, the rst writer and highlight; the open gate evidence (fuzzing, coverage, mutation samples, benchmarks)"
   ],
   "handoff": "PROGRESS.md, section Handoff"
 }

@@ -3272,3 +3272,10 @@ coverage, fuzzing or benchmarks for this range.
 Harness: 61366 units: 59513 pass, 1433 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 57516 units: 0 regressions, 1997 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 57516, "total": 58884}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 17, "passing": 61}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"not_started": 59, "partial": 11, "passing": 7}, "units": {"passing": 59513, "total": 60946}}`.
+
+Addition to the record of batch H (2026-11-15 11:10 UTC): the gate run
+of the worker on `2903fa5` (the block **cli**) passed at 10:50 UTC. The
+stop of the worker at 10:20 UTC had not reached the gate process, so the
+run went to its end while the merge check ran. The record above says
+that the block had no gate pass on its branch; that was the state when
+the batch started.
