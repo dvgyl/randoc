@@ -336,9 +336,9 @@
       }
     },
     "mmd_title_block": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 5,
+        "passing": 65,
         "total": 65
       }
     },
@@ -377,9 +377,9 @@
       }
     },
     "pandoc_title_block": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 5,
+        "passing": 125,
         "total": 125
       }
     },
@@ -410,7 +410,7 @@
     "raw_tex": {
       "status": "partial",
       "units": {
-        "passing": 801,
+        "passing": 803,
         "total": 937
       }
     },
@@ -534,28 +534,28 @@
     "tex_math_dollars": {
       "status": "partial",
       "units": {
-        "passing": 295,
+        "passing": 303,
         "total": 325
       }
     },
     "tex_math_double_backslash": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 89,
+        "passing": 91,
         "total": 91
       }
     },
     "tex_math_gfm": {
       "status": "partial",
       "units": {
-        "passing": 54,
+        "passing": 56,
         "total": 62
       }
     },
     "tex_math_single_backslash": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 140,
+        "passing": 142,
         "total": 142
       }
     },
@@ -580,9 +580,9 @@
       "status": "not_started"
     },
     "yaml_metadata_block": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 24,
+        "passing": 204,
         "total": 204
       }
     }
@@ -684,7 +684,7 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 11558,
+        "passing": 11902,
         "total": 12019
       },
       "read": {
@@ -875,9 +875,9 @@
       }
     },
     "columns": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 760,
+        "passing": 770,
         "total": 770
       }
     },
@@ -1246,9 +1246,9 @@
       }
     },
     "metadata": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 36,
+        "passing": 42,
         "total": 42
       }
     },
@@ -1470,9 +1470,9 @@
       }
     },
     "template": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 629,
+        "passing": 844,
         "total": 844
       }
     },
@@ -1493,7 +1493,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 72,
+        "passing": 78,
         "total": 143
       }
     },
@@ -1629,23 +1629,23 @@
     },
     "commonmark": {
       "end_to_end": {
-        "passing": 1471,
+        "passing": 1502,
         "total": 1508
       },
       "status": "partial",
       "write": {
-        "passing": 1471,
+        "passing": 1502,
         "total": 1508
       }
     },
     "commonmark_x": {
       "end_to_end": {
-        "passing": 724,
+        "passing": 754,
         "total": 755
       },
       "status": "partial",
       "write": {
-        "passing": 724,
+        "passing": 754,
         "total": 755
       }
     },
@@ -1701,12 +1701,12 @@
     },
     "gfm": {
       "end_to_end": {
-        "passing": 1647,
+        "passing": 1681,
         "total": 1693
       },
       "status": "partial",
       "write": {
-        "passing": 1647,
+        "passing": 1681,
         "total": 1693
       }
     },
@@ -1794,12 +1794,12 @@
     },
     "markdown": {
       "end_to_end": {
-        "passing": 3478,
+        "passing": 3604,
         "total": 3666
       },
       "status": "partial",
       "write": {
-        "passing": 3478,
+        "passing": 3604,
         "total": 3666
       }
     },
@@ -1816,34 +1816,34 @@
     },
     "markdown_mmd": {
       "end_to_end": {
-        "passing": 124,
+        "passing": 154,
         "total": 155
       },
       "status": "partial",
       "write": {
-        "passing": 124,
+        "passing": 154,
         "total": 155
       }
     },
     "markdown_phpextra": {
       "end_to_end": {
-        "passing": 188,
+        "passing": 218,
         "total": 218
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
-        "passing": 188,
+        "passing": 218,
         "total": 218
       }
     },
     "markdown_strict": {
       "end_to_end": {
-        "passing": 1040,
+        "passing": 1071,
         "total": 1081
       },
       "status": "partial",
       "write": {
-        "passing": 1040,
+        "passing": 1071,
         "total": 1081
       }
     },
@@ -1895,12 +1895,12 @@
     },
     "plain": {
       "end_to_end": {
-        "passing": 1605,
+        "passing": 1637,
         "total": 1656
       },
       "status": "partial",
       "write": {
-        "passing": 1605,
+        "passing": 1637,
         "total": 1656
       }
     },
@@ -1964,8 +1964,8 @@
     "extensions": {
       "failing": 1,
       "not_started": 11,
-      "partial": 25,
-      "passing": 53
+      "partial": 20,
+      "passing": 58
     },
     "input_formats": {
       "not_started": 39,
@@ -1974,17 +1974,17 @@
     },
     "options": {
       "not_started": 1,
-      "partial": 18,
-      "passing": 90
+      "partial": 15,
+      "passing": 93
     },
     "output_formats": {
       "failing": 1,
       "not_started": 59,
-      "partial": 12,
-      "passing": 5
+      "partial": 11,
+      "passing": 6
     },
     "units": {
-      "passing": 54488,
+      "passing": 55396,
       "total": 56756
     }
   }

@@ -2427,3 +2427,8 @@ started); the math separator change (patch, not committed).
 
 Checks that did not run: the report does not state a run of mutation
 tests, coverage, fuzzing or benchmarks for this range. Licence scan: no.
+
+`merge-ws check` of batch a (a plain script of the coordinator, no merge agent): passed at 02:18 UTC on the tree of `90e425e`.
+Harness: 57176 units: 55396 pass, 1360 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 54488 units: 0 regressions, 908 new passes.
+Capability summary before: `{'extensions': {'failing': 1, 'not_started': 11, 'partial': 25, 'passing': 53}, 'input_formats': {'not_started': 39, 'partial': 9, 'passing': 4}, 'options': {'not_started': 1, 'partial': 18, 'passing': 90}, 'output_formats': {'failing': 1, 'not_started': 59, 'partial': 12, 'passing': 5}, 'units': {'passing': 54488, 'total': 56756}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 55396, "total": 56756}}`.
