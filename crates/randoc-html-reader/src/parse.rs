@@ -236,7 +236,7 @@ pub(crate) struct Parser<'a> {
     pub(crate) meta: Vec<(Text, MetaValue)>,
     meta_index: std::collections::HashMap<Text, usize>,
     /// The `href` of the `base` element.
-    pub(crate) base: Option<Text>,
+    pub(crate) base: Option<BaseUri>,
 }
 
 impl<'a> Parser<'a> {
@@ -1233,7 +1233,7 @@ impl<'a> Parser<'a> {
                         }
                         "base" => {
                             if let Some(href) = attribute(&clean, "href") {
-                                self.base = Some(href.to_owned());
+                                self.base = uri_parts(href).map(|parts| BaseUri::new(&parts));
                             }
                         }
                         _ => {}
@@ -1502,8 +1502,8 @@ impl<'a> Parser<'a> {
     fn url(&self, url: &str) -> Text {
         let resolved = self
             .base
-            .as_deref()
-            .and_then(|base| resolve_reference(base, url));
+            .as_ref()
+            .and_then(|base| resolve_against(&base.parts(), url));
         escape_uri(resolved.as_deref().unwrap_or(url))
     }
 
@@ -1990,16 +1990,17 @@ fn is_authority(authority: &str) -> bool {
     host_ok && port_ok
 }
 
-/// An IPv6 address or a future IP literal (`v`, hexadecimal digits, `.`,
-/// then unreserved characters, sub-delimiters or `:`).
+/// An IPv6 address or a future IP literal: `v`, one hexadecimal digit, `.`,
+/// then unreserved characters or sub-delimiters. Found with the oracle: a
+/// second digit or a `:` makes the reference one that Pandoc keeps.
 fn is_ip_literal(literal: &str) -> bool {
     if let Some(rest) = literal.strip_prefix('v') {
         return rest.split_once('.').is_some_and(|(version, address)| {
-            !version.is_empty()
+            version.len() == 1
                 && version.bytes().all(|byte| byte.is_ascii_hexdigit())
                 && !address.is_empty()
                 && !address.contains('%')
-                && is_uri_component(address, ":")
+                && is_uri_component(address, "")
         });
     }
     is_ipv6(literal)
@@ -2028,6 +2029,8 @@ fn push_authority(out: &mut String, authority: &str) {
 /// character or a form that RFC 3986 does not permit there, or a colon in
 /// its first segment that does not end a scheme.
 fn uri_parts(text: &str) -> Option<UriParts<'_>> {
+    #[cfg(test)]
+    URI_CHARS.with(|chars| chars.set(chars.get() + text.len() as u64));
     let (rest, fragment) = match text.split_once('#') {
         Some((rest, fragment)) => (rest, Some(fragment)),
         None => (text, None),
@@ -2073,11 +2076,52 @@ fn uri_parts(text: &str) -> Option<UriParts<'_>> {
     })
 }
 
+#[cfg(test)]
+thread_local! {
+    /// The characters that `uri_parts` read on this thread.
+    pub(crate) static URI_CHARS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+/// The parts of the URI of a `base` element, read once for all links.
+pub(crate) struct BaseUri {
+    scheme: Option<Text>,
+    authority: Option<Text>,
+    path: Text,
+    query: Option<Text>,
+}
+
+impl BaseUri {
+    fn new(parts: &UriParts<'_>) -> Self {
+        BaseUri {
+            scheme: parts.scheme.map(str::to_owned),
+            authority: parts.authority.map(str::to_owned),
+            path: parts.path.to_owned(),
+            query: parts.query.map(str::to_owned),
+        }
+    }
+
+    fn parts(&self) -> UriParts<'_> {
+        UriParts {
+            scheme: self.scheme.as_deref(),
+            authority: self.authority.as_deref(),
+            path: &self.path,
+            query: self.query.as_deref(),
+            fragment: None,
+        }
+    }
+}
+
 /// Resolves a reference against a base URI (RFC 3986, section 5.2). The
 /// base can be relative. Returns `None` when the base or the reference is
 /// not a URI reference.
+#[cfg(test)]
 fn resolve_reference(base: &str, reference: &str) -> Option<Text> {
-    let base = uri_parts(base)?;
+    resolve_against(&uri_parts(base)?, reference)
+}
+
+/// Resolves a reference against the parts of a base URI. Returns `None`
+/// when the reference is not a URI reference.
+fn resolve_against(base: &UriParts<'_>, reference: &str) -> Option<Text> {
     let mut reference = uri_parts(reference)?;
     // A reference with the scheme of the base is relative to it.
     if reference.scheme.is_some() && reference.scheme == base.scheme {

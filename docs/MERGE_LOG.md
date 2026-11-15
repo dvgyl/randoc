@@ -3109,3 +3109,48 @@ of the coordinator); it reached `main` in this batch, not in batch E
 Gate: the worker ran `scripts/gate.sh` on `f92d211` (passed at 06:00
 UTC). Checks that did not run: fuzzing after the parser changes,
 coverage, the mutation sample, benchmarks.
+
+**html-reader**: branch `ws/html-reader-4`, commits `2461f34..03cb202`
+(two commits: `ef349a3` and `03cb202`; the state of `2461f34` goes to
+`main` in batch F). `ef349a3` makes four scans linear: the name of an
+environment (R4-03), the grid of an empty body (R4-04), the owner of
+nested notes (R4-05) and the base URI (R4-10). It also corrects the rule
+for a future IP literal (R4-07) and moves a brace comment (R4-13).
+`03cb202` raises I-HTMLR-24 and I-HTMLR-25 to medium.
+
+Gate: no full gate run on the branch for `03cb202` (the plain gate run
+of the coordinator was stopped at 08:02 UTC to free a build slot for a
+merge check). A conformance run of the coordinator on `03cb202` passed
+at 08:13 UTC (58990 units, 57114 pass, 0 regressions against the
+baseline of the branch); the worker ran the tests of the crate, clippy
+and the format check. The merge check of batch G on the merged tree is
+the gate of this block.
+The worker ran only the tests of the crate, clippy and the format check
+on these two commits.
+
+Measured by the worker: crate tests 48 passed, 1 ignored. Oracle matrix
+of R4-07: 192 inputs, 12 differences on `main`, all in this rule; the
+192 inputs are replay cases `futureip-*`. Step-count tests for R4-03,
+R4-04, R4-05 and R4-10. CPU (debug build, one run): R4-03 0.22 s at
+N=10,000 `\begin{`; R4-10 0.33 s and 1.01 s for the base with N
+characters and N links (review: 1.6 s and 9.0 s).
+
+Review state: Round 4 of the HTML reader (the resumed Codex session, on
+`main` `856692d`) requested changes with 2 high and 8 medium findings.
+The block of batch F corrects the two high findings. This block
+corrects the four time findings (R4-03, R4-04, R4-05, R4-10) and R4-07,
+each with a step-count test or an oracle matrix, as the report says. No
+Opus review of round 4 ran. The verification by both reviewers is due
+when the three open medium findings are corrected.
+
+Open: R4-06, R4-08 and R4-09 (medium; rows I-HTMLR-24 and I-HTMLR-25);
+the low findings R4-11, R4-12, R4-14 and R4-15.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+Licence scan of the block: 37 hits outside the licence texts, all in
+the sorted lists of element names in `parse.rs` (for example
+`HTML_BLOCK_TAGS`). The lists are on `main` since earlier sessions, this
+block does not change them, they were found with the reference from a
+list of candidates, and both reviews of round 3 found no creative
+selection in them.

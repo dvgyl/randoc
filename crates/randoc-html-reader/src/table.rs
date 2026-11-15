@@ -541,7 +541,11 @@ fn place_row_section(hang: &mut [i64], cells: &mut impl Iterator<Item = Cell>) -
 }
 
 fn header_section(mut rows: Vec<ReadRow>, column_count: usize) -> Vec<Row> {
+    if rows.is_empty() {
+        return Vec::new();
+    }
     clip_rows(&mut rows);
+    count_grid_slots(column_count);
     let mut hang = vec![1i64; column_count];
     rows.into_iter()
         .map(|(attr, cells)| {
@@ -555,7 +559,11 @@ fn header_section(mut rows: Vec<ReadRow>, column_count: usize) -> Vec<Row> {
 }
 
 fn body_section(mut rows: Vec<ReadRow>, row_head: usize, column_count: usize) -> Vec<Row> {
+    if rows.is_empty() {
+        return Vec::new();
+    }
     clip_rows(&mut rows);
+    count_grid_slots(column_count);
     let mut head_hang = vec![1i64; row_head];
     let mut body_hang = vec![1i64; column_count - row_head];
     rows.into_iter()
@@ -572,8 +580,40 @@ fn body_section(mut rows: Vec<ReadRow>, row_head: usize, column_count: usize) ->
 }
 
 #[cfg(test)]
+thread_local! {
+    /// The grid slots that the sections of the tables on this thread made.
+    static GRID_SLOTS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+fn count_grid_slots(slots: usize) {
+    #[cfg(test)]
+    GRID_SLOTS.with(|count| count.set(count.get() + slots));
+    #[cfg(not(test))]
+    let _ = slots;
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
+
+    // `colspan=N` and N empty bodies: each empty body has no rows and makes
+    // no grid. Pandoc 3.13 gives an empty `TableBody` for each.
+    #[test]
+    fn an_empty_body_makes_no_grid() {
+        let slots = |count: usize| {
+            GRID_SLOTS.with(|slots| slots.set(0));
+            for _ in 0..count {
+                let empty = body(Attr::default(), Vec::new(), count);
+                assert!(empty.head.is_empty() && empty.body.is_empty());
+            }
+            GRID_SLOTS.with(std::cell::Cell::get)
+        };
+        let (small, large) = (slots(500), slots(2000));
+        assert!(
+            large <= small * 5 + 4,
+            "{small} slots for 500 bodies, {large} for 2000"
+        );
+    }
 
     fn plain_cell(row_span: i64, col_span: i64) -> ReadCell {
         ReadCell {

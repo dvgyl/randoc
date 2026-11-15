@@ -3624,3 +3624,771 @@ input = "<main style=\"color:red\" dir=\"rtl\">x</main>"
 id = "mainattr-100"
 from = "html"
 input = "<main role=\"r\" id=\"m\">x</main>"
+
+[[case]]
+id = "futureip-001"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-002"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-003"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-004"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-005"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-006"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-007"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-008"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-009"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-010"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-011"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-012"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-013"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-014"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-015"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v1.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-016"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v1.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-017"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-018"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-019"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-020"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-021"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-022"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-023"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-024"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-025"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-026"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-027"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-028"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-029"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-030"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-031"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v12.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-032"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v12.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-033"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-034"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-035"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-036"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-037"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-038"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-039"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-040"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-041"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-042"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-043"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-044"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-045"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-046"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-047"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[va.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-048"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[va.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-049"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-050"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-051"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-052"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-053"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-054"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-055"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-056"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-057"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-058"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-059"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-060"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-061"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-062"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-063"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vF.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-064"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vF.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-065"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-066"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-067"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-068"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-069"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-070"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-071"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-072"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-073"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-074"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-075"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-076"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-077"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-078"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-079"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[v.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-080"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[v.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-081"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-082"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-083"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-084"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-085"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-086"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-087"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-088"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-089"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-090"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-091"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-092"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-093"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-094"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-095"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[vg.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-096"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[vg.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-097"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-098"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-099"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-100"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-101"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-102"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-103"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-104"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-105"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-106"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-107"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-108"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-109"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-110"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-111"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V1.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-112"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V1.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-113"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-114"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-115"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-116"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-117"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-118"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-119"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-120"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-121"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-122"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-123"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-124"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-125"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-126"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-127"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V12.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-128"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V12.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-129"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-130"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-131"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-132"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-133"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-134"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-135"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-136"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-137"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-138"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-139"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-140"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-141"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-142"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-143"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Va.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-144"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Va.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-145"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-146"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-147"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-148"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-149"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-150"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-151"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-152"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-153"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-154"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-155"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-156"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-157"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-158"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-159"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[VF.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-160"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[VF.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-161"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-162"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-163"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-164"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-165"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-166"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-167"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-168"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-169"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-170"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-171"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-172"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-173"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-174"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-175"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[V.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-176"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[V.a@b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-177"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.a]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-178"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.a]:80/i\"></p>"
+
+[[case]]
+id = "futureip-179"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.a:b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-180"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.a:b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-181"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.:]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-182"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.:]:80/i\"></p>"
+
+[[case]]
+id = "futureip-183"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.a;b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-184"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.a;b]:80/i\"></p>"
+
+[[case]]
+id = "futureip-185"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.a%41]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-186"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.a%41]:80/i\"></p>"
+
+[[case]]
+id = "futureip-187"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.-._~]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-188"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.-._~]:80/i\"></p>"
+
+[[case]]
+id = "futureip-189"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.!$&'()*+,;=]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-190"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.!$&'()*+,;=]:80/i\"></p>"
+
+[[case]]
+id = "futureip-191"
+input = "<head><base href=\"https://e/b/\"></head><p><a href=\"//[Vg.a@b]/p\">x</a></p>"
+
+[[case]]
+id = "futureip-192"
+input = "<head><base href=\"https://e/b/\"></head><p><img src=\"http://[Vg.a@b]:80/i\"></p>"

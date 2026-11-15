@@ -243,6 +243,9 @@ struct Special {
     #[cfg(test)]
     plain: bool,
     no_environment_end: Vec<&'static str>,
+    /// For each index of the text, the index of the first `}` at or after
+    /// it. Made on first use.
+    next_closes: Option<Vec<Option<usize>>>,
     /// The close of each quotation of the whole text token. Made on first use.
     quote_closes: Option<Rc<QuoteCloses>>,
     /// The innermost quotation around this text.
@@ -311,6 +314,7 @@ impl Special {
             #[cfg(test)]
             plain: false,
             no_environment_end: Vec::new(),
+            next_closes: None,
             quote_closes: None,
             context: None,
             next: None,
@@ -680,7 +684,13 @@ impl Special {
         if chars.get(at) != Some(&'{') {
             return None;
         }
-        let name_end = at + chars.get(at..)?.iter().position(|c| *c == '}')?;
+        count_tex_step();
+        let name_end = self
+            .next_closes
+            .get_or_insert_with(|| next_closes(chars))
+            .get(at)
+            .copied()
+            .flatten()?;
         let name = collect(chars, at + 1, name_end);
         let name = *MATH_ENVIRONMENTS.iter().find(|known| **known == name)?;
         if self.no_environment_end.contains(&name) {
@@ -940,8 +950,6 @@ const MATH_ENVIRONMENTS: &[&str] = &[
     "subequations",
 ];
 
-/// Returns, for each `{` of the text, the index of the `}` that closes it.
-/// A backslash escapes the next character.
 /// Returns the index after the spaces and tabs at `at`.
 fn skip_spaces(chars: &[char], mut at: usize) -> usize {
     while matches!(chars.get(at), Some(' ' | '\t')) {
@@ -984,6 +992,24 @@ fn number_end(chars: &[char], start: usize) -> Option<usize> {
     digits(end + 1)
 }
 
+/// For each index of the text, the index of the first `}` at or after it.
+fn next_closes(chars: &[char]) -> Vec<Option<usize>> {
+    let mut closes = vec![None; chars.len()];
+    let mut next = None;
+    for (at, c) in chars.iter().enumerate().rev() {
+        if *c == '}' {
+            next = Some(at);
+        }
+        count_tex_step();
+        if let Some(slot) = closes.get_mut(at) {
+            *slot = next;
+        }
+    }
+    closes
+}
+
+/// Returns, for each `{` of the text, the index of the `}` that closes it.
+/// A backslash escapes the next character.
 fn brace_ends(chars: &[char]) -> Vec<Option<usize>> {
     let mut ends = vec![None; chars.len()];
     let mut open: Vec<usize> = Vec::new();
@@ -1493,6 +1519,22 @@ mod tests {
             let (small, large) = (tex_steps(&family(100), true), tex_steps(&family(400), true));
             assert!(large > small * 10, "the plain scan is not linear");
         }
+    }
+
+    // `\begin{` without a `}`: each environment name scan fails. Pandoc
+    // 3.13 gives one `Str`.
+    #[test]
+    fn a_failed_environment_name_does_not_scan_the_rest_again() {
+        let open = |count: usize| r"\begin{".repeat(count);
+        assert_eq!(
+            inlines(&open(2), &[Extension::RawTex]),
+            vec![word(r"\begin{\begin{")]
+        );
+        let (small, large) = (tex_steps(&open(500), false), tex_steps(&open(2000), false));
+        assert!(
+            large <= small * 5,
+            "{small} steps for 500 names, {large} for 2000"
+        );
     }
 
     // The scans with a memory give the result of the scans without one.

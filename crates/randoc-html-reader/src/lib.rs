@@ -259,6 +259,58 @@ fn resolve_notes(
     });
 }
 
+/// The container of each of `count` headings: `None` for the document,
+/// `Some(k + 1)` for the note with the k-th heading range. The first range
+/// that holds a heading owns it: a note inside a note comes first. A range
+/// that reaches past the headings owns none. Each heading gets its owner
+/// once, so nested ranges do not visit it again.
+fn heading_owners(
+    count: usize,
+    ranges: impl Iterator<Item = std::ops::Range<usize>>,
+) -> Vec<Option<usize>> {
+    let mut owner = vec![None; count];
+    // `next[i]` leads to the first heading at or after `i` without an owner.
+    let mut next: Vec<usize> = (0..=count).collect();
+    for (index, range) in ranges.enumerate() {
+        if range.start > range.end || range.end > count {
+            continue;
+        }
+        let mut at = without_owner(&mut next, range.start);
+        while at < range.end.min(count) {
+            if let Some(slot) = owner.get_mut(at) {
+                *slot = Some(index + 1);
+            }
+            if let Some(slot) = next.get_mut(at) {
+                *slot = at + 1;
+            }
+            at = without_owner(&mut next, at + 1);
+        }
+    }
+    owner
+}
+
+/// Follows `next` from `at` to an index that leads to itself, and makes
+/// each index of the path lead there directly.
+fn without_owner(next: &mut [usize], at: usize) -> usize {
+    let mut root = at;
+    while let Some(&step) = next.get(root).filter(|step| **step != root) {
+        #[cfg(test)]
+        OWNER_STEPS.with(|steps| steps.set(steps.get() + 1));
+        root = step;
+    }
+    let mut at = at;
+    while at != root {
+        let Some(slot) = next.get_mut(at) else { break };
+        at = std::mem::replace(slot, root);
+    }
+    root
+}
+
+#[cfg(test)]
+thread_local! {
+    static OWNER_STEPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
 /// Gives each heading without an identifier an automatic identifier, and
 /// reports an explicit identifier that is in use. Both go in source order, so
 /// a heading of a note comes where the note is, not where it is referenced.
@@ -270,14 +322,10 @@ fn identify_headings(
     position: &dyn Fn(usize) -> SourcePos,
     logs: &mut Vec<(usize, LogMessage)>,
 ) {
-    // The container of each heading: 0 for the document, k + 1 for note k.
-    // A note inside a note comes first in `notes`, so it keeps its headings.
-    let mut owner: Vec<Option<usize>> = vec![None; ends.len()];
-    for (index, (_, _, headings)) in notes.iter().enumerate() {
-        for slot in owner.get_mut(headings.clone()).unwrap_or_default() {
-            slot.get_or_insert(index + 1);
-        }
-    }
+    let owner = heading_owners(
+        ends.len(),
+        notes.iter().map(|(_, _, headings)| headings.clone()),
+    );
     let mut order: Vec<Vec<usize>> = vec![Vec::new(); notes.len() + 1];
     for (heading, container) in owner.iter().enumerate() {
         if let Some(list) = order.get_mut(container.unwrap_or(0)) {
@@ -358,6 +406,28 @@ mod tests {
             Err(error) => format!("error: {error}"),
         };
         (text, context.log().to_vec())
+    }
+
+    // A base with N characters and N links: the base is read once. Pandoc
+    // 3.13 keeps each absolute target.
+    #[test]
+    fn the_base_uri_is_read_once() {
+        let chars = |count: usize| {
+            let input = format!(
+                "<head><base href=\"{}\"></head>{}",
+                "a".repeat(count),
+                "<a href=\"https://x/z\">x</a>".repeat(count)
+            );
+            parse::URI_CHARS.with(|chars| chars.set(0));
+            let text = blocks(&input);
+            assert!(text.contains("https://x/z") && !text.contains("aaa"));
+            parse::URI_CHARS.with(std::cell::Cell::get)
+        };
+        let (small, large) = (chars(250), chars(1000));
+        assert!(
+            large <= small * 5,
+            "{small} characters for 250 links, {large} for 1000"
+        );
     }
 
     fn blocks(input: &str) -> String {
@@ -820,6 +890,56 @@ mod tests {
             assert!(
                 large <= small.saturating_mul(5).saturating_add(1000),
                 "{unit}: {small} steps for 500, {large} steps for 2000"
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod owner_tests {
+    use super::*;
+
+    fn plain_owners(count: usize, ranges: &[std::ops::Range<usize>]) -> Vec<Option<usize>> {
+        let mut owner = vec![None; count];
+        for (index, range) in ranges.iter().enumerate() {
+            for slot in owner.get_mut(range.clone()).unwrap_or_default() {
+                slot.get_or_insert(index + 1);
+            }
+        }
+        owner
+    }
+
+    // N nested notes around the same N headings.
+    #[test]
+    fn nested_notes_give_each_heading_its_owner_once() {
+        let steps = |count: usize| {
+            OWNER_STEPS.with(|steps| steps.set(0));
+            let owner = heading_owners(count, (0..count).map(|_| 0..count));
+            assert!(owner.iter().all(|owner| *owner == Some(1)));
+            OWNER_STEPS.with(std::cell::Cell::get)
+        };
+        let (small, large) = (steps(500), steps(2000));
+        assert!(
+            large <= small * 5 + 8,
+            "{small} steps for 500 notes, {large} for 2000"
+        );
+        let mut seed: u64 = 3;
+        let mut next = |limit: usize| {
+            seed = seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1);
+            usize::try_from(seed >> 33).unwrap_or(0) % limit
+        };
+        for _ in 0..2000 {
+            let count = next(12);
+            let ranges: Vec<_> = (0..next(6))
+                .map(|_| {
+                    let start = next(14);
+                    start..start + next(8)
+                })
+                .collect();
+            assert_eq!(
+                heading_owners(count, ranges.iter().cloned()),
+                plain_owners(count, &ranges),
+                "{count} {ranges:?}"
             );
         }
     }
