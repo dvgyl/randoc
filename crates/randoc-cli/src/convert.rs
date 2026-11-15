@@ -484,8 +484,8 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
     if by == 0 {
         return;
     }
-    // With a shift of -N, a level-N heading at the start replaces the title.
-    // Each of them replaces the title, so the last one stays.
+    // A negative shift by N levels makes the first headings of level N the
+    // document title; the last of them stays.
     let leading = doc
         .blocks
         .iter()
@@ -500,7 +500,9 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
         doc.meta.insert("title", title);
     }
     doc.blocks.drain(..leading);
+    crate::steps::count(leading);
     randoc::ast::walk::walk_blocks_mut(doc, |block| {
+        crate::steps::count(1);
         if let Block::Header(level, _, inlines) = block {
             // Haskell `Int` addition wraps around, so a very large shift gives a paragraph.
             let new_level = level.wrapping_add(by);
@@ -1223,8 +1225,25 @@ fn input_files(settings: &Settings, positional: Vec<String>) -> Vec<String> {
     inputs
 }
 
-/// Runs the conversion with the settings and the input files of the command line.
+/// Runs the conversion with the settings and the input files of the command
+/// line. The conversion runs on its own thread with the stack that the
+/// nesting limit of the program needs, so the stack of the caller is safe.
 pub fn run(settings: Settings, positional: Vec<String>) -> Result<()> {
+    std::thread::Builder::new()
+        .stack_size(crate::CONVERSION_STACK_BYTES)
+        .spawn(move || run_on_this_thread(settings, positional))
+        .map_err(|error| Error::ShouldNeverHappen(format!("The conversion thread: {error}")))?
+        .join()
+        .unwrap_or_else(|_| {
+            Err(Error::ShouldNeverHappen(
+                "The conversion thread stopped.".to_owned(),
+            ))
+        })
+}
+
+/// Runs the conversion on the thread of the caller, which must have the
+/// stack of `run`.
+pub(crate) fn run_on_this_thread(settings: Settings, positional: Vec<String>) -> Result<()> {
     let data_dir = settings
         .data_dir
         .clone()
@@ -1392,7 +1411,8 @@ fn convert(
         for path in paths {
             let bytes = read_include(path, settings, context)?;
             check_utf8(path, &bytes)?;
-            texts.push(String::from_utf8_lossy(&bytes).into_owned());
+            // Pandoc cleans an include file as a template (cli-R9-05).
+            texts.push(String::from_utf8_lossy(&clean_template(bytes)).into_owned());
         }
     }
     reader_options.abbreviations = abbreviations(settings, data_dir, context)?;
@@ -1500,7 +1520,13 @@ fn convert(
     let curdir = std::env::current_dir()
         .map(|dir| dir.to_string_lossy().into_owned())
         .unwrap_or_default();
-    writer_options.variables = crate::template::variables(settings, inputs, &includes, &curdir);
+    writer_options.variables = crate::template::variables(
+        settings,
+        inputs,
+        &includes,
+        &curdir,
+        context.limits.max_nesting_depth,
+    )?;
     if is_html_format(&to_spec.name) && writer_options.template.is_some() {
         crate::template::page_title_fallback(&mut writer_options.variables, &doc, context);
     }
@@ -1617,6 +1643,22 @@ mod tests {
     }
 
     #[test]
+    fn many_leading_headings_take_linear_steps() {
+        for size in [5_000, 20_000] {
+            let mut doc = Pandoc {
+                blocks: vec![Block::Header(1, Default::default(), Vec::new()); size],
+                ..Pandoc::default()
+            };
+            crate::steps::take();
+            shift_headings(&mut doc, -1);
+            assert!(doc.blocks.is_empty());
+            assert!(crate::steps::take() <= size, "{size}");
+        }
+    }
+
+    /// The wall-time form of `many_leading_headings_take_linear_steps`.
+    #[test]
+    #[ignore = "wall time depends on the load of the machine"]
     fn many_leading_headings_finish_in_linear_time() {
         let run = |size: usize| {
             let mut doc = Pandoc {
@@ -2016,6 +2058,41 @@ mod tests {
         );
     }
 
+    // Pandoc 3.13, template `$header-includes$|$include-before$|$include-after$`
+    // with each include file: `EF BB BF x` gives `x`, `a CR b` gives `ab`,
+    // `a CR LF b` gives `a LF b`, `x EF BB BF y` keeps the inner mark.
+    #[test]
+    fn include_files_lose_the_byte_order_mark_and_carriage_returns() {
+        for (text, expected) in [
+            ("\u{feff}x", "x"),
+            ("a\rb", "ab"),
+            ("a\r\nb", "a\nb"),
+            ("x\u{feff}y", "x\u{feff}y"),
+            ("\u{feff}\u{feff}z", "\u{feff}z"),
+        ] {
+            let files = [
+                ("in.json", EMPTY),
+                (
+                    "t.html",
+                    "$header-includes$|$include-before$|$include-after$",
+                ),
+                ("h", text),
+            ];
+            let (result, _) = convert_files(&files, &["in.json"], |s| {
+                s.to = Some("html".to_owned());
+                s.template = Some("t.html".to_owned());
+                s.include_in_header = vec!["h".to_owned()];
+                s.include_before_body = vec!["h".to_owned()];
+                s.include_after_body = vec!["h".to_owned()];
+            });
+            assert_eq!(
+                result.unwrap(),
+                format!("{expected}|{expected}|{expected}"),
+                "{text:?}"
+            );
+        }
+    }
+
     #[test]
     fn found_files_reach_the_subsystem_errors() {
         let files = [
@@ -2093,6 +2170,44 @@ mod tests {
                 .unwrap_or_default()
                 .contains("NotUTF8Encoded")
         );
+    }
+
+    // Review cli-R9-20: `run` used the stack of its caller.
+    #[test]
+    fn run_is_safe_on_a_small_stack_for_deep_documents() {
+        let check = || {
+            for (depth, ok) in [(1_000, true), (10_000, true), (100_000, false)] {
+                let input = out_path(&format!("deep-{depth}.json"));
+                let output = out_path(&format!("deep-{depth}-out.json"));
+                let open = r#"{"t":"BlockQuote","c":["#;
+                let text = format!(
+                    r#"{{"pandoc-api-version":[1,23,1,2],"meta":{{}},"blocks":[{}{}{}]}}"#,
+                    open.repeat(depth),
+                    r#"{"t":"Para","c":[{"t":"Str","c":"x"}]}"#,
+                    "]}".repeat(depth)
+                );
+                std::fs::write(&input, &text).unwrap();
+                let settings = Settings {
+                    from: Some("json".to_owned()),
+                    to: Some("json".to_owned()),
+                    output_file: Some(output.clone()),
+                    ..Settings::default()
+                };
+                let result = run(settings, vec![input.clone()]);
+                assert_eq!(result.is_ok(), ok, "{depth}: {result:?}");
+                if ok {
+                    assert_eq!(std::fs::read_to_string(&output).unwrap(), text + "\n");
+                }
+                let _ = std::fs::remove_file(&input);
+                let _ = std::fs::remove_file(&output);
+            }
+        };
+        std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(check)
+            .unwrap()
+            .join()
+            .unwrap();
     }
 
     #[test]

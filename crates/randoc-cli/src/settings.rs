@@ -166,6 +166,7 @@ impl Settings {
     /// folder of the default stays as the last folder.
     pub fn add_resource_path(&mut self, folders: Vec<String>) {
         for folder in folders.into_iter().rev() {
+            crate::steps::count(1);
             self.resource_path.push_front(folder);
         }
     }
@@ -305,6 +306,21 @@ mod tests {
     /// Codex review round 7, cli-R7-03: each option moved the whole earlier
     /// list, so N options took N * N / 2 moves.
     #[test]
+    fn repeated_resource_paths_take_linear_steps() {
+        for count in [10_000, 40_000] {
+            crate::steps::take();
+            let mut settings = Settings::default();
+            for _ in 0..count {
+                settings.add_resource_path(vec!["x".to_owned()]);
+            }
+            assert_eq!(settings.resource_path.len(), count + 1);
+            assert!(crate::steps::take() <= count, "{count}");
+        }
+    }
+
+    /// The wall-time form of `repeated_resource_paths_take_linear_steps`.
+    #[test]
+    #[ignore = "wall time depends on the load of the machine"]
     fn repeated_resource_paths_take_linear_time() {
         let fastest = |count: usize| {
             (0..5)

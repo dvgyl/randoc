@@ -2557,3 +2557,38 @@ coverage, fuzzing or benchmarks for this range.
 Harness: 58094 units: 56218 pass, 1456 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 55396 units: 0 regressions, 822 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 55396, "total": 56756}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
+
+## Session 6 of 2026-11-15, batch D (three blocks: cli, latex-reader, citeproc)
+
+**cli**: branch `ws/cli-5`, commits `e8a6da7..3c478df` (`main` holds
+`e8a6da7` as `023405c`). The block holds three commits. a634dff: a
+variable depth bound, an own stack for `convert::run`, and linear time
+for the marks of empty values (cli-R9-01, cli-R9-20, cli-R9-15). It also
+holds step-count forms of three wall-time tests. 1b93ce4: a licence-scan
+comment written in own words. 3c478df: include files lose the byte order
+mark and the carriage returns (cli-R9-05).
+
+Gate: `04:40 UTC 1b93ce4 gate passed: safety findings cli-R9-01
+cli-R9-20 cli-R9-15 (variable depth bound, own stack of convert::run,
+linear empty-value marks), step-count forms of the wall-time tests,
+licence-scan comment`; `05:08 UTC 3c478df gate passed: cli-R9-05
+(include files lose the byte order mark and carriage returns)`. The
+worker ran the gate.
+
+Measured by the worker: review input with 12,000 keys: 0.17 s CPU (before
+8.49 s); 48,000 keys: 0.46 s CPU. Depth tests on a 2 MB stack pass.
+
+Review state: Round 9 of the command line (Codex, on `main` `a2fbf7d`,
+session 5): 2 critical, 12 high and 10 medium findings. Both critical
+findings are corrected on `main` since `023405c`. This block corrects the
+three safety findings (cli-R9-01, cli-R9-20, cli-R9-15) and the high
+finding cli-R9-05. The report says that the block before also corrected
+cli-R9-02 and cli-R9-22. The other high findings (cli-R9-17, 04, 06, 07,
+23) and the 10 medium findings are open; a new worker continues with
+them. No Opus review of round 9 ran. The verification by both reviewers
+is due after the high findings.
+
+Open: cli-R9-17, 04, 06, 07, 23 (high); 10 medium findings of round 9
+(the report says they are not started); I-CLI-52 (low).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.

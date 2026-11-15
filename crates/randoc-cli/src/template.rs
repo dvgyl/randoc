@@ -179,19 +179,26 @@ pub struct Includes {
 /// and the `variables` key of a defaults file replace them. The options
 /// `--css` and the include files add their values after the `-V` values.
 /// `sourcefile` adds each input file; `outputfile`, `curdir` and
-/// `pandoc-version` apply only when no `-V` sets them.
+/// `pandoc-version` apply only when no `-V` sets them. A JSON value with
+/// more than `max_depth` levels is an error.
 pub fn variables(
     settings: &Settings,
     inputs: &[String],
     includes: &Includes,
     curdir: &str,
-) -> Variables {
+    max_depth: usize,
+) -> Result<Variables> {
     let mut vars = Variables::new();
     for (name, value) in &settings.variables {
         match value {
             VarValue::Text(text) => add(&mut vars, name, Val::text(text.as_str())),
             VarValue::Json(json) => {
-                vars.insert(name.as_str(), json_val(json));
+                let value = json_val(json, max_depth).ok_or_else(|| {
+                    Error::App(format!(
+                        "The value of the template variable '{name}' has more than {max_depth} levels."
+                    ))
+                })?;
+                vars.insert(name.as_str(), value);
             }
         }
     }
@@ -224,7 +231,7 @@ pub fn variables(
             vars.insert(name, Val::text(value));
         }
     }
-    vars
+    Ok(vars)
 }
 
 /// Adds a value to a variable: the first value stays a single value, more
@@ -241,23 +248,33 @@ fn add(vars: &mut Variables, name: &str, value: Val) {
     vars.insert(name, new);
 }
 
-/// Converts a JSON value of `--variable-json` or a defaults file.
-fn json_val(json: &serde_json::Value) -> Val {
+/// Converts a JSON value of `--variable-json` or a defaults file, or gives
+/// `None` for a value with more than `depth` levels of lists and maps.
+fn json_val(json: &serde_json::Value, depth: usize) -> Option<Val> {
     use serde_json::Value;
-    match json {
+    Some(match json {
         Value::Null => Val::Null,
         Value::Bool(b) => Val::Bool(*b),
         Value::Number(n) => Val::text(number_text(n)),
         Value::String(s) => Val::text(s.as_str()),
-        Value::Array(items) => Val::List(items.iter().map(json_val).collect()),
+        Value::Array(items) => {
+            let depth = depth.checked_sub(1)?;
+            Val::List(
+                items
+                    .iter()
+                    .map(|item| json_val(item, depth))
+                    .collect::<Option<_>>()?,
+            )
+        }
         Value::Object(map) => {
+            let depth = depth.checked_sub(1)?;
             let mut vars = Variables::new();
             for (key, value) in map {
-                vars.insert(key.as_str(), json_val(value));
+                vars.insert(key.as_str(), json_val(value, depth)?);
             }
             Val::Map(vars)
         }
-    }
+    })
 }
 
 /// The text of a JSON number: an integer without a fraction.
@@ -315,7 +332,7 @@ mod tests {
     /// renders the template of `WriterOptions`.
     fn render(source: &str, args: &[&str], includes: &Includes) -> String {
         let settings = settings(args);
-        let vars = variables(&settings, &["x.md".to_owned()], includes, "/cwd");
+        let vars = variables(&settings, &["x.md".to_owned()], includes, "/cwd", 128).unwrap();
         let mut none = |_: &str| -> std::result::Result<String, ()> { Err(()) };
         let template = Template::compile("t", source, 128, &mut none).unwrap();
         template.render(&vars).render(None)
@@ -449,13 +466,74 @@ mod tests {
             &["m.md".to_owned(), "abbr".to_owned()],
             &none,
             "/c",
-        );
+            128,
+        )
+        .unwrap();
         assert_eq!(
             vars.get("sourcefile"),
             Some(&Val::List(vec![Val::text("m.md"), Val::text("abbr")]))
         );
-        let vars = variables(&settings, &[], &none, "/c");
+        let vars = variables(&settings, &[], &none, "/c", 128).unwrap();
         assert_eq!(vars.get("sourcefile"), Some(&Val::text("-")));
+    }
+
+    /// Nests `depth` lists or maps around a string, without recursion.
+    fn nested_json(depth: usize, map: bool) -> serde_json::Value {
+        let mut value = serde_json::Value::String("x".to_owned());
+        for _ in 0..depth {
+            value = if map {
+                serde_json::Value::Object(serde_json::Map::from_iter([("k".to_owned(), value)]))
+            } else {
+                serde_json::Value::Array(vec![value])
+            };
+        }
+        value
+    }
+
+    /// Takes a nested value apart without recursion, so that its drop is safe.
+    fn take_apart(value: serde_json::Value) {
+        let mut stack = vec![value];
+        while let Some(value) = stack.pop() {
+            match value {
+                serde_json::Value::Array(items) => stack.extend(items),
+                serde_json::Value::Object(map) => stack.extend(map.into_iter().map(|(_, v)| v)),
+                _ => {}
+            }
+        }
+    }
+
+    // Review cli-R9-01: the conversion of a deep value overflowed the stack.
+    #[test]
+    fn deep_json_variables_give_the_depth_error_on_a_small_stack() {
+        let run = || {
+            for map in [false, true] {
+                for (depth, ok) in [(127, true), (128, true), (10_000, false), (100_000, false)] {
+                    let mut settings = Settings::default();
+                    settings
+                        .variables
+                        .push(("x".to_owned(), VarValue::Json(nested_json(depth, map))));
+                    let result = variables(&settings, &[], &Includes::default(), "/c", 128);
+                    assert_eq!(result.is_ok(), ok, "{depth} {map}");
+                    if let Err(error) = result {
+                        assert_eq!(
+                            error.to_string(),
+                            "The value of the template variable 'x' has more than 128 levels."
+                        );
+                    }
+                    for (_, value) in std::mem::take(&mut settings.variables) {
+                        if let VarValue::Json(json) = value {
+                            take_apart(json);
+                        }
+                    }
+                }
+            }
+        };
+        std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(run)
+            .unwrap()
+            .join()
+            .unwrap();
     }
 
     #[test]
@@ -468,7 +546,7 @@ mod tests {
         settings
             .variables
             .push(("x".to_owned(), VarValue::Text("1".to_owned())));
-        let vars = variables(&settings, &[], &Includes::default(), "/c");
+        let vars = variables(&settings, &[], &Includes::default(), "/c", 128).unwrap();
         let mut none = |_: &str| -> std::result::Result<String, ()> { Err(()) };
         let template = Template::compile("t", LIST, 128, &mut none).unwrap();
         assert_eq!(template.render(&vars).render(None), "<d1><d2><1>");
@@ -481,7 +559,7 @@ mod tests {
         let title = |sources: &[&str], meta: Option<&str>, args: &[&str]| {
             let settings = settings(args);
             let inputs: Vec<String> = sources.iter().map(|s| (*s).to_owned()).collect();
-            let mut vars = variables(&settings, &inputs, &Includes::default(), "/c");
+            let mut vars = variables(&settings, &inputs, &Includes::default(), "/c", 128).unwrap();
             let mut doc = Pandoc::default();
             if let Some(text) = meta {
                 doc.meta

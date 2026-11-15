@@ -15,6 +15,7 @@ mod lua;
 mod node;
 pub mod opts;
 pub mod settings;
+mod steps;
 pub mod subsystem;
 pub mod template;
 
@@ -27,7 +28,7 @@ use crate::settings::Settings;
 
 /// The stack size of the conversion thread. Deep documents need a large stack.
 /// The system gives memory to the stack only when the program uses it.
-const CONVERSION_STACK_BYTES: usize = 1 << 30;
+pub(crate) const CONVERSION_STACK_BYTES: usize = 1 << 30;
 
 /// The nesting limit for the conversion thread. A debug build uses less than
 /// 32 KB of stack for one level, so this depth fits in the stack.
@@ -181,7 +182,7 @@ fn run_checked(args: &[String]) -> Result<()> {
         }
         return write_stdout(&info::run(&command, program, &data_dir)?);
     }
-    convert::run(settings, positional)
+    convert::run_on_this_thread(settings, positional)
 }
 
 /// Writes bytes to standard output.

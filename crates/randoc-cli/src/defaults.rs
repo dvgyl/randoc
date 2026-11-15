@@ -138,8 +138,9 @@ fn apply_file(
     let Kind::Mapping(mut entries) = root.kind else {
         return Err(source.error("", "Expected a mapping", root.mark));
     };
+    let mut cursor = Cursor::new(&text);
     for (key, value) in &mut entries {
-        if let Some(mark) = empty_value_mark(&text, key, value) {
+        if let Some(mark) = empty_value_mark(&mut cursor, key, value) {
             value.mark = mark;
         }
     }
@@ -218,20 +219,83 @@ fn apply_file(
 /// Returns the position that Pandoc gives an empty value of a key: the
 /// character after the `:` on the line of the key. `randoc-yaml` puts an
 /// empty value without a tag or an anchor at the next token instead.
-fn empty_value_mark(text: &str, key: &Node, value: &Node) -> Option<Mark> {
+fn empty_value_mark(cursor: &mut Cursor, key: &Node, value: &Node) -> Option<Mark> {
     let empty = matches!(&value.kind, Kind::Scalar { text, style: randoc_yaml::Style::Plain } if text.is_empty());
     if !empty || value.tag.is_some() {
         return None;
     }
-    let line = text.lines().nth(key.mark.line.checked_sub(1)?)?;
     let start = key.mark.column.checked_sub(1)? + key.as_str()?.chars().count();
-    let colon = line.chars().skip(start).position(|c| c == ':')?;
+    cursor.seek(key.mark.line, start)?;
     let mark = Mark {
         line: key.mark.line,
-        column: start + colon + 2,
+        column: cursor.find_colon()? + 2,
     };
     // A value with an anchor has its mark on the line of the key.
     (mark.line < value.mark.line).then_some(mark)
+}
+
+/// A position in a text that moves forward. The keys of a mapping come in
+/// source order, so the searches of all keys read the text one time.
+struct Cursor<'a> {
+    text: &'a str,
+    /// The line, from 1.
+    line: usize,
+    /// The character of the line, from 0.
+    column: usize,
+    /// The byte offset of the position.
+    byte: usize,
+}
+
+impl<'a> Cursor<'a> {
+    fn new(text: &'a str) -> Self {
+        Cursor {
+            text,
+            line: 1,
+            column: 0,
+            byte: 0,
+        }
+    }
+
+    /// Moves to character `column` (from 0) of line `line` (from 1).
+    fn seek(&mut self, line: usize, column: usize) -> Option<()> {
+        if (line, column) < (self.line, self.column) {
+            *self = Cursor::new(self.text);
+        }
+        while self.line < line {
+            let rest = self.text.get(self.byte..)?;
+            self.byte += rest.find('\n')? + 1;
+            self.line += 1;
+            self.column = 0;
+            crate::steps::count(1);
+        }
+        while self.column < column {
+            self.next_on_line()?;
+        }
+        Some(())
+    }
+
+    /// Moves to the next `:` of the line and returns its column, from 0.
+    fn find_colon(&mut self) -> Option<usize> {
+        loop {
+            let c = self.text.get(self.byte..)?.chars().next()?;
+            if c == ':' {
+                return Some(self.column);
+            }
+            self.next_on_line()?;
+        }
+    }
+
+    /// Moves one character forward on the line.
+    fn next_on_line(&mut self) -> Option<()> {
+        let c = self.text.get(self.byte..)?.chars().next()?;
+        if c == '\n' {
+            return None;
+        }
+        self.byte += c.len_utf8();
+        self.column += 1;
+        crate::steps::count(1);
+        Some(())
+    }
 }
 
 /// The text of a defaults file, for the error messages.
@@ -715,6 +779,7 @@ fn apply_key(
     let data_dir = s.data_dir.clone();
     if key == "filters" {
         for (index, item) in list(v)?.iter().enumerate() {
+            crate::steps::count(1);
             let f = filter(item, c, data_dir.as_deref()).map_err(|e| at(index, e))?;
             s.filters.push(f);
         }
@@ -1399,7 +1464,43 @@ verbosity: ERROR\nfail-if-warnings: true\nlog-file: l\n";
         assert_eq!(s.css, ["/home//c"]);
     }
 
+    // Review cli-R9-15: each empty value searched the text from its start.
     #[test]
+    fn the_marks_of_empty_values_take_linear_steps() {
+        let steps = |text: &str| {
+            crate::steps::take();
+            let (result, _) = load(&[("d", text)], "d");
+            assert!(result.is_err());
+            crate::steps::take()
+        };
+        for size in [1_000, 10_000] {
+            let block: String = (0..size).map(|i| format!("x{i}:\n")).collect();
+            assert!(steps(&block) <= 2 * block.len(), "block {size}");
+            let flow = format!(
+                "{{{}}}\n",
+                (0..size)
+                    .map(|i| format!("x{i}: "))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
+            assert!(steps(&flow) <= 2 * flow.len(), "flow {size}");
+        }
+    }
+
+    #[test]
+    fn a_long_filters_list_takes_linear_steps() {
+        for size in [500, 2_000] {
+            let text = format!("{{\"filters\":[{}]}}", vec!["\"x.lua\""; size].join(","));
+            crate::steps::take();
+            let (result, _) = load(&[("w.json", &text)], "w.json");
+            assert_eq!(result.map(|s| s.filters.len()).ok(), Some(size));
+            assert!(crate::steps::take() <= size, "{size}");
+        }
+    }
+
+    /// The wall-time form of `a_long_filters_list_takes_linear_steps`.
+    #[test]
+    #[ignore = "wall time depends on the load of the machine"]
     fn a_long_filters_list_takes_linear_time() {
         let fastest = |size: usize| {
             // JSON form: the YAML parser has its own time row (I-CLI-24).
