@@ -322,9 +322,9 @@
       }
     },
     "mmd_header_identifiers": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 2,
+        "passing": 3,
         "total": 3
       }
     },
@@ -410,8 +410,8 @@
     "raw_tex": {
       "status": "partial",
       "units": {
-        "passing": 806,
-        "total": 939
+        "passing": 1374,
+        "total": 1507
       }
     },
     "rebase_relative_paths": {
@@ -445,8 +445,8 @@
     "smart": {
       "status": "partial",
       "units": {
-        "passing": 2062,
-        "total": 2068
+        "passing": 2469,
+        "total": 2475
       }
     },
     "smart_quotes": {
@@ -534,8 +534,8 @@
     "tex_math_dollars": {
       "status": "partial",
       "units": {
-        "passing": 303,
-        "total": 325
+        "passing": 575,
+        "total": 597
       }
     },
     "tex_math_double_backslash": {
@@ -555,8 +555,8 @@
     "tex_math_single_backslash": {
       "status": "passing",
       "units": {
-        "passing": 143,
-        "total": 143
+        "passing": 279,
+        "total": 279
       }
     },
     "wikilinks_title_after_pipe": {
@@ -668,8 +668,8 @@
     },
     "html": {
       "read": {
-        "passing": 9206,
-        "total": 9210
+        "passing": 9910,
+        "total": 9914
       },
       "status": "partial"
     },
@@ -685,11 +685,11 @@
     "json": {
       "end_to_end": {
         "passing": 11902,
-        "total": 12019
+        "total": 12017
       },
       "read": {
-        "passing": 2828,
-        "total": 2831
+        "passing": 2826,
+        "total": 2829
       },
       "status": "partial"
     },
@@ -709,7 +709,7 @@
         "total": 1846
       },
       "read": {
-        "passing": 2876,
+        "passing": 2879,
         "total": 2920
       },
       "status": "partial"
@@ -938,10 +938,10 @@
       }
     },
     "email-obfuscation": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 15,
-        "total": 19
+        "passing": 13,
+        "total": 13
       }
     },
     "embed-resources": {
@@ -1716,23 +1716,23 @@
     "html": {
       "end_to_end": {
         "passing": 514,
-        "total": 520
+        "total": 519
       },
       "status": "partial",
       "write": {
         "passing": 517,
-        "total": 520
+        "total": 519
       }
     },
     "html4": {
       "end_to_end": {
         "passing": 419,
-        "total": 422
+        "total": 421
       },
       "status": "partial",
       "write": {
         "passing": 420,
-        "total": 422
+        "total": 421
       }
     },
     "html5": {
@@ -1964,8 +1964,8 @@
     "extensions": {
       "failing": 1,
       "not_started": 11,
-      "partial": 20,
-      "passing": 58
+      "partial": 19,
+      "passing": 59
     },
     "input_formats": {
       "not_started": 39,
@@ -1974,8 +1974,8 @@
     },
     "options": {
       "not_started": 1,
-      "partial": 15,
-      "passing": 93
+      "partial": 14,
+      "passing": 94
     },
     "output_formats": {
       "failing": 1,
@@ -1984,8 +1984,8 @@
       "passing": 6
     },
     "units": {
-      "passing": 56248,
-      "total": 57703
+      "passing": 56953,
+      "total": 58401
     }
   }
 }

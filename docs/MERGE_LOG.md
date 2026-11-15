@@ -2932,3 +2932,8 @@ also on `main`). I-HTMLR-29 (low; smart quotation only, also on
 `main`).
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+`merge-ws check` of batch f (a plain script of the coordinator, no merge agent): passed at 08:27 UTC on the tree of `33dcee6`.
+Harness: 58821 units: 56953 pass, 1448 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56246 units: 0 regressions, 707 new passes.
+Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56248, "total": 57703}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56953, "total": 58401}}`.
