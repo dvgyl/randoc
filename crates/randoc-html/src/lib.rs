@@ -43,13 +43,13 @@ pub fn writer(format: &str) -> Option<Writer> {
         "html4" => Version::Html4,
         _ => return None,
     };
-    Some(Writer::Text(Arc::new(
+    Some(Writer::Text(Arc::new(randoc_core::TemplateWriter(
         move |doc: &randoc_ast::Pandoc,
               options: &randoc_core::WriterOptions,
               context: &mut randoc_core::Context| {
             html::write(doc, options, context, version)
         },
-    )))
+    ))))
 }
 
 /// Renders blocks as an HTML5 fragment without a final newline, as the

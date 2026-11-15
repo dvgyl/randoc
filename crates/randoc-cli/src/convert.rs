@@ -13,7 +13,7 @@ use randoc::{
 use crate::cli::HIGHLIGHT_STYLES;
 use crate::settings::{Eol, Filter, Settings};
 use crate::subsystem::{self, Subsystem};
-use crate::template::{Includes, TemplateText};
+use crate::template::{Includes, TemplateFiles, TemplateText};
 use randoc_yaml::{Entrance, Kind, Limits, Node, Value};
 
 use crate::node::NodeExt;
@@ -729,34 +729,40 @@ pub fn clean_template(bytes: Vec<u8>) -> Vec<u8> {
 fn find_template(
     name: &str,
     format: &str,
-    data_dir: &str,
-    settings: &Settings,
+    files: &TemplateFiles,
     context: &mut Context,
 ) -> Result<TemplateText> {
-    let candidates = template_candidates(name, format, data_dir, &settings.resource_path);
+    let candidates = template_candidates(name, format, files.data_dir, files.resource_path);
     for candidate in &candidates {
-        if let Ok(bytes) = context.host().read_file(&candidate.path) {
-            if !candidate.in_data_dir {
-                context.report(LogMessage::LoadedResource(
-                    candidate.name.clone(),
-                    candidate.path.clone(),
-                ));
-            }
-            match check_utf8(&candidate.name, &bytes) {
-                // Error messages and partial paths use the template name,
-                // not the path of the file that was found.
-                Ok(()) => {
-                    return Ok(TemplateText {
-                        path: candidate.name.clone(),
-                        text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
-                        is_file: true,
-                    });
+        let bytes = match files.read(&candidate.path, context) {
+            Ok(bytes) => bytes,
+            Err(error) => {
+                if !candidate.in_data_dir {
+                    crate::template::unreadable_absolute_path(&candidate.path, &error)?;
                 }
-                // Pandoc goes on to NAME.FORMAT when NAME without an
-                // extension is not UTF-8.
-                Err(_) if candidate.name == name && !has_extension(name) => {}
-                Err(error) => return Err(error),
+                continue;
             }
+        };
+        if !candidate.in_data_dir {
+            context.report(LogMessage::LoadedResource(
+                candidate.name.clone(),
+                candidate.path.clone(),
+            ));
+        }
+        match check_utf8(&candidate.name, &bytes) {
+            // Error messages and partial paths use the template name,
+            // not the path of the file that was found.
+            Ok(()) => {
+                return Ok(TemplateText {
+                    path: candidate.name.clone(),
+                    text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
+                    is_file: true,
+                });
+            }
+            // Pandoc goes on to NAME.FORMAT when NAME without an
+            // extension is not UTF-8.
+            Err(_) if candidate.name == name && !has_extension(name) => {}
+            Err(error) => return Err(error),
         }
     }
     let last = candidates.last().map_or(name, |c| c.name.as_str());
@@ -831,9 +837,9 @@ pub struct SandboxHost {
 
 impl SandboxHost {
     /// Returns a host that permits the files that the settings name: each
-    /// named file, the files that the template search tries for the output
-    /// format, and a highlighting theme file.
-    pub fn new(settings: &Settings, inputs: &[String], format: &str, data_dir: &str) -> Self {
+    /// named file and a highlighting theme file. Templates are read past
+    /// this host (`TemplateFiles`).
+    pub fn new(settings: &Settings, inputs: &[String], data_dir: &str) -> Self {
         let mut permitted: BTreeSet<String> = inputs
             .iter()
             .chain(&settings.metadata_files)
@@ -857,13 +863,6 @@ impl SandboxHost {
             .chain(&settings.include_after_body)
         {
             permitted.extend(resource_candidates(include, &settings.resource_path));
-        }
-        if let Some(template) = &settings.template {
-            permitted.extend(
-                template_candidates(template, format, data_dir, &settings.resource_path)
-                    .into_iter()
-                    .map(|candidate| candidate.path),
-            );
         }
         if settings.syntax_highlighting.ends_with(".theme") {
             permitted.insert(settings.syntax_highlighting.clone());
@@ -1100,7 +1099,7 @@ fn read_include(path: &str, settings: &Settings, context: &mut Context) -> Resul
 }
 
 /// Returns the error of Pandoc for a file NAME whose bytes are not UTF-8.
-fn check_utf8(name: &str, bytes: &[u8]) -> Result<()> {
+pub(crate) fn check_utf8(name: &str, bytes: &[u8]) -> Result<()> {
     let Err(error) = std::str::from_utf8(bytes) else {
         return Ok(());
     };
@@ -1250,18 +1249,7 @@ pub fn run(settings: Settings, positional: Vec<String>) -> Result<()> {
     let inputs = input_files(&settings, positional);
 
     let mut context = if settings.sandbox {
-        let format = match &settings.to {
-            Some(to) => FormatSpec::parse(to).name,
-            None => settings
-                .output_file
-                .as_deref()
-                .and_then(format_from_extension)
-                .unwrap_or("html")
-                .to_owned(),
-        };
-        Context::new(Box::new(SandboxHost::new(
-            &settings, &inputs, &format, &data_dir,
-        )))
+        Context::new(Box::new(SandboxHost::new(&settings, &inputs, &data_dir)))
     } else {
         Context::native()
     };
@@ -1369,29 +1357,30 @@ fn convert(
         )));
     }
     read_named_files(ReadPoint::BeforeTemplate, settings, context)?;
+    let files = TemplateFiles::new(settings, data_dir);
     let template = match &settings.template {
-        Some(name) => Some(find_template(
-            name,
-            &to_spec.name,
-            data_dir,
-            settings,
-            context,
-        )?),
+        Some(name) => Some(find_template(name, &to_spec.name, &files, context)?),
         None if settings.is_standalone() => Some(crate::template::default_template(
             &to_spec.name,
-            data_dir,
+            &files,
             context,
-        )),
+        )?),
         None => None,
     };
     let template = template
-        .map(|text| crate::template::compile(&text, data_dir, context))
+        .map(|text| crate::template::compile(&text, &files, context))
         .transpose()?;
     read_named_files(ReadPoint::AfterTemplate, settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
     let style = settings.syntax_highlighting.as_str();
     if !matches!(style, "none" | "default" | "idiomatic") {
         check_highlight_style(style, |path| context.host().read_file(path))?;
+    }
+    if settings.is_standalone()
+        && !writer.renders_template()
+        && randoc_data::default_template(&to_spec.name).is_some()
+    {
+        return Err(subsystem::missing(Subsystem::Templates));
     }
     // Pandoc reads the before-body files, then the after-body files, then the header files.
     let mut includes = Includes::default();
@@ -1498,7 +1487,16 @@ fn convert(
     }
 
     let mut writer_options = writer_options;
-    writer_options.template = template;
+    // Pandoc ignores the template text of a format without a default
+    // template; its writer takes the presence of a template as the
+    // standalone flag.
+    writer_options.template = template.map(|template| {
+        if writer.renders_template() {
+            template
+        } else {
+            Default::default()
+        }
+    });
     let curdir = std::env::current_dir()
         .map(|dir| dir.to_string_lossy().into_owned())
         .unwrap_or_default();
@@ -1883,8 +1881,9 @@ mod tests {
             .insert("/u/templates/d.json".to_owned(), b"d".to_vec());
         let mut context = Context::new(Box::new(host));
         let settings = Settings::default();
+        let files = TemplateFiles::new(&settings, "/u");
         assert_eq!(
-            find_template("t.json", "json", "/u", &settings, &mut context)
+            find_template("t.json", "json", &files, &mut context)
                 .unwrap()
                 .text,
             "t"
@@ -1894,7 +1893,7 @@ mod tests {
             [LogMessage::LoadedResource(name, path)] if name == "t.json" && path == "t.json"
         ));
         assert_eq!(
-            find_template("d.json", "json", "/u", &settings, &mut context)
+            find_template("d.json", "json", &files, &mut context)
                 .unwrap()
                 .text,
             "d"
@@ -1914,7 +1913,7 @@ mod tests {
             ..Settings::default()
         };
         let dir = std::env::temp_dir().to_string_lossy().into_owned();
-        let mut host = SandboxHost::new(&settings, std::slice::from_ref(&dir), "json", "/u");
+        let mut host = SandboxHost::new(&settings, std::slice::from_ref(&dir), "/u");
         assert_eq!(host.read_file(&named).unwrap(), b"n");
         assert!(host.file_exists(&named));
         assert!(host.read_file(&other).is_err());
@@ -1925,11 +1924,11 @@ mod tests {
             format!("{dir}: withBinaryFile: inappropriate type (is a directory)")
         );
         let template = Settings {
-            template: Some(named.trim_end_matches(".txt").to_owned()),
+            template: Some(named.clone()),
             ..Settings::default()
         };
-        let mut host = SandboxHost::new(&template, &[], "txt", "/u");
-        assert!(host.read_file(&named).is_ok());
+        let mut host = SandboxHost::new(&template, &[], "/u");
+        assert!(host.read_file(&named).is_err());
     }
 
     #[test]

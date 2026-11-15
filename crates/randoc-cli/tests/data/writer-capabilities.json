@@ -1,0 +1,2309 @@
+{
+ "template": "marker:$title$|$body$",
+ "records": [
+  {
+   "writer": "beamer",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "\\begin{frame}\nBody\n\\end{frame}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\\begin{frame}\n\\end{frame}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "% Options for packages loaded elsewhere\n\\PassOptionsToPackage{unicode}{hyperref}\n\\PassOptionsToPackage{hyphens}{url}\n\\documentclass[\n  ignorenonframetext,\n]{beamer}\n\\newif\\ifbibliography\n\\usepackage{pgfpages}\n\\setbeamertemplate{caption}[numbered]\n\\setbeamertemplate{caption label separator}{: }\n\\setbeamercolor{caption name}{fg=normal text.fg}\n\\beamertemplatenavigationsymbolsempty\n% remove section numbering\n\\setbeamertemplate{part page}{\n  \\centering\n  \\begin{beamercolorbox}[sep=16pt,center]{part title}\n    \\usebeamerfont{part title}\\insertpart\\par\n  \\end{beamercolorbox}\n}\n\\setbeamertemplate{section page}{\n  \\centering\n  \\begin{beamercolorbox}[sep=12pt,center]{section title}\n    \\usebeamerfont{section title}\\insertsection\\par\n  \\end{beamercolorbox}\n}\n\\setbeamertemplate{subsection page}{\n  \\centering\n  \\begin{beamercolorbox}[sep=8pt,center]{subsection title}\n    \\usebeamerfont{subsection title}\\insertsubsection\\par\n  \\end{beamercolorbox}\n}\n% Prevent slide breaks in the middle of a paragraph\n\\widowpenalties 1 10000\n\\raggedbottom\n\\AtBeginPart{\n  \\frame{\\partpage}\n}\n\\AtBeginSection{\n  \\ifbibliography\n  \\else\n    \\frame{\\sectionpage}\n  \\fi\n}\n\\AtBeginSubsection{\n  \\frame{\\subsectionpage}\n}\n\\usepackage{iftex}\n\\ifPDFTeX\n  \\usepackage[T1]{fontenc}\n  \\usepackage[utf8]{inputenc}\n  \\usepackage{textcomp} % provide euro and other symbols\n\\else % if luatex or xetex\n  \\usepackage{unicode-math} % this also loads fontspec\n  \\defaultfontfeatures{Scale=MatchLowercase}\n  \\defaultfontfeatures[\\rmfamily]{Ligatures=TeX,Scale=1}\n\\fi\n\\usepackage{lmodern}\n\\ifPDFTeX\\else\n  % xetex/luatex font selection\n\\fi\n% Use upquote if available, for straight quotes in verbatim environments\n\\IfFileExists{upquote.sty}{\\usepackage{upquote}}{}\n\\IfFileExists{microtype.sty}{% use microtype if available\n  \\usepackage[]{microtype}\n  \\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts\n}{}\n\\makeatletter\n\\@ifundefined{KOMAClassName}{% if non-KOMA class\n  \\IfFileExists{parskip.sty}{%\n    \\usepackage{parskip}\n  }{% else\n    \\setlength{\\parindent}{0pt}\n    \\setlength{\\parskip}{6pt plus 2pt minus 1pt}}\n}{% if KOMA class\n  \\KOMAoptions{parskip=half}}\n\\makeatother\n\\setlength{\\emergencystretch}{3em} % prevent overfull lines\n\\providecommand{\\tightlist}{%\n  \\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}\n\\usepackage{bookmark}\n\\IfFileExists{xurl.sty}{\\usepackage{xurl}}{} % add URL line breaks if available\n\\urlstyle{same}\n% fallback for those not using the hyperref driver hyperxmp:\n\\makeatletter\n\\@ifundefined{xmpquote}{\\newcommand{\\xmpquote}[1]{#1}}{}\n\\makeatother\n\\hypersetup{\n  pdftitle={Title},\n  hidelinks,\n  pdfcreator={LaTeX via pandoc}}\n\n\\title{\\texorpdfstring{Title}{Title}}\n\\author{\\texorpdfstring{}{}}\n\\date{}\n\n\\begin{document}\n\\frame{\\titlepage}\n\n\\begin{frame}\nBody\n\\end{frame}\n\n\\end{document}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "% Options for packages loaded elsewhere\n\\PassOptionsToPackage{unicode}{hyperref}\n\\PassOptionsToPackage{hyphens}{url}\n\\documentclass[\n  ignorenonframetext,\n]{beamer}\n\\newif\\ifbibliography\n\\usepackage{pgfpages}\n\\setbeamertemplate{caption}[numbered]\n\\setbeamertemplate{caption label separator}{: }\n\\setbeamercolor{caption name}{fg=normal text.fg}\n\\beamertemplatenavigationsymbolsempty\n% remove section numbering\n\\setbeamertemplate{part page}{\n  \\centering\n  \\begin{beamercolorbox}[sep=16pt,center]{part title}\n    \\usebeamerfont{part title}\\insertpart\\par\n  \\end{beamercolorbox}\n}\n\\setbeamertemplate{section page}{\n  \\centering\n  \\begin{beamercolorbox}[sep=12pt,center]{section title}\n    \\usebeamerfont{section title}\\insertsection\\par\n  \\end{beamercolorbox}\n}\n\\setbeamertemplate{subsection page}{\n  \\centering\n  \\begin{beamercolorbox}[sep=8pt,center]{subsection title}\n    \\usebeamerfont{subsection title}\\insertsubsection\\par\n  \\end{beamercolorbox}\n}\n% Prevent slide breaks in the middle of a paragraph\n\\widowpenalties 1 10000\n\\raggedbottom\n\\AtBeginPart{\n  \\frame{\\partpage}\n}\n\\AtBeginSection{\n  \\ifbibliography\n  \\else\n    \\frame{\\sectionpage}\n  \\fi\n}\n\\AtBeginSubsection{\n  \\frame{\\subsectionpage}\n}\n\\usepackage{iftex}\n\\ifPDFTeX\n  \\usepackage[T1]{fontenc}\n  \\usepackage[utf8]{inputenc}\n  \\usepackage{textcomp} % provide euro and other symbols\n\\else % if luatex or xetex\n  \\usepackage{unicode-math} % this also loads fontspec\n  \\defaultfontfeatures{Scale=MatchLowercase}\n  \\defaultfontfeatures[\\rmfamily]{Ligatures=TeX,Scale=1}\n\\fi\n\\usepackage{lmodern}\n\\ifPDFTeX\\else\n  % xetex/luatex font selection\n\\fi\n% Use upquote if available, for straight quotes in verbatim environments\n\\IfFileExists{upquote.sty}{\\usepackage{upquote}}{}\n\\IfFileExists{microtype.sty}{% use microtype if available\n  \\usepackage[]{microtype}\n  \\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts\n}{}\n\\makeatletter\n\\@ifundefined{KOMAClassName}{% if non-KOMA class\n  \\IfFileExists{parskip.sty}{%\n    \\usepackage{parskip}\n  }{% else\n    \\setlength{\\parindent}{0pt}\n    \\setlength{\\parskip}{6pt plus 2pt minus 1pt}}\n}{% if KOMA class\n  \\KOMAoptions{parskip=half}}\n\\makeatother\n\\setlength{\\emergencystretch}{3em} % prevent overfull lines\n\\providecommand{\\tightlist}{%\n  \\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}\n\\usepackage{bookmark}\n\\IfFileExists{xurl.sty}{\\usepackage{xurl}}{} % add URL line breaks if available\n\\urlstyle{same}\n% fallback for those not using the hyperref driver hyperxmp:\n\\makeatletter\n\\@ifundefined{xmpquote}{\\newcommand{\\xmpquote}[1]{#1}}{}\n\\makeatother\n\\hypersetup{\n  hidelinks,\n  pdfcreator={LaTeX via pandoc}}\n\n\\author{\\texorpdfstring{}{}}\n\\date{}\n\n\\begin{document}\n\n\\begin{frame}\n\\end{frame}\n\n\\end{document}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|\\begin{frame}\nBody\n\\end{frame}",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|\\begin{frame}\n\\end{frame}",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|\\begin{frame}\nBody\n\\end{frame}",
+   "stderr": ""
+  },
+  {
+   "writer": "beamer",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "beamer",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|\\begin{frame}\n\\end{frame}",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "---\ntitle: Title\n---\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "commonmark_x",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "commonmark_x",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "csljson",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "csljson",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "---\ntitle: Title\n---\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "gfm",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "gfm",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=yes\" />\n  <title>Title</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n<header id=\"title-block-header\">\n<h1 class=\"title\">Title</h1>\n</header>\n<p>Body</p>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=yes\" />\n  <title>-</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "html",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <title>Title</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n<div id=\"header\">\n<h1 class=\"title\">Title</h1>\n</div>\n<p>Body</p>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <title>-</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "html4",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html4",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=yes\" />\n  <title>Title</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n<header id=\"title-block-header\">\n<h1 class=\"title\">Title</h1>\n</header>\n<p>Body</p>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc 3.13\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=yes\" />\n  <title>-</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    html {\n      color: #1a1a1a;\n      color: light-dark(#1a1a1a, #fdfdfd);\n      background-color: #fdfdfd;\n      background-color: light-dark(#fdfdfd, #1a1a1a);\n      color-scheme: light dark;\n    }\n    body {\n      margin: 0 auto;\n      max-width: 36em;\n      padding-left: 50px;\n      padding-right: 50px;\n      padding-top: 50px;\n      padding-bottom: 50px;\n      hyphens: auto;\n      overflow-wrap: break-word;\n      text-rendering: optimizeLegibility;\n      font-kerning: normal;\n    }\n    @media (max-width: 600px) {\n      body {\n        font-size: 0.9em;\n        padding: 12px;\n      }\n      h1 {\n        font-size: 1.8em;\n      }\n    }\n    @media print {\n      html {\n        color-scheme: light only;\n      }\n      html, body, pre, code {\n        background-color: transparent;\n      }\n      body, a, a:visited, blockquote {\n        color: black;\n      }\n      pre, code {\n        padding: 0;\n      }\n      p, h2, h3 {\n        orphans: 3;\n        widows: 3;\n      }\n      h2, h3, h4 {\n        page-break-after: avoid;\n      }\n    }\n    p {\n      margin: 1em 0;\n    }\n    a, a:visited {\n      color: inherit;\n    }\n    img {\n      max-width: 100%;\n    }\n    svg {\n      height: auto;\n      max-width: 100%;\n    }\n    h1, h2, h3, h4, h5, h6 {\n      margin-top: 1.4em;\n    }\n    h5, h6 {\n      font-size: 1em;\n      font-style: italic;\n    }\n    h6 {\n      font-weight: normal;\n    }\n    ol, ul {\n      padding-left: 1.7em;\n      margin-top: 1em;\n    }\n    li > ol, li > ul {\n      margin-top: 0;\n    }\n    blockquote {\n      margin: 1em 0 1em 1.7em;\n      padding-left: 1em;\n      border-left: 2px solid;\n      border-color: #e6e6e6;\n      border-color: light-dark(#e6e6e6, #4c4c4c);\n      color: #606060;\n      color: light-dark(#606060, #b6b6b6);\n    }\n    code {\n      white-space: pre-wrap;\n      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;\n      font-size: 85%;\n      margin: 0;\n      hyphens: manual;\n    }\n    pre {\n      margin: 1em 0;\n      overflow: auto;\n    }\n    pre code {\n      padding: 0;\n      overflow: visible;\n      overflow-wrap: normal;\n    }\n    .sourceCode {\n     background-color: transparent;\n     overflow: visible;\n    }\n    hr {\n      border: none;\n      border-top: 1px solid currentColor;\n      height: 1px;\n      margin: 1em 0;\n    }\n    table {\n      margin: 1em 0;\n      border-collapse: collapse;\n      width: 100%;\n      overflow-x: auto;\n      display: block;\n      font-variant-numeric: lining-nums tabular-nums;\n    }\n    table caption {\n      margin-bottom: 0.75em;\n    }\n    tbody {\n      margin-top: 0.5em;\n      border-top: 1px solid currentColor;\n      border-bottom: 1px solid currentColor;\n    }\n    th {\n      border-top: 1px solid currentColor;\n      padding: 0.25em 0.5em 0.25em 0.5em;\n    }\n    td {\n      padding: 0.125em 0.5em 0.25em 0.5em;\n    }\n    header {\n      margin-bottom: 4em;\n      text-align: center;\n    }\n    #TOC li {\n      list-style: none;\n    }\n    #TOC ul {\n      padding-left: 1.3em;\n    }\n    #TOC > ul {\n      padding-left: 0;\n    }\n    #TOC a:not(:hover) {\n      text-decoration: none;\n    }\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n</head>\n<body>\n\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "html5",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "html5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "stderr": ""
+  },
+  {
+   "writer": "json",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "json",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "% Options for packages loaded elsewhere\n\\PassOptionsToPackage{unicode}{hyperref}\n\\PassOptionsToPackage{hyphens}{url}\n\\documentclass[\n]{article}\n\\usepackage{xcolor}\n\\usepackage{amsmath,amssymb}\n\\setcounter{secnumdepth}{-\\maxdimen} % remove section numbering\n\\usepackage{iftex}\n\\ifPDFTeX\n  \\usepackage[T1]{fontenc}\n  \\usepackage[utf8]{inputenc}\n  \\usepackage{textcomp} % provide euro and other symbols\n\\else % if luatex or xetex\n  \\usepackage{unicode-math} % this also loads fontspec\n  \\defaultfontfeatures{Scale=MatchLowercase}\n  \\defaultfontfeatures[\\rmfamily]{Ligatures=TeX,Scale=1}\n\\fi\n\\usepackage{lmodern}\n\\ifPDFTeX\\else\n  % xetex/luatex font selection\n\\fi\n% Use upquote if available, for straight quotes in verbatim environments\n\\IfFileExists{upquote.sty}{\\usepackage{upquote}}{}\n\\IfFileExists{microtype.sty}{% use microtype if available\n  \\usepackage[]{microtype}\n  \\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts\n}{}\n\\makeatletter\n\\@ifundefined{KOMAClassName}{% if non-KOMA class\n  \\IfFileExists{parskip.sty}{%\n    \\usepackage{parskip}\n  }{% else\n    \\setlength{\\parindent}{0pt}\n    \\setlength{\\parskip}{6pt plus 2pt minus 1pt}}\n}{% if KOMA class\n  \\KOMAoptions{parskip=half}}\n\\makeatother\n\\setlength{\\emergencystretch}{3em} % prevent overfull lines\n\\providecommand{\\tightlist}{%\n  \\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}\n\\usepackage{bookmark}\n\\IfFileExists{xurl.sty}{\\usepackage{xurl}}{} % add URL line breaks if available\n\\urlstyle{same}\n% fallback for those not using the hyperref driver hyperxmp:\n\\makeatletter\n\\@ifundefined{xmpquote}{\\newcommand{\\xmpquote}[1]{#1}}{}\n\\makeatother\n\\hypersetup{\n  pdftitle={Title},\n  hidelinks,\n  pdfcreator={LaTeX via pandoc}}\n\n\\title{Title}\n\\author{}\n\\date{}\n\n\\begin{document}\n\\maketitle\n\nBody\n\n\\end{document}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "% Options for packages loaded elsewhere\n\\PassOptionsToPackage{unicode}{hyperref}\n\\PassOptionsToPackage{hyphens}{url}\n\\documentclass[\n]{article}\n\\usepackage{xcolor}\n\\usepackage{amsmath,amssymb}\n\\setcounter{secnumdepth}{-\\maxdimen} % remove section numbering\n\\usepackage{iftex}\n\\ifPDFTeX\n  \\usepackage[T1]{fontenc}\n  \\usepackage[utf8]{inputenc}\n  \\usepackage{textcomp} % provide euro and other symbols\n\\else % if luatex or xetex\n  \\usepackage{unicode-math} % this also loads fontspec\n  \\defaultfontfeatures{Scale=MatchLowercase}\n  \\defaultfontfeatures[\\rmfamily]{Ligatures=TeX,Scale=1}\n\\fi\n\\usepackage{lmodern}\n\\ifPDFTeX\\else\n  % xetex/luatex font selection\n\\fi\n% Use upquote if available, for straight quotes in verbatim environments\n\\IfFileExists{upquote.sty}{\\usepackage{upquote}}{}\n\\IfFileExists{microtype.sty}{% use microtype if available\n  \\usepackage[]{microtype}\n  \\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts\n}{}\n\\makeatletter\n\\@ifundefined{KOMAClassName}{% if non-KOMA class\n  \\IfFileExists{parskip.sty}{%\n    \\usepackage{parskip}\n  }{% else\n    \\setlength{\\parindent}{0pt}\n    \\setlength{\\parskip}{6pt plus 2pt minus 1pt}}\n}{% if KOMA class\n  \\KOMAoptions{parskip=half}}\n\\makeatother\n\\setlength{\\emergencystretch}{3em} % prevent overfull lines\n\\providecommand{\\tightlist}{%\n  \\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}\n\\usepackage{bookmark}\n\\IfFileExists{xurl.sty}{\\usepackage{xurl}}{} % add URL line breaks if available\n\\urlstyle{same}\n% fallback for those not using the hyperref driver hyperxmp:\n\\makeatletter\n\\@ifundefined{xmpquote}{\\newcommand{\\xmpquote}[1]{#1}}{}\n\\makeatother\n\\hypersetup{\n  hidelinks,\n  pdfcreator={LaTeX via pandoc}}\n\n\\author{}\n\\date{}\n\n\\begin{document}\n\n\n\n\\end{document}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body",
+   "stderr": ""
+  },
+  {
+   "writer": "latex",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "latex",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "---\ntitle: Title\n---\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_github",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_github",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_github",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": "[WARNING] Deprecated: markdown_github. Use gfm instead.\n"
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "title: Title\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_mmd",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_mmd",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_phpextra",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_phpextra",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markdown_strict",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markdown_strict",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "markua",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "markua",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "[ Para [ Str \"Body\" ] ]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "[]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList [ ( \"title\" , MetaInlines [ Str \"Title\" ] ) ]\n    }\n  [ Para [ Str \"Body\" ] ]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "Pandoc Meta { unMeta = fromList [] } []\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList [ ( \"title\" , MetaInlines [ Str \"Title\" ] ) ]\n    }\n  [ Para [ Str \"Body\" ] ]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "Pandoc Meta { unMeta = fromList [] } []\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Pandoc\n  Meta\n    { unMeta =\n        fromList [ ( \"title\" , MetaInlines [ Str \"Title\" ] ) ]\n    }\n  [ Para [ Str \"Body\" ] ]\n",
+   "stderr": ""
+  },
+  {
+   "writer": "native",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "native",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "Pandoc Meta { unMeta = fromList [] } []\n",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Title\n\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "plain",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "plain",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  }
+ ]
+}

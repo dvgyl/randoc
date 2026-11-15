@@ -67,12 +67,32 @@ pub trait BinaryReader: Send + Sync {
 
 /// A writer for a text format.
 pub trait TextWriter: Send + Sync {
+    /// Returns true if the writer renders `WriterOptions::template`.
+    ///
+    /// A writer that returns false gives the fragment only, so a caller must
+    /// not give it a template, because the template text and the title are
+    /// lost. The default is false, so that a new writer is safe until it
+    /// says that it renders the template.
+    fn renders_template(&self) -> bool {
+        false
+    }
+
     /// Renders the document as text.
     fn write(&self, doc: &Pandoc, options: &WriterOptions, context: &mut Context) -> Result<Text>;
 }
 
 /// A writer for a binary format, for example DOCX.
 pub trait BinaryWriter: Send + Sync {
+    /// Returns true if the writer renders `WriterOptions::template`.
+    ///
+    /// A writer that returns false gives the fragment only, so a caller must
+    /// not give it a template, because the template text and the title are
+    /// lost. The default is false, so that a new writer is safe until it
+    /// says that it renders the template.
+    fn renders_template(&self) -> bool {
+        false
+    }
+
     /// Renders the document as bytes.
     fn write(
         &self,
@@ -120,6 +140,14 @@ impl Output {
 }
 
 impl Writer {
+    /// Returns true if the writer renders `WriterOptions::template`.
+    pub fn renders_template(&self) -> bool {
+        match self {
+            Writer::Text(writer) => writer.renders_template(),
+            Writer::Binary(writer) => writer.renders_template(),
+        }
+    }
+
     /// Renders the document with the writer.
     pub fn write(
         &self,
@@ -154,6 +182,24 @@ where
 {
     fn write(&self, doc: &Pandoc, options: &WriterOptions, context: &mut Context) -> Result<Text> {
         self(doc, options, context)
+    }
+}
+
+/// A text writer function that renders `WriterOptions::template`: its
+/// `renders_template` returns true. A writer crate wraps its registration in
+/// it when the writer renders the template.
+pub struct TemplateWriter<F>(pub F);
+
+impl<F> TextWriter for TemplateWriter<F>
+where
+    F: Fn(&Pandoc, &WriterOptions, &mut Context) -> Result<Text> + Send + Sync,
+{
+    fn renders_template(&self) -> bool {
+        true
+    }
+
+    fn write(&self, doc: &Pandoc, options: &WriterOptions, context: &mut Context) -> Result<Text> {
+        (self.0)(doc, options, context)
     }
 }
 
@@ -219,11 +265,75 @@ mod tests {
             )
             .unwrap();
         let writer = Writer::Text(Arc::new(write));
+        assert!(!writer.renders_template());
         let output = writer
             .write(&doc, &WriterOptions::default(), &mut context)
             .unwrap();
         assert_eq!(output, Output::Text("1 blocks".into()));
         assert_eq!(output.into_bytes(), b"1 blocks");
         assert_eq!(Output::Binary(vec![1, 2]).into_bytes(), [1, 2]);
+    }
+
+    #[test]
+    fn template_writers_report_their_capability_and_render_the_template() {
+        fn write(_: &Pandoc, options: &WriterOptions, _: &mut Context) -> Result<Text> {
+            Ok(options
+                .template
+                .as_ref()
+                .map(|template| template.render(&options.variables).render(None))
+                .unwrap_or_else(|| "fragment".to_owned()))
+        }
+
+        let writer = Writer::Text(Arc::new(TemplateWriter(write)));
+        assert!(writer.renders_template());
+        let mut load = |_: &str| -> std::result::Result<String, ()> { Err(()) };
+        let mut options = WriterOptions {
+            template: Some(
+                randoc_templates::Template::compile(
+                    "t",
+                    "title=$title$;body=$body$",
+                    128,
+                    &mut load,
+                )
+                .unwrap(),
+            ),
+            ..WriterOptions::default()
+        };
+        options
+            .variables
+            .insert("title", randoc_templates::Val::text("T"));
+        options
+            .variables
+            .insert("body", randoc_templates::Val::text("B"));
+        assert_eq!(
+            writer
+                .write(&Pandoc::default(), &options, &mut Context::pure())
+                .unwrap(),
+            Output::Text("title=T;body=B".into())
+        );
+    }
+
+    #[test]
+    fn binary_writers_do_not_claim_template_support_by_default() {
+        struct FragmentWriter;
+
+        impl BinaryWriter for FragmentWriter {
+            fn write(&self, _: &Pandoc, _: &WriterOptions, _: &mut Context) -> Result<Vec<u8>> {
+                Ok(vec![1])
+            }
+        }
+
+        let writer = Writer::Binary(Arc::new(FragmentWriter));
+        assert!(!writer.renders_template());
+        assert_eq!(
+            writer
+                .write(
+                    &Pandoc::default(),
+                    &WriterOptions::default(),
+                    &mut Context::pure()
+                )
+                .unwrap(),
+            Output::Binary(vec![1])
+        );
     }
 }

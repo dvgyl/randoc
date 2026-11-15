@@ -2473,3 +2473,49 @@ Licence scan: the report states none for this range.
 Harness: 57176 units: 55396 pass, 1360 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 55396 units: 0 regressions, 0 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 55396, "total": 56756}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 55396, "total": 56756}}`.
+
+## Session 6 of 2026-11-15, batch C (two blocks: cli, latex-reader)
+
+**cli**: branch `ws/cli-5`, commits `4675d05..e8a6da7` (one merge of
+`origin/main` inside). The first version of the change came from a
+stopped worker of the model GPT-6.1 Sol (13 minutes, not committed).
+The Opus worker checked each line against the brief and recorded the
+oracle matrix again (the report says what it kept and what it changed).
+f9e5989: standalone output and `--template` for a writer that does not
+render the template stop with a scope-gap error (cli-R9-19). 8ef00f3:
+`--sandbox` limits no template or partial read (cli-R9-03); a failed
+template read is an error (cli-R9-21). e8a6da7: the Markdown writers
+register as `TemplateWriter`. The contract `renders_template` and
+`TemplateWriter` is in `randoc-core` (decision of the coordinator).
+
+Gate: `04:05 UTC e8a6da7 gate passed: CRITICAL cli-R9-19 cli-R9-03
+(writer capability renders_template with the scope-gap error, template
+reads past the sandbox, cli-R9-21, merge of origin/main 4675d05 with the
+Markdown writer registered as TemplateWriter)`. The worker ran the gate.
+
+Measured by the worker: 144 oracle rows of the writer matrix equal
+Pandoc, except 24 standalone `latex` and `beamer` rows (exit 4) and 6
+`csljson` rows (I-CLI-52). Sandbox matrix: 184 rows; the 92 sandbox
+rows equal the 92 plain rows. Resource replay: 3191 rows pass.
+
+Review state: Round 9 of the command line (Codex, on `main` `a2fbf7d`,
+session 5) requested changes with 2 critical, 12 high and 10 medium
+findings. This block corrects both critical findings (cli-R9-19,
+cli-R9-03) and the high finding cli-R9-21. The other 11 high and 10
+medium findings are open; the worker continues with them. No Opus review
+of round 9 ran. No finding of level critical is open in the command line.
+
+Open: I-CLI-52 (low); 11 high, 10 medium findings of round 9; items 4
+and 5 of the unit (not started).
+Checks that did not run: the report does not state a run of mutation
+tests, coverage, fuzzing or benchmarks for this range.
+
+Licence scan of the block: 5 hits outside the licence texts, each one
+judged by the coordinator. Two are in `convert.rs` and are on `main`
+since earlier sessions, not changed by this block: an error text of the
+reference that the program must print, and one comment with 8 words in
+common with the manual (the worker rewords it in its next commit). Three
+are in stored reference results (`resources.json`,
+`writer-capabilities.json`): text of the default templates `styles.html`
+and `hypersetup.latex`, which `crates/randoc-data` holds under their
+BSD-3-Clause option (ADR 5).

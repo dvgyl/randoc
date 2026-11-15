@@ -6,6 +6,8 @@ use randoc::ast::{MetaValue, Pandoc};
 use randoc::{Context, Error, LogMessage, Result};
 use randoc_templates::{CompileError, Context as Variables, Template, Val};
 
+use std::collections::VecDeque;
+
 use crate::settings::{Settings, VarValue};
 
 /// The version that `pandoc-version` gives.
@@ -24,59 +26,119 @@ pub struct TemplateText {
     pub is_file: bool,
 }
 
-/// Returns the default template of an output format: the file of the user
-/// data folder, else the template of `randoc-data`. A format without a
-/// default template (`json`, `native`) gives an empty template.
-pub fn default_template(format: &str, data_dir: &str, context: &mut Context) -> TemplateText {
-    let name = crate::info::template_name(format);
-    // Pandoc does not look in the user data folder for a format that has no
-    // default template.
-    if randoc_data::default_template(format).is_none() {
-        return TemplateText {
-            path: name,
-            text: String::new(),
-            is_file: false,
-        };
+/// Where a run reads a template and its partials. Pandoc reads them with
+/// full file access, so `--sandbox` does not limit these reads.
+#[derive(Debug, Clone, Copy)]
+pub struct TemplateFiles<'a> {
+    /// True with `--sandbox`: the reads go past the host of the sandbox.
+    pub native: bool,
+    /// The user data folder.
+    pub data_dir: &'a str,
+    /// The resource path, for a template file and its partials.
+    pub resource_path: &'a VecDeque<String>,
+}
+
+impl<'a> TemplateFiles<'a> {
+    /// Returns where the run of `settings` reads templates.
+    pub fn new(settings: &'a Settings, data_dir: &'a str) -> Self {
+        TemplateFiles {
+            native: settings.sandbox,
+            data_dir,
+            resource_path: &settings.resource_path,
+        }
     }
-    let text = context
-        .host()
-        .read_file(&crate::convert::data_path(data_dir, &name))
-        .ok()
-        .and_then(|bytes| String::from_utf8(crate::convert::clean_template(bytes)).ok())
-        .or_else(|| {
-            randoc_data::data_file(&name).map(|bytes| String::from_utf8_lossy(bytes).into_owned())
-        })
-        .unwrap_or_default();
-    TemplateText {
-        path: name,
-        text,
-        is_file: false,
+
+    /// Reads a template file or a partial.
+    pub fn read(&self, path: &str, context: &mut Context) -> std::io::Result<Vec<u8>> {
+        if self.native {
+            randoc::Host::read_file(&mut randoc::NativeHost, path)
+        } else {
+            context.host().read_file(path)
+        }
     }
 }
 
-/// Compiles a template. A partial `$name()$` is read next to a template
-/// file, then as `templates/FILE` of the user data folder, then from
-/// `randoc-data`.
-pub fn compile(template: &TemplateText, data_dir: &str, context: &mut Context) -> Result<Template> {
+/// Returns the default template of an output format: the file of the user
+/// data folder, else the template of `randoc-data`. A format without a
+/// default template (`json`, `native`) gives an empty template. A file of
+/// the user data folder that is not UTF-8 is an error; a missing file or a
+/// folder gives the template of `randoc-data`.
+pub fn default_template(
+    format: &str,
+    files: &TemplateFiles,
+    context: &mut Context,
+) -> Result<TemplateText> {
+    let name = crate::info::template_name(format);
+    // Pandoc names the template by the output format for partial paths and
+    // syntax errors: `-t html` reads `default.html5` as `default.html`.
+    let path = format!("templates/default.{format}");
+    // Pandoc does not look in the user data folder for a format that has no
+    // default template.
+    if randoc_data::default_template(format).is_none() {
+        return Ok(TemplateText {
+            path,
+            text: String::new(),
+            is_file: false,
+        });
+    }
+    let text = match files.read(&crate::convert::data_path(files.data_dir, &name), context) {
+        Ok(bytes) => {
+            crate::convert::check_utf8(&name, &bytes)?;
+            String::from_utf8_lossy(&crate::convert::clean_template(bytes)).into_owned()
+        }
+        Err(_) => randoc_data::data_file(&name)
+            .map(|bytes| String::from_utf8_lossy(bytes).into_owned())
+            .unwrap_or_default(),
+    };
+    Ok(TemplateText {
+        path,
+        text,
+        is_file: false,
+    })
+}
+
+/// Compiles a template. A partial `$name()$` of a template file is read in
+/// the folders of the resource path, then as `templates/FILE` of the user
+/// data folder, then from `randoc-data`; a partial of a default template only
+/// in the last two. A partial that is not UTF-8 is an error that names the
+/// partial path.
+pub fn compile(
+    template: &TemplateText,
+    files: &TemplateFiles,
+    context: &mut Context,
+) -> Result<Template> {
     let max_depth = context.limits.max_nesting_depth;
     let mut load = |path: &str| -> Result<String> {
         let file = path.rsplit('/').next().unwrap_or(path);
         let data_path = format!("templates/{file}");
-        let local = template
-            .is_file
-            .then(|| context.host().read_file(path).ok())
-            .flatten();
-        let bytes = local
-            .or_else(|| {
-                context
-                    .host()
-                    .read_file(&crate::convert::data_path(data_dir, &data_path))
-                    .ok()
-            })
-            .or_else(|| randoc_data::data_file(&data_path).map(<[u8]>::to_vec))
-            .ok_or_else(|| Error::CouldNotFindDataFile(data_path.clone()))?;
-        String::from_utf8(crate::convert::clean_template(bytes))
-            .map_err(|_| Error::CouldNotFindDataFile(data_path))
+        let mut candidates: Vec<(String, bool)> = if template.is_file {
+            crate::convert::resource_candidates(path, files.resource_path)
+                .into_iter()
+                .map(|candidate| (candidate, true))
+                .collect()
+        } else {
+            Vec::new()
+        };
+        candidates.push((crate::convert::data_path(files.data_dir, &data_path), false));
+        for (candidate, is_local) in candidates {
+            match files.read(&candidate, context) {
+                Ok(bytes) => {
+                    if is_local {
+                        context.report(LogMessage::LoadedResource(path.to_owned(), candidate));
+                    }
+                    crate::convert::check_utf8(path, &bytes)?;
+                    return Ok(
+                        String::from_utf8_lossy(&crate::convert::clean_template(bytes))
+                            .into_owned(),
+                    );
+                }
+                Err(error) if is_local => unreadable_absolute_path(&candidate, &error)?,
+                Err(_) => {}
+            }
+        }
+        randoc_data::data_file(&data_path)
+            .map(|bytes| String::from_utf8_lossy(bytes).into_owned())
+            .ok_or(Error::CouldNotFindDataFile(data_path))
     };
     Template::compile(&template.path, &template.text, max_depth, &mut load).map_err(|error| {
         match error {
@@ -88,6 +150,16 @@ pub fn compile(template: &TemplateText, data_dir: &str, context: &mut Context) -
             )),
         }
     })
+}
+
+/// Pandoc reads an absolute template path or partial path at once, so a
+/// path that exists and cannot be read (a folder) is an error. A relative
+/// path that cannot be read sends the search on.
+pub fn unreadable_absolute_path(path: &str, error: &std::io::Error) -> Result<()> {
+    if std::path::Path::new(path).is_absolute() && error.kind() != std::io::ErrorKind::NotFound {
+        return Err(crate::convert::io_error(path, "withBinaryFile", error));
+    }
+    Ok(())
 }
 
 /// The include files of a run, as text, in the order of the command line.
@@ -447,6 +519,17 @@ mod tests {
         Context::new(Box::new(host))
     }
 
+    static RESOURCE_PATH: std::sync::LazyLock<VecDeque<String>> =
+        std::sync::LazyLock::new(|| VecDeque::from([".".to_owned()]));
+
+    fn files() -> TemplateFiles<'static> {
+        TemplateFiles {
+            native: false,
+            data_dir: "/u",
+            resource_path: &RESOURCE_PATH,
+        }
+    }
+
     fn file(path: &str, text: &str) -> TemplateText {
         TemplateText {
             path: path.to_owned(),
@@ -466,7 +549,7 @@ mod tests {
             ("sub/sub/q.tpl", "Q\n"),
             ("sub/../part.tpl", "UP\n"),
         ]);
-        let template = compile(&file("sub/pt.tpl", source), "/u", &mut context).unwrap();
+        let template = compile(&file("sub/pt.tpl", source), &files(), &mut context).unwrap();
         assert_eq!(
             template.render(&Variables::new()).render(None),
             "p:SUBPART|Q|UP"
@@ -476,13 +559,17 @@ mod tests {
             ("sub/sub/q.tpl", "Q\n"),
             ("/u/templates/part.tpl", "DDPART\n"),
         ]);
-        let template = compile(&file("sub/pt.tpl", source), "/u", &mut context).unwrap();
+        let template = compile(&file("sub/pt.tpl", source), &files(), &mut context).unwrap();
         assert_eq!(
             template.render(&Variables::new()).render(None),
             "p:SUBPART|Q|DDPART"
         );
-        let error =
-            compile(&file("pt.tpl", "p:$part()$"), "/u", &mut context_with(&[])).unwrap_err();
+        let error = compile(
+            &file("pt.tpl", "p:$part()$"),
+            &files(),
+            &mut context_with(&[]),
+        )
+        .unwrap_err();
         assert_eq!(
             error.to_string(),
             "Could not find data file 'templates/part.tpl'"
@@ -493,26 +580,33 @@ mod tests {
     #[test]
     fn a_default_template_reads_partials_only_from_the_data_folders() {
         let mut context = context_with(&[("templates/common.latex", "LOCAL")]);
-        let template = default_template("latex", "/u", &mut context);
+        let template = default_template("latex", &files(), &mut context).unwrap();
         assert_eq!(template.path, "templates/default.latex");
         assert!(!template.is_file);
-        assert!(compile(&template, "/u", &mut context).is_ok());
+        assert!(compile(&template, &files(), &mut context).is_ok());
         // Pandoc 3.13: `-s -t native --data-dir=dd` ignores `dd/templates/default.native`.
         let mut context = context_with(&[
             ("/u/templates/default.plain", "USER $body$"),
             ("/u/templates/default.native", "$if(x)$"),
         ]);
         assert_eq!(
-            default_template("plain", "/u", &mut context).text,
+            default_template("plain", &files(), &mut context)
+                .unwrap()
+                .text,
             "USER $body$"
         );
-        assert_eq!(default_template("native", "/u", &mut context).text, "");
+        assert_eq!(
+            default_template("native", &files(), &mut context)
+                .unwrap()
+                .text,
+            ""
+        );
         let user = TemplateText {
             is_file: false,
             ..file("templates/default.latex", "$common()$")
         };
         let mut context = context_with(&[("templates/common.latex", "LOCAL")]);
-        let rendered = compile(&user, "/u", &mut context)
+        let rendered = compile(&user, &files(), &mut context)
             .unwrap()
             .render(&Variables::new())
             .render(None);
@@ -524,7 +618,7 @@ mod tests {
     fn a_syntax_error_names_the_template() {
         let error = compile(
             &file("bad.tpl", "a $if(x)$ b\n"),
-            "/u",
+            &files(),
             &mut context_with(&[]),
         )
         .unwrap_err();

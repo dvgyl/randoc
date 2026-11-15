@@ -5,7 +5,7 @@ Usage: resource_matrix.py PANDOC OUT.json [resources|utf8|GROUP [OLD.json ...]]
 
 `resources` records each group except `utf8`. GROUP is one of `base`,
 `lists`, `templates`, `defaults`, `named`, `datadir`, `aux`, `values`, `nested`,
-`inputs`, `numbering`, `review8`, `abbreviations`. A case that has a record with the
+`inputs`, `numbering`, `review8`, `abbreviations`, `sandbox-templates`. A case that has a record with the
 same arguments and files in an OLD.json keeps that record; the oracle runs
 only for the other cases.
 
@@ -332,6 +332,69 @@ def template_path_cases():
                         ("r1/sub/bad.json", "sub/bad.json")]:
         cases.append(case(["--data-dir=dd", "--resource-path=r1", "--template=" + name],
                           {place: "\udcff"}))
+    return cases
+
+
+def sandbox_template_cases():
+    """Each template source with a partial in the same folder, in a subfolder
+    and in the parent folder, with and without `--sandbox`. Then a template and
+    a partial that are absent, a folder or not UTF-8. The output format is
+    `html`, so the template text is in the output."""
+    # SOURCE: the options, the folder of the template file, its file name.
+    sources = {
+        "builtin": (["-s"], None, None),
+        "datadir-default": (["-s", "--data-dir=dd"], "dd/templates", "default.html5"),
+        "relative": (["--template=tp/t.html"], "tp", "t.html"),
+        "absolute": (["--template={root}/tp/t.html"], "tp", "t.html"),
+        "no-extension": (["--template=tp/t"], "tp", "t.html"),
+        "datadir-named": (["--data-dir=dd", "--template=dt"], "dd/templates", "dt.html"),
+        "resource-path": (["--resource-path=r", "--template=rt.html"], "r", "rt.html"),
+    }
+    partials = {"same": "p", "sub": "sub/p", "parent": "../p"}
+
+    # A titled document, so that the result does not depend on the title
+    # fallback of the HTML formats (cli-R9-06).
+    titled = ('{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines",'
+              '"c":[{"t":"Str","c":"T"}]}},"blocks":[]}')
+
+    def html_case(options, files, sandbox, log=True):
+        files = dict(files, **{"a.json": titled})
+        lead = ["--sandbox"] if sandbox else []
+        # The built-in template runs without the log: the HTML writer does
+        # not report `NoLangSpecified` yet (I-CLI-35).
+        logs = ["--verbose", "--log=log.json"] if log else []
+        return {"args": lead + ["-f", "json", "-t", "html"] + logs + options + ["a.json"],
+                "files": files}
+
+    cases = []
+    for sandbox in [False, True]:
+        for source, (options, folder, name) in sources.items():
+            if folder is None:
+                # The built-in template reads its partial `styles.html` from
+                # the data directory.
+                for files in [{}, {"dd/templates/styles.html": "S\n"}]:
+                    cases.append(html_case(options + ["--data-dir=dd"], files, sandbox,
+                                           log=False))
+                continue
+            for place, partial in partials.items():
+                partial_path = os.path.normpath(folder + "/" + partial + ".html")
+                template = {folder + "/" + name: "T:$" + partial + "()$\n"}
+                for state, text in [("present", "P\n"), ("absent", None),
+                                    ("folder", None), ("bad", "\udcff")]:
+                    files = dict(template)
+                    if text is not None:
+                        files[partial_path] = text
+                    elif state == "folder":
+                        files[partial_path + "/keep"] = ""
+                    cases.append(html_case(options, files, sandbox))
+            for state in ["absent", "folder", "bad"]:
+                files = {"tp/keep": "", "r/keep": "", "dd/templates/keep": ""}
+                if state == "folder":
+                    files[folder + "/" + name + "/keep"] = ""
+                elif state == "bad":
+                    files[folder + "/" + name] = "\udcff"
+                builtin = source == "datadir-default" and state != "bad"
+                cases.append(html_case(options, files, sandbox, log=not builtin))
     return cases
 
 
@@ -779,12 +842,14 @@ def main():
         "numbering": numbering_cases,
         "review8": review_eight_cases,
         "abbreviations": abbreviation_cases,
+        "sandbox-templates": sandbox_template_cases,
     }
     try:
         if mode == "resources":
             cases = [c for name in ["base", "lists", "templates", "defaults", "named",
                                     "datadir", "aux", "values", "nested", "inputs",
-                                    "numbering", "review8", "abbreviations"]
+                                    "numbering", "review8", "abbreviations",
+                                    "sandbox-templates"]
                      for c in groups[name]()]
         else:
             cases = groups[mode]()

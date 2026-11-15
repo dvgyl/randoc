@@ -25,7 +25,8 @@ pub use error::{Error, Result};
 pub use extensions::{Extension, Extensions, FormatSpec, default_extensions, supported_extensions};
 pub use extensions_data::{ALL_EXTENSIONS, FORMAT_EXTENSIONS, FormatExtensions};
 pub use format::{
-    BinaryReader, BinaryWriter, Output, Reader, Source, Sources, TextReader, TextWriter, Writer,
+    BinaryReader, BinaryWriter, Output, Reader, Source, Sources, TemplateWriter, TextReader,
+    TextWriter, Writer,
 };
 pub use logging::{LogMessage, SourcePos, Verbosity};
 pub use options::{

@@ -40,7 +40,7 @@ pub fn writer(format: &str) -> Option<Writer> {
     let variant = match format {
         "markdown" | "markdown_strict" | "markdown_phpextra" | "markdown_mmd" => Variant::Markdown,
         "markdown_github" => {
-            return Some(Writer::Text(Arc::new(
+            return Some(Writer::Text(Arc::new(randoc_core::TemplateWriter(
                 |doc: &Pandoc, options: &WriterOptions, context: &mut Context| {
                     context.report(LogMessage::Deprecated(
                         Text::from("markdown_github"),
@@ -48,18 +48,18 @@ pub fn writer(format: &str) -> Option<Writer> {
                     ));
                     write(doc, options, context, Variant::Markdown)
                 },
-            )));
+            ))));
         }
         "gfm" | "commonmark" | "commonmark_x" => Variant::Commonmark,
         "plain" => Variant::Plain,
         "markua" => Variant::Markua,
         _ => return None,
     };
-    Some(Writer::Text(Arc::new(
+    Some(Writer::Text(Arc::new(randoc_core::TemplateWriter(
         move |doc: &Pandoc, options: &WriterOptions, context: &mut Context| {
             write(doc, options, context, variant)
         },
-    )))
+    ))))
 }
 
 /// Renders a document as a fragment.
