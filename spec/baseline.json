@@ -18200,8 +18200,6 @@
     "html-writer/options/opt-columns-200-html4#e2e:html4",
     "html-writer/options/opt-columns-200-html4#read",
     "html-writer/options/opt-columns-200-html4#write:html4",
-    "html-writer/options/opt-email-javascript#read",
-    "html-writer/options/opt-email-javascript-html4#read",
     "html-writer/options/opt-email-none#e2e:html",
     "html-writer/options/opt-email-none#read",
     "html-writer/options/opt-email-none#write:html",
