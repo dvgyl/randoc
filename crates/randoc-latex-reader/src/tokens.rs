@@ -82,7 +82,8 @@ pub(crate) fn tokenize(input: &str) -> Vec<Tok> {
         line: 1,
         column: 1,
         out: Vec::new(),
-        verb_failures: HashMap::new(),
+        line_end: 0,
+        line_last: HashMap::new(),
     }
     .run()
 }
@@ -93,9 +94,12 @@ struct Tokenizer {
     line: u32,
     column: u32,
     out: Vec<Tok>,
-    /// For each `\verb` delimiter, the line end before which the delimiter
-    /// does not occur again. It keeps repeated `\verb` without an end linear.
-    verb_failures: HashMap<char, usize>,
+    /// The end of the line that `line_last` describes.
+    line_end: usize,
+    /// For the rest of the line before `line_end`: the last position of
+    /// each character, so that a `\verb` without its end delimiter is
+    /// found in constant time.
+    line_last: HashMap<char, usize>,
 }
 
 impl Tokenizer {
@@ -202,6 +206,13 @@ impl Tokenizer {
         let letters = self.count_while(1, |c| c.is_ascii_alphabetic());
         if letters == 0 {
             match self.peek(1) {
+                Some('\n') => {
+                    // Pandoc counts the newline of `\` at the end of a line
+                    // as a column, so its later lines are one line lower.
+                    let (line, column) = (self.line, self.column);
+                    self.take(Kind::Symbol('\n'), 2);
+                    (self.line, self.column) = (line, column + 2);
+                }
                 Some(symbol) => self.take(Kind::Symbol(symbol), 2),
                 None => self.take(Kind::Other('\\'), 1),
             }
@@ -210,6 +221,11 @@ impl Tokenizer {
         let name: Text = self.chars[self.index + 1..self.index + 1 + letters]
             .iter()
             .collect();
+        if name == "par" {
+            // `\par` is a paragraph break, as a blank line is.
+            self.take(Kind::Par, letters + 1);
+            return;
+        }
         self.take(Kind::Word(name.clone()), letters + 1);
         match name.as_str() {
             "verb" => self.verb(),
@@ -228,17 +244,25 @@ impl Tokenizer {
         if delimiter.is_alphabetic() || delimiter == ' ' || delimiter == '\n' {
             return;
         }
-        if self
-            .verb_failures
-            .get(&delimiter)
-            .is_some_and(|&line_end| self.index < line_end)
+        let start = self.index + star + 1;
+        if start >= self.line_end {
+            let length = self.count_while(star + 1, |c| c != '\n');
+            self.line_end = start + length;
+            self.line_last.clear();
+            for (offset, &c) in self.chars[start..self.line_end].iter().enumerate() {
+                self.line_last.insert(c, start + offset);
+            }
+        }
+        if !crate::parse::plain_scans()
+            && self
+                .line_last
+                .get(&delimiter)
+                .is_none_or(|&last| last < start)
         {
             return;
         }
         let body = self.count_while(star + 1, |c| c != delimiter && c != '\n');
         if self.peek(star + 1 + body) != Some(delimiter) {
-            self.verb_failures
-                .insert(delimiter, self.index + star + 1 + body);
             return;
         }
         let text = self.chars[self.index + star + 1..self.index + star + 1 + body]
@@ -282,15 +306,19 @@ impl Tokenizer {
     /// After `\begin{NAME}` of a verbatim environment, the text up to
     /// `\end{NAME}` is one token.
     fn verbatim_environment(&mut self) {
-        let name_length = self.count_while_max(1, MAX_NAME_LENGTH, |c| c != '}' && c != '\n');
-        if self.peek(0) != Some('{') || self.peek(1 + name_length) != Some('}') {
+        let spaces = self.count_while(0, |c| c == ' ' || c == '\t');
+        let name_length =
+            self.count_while_max(spaces + 1, MAX_NAME_LENGTH, |c| c != '}' && c != '\n');
+        if self.peek(spaces) != Some('{') || self.peek(spaces + 1 + name_length) != Some('}') {
             return;
         }
-        let name: Text = self.chars[self.index + 1..self.index + 1 + name_length]
-            .iter()
-            .collect();
+        let start = self.index + spaces + 1;
+        let name: Text = self.chars[start..start + name_length].iter().collect();
         if !VERBATIM_ENVIRONMENTS.contains(&name.as_str()) {
             return;
+        }
+        if spaces > 0 {
+            self.take(Kind::Space, spaces);
         }
         self.take(Kind::Open, 1);
         self.take(Kind::Letters(name.clone()), name_length);

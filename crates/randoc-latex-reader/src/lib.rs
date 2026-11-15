@@ -97,6 +97,7 @@ mod tests {
         ("\\texttt{{", "}}"),
         ("\\iftrue ", "\\fi"),
         ("\\enquote{", "}"),
+        ("\\documentclass{}", ""),
     ];
 
     fn nested(open: &str, close: &str, levels: usize) -> String {
@@ -118,6 +119,29 @@ mod tests {
                     }
                 }
             }
+        });
+    }
+
+    /// One nesting of `NESTINGS` at one depth, for a memory measurement:
+    /// `LTXR_NESTING` is the index, `LTXR_LEVELS` the depth.
+    #[test]
+    #[ignore]
+    fn one_nesting_for_a_memory_measurement() {
+        let index: usize = std::env::var("LTXR_NESTING")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(0);
+        let levels: usize = std::env::var("LTXR_LEVELS")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(1_000);
+        on_small_stack(move || {
+            let (open, close) = NESTINGS[index.min(NESTINGS.len() - 1)];
+            let input = nested(open, close, levels);
+            assert!(matches!(
+                convert(&input, "latex"),
+                Ok(_) | Err(Error::Parse(_))
+            ));
         });
     }
 
@@ -144,7 +168,10 @@ mod tests {
             "\\begin{tabular}{ll}a & }b\\\\ c\\end{tabular}",
             "\\begin{tabular}{lc}a & \\multicof}\\caption{c}\\end{figure}",
         ] {
-            assert!(convert(input, "latex").is_ok(), "{input}");
+            assert!(
+                matches!(convert(input, "latex"), Ok(_) | Err(Error::Parse(_))),
+                "{input}"
+            );
         }
     }
 
@@ -195,7 +222,10 @@ mod tests {
             "\\iffalse \\label| \\fi",
             "\\documentclass{article}\\label|\\begin{document}x\\end{document}",
         ] {
-            assert!(convert(input, "latex").is_ok(), "{input}");
+            assert!(
+                matches!(convert(input, "latex"), Ok(_) | Err(Error::Parse(_))),
+                "{input}"
+            );
         }
     }
 
@@ -383,13 +413,101 @@ mod tests {
         "\\newif\\iffoo \\footrue\\iffoo y\\fi ",
         "\\enquote{x} ",
         "\\char65 ",
+        "\\begin{itemize}\\item x}\\end{itemize}\n",
+        "\\begin{tabular}{l}a & b\\end{tabular}\n",
+        "\\begin{tabular}{l}a \\end{x} b\\\\\\end{tabular}\n",
+        "\\begin{zz} & x \\\\\n",
+        "\\documentclass{a}",
+        "MISSING ARGUMENTS",
+        "LETTER ARGUMENTS",
+        "VERB DELIMITERS",
+        "IF WITHOUT FI",
     ];
 
     fn wrap_unit(unit: &str, n: usize) -> String {
         match unit {
             "\\item x\n" => format!("\\begin{{itemize}}{}\\end{{itemize}}", unit.repeat(n)),
-            "a & b \\\\\n" => format!("\\begin{{tabular}}{{ll}}{}\\end{{tabular}}", unit.repeat(n)),
+            "a & b \\\\\n" | "\\begin{zz} & x \\\\\n" => {
+                format!("\\begin{{tabular}}{{ll}}{}\\end{{tabular}}", unit.repeat(n))
+            }
+            "MISSING ARGUMENTS" => format!("\\newcommand{{\\x}}[100000]{{a}}{}", "\\x ".repeat(n)),
+            "LETTER ARGUMENTS" => format!("\\newcommand{{\\x}}[{n}]{{#1}}\\x {}", "a".repeat(n)),
+            "VERB DELIMITERS" => (0..n)
+                .filter_map(|i| char::from_u32(0xe000 + u32::try_from(i).unwrap_or(0)))
+                .map(|delimiter| format!("\\verb{delimiter}x "))
+                .collect(),
+            "IF WITHOUT FI" => format!("\\def\\a{{{}}}\\a", "\\iftrue ".repeat(n)),
             _ => unit.repeat(n),
+        }
+    }
+
+    /// Nested whole groups in an argument: four times the depth takes at
+    /// most five times the steps (the group ends are found once).
+    #[test]
+    fn nested_whole_groups_take_linear_steps() {
+        std::thread::Builder::new()
+            .stack_size(512 * 1024 * 1024)
+            .spawn(|| {
+                let steps = |n: usize| {
+                    let mut context = Context::pure();
+                    context.limits.max_nesting_depth = 100_000;
+                    let input = format!("\\emph{{{}x{}}}", "{".repeat(n), "}".repeat(n));
+                    let mut parser = Parser::new(&input, options("latex").extensions, &mut context);
+                    let _ = parser.document();
+                    parser.steps()
+                };
+                let (small, large) = (steps(500).max(1), steps(2_000));
+                assert!(large <= small * 5, "{small} steps, then {large}");
+            })
+            .expect("thread")
+            .join()
+            .expect("no stack overflow");
+    }
+
+    /// Rule 15: each cache and index gives the result of its plain scan,
+    /// on documents made of the constructs that use them.
+    #[test]
+    fn each_cache_gives_the_result_of_the_plain_scan() {
+        const PARTS: &[&str] = &[
+            "\\newcommand{\\x}[3]{<#1#2#3>}",
+            "\\x ",
+            "\\x{a}",
+            "{b c}",
+            "}",
+            "{",
+            "abc ",
+            "\\emph{{{d}}}",
+            "\\emph{ {e} }",
+            "\\verb|v| ",
+            "\\verb+w ",
+            "\\verb!",
+            "\n",
+            "\n\n",
+            "\\def\\a{\\iftrue p\\else q\\fi \\iftrue r}",
+            "\\a ",
+            "\\fi ",
+            "\\iffalse s\\fi ",
+            "\\begin{tabular}{l}t & u\\end{tabular}",
+            "\\begin{tabular}{l}\\begin{tabular}{l}y\\end{tabular}\\\\\\end{tabular}",
+            "\\documentclass{a}",
+            "\\begin{document}",
+            "\\end{document}",
+        ];
+        let mut state = 12_345u64;
+        let mut next = |bound: usize| {
+            state = state
+                .wrapping_mul(6_364_136_223_846_793_005)
+                .wrapping_add(1_442_695_040_888_963_407);
+            usize::try_from(state >> 33).unwrap_or(0) % bound
+        };
+        for _ in 0..3_000 {
+            let length = 1 + next(12);
+            let input: String = (0..length).map(|_| PARTS[next(PARTS.len())]).collect();
+            let with_caches = format!("{:?}", convert(&input, "latex"));
+            crate::parse::PLAIN_SCANS.with(|plain| plain.set(true));
+            let plain = format!("{:?}", convert(&input, "latex"));
+            crate::parse::PLAIN_SCANS.with(|plain| plain.set(false));
+            assert_eq!(with_caches, plain, "{input:?}");
         }
     }
 

@@ -2137,3 +2137,45 @@ options 90 passing, 18 partial, 1 not started; output formats 5
 passing, 12 partial, 1 failing, 59 not started; units 50817 of 53228
 passing. `spec/baseline.json` and `spec/capabilities.json` are updated
 in the next commit.
+
+## Workstream latex-reader (branch `ws/latex-reader-4`, commit 4fad0ed, one squashed commit, session 5 of 2026-11-15, batch D)
+
+Merged as a small block under owner instruction 17. Batch B merged the
+earlier commit a048f35 of the branch as d4b88c5 and reverted it
+(6a37e63), because the depth test used more than 4 GB. This record
+holds all commits of `git log --format='%h %s' main..4fad0ed`: a048f35
+reads parse errors, tables and figures as Pandoc does; f01e3c5 closes
+review findings of round 1 on linear time and lost text; dcb5f1c names
+the crate notice of the inlines port; 1ba8158 merges `main`; 6bc225c
+expands control symbols and matches delimited parameters; b6dfadc
+expands macros in URLs, accent arguments and raw environments; 4fad0ed
+bounds the memory of nested copies of tokens (row I-LTXR-51: all live
+copies of `with_tokens` together hold at most one token per input or
+expansion token plus 50,000, then the depth error).
+
+The gate evidence comes from the inbox lines of a048f35, dcb5f1c,
+6bc225c, b6dfadc and 4fad0ed (`env/store/inbox/latex-reader.log`, the
+last one 2026-11-14T23:29:30Z), from the commit list above and from the
+top section of `env/store/reports/latex-reader.md` (2026-11-14 23:50
+UTC, final).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 4fad0ed. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Report: suite `latex-reader/` 4,253 units / 3,244 pass at the start; 5,454 / 4,636 pass on b6dfadc (0 lost). Corpus: 5 of 8 LaTeX documents pass (0 before). `COMMANDS.md`: equal 162 to 214. |
+| 3. Tests | Memory proof on the merged tree: the test binary under `limit-run 1500 600 BINARY --include-ignored` ended without a stop for memory or time (22 pass, 1 fail: the ignored wall-time test `repeated_constructs_take_linear_time`, known). Report: depth test peak 236 MB, whole binary peak 310 MB. `cargo test -p randoc-latex-reader` on the merged tree: 21 pass, 0 fail, 2 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Report: fuzz target `latex_read` on 4fad0ed, 841 s, 187,931 runs, 0 crashes, 0 timeouts, peak 599 MB. |
+| 5. Reviews | Round 1 (both reviewers) requested changes; about half of the findings are corrected; each open one is a row I-LTXR-16 to I-LTXR-49. |
+| 6. No slowdowns | Report: review stress inputs at 16,000 items, 0.15 to 0.93 s (debug build). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: one, in `docs/ISSUES.md`. `resolve-tables` kept
+`main` and added 36 rows; the rows I-LTXR-05, I-LTXR-08 and I-LTXR-14
+had the older text of `main`, so the text of 4fad0ed is taken for them.
+Each I-LTXR row is in the file one time. Licence scan of 4fad0ed: only
+the licence text in `crates/randoc-latex-reader/NOTICE.md`; accepted.
+
+Open findings: I-LTXR-11, I-LTXR-34, I-LTXR-35, I-LTXR-37, I-LTXR-38
+(high); I-LTXR-07, I-LTXR-42 to I-LTXR-48 (medium); the low rows. Open
+checks: the verification of round 1, the Pandoc test suite, the
+differential run, coverage, the mutation sample.

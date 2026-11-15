@@ -6,64 +6,64 @@ counts the probe contexts that give the bytes of Pandoc 3.13:
 equal (all), not started (not all, and no string of src/parse.rs
 names it), partial (some), different (none).
 
-Counts: equal 162, partial 68, different 4, not started 117, not probed 0
+Counts: equal 214, partial 60, different 10, not started 67, not probed 0
 
 | rank | name | state | contexts equal |
 | --- | --- | --- | --- |
-| 1 | `\section` | partial | 6/8 |
+| 1 | `\section` | partial | 7/8 |
 | 2 | `\emph` | equal | 8/8 |
-| 3 | `\label` | partial | 6/8 |
-| 4 | `\ref` | partial | 6/8 |
+| 3 | `\label` | partial | 7/8 |
+| 4 | `\ref` | partial | 7/8 |
 | 5 | `\cite` | equal | 8/8 |
 | 6 | `\textbf` | equal | 8/8 |
-| 7 | `\item` | partial | 4/8 |
-| 8 | `{itemize}` | partial | 5/8 |
-| 9 | `\subsection` | partial | 6/8 |
-| 10 | `\begin` | different | 0/8 |
-| 11 | `\end` | different | 0/8 |
-| 12 | `\usepackage` | not started | 5/8 |
+| 7 | `\item` | partial | 5/8 |
+| 8 | `{itemize}` | partial | 7/8 |
+| 9 | `\subsection` | partial | 7/8 |
+| 10 | `\begin` | equal | 8/8 |
+| 11 | `\end` | equal | 8/8 |
+| 12 | `\usepackage` | partial | 5/8 |
 | 13 | `\includegraphics` | equal | 8/8 |
 | 14 | `\caption` | partial | 5/8 |
-| 15 | `{figure}` | different | 0/8 |
+| 15 | `{figure}` | equal | 8/8 |
 | 16 | `\centering` | partial | 6/8 |
 | 17 | `\textit` | equal | 8/8 |
-| 18 | `{enumerate}` | partial | 5/8 |
+| 18 | `{enumerate}` | partial | 7/8 |
 | 19 | `\footnote` | equal | 8/8 |
 | 20 | `{equation}` | equal | 8/8 |
 | 21 | `\hline` | equal | 8/8 |
-| 22 | `{tabular}` | different | 0/8 |
-| 23 | `{table}` | partial | 6/8 |
-| 24 | `\documentclass` | partial | 4/8 |
-| 25 | `{document}` | partial | 5/8 |
-| 26 | `\newcommand` | partial | 7/8 |
-| 27 | `\url` | partial | 7/8 |
-| 28 | `\href` | partial | 7/8 |
+| 22 | `{tabular}` | partial | 7/8 |
+| 23 | `{table}` | partial | 7/8 |
+| 24 | `\documentclass` | partial | 5/8 |
+| 25 | `{document}` | partial | 6/8 |
+| 26 | `\newcommand` | equal | 8/8 |
+| 27 | `\url` | equal | 8/8 |
+| 28 | `\href` | equal | 8/8 |
 | 29 | `\texttt` | equal | 8/8 |
-| 30 | `\subsubsection` | partial | 6/8 |
-| 31 | `\title` | partial | 4/8 |
-| 32 | `\author` | partial | 4/8 |
-| 33 | `\date` | partial | 4/8 |
+| 30 | `\subsubsection` | partial | 7/8 |
+| 31 | `\title` | partial | 5/8 |
+| 32 | `\author` | partial | 5/8 |
+| 33 | `\date` | partial | 5/8 |
 | 34 | `\maketitle` | partial | 4/8 |
-| 35 | `{abstract}` | partial | 6/8 |
+| 35 | `{abstract}` | partial | 7/8 |
 | 36 | `{align}` | equal | 8/8 |
 | 37 | `{align*}` | equal | 8/8 |
 | 38 | `{equation*}` | equal | 8/8 |
-| 39 | `\eqref` | partial | 6/8 |
+| 39 | `\eqref` | partial | 7/8 |
 | 40 | `\textwidth` | equal | 8/8 |
 | 41 | `\linewidth` | equal | 8/8 |
 | 42 | `\vspace` | equal | 8/8 |
 | 43 | `\hspace` | equal | 8/8 |
 | 44 | `\noindent` | partial | 6/8 |
-| 45 | `\paragraph` | partial | 6/8 |
-| 46 | `\chapter` | partial | 6/8 |
-| 47 | `{description}` | partial | 4/8 |
-| 48 | `{quote}` | partial | 6/8 |
-| 49 | `{center}` | partial | 5/8 |
-| 50 | `{verbatim}` | partial | 6/8 |
+| 45 | `\paragraph` | partial | 7/8 |
+| 46 | `\chapter` | partial | 7/8 |
+| 47 | `{description}` | partial | 6/8 |
+| 48 | `{quote}` | equal | 8/8 |
+| 49 | `{center}` | partial | 7/8 |
+| 50 | `{verbatim}` | equal | 8/8 |
 | 51 | `\toprule` | equal | 8/8 |
 | 52 | `\midrule` | equal | 8/8 |
 | 53 | `\bottomrule` | equal | 8/8 |
-| 54 | `\multicolumn` | partial | 7/8 |
+| 54 | `\multicolumn` | equal | 8/8 |
 | 55 | `\citep` | equal | 8/8 |
 | 56 | `\citet` | equal | 8/8 |
 | 57 | `\\` | partial | 7/8 |
@@ -72,14 +72,14 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 60 | `\dots` | equal | 8/8 |
 | 61 | `\quad` | equal | 8/8 |
 | 62 | `\qquad` | equal | 8/8 |
-| 63 | `\thanks` | not started | 0/8 |
+| 63 | `\thanks` | equal | 8/8 |
 | 64 | `\tableofcontents` | equal | 8/8 |
 | 65 | `\newpage` | equal | 8/8 |
 | 66 | `\clearpage` | equal | 8/8 |
-| 67 | `\bibliography` | not started | 0/8 |
+| 67 | `\bibliography` | different | 0/8 |
 | 68 | `\bibliographystyle` | not started | 5/8 |
 | 69 | `\bibitem` | equal | 8/8 |
-| 70 | `{thebibliography}` | not started | 6/8 |
+| 70 | `{thebibliography}` | equal | 8/8 |
 | 71 | `\newblock` | equal | 8/8 |
 | 72 | `\input` | partial | 5/8 |
 | 73 | `\include` | partial | 3/8 |
@@ -95,16 +95,16 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 83 | `\huge` | not started | 0/8 |
 | 84 | `\LARGE` | not started | 0/8 |
 | 85 | `\Huge` | not started | 0/8 |
-| 86 | `\bf` | partial | 6/8 |
-| 87 | `\it` | partial | 6/8 |
-| 88 | `\em` | partial | 6/8 |
+| 86 | `\bf` | equal | 8/8 |
+| 87 | `\it` | equal | 8/8 |
+| 88 | `\em` | equal | 8/8 |
 | 89 | `\tt` | not started | 0/8 |
 | 90 | `\rm` | not started | 0/8 |
 | 91 | `\sc` | equal | 8/8 |
 | 92 | `\sf` | equal | 8/8 |
-| 93 | `\sl` | partial | 6/8 |
-| 94 | `\bfseries` | partial | 6/8 |
-| 95 | `\itshape` | partial | 6/8 |
+| 93 | `\sl` | equal | 8/8 |
+| 94 | `\bfseries` | equal | 8/8 |
+| 95 | `\itshape` | equal | 8/8 |
 | 96 | `\ttfamily` | not started | 0/8 |
 | 97 | `\scshape` | not started | 0/8 |
 | 98 | `\sffamily` | equal | 8/8 |
@@ -125,7 +125,7 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 113 | `\makebox` | equal | 8/8 |
 | 114 | `\fbox` | equal | 8/8 |
 | 115 | `\framebox` | equal | 8/8 |
-| 116 | `\parbox` | not started | 0/8 |
+| 116 | `\parbox` | different | 0/8 |
 | 117 | `\raisebox` | equal | 8/8 |
 | 118 | `\vbox` | not started | 1/8 |
 | 119 | `\phantom` | equal | 8/8 |
@@ -139,7 +139,7 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 127 | `\pagebreak` | equal | 8/8 |
 | 128 | `\cleardoublepage` | equal | 8/8 |
 | 129 | `\indent` | equal | 8/8 |
-| 130 | `\par` | partial | 3/8 |
+| 130 | `\par` | not started | 5/8 |
 | 131 | `\raggedright` | not started | 0/8 |
 | 132 | `\raggedleft` | equal | 8/8 |
 | 133 | `\enspace` | equal | 8/8 |
@@ -214,8 +214,8 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 202 | `\slash` | not started | 0/8 |
 | 203 | `\char` | partial | 7/8 |
 | 204 | `\symbol` | equal | 8/8 |
-| 205 | `\part` | partial | 6/8 |
-| 206 | `\subparagraph` | partial | 6/8 |
+| 205 | `\part` | partial | 7/8 |
+| 206 | `\subparagraph` | partial | 7/8 |
 | 207 | `\appendix` | equal | 8/8 |
 | 208 | `\frontmatter` | equal | 8/8 |
 | 209 | `\mainmatter` | equal | 8/8 |
@@ -223,20 +223,20 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 211 | `\listoffigures` | not started | 5/8 |
 | 212 | `\listoftables` | not started | 5/8 |
 | 213 | `\footnotemark` | not started | 0/8 |
-| 214 | `\footnotetext` | not started | 7/8 |
+| 214 | `\footnotetext` | partial | 7/8 |
 | 215 | `\marginpar` | equal | 8/8 |
 | 216 | `\pageref` | equal | 8/8 |
-| 217 | `\autoref` | partial | 6/8 |
-| 218 | `\cref` | partial | 6/8 |
-| 219 | `\Cref` | partial | 6/8 |
+| 217 | `\autoref` | partial | 7/8 |
+| 218 | `\cref` | partial | 7/8 |
+| 219 | `\Cref` | partial | 7/8 |
 | 220 | `\nameref` | equal | 8/8 |
-| 221 | `\hyperref` | not started | 0/8 |
-| 222 | `\hypertarget` | not started | 0/8 |
-| 223 | `\hyperlink` | not started | 0/8 |
-| 224 | `\nolinkurl` | not started | 0/8 |
+| 221 | `\hyperref` | different | 0/8 |
+| 222 | `\hypertarget` | partial | 1/8 |
+| 223 | `\hyperlink` | partial | 1/8 |
+| 224 | `\nolinkurl` | partial | 1/8 |
 | 225 | `\captionof` | equal | 8/8 |
 | 226 | `\printbibliography` | equal | 8/8 |
-| 227 | `\addbibresource` | not started | 0/8 |
+| 227 | `\addbibresource` | different | 0/8 |
 | 228 | `\nocite` | equal | 8/8 |
 | 229 | `\citealp` | equal | 8/8 |
 | 230 | `\citeauthor` | equal | 8/8 |
@@ -246,14 +246,14 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 234 | `\autocite` | equal | 8/8 |
 | 235 | `\footcite` | equal | 8/8 |
 | 236 | `\cites` | partial | 7/8 |
-| 237 | `\renewcommand` | partial | 7/8 |
-| 238 | `\providecommand` | partial | 7/8 |
-| 239 | `\def` | partial | 6/8 |
-| 240 | `\let` | partial | 6/8 |
-| 241 | `\newenvironment` | partial | 7/8 |
-| 242 | `\DeclareMathOperator` | not started | 6/8 |
-| 243 | `\newtheorem` | not started | 4/8 |
-| 244 | `\theoremstyle` | not started | 4/8 |
+| 237 | `\renewcommand` | equal | 8/8 |
+| 238 | `\providecommand` | equal | 8/8 |
+| 239 | `\def` | equal | 8/8 |
+| 240 | `\let` | equal | 8/8 |
+| 241 | `\newenvironment` | equal | 8/8 |
+| 242 | `\DeclareMathOperator` | partial | 7/8 |
+| 243 | `\newtheorem` | partial | 5/8 |
+| 244 | `\theoremstyle` | partial | 5/8 |
 | 245 | `\newcounter` | equal | 8/8 |
 | 246 | `\setcounter` | equal | 8/8 |
 | 247 | `\addtocounter` | not started | 5/8 |
@@ -263,7 +263,7 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 251 | `\newlength` | equal | 8/8 |
 | 252 | `\pagestyle` | equal | 8/8 |
 | 253 | `\thispagestyle` | equal | 8/8 |
-| 254 | `\graphicspath` | not started | 4/8 |
+| 254 | `\graphicspath` | partial | 5/8 |
 | 255 | `\hypersetup` | equal | 8/8 |
 | 256 | `\geometry` | equal | 8/8 |
 | 257 | `\makeatletter` | equal | 8/8 |
@@ -290,18 +290,18 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 278 | `\addlinespace` | equal | 8/8 |
 | 279 | `\multirow` | not started | 7/8 |
 | 280 | `\tabularnewline` | not started | 7/8 |
-| 281 | `\textcolor` | not started | 0/8 |
+| 281 | `\textcolor` | different | 0/8 |
 | 282 | `\color` | equal | 8/8 |
-| 283 | `\colorbox` | not started | 0/8 |
+| 283 | `\colorbox` | different | 0/8 |
 | 284 | `\definecolor` | equal | 8/8 |
 | 285 | `\enquote` | partial | 7/8 |
-| 286 | `\foreignquote` | not started | 0/8 |
+| 286 | `\foreignquote` | partial | 1/8 |
 | 287 | `\texorpdfstring` | equal | 8/8 |
-| 288 | `\SI` | not started | 0/8 |
+| 288 | `\SI` | different | 0/8 |
 | 289 | `\si` | not started | 0/8 |
-| 290 | `\num` | not started | 0/8 |
-| 291 | `\qty` | not started | 0/8 |
-| 292 | `\ang` | not started | 0/8 |
+| 290 | `\num` | different | 0/8 |
+| 291 | `\qty` | different | 0/8 |
+| 292 | `\ang` | different | 0/8 |
 | 293 | `\lstinline` | not started | 0/8 |
 | 294 | `\verb` | partial | 7/8 |
 | 295 | `\mintinline` | not started | 0/8 |
@@ -309,55 +309,55 @@ Counts: equal 162, partial 68, different 4, not started 117, not probed 0
 | 297 | `\MakeLowercase` | not started | 0/8 |
 | 298 | `\uppercase` | not started | 0/8 |
 | 299 | `\lowercase` | not started | 0/8 |
-| 300 | `\ensuremath` | not started | 0/8 |
+| 300 | `\ensuremath` | partial | 1/8 |
 | 301 | `\sout` | equal | 8/8 |
 | 302 | `\uline` | equal | 8/8 |
 | 303 | `\todo` | equal | 8/8 |
 | 304 | `\xspace` | not started | 0/8 |
-| 305 | `\gls` | not started | 0/8 |
-| 306 | `\ac` | not started | 0/8 |
-| 307 | `{flushleft}` | not started | 6/8 |
-| 308 | `{flushright}` | not started | 6/8 |
-| 309 | `{minipage}` | partial | 6/8 |
-| 310 | `{quotation}` | partial | 6/8 |
-| 311 | `{verse}` | partial | 6/8 |
-| 312 | `{Verbatim}` | partial | 5/8 |
-| 313 | `{lstlisting}` | partial | 5/8 |
-| 314 | `{minted}` | partial | 5/8 |
-| 315 | `{comment}` | partial | 7/8 |
-| 316 | `{figure*}` | partial | 1/8 |
-| 317 | `{table*}` | partial | 1/8 |
-| 318 | `{tabular*}` | partial | 1/8 |
-| 319 | `{tabularx}` | partial | 1/8 |
-| 320 | `{longtable}` | partial | 1/8 |
-| 321 | `{array}` | not started | 6/8 |
+| 305 | `\gls` | partial | 1/8 |
+| 306 | `\ac` | partial | 1/8 |
+| 307 | `{flushleft}` | equal | 8/8 |
+| 308 | `{flushright}` | equal | 8/8 |
+| 309 | `{minipage}` | equal | 8/8 |
+| 310 | `{quotation}` | equal | 8/8 |
+| 311 | `{verse}` | equal | 8/8 |
+| 312 | `{Verbatim}` | partial | 7/8 |
+| 313 | `{lstlisting}` | partial | 7/8 |
+| 314 | `{minted}` | partial | 7/8 |
+| 315 | `{comment}` | equal | 8/8 |
+| 316 | `{figure*}` | equal | 8/8 |
+| 317 | `{table*}` | partial | 2/8 |
+| 318 | `{tabular*}` | equal | 8/8 |
+| 319 | `{tabularx}` | equal | 8/8 |
+| 320 | `{longtable}` | equal | 8/8 |
+| 321 | `{array}` | equal | 8/8 |
 | 322 | `{gather}` | equal | 8/8 |
 | 323 | `{gather*}` | equal | 8/8 |
 | 324 | `{multline}` | equal | 8/8 |
 | 325 | `{eqnarray}` | equal | 8/8 |
-| 326 | `{split}` | not started | 6/8 |
-| 327 | `{cases}` | not started | 6/8 |
-| 328 | `{pmatrix}` | not started | 6/8 |
-| 329 | `{bmatrix}` | not started | 6/8 |
+| 326 | `{split}` | equal | 8/8 |
+| 327 | `{cases}` | equal | 8/8 |
+| 328 | `{pmatrix}` | equal | 8/8 |
+| 329 | `{bmatrix}` | equal | 8/8 |
 | 330 | `{subequations}` | not started | 1/8 |
-| 331 | `{theorem}` | not started | 6/8 |
-| 332 | `{lemma}` | not started | 6/8 |
-| 333 | `{proof}` | not started | 1/8 |
-| 334 | `{definition}` | not started | 6/8 |
-| 335 | `{corollary}` | not started | 6/8 |
-| 336 | `{proposition}` | not started | 6/8 |
-| 337 | `{remark}` | not started | 6/8 |
-| 338 | `{example}` | not started | 6/8 |
-| 339 | `{subfigure}` | not started | 1/8 |
-| 340 | `{subtable}` | not started | 6/8 |
-| 341 | `{wrapfigure}` | not started | 6/8 |
-| 342 | `{sidewaystable}` | not started | 6/8 |
-| 343 | `{landscape}` | not started | 6/8 |
-| 344 | `{titlepage}` | not started | 6/8 |
-| 345 | `{appendices}` | not started | 6/8 |
-| 346 | `{multicols}` | not started | 6/8 |
-| 347 | `{alltt}` | not started | 1/8 |
+| 331 | `{theorem}` | equal | 8/8 |
+| 332 | `{lemma}` | equal | 8/8 |
+| 333 | `{proof}` | partial | 2/8 |
+| 334 | `{definition}` | equal | 8/8 |
+| 335 | `{corollary}` | equal | 8/8 |
+| 336 | `{proposition}` | equal | 8/8 |
+| 337 | `{remark}` | equal | 8/8 |
+| 338 | `{example}` | equal | 8/8 |
+| 339 | `{subfigure}` | partial | 2/8 |
+| 340 | `{subtable}` | equal | 8/8 |
+| 341 | `{wrapfigure}` | equal | 8/8 |
+| 342 | `{sidewaystable}` | equal | 8/8 |
+| 343 | `{landscape}` | equal | 8/8 |
+| 344 | `{titlepage}` | equal | 8/8 |
+| 345 | `{appendices}` | equal | 8/8 |
+| 346 | `{multicols}` | equal | 8/8 |
+| 347 | `{alltt}` | partial | 2/8 |
 | 348 | `{displaymath}` | equal | 8/8 |
 | 349 | `{math}` | equal | 8/8 |
-| 350 | `{tikzpicture}` | not started | 3/8 |
-| 351 | `{otherlanguage}` | not started | 1/8 |
+| 350 | `{tikzpicture}` | equal | 8/8 |
+| 351 | `{otherlanguage}` | partial | 2/8 |

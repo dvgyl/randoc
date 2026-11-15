@@ -303,6 +303,263 @@ MATRICES = [
     ),
 ]
 
+# Environments with the arguments that they need, for the error matrices.
+ERROR_ENVIRONMENTS = [
+    ("itemize", ""), ("enumerate", ""), ("description", ""), ("quote", ""), ("quotation", ""),
+    ("verse", ""), ("center", ""), ("flushleft", ""), ("minipage", "{3cm}"), ("figure", ""),
+    ("table", ""), ("abstract", ""), ("unknownenv", ""), ("tabular", "{l}"),
+    ("longtable", "{l}"), ("tabularx", "{3cm}{l}"), ("multicols", "{2}"), ("small", ""),
+    ("theorem", ""), ("proof", ""), ("sloppypar", ""), ("otherlanguage", "{german}"),
+    ("table*", ""), ("thebibliography", "{9}"),
+]
+ERRORS = ["\\end{word}", "}", "\\label|", "\\textbf{a"]
+
+
+def error_forms():
+    forms = []
+    for name, args in ERROR_ENVIRONMENTS:
+        item = "\\item " if name in ("itemize", "enumerate", "description",
+                                     "thebibliography") else ""
+        for error in ERRORS:
+            forms.append(f"\\begin{{{name}}}{args}\n{item}x {error} y\n\\end{{{name}}}")
+    return forms
+
+
+# Matrices of parse errors and of table cells, in `errors.toml`. The fourth
+# element is the input format of the cases.
+ERROR_MATRICES = [
+    (
+        "fallback",
+        error_forms(),
+        ["a\n\n{}\n\nb", "\\begin{{quote}}\n{}\n\\end{{quote}}",
+         "\\begin{{itemize}}\n\\item {}\n\\end{{itemize}}\nz"],
+        "latex",
+    ),
+    ("fallback-raw", error_forms(), ["a\n\n{}\n\nb"], "latex+raw_tex"),
+    (
+        "cell",
+        ["p \\end{word} q", "a } b", "\\textbf{a & b}", "{a & b}", "\\emph{a \\\\ b}",
+         "a \\label| b", "a \\begin{quote} b", "\\begin{quote} a \\end{quote}",
+         "\\begin{tabular}{l} a & b \\end{tabular}", "\\begin{itemize}\\item x\\end{itemize}",
+         "a\n\nb", "\\multicolumn{2}{c}{a}", "\\multicolumn{2}{c}{a} & b", "a & b & c",
+         "", "\\section{h}", "\\textbf{a", "\\begin{word} x", "\\end{word}", "a & b",
+         "\\itshape a ", "\\emph{a} \\textbf{b}", "f \\begin{quote} a \\end{quote}"],
+        ["\\begin{{tabular}}{{l}}\n{} \\\\\nd \\\\\n\\end{{tabular}}",
+         "\\begin{{tabular}}{{ll}}\n{} & z \\\\\nd & e \\\\\n\\end{{tabular}}",
+         "\\begin{{tabular}}{{lll}}\n\\hline\n{} \\\\\n\\hline\nd & e & f\n\\end{{tabular}}"],
+        "latex",
+    ),
+    (
+        "cell-raw",
+        ["a & b & c", "\\textbf{a & b}", "p \\end{word} q"],
+        ["\\begin{{tabular}}{{ll}}\n{} \\\\\n\\end{{tabular}}"],
+        "latex+raw_tex",
+    ),
+    (
+        "stray",
+        ["\\end{word}", "\\end*{word}", "\\end[o]{word}", "}", "{a", "\\textbf{a",
+         "\\begin{word}", "\\emph{\\begin{quote}x\\end{quote}}", "\\emph{a \\end{word}}",
+         "{a \\end{word} b}", "\\emph{\\begin{word}}", "\\footnote{a \\end{word}}",
+         "\\emph{\\begin{equation}x\\end{equation}}"],
+        ["{}", "a {}", "x\n\n{}", "  {}", "\\begin{{quote}}\n{}\n\\end{{quote}}",
+         "\\begin{{center}}\nx {} y\n\\end{{center}}",
+         "\\begin{{itemize}}\n\\item {}\n\\end{{itemize}}\nz",
+         "\\begin{{document}}\n{}\n\\end{{document}}"],
+        "latex",
+    ),
+    (
+        "figure",
+        ["\\includegraphics{a.png}", "\\includegraphics{a.png} x", "text",
+         "\\includegraphics{a.png}\n\\includegraphics{b.png}",
+         "\\includegraphics{a.png}\n\ny",
+         "\\begin{center}\n\\includegraphics{a.png}\n\\end{center}",
+         "\\begin{quote}\n\\includegraphics{a.png}\n\\end{quote}",
+         "\\emph{\\includegraphics{a.png}}", "\\centering\n\\includegraphics[width=3cm]{a.png}",
+         "one\n\ntwo"],
+        ["\\begin{{figure}}\n{}\n\\end{{figure}}",
+         "\\begin{{figure}}[h]\n{}\n\\caption{{c}}\\label{{f}}\n\\end{{figure}}",
+         "\\begin{{itemize}}\n\\item \\begin{{figure}}\n{}\n\\end{{figure}}\n\\end{{itemize}}"],
+        "latex",
+    ),
+    (
+        "par",
+        ["a\\par b", "a \\par\nb", "\\par a", "a\\par\n\nb", "a\\par\\par b"],
+        ["{}", "\\begin{{itemize}}\\item {}\\end{{itemize}}",
+         "\\begin{{tabular}}{{l}}{} \\\\\\end{{tabular}}", "x {{{}}} y",
+         "\\begin{{quote}}{}\\end{{quote}}", "\\emph{{{}}}", "\\section{{{}}}",
+         "\\newcommand{{\\x}}[1]{{#1}}\\x{{{}}}"],
+        "latex",
+    ),
+    (
+        "mathmacro",
+        ["equation", "equation*", "align", "align*", "gather", "multline", "eqnarray",
+         "displaymath", "math"],
+        ["\\newcommand{{\\R}}{{\\mathbb{{R}}}}\\begin{{{}}}a\\R\\end{{{}}}",
+         "\\newcommand{{\\be}}{{\\begin{{{}}}}}\\newcommand{{\\ee}}{{\\end{{{}}}}}\nT.\n\\be\nx\n\\ee\nM.",
+         "\\newcommand{{\\ee}}{{\\end{{{}}}}}\\begin{{{}}}x\\ee",
+         "\\newcommand{{\\v}}[1]{{\\mathbf{{#1}}}}\\begin{{{}}}\\v{{a}}\\end{{{}}}",
+         "\\newcommand{{\\x}}{{\\iftrue a\\fi}}\\begin{{{}}}\\x\\end{{{}}}"],
+        "latex",
+    ),
+    (
+        "endarg",
+        ["\\end*{word}", "\\end[o]{word}", "\\end {word}", "\\end x", "\\end{word}"],
+        ["{}", "\\begin{{quote}}\n{}\n\\end{{quote}}", "\\begin{{center}}x {}\\end{{center}}",
+         "\\begin{{itemize}}\\item {}\\end{{itemize}}"],
+        "latex",
+    ),
+    (
+        "span",
+        ["\\multicolumn{2}{c}{a}", "\\multicolumn{3}{c}{a}", "\\multicolumn{3}{c}{a} & b",
+         "\\multicolumn{1}{r}{a} & b", "a & \\multicolumn{2}{l}{b}"],
+        ["\\begin{{tabular}}{{l}}\n{} \\\\\n\\end{{tabular}}",
+         "\\begin{{tabular}}{{ll}}\n{} \\\\\n\\end{{tabular}}",
+         "\\begin{{tabular}}{{lll}}\n{} \\\\\nx \\\\\n\\end{{tabular}}"],
+        "latex",
+    ),
+    (
+        "global",
+        ["\\global\\def\\x{a}\\x", "\\global\\let\\a\\b x", "\\global\\edef\\x{a}\\x",
+         "\\global\\gdef\\x{a}\\x", "\\global\\xdef\\x{a}\\x", "\\gdef\\x{a}\\x",
+         "\\edef\\x{a}\\x", "\\global\\newcommand{\\x}{a}\\x", "\\global x",
+         "\\global{a}", "\\global\\relax a", "\\global\\global\\def\\x{a}\\x",
+         "\\global\\advance\\count by1", "\\global\\setlength\\x{2}", "\\global"],
+        ["{}", "a {}", "\\begin{{quote}}{}\\end{{quote}}"],
+        "latex",
+    ),
+    (
+        "lines",
+        ["abc\\\nde }", "abc\\\nde\nf }", "ab\\\\\nde }", "abc\\\n  de }",
+         "a\\\nb\\\nc\n\\def<{x}", "x\\\n\n\\section|"],
+        ["{}", "p\n\n{}"],
+        "latex",
+    ),
+    (
+        "accent",
+        ["\\~{}", "\\'{}", "\\`{}", "\\^{}", "\\\"{}", "\\={}", "\\.{}", "\\c{}", "\\v{}",
+         "\\u{}", "\\H{}", "\\r{}", "\\k{}", "\\d{}", "\\b{}", "\\~{ }", "\\'{e}", "\\~ n"],
+        ["{}", "a{}b", "\\emph{{{}}}", "\\section{{{}}}"],
+        "latex",
+    ),
+    (
+        "thanks",
+        ["A\\thanks{x}", "A\\thanks{x \\emph{y}}", "A\\thanks{x}\\thanks{y}"],
+        ["\\title{{{}}}\\begin{{document}}\\maketitle\\end{{document}}",
+         "\\author{{{} \\and B}}\\begin{{document}}\\maketitle\\end{{document}}",
+         "\\date{{{}}}\\begin{{document}}\\maketitle\\end{{document}}", "{}"],
+        "latex",
+    ),
+    (
+        "thanks-raw",
+        ["A\\thanks{x}"],
+        ["{}", "\\title{{{}}}\\begin{{document}}\\maketitle\\end{{document}}"],
+        "latex+raw_tex",
+    ),
+    (
+        "envparam",
+        ["\\newenvironment{e}{}{}\\begin{e}\\newcommand\\x[1]{#1}\\x a\\end{e}",
+         "\\newenvironment{e}[1]{<#1>}{>}\\begin{e}{p}q\\end{e}",
+         "\\newenvironment{e}[2][d]{(#1,#2)}{.}\\begin{e}{p}q\\end{e}",
+         "\\newenvironment{e}[2][d]{(#1,#2)}{.}\\begin{e}[o]{p}q\\end{e}",
+         "\\newenvironment{e}{}{}\\begin{e}\\def\\y#1{[#1]}\\y z\\end{e}"],
+        ["{}", "x {} y", "\\begin{{quote}}{}\\end{{quote}}"],
+        "latex",
+    ),
+    (
+        "verbspace",
+        ["verbatim", "lstlisting", "Verbatim", "comment"],
+        ["\\begin {{{}}}\n% n\n\\foo{{x}} y\n\\end{{{}}}", "\\begin  {{{}}}%\n\\end{{{}}}",
+         "a\n\n\\begin {{{}}}\nb\n\\end{{{}}}\n\nc"],
+        "latex",
+    ),
+    (
+        "argmacro",
+        ["\\label{\\x}\\ref{\\x}", "\\cite{\\x}", "\\cite[\\x]{k}", "\\citep[p]{\\x}",
+         "\\textcite{\\x}", "\\eqref{\\x}", "\\autoref{\\x}", "\\section{T}\\label{s\\x}",
+         "\\includegraphics{\\x}", "\\url{\\x}", "\\href{\\x}{y}", "\\foo{\\x}"],
+        ["\\newcommand{{\\x}}{{k1,k2}}{}", "\\newcommand{{\\x}}{{X}}{}", "\\def\\x{{a.png}}{}"],
+        "latex",
+    ),
+    (
+        "argmacro-raw",
+        ["\\cite[\\x]{k}", "\\foo{\\x}", "\\eqref{\\x}", "\\label{\\x}"],
+        ["\\newcommand{{\\x}}{{X}}{}"],
+        "latex+raw_tex",
+    ),
+    (
+        "head",
+        ["a & b \\\\\n\\hline\nc & d \\\\\n", "a & b \\\\\nc & d \\\\\n\\hline\ne & f \\\\\n",
+         "\\hline\na & b \\\\\n\\hline\nc & d \\\\\n", "a & b \\\\\n\\hline\n",
+         "\\toprule\na & b \\\\\n\\midrule\nc & d \\\\\n\\bottomrule\n",
+         "a & b \\\\\nc & d \\\\\ne & f \\\\\n\\hline\n", "\\hline\n\\hline\na & b \\\\\n\\hline\nc & d\\\\\n"],
+        ["\\begin{{tabular}}{{ll}}\n{}\\end{{tabular}}",
+         "\\begin{{table}}\\caption{{c}}\\begin{{tabular}}{{ll}}\n{}\\end{{tabular}}\\end{{table}}"],
+        "latex",
+    ),
+    (
+        "ctrlsym",
+        ["\\def\\!{x}", "\\newcommand{\\!}{x}", "\\def\\-{x}", "\\def\\,{x}", "\\let\\!\\relax",
+         "\\newcommand{\\;}[1]{<#1>}"],
+        ["{}\\!\\-\\,\\;{{a}}", "{}a\\! b", "{}\\emph{{\\!}}"],
+        "latex",
+    ),
+    (
+        "ctrlspace",
+        ["\\  x", "a\\ \\ b", "x\n\\ \ny", "\\ \n\nb", "a\\\tb", "a\\  \n  b"],
+        ["{}", "\\emph{{{}}}"],
+        "latex",
+    ),
+    (
+        "dimension",
+        [".5\\linewidth", "0.5\\linewidth", "1.\\linewidth", "1\\linewidth", "-.5\\linewidth",
+         "0.25\\textwidth", "2\\columnwidth", "50", "1.5cm", "0.5 \\linewidth", "+0.5\\linewidth"],
+        ["\\includegraphics[width={}]{{x}}", "\\includegraphics[height={}]{{x}}"],
+        "latex",
+    ),
+    (
+        "delimdef",
+        ["\\def\\x#1.{(#1)}\\x ab. c", "\\def\\x#1.{(#1)}\\x {ab}. c", "\\def\\x#1.{(#1)}\\x {a}b. c",
+         "\\def\\x#1.{(#1)}\\x ab c", "\\def\\x#1.{(#1)}\\x a{.}b. c", "\\def\\x[#1]{<#1>}\\x q r",
+         "\\def\\x[#1]{<#1>}\\x [q] r", "\\def\\x#1.{(#1)}\\x ab\n\ncd. e",
+         "\\def\\x(#1,#2){<#1|#2>}\\x(a,b) c", "\\def\\x#1#2.{#2#1}\\x ab.",
+         "\\def\\x#1.#2{[#1][#2]}\\x a.b c", "\\def\\x#1,{#1#1}\\x ab,", "\\def\\x#1.#2!{(#1)(#2)}\\x a.b! c",
+         "\\def\\x#1..{(#1)}\\x a.b.. c", "\\def\\x.#1{(#1)}\\x .ab"],
+        ["{}", "\\emph{{{}}}", "\\begin{{itemize}}\\item {}\\end{{itemize}}"],
+        "latex",
+    ),
+    (
+        "expand",
+        # Each macro kind gives the text `kx`: \m is the use of the macro.
+        ["\\newcommand{\\m}{kx}", "\\def\\m{kx}", "\\newcommand{\\n}[1]{k#1}\\def\\m{\\n{x}}",
+         "\\newcommand{\\n}[1][x]{k#1}\\def\\m{\\n}", "\\def\\n{kx}\\let\\m\\n",
+         "\\def\\!{kx}\\def\\m{\\!}", "\\def\\n#1.{k#1}\\def\\m{\\n x.}"],
+        ["{}\\label{{\\m}}\\ref{{\\m}}", "{}\\cite{{\\m}}", "{}\\cite[\\m]{{c}}",
+         "{}\\url{{\\m}}", "{}\\href{{\\m}}{{t}}", "{}\\includegraphics{{\\m}}",
+         "{}\\section{{\\m}}", "{}\\emph{{\\m}}", "{}\\footnote{{\\m}}", "{}\\texttt{{\\m}}",
+         "{}\\verb|\\m|", "{}\\begin{{equation}}\\m\\end{{equation}}",
+         "{}\\begin{{align}}a&\\m\\end{{align}}", "{}$\\m$", "{}\\[\\m\\]",
+         "{}\\begin{{verbatim}}\n\\m\n\\end{{verbatim}}", "{}\\begin{{quote}}\\m\\end{{quote}}",
+         "{}\\begin{{tabular}}{{l}}\\m\\\\\\end{{tabular}}",
+         "{}\\begin{{itemize}}\\item \\m\\end{{itemize}}", "{}\\'\\m", "{}\\caption{{\\m}}",
+         "{}\\title{{\\m}}\\begin{{document}}\\maketitle\\end{{document}}"],
+        "latex",
+    ),
+    (
+        "expand-raw",
+        ["\\newcommand{\\m}{kx}", "\\def\\!{kx}\\def\\m{\\!}"],
+        ["{}\\foo{{\\m}}", "{}\\cite[\\m]{{c}}", "{}\\label{{\\m}}", "{}\\begin{{zz}}\\m\\end{{zz}}"],
+        "latex+raw_tex",
+    ),
+    (
+        "tikz",
+        ["\\begin{tikzpicture}\n\\draw (0,0);\n\\end{tikzpicture}",
+         "\\begin{tikzpicture}[s]{w}\nb\n\\end{tikzpicture}"],
+        ["{}", "a {} b", "\\begin{{tabular}}{{ll}}\n{} & x\\\\\n\\end{{tabular}}",
+         "\\begin{{itemize}}\\item {}\\end{{itemize}}"],
+        "latex",
+    ),
+]
+
 
 def write_matrix():
     out = (
@@ -317,6 +574,22 @@ def write_matrix():
                 out += f'\n[[case]]\nid = "{name}-{f:02}-{c:02}"\ninput = {toml_string(text)}\n'
                 count += 1
     target = ROOT / "conformance/cases/latex-reader/rules.toml"
+    target.write_text(out)
+    print(f"wrote {count} cases to {target.relative_to(ROOT)}; run randoc-harness record")
+    out = (
+        "# Error and cell matrices of `latex_diff.py matrix`. Do not edit: run the tool.\n"
+        'from = "latex"\nto = []\n'
+    )
+    count = 0
+    for name, forms, contexts, source in ERROR_MATRICES:
+        for f, form in enumerate(forms, 1):
+            for c, context in enumerate(contexts, 1):
+                text = context.replace("{}", "\0").format().replace("\0", form) + "\n"
+                out += f'\n[[case]]\nid = "{name}-{f:02}-{c:02}"\ninput = {toml_string(text)}\n'
+                if source != "latex":
+                    out += f'from = "{source}"\n'
+                count += 1
+    target = ROOT / "conformance/cases/latex-reader/errors.toml"
     target.write_text(out)
     print(f"wrote {count} cases to {target.relative_to(ROOT)}; run randoc-harness record")
 

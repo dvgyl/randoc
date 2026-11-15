@@ -1,5 +1,5 @@
 //! The inline list with the join rules of the `Inlines` monoid of
-//! `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`, BSD-3-Clause; see ADR 13).
+//! `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`, BSD-3-Clause; see `NOTICE.md`).
 
 use randoc_ast::{Block, Inline};
 

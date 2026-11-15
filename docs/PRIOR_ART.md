@@ -176,6 +176,7 @@ LaTeX reader is GPL and is not permitted):
 | LaTeX syntax tree in Rust | `texlab` 5.21.0, crate `syntax` | GPL-3.0 (https://raw.githubusercontent.com/latex-lsp/texlab/v5.21.0/LICENSE) | No | Not opened. |
 | TeX engine in Rust | `tectonic` 0.15.0 | MIT (https://raw.githubusercontent.com/tectonic-typesetting/tectonic/tectonic%400.15.0/LICENSE) | Yes | Not used. A full TeX engine typesets; the reader needs the token level and the rules of the oracle. |
 | TeX math | `pulldown-latex` 0.8.0 (see the table above) | MIT | Yes | Not used. The reader keeps math as TeX source, as the oracle does. |
+| Join rules of an inline list | `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`, the `Inlines` monoid) | BSD-3-Clause (https://hackage.haskell.org/package/pandoc-types-1.23.1/src/LICENSE) | Yes | Ported in `crates/randoc-latex-reader/src/inlines.rs` (the same port as ADR 13 makes for the HTML reader); notice in `crates/randoc-latex-reader/NOTICE.md`. |
 
 Parsers that are useful for differential tests and for study, but whose
 trees differ from the oracle: `pulldown-cmark` (MIT), `comrak`
