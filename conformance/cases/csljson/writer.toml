@@ -54,3 +54,13 @@ input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fro
 [[case]]
 id = "escapes"
 input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\\\"b\\\\c\"),(\"title\",MetaString \"t\\u0001\\u001f\\t\\n\\r/<>& \")])])]}) []\n"
+
+[[case]]
+id = "standalone-no-references"
+args = ["-s"]
+input = "Pandoc (Meta {unMeta = fromList []}) []\n"
+
+[[case]]
+id = "standalone-references"
+args = ["-s"]
+input = "Pandoc (Meta {unMeta = fromList [(\"references\",MetaList [MetaMap (fromList [(\"id\",MetaString \"a\"),(\"title\",MetaInlines [Str \"T\"])])])]}) []\n"

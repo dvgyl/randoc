@@ -228,7 +228,7 @@ fn split_up(text: &str) -> Vec<&str> {
     runs
 }
 
-fn to_upper(turkish: bool, text: &str) -> String {
+pub(crate) fn to_upper(turkish: bool, text: &str) -> String {
     text.chars()
         .map(|c| match c {
             'i' if turkish => '\u{130}',
@@ -239,7 +239,7 @@ fn to_upper(turkish: bool, text: &str) -> String {
         .collect()
 }
 
-fn to_lower(turkish: bool, text: &str) -> String {
+pub(crate) fn to_lower(turkish: bool, text: &str) -> String {
     text.chars()
         .map(|c| match c {
             '\u{130}' if turkish => 'i',

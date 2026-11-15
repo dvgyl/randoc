@@ -1,0 +1,17 @@
+[
+{"id": "a1", "type": "book", "title": "Title a1", "author": [{"family": "Ampleforth", "given": "Ada"}]},
+{"id": "a2", "type": "book", "title": "Title a2", "author": [{"family": "Ampleforth", "given": "Ada"}, {"family": "Brook", "given": "Bella"}]},
+{"id": "a3", "type": "book", "title": "Title a3", "author": [{"family": "Beethoven", "given": "Ludwig", "non-dropping-particle": "van"}, {"family": "Gaulle", "given": "Charles", "non-dropping-particle": "de"}, {"family": "Doe", "given": "John", "suffix": "Jr."}]},
+{"id": "a4", "type": "book", "title": "Title a4", "author": [{"family": "Ampleforth", "given": "Ada"}, {"family": "Brook", "given": "Bella"}, {"family": "Cole", "given": "Cyrus"}, {"literal": "Widget Society"}, {"literal": "others"}]},
+{"id": "a5", "type": "book", "title": "Title a5", "author": [{"family": "Doe", "given": "John", "suffix": "III", "comma-suffix": true}, {"family": "Humboldt", "given": "Alexander", "dropping-particle": "von"}]},
+{"id": "a6", "type": "book", "title": "Title a6", "author": [{"family": "Tolkien", "given": "John Ronald Reuel"}, {"family": "Sartre", "given": "Jean-Paul"}, {"family": "Rowling", "given": "J.K."}, {"family": "Wang", "given": "Ji-ping"}, {"family": "Adorno", "given": "Th. W."}, {"family": "Lamb", "given": "MaryAnn de la"}]},
+{"id": "a7", "type": "book", "title": "Title a7", "author": [{"family": "毛", "given": "泽东"}, {"family": "Толстой", "given": "Лев Николаевич"}]},
+{"id": "a8", "type": "book", "title": "Title a8", "editor": [{"family": "Brook", "given": "Bella"}, {"family": "Cole", "given": "Cyrus"}], "translator": [{"family": "Brook", "given": "Bella"}, {"family": "Cole", "given": "Cyrus"}]},
+{"id": "a9", "type": "book", "title": "Title a9", "editor": [{"family": "Dunmore", "given": "Della"}], "translator": [{"family": "Ampleforth", "given": "Ada"}, {"family": "Brook", "given": "Bella"}]},
+{"id": "a10", "type": "book", "title": "Title a10"},
+{"id": "a11", "type": "book", "title": "Title a11", "author": [{"family": "Ampleforth", "given": "Ada"}, {"family": "Brook", "given": "Bella"}, {"family": "Cole", "given": "Cyrus"}, {"family": "Dunmore", "given": "Della"}]},
+{"id": "a12", "type": "book", "title": "Title a12", "author": [{"family": "Alembert", "given": "Jean", "non-dropping-particle": "d’"}, {"family": "Hare", "given": "Hal", "non-dropping-particle": "O'"}]},
+{"id": "a13", "type": "book", "title": "Title a13", "author": [{"family": "Solo"}, {"given": "Prince"}, {"literal": "Lower case org"}]},
+{"id": "a14", "type": "book", "title": "Title a14", "author": [{"family": "Ampleforth", "given": "Ada"}, {"family": "Brook", "given": "Bella"}, {"family": "Cole", "given": "Cyrus"}, {"family": "Dunmore", "given": "Della"}, {"family": "Easton", "given": "Eli"}], "editor": [{"family": "Easton", "given": "Eli"}]},
+{"id": "a15", "type": "book", "title": "Title a15", "author": [{"family": "ümlaut", "given": "émile"}, {"family": "Ibsen", "given": "İsa"}], "language": "tr"}
+]

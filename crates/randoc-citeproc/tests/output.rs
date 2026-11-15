@@ -88,7 +88,7 @@ fn each_layout_renders_the_oracle_inlines() {
         let elements = layout.elements.iter().map(|e| build(&locale, e)).collect();
         let item = Output::Tagged(
             Tag::Item {
-                author_only: false,
+                kind: randoc_citeproc::types::ItemType::NormalCite,
                 id: "a".into(),
             },
             Box::new(output::formatted(Formatting::default(), elements)),

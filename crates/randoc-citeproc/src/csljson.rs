@@ -373,7 +373,11 @@ fn write(doc: &Pandoc, _: &WriterOptions, context: &mut Context) -> Result<Text>
             }));
         }
     }
-    Ok(reference::write_pretty(&JsonOut::Array(out)))
+    // The reference ends the text with a line feed, also with `--standalone`
+    // (row I-CLI-52).
+    let mut text = reference::write_pretty(&JsonOut::Array(out));
+    text.push('\n');
+    Ok(text)
 }
 
 /// The key of a variable in the output: lower case, except the variables
@@ -862,10 +866,10 @@ mod tests {
 
     #[test]
     fn the_writer_gives_the_oracle_bytes() {
-        assert_eq!(round_trip("[]"), "[]");
+        assert_eq!(round_trip("[]"), "[]\n");
         assert_eq!(
             round_trip(r#"[{"id":1,"volume":3,"title":"a <sc>b</sc>"}]"#),
-            "[\n  {\n    \"id\": \"1\",\n    \"title\": \"a <span style=\\\"font-variant:small-caps;\\\">b</span>\",\n    \"type\": \"\",\n    \"volume\": \"3\"\n  }\n]"
+            "[\n  {\n    \"id\": \"1\",\n    \"title\": \"a <span style=\\\"font-variant:small-caps;\\\">b</span>\",\n    \"type\": \"\",\n    \"volume\": \"3\"\n  }\n]\n"
         );
     }
 }

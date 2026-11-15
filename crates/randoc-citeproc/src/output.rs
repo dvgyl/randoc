@@ -16,8 +16,8 @@ use crate::haskell;
 use crate::markup::{self, Markup, Style as MarkupStyle, TooDeep};
 use crate::reference::Name;
 use crate::types::{
-    DisplayStyle, FontStyle, FontVariant, FontWeight, Formatting, Locale, TextCase, TextDecoration,
-    VerticalAlign,
+    DisplayStyle, FontStyle, FontVariant, FontWeight, Formatting, ItemType, Locale, TextCase,
+    TextDecoration, VerticalAlign,
 };
 use crate::unicode_class::{is_letter, is_lower};
 
@@ -42,15 +42,23 @@ pub enum Output {
 /// tags; they render as [`Tag::Other`].
 #[derive(Debug, Clone, PartialEq)]
 pub enum Tag {
-    /// One cited item (`TagItem`); `author_only` for the author-only form.
+    /// One cited item (`TagItem`).
     Item {
-        /// The item has the author-only form.
-        author_only: bool,
+        /// The form of the item.
+        kind: ItemType,
         /// The identifier of the item.
         id: String,
     },
     /// Names (`TagNames`).
     Names(Vec<Name>),
+    /// A term (`TagTerm`).
+    Term,
+    /// The locator of an item (`TagLocator`).
+    Locator,
+    /// The prefix of an item (`TagPrefix`).
+    Prefix,
+    /// The suffix of an item (`TagSuffix`).
+    Suffix,
     /// Each other tag.
     Other,
 }
@@ -95,8 +103,8 @@ pub fn render_output(
             check_depth(inlines, depth)?;
             inlines.clone()
         }
-        Output::Tagged(Tag::Item { author_only, id }, inner)
-            if options.link_citations && !author_only =>
+        Output::Tagged(Tag::Item { kind, id }, inner)
+            if options.link_citations && *kind != ItemType::AuthorOnly =>
         {
             add_hyperlink(&format!("#ref-{id}"), render(inner)?)
         }

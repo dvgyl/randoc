@@ -367,8 +367,112 @@ fn a_macro_cycle_gives_the_depth_error_in_evaluation() {
         let style = randoc_citeproc::parse_style(&mut Context::pure(), &style_text).unwrap();
         let reference = randoc_citeproc::reference::Reference::default();
         let locale = randoc_citeproc::types::Locale::default();
-        randoc_citeproc::eval::eval_citation(&style, &locale, &[("a", Some(&reference))], 128)
+        randoc_citeproc::eval::eval_citation(&style, &locale, &one_item(&reference), 128)
             .map(|_| ())
     });
     assert_eq!(result, Err(randoc_citeproc::eval::EvalError::TooDeep));
+}
+
+fn evaluate_title_only(style_text: String) -> Result<(), randoc_citeproc::eval::EvalError> {
+    on_small_stack(move || {
+        use randoc_citeproc::reference::{Reference, Val};
+        let style = randoc_citeproc::parse_style(&mut Context::pure(), &style_text).unwrap();
+        let mut reference = Reference::default();
+        reference.variables.insert(
+            randoc_citeproc::reference::Variable::new("title"),
+            Val::Text("T".into()),
+        );
+        let locale = randoc_citeproc::types::Locale::default();
+        randoc_citeproc::eval::eval_citation(&style, &locale, &one_item(&reference), 128)
+            .map(|_| ())
+    })
+}
+
+#[test]
+fn names_with_substitute_at_the_default_limit_evaluate() {
+    // 62 levels of names and substitute is the deepest style the parser takes.
+    let names = nested(
+        "<names variable=\"author\"><substitute>",
+        "</substitute></names>",
+        62,
+        "<text variable=\"title\"/>",
+    );
+    assert_eq!(evaluate_title_only(style_with_layout(&names)), Ok(()));
+    let groups = nested(
+        "<group>",
+        "</group>",
+        120,
+        "<names variable=\"author\"><substitute><text variable=\"title\"/></substitute></names>",
+    );
+    assert_eq!(evaluate_title_only(style_with_layout(&groups)), Ok(()));
+}
+
+#[test]
+fn a_macro_cycle_in_a_substitute_gives_the_depth_error() {
+    let style_text = format!(
+        "<style {NS}><macro name=\"m\"><group><text macro=\"m\"/></group></macro><citation><layout><names variable=\"author\"><substitute><text macro=\"m\"/></substitute></names></layout></citation></style>"
+    );
+    assert_eq!(
+        evaluate_title_only(style_text),
+        Err(randoc_citeproc::eval::EvalError::TooDeep)
+    );
+}
+
+fn one_item(
+    reference: &randoc_citeproc::reference::Reference<Vec<randoc_ast::Inline>>,
+) -> randoc_citeproc::eval::Citation<'_> {
+    randoc_citeproc::eval::Citation {
+        items: vec![randoc_citeproc::eval::CitationItem::new(
+            "a",
+            Some(reference),
+        )],
+        ..randoc_citeproc::eval::Citation::default()
+    }
+}
+
+#[test]
+fn the_steps_after_the_layout_take_deep_output() {
+    // `moveSuffixInsideDisplay`, `getAuthors` and the suppress-author step
+    // walk the output tree of 120 nested groups.
+    let groups = nested(
+        "<group>",
+        "</group>",
+        120,
+        "<names variable=\"author\"/><text variable=\"title\" display=\"block\"/>",
+    );
+    let style_text =
+        format!("<style {NS}><citation><layout suffix=\".\">{groups}</layout></citation></style>");
+    let result = on_small_stack(move || {
+        use randoc_citeproc::eval::{Citation, CitationItem};
+        use randoc_citeproc::reference::{Name, Reference, Val, Variable};
+        use randoc_citeproc::types::ItemType;
+        let style = randoc_citeproc::parse_style(&mut Context::pure(), &style_text).unwrap();
+        let mut reference = Reference::default();
+        reference
+            .variables
+            .insert(Variable::new("title"), Val::Text("T".into()));
+        reference.variables.insert(
+            Variable::new("author"),
+            Val::Names(vec![Name {
+                family: Some("F".into()),
+                ..Name::default()
+            }]),
+        );
+        let locale = randoc_citeproc::types::Locale::default();
+        let mut results = Vec::new();
+        for kind in [ItemType::AuthorOnly, ItemType::SuppressAuthor] {
+            let citation = Citation {
+                items: vec![CitationItem {
+                    kind,
+                    ..CitationItem::new("a", Some(&reference))
+                }],
+                ..Citation::default()
+            };
+            results.push(
+                randoc_citeproc::eval::eval_citation(&style, &locale, &citation, 128).map(|_| ()),
+            );
+        }
+        results
+    });
+    assert_eq!(result, vec![Ok(()), Ok(())]);
 }

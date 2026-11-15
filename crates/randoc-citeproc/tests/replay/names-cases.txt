@@ -1,0 +1,450 @@
+a1		<names variable="author"/>
+a1		<names variable="author"><name and="text"/></names>
+a1		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a1		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a1		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a1		<names variable="author"><name form="short" and="text"/></names>
+a1		<names variable="author"><name form="count"/></names>
+a1		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a1		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a1		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a1		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a1		<names variable="author"><name initialize-with=". "/></names>
+a1		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a1		<names variable="author"><name initialize-with=""/></names>
+a1		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a1		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a1		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a1		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a1		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a1		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a1		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a1		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a1		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a1	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a1	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a1	@names-delimiter=" ~ "	<names variable="author editor"/>
+a1		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a1		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a1		<names variable="title"/>
+a1		<names variable="author"><name text-case="capitalize-first"/></names>
+a2		<names variable="author"/>
+a2		<names variable="author"><name and="text"/></names>
+a2		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a2		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a2		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a2		<names variable="author"><name form="short" and="text"/></names>
+a2		<names variable="author"><name form="count"/></names>
+a2		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a2		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a2		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a2		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a2		<names variable="author"><name initialize-with=". "/></names>
+a2		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a2		<names variable="author"><name initialize-with=""/></names>
+a2		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a2		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a2		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a2		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a2		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a2		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a2		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a2		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a2		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a2	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a2	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a2	@names-delimiter=" ~ "	<names variable="author editor"/>
+a2		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a2		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a2		<names variable="title"/>
+a2		<names variable="author"><name text-case="capitalize-first"/></names>
+a3		<names variable="author"/>
+a3		<names variable="author"><name and="text"/></names>
+a3		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a3		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a3		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a3		<names variable="author"><name form="short" and="text"/></names>
+a3		<names variable="author"><name form="count"/></names>
+a3		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a3		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a3		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a3		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a3		<names variable="author"><name initialize-with=". "/></names>
+a3		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a3		<names variable="author"><name initialize-with=""/></names>
+a3		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a3		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a3		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a3		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a3		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a3		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a3		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a3		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a3		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a3	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a3	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a3	@names-delimiter=" ~ "	<names variable="author editor"/>
+a3		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a3		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a3		<names variable="title"/>
+a3		<names variable="author"><name text-case="capitalize-first"/></names>
+a4		<names variable="author"/>
+a4		<names variable="author"><name and="text"/></names>
+a4		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a4		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a4		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a4		<names variable="author"><name form="short" and="text"/></names>
+a4		<names variable="author"><name form="count"/></names>
+a4		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a4		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a4		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a4		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a4		<names variable="author"><name initialize-with=". "/></names>
+a4		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a4		<names variable="author"><name initialize-with=""/></names>
+a4		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a4		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a4		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a4		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a4		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a4		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a4		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a4		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a4		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a4	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a4	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a4	@names-delimiter=" ~ "	<names variable="author editor"/>
+a4		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a4		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a4		<names variable="title"/>
+a4		<names variable="author"><name text-case="capitalize-first"/></names>
+a5		<names variable="author"/>
+a5		<names variable="author"><name and="text"/></names>
+a5		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a5		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a5		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a5		<names variable="author"><name form="short" and="text"/></names>
+a5		<names variable="author"><name form="count"/></names>
+a5		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a5		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a5		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a5		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a5		<names variable="author"><name initialize-with=". "/></names>
+a5		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a5		<names variable="author"><name initialize-with=""/></names>
+a5		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a5		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a5		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a5		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a5		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a5		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a5		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a5		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a5		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a5	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a5	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a5	@names-delimiter=" ~ "	<names variable="author editor"/>
+a5		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a5		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a5		<names variable="title"/>
+a5		<names variable="author"><name text-case="capitalize-first"/></names>
+a6		<names variable="author"/>
+a6		<names variable="author"><name and="text"/></names>
+a6		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a6		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a6		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a6		<names variable="author"><name form="short" and="text"/></names>
+a6		<names variable="author"><name form="count"/></names>
+a6		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a6		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a6		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a6		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a6		<names variable="author"><name initialize-with=". "/></names>
+a6		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a6		<names variable="author"><name initialize-with=""/></names>
+a6		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a6		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a6		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a6		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a6		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a6		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a6		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a6		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a6		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a6	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a6	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a6	@names-delimiter=" ~ "	<names variable="author editor"/>
+a6		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a6		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a6		<names variable="title"/>
+a6		<names variable="author"><name text-case="capitalize-first"/></names>
+a7		<names variable="author"/>
+a7		<names variable="author"><name and="text"/></names>
+a7		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a7		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a7		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a7		<names variable="author"><name form="short" and="text"/></names>
+a7		<names variable="author"><name form="count"/></names>
+a7		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a7		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a7		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a7		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a7		<names variable="author"><name initialize-with=". "/></names>
+a7		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a7		<names variable="author"><name initialize-with=""/></names>
+a7		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a7		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a7		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a7		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a7		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a7		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a7		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a7		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a7		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a7	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a7	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a7	@names-delimiter=" ~ "	<names variable="author editor"/>
+a7		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a7		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a7		<names variable="title"/>
+a7		<names variable="author"><name text-case="capitalize-first"/></names>
+a8		<names variable="author"/>
+a8		<names variable="author"><name and="text"/></names>
+a8		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a8		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a8		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a8		<names variable="author"><name form="short" and="text"/></names>
+a8		<names variable="author"><name form="count"/></names>
+a8		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a8		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a8		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a8		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a8		<names variable="author"><name initialize-with=". "/></names>
+a8		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a8		<names variable="author"><name initialize-with=""/></names>
+a8		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a8		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a8		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a8		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a8		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a8		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a8		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a8		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a8		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a8	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a8	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a8	@names-delimiter=" ~ "	<names variable="author editor"/>
+a8		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a8		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a8		<names variable="title"/>
+a8		<names variable="author"><name text-case="capitalize-first"/></names>
+a9		<names variable="author"/>
+a9		<names variable="author"><name and="text"/></names>
+a9		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a9		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a9		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a9		<names variable="author"><name form="short" and="text"/></names>
+a9		<names variable="author"><name form="count"/></names>
+a9		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a9		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a9		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a9		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a9		<names variable="author"><name initialize-with=". "/></names>
+a9		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a9		<names variable="author"><name initialize-with=""/></names>
+a9		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a9		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a9		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a9		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a9		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a9		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a9		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a9		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a9		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a9	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a9	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a9	@names-delimiter=" ~ "	<names variable="author editor"/>
+a9		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a9		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a9		<names variable="title"/>
+a9		<names variable="author"><name text-case="capitalize-first"/></names>
+a10		<names variable="author"/>
+a10		<names variable="author"><name and="text"/></names>
+a10		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a10		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a10		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a10		<names variable="author"><name form="short" and="text"/></names>
+a10		<names variable="author"><name form="count"/></names>
+a10		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a10		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a10		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a10		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a10		<names variable="author"><name initialize-with=". "/></names>
+a10		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a10		<names variable="author"><name initialize-with=""/></names>
+a10		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a10		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a10		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a10		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a10		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a10		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a10		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a10		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a10		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a10	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a10	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a10	@names-delimiter=" ~ "	<names variable="author editor"/>
+a10		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a10		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a10		<names variable="title"/>
+a10		<names variable="author"><name text-case="capitalize-first"/></names>
+a11		<names variable="author"/>
+a11		<names variable="author"><name and="text"/></names>
+a11		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a11		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a11		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a11		<names variable="author"><name form="short" and="text"/></names>
+a11		<names variable="author"><name form="count"/></names>
+a11		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a11		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a11		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a11		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a11		<names variable="author"><name initialize-with=". "/></names>
+a11		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a11		<names variable="author"><name initialize-with=""/></names>
+a11		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a11		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a11		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a11		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a11		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a11		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a11		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a11		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a11		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a11	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a11	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a11	@names-delimiter=" ~ "	<names variable="author editor"/>
+a11		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a11		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a11		<names variable="title"/>
+a11		<names variable="author"><name text-case="capitalize-first"/></names>
+a12		<names variable="author"/>
+a12		<names variable="author"><name and="text"/></names>
+a12		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a12		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a12		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a12		<names variable="author"><name form="short" and="text"/></names>
+a12		<names variable="author"><name form="count"/></names>
+a12		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a12		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a12		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a12		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a12		<names variable="author"><name initialize-with=". "/></names>
+a12		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a12		<names variable="author"><name initialize-with=""/></names>
+a12		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a12		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a12		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a12		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a12		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a12		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a12		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a12		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a12		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a12	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a12	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a12	@names-delimiter=" ~ "	<names variable="author editor"/>
+a12		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a12		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a12		<names variable="title"/>
+a12		<names variable="author"><name text-case="capitalize-first"/></names>
+a13		<names variable="author"/>
+a13		<names variable="author"><name and="text"/></names>
+a13		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a13		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a13		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a13		<names variable="author"><name form="short" and="text"/></names>
+a13		<names variable="author"><name form="count"/></names>
+a13		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a13		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a13		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a13		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a13		<names variable="author"><name initialize-with=". "/></names>
+a13		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a13		<names variable="author"><name initialize-with=""/></names>
+a13		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a13		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a13		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a13		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a13		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a13		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a13		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a13		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a13		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a13	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a13	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a13	@names-delimiter=" ~ "	<names variable="author editor"/>
+a13		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a13		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a13		<names variable="title"/>
+a13		<names variable="author"><name text-case="capitalize-first"/></names>
+a14		<names variable="author"/>
+a14		<names variable="author"><name and="text"/></names>
+a14		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a14		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a14		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a14		<names variable="author"><name form="short" and="text"/></names>
+a14		<names variable="author"><name form="count"/></names>
+a14		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a14		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a14		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a14		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a14		<names variable="author"><name initialize-with=". "/></names>
+a14		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a14		<names variable="author"><name initialize-with=""/></names>
+a14		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a14		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a14		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a14		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a14		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a14		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a14		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a14		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a14		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a14	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a14	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a14	@names-delimiter=" ~ "	<names variable="author editor"/>
+a14		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a14		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a14		<names variable="title"/>
+a14		<names variable="author"><name text-case="capitalize-first"/></names>
+a15		<names variable="author"/>
+a15		<names variable="author"><name and="text"/></names>
+a15		<names variable="author"><name and="symbol" delimiter-precedes-last="always"/></names>
+a15		<names variable="author"><name and="text" name-as-sort-order="first" delimiter-precedes-last="after-inverted-name"/></names>
+a15		<names variable="author"><name name-as-sort-order="all" sort-separator=" / " and="text" delimiter-precedes-last="never"/></names>
+a15		<names variable="author"><name form="short" and="text"/></names>
+a15		<names variable="author"><name form="count"/></names>
+a15		<names variable="author"><name et-al-min="3" et-al-use-first="1"/></names>
+a15		<names variable="author"><name et-al-min="3" et-al-use-first="2" delimiter-precedes-et-al="always"/><et-al font-style="italic"/></names>
+a15		<names variable="author"><name et-al-min="4" et-al-use-first="2" et-al-use-last="true"/></names>
+a15		<names variable="author"><name et-al-min="2" et-al-use-first="1" delimiter-precedes-et-al="never"/><et-al term="and others" prefix="  "/></names>
+a15		<names variable="author"><name initialize-with=". "/></names>
+a15		<names variable="author"><name initialize-with="." initialize="false" name-as-sort-order="all"/></names>
+a15		<names variable="author"><name initialize-with=""/></names>
+a15		<names variable="author"><name><name-part name="family" text-case="uppercase" prefix="&lt;" suffix="&gt;"/><name-part name="given" font-style="italic" suffix=" "/></name></names>
+a15		<names variable="editor translator"><label prefix=" (" suffix=")" form="short"/></names>
+a15		<names variable="editor translator" delimiter="; "><name and="text"/><label prefix=", "/></names>
+a15		<names variable="translator"><label form="verb" suffix=" "/><name/></names>
+a15		<names variable="author"><substitute><names variable="editor"/><text variable="title" font-style="italic"/></substitute></names>
+a15		<group delimiter=" | "><names variable="author"><substitute><text variable="title"/></substitute></names><text variable="title"/></group>
+a15		<group delimiter=": "><text value="By"/><names variable="author"/></group>
+a15		<names variable="author editor" delimiter="; " prefix="[" suffix="]"/>
+a15		<names variable="author" font-weight="bold" prefix=" (" suffix=") "><name and="text" delimiter=" , "/></names>
+a15	@et-al-min="3" et-al-use-first="1" and="symbol" initialize-with="."	<names variable="author"/>
+a15	@name-form="short" name-delimiter=" / "	<names variable="author"><name and="text"/></names>
+a15	@names-delimiter=" ~ "	<names variable="author editor"/>
+a15		<names variable="author"><name form="short"/><substitute><names variable="editor"><label form="short" prefix=" (" suffix=")"/></names></substitute></names>
+a15		<names variable="author"><name name-as-sort-order="first"/><label form="short" prefix=", "/></names>
+a15		<names variable="title"/>
+a15		<names variable="author"><name text-case="capitalize-first"/></names>

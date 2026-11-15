@@ -168,6 +168,17 @@ pub enum Match {
     None,
 }
 
+/// `CitationItemType`: the form of one cited item.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ItemType {
+    /// Only the author (`AuthorOnly`), for example the name of an in-text citation.
+    AuthorOnly,
+    /// The citation without the author (`SuppressAuthor`).
+    SuppressAuthor,
+    /// The full citation (`NormalCite`).
+    NormalCite,
+}
+
 /// The cite position of a `position` condition.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(missing_docs)]

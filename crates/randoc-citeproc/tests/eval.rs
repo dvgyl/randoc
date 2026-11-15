@@ -9,11 +9,11 @@
 #![allow(clippy::unwrap_used, clippy::panic)]
 
 use randoc_ast::{Block, Inline};
-use randoc_citeproc::eval::eval_citation;
+use randoc_citeproc::eval::{Citation, CitationItem, eval_citation};
 use randoc_citeproc::json::Json;
 use randoc_citeproc::output::{self, RenderOptions};
 use randoc_citeproc::reference::{Reference, Val, read_reference};
-use randoc_citeproc::types::Locale;
+use randoc_citeproc::types::{ItemType, Locale, Style};
 use randoc_core::Context;
 
 fn plain(json: &str) -> Vec<Inline> {
@@ -104,12 +104,114 @@ fn each_date_gives_the_oracle_inlines() {
     );
 }
 
-fn replay(replay: &str, refs: &str, minimum: usize) {
-    let base = Locale {
+/// 15 references (personal, literal, particle, Byzantine and other names) x
+/// 30 `names` layouts (options of `name`, `et-al`, `label`, `substitute`,
+/// `editortranslator`, the count form).
+#[test]
+fn each_name_gives_the_oracle_inlines() {
+    replay(
+        include_str!("replay/names.txt"),
+        include_str!("replay/names-refs.json"),
+        440,
+    );
+}
+
+/// The locale that the merged locale of each style falls back to.
+fn base_locale() -> Locale {
+    Locale {
         language: Some(randoc_citeproc::parse_lang("en-US").unwrap()),
         punctuation_in_quote: Some(true),
         ..Locale::default()
+    }
+}
+
+/// The rendered inlines of one citation, after the last steps of
+/// `citeproc` and the class step of the filter.
+fn render(style: &Style, locale: &Locale, citation: &Citation) -> Vec<Inline> {
+    let evaluated = eval_citation(style, locale, citation, 128).unwrap();
+    // Pandoc turns `link-bibliography` on by default.
+    let options = RenderOptions {
+        link_bibliography: true,
+        ..RenderOptions::default()
     };
+    let rendered = output::render_output(options, locale, &evaluated.output, 128).unwrap();
+    let mut got = output::finish(locale, rendered, 128).unwrap();
+    drop_quoted_class(&mut got);
+    got
+}
+
+/// One item of the form `TYPE^ID^LABEL^LOCATOR^PREFIX^SUFFIX`; an empty
+/// field is no value.
+fn item<'a>(spec: &str, refs: &'a [Reference<Vec<Inline>>]) -> CitationItem<'a> {
+    let fields: Vec<&str> = spec.split('^').collect();
+    let [kind, id, label, locator, prefix, suffix] = fields[..] else {
+        panic!("bad item: {spec}")
+    };
+    let text = |t: &str| (!t.is_empty()).then(|| t.to_owned());
+    let inlines = |t: &str| (!t.is_empty()).then(|| output::from_text(t));
+    CitationItem {
+        kind: match kind {
+            "A" => ItemType::AuthorOnly,
+            "S" => ItemType::SuppressAuthor,
+            _ => ItemType::NormalCite,
+        },
+        label: text(label),
+        locator: text(locator),
+        prefix: inlines(prefix),
+        suffix: inlines(suffix),
+        ..CitationItem::new(id, refs.iter().find(|r| r.id == id))
+    }
+}
+
+/// 15 references x 30 citation layouts x 9 citation forms
+/// (`tools/citation_cases.py`, `tools/citation.lua`). The oracle reads the
+/// Markdown citation of the first field; the test gives the library the
+/// items of the second field, the form that the `--citeproc` filter (a
+/// later unit) makes from it.
+#[test]
+fn each_citation_form_gives_the_oracle_inlines() {
+    let locale_xml = include_str!("replay/citation-locale.xml").trim_end();
+    let base = base_locale();
+    let refs = references(include_str!("replay/citation-refs.json"), &base);
+    let mut failures = Vec::new();
+    let mut count = 0;
+    for line in include_str!("replay/citation.txt")
+        .lines()
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+    {
+        let fields: Vec<&str> = line.split('\t').collect();
+        let [form, items, attrs, layout, expected] = fields[..] else {
+            panic!("bad line: {line}")
+        };
+        count += 1;
+        let style_text = format!(
+            "<style xmlns=\"http://purl.org/net/xbiblio/csl\" class=\"in-text\" version=\"1.0\" default-locale=\"en-US\">{locale_xml}<macro name=\"m\"><text variable=\"publisher\" font-weight=\"bold\"/></macro><citation><layout {attrs}>{layout}</layout></citation></style>"
+        );
+        let style = randoc_citeproc::parse_style(&mut Context::pure(), &style_text).unwrap();
+        let locale = style.locales[0].clone().merge(&base);
+        let citation = Citation {
+            items: items.split('|').map(|spec| item(spec, &refs)).collect(),
+            ..Citation::default()
+        };
+        let got = render(&style, &locale, &citation);
+        let expected = plain(expected);
+        if got != expected {
+            failures.push(format!(
+                "{form} <layout {attrs}>{layout}\n  expected {expected:?}\n  got      {got:?}"
+            ));
+        }
+    }
+    assert!(count >= 4_000, "{count} cases");
+    assert!(
+        failures.is_empty(),
+        "{} of {count} differ:\n{}",
+        failures.len(),
+        failures.join("\n")
+    );
+}
+
+fn replay(replay: &str, refs: &str, minimum: usize) {
+    let base = base_locale();
     let refs = references(refs, &base);
     let mut failures = Vec::new();
     let mut count = 0;
@@ -126,16 +228,11 @@ fn replay(replay: &str, refs: &str, minimum: usize) {
         count += 1;
         let style = randoc_citeproc::parse_style(&mut Context::pure(), style_text).unwrap();
         let locale = style.locales[0].clone().merge(&base);
-        let reference = refs.iter().find(|r| r.id == id);
-        let evaluated = eval_citation(&style, &locale, &[(id, reference)], 128).unwrap();
-        // Pandoc turns `link-bibliography` on by default.
-        let options = RenderOptions {
-            link_bibliography: true,
-            ..RenderOptions::default()
+        let citation = Citation {
+            items: vec![CitationItem::new(id, refs.iter().find(|r| r.id == id))],
+            ..Citation::default()
         };
-        let rendered = output::render_output(options, &locale, &evaluated.output, 128).unwrap();
-        let mut got = output::finish(&locale, rendered, 128).unwrap();
-        drop_quoted_class(&mut got);
+        let got = render(&style, &locale, &citation);
         let expected = plain(expected);
         if got != expected {
             failures.push(format!(

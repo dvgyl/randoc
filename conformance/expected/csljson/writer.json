@@ -193,6 +193,42 @@
       "stdout": "[]\n",
       "stderr": ""
     },
+    "standalone-no-references#e2e:csljson": {
+      "key": "ead9111cebc6459b",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "standalone-no-references#read": {
+      "key": "9be8991d66a1b7cc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "standalone-no-references#write:csljson": {
+      "key": "e1bd30a20f648936",
+      "exit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "standalone-references#e2e:csljson": {
+      "key": "34af3bce91568ef9",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"title\": \"T\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "standalone-references#read": {
+      "key": "466faf628e70e0ba",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"a\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"T\"}]}}}]}},\"blocks\":[]}",
+      "stderr": ""
+    },
+    "standalone-references#write:csljson": {
+      "key": "12bb094a5356df14",
+      "exit": 0,
+      "stdout": "[\n  {\n    \"id\": \"a\",\n    \"title\": \"T\",\n    \"type\": \"\"\n  }\n]\n",
+      "stderr": ""
+    },
     "value-forms#e2e:csljson": {
       "key": "b853a24c455ee89d",
       "exit": 0,

@@ -2638,3 +2638,68 @@ Licence scan of the block: 4 hits outside the licence texts in
 list of HTML element names in the order of the alphabet (`"h1"` to
 `"header"`), three are comparisons of one character (`c == ' ' ||`).
 None is text or code of a kind that can be copied material.
+
+**citeproc**: branch `ws/citeproc-3`, commits `937bfcd..8451965`
+(`main` holds `937bfcd` as `b014620`). The block holds one commit:
+8451965 `feat(citeproc): evaluate names and substitute`. It adds the
+`names` module of `eval.rs`: the evaluation of `names`, `substitute`,
+the name formats, `et al.` and the count form. It removes
+`EvalError::NotPorted`. It adds the replay files and a new
+`tools/eval.lua`. The commits 615548e and 6e7c837 of the branch are not
+in this block. They wait for a gate run.
+
+Gate: `04:29 UTC 8451965 gate passed: citeproc names and substitute
+(450 of 450 oracle citations)`. The worker ran the gate.
+
+Measured by the worker: replay `each_name_gives_the_oracle_inlines`:
+450 of 450 equal (15 references x 30 layouts). Step test
+`names_evaluate_in_linear_steps`: 4 classes at 1,000 and 4,000. Two
+depth tests pass. `licence-scan ws/citeproc-3`: no hit.
+
+Review state: The Codex verification of round 3b (on `main` `856692d`,
+ended 04:56 UTC) requests changes with 3 high and 5 medium findings.
+They are in the modules that were on `main` before this block (typed
+metadata, the output and case functions, the output parser, the
+evaluation dispatch). They are item 0 of the next citeproc unit. An
+Opus review of the same commit runs since 04:47 UTC. The `names` module
+of this block has no review round yet. No program path calls the
+evaluation yet.
+
+Open: I-CITE-16 (scope gap; the report does not state a level); 3 high
+and 5 medium findings of round 3b; unit 4 (sorting, disambiguation,
+collapse, positions across citations), not started.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+**citeproc**: branch `ws/citeproc-3`, commits `8451965..6e7c837` (two
+commits). The state of `8451965` goes to `main` in batch D. The commit
+`615548e` ends the `csljson` writer text with a line feed, also with
+`--standalone`. It answers row I-CLI-52 of the command line worker. The
+commit `6e7c837` adds the entry for one citation (`eval_citation`).
+It ports item prefixes and suffixes, locators and their labels,
+author-only and suppress-author items, citation numbers and the
+positions of items inside one citation.
+
+Gate: `scripts/gate.sh` passed on `6e7c837` at 05:26 UTC (a plain gate
+run of the coordinator, tool `env/bin/gate-branch`, state file
+`env/tmp/gate-s6-citeproc/state.txt`; the worker was paused at 04:58 UTC
+before it could run the gate on these two commits).
+
+Measured by the worker: replay of 4050 oracle citations (15 references
+x 30 layouts x 9 citation forms): 4050 equal. Two new `csljson` writer
+cases with `-s`: 6 units pass. Harness `--filter csljson/writer`: 44
+pass, 0 fail, 1 skipped.
+
+Review state: the Codex verification of round 3b (on `main` `856692d`)
+requests changes with 3 high and 5 medium findings in the modules that
+were on `main` before this block. They are item 0 of the next citeproc
+unit. An Opus review of the same commit runs. The modules of this block
+have no review round yet. No program path calls the evaluation yet.
+
+Open: I-CITE-16 (scope gap: document cite history, sorting,
+disambiguation, collapse, bibliography; note styles not compared). Unit
+4 (sorting, disambiguation, collapse, positions across citations) is
+not started. The report states no level for these items.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range (item 4 of the unit is
+not started).

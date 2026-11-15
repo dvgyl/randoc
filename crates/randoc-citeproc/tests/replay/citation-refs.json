@@ -1,0 +1,18 @@
+[
+{"id": "c1", "type": "book", "title": "Rivers of Glass", "issued": {"date-parts": [[1998]]}, "author": [{"family": "Ampleforth", "given": "Ada"}], "publisher": "Northwind"},
+{"id": "c2", "type": "article-journal", "title": "On Small Stones", "issued": {"date-parts": [[2004, 5]]}, "author": [{"family": "Brook", "given": "Bella"}, {"family": "Cole", "given": "Cyrus"}], "container-title": "Pebble Review", "volume": "12", "page": "101-119"},
+{"id": "c3", "type": "book", "title": "Three Hands", "issued": {"date-parts": [[2011]]}, "author": [{"family": "Dunmore", "given": "Della"}, {"family": "Easton", "given": "Eli"}, {"family": "Fairley", "given": "Fay"}]},
+{"id": "c4", "type": "report", "title": "Annual Count", "issued": {"date-parts": [[2020]]}, "author": [{"literal": "Harbour Survey Office"}]},
+{"id": "c5", "type": "book", "title": "Collected Letters", "issued": {"date-parts": [[1975]]}, "editor": [{"family": "Grange", "given": "Gil"}]},
+{"id": "c6", "type": "webpage", "title": "Tide Tables Online"},
+{"id": "c7", "type": "chapter", "title": "A Short Chapter", "issued": {"date-parts": [[2015, 3, 9]]}, "author": [{"family": "Gaulle", "given": "Charles", "non-dropping-particle": "de"}], "container-title": "Big Book", "page": "33"},
+{"id": "c8", "type": "book", "title": "Many Voices", "issued": {"date-parts": [[2001]]}, "author": [{"family": "Ives", "given": "Ian"}, {"family": "Jones", "given": "Jo"}, {"family": "Kemp", "given": "Kit"}, {"family": "Lowe", "given": "Lu"}, {"family": "Marsh", "given": "Max"}]},
+{"id": "c9", "type": "book", "title": "Lower Case", "issued": {"date-parts": [[1990]]}, "author": [{"family": "hooks", "given": "bell"}]},
+{"id": "c10", "type": "book", "title": "Der Fluss", "issued": {"date-parts": [[1930]]}, "author": [{"family": "Neumann", "given": "Nina"}], "language": "de-DE"},
+{"id": "c11", "type": "article-newspaper", "title": "Storm Warning", "issued": {"date-parts": [[2022, 11, 2]]}, "author": [{"family": "Oakes", "given": "Olive"}], "container-title": "Coast Daily"},
+{"id": "c12", "type": "thesis", "title": "Sand Models", "issued": {"date-parts": [[2009]]}, "author": [{"family": "Pryce", "given": "Pat"}], "publisher": "Dune University", "number-of-pages": "240"},
+{"id": "c13", "type": "book", "title": "No Date Here", "author": [{"family": "Quill", "given": "Quinn"}], "translator": [{"family": "Rowe", "given": "Rex"}]},
+{"id": "c14", "type": "book", "title": "Same Again", "issued": {"date-parts": [[1998]]}, "author": [{"family": "Ampleforth", "given": "Ada"}, {"family": "Stone", "given": "Sam"}]},
+{"id": "c15", "type": "legal_case", "title": "Field v. Meadow", "issued": {"date-parts": [[1961]]}, "authority": "High Court", "section": "4"},
+{"id": "z1", "type": "book", "title": "Other Item", "issued": {"date-parts": [[1950]]}, "author": [{"family": "Zeller", "given": "Zoe"}]}
+]
