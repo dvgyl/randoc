@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T05:15:00Z",
+  "updated": "2026-11-15T00:56:00Z",
   "oracle": {
     "version": "pandoc 3.13",
     "release_file": "pandoc-3.13-arm64-macOS.zip",
@@ -14,30 +14,30 @@
     "source_commit": "30b135468435dc4fbccfc2694508fa8e3e9ddc33"
   },
   "harness": {
-    "units": 49305,
-    "pass": 46457,
-    "fail": 2446,
-    "skipped": 402,
-    "baseline_units": 46457,
-    "measured": "2026-11-12 on 8c723ae (merge check of the last batch of session 4)"
+    "units": 57176,
+    "pass": 54488,
+    "fail": 2268,
+    "skipped": 420,
+    "baseline_units": 54488,
+    "measured": "2026-11-15 on e3455ba (merge check of batch D of session 5)"
   },
   "pandoc_test_suite": {
     "status": "measured",
     "run": 2231,
     "oracle_pass": 2231,
-    "randoc_pass": 509,
+    "randoc_pass": 607,
     "cannot_run_estimate": 1939,
     "details": "spec/pandoc-testsuite.json",
-    "measured": "2026-11-12T03:15:00Z on a6fa07a (not measured after the last two batches)"
+    "measured": "2026-11-15 on e3455ba"
   },
   "corpus": {
     "status": "measured",
     "documents": 230,
     "units": 690,
     "oracle_pass": 690,
-    "randoc_pass": 133,
+    "randoc_pass": 159,
     "details": "spec/corpus.json",
-    "measured": "2026-11-12T03:15:00Z on a6fa07a (not measured after the last two batches)"
+    "measured": "2026-11-15 on e3455ba"
   },
   "workstreams": [
     {

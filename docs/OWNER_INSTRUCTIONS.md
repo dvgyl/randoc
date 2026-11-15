@@ -210,6 +210,16 @@ completely. Its main rules:
     resumed the stopped workers with new time limits and continued with
     the same tasks.)
 
+22. "can you please pause everything safely and prepare the handoff?"
+    (Given in the fifth session on 2026-11-15 at about 00:30 UTC. How the
+    coordinator applied it: each of the five workers got the order to
+    commit what passed its tests, to save an open change as a patch and to
+    stop; the merge batch that ran went to its end and was pushed; two
+    branches with commits that had no gate pass went to GitHub as
+    `wip/NAME` branches after a licence scan; a Sonnet agent measured
+    `main`; then the coordinator removed each worktree, stopped the
+    watchdog and wrote the handoff.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,

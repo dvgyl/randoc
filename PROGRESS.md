@@ -5,110 +5,89 @@ of a session, then run `./init.sh`.
 
 ## Handoff
 
-Written: 2026-11-12 05:15 UTC, in the fourth session (it started on
-2026-11-11 at 20:34 UTC). This is the state at the end of the session:
-no worker, no review and no merge runs, and no worktree exists. The
-coordinator records (`decisions.tsv`, `units.tsv`) are under
-`/Volumes/Extreme Pro/Randoc/env/store/`.
+Written: 2026-11-15 00:56 UTC, in the fifth session (it started on 2026-11-12 at
+05:20 UTC, was stopped by the usage limit of the account at about 07:20
+UTC, and continued on 2026-11-14 at 20:50 UTC). This is the state after the safe pause that the owner ordered: no worker, no review and no merge runs, no worktree exists, and the watchdog is stopped. The coordinator
+records (`decisions.tsv`, `units.tsv`, the gate lines in `inbox/`) are
+under `/Volumes/Extreme Pro/Randoc/env/store/`.
 
 Key points:
 
-- `main` is at the commit that holds this text, pushed to
-  <https://github.com/dvgyl/randoc>. This session merged 23 small
-  blocks in 8 batches. Each batch passed the full merge check on
-  the merged tree with 0 regressions.
+- `main` is at the commit that holds this text, pushed to <https://github.com/dvgyl/randoc>.
+  This session made 16 block merges in 4 batches (A to D). Each batch passed the full merge check on the merged tree with 0 regressions; one block (the LaTeX reader) was reverted in batch B for a memory defect and merged again in batch D with a proof.
 - **Measured progress in this session** (start, then now): conformance
-  harness 19,375 of 20,938 units, then 46,457 of 49,305; Pandoc's own
-  test suite 282 of 2,231 tests, then 509 at the last measurement (03:15 UTC, before the last two batches); the corpus of real documents
-  79 of 690 units, then 133 at the same measurement.
-- **New on `main`:** the reader `latex` (partial), the writers `markdown`,
-  `gfm`, `commonmark`, `commonmark_x` and `plain` (partial), standalone
-  HTML output through the default template (`-s`, `--toc`), math in the
-  HTML and Markdown writers through `randoc-math`, JSON filters
-  (`--filter`), defaults files and metadata blocks through `randoc-yaml`,
-  the default abbreviation list, and the East Asian line-break transform.
-- **The reviews of the major blocks are done** (task 1 of the last
-  handoff). Each of the nine blocks got both reviewers. No reviewer
-  approved: each report requests changes. The correction units are on
-  `main` for `cli`, `html-writer`, `yaml`, `commonmark-reader`, `math`
-  and, for the larger part, `html-reader` and `markdown-reader`; `lua` and
-  `citeproc` are in work or wait. The verification of the corrections by
-  the same reviewers is due for each block (section "Next three tasks").
-- **Three licence corrections on `main`.** A review and a licence audit
-  found that stored test results held text with a copyleft licence: the
-  completion scripts of Pandoc (the output of `--bash-completion` and
-  `--completion`), the styles of its reference ODT (the output of
-  `-t fodt -s`), and three table inputs from its manual. The head of
-  `main` does not hold them any more. The old commits of `main` still do:
-  see decision D6, which waits for the owner.
-- **Critical findings of this session, all corrected on `main`:** a crash
-  of the HTML reader (a table header cell with a very large `colspan`);
-  lost document text in the Markdown reader (two caches for HTML closers);
-  a loop of the LaTeX reader that did not end and allocated without a
-  bound (it used 10 GB on this machine before the watchdog stopped it).
-- **The machine.** No stop of the computer in this session. The watchdog
-  is now version 3 (a poll each half second). A new tool
-  `env/bin/limit-run` runs one command with a memory and a time limit;
-  each worker must use it for fuzz artifacts and stress inputs (standing
-  order 18c).
+  harness 46,457 of 49,305 units, then 54,488 of 57,176; Pandoc's own test suite
+  509 of 2,231 tests, then 607; the corpus of real documents 133
+  of 690 units, then 159.
+- **New on `main`:** Lua filters in the program (`--lua-filter`, `-L`),
+  the level of each log message from a reference matrix, the corrections
+  of the review findings of the Markdown reader (round 3), citeproc
+  (round 2) and Lua (round 3), three ported modules of the citation
+  evaluation, and a faster conformance harness. Also: the libraries `lpeg` and `re` for Lua filters (LPeg 1.1.0), the option globals of a filter, about half of the corrections of the first LaTeX reader review, the closed medium rows of the HTML reader with EPUB section types, and the Markdown writer corrections for divs, figures and nested emphasis.
+- **Two critical findings of this session, both corrected:** the Markdown
+  writer lost table captions and visible text of adjacent reference links
+  (first review of that writer; corrected on `main` in `f292078`); a depth test of the LaTeX
+  reader used more than 4 GB, because the reader copied token lists at
+  each nesting level (the watchdog stopped it in a merge check, the block
+  was reverted on `main`; the corrected block is on `main` as `c46be2e`, and the merge check ran the whole test binary of the crate under `limit-run 1500`).
+- **Reviews of this session.** First reviews: the LaTeX reader (Opus: 4
+  high, 5 medium; Codex: 21 high, 8 medium) and the Markdown writer (Opus:
+  2 high, 7 medium; Codex: 2 critical, 16 high, 3 medium). Verification
+  reviews: the CommonMark reader (Opus APPROVES; Codex requests changes
+  with 4 medium), math (both request changes: 4 high, 5 medium in all, two
+  of the high ones with their cause in the Markdown writer), Lua (both
+  request changes: 7 high, 8 medium; corrected on the branch). The Markdown reader, round 4 (Codex): one critical finding of round 3 is still open, and 4 high and 3 medium are new. The command line, round 9 (Codex): 2 critical, 12 high, 10 medium. No Opus review ran for these two rounds.
+- **The usage limit.** About 10 Opus agents in parallel used up the 5-hour
+  window of the account in about 2 hours. A stop comes without a warning.
+  Since then: a merge check runs detached with a state file
+  (`env/tmp/merge-s5-*/state.txt`), each worker commits after each item,
+  appends a gate line to `env/store/inbox/NAME.log` and writes its report
+  section early, and Codex reviews (which do not use this limit) start
+  before Opus reviews.
 
 ### How to start the next session
 
-0. Read `docs/OWNER_INSTRUCTIONS.md` first (18 instructions, in the words
+0. Read `docs/OWNER_INSTRUCTIONS.md` first (22 instructions, in the words
    of the owner) and `docs/ORIGINAL_SPEC.md`, the full task text.
-1. Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command,
+1. First check: `git status --short` shows nothing in the main checkout,
+   and `git rev-parse main` is equal to `git rev-parse origin/main` after
+   `git fetch origin`. If the local `main` is ahead, a merge batch did not
+   end: read `env/tmp/merge-s5-*/state.txt` and the check log next to it;
+   push only when the log shows a passed check (`merge-ws: summary`, 0
+   regressions) for the tree of the local head; else run
+   `env/bin/merge-ws check`.
+2. Run `. "/Volumes/Extreme Pro/Randoc/env/env.sh"` before each command,
    then `./init.sh` in `/Volumes/Extreme Pro/Randoc/randoc`.
-2. Start `env/bin/randoc-watchdog` in the background (version 3: it does
-   not end; it writes each event to `env/tmp/watchdog-events.log`; read
-   that file at each drain). Keep the limits: 3 build slots in
-   `env/bin/cargo`, `CARGO_BUILD_JOBS=2`, `RUST_TEST_THREADS=3`,
-   `GHCRTS=-M3g`.
-3. Look at the free space of the external drive (`df -g`). One worktree
-   with a full build needs about 10 GB; a review tree with only the two
-   programs needs 2 GB. The drive had 30 to 61 GB free in this session.
-   Remove a worktree as soon as its unit ends (the branch keeps the
-   commits). Do not run `du` or `find` on `wt/`: it needs minutes on this
-   file system.
-4. Limits that worked: at most 5 code workers at the same time (with 6 or
-   7, one gate run waited 40 to 58 minutes for a build slot), about 9
-   agents and Codex runs in all, free memory above 40%. One gate run needs
-   20 to 60 minutes and one full merge check about 50 minutes under this
-   load, so batch several blocks into one merge check.
-5. Read `env/store/standing-orders.md`, `env/store/decisions.tsv` (the
-   rows of 2026-11-11 from 20:34 UTC and of 2026-11-12),
-   `env/store/units.tsv` and, for each workstream, the top section of
-   `env/store/reports/NAME.md`.
-6. Read `docs/PRIOR_ART.md`, `docs/ADR.md` (ADR 18 is new) and the section
-   "Commit cadence" of `docs/CONTRIBUTING.md`.
-7. Tools and brief forms of this session, in `env/bin` and
-   `env/store/briefs`:
-   - `s4-common.md`: the rules for each worker (with the `limit-run`
-     rule). A launch message is short: the two brief files, the worktree,
-     the time limit, and three rules inline (memory, delete, licence and
-     git). A final answer has at most 12 lines.
-   - `merge-s4.md`: the merge agent for a batch (one squash commit for
-     each block, one full check on the final tree, then the push). The
-     launch message lists the blocks. A worker that continues on its
-     branch after a merge runs `git merge main` first.
-   - `review-s4-new.template.md` and `review-s4-resume.template.md` with
-     the tool `mk-s4`: the briefs for a review of a block that is on
-     `main`. Reviewers read a frozen tree (`wt/review-s4b`, a detached
-     checkout with built programs), not a worktree of a worker.
-   - `codex-review-file PROMPT OUT` (a new Codex session) and
-     `codex-resume PRIOR OUT PROMPT` (the session of an earlier round by
-     the identifier in its log). An Opus reviewer of an earlier session
-     cannot be resumed from a new session: start a new one.
-   - `licence-scan BRANCH...` and `wip-push BRANCH NAME` (a snapshot
-     commit on `wip/NAME` after a clean scan).
-   - `limit-run MAX_MB SECONDS COMMAND...`.
-   - `clerk.md` and the files `clerk-s4-NN.md`: the form of a record task
-     for a Sonnet agent. Tell each agent that commits: no co-author line,
-     no tool attribution, no other trailer.
-8. Roles (owner instructions 14 and 18): the coordinator on Fable 5.2
+3. Start the watchdog `env/bin/randoc-watchdog` (version 3) in the
+   background; it is stopped (look with `pgrep -f randoc-watchdog`). It
+   writes each event to `env/tmp/watchdog-events.log`. Keep the limits: 3 build slots,
+   `CARGO_BUILD_JOBS=2`, `RUST_TEST_THREADS=3`, `GHCRTS=-M3g`, at most 5
+   code workers.
+4. The drive: `df -g`. It had 33 to 53 GB free in this session; one
+   worktree with a build needs 10 GB or more. Two clean-ups of old
+   scratch data ran (`reports/disk-s5.md`). Remove a worktree when its
+   workstream has no next unit: `git worktree remove --force`, then
+   `rm -rf` of the folder with its full path (git leaves the build
+   folder).
+5. Tools of this session in `env/bin`: `drain-s5` (one short state of
+   each unit of `env/store/current-s5.txt`, the gate lines and the
+   machine), `mk-s5` with the templates `review-s5-new` and
+   `review-s5-resume` (the frozen review tree is `wt/review-s5`; move it
+   with `git checkout --detach COMMIT` and build `randoc-cli` and
+   `randoc-harness` there), the new `merge-ws` (`check` runs
+   `scripts/gate.sh --update-spec`: one suite run that also writes the
+   baseline and the matrix; the old tool is `merge-ws.s4.bak`). Briefs:
+   `s5-common.md` (the worker rules), `merge-s5.md`, one `NAME-s5.md` for
+   each unit, `clerk-s5-NN.md`.
+6. A merge check needs 20 to 30 minutes when five workers run; the first
+   check after a clean of `target/harness/verified-oracle.json` needs 80
+   minutes more, because it compares each stored result with the
+   reference program again.
+7. Roles (owner instructions 14, 18 and 20): the coordinator on Fable 5.2
    writes briefs and decides; each worker is an Opus 5.5 agent
-   (`pstack:poteto-agent`); a Sonnet 5.5 agent writes records and runs
-   single checks and measurements; Codex with GPT-6.1 Sol and a new Opus
-   5.5 agent review.
+   (`pstack:poteto-agent`); a Sonnet 5.5 agent writes records, measures
+   and does single checks; Codex with GPT-6.1 Sol and a new Opus 5.5
+   agent review.
 
 ### What works
 
@@ -116,132 +95,108 @@ Key points:
   `commonmark_x`, `markdown` and its variants, `html`, `csljson`, `latex`
   (partial). Writers: `json`, `native`, `html`, `html4`, `csljson`,
   `markdown`, `gfm`, `commonmark`, `commonmark_x`, `plain` and the
-  Markdown variants (partial).
-- The command line: the options, defaults files (through `randoc-yaml`),
-  the resource search, templates and standalone HTML output, JSON
-  filters, the log, error texts and exit codes.
-- Libraries on `main` that no program path calls yet: `randoc-lua` (Lua
-  5.4.8, document types, filters, first modules) and the CSL style and
-  locale parser of `randoc-citeproc`.
-- Conformance harness (merge check of the last batch, 2026-11-12 at about 05:15 UTC, on the tree of `8c723ae`): 49,305 units,
-  46,457 pass, 2,446 fail, 402 skipped, 0 regressions.
-- Capability matrix (`spec/capabilities.json`): input formats 4 passing and 9 partial of 52; output formats 5 passing, 12 partial and 1 failing (`markua`) of 77 (`beamer` passes, `latex` is partial); extensions 52 passing and 26 partial of 90; options 84 passing and 24 partial of 109. Five entries went from passing to partial in the last batch, because 330 new standalone units of the Markdown writer fail; no unit of the baseline was lost.
-- Pandoc's own test suite (`tools/pandoc-testsuite`, measured at
-  03:15 UTC on `a6fa07a`; NOT measured after the last two batches, which added the writers `latex` and `beamer`): 509 of 2,231 tests pass (282 at the start of the session). By group: `command` 493 of 1,884, `old` 16 of 174, and 0 for the reader groups `docx`, `odt`, `rtf`, `fb2`, `pptx`, `xlsx`.
-- Corpus of real documents (`tools/corpus`, same time): 133 of 690 units pass (79 at the start). By target: `json` 58 of 230, `html` 31 of 230, `markdown` 44 of 230.
+  Markdown variants (partial), `latex` and `beamer` (fragment output).
+- The command line: the options, defaults files, the resource search,
+  templates and standalone HTML output, JSON filters (`--filter`), Lua
+  filters (`--lua-filter`, `-L`) with the libraries `lpeg` and `re` and
+  the option globals, the log, error texts and exit codes. Three critical
+  review findings are open (section "Open issues").
+- Libraries on `main` that no program path calls yet: the CSL style and
+  locale parser and four modules of the citation evaluation of
+  `randoc-citeproc`.
+- Conformance harness (merge check of batch D, 2026-11-15 00:53 UTC, on
+  the tree of `e3455ba`): 57,176 units, 54,488 pass, 2,268 fail, 420
+  skipped, 0 regressions.
+- Capability matrix (`spec/capabilities.json`): input formats 4 passing
+  and 9 partial of 52; output formats 5 passing, 12 partial and 1 failing
+  of 77; extensions 53 passing, 25 partial and 1 failing of 90; options 90
+  passing and 18 partial of 109.
+- Pandoc's own test suite (`tools/pandoc-testsuite`): 607 of 2,231 tests pass (measured on `e3455ba`; 509 at the start of the session, 592 on 2026-11-12). By group: `command` 582 of 1,884, `old` 25 of 174, and 0 for the reader groups `docx`, `odt`, `rtf`, `fb2`, `pptx`, `xlsx`. No test was lost.
+- Corpus of real documents (`tools/corpus`): 159 of 690 units pass (measured on `e3455ba`; 133 at the start of the session). By target: `json` 62 of 230, `html` 35 of 230, `markdown` 62 of 230. The number did not change between 2026-11-12 and the end of the session, although the harness gained 6,300 passing units: most corrections of this session came from review findings and reference matrices, not from the corpus documents.
 - Quarto and R Markdown: not measured.
-
-A correction of the last handoff: the 1,939 tests that the test-suite tool
-counts as "unsupported" do not wait for a missing format. They need
-Haskell code, so an external program cannot run them. Of the 2,231 tests
-that can run, the count of tests for which one missing format is the only
-missing thing is: `latex` reader 235, `markdown` writer 193, `docx` reader
-115, `latex` writer 110, `rst` reader 78, `typst` writer 73, `rst` writer
-42, `odt` reader 41, `org` reader 36 (`env/store/reports/next-wave-demand.md`,
-counted at the start of this session).
 
 ### State of each workstream
 
 "Gate" means `scripts/gate.sh`. Read the top section of
-`env/store/reports/NAME.md` before you trust a row. "Round N" is the last
-review round; its reports are `env/store/reviews/NAME-opus-rN.md` and
-`NAME-codex-rN.md` (a Codex report with the ending `.partial` is the last
-file of a run that its service stopped).
+`env/store/reports/NAME.md` before you trust a row. A patch or a staged
+file that a row names is in `env/store/patches-s5/NAME/` (a copy; the
+original is in the scratch folder `env/tmp/NAME-s5*/`). No worktree
+exists: start each unit on the named branch in a new worktree.
 
 | Workstream | State | Next step |
 | --- | --- | --- |
-| harness-flaky, layout-perf | On `main` since session 3, both with two approvals. | None. |
-| contracts | On `main` (`4713a06`): two new fields of `Limits`, 15 `Host` methods, one Haskell `show`, a public JSON value parser, the `zip` pin, ADR 18. No review round. Rows I-CONTRACTS-01 (processor time) and I-CONTRACTS-02 (the process environment) are open. | Review it with the next block that uses it. Then the open shared requests (section "Open issues"). |
-| yaml | On `main` (`2c8e284`). Round 9: both request changes. The nested list regression of this session is corrected. Three medium rows are open: I-YAML-22 (a document marker skips the replay value checks), I-YAML-23 (a blank line with a tab is refused), I-YAML-24 (tab indentation before a key is accepted). Row I-YAML-02 lists examples that match now. | One unit for the three rows, then resume both reviewers of round 9 (Codex log `yaml-codex-r9`). |
-| cli | On `main` (`f6d82a9`, `34fb476`). Round 8: Opus requests changes; the Codex run was stopped (partial report). Each finding with the level medium or higher is corrected. New: templates, the default abbreviation list, defaults files through `randoc-yaml`, JSON filters, East Asian line breaks. Open: row I-CLI-35 (medium: `randoc-core` gives the "no title" message the level WARNING, the reference INFO; ten template cases fail), the matrix of 300 standalone command lines, `-s` is stopped for the LaTeX and Markdown writers, `--lua-filter` is not connected. No review of unit 2. | Unit 3: the level of that message, `-s` for each writer that renders a template, `--lua-filter` through `randoc_lua::apply_filter_files` (the exact call is in `reports/lua.md`), the removal of the `saphyr-parser` notice rows, the standalone matrix. Then the verification review. |
-| html-writer | On `main` (`24b5136`). Round 6: both request changes (the time of nested section divs; one report claim); corrected. New and not reviewed: standalone output, `--toc`, math through `randoc-math`. Coverage of `standalone.rs` is 79%. Row I-HTML-34 (`abstract-title` needs the translation files of Pandoc, decision D1). | The review of the new code. Fuzzing, the mutation sample, the `-s` conformance cases. |
-| html-reader | On `main` (`7f8b193`, `8e95526`). Round 3: Opus requests changes (1 critical, 4 high, 7 medium); the Codex run was stopped (partial report with the same findings). Corrected: the crash, 3 high, 4 medium. Open medium rows: I-HTMLR-19, I-HTMLR-21, I-HTMLR-22, I-HTMLR-23. The licence question on the tag-name lists is answered: both reviewers confirm each list from the behaviour of the reference. | Unit 2 (brief `html-reader-s4b.md`), then the verification. |
-| commonmark-reader | On `main` (`6e8fcd9`). Round 7: both request changes (1 high, 6 medium); each one is corrected. Open: 16 documents of the differential run in two classes are not reduced; the specification run was not repeated after the unit; no coverage number. | The verification by the reviewers (Codex log `commonmark-reader-codex-r7`). The specification run. |
-| markdown-reader | On `main` (`c145443`, `8508188`, and the last batch). Round 3: Codex requests changes (2 critical, 15 high, 3 medium), Opus requests changes (1 high, 4 medium). Corrected: both critical findings (a test compares each cache with the plain scan), seven time findings, the abbreviation rule. Open: the rows I-MD-56 (the rest of a depth finding: one form overflows a 2 MB stack at 10,000 repetitions), I-MD-57 and I-MD-58 (quadratic time), and eight high and five medium conformance findings (row I-MD-59 lists them). Fuzzing, coverage and mutation tests did not run in this session. | Unit 4: the open high findings first (`reports/markdown-reader.md` has a plan for I-MD-57 and I-MD-58). Then the verification. This reader is the most used one. |
-| math | On `main` (`e145a28`). Round 3: both request changes (4 high, 7 medium); each one is corrected from 11,050 new reference rows. The warning shows the line and the column of the reference. Open: coverage, the mutation sample, formulas with characters that have no conversion (I-MATH-01). | The verification by the reviewers (Codex log `math-codex-r3`). |
-| lua | On `main` (the last batch). Round 2: both request changes (5 high, 8 medium); all are corrected. New: the locale of the environment, each function of `pandoc.system`, the entrance `apply_filter_files`. Open: `lpeg` and `re` (not started: they need a second `unsafe` block; ADR 11 permits one; the coordinator of session 4 recommends to permit it with a safety argument and a test, as for the first one), row I-LUA-11 (walk time with the depth), `cputime`. No program option calls the crate yet. | The command line connects `--lua-filter`. Then `lpeg` and `re`, the other modules, `pandoc.read` and `pandoc.write`. The verification (Codex log `lua-codex-r2`). |
-| citeproc | On `main` (units 1 and 2, and the last batch). Round 2: Codex requests changes (1 critical, 3 high, 9 medium), Opus requests changes (2 medium). Corrected: the critical finding (a table lost its text in CSL JSON) and two high findings. Open: Codex R2-07 (render functions overflow a 2 MB stack) and the medium findings (`reports/citeproc.md` lists them; a first probe of two of them found 46 of 204 metadata cases that differ). | The open findings (brief `citeproc-s4.md`, items 2 to 4), then unit 3 of the plan in `reports/citeproc-research.md`. |
-| latex-reader | New in this session. On `main` (`6a01107`, `97d69d8`, `27f478c`, and the last batch). No review round. Two critical defects that its own fuzz run found are corrected (a loop without end; a parameter count without a bound); each parser loop has a shared guard and the reader has a step budget. A table of 351 common commands (`crates/randoc-latex-reader/COMMANDS.md`): 162 equal in each probed context, 68 partial, 4 different, 117 not started. For 3 of the 8 corpus documents the reference stops with a parse error and Randoc does not (row I-LTXR-11). | Unit 4: the command table and row I-LTXR-11 (brief `latex-reader-u3.md`, items 3 to 6). Then the first review. |
-| markdown-writer | New on `main` in this session (`c0a90c0`, and the last batch). No review round. With the trees of the reference as input, 57 of 60 corpus documents are correct. Open: standalone output is half-done (330 replay units with reference results fail, because the writer does not render the template yet; a draft that is not compiled is in `env/tmp/markdown-writer-s4/`), grid tables with row spans (I-MDW-02), `--ascii` (I-MDW-05), one reference form (I-MDW-06), `markua`; 177 of 200 large random trees differ for `markdown` (many small rules). | Finish standalone output (brief `markdown-writer-u3.md`, item 2), then items 3 to 6. Then the first review. |
-| latex-writer | New on `main` in this session (the last batch): the writers `latex` and `beamer`, fragment output. The findings of the old review round 2 are corrected. No review of the current code. Open: standalone output is not started; rows I-LATEX-09 and I-LATEX-10 have old text; scope gaps math and highlighting; the mutation sample and coverage did not run. | Standalone output with `default.latex` and `default.beamer` (the cut of the HTML writer). Then the review. |
-| highlight | Not touched in sessions 3 and 4. Branch `ws/highlight` at `a9c1784` (a `wip` commit whose last three edits are not compiled). Not on GitHub. | The section "highlight" of the brief `open-branches-s4.md` (the merge of `main`, the licence table of each definition file, then `highlight-s3.md`). |
+| cli | On `main` (`fef04d5`: Lua filters, the level of each log message, the `saphyr-parser` rows removed). **Round 9 (Codex): 2 critical, 12 high, 10 medium, all open.** Critical: cli-R9-19 (standalone output silently drops titles and template text) and cli-R9-03 (`--sandbox` silently ignores the default template of the user; the worker found the cause: Randoc permits only the `--template` candidates and then uses the built-in template, the reference reads the template of the user with full file access). No code of unit 4 exists (branch `ws/cli-4` is at `main`). No Opus review of round 9 yet. `-s` needs no change: the command line already gives the template and the variables to each writer. | Brief `cli-s5b.md`, item 0 (a) first and alone. Then its other items; new: set `FilterEnvironment::readers` and `writers` when the Lua branch has `pandoc.read`. |
+| markdown-reader | On `main` (`52e5f01`, `4333b6e`). **Round 4 (Codex): Codex R3-02 is STILL OPEN at critical** (the scans for HTML closers still consume literal tags inside code), the reviewer has counterexamples against the closure of R3-11, R3-12, R3-15 and Opus R3-03, and 4 new high and 3 new medium findings. Unit 5 stopped with nothing committed: a patch (818 lines; the same content is `stash@{0}` of the repository) corrects R4-03, R4-04, R4-05, R4-06 and holds half of R4-01, R4-07 and I-MD-60. No Opus review of round 4 yet. | Codex R3-02 first (it was not in the brief `markdown-reader-s5b.md`: add it as item 0, with the method of `markdown-reader-s4b.md`: each cache against the plain scan). Then apply the patch on `ws/markdown-reader-5`, run the crate tests, make the replay data again, the gate. |
+| markdown-writer | On `main`: both critical findings of round 1 are corrected (`f292078`), then divs, figures, nested emphasis, the `columns` panic (`ff5a64b`). Branch `ws/markdown-writer-3` at `5498568` has NO gate pass: standalone output (all 330 standalone replay units pass in the library test), 9 high Codex findings, a faster depth test; pushed as `wip/markdown-writer`. Two patches: one math rule, about 40 replay cases without reference results. Open: nested lists and tables are slow (cause in `randoc-layout`), the medium findings, items 4 to 6 of the brief. | Gate on `5498568`, merge. Then the rest of `markdown-writer-s5.md`. Then the verification by both reviewers. |
+| latex-reader | On `main` (`c46be2e`, the state of `4fad0ed`). Round 1 (both reviewers: 25 high, 13 medium): about half is corrected; each open finding is a row I-LTXR-16 to I-LTXR-49. The memory defect of a depth test is closed (I-LTXR-51). 5 of 8 corpus documents are equal. Unit 5 stopped with a patch (10 findings, 10 new matrices, the new file `scope.rs`); with it one baseline unit fails (`latex-reader/structure/structure-021#read`, not examined). | Apply the patch on `ws/latex-reader-4`, examine that unit, the gate. Then the open rows, the ignored wall-time test, `COMMANDS.md`. Before each gate: the whole test binary of the crate through `limit-run 1500 300`. |
+| lua | On `main`: the round 3 findings (`9c224f6`), the option globals, `lpeg` and `re` (`c75b776`, ADR 19), step-count time tests (`54ae392`). Open medium rows I-LUA-11 and I-LUA-15. `pandoc.read` and `pandoc.write` are written as staged files, not compiled. | Brief `lua-s5.md` from item 3 (the staged files), then `MODULES.md`, the entrances for custom readers and writers and the interpreter. Then the verification by both reviewers (Codex log `lua-codex-r3`). |
+| citeproc | On `main`: the round 2 findings (`b95fb95`), text cases, the output tree, the evaluation of `text`, `group`, `choose` (`11e9493`), `number` and `label` (`d3f5a8a`). Branch `ws/citeproc-3` at `1fbd17f` (the date module, 323 of 323 reference cases; NO gate pass; pushed as `wip/citeproc`). `names` is a patch script with 450 recorded reference results. No review of the new modules. | Gate on `1fbd17f`, merge. Apply the names patch. Then the entry for one citation, unit 4 of the plan, `--citeproc`. A Codex verification of round 2 (brief `review-citeproc-round3-codex.md` is ready). |
+| html-reader | On `main` (`becae30`). The four medium rows of round 3 are closed; EPUB section types and the TeX annotation of MathML are read. Open: the `iframe` fetch, the checks (fuzz, coverage, mutation). | The verification by both reviewers (round 4). |
+| commonmark-reader | On `main` since session 4. Round 8: Opus APPROVES; Codex requests changes with 4 medium (R8-01 to R8-04). | One short unit for the 4 medium findings and the 3 low Opus findings, then the Codex verification (log `commonmark-reader-codex-r8`). |
+| math | On `main` since session 4. Round 4: both request changes (Opus: 2 medium in the crate; Codex: 2 high, 3 medium). The two Opus high findings had their cause in the Markdown writer and are corrected there. | Brief `math-s5.md` (add the Codex findings), then the verification. |
+| yaml | Not touched in session 5. Three medium rows open (I-YAML-22 to 24). | Brief `yaml-s5.md`. |
+| html-writer | Not touched. The review of the new code of session 4 is due; the briefs `review-html-writer-round7-*.md` are ready (make them again for the new head). | The review. |
+| latex-writer | Not touched. Standalone output is not started. | Brief `latex-writer-s5.md`. |
+| harness-speed | On `main` (`4146317`, `052eb5b`). No review round. Not done: a run mode that selects units for a worker. | The review with the next block that changes the harness. |
+| contracts | Open requests: two defects of `NativeHost` (a copy of a file onto itself empties it; a variable that is not UTF-8 makes `environment` panic; no caller reaches them now), an error kind that a Lua `pcall` cannot catch (I-LUA-15), one shared module for the join rules of an inline list (three copies), public helpers for citeproc (Haskell `isSpace`, a general-category table, the `aeson` string writer), the listings language table for the LaTeX reader (I-LTXR-03), two time defects of `randoc-layout` (the indent prefix is copied at each nesting level; no fast path for the width of ASCII text). | Briefs `contracts-s5.md` and items 1 and 2 of `cli-s5b.md`; one new unit for `randoc-layout`. |
+| highlight | Not touched since session 2. | The section "highlight" of the brief `open-branches-s4.md`. |
 
-Not started: `docx` (a brief is ready: `docx-reader.md`), `odt`, `epub`,
-`rst`, `org`, `typst`, `djot`, `man`, `docbook`, `jats`, the wiki formats
-and the other formats of the inventory, custom readers and writers,
-`--lua-filter` in the program, `--citeproc`, `--embed-resources`, PDF
-output through an engine, and the `lua` and `server` modes.
+Not started: `docx` (brief `docx-reader.md`), `odt`, `epub`, `rst`, `org`,
+`typst`, `djot`, `man`, `docbook`, `jats`, the wiki formats and the other
+formats of the inventory, custom readers and writers, `--citeproc`,
+`--embed-resources`, PDF output through an engine, and the `lua` and
+`server` modes.
 
 ### Open issues
 
-- **Verification of the corrections.** No block has an approval of this
-  session. For each block whose correction unit is on `main`, the same
-  reviewers verify: resume the Codex session (`codex-resume` with the log
-  of the round in the table) and start a new Opus reviewer with the
-  template `review-s4-new` on a new frozen tree of `main`.
-- **Licence.** (1) Decision D6 waits for the owner: the old commits of
-  `main` hold the completion scripts, the FODT results and the manual
-  tables; a removal needs a forced push. (2) The licence scan of a branch
-  diff is not sufficient: a stored reference result can hold copyleft
-  text that the reference program generates. The audit of this session
-  (`env/store/reports/licence-audit-s4.md`) checked all 751 tracked files
-  of `c494dd5`; run its scripts (`env/tmp/licence-audit-s4/`) again
-  before each handoff. (3) `wip/highlight` is still not pushed: nobody
-  checked the licence of each syntax definition file (the brief
-  `open-branches-s4.md` has the item). (4) Decisions D1 to D5 still wait.
-- **Requests to the coordinator that are not done (shared contracts).**
-  One shared module for the join rules of an inline list (three copies:
-  `randoc-html-reader`, `randoc-latex-reader`, `randoc-lua`; the port of
-  `Text.Pandoc.Builder` belongs in `randoc-ast`); `is_space` of
-  `randoc_core::shared` public for `randoc-commonmark`; the level of
-  `LogMessage::NoTitleElement` (the reference gives INFO); the removal of
-  the `saphyr-parser` rows in `THIRD_PARTY_NOTICES.md` and
-  `docs/PRIOR_ART.md` and of its licence file (no crate uses it); the
-  rows I-CONTRACTS-01 to 03 (the Lua unit in work handles them).
-- **Gate evidence that is open.** Mutation samples and coverage did not
-  run for most blocks of this session (each merge record says what ran);
-  no benchmark (gate 6) was measured; the Markdown writer and the LaTeX
-  reader have no review round yet.
-- **Codex.** Two more Codex runs were stopped by the service with a
-  content flag (`cli` round 8, `html-reader` round 3), seven in all. Their
-  last report files held real findings, among them both critical ones. A
-  stopped run can leave a child process: look for processes whose working
-  directory is in its scratch folder.
-- **Speed of the checks.** One gate run needs 20 to 60 minutes and the
-  harness has more than 40,000 units. Most of the time is file input and
-  output on the exFAT drive. A faster harness (fewer temporary files, a
-  filter for the suites that a branch changes) would raise the merge rate.
+- **Critical findings that are open on `main`.** Three: cli-R9-19 and
+  cli-R9-03 (the command line) and Codex R3-02 of the Markdown reader.
+  Until they are corrected, no other unit of these two crates merges.
+- **Work that is not in git.** The patches and staged files of the
+  stopped workers are in `env/store/patches-s5/` (the store is a local
+  Git repository). Each report says how to apply them.
+- **Approvals.** One in this session (the CommonMark reader, Opus). Each
+  other review requests changes. A block is done only when both reviewers
+  approve its head.
+- **Licence.** Decision D6 still waits for the owner (the old commits of
+  `main` hold three kinds of copyleft text; the head does not). Decisions
+  D1 to D5 wait too. New material of this session: LPeg 1.1.0 (MIT; a
+  copy of its C sources with a hash test, ADR 19; the coordinator
+  permitted the one download from the page of its author). The licence
+  audit scripts of session 4 (`env/tmp/licence-audit-s4/`) did NOT run
+  again in this session: run them before the next handoff.
+- **Gate evidence that is open.** Mutation samples, coverage and fuzzing
+  did not run for several blocks (each merge record says what ran); no
+  benchmark (gate 6) was measured in sessions 4 and 5.
+- **The machine.** Load averages of 40 to 90 came from several gate runs
+  at the same time on the exFAT drive and from other work of the owner on
+  the same computer. Memory stayed above 35% free. The watchdog stopped
+  one process of the project (the LaTeX reader test at 4 GB).
 - **Interpretations of the coordinator that the owner can change:** the
-  three conditions for a small block; the `wip/NAME` snapshot branches;
-  the severity levels; test names of Pandoc as identifiers in
-  `spec/pandoc-testsuite.json` (the licence audit classed them as not
-  clear; the coordinator keeps them).
+  download of LPeg under the reuse rule; the pause of the citeproc unit
+  to keep the limit of 5 code workers when a critical finding needed a
+  worker; the three conditions for a small block, the `wip/NAME` branches
+  and the severity levels, as in the last handoff.
 
 ### Next three tasks
 
-1. **Close the review loop of each block.** Merge the units that are in
-   work (the table above). Then, for each block: the verification by the
-   same reviewers, and one correction unit for what stays open. Start
-   with the blocks that had critical findings (`markdown-reader`,
-   `html-reader`, `latex-reader`), then the first review round of the
-   Markdown writer and the LaTeX reader. Measure `main` after each batch
-   with a Sonnet agent (the report form is in
-   `env/store/reports/measure-s4.md`).
-2. **Connect the Lua runtime and citations.** `--lua-filter` in the
-   command line (the Lua unit gives one public entrance for it), then the
-   other `pandoc` modules, `pandoc.read` and `pandoc.write`, custom
-   readers and writers, and `randoc lua`. `citeproc` units 3 to 6 (the
-   brief `citeproc.md`) with the round 2 findings first, then
-   `--citeproc`. Quarto and R Markdown need both.
-3. **The next formats, in the order of the demand table:** finish the
-   LaTeX reader (the command table `COMMANDS.md`) and the Markdown writer
-   (real documents first), merge the LaTeX writer, then the `docx` reader
-   (brief `docx-reader.md`; it also builds the shared archive and XML
-   layer for `odt` and `epub`), the `rst` reader, the `typst` writer and
-   the `rst` writer. `highlight` (brief `open-branches-s4.md`) gives
-   syntax highlighting to the HTML and LaTeX writers. Give each new crate
-   a differential tool from its first unit, a step budget for each parser
-   loop, and a test that compares each cache with the plain scan.
+1. **Correct the three open critical findings, then close the review
+   loop.** First the command line (brief `cli-s5b.md`, item 0 (a)) and the
+   Markdown reader (Codex R3-02). Then apply the patches of the stopped
+   units (the table above), run their gates and merge. Then, for each
+   block: the verification by the same reviewers, Codex first. Measure
+   `main` after each batch with a Sonnet agent.
+2. **Connect the Lua runtime and citations.** The staged `pandoc.read`
+   and `pandoc.write`, the table `MODULES.md`, custom readers and
+   writers, the interpreter mode; the options and the format lookups
+   that the command line must give to a filter. citeproc: `names`, the
+   entry for one citation, unit 4 of its plan, then `--citeproc`.
+3. **The next formats.** Finish the LaTeX reader (the open rows, then
+   `COMMANDS.md`) and standalone output of the Markdown and LaTeX
+   writers; the short units for `commonmark`, `math` and `yaml`; the
+   shared contracts (`contracts-s5.md`, `randoc-layout`); then the `docx`
+   reader (brief `docx-reader.md`), the `rst` reader, the `typst` writer
+   and the `rst` writer, and `highlight`.
 
 ## Workstreams that are merged
 
