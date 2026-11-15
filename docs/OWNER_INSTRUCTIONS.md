@@ -220,6 +220,33 @@ completely. Its main rules:
     `main`; then the coordinator removed each worktree, stopped the
     watchdog and wrote the handoff.)
 
+23. The start message of the sixth session (2026-11-15, 01:09 UTC): the
+    start text of instruction 20 again (the files to read now end with
+    the decision rows from 2026-11-12T05:20, `s5-common.md` and
+    `merge-s5.md`; the first check reads `env/tmp/merge-s5-*/state.txt`
+    before a push), with these additions to its rules: "Batch several
+    blocks into one merge check", "The usage limit: about 10 Opus agents
+    in parallel use up the 5-hour window in about 2 hours, and a stop
+    comes without a warning. Run each merge check detached with a state
+    file. Each worker commits after each item, appends its gate line to
+    env/store/inbox/NAME.log and writes its report section early. Start
+    the Codex reviewer of a round first, and run at most one or two Opus
+    reviewers next to the five workers. Keep env/store/decisions.tsv and
+    units.tsv current through a Sonnet clerk after each merge batch."
+    And then: "Don't handoff before 9 am UTC and keep working in this
+    thread" (The time is 09:00 UTC on 2026-11-15. How the coordinator
+    applies the message: at 01:12 UTC the usage tool of the app showed
+    the weekly limit of the account for all models at 99% used, with a
+    reset on 2026-11-21 and with extra usage off. A group of Opus
+    workers would use the last 1% in a short time, and then each agent
+    and the coordinator stop. So in this session no Opus agent starts
+    while that limit is at 99%. The code workers run through the Codex
+    CLI with GPT-6.1 Sol, which does not use that limit; instruction 14
+    permits a change of the delegation. Each gate run and each merge
+    check is a plain script with a state file, and the coordinator
+    writes the records itself. This is an interpretation of the
+    coordinator. The owner can change it with one sentence.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,
