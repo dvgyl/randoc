@@ -1,0 +1,85 @@
+{
+ "oracle": "pandoc 3.13",
+ "cases": [
+  {
+   "id": "email html",
+   "format": "html",
+   "opts": {
+    "email": "javascript"
+   },
+   "doc": "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"Write\"}, {\"t\": \"Space\"}, {\"t\": \"Str\", \"c\": \"to\"}, {\"t\": \"Space\"}, {\"t\": \"Link\", \"c\": [[\"\", [], []], [{\"t\": \"Str\", \"c\": \"box@site.test\"}], [\"mailto:box@site.test\", \"\"]]}, {\"t\": \"Space\"}, {\"t\": \"Link\", \"c\": [[\"\", [], []], [{\"t\": \"Str\", \"c\": \"the\"}, {\"t\": \"Space\"}, {\"t\": \"Str\", \"c\": \"desk\"}], [\"mailto:desk@site.test?subject=Hi\", \"\"]]}]}]}",
+   "template": null,
+   "sha256": "2b7ad4576ce71c1a66e205fcd43c4f9f3356a0ea012b1011cb1ab90e73e4b39f",
+   "length": 1032,
+   "known": "I-HTML-03"
+  },
+  {
+   "id": "katex https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/ html",
+   "format": "html",
+   "opts": {
+    "katex": "https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/",
+    "variables": {
+     "pagetitle": "Fixed"
+    }
+   },
+   "doc": "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"Then\"}, {\"t\": \"Space\"}, {\"t\": \"Math\", \"c\": [{\"t\": \"InlineMath\"}, \"a+b\"]}]}, {\"t\": \"Para\", \"c\": [{\"t\": \"Math\", \"c\": [{\"t\": \"DisplayMath\"}, \"\\\\sum_i x_i\"]}]}]}",
+   "template": "[$math$]",
+   "sha256": "a6ae437ae6d118dee82550b3135f1f2d317d34cfc901492ad61ab760d959d53e",
+   "length": 671
+  },
+  {
+   "id": "katex https://files.test/k/ html",
+   "format": "html",
+   "opts": {
+    "katex": "https://files.test/k/",
+    "variables": {
+     "pagetitle": "Fixed"
+    }
+   },
+   "doc": "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"Then\"}, {\"t\": \"Space\"}, {\"t\": \"Math\", \"c\": [{\"t\": \"InlineMath\"}, \"a+b\"]}]}, {\"t\": \"Para\", \"c\": [{\"t\": \"Math\", \"c\": [{\"t\": \"DisplayMath\"}, \"\\\\sum_i x_i\"]}]}]}",
+   "template": "[$math$]",
+   "sha256": "9f50b178ba4e6127d731bb73ce69b7c85a5030edebded2005752fe5e7384bfca",
+   "length": 617
+  },
+  {
+   "id": "email html4",
+   "format": "html4",
+   "opts": {
+    "email": "javascript"
+   },
+   "doc": "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"Write\"}, {\"t\": \"Space\"}, {\"t\": \"Str\", \"c\": \"to\"}, {\"t\": \"Space\"}, {\"t\": \"Link\", \"c\": [[\"\", [], []], [{\"t\": \"Str\", \"c\": \"box@site.test\"}], [\"mailto:box@site.test\", \"\"]]}, {\"t\": \"Space\"}, {\"t\": \"Link\", \"c\": [[\"\", [], []], [{\"t\": \"Str\", \"c\": \"the\"}, {\"t\": \"Space\"}, {\"t\": \"Str\", \"c\": \"desk\"}], [\"mailto:desk@site.test?subject=Hi\", \"\"]]}]}]}",
+   "template": null,
+   "sha256": "2b7ad4576ce71c1a66e205fcd43c4f9f3356a0ea012b1011cb1ab90e73e4b39f",
+   "length": 1032,
+   "known": "I-HTML-03"
+  },
+  {
+   "id": "katex https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/ html4",
+   "format": "html4",
+   "opts": {
+    "katex": "https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/",
+    "variables": {
+     "pagetitle": "Fixed"
+    }
+   },
+   "doc": "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"Then\"}, {\"t\": \"Space\"}, {\"t\": \"Math\", \"c\": [{\"t\": \"InlineMath\"}, \"a+b\"]}]}, {\"t\": \"Para\", \"c\": [{\"t\": \"Math\", \"c\": [{\"t\": \"DisplayMath\"}, \"\\\\sum_i x_i\"]}]}]}",
+   "template": "[$math$]",
+   "sha256": "a6ae437ae6d118dee82550b3135f1f2d317d34cfc901492ad61ab760d959d53e",
+   "length": 671
+  },
+  {
+   "id": "katex https://files.test/k/ html4",
+   "format": "html4",
+   "opts": {
+    "katex": "https://files.test/k/",
+    "variables": {
+     "pagetitle": "Fixed"
+    }
+   },
+   "doc": "{\"pandoc-api-version\": [1, 23, 1, 2], \"meta\": {}, \"blocks\": [{\"t\": \"Para\", \"c\": [{\"t\": \"Str\", \"c\": \"Then\"}, {\"t\": \"Space\"}, {\"t\": \"Math\", \"c\": [{\"t\": \"InlineMath\"}, \"a+b\"]}]}, {\"t\": \"Para\", \"c\": [{\"t\": \"Math\", \"c\": [{\"t\": \"DisplayMath\"}, \"\\\\sum_i x_i\"]}]}]}",
+   "template": "[$math$]",
+   "sha256": "9f50b178ba4e6127d731bb73ce69b7c85a5030edebded2005752fe5e7384bfca",
+   "length": 617
+  }
+ ]
+}

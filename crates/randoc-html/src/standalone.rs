@@ -9,9 +9,9 @@
 
 use std::cell::RefCell;
 
-use randoc_ast::{Attr, Block, Inline, Meta, MetaValue, Target};
+use randoc_ast::{Attr, Block, Citation, Inline, Meta, MetaValue, Target};
 use randoc_core::shared::meta_context::{meta_to_context, normalize_date};
-use randoc_core::shared::{stringify, stringify_meta};
+use randoc_core::shared::{stringify, stringify_blocks, stringify_meta};
 use randoc_core::{CaptionPosition, Error, HtmlMathMethod, Result};
 use randoc_layout::Doc;
 use randoc_templates::{Context as TemplateContext, Val};
@@ -38,6 +38,7 @@ impl Html<'_> {
     pub(crate) fn meta_context(&mut self, meta: &Meta) -> Result<TemplateContext> {
         let max_depth = self.max_depth;
         let variables = &self.options.variables;
+        check_variable_depth(variables, max_depth)?;
         let writer = RefCell::new(&mut *self);
         meta_to_context(
             meta,
@@ -70,11 +71,22 @@ impl Html<'_> {
         {
             fields.push(("pagetitle", text(title)));
         }
-        // A list gives each item with inline text; a single value only a
-        // string or inlines (the oracle gives no name for a single block).
+        // A list gives each item with inline text, in the order of the
+        // oracle matrix `src/meta_fields.jsonl`: first the inlines, then the
+        // single plain blocks, then the single paragraphs, then the strings.
+        // A single value gives a name only when it is a string or inlines.
         let names: Vec<Val> = match meta.get("author") {
             Some(MetaValue::MetaList(items)) => {
-                items.iter().filter_map(inline_text).map(text).collect()
+                let mut ranked: Vec<(u8, &MetaValue)> = items
+                    .iter()
+                    .filter_map(|item| author_rank(item).map(|rank| (rank, item)))
+                    .collect();
+                ranked.sort_by_key(|(rank, _)| *rank);
+                ranked
+                    .into_iter()
+                    .filter_map(|(_, item)| inline_text(item))
+                    .map(text)
+                    .collect()
             }
             Some(single @ (MetaValue::MetaString(_) | MetaValue::MetaInlines(_))) => {
                 vec![text(stringify_meta(single))]
@@ -91,7 +103,7 @@ impl Html<'_> {
         {
             fields.push(("date-meta", Val::text(date)));
         }
-        if let Some(description) = meta.get("description").and_then(inline_text) {
+        if let Some(description) = meta.get("description").and_then(description_text) {
             fields.push(("description-meta", text(description)));
         }
         fields.push(("abstract-title", Val::text("Abstract")));
@@ -243,7 +255,7 @@ impl Html<'_> {
             ));
             text.push(Inline::Space);
         }
-        text.extend(without_links_and_notes(&entry.inlines, self.max_depth)?);
+        text.extend(entry.inlines.iter().cloned());
         if entry.id.is_empty() {
             return Ok(text);
         }
@@ -258,7 +270,10 @@ impl Html<'_> {
     }
 }
 
-/// The script that Pandoc 3.13 writes after the KaTeX script element.
+/// The text that the reference (Pandoc 3.13) writes after the KaTeX script
+/// element for `--katex`, observed in its output (480 bytes). Whether a
+/// literal of this size can stay is decision D7 of `PROGRESS.md`
+/// (`docs/ISSUES.md`, I-HTML-36).
 const KATEX_SCRIPT: &str = r#"<script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -288,8 +303,58 @@ pub(crate) fn inline_text(value: &MetaValue) -> Option<String> {
     }
 }
 
-/// Returns inlines with each note removed and each link replaced by its content.
-fn without_links_and_notes(inlines: &[Inline], max_depth: usize) -> Result<Vec<Inline>> {
+/// Returns the depth error when a template variable holds values nested
+/// deeper than `max_depth`. The walk has no recursion, so that the copy of
+/// the variables into the context and the render stay within the limit.
+fn check_variable_depth(variables: &TemplateContext, max_depth: usize) -> Result<()> {
+    let mut pending: Vec<(&Val, usize)> = variables.0.values().map(|v| (v, 1)).collect();
+    while let Some((value, depth)) = pending.pop() {
+        if depth > max_depth {
+            return Err(Error::App(
+                "The template variables are nested too deeply.".into(),
+            ));
+        }
+        match value {
+            Val::List(items) => pending.extend(items.iter().map(|v| (v, depth + 1))),
+            Val::Map(map) => pending.extend(map.0.values().map(|v| (v, depth + 1))),
+            Val::Simple(_) | Val::Bool(_) | Val::Null => {}
+        }
+    }
+    Ok(())
+}
+
+/// The place of an author list item in `author-meta`, or `None` for an item
+/// without a name.
+fn author_rank(item: &MetaValue) -> Option<u8> {
+    match item {
+        MetaValue::MetaInlines(_) => Some(0),
+        MetaValue::MetaBlocks(blocks) => match blocks.as_slice() {
+            [Block::Plain(_)] => Some(1),
+            [Block::Para(_)] => Some(2),
+            _ => None,
+        },
+        MetaValue::MetaString(_) => Some(3),
+        _ => None,
+    }
+}
+
+/// The text of `description-meta`: the plain text of a string, of inlines or
+/// of blocks of any form, and `True` or `False` for a boolean. A list or a
+/// map gives no text.
+fn description_text(value: &MetaValue) -> Option<String> {
+    match value {
+        MetaValue::MetaString(_) | MetaValue::MetaInlines(_) => Some(stringify_meta(value)),
+        MetaValue::MetaBlocks(blocks) => Some(stringify_blocks(blocks)),
+        MetaValue::MetaBool(true) => Some("True".to_owned()),
+        MetaValue::MetaBool(false) => Some("False".to_owned()),
+        MetaValue::MetaList(_) | MetaValue::MetaMap(_) => None,
+    }
+}
+
+/// Returns inlines with each note removed and each link replaced by its
+/// content, or the depth error. A citation keeps its identifiers, not its
+/// prefix and suffix, which the writer does not show.
+pub(crate) fn without_links_and_notes(inlines: &[Inline], max_depth: usize) -> Result<Vec<Inline>> {
     let mut out = Vec::with_capacity(inlines.len());
     for inline in inlines {
         strip(inline, &mut out, max_depth)?;
@@ -324,7 +389,20 @@ fn strip(inline: &Inline, out: &mut Vec<Inline>, depth: usize) -> Result<()> {
         Inline::Subscript(c) => Inline::Subscript(inner(c)?),
         Inline::SmallCaps(c) => Inline::SmallCaps(inner(c)?),
         Inline::Quoted(kind, c) => Inline::Quoted(*kind, inner(c)?),
-        Inline::Cite(citations, c) => Inline::Cite(citations.clone(), inner(c)?),
+        Inline::Cite(citations, c) => {
+            let citations = citations
+                .iter()
+                .map(|citation| Citation {
+                    id: citation.id.clone(),
+                    prefix: Vec::new(),
+                    suffix: Vec::new(),
+                    mode: citation.mode,
+                    note_num: citation.note_num,
+                    hash: citation.hash,
+                })
+                .collect();
+            Inline::Cite(citations, inner(c)?)
+        }
         Inline::Span(attr, c) => Inline::Span(attr.clone(), inner(c)?),
         Inline::Image(attr, c, target) => Inline::Image(attr.clone(), inner(c)?, target.clone()),
         other => other.clone(),
@@ -335,6 +413,7 @@ fn strip(inline: &Inline, out: &mut Vec<Inline>, depth: usize) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use randoc_ast::{Attr, Block, Citation, CitationMode, Inline, Target};
     use randoc_core::{CaptionPosition, Context, HtmlMathMethod, WrapOption, WriterOptions};
     use randoc_templates::{Template, Val};
 
@@ -404,6 +483,194 @@ mod tests {
             options.variables.insert("pagetitle", Val::text("Fixed"));
         }
         options
+    }
+
+    /// Replays `src/toc.jsonl` (`tools/toc_matrix.py`): headings in divs
+    /// that are a section and in divs that are not, and the classes that
+    /// remove a heading from the table of contents.
+    #[test]
+    fn the_toc_matrix_has_no_difference() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/toc.jsonl");
+        let data = std::fs::read_to_string(path).unwrap();
+        let mut failures = Vec::new();
+        let mut cases = 0;
+        for line in data.lines() {
+            let case: serde_json::Value = serde_json::from_str(line).unwrap();
+            let [name, format, opts, doc, expected] = case.as_array().unwrap().as_slice() else {
+                panic!("a case has five parts: {line}");
+            };
+            let format = format.as_str().unwrap();
+            let doc = randoc_ast::json::from_json(doc.as_str().unwrap()).unwrap();
+            let mut options = options(opts, &doc);
+            options.template = Some(compile("probe", format, "$toc$|$body$"));
+            let version = if format == "html4" {
+                Version::Html4
+            } else {
+                Version::Html5
+            };
+            let output = write(&doc, &options, &mut Context::pure(), version);
+            cases += 1;
+            if output.as_deref().ok() != expected.as_str() {
+                failures.push(format!("{name} {format} {opts}: {output:?}"));
+            }
+        }
+        assert!(cases >= 190, "only {cases} cases");
+        assert!(
+            failures.is_empty(),
+            "{} differences: {failures:#?}",
+            failures.len()
+        );
+    }
+
+    /// A heading whose text is `levels` nested inlines of one kind.
+    fn deep_heading(kind: &str, levels: usize) -> Block {
+        let mut inline = Inline::Str("x".into());
+        for _ in 0..levels {
+            inline = match kind {
+                "emph" => Inline::Emph(vec![inline]),
+                "link" => Inline::Link(Attr::default(), vec![inline], Target::default()),
+                _ => Inline::Span(Attr::default(), vec![inline]),
+            };
+        }
+        let content = match kind {
+            "cite-prefix" => vec![Inline::Cite(
+                vec![Citation {
+                    id: "k".into(),
+                    prefix: vec![inline],
+                    suffix: Vec::new(),
+                    mode: CitationMode::NormalCitation,
+                    note_num: 0,
+                    hash: 0,
+                }],
+                vec![Inline::Str("c".into())],
+            )],
+            "note" => vec![
+                Inline::Str("n".into()),
+                Inline::Note(vec![Block::Para(vec![inline])]),
+            ],
+            _ => vec![inline],
+        };
+        Block::Header(1, Attr::new("h", Vec::new(), Vec::new()), content)
+    }
+
+    /// Writes on a thread with a 2 MB stack and the default limits, with a
+    /// template and `--toc`. The thread builds the input and forgets it
+    /// after the write: its recursive drop is not part of the writer.
+    fn write_on_small_stack(
+        kind: &'static str,
+        levels: usize,
+        version: Version,
+    ) -> std::result::Result<String, String> {
+        std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || {
+                let mut options = WriterOptions::default();
+                options.table_of_contents = true;
+                options.variables.insert("pagetitle", Val::text("Fixed"));
+                options.template = Some(compile("probe", "html", "$toc$|$body$"));
+                let mut blocks = Vec::new();
+                if kind == "variable" {
+                    let mut value = Val::text("x");
+                    for _ in 0..levels {
+                        value = Val::List(vec![value]);
+                    }
+                    options.variables.insert("unused", value);
+                } else {
+                    blocks.push(deep_heading(kind, levels));
+                }
+                let doc = randoc_ast::Pandoc {
+                    meta: Default::default(),
+                    blocks,
+                };
+                let result =
+                    write(&doc, &options, &mut Context::pure(), version).map_err(|e| e.to_string());
+                std::mem::forget(doc);
+                std::mem::forget(options);
+                result
+            })
+            .unwrap()
+            .join()
+            .unwrap()
+    }
+
+    /// Review round 7b, R7b-03 and R7b-04: the table of contents and the
+    /// template variables copy no tree past the depth limit.
+    #[test]
+    fn deep_headings_and_variables_stop_at_the_limit_on_a_small_stack() {
+        for version in [Version::Html5, Version::Html4] {
+            for levels in [1_000, 10_000, 100_000] {
+                for kind in ["span", "emph", "link", "note", "variable"] {
+                    let error = write_on_small_stack(kind, levels, version).unwrap_err();
+                    assert!(error.contains("nested too deeply"), "{kind} {levels}");
+                }
+                // The prefix of a citation does not show, so its depth does not count.
+                let output = write_on_small_stack("cite-prefix", levels, version).unwrap();
+                assert!(output.contains("data-cites") || output.contains("citation"));
+            }
+        }
+    }
+
+    #[test]
+    fn the_default_limit_is_safe_for_the_table_of_contents_on_a_small_stack() {
+        for kind in ["span", "emph", "link", "note", "cite-prefix", "variable"] {
+            let mut deepest = 0;
+            for levels in [1, 20, 60, 100, 120, 126, 127, 128, 129, 130] {
+                if write_on_small_stack(kind, levels, Version::Html5).is_ok() {
+                    deepest = levels;
+                }
+            }
+            assert!(deepest >= 60, "{kind}: {deepest}");
+        }
+    }
+
+    /// Replays `src/meta_fields.jsonl` (`tools/meta_fields.py`): the fields
+    /// `pagetitle`, `author-meta`, `date-meta` and `description-meta` for
+    /// each metadata value kind. `pandoc.write` gives `Untitled` for a
+    /// document without a title text; Randoc leaves that to the command line
+    /// (I-HTML-35), so the test sets the same variable.
+    #[test]
+    fn the_meta_field_matrix_has_no_difference() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/meta_fields.jsonl");
+        let data = std::fs::read_to_string(path).unwrap();
+        let mut lines = data.lines();
+        let header: serde_json::Value = serde_json::from_str(lines.next().unwrap()).unwrap();
+        let probe = header["probe"].as_str().unwrap();
+        let mut failures = Vec::new();
+        let mut cases = 0;
+        for line in lines {
+            let case: serde_json::Value = serde_json::from_str(line).unwrap();
+            let [name, format, doc, expected] = case.as_array().unwrap().as_slice() else {
+                panic!("a case has four parts: {line}");
+            };
+            let doc = randoc_ast::json::from_json(doc.as_str().unwrap()).unwrap();
+            let mut options = WriterOptions::default();
+            let titled = doc
+                .meta
+                .get("title")
+                .and_then(super::inline_text)
+                .is_some_and(|t| !t.is_empty());
+            if !titled {
+                options.variables.insert("pagetitle", Val::text("Untitled"));
+            }
+            let format = format.as_str().unwrap();
+            options.template = Some(compile("probe", format, probe));
+            let version = if format == "html4" {
+                Version::Html4
+            } else {
+                Version::Html5
+            };
+            let output = write(&doc, &options, &mut Context::pure(), version);
+            cases += 1;
+            if output.as_deref().ok() != expected.as_str() {
+                failures.push(format!("{name} {format}: {output:?}"));
+            }
+        }
+        assert!(cases >= 300, "only {cases} cases");
+        assert!(
+            failures.is_empty(),
+            "{} differences: {failures:#?}",
+            failures.len()
+        );
     }
 
     /// Replays `src/standalone.jsonl` (`tools/standalone.py`): Pandoc 3.13

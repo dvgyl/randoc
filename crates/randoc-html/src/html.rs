@@ -14,7 +14,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::Version;
 use crate::attributes::{HTML4_HEADING_ATTRIBUTES, HTML5_ATTRIBUTES, SECTION_ATTRIBUTES};
-use crate::standalone::TocEntry;
+use crate::standalone::{TocEntry, without_links_and_notes};
 use randoc_layout::{Doc, cr, empty, flush, space};
 
 use crate::shared::{Dimension, escape_attribute, escape_text};
@@ -157,6 +157,9 @@ pub(crate) struct Html<'a> {
     pub(crate) toc_entries: Vec<TocEntry>,
     /// The indexes in `toc_entries` of the sections that the writer renders now.
     toc_open: Vec<usize>,
+    /// `true` inside a div that is not a section and holds more than one
+    /// block: Pandoc lists no heading of its content in the table of contents.
+    toc_hidden: bool,
     /// `true` when the output has a `q` element (the template variable `quotes`).
     pub(crate) wrote_q_tags: bool,
     /// `true` when the document has math (the template variable `math`).
@@ -188,6 +191,7 @@ impl<'a> Html<'a> {
             warnings: RefCell::new(Vec::new()),
             leading_levels: RefCell::new(HashMap::new()),
             toc_entries: Vec::new(),
+            toc_hidden: false,
             toc_open: Vec::new(),
             wrote_q_tags: false,
             wrote_math: false,
@@ -322,10 +326,14 @@ impl Html<'_> {
         }
     }
 
-    /// As `text`, and escapes `"` and `'` too: Pandoc writes the TeX source
-    /// for MathJax and KaTeX this way.
+    /// The TeX source for MathJax and KaTeX: escaped as an attribute value
+    /// (also `"` and `'`), without the presentation selector of U+21A9, and
+    /// obfuscated in an e-mail link.
     fn quoted_text(&self, text: &str) -> Doc {
-        let escaped = self.escape_hook(&escape_attribute(text, false));
+        if self.obfuscating {
+            return lit(&obfuscate(text));
+        }
+        let escaped = escape_attribute(text, false);
         if self.wraps() {
             words(&escaped)
         } else {
@@ -391,14 +399,19 @@ impl Html<'_> {
         level
     }
 
-    /// Returns, for each block that starts a section, the index where its section
-    /// ends: the next block with a heading at its start of the same level or a lower
-    /// level, or the end of the list. One pass with a stack keeps the time linear.
-    fn section_ends(&self, blocks: &[Block]) -> Vec<usize> {
+    /// Returns, for each block that starts a section, the number of blocks of
+    /// its section: up to the next block with a heading at its start of the
+    /// same level or a lower level, or to the end of the list. A span does
+    /// not change when the list is a part of a larger list, so the children
+    /// of a section reuse the spans of their parent. One pass with a stack
+    /// keeps the time linear.
+    fn section_spans(&self, blocks: &[Block]) -> Vec<usize> {
         let mut ends = vec![blocks.len(); blocks.len()];
         // The open sections, from the outermost to the innermost.
         let mut open: Vec<(usize, i64)> = Vec::new();
         for (index, block) in blocks.iter().enumerate() {
+            #[cfg(test)]
+            crate::table::steps::add(1);
             let Some(level) = self.leading_heading_level(block) else {
                 continue;
             };
@@ -413,7 +426,26 @@ impl Html<'_> {
             }
             open.push((index, level));
         }
-        ends
+        ends.iter()
+            .enumerate()
+            .map(|(index, end)| end.saturating_sub(index))
+            .collect()
+    }
+
+    /// Returns the number of units of `section_units` in a list of blocks:
+    /// each heading with the blocks of its section counts as one.
+    fn section_unit_count(&self, blocks: &[Block]) -> usize {
+        let spans = self.section_spans(blocks);
+        let mut count = 0;
+        let mut index = 0;
+        while let Some(block) = blocks.get(index) {
+            count += 1;
+            index += match block {
+                Block::Header(..) => spans.get(index).copied().unwrap_or(1).max(1),
+                _ => 1,
+            };
+        }
+        count
     }
 
     // ----- blocks -----
@@ -421,21 +453,30 @@ impl Html<'_> {
     /// Renders blocks and groups each heading with the blocks after it into a section.
     /// Each nested section and each nested div of this path counts as one depth level.
     pub(crate) fn section_blocks(&mut self, blocks: &[Block], depth: usize) -> Result<Doc> {
-        self.section_units(blocks, depth, "\n", &[])
+        self.section_units(blocks, None, depth, "\n", &[])
     }
 
     /// As `section_blocks`, with `separator` between the units: a block, or a
     /// section. `extra` are attributes after the own attributes of each unit
-    /// (the attributes of a wrapper div).
+    /// (the attributes of a wrapper div). `spans` are the section spans of
+    /// `blocks` when the caller has them.
     fn section_units(
         &mut self,
         blocks: &[Block],
+        spans: Option<&[usize]>,
         depth: usize,
         separator: &str,
         extra: &[(String, String)],
     ) -> Result<Doc> {
         let depth = self.enter(depth)?;
-        let ends = self.section_ends(blocks);
+        let computed;
+        let spans = match spans {
+            Some(spans) => spans,
+            None => {
+                computed = self.section_spans(blocks);
+                &computed
+            }
+        };
         let mut doc = empty();
         let mut first = true;
         let mut index = 0;
@@ -451,13 +492,14 @@ impl Html<'_> {
             let mut next = index + 1;
             let section = match block {
                 Block::Header(level, attr, inlines) => {
-                    next = ends.get(index).copied().unwrap_or(blocks.len());
-                    let children = blocks.get(index + 1..next).unwrap_or_default();
+                    let span = spans.get(index).copied().unwrap_or_default();
+                    next = (index + span).clamp(index + 1, blocks.len());
                     let section = LooseSection {
                         level: *level,
                         heading: attr,
                         inlines,
-                        rest: children,
+                        rest: blocks.get(index + 1..next).unwrap_or_default(),
+                        rest_spans: spans.get(index + 1..next),
                     };
                     doc += self.header_section(&section, depth, extra)?;
                     true
@@ -474,6 +516,7 @@ impl Html<'_> {
                                 heading: &heading.attr,
                                 inlines: heading.inlines,
                                 rest: heading.rest,
+                                rest_spans: None,
                             };
                             doc += self.header_section(&section, depth, extra)?;
                             true
@@ -512,9 +555,10 @@ impl Html<'_> {
             heading: attr,
             inlines,
             rest: children_blocks,
+            rest_spans,
         } = section;
         let number = self.next_section_number(level, attr);
-        self.open_toc_entry(level, &attr.id, &attr.classes, number.as_ref(), inlines);
+        self.open_toc_entry(level, &attr.id, &attr.classes, number.as_ref(), inlines)?;
         // Pandoc moves the keys `role` and `epub:type` from a heading to its
         // section, and then writes the section element also without
         // `--section-divs`.
@@ -546,7 +590,7 @@ impl Html<'_> {
             if self.block_level == 0 {
                 self.flush_notes(&mut body, ReferenceLocation::EndOfBlock, "")?;
             }
-            let children = self.section_blocks(children_blocks, depth)?;
+            let children = self.section_units(children_blocks, rest_spans, depth, "\n", &[])?;
             self.toc_open.pop();
             then_section_children(&mut body, children, children_blocks);
             self.flush_leaf_section_notes(&mut body, children_blocks)?;
@@ -569,7 +613,7 @@ impl Html<'_> {
         if self.block_level == 0 {
             self.flush_notes(&mut header, ReferenceLocation::EndOfBlock, &attr.id)?;
         }
-        let children = self.section_units(children_blocks, depth, "\n", extra)?;
+        let children = self.section_units(children_blocks, rest_spans, depth, "\n", extra)?;
         self.toc_open.pop();
         then_section_children(&mut header, children, children_blocks);
         self.flush_leaf_section_notes(&mut header, children_blocks)?;
@@ -577,7 +621,10 @@ impl Html<'_> {
     }
 
     /// Records a section heading for the table of contents. The caller pops
-    /// `toc_open` after the children of the section.
+    /// `toc_open` after the children of the section. `classes` are the
+    /// classes of the heading: a class of a div does not remove its heading.
+    /// The entry keeps a copy of the inlines without links and notes, made
+    /// within the depth limit.
     fn open_toc_entry(
         &mut self,
         level: i64,
@@ -585,20 +632,22 @@ impl Html<'_> {
         classes: &[Text],
         number: Option<&SectionNumber>,
         inlines: &[Inline],
-    ) {
-        if !(self.options.table_of_contents && self.options.template.is_some()) {
+    ) -> Result<()> {
+        if self.toc_hidden || !(self.options.table_of_contents && self.options.template.is_some()) {
             self.toc_open.push(usize::MAX);
-            return;
+            return Ok(());
         }
+        let inlines = without_links_and_notes(inlines, self.max_depth)?;
         self.toc_open.push(self.toc_entries.len());
         self.toc_entries.push(TocEntry {
             level,
             id: id.to_owned(),
             number: number.map(|n| n.shown.clone()),
             unlisted: classes.iter().any(|c| c == "unlisted"),
-            inlines: inlines.to_vec(),
+            inlines,
             parent: self.toc_open.iter().rev().nth(1).copied(),
         });
+        Ok(())
     }
 
     fn section_classes(&self, level: i64, header: &[Text], div: &[Text]) -> Vec<Text> {
@@ -738,13 +787,7 @@ impl Html<'_> {
         } else {
             &section.id
         };
-        let classes: Vec<Text> = header
-            .classes
-            .iter()
-            .chain(&section.classes)
-            .cloned()
-            .collect();
-        self.open_toc_entry(level, id, &classes, number.as_ref(), inlines);
+        self.open_toc_entry(level, id, &header.classes, number.as_ref(), inlines)?;
         let mut body = self.header(level, header, Attrs::new(), number.as_ref(), inlines, depth)?;
         if self.block_level == 0 {
             self.flush_notes(&mut body, ReferenceLocation::EndOfBlock, "")?;
@@ -998,6 +1041,7 @@ impl Html<'_> {
                 heading,
                 inlines,
                 rest,
+                rest_spans: None,
             };
             return self.loose_section(attr, &section, depth, extra);
         }
@@ -1008,7 +1052,7 @@ impl Html<'_> {
         let one_section = || {
             sections
                 && matches!(content.first(), Some(Block::Header(..)))
-                && self.section_ends(content).first() == Some(&content.len())
+                && self.section_spans(content).first() == Some(&content.len())
         };
         if wrapper_value(attr) == Some("1") && (content.len() == 1 || one_section()) {
             let pairs = attr
@@ -1021,7 +1065,7 @@ impl Html<'_> {
             let mut attrs = self.attrs(&own);
             attrs.extend(extra);
             if sections {
-                return self.section_units(content, depth, "\n", &attrs);
+                return self.section_units(content, None, depth, "\n", &attrs);
             }
             return match content {
                 [child] if self.block_present(child) => self.block_with(child, depth, attrs),
@@ -1045,11 +1089,17 @@ impl Html<'_> {
         } else {
             "\n"
         };
+        // The table of contents goes into a div that is not a section only
+        // when the div holds one unit: one block, or one heading with its
+        // section (`src/toc.jsonl`).
+        let hidden = self.toc_hidden;
+        self.toc_hidden = hidden || self.section_unit_count(content) != 1;
         let body = if sections {
-            self.section_units(content, depth, separator, &[])
+            self.section_units(content, None, depth, separator, &[])
         } else {
             self.lines(content, depth, separator, &[])
         };
+        self.toc_hidden = hidden;
         self.block_level = outer;
         self.plain_paragraphs = outer_plain;
         self.incremental = outer_incremental;
@@ -1091,6 +1141,7 @@ impl Html<'_> {
             heading,
             inlines,
             rest,
+            rest_spans: _,
         } = section;
         let div_classes = div.classes.get(1..).unwrap_or_default();
         let classes = unique_classes(&self.section_classes(level, &[], div_classes));
@@ -1875,6 +1926,7 @@ impl Html<'_> {
                 Err(error) => self.math_as_tex(kind, tex, &class_attr, &error),
             },
             HtmlMathMethod::MathMl => match randoc_math::to_mathml(kind, tex, self.max_depth) {
+                Ok(mathml) if self.obfuscating => lit(&obfuscate_markup(&mathml)),
                 Ok(mathml) => lit(&mathml),
                 Err(error) => self.math_as_tex(kind, tex, &class_attr, &error),
             },
@@ -2061,6 +2113,8 @@ struct LooseSection<'a> {
     inlines: &'a [Inline],
     /// The blocks of the div after the heading.
     rest: &'a [Block],
+    /// The section spans of `rest`, when the caller has them.
+    rest_spans: Option<&'a [usize]>,
 }
 
 /// The attributes of the section element of a div. Pandoc writes the
@@ -2372,6 +2426,72 @@ fn tag_start_escaped(name: &str, attrs: &[(String, String)]) -> Doc {
 
 /// Writes each character as a character reference: odd code points in
 /// hexadecimal, even code points in decimal, as Pandoc does.
+/// Obfuscates each text node of a MathML string, as Pandoc does in an
+/// e-mail link: the markup stays, and the text gets one character reference
+/// for each character of its decoded form.
+fn obfuscate_markup(xml: &str) -> String {
+    let mut out = String::with_capacity(xml.len() * 4);
+    let mut rest = xml;
+    while !rest.is_empty() {
+        let (part, after) = if rest.starts_with('<') {
+            let end = rest.find('>').map_or(rest.len(), |i| i + 1);
+            let (tag, after) = rest.split_at(end);
+            out.push_str(tag);
+            (None, after)
+        } else {
+            let end = rest.find('<').unwrap_or(rest.len());
+            let (text, after) = rest.split_at(end);
+            (Some(text), after)
+        };
+        if let Some(text) = part {
+            out.push_str(&obfuscate(&decode_references(text)));
+        }
+        rest = after;
+    }
+    out
+}
+
+/// Decodes the character references of XML text: the five named ones and
+/// the numeric ones. Other text stays.
+fn decode_references(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(start) = rest.find('&') {
+        let (before, reference) = rest.split_at(start);
+        out.push_str(before);
+        let decoded = reference.find(';').and_then(|end| {
+            let name = reference.get(1..end)?;
+            let c = match name {
+                "lt" => '<',
+                "gt" => '>',
+                "amp" => '&',
+                "quot" => '"',
+                "apos" => '\'',
+                _ => {
+                    let code = match name.strip_prefix("#x").or_else(|| name.strip_prefix("#X")) {
+                        Some(hex) => u32::from_str_radix(hex, 16).ok()?,
+                        None => name.strip_prefix('#')?.parse().ok()?,
+                    };
+                    char::from_u32(code)?
+                }
+            };
+            Some((c, end + 1))
+        });
+        match decoded {
+            Some((c, length)) => {
+                out.push(c);
+                rest = reference.get(length..).unwrap_or_default();
+            }
+            None => {
+                out.push('&');
+                rest = reference.get(1..).unwrap_or_default();
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
+
 fn obfuscate(text: &str) -> String {
     text.chars()
         .map(|c| {
@@ -2883,6 +3003,103 @@ mod tests {
         let large = steps_for(1_000);
         // Linear work gives a ratio of 4; the walk at each level gave 16.
         assert!(large <= small * 5, "{small} steps, then {large} steps");
+    }
+
+    /// Review round 7b, R7b-06: sibling headings of levels 1 to N make a
+    /// chain of N nested sections. Each list of blocks gets its section
+    /// spans once, so the work grows linearly.
+    #[test]
+    fn a_heading_chain_gets_its_section_spans_once() {
+        let steps_for = |levels: usize| {
+            std::thread::Builder::new()
+                .stack_size(256 << 20)
+                .spawn(move || {
+                    let blocks: Vec<Block> = (1..=levels)
+                        .map(|level| {
+                            Block::Header(
+                                i64::try_from(level).unwrap(),
+                                Attr::default(),
+                                vec![Inline::Str("h".into())],
+                            )
+                        })
+                        .collect();
+                    let doc = Pandoc {
+                        meta: Default::default(),
+                        blocks,
+                    };
+                    let mut context = Context::pure();
+                    context.limits.max_nesting_depth = 4 * levels;
+                    crate::table::steps::take();
+                    let out = write(
+                        &doc,
+                        &WriterOptions::default(),
+                        &mut context,
+                        Version::Html5,
+                    );
+                    let steps = crate::table::steps::take();
+                    assert!(out.is_ok());
+                    std::mem::forget(doc);
+                    steps
+                })
+                .unwrap()
+                .join()
+                .unwrap()
+        };
+        let small = steps_for(250);
+        let large = steps_for(1_000);
+        // Linear work gives a ratio of 4; a new scan of each child list gave 16.
+        assert!(large <= small * 5, "{small} steps, then {large} steps");
+    }
+
+    /// Replays `src/math_email.jsonl` (`tools/math_email.py`): each math
+    /// method in an e-mail link with reference obfuscation and without it.
+    #[test]
+    fn the_math_email_matrix_has_no_difference() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/math_email.jsonl");
+        let data = std::fs::read_to_string(path).unwrap();
+        let mut failures = Vec::new();
+        let mut cases = 0;
+        for line in data.lines() {
+            let case: serde_json::Value = serde_json::from_str(line).unwrap();
+            let [tex, format, opts, doc, expected] = case.as_array().unwrap().as_slice() else {
+                panic!("a case has five parts: {line}");
+            };
+            let format = format.as_str().unwrap();
+            let doc = randoc_ast::json::from_json(doc.as_str().unwrap()).unwrap();
+            let mut options = WriterOptions::default();
+            options.extensions = randoc_core::FormatSpec::parse(format).extensions().unwrap();
+            options.html_math_method = match opts["math"].as_str().unwrap() {
+                "mathjax" => HtmlMathMethod::MathJax(
+                    "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js".into(),
+                ),
+                "katex" => {
+                    HtmlMathMethod::KaTex("https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/".into())
+                }
+                "plain" => HtmlMathMethod::PlainMath,
+                "gladtex" => HtmlMathMethod::GladTex,
+                "webtex" => HtmlMathMethod::WebTex("https://latex.codecogs.com/png.latex?".into()),
+                _ => HtmlMathMethod::MathMl,
+            };
+            if opts["email"].as_str() == Some("references") {
+                options.email_obfuscation = ObfuscationMethod::ReferenceObfuscation;
+            }
+            let version = if format == "html4" {
+                Version::Html4
+            } else {
+                Version::Html5
+            };
+            let output = write(&doc, &options, &mut Context::pure(), version);
+            cases += 1;
+            if output.as_deref().ok() != expected.as_str() {
+                failures.push(format!("{tex} {format} {opts}: {output:?}"));
+            }
+        }
+        assert!(cases >= 500, "only {cases} cases");
+        assert!(
+            failures.is_empty(),
+            "{} differences: {failures:#?}",
+            failures.len()
+        );
     }
 
     #[test]

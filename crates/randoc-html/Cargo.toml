@@ -8,7 +8,7 @@ license.workspace = true
 repository.workspace = true
 authors.workspace = true
 # The oracle matrices are test data: the replay test reads them from the source tree.
-exclude = ["src/*.jsonl"]
+exclude = ["src/*.jsonl", "src/digests.json"]
 
 [dependencies]
 randoc-ast = { workspace = true }

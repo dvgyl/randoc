@@ -20,6 +20,8 @@
 //! ```
 
 mod attributes;
+#[cfg(test)]
+mod digests;
 mod html;
 pub mod shared;
 mod standalone;

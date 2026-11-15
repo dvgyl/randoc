@@ -2755,3 +2755,56 @@ the mutation sample.
 Harness: 58123 units: 56248 pass, 1455 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56218 units: 0 regressions, 30 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56248, "total": 57703}}`.
+
+## Session 6 of 2026-11-15, batch F (five blocks: html-writer, markdown-reader, cli, citeproc, html-reader)
+
+**html-writer**: branch `ws/html-writer-3`, commits `cec0604..7fb62cf`
+(the range holds a merge of `origin/main`; its commits are not part of
+the block). `4d92875` keeps the scripts of the reference (e-mail script,
+KaTeX loader script) out of stored results; hash records replace them.
+`c274819` makes `description-meta` take the plain text of blocks.
+`cff7493` replaces a filler paragraph of `options.toml` with own text.
+`94ad0b8` and `7fb62cf` correct format and lint.
+
+Gate: `06:33 UTC 7fb62cf gate passed EXCEPT removed baseline units: 2`.
+The worker ran the gate. Two units fail on purpose: `html-writer/options/
+opt-email-javascript#read` and `html-writer/options/opt-email-javascript-
+html4#read`. The block removes them from the suite. The coordinator
+removes these two names from `spec/baseline.json` in a commit of its own
+before the merge check.
+
+Measured by the worker: 6 stored results replaced by hash records. Oracle
+matrix of R7b-02: 304 cases, 0 differences.
+
+Review state: Round 7b of the HTML writer (the resumed Codex session, on
+`main` `856692d`, ended 04:36 UTC) requested changes with 2 critical, 3
+high, 4 medium and 2 low findings; the findings of the rounds before are
+closed. This block corrects both critical findings. R7b-01: no stored
+result holds a script that the reference generates; hash comparisons
+replace those records; the text of a default template of
+`crates/randoc-data` stays permitted (ADR 5); the two script literals of
+the writer source stay until the owner decides (D7 of `PROGRESS.md`).
+R7b-02: standalone output keeps the text of a `description` metadata
+value that holds blocks. No Opus review of round 7b ran.
+
+Open: 3 high and 4 medium findings of round 7b (the worker continues);
+2 low findings; I-HTML-36 (licence question, D7); I-HTML-03 (waits for D7).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+Addition of the coordinator: the block holds the commits to `8c02b9d`
+(gate line of the worker at 07:30 UTC, again with the two removed
+baseline units as the only failure; the other workspace tests passed in
+a run of their own). The final answer of the worker says: the high
+findings R7b-03 to R7b-05 and the medium findings R7b-06 to R7b-08 and
+R7b-11 are corrected in `15d615d`, with two new oracle matrices (the
+table of contents, 276 cases; math in e-mail links, 576 cases), depth
+tests on a 2 MB stack and a step-count test; the matrix of R7b-02 also
+corrected the order of `author-meta` names; R7b-10 is corrected and
+R7b-09 is row I-HTML-37 (its cause is in `randoc-core`). The writer
+source holds one script literal, `KATEX_SCRIPT` (row I-HTML-36, decision
+D7); Randoc does not write the e-mail script yet (I-HTML-03). Open
+requests to the coordinator: the depth check of R7b-04 also in
+`meta_to_context` of `randoc-core`, and one indentation of the math
+warning detail in `randoc-core`. Not run: coverage, the mutation
+sample.
