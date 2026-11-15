@@ -2217,3 +2217,42 @@ hits, 0.5 %); accepted, as in earlier records.
 Open findings: none with the level medium or higher; the low rows and
 the scope gaps I-HTMLR-01, 02, 07. Open checks: the verification of
 round 3, fuzzing, coverage, the mutation sample, the CPU table.
+
+## Workstream citeproc (branch `ws/citeproc-3`, commit 4327de5, one squashed commit, session 5 of 2026-11-15, batch D)
+
+Merged as a small block under owner instruction 17. `main` holds the
+earlier commit ecb6687 of the branch as 11e9493 (batch C); this record
+holds the commit 4327de5 only. Content: 4327de5 evaluates the CSL
+elements `number` and `label` without locator (`src/eval.rs`, suite
+`number` in `tests/eval.rs`). Rows: no change.
+
+The gate evidence comes from the inbox line of 4327de5
+(`env/store/inbox/citeproc.log`, 23:25:46 UTC), from `git log
+--format='%h %s' main..4327de5` (it also lists ecb6687 and the earlier
+commits, which `main` holds) and from the report
+`env/store/reports/citeproc.md`: the section of 2026-11-14 23:47 UTC
+describes 4327de5; the top section (2026-11-15 00:25 UTC) describes the
+later head 1fbd17f, which is not in this block.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 4327de5. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Inbox line and report: 111 oracle citations for `number` and `label` (replay 111 of 111). |
+| 3. Tests | `cargo test -p randoc-citeproc` on the merged tree: 93 pass, 0 fail, 4 ignored. Report (on 4327de5): coverage 92.0 % of the crate lines (`eval.rs` 79.0 %); mutation sample 6 mutants, 4 caught, 2 unviable, 0 missed. |
+| 4. No panics | Report: fuzzing on def8193 code (900 s each), 0 crashes. Not run on the new modules (their input comes from the parsers). |
+| 5. Reviews | No review of the new modules yet. |
+| 6. No slowdowns | Not measured (the rule 21c time table did not run). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: three (add/add), in
+`crates/randoc-citeproc/src/eval.rs`, `crates/randoc-citeproc/tests/eval.rs`
+and `crates/randoc-citeproc/tools/eval.lua` (`main` holds an earlier
+state of the branch); the versions of 4327de5 are taken, so the crate
+is equal to 4327de5. `docs/ISSUES.md` merged without a conflict.
+Licence scan of 4327de5: no hit.
+
+Open findings: none with the level medium or higher; I-CITE-15 and the
+other low rows. The modules `names`, `date`, the `Citeproc` entry,
+sorting, disambiguation, collapsing, positions and locators are not
+ported. Open checks: a review of the new modules, the time table,
+fuzzing of the new modules.

@@ -1,0 +1,111 @@
+n1		<number variable="volume" form="numeric"/>
+n1		<number variable="volume" form="ordinal"/>
+n1		<number variable="volume" form="long-ordinal"/>
+n1		<number variable="volume" form="roman"/>
+n1		<number variable="issue" form="numeric"/>
+n1		<number variable="issue" form="ordinal"/>
+n1		<number variable="issue" form="long-ordinal"/>
+n1		<number variable="issue" form="roman"/>
+n1		<number variable="edition" form="numeric"/>
+n1		<number variable="edition" form="ordinal"/>
+n1		<number variable="edition" form="long-ordinal"/>
+n1		<number variable="edition" form="roman"/>
+n1		<number variable="number" form="numeric"/>
+n1		<number variable="number" form="ordinal"/>
+n1		<number variable="number" form="long-ordinal"/>
+n1		<number variable="number" form="roman"/>
+n1		<number variable="chapter-number" form="numeric"/>
+n1		<number variable="chapter-number" form="ordinal"/>
+n1		<number variable="chapter-number" form="long-ordinal"/>
+n1		<number variable="chapter-number" form="roman"/>
+n1		<label variable="volume"/>
+n1		<label variable="volume" form="short" plural="always"/>
+n1		<label variable="volume" form="short" plural="never" suffix=". "/>
+n1		<label variable="issue"/>
+n1		<label variable="issue" form="short" plural="always"/>
+n1		<label variable="issue" form="short" plural="never" suffix=". "/>
+n1		<label variable="page"/>
+n1		<label variable="page" form="short" plural="always"/>
+n1		<label variable="page" form="short" plural="never" suffix=". "/>
+n1		<label variable="number"/>
+n1		<label variable="number" form="short" plural="always"/>
+n1		<label variable="number" form="short" plural="never" suffix=". "/>
+n1		<label variable="number-of-volumes"/>
+n1		<label variable="number-of-volumes" form="short" plural="always"/>
+n1		<label variable="number-of-volumes" form="short" plural="never" suffix=". "/>
+n1		<group delimiter=" "><label variable="page" form="short"/><text variable="page"/></group>
+n1		<number variable="volume" prefix="v" font-weight="bold"/>
+n2		<number variable="volume" form="numeric"/>
+n2		<number variable="volume" form="ordinal"/>
+n2		<number variable="volume" form="long-ordinal"/>
+n2		<number variable="volume" form="roman"/>
+n2		<number variable="issue" form="numeric"/>
+n2		<number variable="issue" form="ordinal"/>
+n2		<number variable="issue" form="long-ordinal"/>
+n2		<number variable="issue" form="roman"/>
+n2		<number variable="edition" form="numeric"/>
+n2		<number variable="edition" form="ordinal"/>
+n2		<number variable="edition" form="long-ordinal"/>
+n2		<number variable="edition" form="roman"/>
+n2		<number variable="number" form="numeric"/>
+n2		<number variable="number" form="ordinal"/>
+n2		<number variable="number" form="long-ordinal"/>
+n2		<number variable="number" form="roman"/>
+n2		<number variable="chapter-number" form="numeric"/>
+n2		<number variable="chapter-number" form="ordinal"/>
+n2		<number variable="chapter-number" form="long-ordinal"/>
+n2		<number variable="chapter-number" form="roman"/>
+n2		<label variable="volume"/>
+n2		<label variable="volume" form="short" plural="always"/>
+n2		<label variable="volume" form="short" plural="never" suffix=". "/>
+n2		<label variable="issue"/>
+n2		<label variable="issue" form="short" plural="always"/>
+n2		<label variable="issue" form="short" plural="never" suffix=". "/>
+n2		<label variable="page"/>
+n2		<label variable="page" form="short" plural="always"/>
+n2		<label variable="page" form="short" plural="never" suffix=". "/>
+n2		<label variable="number"/>
+n2		<label variable="number" form="short" plural="always"/>
+n2		<label variable="number" form="short" plural="never" suffix=". "/>
+n2		<label variable="number-of-volumes"/>
+n2		<label variable="number-of-volumes" form="short" plural="always"/>
+n2		<label variable="number-of-volumes" form="short" plural="never" suffix=". "/>
+n2		<group delimiter=" "><label variable="page" form="short"/><text variable="page"/></group>
+n2		<number variable="volume" prefix="v" font-weight="bold"/>
+n3		<number variable="volume" form="numeric"/>
+n3		<number variable="volume" form="ordinal"/>
+n3		<number variable="volume" form="long-ordinal"/>
+n3		<number variable="volume" form="roman"/>
+n3		<number variable="issue" form="numeric"/>
+n3		<number variable="issue" form="ordinal"/>
+n3		<number variable="issue" form="long-ordinal"/>
+n3		<number variable="issue" form="roman"/>
+n3		<number variable="edition" form="numeric"/>
+n3		<number variable="edition" form="ordinal"/>
+n3		<number variable="edition" form="long-ordinal"/>
+n3		<number variable="edition" form="roman"/>
+n3		<number variable="number" form="numeric"/>
+n3		<number variable="number" form="ordinal"/>
+n3		<number variable="number" form="long-ordinal"/>
+n3		<number variable="number" form="roman"/>
+n3		<number variable="chapter-number" form="numeric"/>
+n3		<number variable="chapter-number" form="ordinal"/>
+n3		<number variable="chapter-number" form="long-ordinal"/>
+n3		<number variable="chapter-number" form="roman"/>
+n3		<label variable="volume"/>
+n3		<label variable="volume" form="short" plural="always"/>
+n3		<label variable="volume" form="short" plural="never" suffix=". "/>
+n3		<label variable="issue"/>
+n3		<label variable="issue" form="short" plural="always"/>
+n3		<label variable="issue" form="short" plural="never" suffix=". "/>
+n3		<label variable="page"/>
+n3		<label variable="page" form="short" plural="always"/>
+n3		<label variable="page" form="short" plural="never" suffix=". "/>
+n3		<label variable="number"/>
+n3		<label variable="number" form="short" plural="always"/>
+n3		<label variable="number" form="short" plural="never" suffix=". "/>
+n3		<label variable="number-of-volumes"/>
+n3		<label variable="number-of-volumes" form="short" plural="always"/>
+n3		<label variable="number-of-volumes" form="short" plural="never" suffix=". "/>
+n3		<group delimiter=" "><label variable="page" form="short"/><text variable="page"/></group>
+n3		<number variable="volume" prefix="v" font-weight="bold"/>

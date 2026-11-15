@@ -4,8 +4,9 @@
 //! (variables, values, terms and macros), `group` with its suppression
 //! rule, `choose`, page ranges and term lookup.
 //!
-//! The elements `names`, `date`, `number` and `label` are not ported yet:
-//! they give [`EvalError::NotPorted`], so no output is silently wrong.
+//! `number` and `label` are ported too. The elements `names` and `date`
+//! are not ported yet: they give [`EvalError::NotPorted`], so no output is
+//! silently wrong.
 
 use std::collections::BTreeSet;
 
@@ -16,8 +17,9 @@ use crate::markup::TooDeep;
 use crate::output::{self, Output, Tag};
 use crate::reference::{self, Reference, Val};
 use crate::types::{
-    Condition, Element, ElementType, Formatting, Locale, Match, PageRangeFormat, Style, Term,
-    TermForm, TextCase, TextType, Variable, VariableForm,
+    Condition, Element, ElementType, Formatting, Locale, Match, NumberForm, PageRangeFormat,
+    Pluralize, Style, Term, TermForm, TermGender, TermMatch, TermNumber, TextCase, TextType,
+    Variable, VariableForm,
 };
 use crate::unicode_class::is_letter;
 
@@ -185,8 +187,13 @@ impl Eval<'_, '_> {
                 }
                 Vec::new()
             }
-            ElementType::Number(..) => return Err(EvalError::NotPorted("number")),
-            ElementType::Label(..) => return Err(EvalError::NotPorted("label")),
+            ElementType::Number(variable, form) => {
+                let output = self.number(variable.as_str(), *form, depth)?;
+                vec![self.with_formatting(formatting, output)]
+            }
+            ElementType::Label(variable, form, pluralize) => {
+                vec![self.label(variable.as_str(), *form, *pluralize, formatting, depth)?]
+            }
             ElementType::Date { .. } => return Err(EvalError::NotPorted("date")),
             ElementType::Names(..) => return Err(EvalError::NotPorted("names")),
         })
@@ -355,6 +362,147 @@ impl Eval<'_, '_> {
         })
     }
 
+    /// `eNumber`: each number part of the value in the form.
+    fn number(&mut self, name: &str, form: NumberForm, depth: usize) -> Result<Output, EvalError> {
+        let value = self.ask_variable(name);
+        let gender = self
+            .lookup_term_entries(&term_named(name))
+            .into_iter()
+            .next()
+            .and_then(|(term, _)| term.gender);
+        let parts = match value {
+            Some(Val::Num(n)) => vec![Val::Num(n)],
+            Some(Val::Fancy(x)) => split_nums(&output::stringify(&x)),
+            Some(Val::Text(t)) => split_nums(&t),
+            _ => Vec::new(),
+        };
+        let mut outputs = Vec::with_capacity(parts.len());
+        for part in parts {
+            outputs.push(self.eval_number(form, gender, &part, depth)?);
+        }
+        Ok(output::formatted(Formatting::default(), outputs))
+    }
+
+    /// `evalNumber`.
+    fn eval_number(
+        &mut self,
+        form: NumberForm,
+        gender: Option<TermGender>,
+        value: &Val<Vec<Inline>>,
+        depth: usize,
+    ) -> Result<Output, EvalError> {
+        let i = match value {
+            Val::Num(i) => *i,
+            Val::Text(t) => return Ok(Output::Literal(output::from_text(t))),
+            Val::Fancy(x) => return Ok(Output::Literal(x.clone())),
+            Val::Names(_) | Val::Date(_) => return Ok(Output::Null),
+        };
+        let numbered = |name: String| Term {
+            gender_form: gender,
+            ..term_named(&name)
+        };
+        let decimal = i.to_string();
+        let with_suffix = |this: &Self, suffix: &str| -> Result<Output, EvalError> {
+            let suffix = output::parse_csl_json(this.locale, suffix, depth)?;
+            Ok(Output::Literal(output::concat(vec![
+                output::from_text(&decimal),
+                suffix,
+            ])))
+        };
+        match form {
+            NumberForm::Numeric => Ok(Output::Literal(output::from_text(&decimal))),
+            NumberForm::Roman => Ok(Output::Literal(output::from_text(&roman(i)))),
+            NumberForm::LongOrdinal if (1..=10).contains(&i) => {
+                match self
+                    .lookup_term(&numbered(format!("long-ordinal-{i:02}")))
+                    .into_iter()
+                    .next()
+                {
+                    Some(text) => Ok(Output::Literal(output::from_text(&text))),
+                    None => self.eval_number(NumberForm::Ordinal, gender, value, depth),
+                }
+            }
+            NumberForm::LongOrdinal | NumberForm::Ordinal => {
+                let two = numbered(format!("ordinal-{:02}", i.rem_euclid(100)));
+                let found = self
+                    .lookup_term_entries(&two)
+                    .into_iter()
+                    .find(|(term, _)| i <= 99 || term.matching != Some(TermMatch::WholeNumber));
+                if let Some((_, suffix)) = found {
+                    return with_suffix(self, &suffix);
+                }
+                let one = numbered(format!("ordinal-{:02}", i.rem_euclid(10)));
+                let found = self
+                    .lookup_term_entries(&one)
+                    .into_iter()
+                    .find(|(term, _)| {
+                        i <= 10
+                            || term.matching.is_none()
+                            || term.matching == Some(TermMatch::LastDigit)
+                    });
+                if let Some((_, suffix)) = found {
+                    return with_suffix(self, &suffix);
+                }
+                if let Some(suffix) = self.lookup_term(&term_named("ordinal")).into_iter().next() {
+                    return with_suffix(self, &suffix);
+                }
+                self.warnings
+                    .insert(format!("no ordinal suffix found for {decimal}"));
+                Ok(Output::Literal(output::from_text(&decimal)))
+            }
+        }
+    }
+
+    /// `eLabel` with no locator: the term of the variable in the number
+    /// that its value asks for.
+    fn label(
+        &mut self,
+        name: &str,
+        form: TermForm,
+        pluralize: Pluralize,
+        formatting: &Formatting,
+        depth: usize,
+    ) -> Result<Output, EvalError> {
+        let lookup_name = if name == "editortranslator" {
+            "editor"
+        } else {
+            name
+        };
+        let term = match lookup_variable(self.reference, lookup_name) {
+            None => Output::Null,
+            Some(value) => {
+                let number = match pluralize {
+                    Pluralize::Always => TermNumber::Plural,
+                    Pluralize::Never => TermNumber::Singular,
+                    Pluralize::Contextual => match &value {
+                        Val::Text(t) => determine_plural(name, t),
+                        Val::Num(n) => determine_plural(name, &n.to_string()),
+                        Val::Fancy(x) => determine_plural(name, &output::stringify(x)),
+                        Val::Names(names) if names.len() > 1 => TermNumber::Plural,
+                        _ => TermNumber::Singular,
+                    },
+                };
+                let term = Term {
+                    form,
+                    number: Some(number),
+                    ..term_named(name)
+                };
+                self.term(&term, depth)?
+            }
+        };
+        if let Some(suffix) = &formatting.suffix
+            && suffix.starts_with('.')
+            && let Output::Literal(x) = &term
+            && output::stringify(x).ends_with('.')
+            && !formatting.strip_periods
+        {
+            let mut formatting = formatting.clone();
+            formatting.suffix = (suffix.chars().count() > 1).then(|| suffix[1..].to_owned());
+            return Ok(output::formatted(formatting, vec![term]));
+        }
+        Ok(output::formatted(formatting.clone(), vec![term]))
+    }
+
     /// `pageRange`.
     fn page_range(&self, text: &str, depth: usize) -> Result<Output, EvalError> {
         let delimiter = self
@@ -383,6 +531,14 @@ impl Eval<'_, '_> {
 
     /// `lookupTerm`: the texts of the matching terms of the locale.
     fn lookup_term(&self, term: &Term) -> Vec<String> {
+        self.lookup_term_entries(term)
+            .into_iter()
+            .map(|(_, text)| text)
+            .collect()
+    }
+
+    /// `lookupTerm` with the terms of the locale that match.
+    fn lookup_term_entries(&self, term: &Term) -> Vec<(Term, String)> {
         let name = if term.name == "sub verbo" {
             "sub-verbo"
         } else {
@@ -399,7 +555,7 @@ impl Eval<'_, '_> {
                 terms
                     .iter()
                     .filter(|(found, _)| term_matches(&wanted, found))
-                    .map(|(_, text)| text.clone())
+                    .cloned()
                     .collect()
             })
             .unwrap_or_default()
@@ -518,6 +674,125 @@ fn lookup_variable(reference: &Reference<Vec<Inline>>, name: &str) -> Option<Val
             }
         }
     }
+}
+
+/// The number of a label term for a value (`determinePlural`).
+fn determine_plural(variable: &str, text: &str) -> TermNumber {
+    if variable == "number-of-volumes" && text != "1" && text != "0" {
+        return TermNumber::Plural;
+    }
+    if text.contains("\\-") {
+        return TermNumber::Singular;
+    }
+    let ungrouped = if variable == "page" || variable == "locator" {
+        text.to_owned()
+    } else {
+        drop_digit_grouping(text)
+    };
+    if is_one_identifier(&ungrouped) {
+        TermNumber::Singular
+    } else if split_nums(text).len() > 1 {
+        TermNumber::Plural
+    } else {
+        TermNumber::Singular
+    }
+}
+
+/// `isOneIdentifier`: one word with digits, no range or list punctuation.
+fn is_one_identifier(text: &str) -> bool {
+    let words: Vec<&str> = text
+        .split(crate::haskell::is_space)
+        .filter(|w| !w.is_empty())
+        .collect();
+    !text.chars().any(is_sep_punct)
+        && !text.contains('&')
+        && !words.contains(&"and")
+        && words
+            .iter()
+            .filter(|w| w.chars().any(|c| c.is_ascii_digit()))
+            .count()
+            == 1
+}
+
+/// `dropDigitGrouping`: a comma between a digit and exactly three digits goes.
+fn drop_digit_grouping(text: &str) -> String {
+    let chars: Vec<char> = text.chars().collect();
+    let digit = |i: usize| chars.get(i).is_some_and(char::is_ascii_digit);
+    let mut out = String::with_capacity(text.len());
+    for (i, c) in chars.iter().enumerate() {
+        let grouping = *c == ','
+            && i > 0
+            && digit(i - 1)
+            && digit(i + 1)
+            && digit(i + 2)
+            && digit(i + 3)
+            && !digit(i + 4);
+        if !grouping {
+            out.push(*c);
+        }
+    }
+    out
+}
+
+/// `splitNums`: runs of separators and runs of other characters; a run
+/// that reads as an integer is a number, and `-` alone is an en dash.
+fn split_nums(text: &str) -> Vec<Val<Vec<Inline>>> {
+    let class = |c: char| is_sep_punct(c) || crate::haskell::is_space(c);
+    let mut runs: Vec<&str> = Vec::new();
+    let mut start = 0;
+    let mut first: Option<char> = None;
+    for (at, c) in text.char_indices() {
+        match first {
+            Some(f) if class(f) == class(c) => {}
+            Some(_) => {
+                runs.push(&text[start..at]);
+                start = at;
+                first = Some(c);
+            }
+            None => first = Some(c),
+        }
+    }
+    if start < text.len() {
+        runs.push(&text[start..]);
+    }
+    runs.into_iter()
+        .map(|run| match crate::types::read_as_int(run) {
+            Some(n) => Val::Num(n),
+            None if run == "-" => Val::Text("\u{2013}".into()),
+            None => Val::Text(run.to_owned()),
+        })
+        .collect()
+}
+
+/// `toRomanNumeral`: lower-case roman numerals below 4000.
+fn roman(x: i64) -> String {
+    if !(0..4000).contains(&x) {
+        return x.to_string();
+    }
+    const TABLE: [(i64, &str); 13] = [
+        (1000, "m"),
+        (900, "cm"),
+        (500, "d"),
+        (400, "cd"),
+        (100, "c"),
+        (90, "xc"),
+        (50, "l"),
+        (40, "xl"),
+        (10, "x"),
+        (9, "ix"),
+        (5, "v"),
+        (4, "iv"),
+        (1, "i"),
+    ];
+    let mut rest = x;
+    let mut out = String::new();
+    for (value, letters) in TABLE {
+        while rest >= value {
+            out.push_str(letters);
+            rest -= value;
+        }
+    }
+    out
 }
 
 /// `isSepPunct`: the punctuation between the pages of a range.

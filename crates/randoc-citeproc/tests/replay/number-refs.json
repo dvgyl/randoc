@@ -1,0 +1,5 @@
+[
+{"id":"n1","type":"book","volume":"3","issue":"21","edition":"2","page":"5-9","number":"112","number-of-volumes":"4","chapter-number":"1"},
+{"id":"n2","type":"book","volume":"1, 3","issue":"12th","edition":101,"page":"7","number":"US 9,876,543","number-of-volumes":"1","chapter-number":"23"},
+{"id":"n3","type":"book","volume":"2-4","issue":"3 & 5","edition":"11","page":"12\\-14","number":"4000","chapter-number":"0"}
+]

@@ -44,8 +44,7 @@ fn drop_quoted_class(inlines: &mut [Inline]) {
     }
 }
 
-fn references(locale: &Locale) -> Vec<Reference<Vec<Inline>>> {
-    let text = include_str!("replay/eval-refs.json");
+fn references(text: &str, locale: &Locale) -> Vec<Reference<Vec<Inline>>> {
     let tape = randoc_ast::json::parse_value(text, 128).unwrap();
     let Json::Array(items) = Json::from_value(tape.root()) else {
         panic!("array")
@@ -80,13 +79,29 @@ fn references(locale: &Locale) -> Vec<Reference<Vec<Inline>>> {
 
 #[test]
 fn each_citation_gives_the_oracle_inlines() {
-    let replay = include_str!("replay/eval.txt");
+    replay(
+        include_str!("replay/eval.txt"),
+        include_str!("replay/eval-refs.json"),
+        30,
+    );
+}
+
+#[test]
+fn each_number_and_label_gives_the_oracle_inlines() {
+    replay(
+        include_str!("replay/number.txt"),
+        include_str!("replay/number-refs.json"),
+        100,
+    );
+}
+
+fn replay(replay: &str, refs: &str, minimum: usize) {
     let base = Locale {
         language: Some(randoc_citeproc::parse_lang("en-US").unwrap()),
         punctuation_in_quote: Some(true),
         ..Locale::default()
     };
-    let refs = references(&base);
+    let refs = references(refs, &base);
     let mut failures = Vec::new();
     let mut count = 0;
     for line in replay
@@ -119,7 +134,7 @@ fn each_citation_gives_the_oracle_inlines() {
             ));
         }
     }
-    assert!(count >= 30, "{count} cases");
+    assert!(count >= minimum, "{count} cases");
     assert!(
         failures.is_empty(),
         "{} of {count} differ:\n{}",
