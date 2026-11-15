@@ -21,6 +21,11 @@ randoc-templates = { workspace = true }
 mlua = { workspace = true }
 mlua-sys = { workspace = true }
 
+# The tests of `pandoc.read` and `pandoc.write` use the registry of the
+# program. The crate itself must not depend on `randoc`.
+[dev-dependencies]
+randoc = { workspace = true }
+
 [build-dependencies]
 cc = { workspace = true }
 

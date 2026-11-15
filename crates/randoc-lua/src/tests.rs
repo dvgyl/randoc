@@ -1665,3 +1665,194 @@ fn lpeg_errors_cross_the_c_boundary_as_lua_errors() {
         assert_eq!(eval(&runtime, &format!("return {works}")), "z");
     }
 }
+
+/// A host that records each file access of a conversion and answers it
+/// with the text `inside`.
+#[derive(Default)]
+struct WatchedHost {
+    calls: std::sync::Arc<std::sync::Mutex<Vec<String>>>,
+}
+
+impl randoc_core::Host for WatchedHost {
+    fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
+        self.calls.lock().unwrap().push(format!("read_file {path}"));
+        Ok(b"inside".to_vec())
+    }
+
+    fn file_exists(&mut self, path: &str) -> bool {
+        self.calls
+            .lock()
+            .unwrap()
+            .push(format!("file_exists {path}"));
+        true
+    }
+}
+
+/// The calls of the host and the result of `code` with the registry of
+/// the program.
+fn convert_probe(mode: Mode, code: &str) -> (Vec<String>, String) {
+    let host = WatchedHost::default();
+    let calls = std::sync::Arc::clone(&host.calls);
+    let source =
+        format!("function Pandoc(d) d.meta.r = pandoc.MetaString(tostring(({code}))) return d end");
+    let filter = LuaFilter {
+        path: "convert.lua",
+        source: source.as_bytes(),
+    };
+    let mut environment = environment();
+    environment.mode = mode;
+    environment.readers = randoc::formats::reader;
+    environment.writers = randoc::formats::writer;
+    let mut doc = Pandoc::default();
+    let mut context = Context::new(Box::new(host));
+    apply_filter(&mut doc, &filter, &environment, &mut context).unwrap();
+    let result = match doc.meta.0.get("r") {
+        Some(MetaValue::MetaString(text)) => text.clone(),
+        other => panic!("no result: {other:?}"),
+    };
+    let calls = calls.lock().unwrap().clone();
+    (calls, result)
+}
+
+/// ADR 11: in restricted mode `pandoc.read` and `pandoc.write` never call
+/// the host of the conversion. A LaTeX `\input` reads its file in full
+/// mode and gets an error in restricted mode, as each other file access
+/// of a reader or writer does.
+#[test]
+fn restricted_mode_refuses_the_file_access_of_read_and_write() {
+    let read = r"pandoc.write(pandoc.read('\\input{part}', 'latex'), 'plain')";
+    let (calls, result) = convert_probe(Mode::Full, read);
+    assert_eq!(calls, ["read_file part.tex"]);
+    assert_eq!(result, "inside");
+    let (calls, result) = convert_probe(Mode::Restricted, read);
+    assert!(
+        calls.is_empty(),
+        "restricted mode called the host: {calls:?}"
+    );
+    assert_ne!(result, "inside");
+    for code in [
+        r"select(2, pcall(pandoc.read, '\\include{part}', 'latex'))",
+        r"pandoc.write(pandoc.read('\\input{part}\n\n*a*', 'markdown'), 'latex')",
+        r"pandoc.write(pandoc.Pandoc{pandoc.Para{pandoc.Image('', 'part.png')}}, 'html')",
+    ] {
+        let (calls, _) = convert_probe(Mode::Restricted, code);
+        assert!(
+            calls.is_empty(),
+            "{code}: restricted mode called the host: {calls:?}"
+        );
+    }
+}
+
+/// The messages of a reader in restricted mode reach the log of the
+/// conversion.
+#[test]
+fn restricted_mode_keeps_the_messages_of_read() {
+    let host = WatchedHost::default();
+    let source =
+        br"function Pandoc(d) pandoc.read('[a][b]\n\n[b]: u\n[b]: v', 'markdown') return d end";
+    let filter = LuaFilter {
+        path: "convert.lua",
+        source,
+    };
+    let mut environment = environment();
+    environment.mode = Mode::Restricted;
+    environment.readers = randoc::formats::reader;
+    let mut doc = Pandoc::default();
+    let mut context = Context::new(Box::new(host));
+    apply_filter(&mut doc, &filter, &environment, &mut context).unwrap();
+    let rendered: Vec<String> = context
+        .log()
+        .iter()
+        .map(|m| m.render().to_string())
+        .collect();
+    assert!(
+        rendered
+            .iter()
+            .any(|line| line.contains("Duplicate link reference")),
+        "{rendered:?}"
+    );
+}
+
+/// A template value with `levels` lists (or maps with the key `k`)
+/// around a text.
+fn nested_variable(levels: usize, map: bool) -> randoc_templates::Val {
+    use randoc_templates::{Context as Variables, Val};
+    let mut value = Val::Simple(randoc_layout::text("x"));
+    for _ in 0..levels {
+        value = if map {
+            Val::Map(Variables([("k".to_owned(), value)].into_iter().collect()))
+        } else {
+            Val::List(vec![value])
+        };
+    }
+    value
+}
+
+/// Takes a nested value apart level by level: the drop of the type is
+/// recursive, and a deep value would overflow the test stack.
+fn take_apart(value: randoc_templates::Val) {
+    use randoc_templates::Val;
+    let mut pending = vec![value];
+    while let Some(value) = pending.pop() {
+        match value {
+            Val::List(items) => pending.extend(items),
+            Val::Map(context) => pending.extend(context.0.into_values()),
+            _ => {}
+        }
+    }
+}
+
+/// The result of an empty filter whose writer options hold the variable
+/// `v` with `levels` levels.
+fn filter_with_deep_variable(levels: usize, map: bool) -> Result<(), String> {
+    let mut environment = environment();
+    environment
+        .writer_options
+        .variables
+        .0
+        .insert("v".to_owned(), nested_variable(levels, map));
+    let filter = LuaFilter {
+        path: "empty.lua",
+        source: b"",
+    };
+    let result = apply_filter(
+        &mut Pandoc::default(),
+        &filter,
+        &environment,
+        &mut Context::pure(),
+    )
+    .map_err(|error| error.to_string());
+    let variables = std::mem::take(&mut environment.writer_options.variables);
+    variables.0.into_values().for_each(take_apart);
+    result
+}
+
+/// Review lua-R4-01 and standing order 21b: the variables of
+/// `PANDOC_WRITER_OPTIONS` at 10,000 and 100,000 levels give the depth
+/// error on a 2 MB stack, for lists and for maps.
+#[test]
+fn deep_template_variables_give_the_depth_error() {
+    on_small_stack(|| {
+        for levels in [10_000, 100_000] {
+            for map in [false, true] {
+                let error = filter_with_deep_variable(levels, map).unwrap_err();
+                assert!(
+                    error.contains(&crate::peek::depth_message(128)),
+                    "{levels} {map}: {error}"
+                );
+            }
+        }
+    });
+}
+
+/// Standing order 21b: the default limit of 128 levels is safe on a 2 MB
+/// stack for lists and for maps.
+#[test]
+fn template_variables_at_the_depth_limit_pass() {
+    on_small_stack(|| {
+        for map in [false, true] {
+            assert_eq!(filter_with_deep_variable(127, map), Ok(()), "{map}");
+            assert!(filter_with_deep_variable(128, map).is_err(), "{map}");
+        }
+    });
+}

@@ -2703,3 +2703,50 @@ not started. The report states no level for these items.
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range (item 4 of the unit is
 not started).
+
+**latex-reader**: branch `ws/latex-reader-4`, commits `280a340..ef9ec4e`
+(`main` holds the state of `280a340` as `9a3d42d`). The block holds one
+commit, ef9ec4e, and the removal of the wall-time test. A text style
+command reads its argument after spaces and blank lines, and stops at
+the end of the input with `unexpected end of input`. A command with a
+group rule stops with `unexpected ()` at the end of the input or after
+a blank line. `\label`, `\ref`, `\url`, `\includegraphics` and 10 more
+take their group after spaces only. An accent on a group with markup
+accents a leading `Str` only. `\copyright` and `\textcopyright` give the
+copyright sign, and `\NeedsTeXFormat` takes one group. The ignored
+wall-time test is removed; the step-count test holds its units and 10
+new ones. New matrices: `argap`, `accentgroup`.
+
+Gate: `04:46 UTC ef9ec4e gate passed: latex-reader parse errors of
+missing arguments, accent on markup, copyright sign, NeedsTeXFormat,
+step test replaces the wall-time test`. The worker ran the gate.
+
+Measured by the worker: whole test binary under `limit-run 1500 300`:
+peak memory 365 to 765 MB over 8 runs before the gates (the report
+gives the numbers for the head `f92d211`, not for `ef9ec4e` alone).
+
+Review state: Round 1 of the LaTeX reader (session 5, on `main`
+`890ef9f`): the Opus reviewer requested changes with 4 high and 5 medium
+findings, the Codex reviewer with 21 high and 8 medium findings. The
+blocks `c46be2e` and `9a3d42d` on `main` correct more than half. This
+block corrects more rows of `docs/ISSUES.md` (the report and the commit
+messages name them). The worker continues with the open rows. The
+verification by both reviewers is due when the open rows are corrected.
+
+Open: I-LTXR-53 (high; corpus documents encguide and ltnews); I-LTXR-42
+(medium); low rests of I-LTXR-35 to 37, 43, 44, 46; I-LTXR-52 (low);
+low rows I-LTXR-16 to 28 and 49 (not started); I-LTXR-03 (request to
+move the language table to `randoc_core::shared`).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+Addition of the coordinator: the block holds the commits to `f92d211`
+(gate pass of the worker at 06:00 UTC). The final answer of the worker
+says: each high row is closed (I-LTXR-34, 35, 37, 38, 50); the medium
+rows 36 and 43 to 48 are closed, their rests are recorded as low; open
+are I-LTXR-42 (medium), the new row I-LTXR-53 (high: two corpus
+documents differ) and the low rows 16 to 28 and 49. Suite
+`latex-reader/`: 6,591 units, 5,757 pass. The whole test binary had a
+peak of 637 MB under `limit-run 1500 300`. The corpus document cyrguide
+is byte-equal now. Not run: fuzzing after the parser changes, coverage,
+the mutation sample.

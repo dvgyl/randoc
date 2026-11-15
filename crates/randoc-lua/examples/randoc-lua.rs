@@ -37,12 +37,10 @@ fn run(args: &[String]) -> Result<(), Error> {
                 source: &source,
             };
             let mut context = Context::native();
-            apply_filter(
-                &mut doc,
-                &filter,
-                &FilterEnvironment::new(format),
-                &mut context,
-            )?;
+            let mut environment = FilterEnvironment::new(format);
+            environment.readers = randoc::formats::reader;
+            environment.writers = randoc::formats::writer;
+            apply_filter(&mut doc, &filter, &environment, &mut context)?;
             let mut text = json::to_json(&doc);
             text.push('\n');
             std::io::stdout()

@@ -406,6 +406,7 @@ dependencies = [
  "cc",
  "mlua",
  "mlua-sys",
+ "randoc",
  "randoc-ast",
  "randoc-core",
  "randoc-layout",

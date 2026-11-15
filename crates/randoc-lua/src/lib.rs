@@ -29,6 +29,7 @@
 #![cfg(not(target_arch = "wasm32"))]
 
 mod construct;
+mod convert;
 mod filter;
 mod formats;
 mod json;
@@ -43,6 +44,7 @@ mod peek;
 mod properties;
 mod push;
 mod runtime;
+mod script;
 mod show;
 #[cfg(test)]
 mod sources;
@@ -54,5 +56,7 @@ mod text;
 mod utils;
 mod walk;
 
+pub use convert::{ReaderLookup, WriterLookup};
 pub use filter::{FilterEnvironment, LuaFilter, apply_filter, apply_filter_files};
 pub use runtime::{INSTRUCTION_LIMIT_MESSAGE, LuaRuntime, Mode, RuntimeLimits};
+pub use script::{custom_reader, custom_writer, read_script, run_script};

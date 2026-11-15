@@ -589,6 +589,12 @@ function native.options_object(name, values, names, writable)
   proxy_names[proxy] = name
   return proxy
 end
+function native.convert_functions(read, write, readers, writers)
+  pandoc.read = function(...) return check(read(...)) end
+  pandoc.write = function(...) return check(write(...)) end
+  pandoc.readers = readers
+  pandoc.writers = writers
+end
 function native.system_functions(system_call)
   local system = pandoc.system
   local pack, unpack, select, type, setmetatable = table.pack, table.unpack, select, type, setmetatable

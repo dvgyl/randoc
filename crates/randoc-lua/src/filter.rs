@@ -4,6 +4,10 @@ use mlua::{Function, Lua, MultiValue, Table, Value, Variadic};
 use randoc_ast::{Pandoc, Text};
 use randoc_core::{Context, Error, LogMessage, ReaderOptions, SourcePos, WriterOptions};
 
+use std::cell::RefCell;
+
+use crate::construct::Call;
+use crate::convert::{self, ReaderLookup, WriterLookup};
 use crate::module;
 use crate::options::{default_reader_options, default_writer_options};
 use crate::os::Os;
@@ -23,7 +27,7 @@ pub struct LuaFilter<'a> {
 }
 
 /// What a filter can see of the conversion that runs it.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct FilterEnvironment {
     /// The output format: the value of the global `FORMAT`.
     pub format: Text,
@@ -52,6 +56,12 @@ pub struct FilterEnvironment {
     pub reader_options: ReaderOptions,
     /// `PANDOC_WRITER_OPTIONS`.
     pub writer_options: WriterOptions,
+    /// The readers of `pandoc.read` and `pandoc.readers`. The program gives
+    /// `randoc::formats::reader`; the default knows no reader.
+    pub readers: ReaderLookup,
+    /// The writers of `pandoc.write` and `pandoc.writers`. The program
+    /// gives `randoc::formats::writer`; the default knows no writer.
+    pub writers: WriterLookup,
 }
 
 impl FilterEnvironment {
@@ -76,6 +86,8 @@ impl FilterEnvironment {
             verbosity: "WARNING".to_string(),
             mode: Mode::Full,
             limits: RuntimeLimits::for_mode(Mode::Full),
+            readers: convert::no_reader,
+            writers: convert::no_writer,
         }
     }
 }
@@ -97,65 +109,156 @@ pub fn apply_filter(
     environment: &FilterEnvironment,
     context: &mut Context,
 ) -> Result<(), Error> {
-    let max_depth = context.limits.max_nesting_depth;
-    let runtime = LuaRuntime::with_limits(environment.mode, environment.limits)?;
-    let lua = runtime.lua();
-    let cx = Cx { lua, max_depth };
-    let mut run = || -> Peek<()> {
-        check_document(&cx, doc)?;
-        module::install(lua, max_depth)?;
-        set_globals(lua, filter, environment)?;
-        lua.scope(|scope| {
-            let native: Table = lua.named_registry_value(module::NATIVE)?;
-            let report =
-                scope.create_function_mut(|lua, (message, show): (mlua::LuaString, bool)| {
-                    if show {
-                        // The default warning function of Lua writes this line.
-                        let mut line = b"Lua warning: ".to_vec();
-                        line.extend_from_slice(&message.as_bytes());
-                        line.push(b'\n');
-                        let _ = std::io::Write::write_all(&mut std::io::stderr(), &line);
-                    }
-                    context.report(LogMessage::ScriptingWarning(
-                        message.text(),
-                        caller_position(lua),
-                    ));
-                    Ok(())
-                })?;
-            native.get::<Function>("install_warn")?.call::<()>(report)?;
-            // ADR 11: restricted mode has no function with file access. In
-            // full mode the system functions use a native host of their own,
-            // also when the conversion has a restricted host, because Pandoc
-            // permits them with `--sandbox` (row I-CONTRACTS-03).
-            if environment.mode == Mode::Full {
-                let mut os = Os::default();
-                let system =
-                    scope.create_function_mut(move |lua, arguments: Variadic<Value>| {
-                        let cx = Cx { lua, max_depth };
-                        let (name, rest) = match arguments.split_first() {
-                            Some((Value::String(name), rest)) => (name.text(), rest),
-                            _ => (String::new(), &arguments[..0]),
-                        };
-                        let result =
-                            system::call(&cx, &mut randoc_core::NativeHost, &mut os, &name, rest);
-                        system_result(lua, result)
-                    })?;
-                let add: Function = native.get("system_functions")?;
-                add.call::<()>(system)?;
-            }
-            let result = (|| -> Peek<()> {
-                for filter in load_filters(&cx, filter, environment.mode)? {
-                    apply_fully(&cx, &filter, doc)?;
-                }
-                Ok(())
-            })();
-            Ok(result)
-        })?
+    let globals = Globals {
+        format: Some(&environment.format),
+        script_file: Some(filter.path),
+        options: true,
     };
-    run().map_err(|error| Error::Filter {
+    with_state(environment, globals, context, |cx| {
+        check_document(cx, doc)?;
+        for filter in load_filters(cx, filter, environment.mode)? {
+            apply_fully(cx, &filter, doc)?;
+        }
+        Ok(())
+    })
+    .map_err(|error| Error::Filter {
         filter: filter.path.to_string(),
         message: error.text(),
     })
+}
+
+/// The globals that differ between the kinds of scripts.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct Globals<'a> {
+    /// `FORMAT`; a reader, a writer and the interpreter have none.
+    pub(crate) format: Option<&'a str>,
+    /// `PANDOC_SCRIPT_FILE`; the interpreter has none.
+    pub(crate) script_file: Option<&'a str>,
+    /// `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS`.
+    pub(crate) options: bool,
+}
+
+/// Runs `body` in a new Lua state with what Pandoc gives each script: the
+/// `pandoc` module, the globals, `warn`, `pandoc.read`, `pandoc.write` and
+/// (in full mode) the system functions.
+pub(crate) fn with_state<T>(
+    environment: &FilterEnvironment,
+    globals: Globals,
+    context: &mut Context,
+    body: impl FnOnce(&Cx) -> Peek<T>,
+) -> Peek<T> {
+    let max_depth = context.limits.max_nesting_depth;
+    let runtime = LuaRuntime::with_limits(environment.mode, environment.limits)
+        .map_err(|error| PeekError::Thrown(lua_error_text(&error)))?;
+    let lua = runtime.lua();
+    let cx = Cx { lua, max_depth };
+    module::install(lua, max_depth)?;
+    set_globals(lua, globals, environment, max_depth)?;
+    // `warn`, `pandoc.read` and `pandoc.write` share the context. None of
+    // them runs Lua code while it holds the context.
+    let context = RefCell::new(context);
+    lua.scope(|scope| {
+        let native: Table = lua.named_registry_value(module::NATIVE)?;
+        let report = scope.create_function(|lua, (message, show): (mlua::LuaString, bool)| {
+            if show {
+                // The default warning function of Lua writes this line.
+                let mut line = b"Lua warning: ".to_vec();
+                line.extend_from_slice(&message.as_bytes());
+                line.push(b'\n');
+                let _ = std::io::Write::write_all(&mut std::io::stderr(), &line);
+            }
+            if let Ok(mut context) = context.try_borrow_mut() {
+                context.report(LogMessage::ScriptingWarning(
+                    message.text(),
+                    caller_position(lua),
+                ));
+            }
+            Ok(())
+        })?;
+        native.get::<Function>("install_warn")?.call::<()>(report)?;
+        let read = scope.create_function(|lua, arguments: Variadic<Value>| {
+            let cx = Cx { lua, max_depth };
+            let call = Call {
+                cx: &cx,
+                name: "read",
+                arguments: &arguments,
+            };
+            let result = match context.try_borrow_mut() {
+                Ok(mut context) => {
+                    convert::without_system_access(environment.mode, &mut context, |context| {
+                        convert::read(
+                            &call,
+                            environment.readers,
+                            &environment.reader_options,
+                            context,
+                        )
+                    })
+                }
+                Err(_) => Err(PeekError::Thrown(BUSY.into())),
+            };
+            system_result(lua, result.map(|value| vec![value]))
+        })?;
+        let write = scope.create_function(|lua, arguments: Variadic<Value>| {
+            let cx = Cx { lua, max_depth };
+            let call = Call {
+                cx: &cx,
+                name: "write",
+                arguments: &arguments,
+            };
+            let result = match context.try_borrow_mut() {
+                Ok(mut context) => {
+                    convert::without_system_access(environment.mode, &mut context, |context| {
+                        convert::write(
+                            &call,
+                            environment.writers,
+                            &environment.writer_options,
+                            context,
+                        )
+                    })
+                }
+                Err(_) => Err(PeekError::Thrown(BUSY.into())),
+            };
+            system_result(lua, result.map(|value| vec![value]))
+        })?;
+        native.get::<Function>("convert_functions")?.call::<()>((
+            read,
+            write,
+            convert::readers_table(lua, environment.readers)?,
+            convert::writers_table(lua, environment.writers)?,
+        ))?;
+        // ADR 11: restricted mode has no function with file access. In
+        // full mode the system functions use a native host of their own,
+        // also when the conversion has a restricted host, because Pandoc
+        // permits them with `--sandbox` (row I-CONTRACTS-03).
+        if environment.mode == Mode::Full {
+            let mut os = Os::default();
+            let system = scope.create_function_mut(move |lua, arguments: Variadic<Value>| {
+                let cx = Cx { lua, max_depth };
+                let (name, rest) = match arguments.split_first() {
+                    Some((Value::String(name), rest)) => (name.text(), rest),
+                    _ => (String::new(), &arguments[..0]),
+                };
+                let result = system::call(&cx, &mut randoc_core::NativeHost, &mut os, &name, rest);
+                system_result(lua, result)
+            })?;
+            let add: Function = native.get("system_functions")?;
+            add.call::<()>(system)?;
+        }
+        Ok(body(&cx))
+    })?
+}
+
+/// The error of `pandoc.read` or `pandoc.write` inside a reader or writer
+/// that the same state runs.
+const BUSY: &str =
+    "pandoc.read and pandoc.write cannot run inside a reader or writer of the same script";
+
+/// The message of an error of the runtime, without the prefix of its kind.
+fn lua_error_text(error: &Error) -> String {
+    match error {
+        Error::Lua(message) => message.clone(),
+        other => other.to_string(),
+    }
 }
 
 /// The position of the Lua code that called `warn`, as Pandoc shows it:
@@ -207,7 +310,7 @@ pub fn apply_filter_files(
 
 /// The message of Lua (`luaL_loadfilex`) for a filter file that it cannot
 /// read.
-fn open_error(path: &str, error: &std::io::Error) -> String {
+pub(crate) fn open_error(path: &str, error: &std::io::Error) -> String {
     let shown = error.to_string();
     let reason = shown.split(" (os error").next().unwrap_or_default();
     if error.kind() == std::io::ErrorKind::IsADirectory {
@@ -234,17 +337,28 @@ fn system_result(lua: &Lua, result: Peek<Vec<Value>>) -> mlua::Result<MultiValue
 }
 
 /// Sets the globals that Pandoc gives a filter.
-fn set_globals(lua: &Lua, filter: &LuaFilter, environment: &FilterEnvironment) -> mlua::Result<()> {
+fn set_globals(
+    lua: &Lua,
+    kind: Globals,
+    environment: &FilterEnvironment,
+    max_depth: usize,
+) -> mlua::Result<()> {
     let globals = lua.globals();
-    globals.set("FORMAT", environment.format.as_str())?;
-    let native: Table = lua.named_registry_value(module::NATIVE)?;
-    crate::options::set_globals(
-        lua,
-        &native,
-        &environment.reader_options,
-        &environment.writer_options,
-    )?;
-    globals.set("PANDOC_SCRIPT_FILE", filter.path)?;
+    globals.set("FORMAT", kind.format)?;
+    if kind.options {
+        let native: Table = lua.named_registry_value(module::NATIVE)?;
+        crate::options::set_globals(
+            lua,
+            &native,
+            &environment.reader_options,
+            &environment.writer_options,
+            max_depth,
+        )?;
+    } else {
+        globals.set("PANDOC_READER_OPTIONS", Value::Nil)?;
+        globals.set("PANDOC_WRITER_OPTIONS", Value::Nil)?;
+    }
+    globals.set("PANDOC_SCRIPT_FILE", kind.script_file)?;
     let state = lua.create_table()?;
     state.set(
         "input_files",
@@ -317,32 +431,33 @@ return function(_, key)
 end
 "#;
 
+/// Compiles a script file as Pandoc does: without a byte order mark and
+/// without a first line that starts with `#`, so that a script can be a
+/// program of a Unix shell. The line end stays for the line count.
+pub(crate) fn load_chunk(cx: &Cx, path: &str, source: &[u8], mode: Mode) -> Peek<Function> {
+    let source = source.strip_prefix(b"\xEF\xBB\xBF").unwrap_or(source);
+    let source = match source {
+        [b'#', ..] => {
+            let end = source
+                .iter()
+                .position(|byte| *byte == b'\n')
+                .unwrap_or(source.len());
+            source.get(end..).unwrap_or_default()
+        }
+        other => other,
+    };
+    runtime::load_code(cx.lua, mode, source)
+        .set_name(format!("@{path}"))
+        .into_function()
+        .map_err(|error| PeekError::Thrown(runtime::message(&error)))
+}
+
 /// Runs the filter file and returns its filters: the tables of the list
 /// that the file returns, the one table that it returns, or the global
 /// functions when it returns nothing.
 fn load_filters(cx: &Cx, filter: &LuaFilter, mode: Mode) -> Peek<Vec<Filter>> {
     let lua = cx.lua;
-    // Lua ignores a first line that starts with `#`, so that a script can
-    // be a program of a Unix shell. The line end stays for the line count.
-    let source = filter
-        .source
-        .strip_prefix(b"\xEF\xBB\xBF")
-        .unwrap_or(filter.source);
-    let source = match source {
-        [b'#', ..] => {
-            let end = filter
-                .source
-                .iter()
-                .position(|byte| *byte == b'\n')
-                .unwrap_or(filter.source.len());
-            filter.source.get(end..).unwrap_or_default()
-        }
-        other => other,
-    };
-    let chunk: Function = runtime::load_code(lua, mode, source)
-        .set_name(format!("@{}", filter.path))
-        .into_function()
-        .map_err(|error| PeekError::Thrown(runtime::message(&error)))?;
+    let chunk = load_chunk(cx, filter.path, filter.source, mode)?;
     let call_traced: Function = lua.named_registry_value(CALL_TRACED)?;
     let mut results = call_traced.call::<MultiValue>(chunk)?.into_iter();
     if results.next() != Some(Value::Boolean(true)) {

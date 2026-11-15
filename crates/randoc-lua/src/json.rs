@@ -258,7 +258,7 @@ fn write(json: &Json, out: &mut String) {
     }
 }
 
-fn write_string(text: &str, out: &mut String) {
+pub(crate) fn write_string(text: &str, out: &mut String) {
     out.push('"');
     for c in text.chars() {
         match c {

@@ -1,0 +1,107 @@
+@@@ reader-sources 0
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"one"},{"t":"SoftBreak"},{"t":"Str","c":"two"},{"t":"SoftBreak"}]},{"t":"Para","c":[{"t":"Str","c":"in.txt=one"},{"t":"SoftBreak"},{"t":"Str","c":"two"},{"t":"SoftBreak"}]},{"t":"Para","c":[{"t":"Str","c":"72"},{"t":"Space"},{"t":"Str","c":"nil"},{"t":"Space"},{"t":"Str","c":"1"},{"t":"Space"},{"t":"Str","c":"table"},{"t":"Space"},{"t":"Str","c":"Sources"},{"t":"Space"},{"t":"Str","c":"s.lua"},{"t":"Space"},{"t":"Str","c":"ReaderOptions"}]}]}
+@@@ reader-markdown 0
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[1,["title",[],[]],[{"t":"Str","c":"Title"}]]},{"t":"Para","c":[{"t":"Emph","c":[{"t":"Str","c":"a"}]},{"t":"Space"},{"t":"Str","c":"and"},{"t":"Space"},{"t":"Quoted","c":[{"t":"DoubleQuote"},[{"t":"Str","c":"b"}]]}]}]}
+@@@ reader-bytes 0
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"string"},{"t":"Space"},{"t":"Str","c":"8"},{"t":"Space"},{"t":"Str","c":"ReaderOptions"}]}]}
+@@@ reader-both 0
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"text"}]}]}
+@@@ reader-none 4
+s.lua does not contain a custom reader
+@@@ reader-reader-table 84
+Error running Lua:
+attempt to call a table value
+stack traceback:
+@@@ reader-error 84
+Error running Lua:
+s.lua:1: boom
+stack traceback:
+	s.lua:1: in function 'Reader'
+@@@ reader-number 84
+Error running Lua:
+Pandoc expected, got number
+	while retrieving Pandoc
+@@@ reader-blocks 84
+Error running Lua:
+Pandoc expected, got Blocks
+	while retrieving Pandoc
+@@@ reader-nil 84
+Error running Lua:
+Pandoc expected, got nil
+	while retrieving Pandoc
+@@@ reader-syntax 84
+Error running Lua:
+s.lua:2: <name> or '...' expected near <eof>
+@@@ reader-load-error 84
+Error running Lua:
+s.lua:1: at load
+stack traceback:
+	s.lua:1: in main chunk
+@@@ reader-globals 0
+{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"nil"},{"t":"Space"},{"t":"Str","c":"nil"},{"t":"Space"},{"t":"Str","c":"table"},{"t":"Space"},{"t":"Str","c":"nil"},{"t":"Space"},{"t":"Str","c":"function"}]}]}
+@@@ writer-basic 0
+w:3 nil WriterOptions Heada bc
+@@@ writer-newline 0
+a
+@@@ writer-two-newlines 0
+a
+
+@@@ writer-empty 0
+
+@@@ writer-number 0
+12
+@@@ writer-bytes 0
+b3
+@@@ writer-both 0
+text
+@@@ writer-pandoc-write 0
+<h1 id="h">HEAD</h1>
+<p><em>A</em> B</p>
+<ul>
+<li>C</li>
+</ul>
+@@@ writer-none 4
+s.lua does not contain a custom writer
+@@@ writer-error 84
+Error running Lua:
+s.lua:1: bad
+stack traceback:
+	s.lua:1: in function 'Writer'
+@@@ writer-table 84
+Error running Lua:
+string expected, got table
+@@@ writer-nil 84
+Error running Lua:
+string expected, got nil
+@@@ writer-syntax 84
+Error running Lua:
+s.lua:2: <name> or '...' expected near <eof>
+@@@ writer-globals 0
+nil nil nil table nil
+@@@ writer-classic 0
+[A_B]
+@@@ lua-arguments 0
+-1=pandoc lua
+0=s.lua
+1=OUT
+2=b
+3=c-d
+3 b c-d
+@@@ lua-globals 0
+nil nil table nil nil function function table <p><em>a</em></p>
+@@@ lua-error 84
+Error running Lua:
+s.lua:1: x
+stack traceback:
+	s.lua:1: in main chunk
+@@@ lua-error-in-function 84
+Error running Lua:
+s.lua:1: deep
+stack traceback:
+	s.lua:1: in local 'f'
+	s.lua:2: in main chunk
+@@@ lua-syntax 84
+Error running Lua:
+s.lua:1: unexpected symbol near '='
+@@@ lua-return 0
+ran

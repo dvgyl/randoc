@@ -1,0 +1,189 @@
+# The oracle matrix of the script entrances.
+# `tools/script-matrix.py` writes this file. Do not edit it.
+@@@ case reader-sources reader
+--- script
+function Reader(input, opts)
+  local parts = {}
+  for _, s in ipairs(input) do parts[#parts + 1] = s.name .. '=' .. s.text end
+  return pandoc.Pandoc({pandoc.Para(tostring(input)), pandoc.Para(table.concat(parts, '|')),
+    pandoc.Para(table.concat({tostring(opts.columns), tostring(FORMAT), #input, type(input),
+      pandoc.utils.type(input), tostring(PANDOC_SCRIPT_FILE), pandoc.utils.type(opts)}, ' '))})
+end
+--- input
+one
+two
+@@@ case reader-markdown reader
+--- script
+function Reader(input) return pandoc.read(tostring(input), 'markdown') end
+--- input
+# Title
+
+*a* and "b"
+@@@ case reader-bytes reader
+--- script
+function ByteStringReader(input, opts) return pandoc.Pandoc{pandoc.Para(type(input) .. ' ' .. #input .. ' ' .. pandoc.utils.type(opts))} end
+--- input
+one
+two
+@@@ case reader-both reader
+--- script
+function Reader() return pandoc.Pandoc{pandoc.Para'text'} end
+function ByteStringReader() return pandoc.Pandoc{pandoc.Para'bytes'} end
+--- input
+x
+@@@ case reader-none reader
+--- script
+x = 1
+--- input
+x
+@@@ case reader-reader-table reader
+--- script
+Reader = {}
+--- input
+x
+@@@ case reader-error reader
+--- script
+function Reader() error('boom') end
+--- input
+x
+@@@ case reader-number reader
+--- script
+function Reader() return 5 end
+--- input
+x
+@@@ case reader-blocks reader
+--- script
+function Reader() return pandoc.Blocks{pandoc.Para'x'} end
+--- input
+x
+@@@ case reader-nil reader
+--- script
+function Reader() end
+--- input
+x
+@@@ case reader-syntax reader
+--- script
+function Reader(
+--- input
+x
+@@@ case reader-load-error reader
+--- script
+error('at load')
+--- input
+x
+@@@ case reader-globals reader
+--- script
+function Reader() return pandoc.Pandoc{pandoc.Para(table.concat({type(PANDOC_READER_OPTIONS), type(PANDOC_WRITER_OPTIONS), type(PANDOC_STATE), tostring(FORMAT), type(pandoc.read)}, ' '))} end
+--- input
+x
+@@@ case writer-basic writer
+--- script
+function Writer(doc, opts) return 'w:' .. #doc.blocks .. ' ' .. tostring(FORMAT) .. ' ' .. pandoc.utils.type(opts) .. ' ' .. pandoc.utils.stringify(doc) end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-newline writer
+--- script
+function Writer() return 'a\n' end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-two-newlines writer
+--- script
+function Writer() return 'a\n\n' end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-empty writer
+--- script
+function Writer() return '' end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-number writer
+--- script
+function Writer() return 12 end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-bytes writer
+--- script
+function ByteStringWriter(doc) return 'b' .. #doc.blocks .. '\n' end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-both writer
+--- script
+function Writer() return 'text' end
+function ByteStringWriter() return 'bytes' end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-pandoc-write writer
+--- script
+function Writer(doc, opts) return pandoc.write(doc:walk{Str = function(s) return pandoc.Str(s.text:upper()) end}, 'html', opts) end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-none writer
+--- script
+x = 1
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-error writer
+--- script
+function Writer() error('bad') end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-table writer
+--- script
+function Writer() return {} end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-nil writer
+--- script
+function Writer() end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-syntax writer
+--- script
+function Writer(
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-globals writer
+--- script
+function Writer() return table.concat({type(PANDOC_READER_OPTIONS), type(PANDOC_WRITER_OPTIONS), tostring(PANDOC_DOCUMENT), type(PANDOC_STATE), tostring(FORMAT)}, ' ') end
+--- input
+[Header 1 ("h",[],[]) [Str "Head"],Para [Emph [Str "a"],Space,Str "b"],BulletList [[Plain [Str "c"]]]]
+@@@ case writer-classic writer
+--- script
+Para = function(text) return '[' .. text .. ']' end
+Str = function(text) return text:upper() end
+Space = function() return '_' end
+Blocksep = function() return '\n' end
+Doc = function(body) return body end
+--- input
+[Para [Str "a",Space,Str "b"]]
+@@@ case lua-arguments lua b c-d
+--- script
+local out = {}
+for i = -1, #arg do out[#out + 1] = i .. '=' .. (i == 1 and 'OUT' or tostring(arg[i])) end
+local rest = table.pack(...)
+out[#out + 1] = rest.n .. ' ' .. tostring(rest[2]) .. ' ' .. tostring(rest[3])
+local f = io.open(arg[1], 'w') f:write(table.concat(out, '\n'), '\n') f:close()
+--- input
+@@@ case lua-globals lua
+--- script
+local f = io.open(arg[1], 'w')
+f:write(table.concat({tostring(PANDOC_SCRIPT_FILE), tostring(FORMAT), type(PANDOC_STATE), tostring(PANDOC_READER_OPTIONS), tostring(PANDOC_WRITER_OPTIONS), type(pandoc.read), type(pandoc.write), type(lpeg), pandoc.write(pandoc.read('*a*'), 'html')}, ' '), '\n') f:close()
+--- input
+@@@ case lua-error lua
+--- script
+error('x')
+--- input
+@@@ case lua-error-in-function lua
+--- script
+local function f() error('deep') end
+f()
+--- input
+@@@ case lua-syntax lua
+--- script
+x = = 1
+--- input
+@@@ case lua-return lua
+--- script
+local f = io.open(arg[1], 'w') f:write('ran\n') f:close()
+return 1, 2
+--- input
