@@ -245,7 +245,35 @@ completely. Its main rules:
     permits a change of the delegation. Each gate run and each merge
     check is a plain script with a state file, and the coordinator
     writes the records itself. This is an interpretation of the
-    coordinator. The owner can change it with one sentence.)
+    coordinator. The owner can change it with one sentence. This
+    interpretation ended at 01:33 UTC, when the owner reset the limits
+    (instructions 24 and 25).)
+
+24. "continue please" and "i have reset the limit" (Given in the sixth
+    session on 2026-11-15 at about 01:32 UTC. How the coordinator applied
+    it: it read the usage tool again; each limit was at 0% used, and the
+    5-hour window ends at 06:30 UTC. The reason for the Codex workers of
+    instruction 23 was gone. The coordinator stopped the four Codex
+    workers (two had run for 13 minutes, two for 2 minutes) and saved
+    their open changes in `env/store/patches-s6/`.)
+
+25. "the weekly limit has been reset", "please conitnue", "and ill be afk
+    so commit and deploy without asking me", "preserve all my instructions
+    about the delegation behaviour and judgements" (Given at about 01:36
+    UTC. How the coordinator applies it: the delegation of instructions
+    14, 18 and 20 applies again without a change. Each code worker is an
+    Opus 5.5 agent. A Sonnet 5.5 agent writes records and does single
+    checks and measurements. GPT-6.1 Sol through Codex and an Opus 5.5
+    agent review. Four Opus workers started at 01:38 UTC on the unit
+    briefs of this session. The open change of a stopped Codex worker is
+    input that the Opus worker checks as the patch of a stopped worker.
+    The mechanical merge steps and each gate run of a branch with no
+    worker run as plain scripts with a state file
+    (`env/bin/merge-batch-s6`, `env/bin/gate-branch`), which is the merge
+    procedure of `env/store/briefs/merge-s5.md` without an agent. Commits
+    and pushes to `main` and to `wip/NAME` branches need no question to
+    the owner, as before. To end before the 5-hour window does, the
+    coordinator reads the usage tool before it starts more agents.)
 
 ## 3. Writing style
 
