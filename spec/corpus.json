@@ -2,7 +2,7 @@
  "program": "pandoc 3.13",
  "oracle": "pandoc 3.13",
  "program_path": "target/debug/randoc",
- "program_sha256": "445b0965c70b9649ab9a7dc0beb95f32e9318957a37f991477c26797d5410194",
+ "program_sha256": "8576f724171f2f0da3bb9695490dccd2b139d2c0a59e4ce2dd3f5e2f124d9dea",
  "oracle_sha256": "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44",
  "targets": [
   "json",
@@ -13,24 +13,24 @@
  "documents": 230,
  "totals": {
   "units": 690,
-  "pass": 159,
-  "fail": 531
+  "pass": 162,
+  "fail": 528
  },
  "by_target": {
   "html": {
    "units": 230,
-   "pass": 35,
-   "fail": 195
+   "pass": 36,
+   "fail": 194
   },
   "json": {
    "units": 230,
-   "pass": 62,
-   "fail": 168
+   "pass": 63,
+   "fail": 167
   },
   "markdown": {
    "units": 230,
-   "pass": 62,
-   "fail": 168
+   "pass": 63,
+   "fail": 167
   }
  },
  "by_format": {
@@ -111,8 +111,8 @@
   },
   "latex": {
    "units": 24,
-   "pass": 12,
-   "fail": 12
+   "pass": 15,
+   "fail": 9
   },
   "man": {
    "units": 12,
@@ -417,18 +417,18 @@
   "latex2e-cmdguide:html": "fail exit,stderr",
   "latex2e-cmdguide:json": "fail exit,stderr",
   "latex2e-cmdguide:markdown": "fail exit,stderr",
-  "latex2e-cyrguide:html": "fail output",
-  "latex2e-cyrguide:json": "fail output",
-  "latex2e-cyrguide:markdown": "fail output",
+  "latex2e-cyrguide:html": "pass",
+  "latex2e-cyrguide:json": "pass",
+  "latex2e-cyrguide:markdown": "pass",
   "latex2e-encguide:html": "fail exit,stderr",
   "latex2e-encguide:json": "fail exit,stderr",
   "latex2e-encguide:markdown": "fail exit,stderr",
   "latex2e-fntguide:html": "pass",
   "latex2e-fntguide:json": "pass",
   "latex2e-fntguide:markdown": "pass",
-  "latex2e-ltnews:html": "fail exit,stderr",
-  "latex2e-ltnews:json": "fail exit,stderr",
-  "latex2e-ltnews:markdown": "fail exit,stderr",
+  "latex2e-ltnews:html": "fail exit,stderr,output",
+  "latex2e-ltnews:json": "fail exit,stderr,output",
+  "latex2e-ltnews:markdown": "fail exit,stderr,output",
   "latex2e-ltnews23:html": "pass",
   "latex2e-ltnews23:json": "pass",
   "latex2e-ltnews23:markdown": "pass",
