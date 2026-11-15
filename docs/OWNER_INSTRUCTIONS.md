@@ -275,6 +275,18 @@ completely. Its main rules:
     the owner, as before. To end before the 5-hour window does, the
     coordinator reads the usage tool before it starts more agents.)
 
+26. "decide for me and stop al the background tasks and give me the handoff
+    promtp for the next thread" (Given at the end of the sixth session on
+    2026-11-15, after the handoff, which named decision D7 as the one
+    decision that waited for the owner. How the coordinator applied it:
+    it decided D7 in the place of the owner, as the table "Decisions that
+    wait for the owner" of `PROGRESS.md` records: the script texts that
+    the HTML writer must write to be byte-identical stay in the source of
+    `randoc-html`, and no stored test result holds them. The owner can
+    change this decision with one sentence. Decisions D1 to D6 keep their
+    working rules: D6 needs a forced push, which the owner forbids. No
+    background task ran at that time, and the watchdog was stopped.)
+
 ## 3. Writing style
 
 The owner's global rule: write all prose (answers, documents, comments,
