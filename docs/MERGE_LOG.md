@@ -2256,3 +2256,39 @@ other low rows. The modules `names`, `date`, the `Citeproc` entry,
 sorting, disambiguation, collapsing, positions and locators are not
 ported. Open checks: a review of the new modules, the time table,
 fuzzing of the new modules.
+
+## Workstream markdown-writer (branch `ws/markdown-writer-3`, commit 34a4339, one squashed commit, session 5 of 2026-11-15, batch D)
+
+Merged as a small block under owner instruction 17. `main` holds the
+earlier commit 7227395 of the branch as f292078 (batch C); this record
+holds the commits 4c203ca and 34a4339 together (4c203ca alone has a
+stack overflow in `tests/limits.rs`; 34a4339 corrects it). Content:
+divs and raw tags with `markdown_attribute`, figure forms, nested
+emphasis, plain scripts, a backslash before white space, no overflow
+for an extreme `columns` value; 34a4339 writes a figure without a copy
+of its content. Rows: I-MDW-16 and I-MDW-17 (low) added.
+
+The gate evidence comes from the inbox line of 34a4339
+(`env/store/inbox/markdown-writer.log`, 23:37 UTC), from `git log
+--format='%h %s' main..34a4339` (it also lists 7227395, which `main`
+holds) and from the report `env/store/reports/markdown-writer.md`: the
+section of 2026-11-14 23:40 UTC describes 34a4339; the top section
+(2026-11-15 00:32 UTC) describes the later head 5498568, which has no
+gate run and is not in this block.
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 34a4339 (the gate on 4c203ca failed). The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Report: 1236 new replay units, 56 fail (I-MDW-16, I-MDW-17); writer suite 21898 units / 21034 pass before, 23134 / 22256 pass after. |
+| 3. Tests | `cargo test -p randoc-markdown-writer` on the merged tree: 20 pass, 0 fail, 1 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Not run in this unit. |
+| 5. Reviews | Round 1 requested changes; the other findings are in work. |
+| 6. No slowdowns | Not measured. Report: the deep test of `tests/limits.rs` needed 47.9 s at 34a4339 (8.9 s at 7227395); the top section finds the cause in `W::link` and corrects it in 5498568 (not in this block). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: none. Licence scan of 34a4339: no hit.
+
+Open findings: I-MDW-06 (high); the other rows of review round 1 that
+are in work; the low rows. Open checks: the time of nested tables and
+inlines (Codex R1-02, Opus R1-09), fuzzing, coverage, the mutation
+sample.

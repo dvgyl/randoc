@@ -1027,3 +1027,48 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{
 id = "ext-header-attr-text"
 to = ["markdown", "markdown-header_attributes", "commonmark_x"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"Head"},{"t":"Space"},{"t":"Str","c":"{#id}"}]}]}'
+
+[[case]]
+id = "backslash-before-letter"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\\b"}]}]}'
+
+[[case]]
+id = "backslash-before-space"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"b\\ c"}]}]}'
+
+[[case]]
+id = "backslash-before-two-space"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"b\\\\ c"}]}]}'
+
+[[case]]
+id = "backslash-before-tab"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\\\tb"}]}]}'
+
+[[case]]
+id = "backslash-before-nbsp"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\\\u00a0b"}]}]}'
+
+[[case]]
+id = "backslash-before-end"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\\"}]}]}'
+
+[[case]]
+id = "backslash-before-punct"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\\_b"}]}]}'
+
+[[case]]
+id = "backslash-before-uni"
+to = ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\\é"}]}]}'
+
+[[case]]
+id = "backslash-matrix-math"
+to = ["markdown_strict", "gfm", "commonmark"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"DisplayMath"},"\\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}"]}]}]}'

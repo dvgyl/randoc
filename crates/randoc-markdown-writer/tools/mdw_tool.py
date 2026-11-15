@@ -1654,6 +1654,90 @@ def define_cases():
     c("wrap-none-notes", [Para("x", Note(Para(" ".join([LONG] * 2))))], args=["--wrap=none"])
     c("columns-120-lineblock", [LineBlock(" ".join([LONG] * 2))], args=["--columns=120"])
 
+    def add(name, ident, blocks, to, args=None):
+        FILES[name]["cases"].append((ident, blocks, to, args))
+
+    # Divs and raw HTML tags with markdown_attribute (markdown_mmd, markdown_phpextra).
+    div_to = ["markdown_mmd", "markdown_phpextra", "markdown_mmd-raw_html", "markdown-fenced_divs+markdown_attribute",
+              "markdown_strict+markdown_attribute", "markdown_phpextra-markdown_attribute", "gfm"]
+    div_attrs = {"none": A(), "id": A("i"), "classes": A("", ["c", "d"]), "all": A("i", ["c"], [("k", "v"), ("data-x", "1")])}
+    div_content = {"para": [Para("x")], "list": [BL(["x"])], "nested": [Div(A("j"), Para("y"))]}
+    for an, at in div_attrs.items():
+        for cn, content in div_content.items():
+            add("figures-divs-spans", "md-attr-div-%s-%s" % (an, cn), [Div(at, *content)], div_to)
+    tags = {
+        "aside-plain": [RawB("html", "<aside>"), Plain("x"), RawB("html", "</aside>")],
+        "aside-para": [RawB("html", "<aside>"), Para("x"), RawB("html", "</aside>")],
+        "class-first": [RawB("html", '<div class="c">'), Para("x"), RawB("html", "</div>")],
+        "two-tags": [RawB("html", "<div><span>"), Plain("x"), RawB("html", "</span></div>")],
+        "close-only": [Plain("x"), RawB("html", "</div>")],
+        "newline": [RawB("html", "<aside>\n"), Plain("x"), RawB("html", "</aside>")],
+        "end": [Para("a"), RawB("html", "<aside>")],
+        "then-raw": [RawB("html", "<aside>"), RawB("html", "<b>"), Plain("x")],
+        "html5": [RawB("html5", "<aside>"), Plain("x")],
+        "in-list": [BL([[RawB("html", "<aside>"), Plain("x"), RawB("html", "</aside>")]])],
+        "text-after": [RawB("html", "<b>t"), Plain("x")],
+        "then-div": [RawB("html", "<aside>"), Div(A("i"), Para("y"))],
+        "comment-last": [RawB("html", "<b><!-- c -->"), Plain("x")],
+        "comment-first": [RawB("html", "<!-- c --><b>"), Plain("x")],
+        "self-close": [RawB("html", '<a b="1"/>'), Plain("x")],
+        "closed-pair": [RawB("html", "<div></div>"), Plain("x")],
+    }
+    attr_forms = ['<details open>', "<a href='u'>", '<a href=u>', '<a  class="c"   id="i">', '<a title="&amp;">',
+                  '<a title="q&quot;">', '<a title="x\'y">', '<a title="1>2">', '<a markdown="0">', '<a\nclass="c">',
+                  '<a data-v="&lt;">', '<A HREF="u">', '<x-y z="1">', '<a title="&#65;&#x42;">']
+    for index, form in enumerate(attr_forms):
+        tags["attr-%d" % index] = [RawB("html", form), Plain("x")]
+    for name, blocks in tags.items():
+        add("figures-divs-spans", "md-attr-tag-" + name, blocks, ["markdown_mmd", "markdown_phpextra", "markdown",
+                                                                  "markdown_phpextra-markdown_attribute"])
+
+    # Figures: the implicit form, the HTML form and the div form per format.
+    def fimg(alt, title="", attr=None):
+        return Image(alt, "i.png", title, attr or A())
+    fig_shapes = {
+        "plain-same": ([Plain(fimg("cap"))], "cap"), "plain-alt": ([Plain(fimg("alt"))], "cap"),
+        "plain-noalt": ([Plain(fimg(""))], "cap"), "para-same": ([Para(fimg("cap"))], "cap"),
+        "para-alt": ([Para(fimg("alt"))], "cap"), "nocap": ([Plain(fimg("alt"))], None),
+        "title-fig": ([Plain(fimg("cap", "fig:t"))], "cap"), "title-figonly": ([Plain(fimg("cap", "fig:"))], "cap"),
+        "title-figfig": ([Plain(fimg("cap", "fig:fig:t"))], "cap"),
+        "img-width": ([Plain(fimg("cap", attr=A("", [], [("width", "80%")])))], "cap"),
+        "img-id": ([Plain(fimg("cap", attr=A("im")))], "cap"), "text": ([Para("words")], "cap"),
+        "two-images": ([Plain(fimg("a"), fimg("b"))], "cap"),
+    }
+    fig_to = ["markdown", "markdown-implicit_figures", "markdown_mmd", "markdown_phpextra", "markdown_strict", "gfm",
+              "commonmark", "plain", "markdown-implicit_figures-raw_html", "markdown_strict-raw_html"]
+    for name, (body, cap) in fig_shapes.items():
+        for fid in ("", "f"):
+            caption = [] if cap is None else [Plain(cap)]
+            add("figures-divs-spans", "fig-form-%s%s" % (name, "-id" if fid else ""), [Fig(A(fid), caption, *body)], fig_to)
+    add("figures-divs-spans", "fig-form-class", [Fig(A("", ["k"]), [Plain("cap")], Para("words"))],
+        ["markdown-implicit_figures-raw_html", "markdown_strict-raw_html", "markdown_mmd-raw_html"])
+
+    # Directly nested emphasis cancels.
+    emph_to = ["markdown", "gfm", "commonmark", "markdown_strict", "plain"]
+    E = lambda *x: {"t": "Emph", "c": I(*x)}
+    S = lambda *x: {"t": "Strong", "c": I(*x)}
+    nested = {"ee": E(E("x")), "eee": E(E(E("x"))), "eeee": E(E(E(E("x")))), "ss": S(S("x")), "ese": E(S(E("x"))),
+              "ee-two": E(E("x"), E("y")), "ee-space": E(SP, E("x")), "ee-strike": E(E(Strike("x"))), "ee-words": E(E("x y"))}
+    for name, inline in nested.items():
+        add("inlines", "nested-emphasis-" + name, [Para("a", SP, inline, SP, "b")], emph_to)
+
+    # A backslash before each kind of character.
+    for name, text in {"letter": "a\\b", "space": "b\\ c", "two-space": "b\\\\ c", "tab": "a\\\tb",
+                       "nbsp": "a\\\u00a0b", "end": "a\\", "punct": "a\\_b", "uni": "a\\\u00e9"}.items():
+        add("escaping", "backslash-before-" + name, [Para(Str(text))], ["markdown_strict", "gfm", "commonmark", "markdown", "markdown_phpextra"])
+    add("escaping", "backslash-matrix-math", [Para(DMath("\\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}"))],
+        ["markdown_strict", "gfm", "commonmark"])
+
+    # Scripts in plain output.
+    for name, tex in {"xn": "x^n", "neg": "10^{-3}", "R": "\\mathbb{R}^n", "nest": "x^{2^n}", "xi": "x^i",
+                      "sub": "x_{-1}", "two": "x^2", "sum": "a^{n+1}"}.items():
+        add("math-raw", "plain-script-" + name, [Para(Math(tex))], ["plain"])
+    for name, inline in {"emph": Sup(E("n")), "minus": Sup(Str("\u22123")), "str-emph": Sup(Str("2"), E("n")),
+                         "sub-minus": Sub(Str("\u22121")), "sub-emph": Sub(E("i"))}.items():
+        add("math-raw", "plain-script-inline-" + name, [Para(Str("x"), inline)], ["plain"])
+
 
 def cmd_cases(args):
     define_cases()

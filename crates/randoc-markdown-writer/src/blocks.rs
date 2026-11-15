@@ -579,6 +579,16 @@ impl W<'_> {
     /// The text of a raw block without the separator after it, or `None`
     /// when the format drops the block.
     fn raw_body(&self, format: &str, text: &str) -> Option<RawBody> {
+        let marked;
+        let text = if self.has(Extension::MarkdownAttribute)
+            && matches!(format, "html" | "html4" | "html5")
+            && let Some(changed) = crate::html::mark_last_open_tag(text)
+        {
+            marked = changed;
+            marked.as_str()
+        } else {
+            text
+        };
         if self.plain() {
             return (format == "plain")
                 .then(|| RawBody::Trimmed(literal(text.trim_end_matches('\n'))));
@@ -861,6 +871,23 @@ impl W<'_> {
                 + literal(fence)
                 + blankline());
         }
+        if !self.has(Extension::NativeDivs)
+            && self.has(Extension::MarkdownAttribute)
+            && self.has(Extension::RawHtml)
+        {
+            let names = Attr::new(attr.id.clone(), attr.classes.clone(), Vec::new());
+            let others = Attr::new(Text::new(), Vec::new(), attr.attributes.clone());
+            let inner = self.block_list(blocks)?;
+            return Ok(literal(format!(
+                "<div{} markdown=\"1\"{}>",
+                html_attrs(&names),
+                html_attrs(&others)
+            )) + blankline()
+                + inner
+                + blankline()
+                + literal("</div>")
+                + blankline());
+        }
         let html_divs =
             self.variant == Variant::Commonmark || self.has(Extension::MarkdownInHtmlBlocks);
         if self.has(Extension::NativeDivs) || html_divs && self.has(Extension::RawHtml) {
@@ -898,18 +925,29 @@ impl W<'_> {
             })
             .collect();
         if self.plain() {
-            let caption_doc = self.inline_lines(&parts)?;
-            if image.is_some() {
+            if image.is_some() && attr.id.is_empty() {
+                let caption_doc = self.inline_lines(&parts)?;
                 return Ok(literal("[") + caption_doc + literal("]") + blankline());
             }
-            return Ok(self.block_list(blocks)? + caption_doc + blankline());
+            return self.block_list(blocks);
         }
+        // Without link attributes the figure identifier and the image
+        // attributes have no Markdown form.
+        let attrs_fit = |image_attr: &Attr| {
+            self.link_attributes() || attr.id.is_empty() && image_attr.is_empty()
+        };
         if let Some((image_attr, alt, target)) = image
             && self.has(Extension::ImplicitFigures)
             && image_attr.id.is_empty()
             && attr.classes.is_empty()
             && attr.attributes.is_empty()
+            && attrs_fit(image_attr)
         {
+            let mut target = target.clone();
+            if let Some(title) = target.title.strip_prefix("fig:") {
+                target.title = Text::from(title);
+            }
+            let target = &target;
             let mut new_attr = image_attr.clone();
             new_attr.id = attr.id.clone();
             let alt_text = stringify(alt);
@@ -917,14 +955,25 @@ impl W<'_> {
             if !alt.is_empty() && alt_text != caption_text.join(" ") {
                 new_attr.attributes.push((Text::from("alt"), alt_text));
             }
+            if !new_attr.is_empty() && !self.link_attributes() && self.has(Extension::RawHtml) {
+                // The alternative text needs an attribute: Pandoc writes the
+                // image alone in HTML.
+                let image = Inline::Image(image_attr.clone(), alt.clone(), target.clone());
+                return Ok(self.html_blocks(&[Block::Plain(vec![image])])? + blankline());
+            }
             let caption_doc = self.inline_lines(&parts)?;
             return Ok(self.image_doc(&new_attr, caption_doc, target) + blankline());
         }
         if self.has(Extension::RawHtml) {
             return Ok(self.html_blocks(std::slice::from_ref(figure))? + blankline());
         }
+        // Pandoc writes a figure div with a caption div here when the format
+        // has divs (I-MDW-17). A copy of the content into a div would walk the
+        // whole subtree before the depth check.
         let mut out = self.block_list(blocks)?;
-        out += self.block_list(&caption.long)?;
+        if !caption.long.is_empty() {
+            out += blankline() + self.block_list(&caption.long)?;
+        }
         Ok(out)
     }
 }

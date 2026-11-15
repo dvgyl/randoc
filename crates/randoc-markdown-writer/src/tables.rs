@@ -368,7 +368,7 @@ impl W<'_> {
 
     fn multiline_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let docs = self.cell_docs(g)?;
-        let relative = Self::relative_widths(g, &docs, self.opts.columns - 1, 0, 2);
+        let relative = Self::relative_widths(g, &docs, self.opts.columns.saturating_sub(1), 0, 2);
         let (head, body) = Self::rows_lines(&docs, relative.as_deref());
         let columns = g.aligns.len();
         let widths: Vec<usize> = match &relative {
@@ -421,7 +421,11 @@ impl W<'_> {
         let widths: Vec<usize> = if padded {
             natural
         } else if self.variant != crate::Variant::Commonmark && g.widths.iter().any(|w| *w > 0.0) {
-            let room = self.opts.columns - i64::try_from(columns).unwrap_or(i64::MAX) - 1;
+            let room = self
+                .opts
+                .columns
+                .saturating_sub(i64::try_from(columns).unwrap_or(i64::MAX))
+                .saturating_sub(1);
             g.widths
                 .iter()
                 .map(|w| {

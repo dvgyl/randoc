@@ -187,3 +187,68 @@ input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{
 id = "edge-space-display-bad-newline"
 to = ["plain", "markdown_strict", "gfm", "markdown-tex_math_dollars", "markdown"]
 input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Space"},{"t":"Math","c":[{"t":"DisplayMath"},"\n\\nosuch{y} "]},{"t":"Space"},{"t":"Str","c":"b"}]}]}'
+
+[[case]]
+id = "plain-script-xn"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"x^n"]}]}]}'
+
+[[case]]
+id = "plain-script-neg"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"10^{-3}"]}]}]}'
+
+[[case]]
+id = "plain-script-R"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"\\mathbb{R}^n"]}]}]}'
+
+[[case]]
+id = "plain-script-nest"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"x^{2^n}"]}]}]}'
+
+[[case]]
+id = "plain-script-xi"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"x^i"]}]}]}'
+
+[[case]]
+id = "plain-script-sub"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"x_{-1}"]}]}]}'
+
+[[case]]
+id = "plain-script-two"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"x^2"]}]}]}'
+
+[[case]]
+id = "plain-script-sum"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Math","c":[{"t":"InlineMath"},"a^{n+1}"]}]}]}'
+
+[[case]]
+id = "plain-script-inline-emph"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"Superscript","c":[{"t":"Emph","c":[{"t":"Str","c":"n"}]}]}]}]}'
+
+[[case]]
+id = "plain-script-inline-minus"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"Superscript","c":[{"t":"Str","c":"−3"}]}]}]}'
+
+[[case]]
+id = "plain-script-inline-str-emph"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"Superscript","c":[{"t":"Str","c":"2"},{"t":"Emph","c":[{"t":"Str","c":"n"}]}]}]}]}'
+
+[[case]]
+id = "plain-script-inline-sub-minus"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"Subscript","c":[{"t":"Str","c":"−1"}]}]}]}'
+
+[[case]]
+id = "plain-script-inline-sub-emph"
+to = ["plain"]
+input = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"},{"t":"Subscript","c":[{"t":"Emph","c":[{"t":"Str","c":"i"}]}]}]}]}'

@@ -47,7 +47,9 @@ impl W<'_> {
                     out.push_str("\\![");
                     i += 1;
                 }
-                '\\' if !escapable_all && next.is_some_and(|n| !n.is_ascii_punctuation()) => {
+                '\\' if !escapable_all
+                    && next.is_some_and(|n| !n.is_ascii_punctuation() && !n.is_whitespace()) =>
+                {
                     out.push('\\');
                 }
                 '\\' | '*' | '`' | '[' | ']' => {

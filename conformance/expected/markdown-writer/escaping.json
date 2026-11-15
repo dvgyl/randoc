@@ -1249,6 +1249,534 @@
       "stdout": "\\\n",
       "stderr": ""
     },
+    "backslash-before-end#e2e:commonmark": {
+      "key": "94e42c55ed2f7635",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#e2e:gfm": {
+      "key": "c6ff210ea3d7b5b6",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#e2e:markdown": {
+      "key": "47406556e17de41c",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#e2e:markdown_phpextra": {
+      "key": "3f53cc81397ad678",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#e2e:markdown_strict": {
+      "key": "1c242b50e43b347b",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#read": {
+      "key": "fe7df7846d21db2d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-end#write:commonmark": {
+      "key": "ac28bcebd0849446",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#write:gfm": {
+      "key": "91a327140e77aed7",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#write:markdown": {
+      "key": "4eb749e40a215b51",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#write:markdown_phpextra": {
+      "key": "f18e8700352e885d",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-end#write:markdown_strict": {
+      "key": "338435d5dc73d728",
+      "exit": 0,
+      "stdout": "a\\\\\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#e2e:commonmark": {
+      "key": "25b5f822f885dbb0",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#e2e:gfm": {
+      "key": "fb767a4078feb969",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#e2e:markdown": {
+      "key": "2db6c72f9ec0590b",
+      "exit": 0,
+      "stdout": "a\\\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#e2e:markdown_phpextra": {
+      "key": "a0d7f43c4950dc97",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#e2e:markdown_strict": {
+      "key": "790de87581439f3a",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#read": {
+      "key": "599858595f01d6e8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\b\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#write:commonmark": {
+      "key": "7b9a2ed54eed0205",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#write:gfm": {
+      "key": "27ce7815a546acc2",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#write:markdown": {
+      "key": "5132dd836aef7334",
+      "exit": 0,
+      "stdout": "a\\\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#write:markdown_phpextra": {
+      "key": "c3dba6697141c8b8",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-letter#write:markdown_strict": {
+      "key": "af5c6671de871f7f",
+      "exit": 0,
+      "stdout": "a\\b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#e2e:commonmark": {
+      "key": "0dc71966f187cd64",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#e2e:gfm": {
+      "key": "90b2f3d9453aa4a9",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#e2e:markdown": {
+      "key": "fbbca4778e9bd487",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#e2e:markdown_phpextra": {
+      "key": "7d6d4bce3b38ec0b",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#e2e:markdown_strict": {
+      "key": "d5ace7657a45a872",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#read": {
+      "key": "1186d16baf76056c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\ b\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#write:commonmark": {
+      "key": "1f6049df49240bb9",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#write:gfm": {
+      "key": "80a5e46618668e7a",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#write:markdown": {
+      "key": "0e90b8af2e2e72fc",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#write:markdown_phpextra": {
+      "key": "fcc353e7259c7020",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-nbsp#write:markdown_strict": {
+      "key": "b3014c3f99b477bb",
+      "exit": 0,
+      "stdout": "a\\\\ b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#e2e:commonmark": {
+      "key": "782709a861572cea",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#e2e:gfm": {
+      "key": "c607518acc94b8e1",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#e2e:markdown": {
+      "key": "cf68b289ca636ad3",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#e2e:markdown_phpextra": {
+      "key": "8206e55c3011320f",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#e2e:markdown_strict": {
+      "key": "5dbd280f57cea6cc",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#read": {
+      "key": "c2637053c7a9ee82",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\_b\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#write:commonmark": {
+      "key": "dcb4d206d9894a0b",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#write:gfm": {
+      "key": "e709687934a8be4a",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#write:markdown": {
+      "key": "9ad967e271aad650",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#write:markdown_phpextra": {
+      "key": "a2860eeacc837484",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-punct#write:markdown_strict": {
+      "key": "7c513c891a3ad5b9",
+      "exit": 0,
+      "stdout": "a\\\\\\_b\n",
+      "stderr": ""
+    },
+    "backslash-before-space#e2e:commonmark": {
+      "key": "cbbdc7b1b681f70b",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#e2e:gfm": {
+      "key": "0f50ae17212b5ed4",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#e2e:markdown": {
+      "key": "45879ede65f87f66",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#e2e:markdown_phpextra": {
+      "key": "7640bbb770e5826a",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#e2e:markdown_strict": {
+      "key": "125b5998d3ae1e1d",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#read": {
+      "key": "1dda6f12bde859f3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\\\\ c\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-space#write:commonmark": {
+      "key": "f66398cd23741774",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#write:gfm": {
+      "key": "89488f214ab6661d",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#write:markdown": {
+      "key": "d753a653648e9643",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#write:markdown_phpextra": {
+      "key": "8e52e599e27456ff",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-space#write:markdown_strict": {
+      "key": "f9b1f5261df805b2",
+      "exit": 0,
+      "stdout": "b\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#e2e:commonmark": {
+      "key": "19200698e0acddbe",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#e2e:gfm": {
+      "key": "aebe2706695f0a37",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#e2e:markdown": {
+      "key": "92c292d2b2e71d65",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#e2e:markdown_phpextra": {
+      "key": "40e8b5bfdf2e65b1",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#e2e:markdown_strict": {
+      "key": "d2029428149959fc",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#read": {
+      "key": "1af4a877418a94a6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\\\tb\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#write:commonmark": {
+      "key": "9a2552cf1f3bfd03",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#write:gfm": {
+      "key": "b2d4157e96e414e0",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#write:markdown": {
+      "key": "10987c6c619e1526",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#write:markdown_phpextra": {
+      "key": "0f0abd3f9d907d7a",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-tab#write:markdown_strict": {
+      "key": "3432405f09621569",
+      "exit": 0,
+      "stdout": "a\\\\\tb\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#e2e:commonmark": {
+      "key": "5716d510d28444e1",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#e2e:gfm": {
+      "key": "13724fbd7b78260a",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#e2e:markdown": {
+      "key": "e8d073423915b148",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#e2e:markdown_phpextra": {
+      "key": "a1f351ccf0641fec",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#e2e:markdown_strict": {
+      "key": "8a9b03c8bdd57c17",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#read": {
+      "key": "1d80ed259245f489",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b\\\\\\\\ c\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#write:commonmark": {
+      "key": "d3e609abef795dba",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#write:gfm": {
+      "key": "d0ed6a827a0bd77b",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#write:markdown": {
+      "key": "936dfcdd4f454805",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#write:markdown_phpextra": {
+      "key": "5887bd92c70290c9",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-two-space#write:markdown_strict": {
+      "key": "667f34139a1cce24",
+      "exit": 0,
+      "stdout": "b\\\\\\\\ c\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#e2e:commonmark": {
+      "key": "e9bd7ecf7dc011a7",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#e2e:gfm": {
+      "key": "7463b9b8489c20e0",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#e2e:markdown": {
+      "key": "954e8af72c894b5e",
+      "exit": 0,
+      "stdout": "a\\\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#e2e:markdown_phpextra": {
+      "key": "6fc1eb34795e2262",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#e2e:markdown_strict": {
+      "key": "d54796c5ee6d527d",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#read": {
+      "key": "254f26b33ba884bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\\\\é\"}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#write:commonmark": {
+      "key": "d21eab466b6a03ac",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#write:gfm": {
+      "key": "4c6e7c3e723e632d",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#write:markdown": {
+      "key": "bb448f55fc56e487",
+      "exit": 0,
+      "stdout": "a\\\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#write:markdown_phpextra": {
+      "key": "40a7ba085910cdd3",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
+    "backslash-before-uni#write:markdown_strict": {
+      "key": "c3ae1226e4b91446",
+      "exit": 0,
+      "stdout": "a\\é\n",
+      "stderr": ""
+    },
     "backslash-end#e2e:commonmark": {
       "key": "2b02580ace913c4a",
       "exit": 0,
@@ -1404,6 +1932,48 @@
       "exit": 0,
       "stdout": "ab\\cd\n",
       "stderr": ""
+    },
+    "backslash-matrix-math#e2e:commonmark": {
+      "key": "3ae189a00b7fcd2c",
+      "exit": 0,
+      "stdout": "$$\\begin{pmatrix}a & b\\\\\\\\ c & d\\end{pmatrix}$$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}, rendering as TeX\n"
+    },
+    "backslash-matrix-math#e2e:gfm": {
+      "key": "bb34e144751f39f1",
+      "exit": 0,
+      "stdout": "``` math\n\\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}\n```\n",
+      "stderr": ""
+    },
+    "backslash-matrix-math#e2e:markdown_strict": {
+      "key": "deaae6064728ad22",
+      "exit": 0,
+      "stdout": "$$\\begin{pmatrix}a & b\\\\\\\\ c & d\\end{pmatrix}$$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}, rendering as TeX\n"
+    },
+    "backslash-matrix-math#read": {
+      "key": "200c9cdc4d1f29e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\\\\begin{pmatrix}a & b\\\\\\\\ c & d\\\\end{pmatrix}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "backslash-matrix-math#write:commonmark": {
+      "key": "d73c37d8a263751d",
+      "exit": 0,
+      "stdout": "$$\\begin{pmatrix}a & b\\\\\\\\ c & d\\end{pmatrix}$$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}, rendering as TeX\n"
+    },
+    "backslash-matrix-math#write:gfm": {
+      "key": "7515ca4ac956eee6",
+      "exit": 0,
+      "stdout": "``` math\n\\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}\n```\n",
+      "stderr": ""
+    },
+    "backslash-matrix-math#write:markdown_strict": {
+      "key": "fb5fdf1642ac8783",
+      "exit": 0,
+      "stdout": "$$\\begin{pmatrix}a & b\\\\\\\\ c & d\\end{pmatrix}$$\n",
+      "stderr": "[WARNING] Could not convert TeX math \\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}, rendering as TeX\n"
     },
     "backslash-mid#e2e:commonmark": {
       "key": "244c5a92700b478b",

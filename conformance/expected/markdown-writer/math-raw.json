@@ -2731,6 +2731,240 @@
       "stdout": "abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcdef\na + b + c + d\n",
       "stderr": ""
     },
+    "plain-script-R#e2e:plain": {
+      "key": "2f0bd5378872139b",
+      "exit": 0,
+      "stdout": "ℝ^(n)\n",
+      "stderr": ""
+    },
+    "plain-script-R#read": {
+      "key": "466db6da2c605c96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\\\\mathbb{R}^n\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-R#write:plain": {
+      "key": "829f48ef0c731980",
+      "exit": 0,
+      "stdout": "ℝ^(n)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-emph#e2e:plain": {
+      "key": "1c1324fc2cd48d14",
+      "exit": 0,
+      "stdout": "x^(n)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-emph#read": {
+      "key": "cfedffd3a077d8e3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-inline-emph#write:plain": {
+      "key": "d21a7a72bf89cc91",
+      "exit": 0,
+      "stdout": "x^(n)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-minus#e2e:plain": {
+      "key": "08c8b0d44ada35a0",
+      "exit": 0,
+      "stdout": "x⁻³\n",
+      "stderr": ""
+    },
+    "plain-script-inline-minus#read": {
+      "key": "92b3d9027e3418b7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"−3\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-inline-minus#write:plain": {
+      "key": "56f478bde089dd51",
+      "exit": 0,
+      "stdout": "x⁻³\n",
+      "stderr": ""
+    },
+    "plain-script-inline-str-emph#e2e:plain": {
+      "key": "1a8c1a75d9666b1e",
+      "exit": 0,
+      "stdout": "x^(2n)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-str-emph#read": {
+      "key": "56a721a1c9a94ea9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"n\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-inline-str-emph#write:plain": {
+      "key": "80f442fbc3027aa3",
+      "exit": 0,
+      "stdout": "x^(2n)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-sub-emph#e2e:plain": {
+      "key": "ef3441f50d9ff21c",
+      "exit": 0,
+      "stdout": "x_(i)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-sub-emph#read": {
+      "key": "9aadee16e9d5593f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"i\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-inline-sub-emph#write:plain": {
+      "key": "6ad3c0ed2562d045",
+      "exit": 0,
+      "stdout": "x_(i)\n",
+      "stderr": ""
+    },
+    "plain-script-inline-sub-minus#e2e:plain": {
+      "key": "35ffaf15c729417b",
+      "exit": 0,
+      "stdout": "x₋₁\n",
+      "stderr": ""
+    },
+    "plain-script-inline-sub-minus#read": {
+      "key": "c5ccd640486e8c68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"−1\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-inline-sub-minus#write:plain": {
+      "key": "5ad29b8c3def09f8",
+      "exit": 0,
+      "stdout": "x₋₁\n",
+      "stderr": ""
+    },
+    "plain-script-neg#e2e:plain": {
+      "key": "40221a37f9ed5bd0",
+      "exit": 0,
+      "stdout": "10⁻³\n",
+      "stderr": ""
+    },
+    "plain-script-neg#read": {
+      "key": "4ab9f77c4f4d36a1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"10^{-3}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-neg#write:plain": {
+      "key": "f482480d95c5f7d9",
+      "exit": 0,
+      "stdout": "10⁻³\n",
+      "stderr": ""
+    },
+    "plain-script-nest#e2e:plain": {
+      "key": "73dcfee366c9bea5",
+      "exit": 0,
+      "stdout": "x^(2^(n))\n",
+      "stderr": ""
+    },
+    "plain-script-nest#read": {
+      "key": "e037356ac61bf078",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^{2^n}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-nest#write:plain": {
+      "key": "2ce25f30021c4e9e",
+      "exit": 0,
+      "stdout": "x^(2^(n))\n",
+      "stderr": ""
+    },
+    "plain-script-sub#e2e:plain": {
+      "key": "e3cb223c39ed96e5",
+      "exit": 0,
+      "stdout": "x₋₁\n",
+      "stderr": ""
+    },
+    "plain-script-sub#read": {
+      "key": "22162ad0648670da",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x_{-1}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-sub#write:plain": {
+      "key": "1010d7b3b0f0867e",
+      "exit": 0,
+      "stdout": "x₋₁\n",
+      "stderr": ""
+    },
+    "plain-script-sum#e2e:plain": {
+      "key": "69fd2a93a4bf9688",
+      "exit": 0,
+      "stdout": "a^(n + 1)\n",
+      "stderr": ""
+    },
+    "plain-script-sum#read": {
+      "key": "d91a3ac010fa9b65",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a^{n+1}\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-sum#write:plain": {
+      "key": "7145a699e615e075",
+      "exit": 0,
+      "stdout": "a^(n + 1)\n",
+      "stderr": ""
+    },
+    "plain-script-two#e2e:plain": {
+      "key": "e444697a8531ded3",
+      "exit": 0,
+      "stdout": "x²\n",
+      "stderr": ""
+    },
+    "plain-script-two#read": {
+      "key": "af7122d4232cdb8e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^2\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-two#write:plain": {
+      "key": "021c2ead5450f824",
+      "exit": 0,
+      "stdout": "x²\n",
+      "stderr": ""
+    },
+    "plain-script-xi#e2e:plain": {
+      "key": "23e3009e57f54854",
+      "exit": 0,
+      "stdout": "x^(i)\n",
+      "stderr": ""
+    },
+    "plain-script-xi#read": {
+      "key": "a48d002a6ce62a51",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^i\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-xi#write:plain": {
+      "key": "ae586479e2fa7a49",
+      "exit": 0,
+      "stdout": "x^(i)\n",
+      "stderr": ""
+    },
+    "plain-script-xn#e2e:plain": {
+      "key": "d7700684eb1cfb37",
+      "exit": 0,
+      "stdout": "x^(n)\n",
+      "stderr": ""
+    },
+    "plain-script-xn#read": {
+      "key": "8196ad5acf56bcfa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"x^n\"]}]}]}\n",
+      "stderr": ""
+    },
+    "plain-script-xn#write:plain": {
+      "key": "90b346bcb705e998",
+      "exit": 0,
+      "stdout": "x^(n)\n",
+      "stderr": ""
+    },
     "raw-inline-backtick#e2e:commonmark": {
       "key": "93a45c1a81d87bfa",
       "exit": 0,

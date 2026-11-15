@@ -96,6 +96,7 @@ fn superscript_char(c: char) -> Option<char> {
         '8' => '⁸',
         '9' => '⁹',
         '+' => '⁺',
+        '\u{2212}' => '⁻',
         '-' => '⁻',
         '=' => '⁼',
         '(' => '⁽',
@@ -120,6 +121,7 @@ fn subscript_char(c: char) -> Option<char> {
         '9' => '₉',
         '+' => '₊',
         '-' => '₋',
+        '\u{2212}' => '₋',
         '=' => '₌',
         '(' => '₍',
         ')' => '₎',
@@ -247,6 +249,13 @@ impl W<'_> {
         let plain = self.plain();
         Ok(match inline {
             Inline::Str(_) | Inline::Space | Inline::SoftBreak | Inline::LineBreak => empty(),
+            Inline::Emph(content) if matches!(content.as_slice(), [Inline::Emph(_)]) => {
+                // Pandoc writes directly nested emphasis as no emphasis.
+                match content.as_slice() {
+                    [Inline::Emph(inner)] => self.inline_list(inner, false)?,
+                    _ => empty(),
+                }
+            }
             Inline::Emph(content) => {
                 let mark = if plain { "" } else { "*" };
                 self.delimited(content, mark, mark)?
@@ -426,7 +435,7 @@ impl W<'_> {
     }
 
     /// Returns `true` when links and images take attributes in braces.
-    fn link_attributes(&self) -> bool {
+    pub(crate) fn link_attributes(&self) -> bool {
         self.has(Extension::LinkAttributes) || self.has(Extension::Attributes)
     }
 
@@ -446,10 +455,14 @@ impl W<'_> {
         };
         if self.plain() {
             let text = self.inline_list(content, false)?.render(None);
+            let only_text = content
+                .iter()
+                .all(|i| matches!(i, Inline::Str(_) | Inline::Space | Inline::SoftBreak));
             let converted = text
                 .chars()
                 .map(|c| if c == ' ' { Some(' ') } else { map(c) })
-                .collect::<Option<Text>>();
+                .collect::<Option<Text>>()
+                .filter(|converted| only_text || converted.trim().is_empty());
             return Ok(match converted {
                 Some(converted) if converted.is_empty() => {
                     if content
