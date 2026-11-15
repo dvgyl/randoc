@@ -29,14 +29,10 @@ struct Record {
     stderr: String,
 }
 
-/// The rows that differ for a cause outside the program (I-CLI-52): the CSL
-/// JSON writer gives no final line feed, and the program adds it only to a
-/// fragment. A row that starts to pass must leave this list.
-const KNOWN_DIFFERENCES: &[(&str, &str)] = &[
-    ("csljson", "standalone"),
-    ("csljson", "template"),
-    ("csljson", "both"),
-];
+/// The rows that differ for a cause outside the program. The list is empty
+/// since the CSL JSON writer ends its text with a line feed (I-CLI-52). A
+/// row that starts to pass must leave this list.
+const KNOWN_DIFFERENCES: &[(&str, &str)] = &[];
 
 #[test]
 fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
