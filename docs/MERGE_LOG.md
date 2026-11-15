@@ -2899,3 +2899,36 @@ names without case (R3b-02), dates with only `circa` (R3b-03), linear
 punctuation clean-up and term lookup (R3b-06, R3b-07), the letter
 classes of the reference in the case change (R3b-08), the file scheme
 without case (the rest of the round 1 finding).
+
+**html-reader**: branch `ws/html-reader-4`, commits `ecc51a9..2461f34`
+(one commit, `2461f34`). The block corrects the two high findings of
+round 4. R4-01: the reader keeps the bracket groups, the bracket runs
+and the argument tails of `\ref` for each index that a scan passed, so
+a failed brace group does not scan successful brackets again. R4-02: a
+smart quotation keeps all extensions of its text. The close mark is
+searched after the math and raw TeX of the text, so a mark inside math
+does not close the quotation.
+
+Gate: `07:32 UTC 2461f34 gate passed: html reader reads math and raw
+TeX inside smart quotations and scans reference arguments once (R4-01,
+R4-02)`. The worker ran the gate.
+
+Measured by the worker: review family `\ref[` x N + `x]{` (debug
+build): 0.08 s user at N=10,000 and 0.18 s at N=25,000 (the review
+measured 1.8 s and 10.1 s). Quotation matrix of 680 inputs: 199
+differences on `main`, 1 after the fix. `\ref` matrix of 300 inputs: 3
+differences. Replay: 704 equal inputs in `quote-tex.toml`. Licence scan
+on `2461f34`: no hits.
+
+Review state: Round 4 of the HTML reader (the resumed Codex session, on
+`main` `856692d`) requested changes with 2 high and 8 medium findings;
+each correction of round 3 holds. This block corrects the two high
+findings (html-reader-R4-01, html-reader-R4-02). The 8 medium findings
+are open; the worker continues with them. No Opus review of round 4 ran.
+
+Open: the 8 medium findings of round 4 (items 2 to 5 of the unit, not
+started at 06:45 UTC). I-HTMLR-28 (low; a `*` after spaces in `\ref`,
+also on `main`). I-HTMLR-29 (low; smart quotation only, also on
+`main`).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.

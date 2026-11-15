@@ -1,0 +1,3524 @@
+# Math and raw TeX inside smart quotations, and the arguments of `\ref`.
+# Generated matrices: each construct in each quotation context.
+from = "html"
+to = []
+
+[[case]]
+id = "quote-tex-001"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x$\"</p>"
+
+[[case]]
+id = "quote-tex-002"
+from = "html+smart+tex_math_dollars"
+input = "<p>'$x$'</p>"
+
+[[case]]
+id = "quote-tex-003"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a $x$ b\"</p>"
+
+[[case]]
+id = "quote-tex-004"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a $x$ b'</p>"
+
+[[case]]
+id = "quote-tex-005"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'$x$'\"</p>"
+
+[[case]]
+id = "quote-tex-006"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"$x$\"'</p>"
+
+[[case]]
+id = "quote-tex-007"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x$</p>"
+
+[[case]]
+id = "quote-tex-008"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b $x$' c\"</p>"
+
+[[case]]
+id = "quote-tex-009"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$$x$$\"</p>"
+
+[[case]]
+id = "quote-tex-010"
+from = "html+smart+tex_math_dollars"
+input = "<p>'$$x$$'</p>"
+
+[[case]]
+id = "quote-tex-011"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a $$x$$ b\"</p>"
+
+[[case]]
+id = "quote-tex-012"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a $$x$$ b'</p>"
+
+[[case]]
+id = "quote-tex-013"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'$$x$$'\"</p>"
+
+[[case]]
+id = "quote-tex-014"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"$$x$$\"'</p>"
+
+[[case]]
+id = "quote-tex-015"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$$x$$</p>"
+
+[[case]]
+id = "quote-tex-016"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b $$x$$' c\"</p>"
+
+[[case]]
+id = "quote-tex-017"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\(x\\)\"</p>"
+
+[[case]]
+id = "quote-tex-018"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\(x\\)'</p>"
+
+[[case]]
+id = "quote-tex-019"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\(x\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-020"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\(x\\) b'</p>"
+
+[[case]]
+id = "quote-tex-021"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\(x\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-022"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\(x\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-023"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\(x\\)</p>"
+
+[[case]]
+id = "quote-tex-024"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\(x\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-025"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\[x\\]\"</p>"
+
+[[case]]
+id = "quote-tex-026"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\[x\\]'</p>"
+
+[[case]]
+id = "quote-tex-027"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\[x\\] b\"</p>"
+
+[[case]]
+id = "quote-tex-028"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\[x\\] b'</p>"
+
+[[case]]
+id = "quote-tex-029"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\[x\\]'\"</p>"
+
+[[case]]
+id = "quote-tex-030"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\[x\\]\"'</p>"
+
+[[case]]
+id = "quote-tex-031"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\[x\\]</p>"
+
+[[case]]
+id = "quote-tex-032"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\[x\\]' c\"</p>"
+
+[[case]]
+id = "quote-tex-033"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\\\(x\\\\)\"</p>"
+
+[[case]]
+id = "quote-tex-034"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\\\(x\\\\)'</p>"
+
+[[case]]
+id = "quote-tex-035"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\\\(x\\\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-036"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\\\(x\\\\) b'</p>"
+
+[[case]]
+id = "quote-tex-037"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\\\(x\\\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-038"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\\\(x\\\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-039"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\\\(x\\\\)</p>"
+
+[[case]]
+id = "quote-tex-040"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\\\(x\\\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-041"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref{x}\"</p>"
+
+[[case]]
+id = "quote-tex-042"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\ref{x}'</p>"
+
+[[case]]
+id = "quote-tex-043"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\ref{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-044"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\ref{x} b'</p>"
+
+[[case]]
+id = "quote-tex-045"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\ref{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-046"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\ref{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-047"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref{x}</p>"
+
+[[case]]
+id = "quote-tex-048"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\ref{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-049"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref[a]{x}\"</p>"
+
+[[case]]
+id = "quote-tex-050"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\ref[a]{x}'</p>"
+
+[[case]]
+id = "quote-tex-051"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\ref[a]{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-052"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\ref[a]{x} b'</p>"
+
+[[case]]
+id = "quote-tex-053"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\ref[a]{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-054"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\ref[a]{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-055"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref[a]{x}</p>"
+
+[[case]]
+id = "quote-tex-056"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\ref[a]{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-057"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\begin{equation}x\\end{equation}\"</p>"
+
+[[case]]
+id = "quote-tex-058"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\begin{equation}x\\end{equation}'</p>"
+
+[[case]]
+id = "quote-tex-059"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\begin{equation}x\\end{equation} b\"</p>"
+
+[[case]]
+id = "quote-tex-060"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\begin{equation}x\\end{equation} b'</p>"
+
+[[case]]
+id = "quote-tex-061"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\begin{equation}x\\end{equation}'\"</p>"
+
+[[case]]
+id = "quote-tex-062"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\begin{equation}x\\end{equation}\"'</p>"
+
+[[case]]
+id = "quote-tex-063"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\begin{equation}x\\end{equation}</p>"
+
+[[case]]
+id = "quote-tex-064"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\begin{equation}x\\end{equation}' c\"</p>"
+
+[[case]]
+id = "quote-tex-065"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x\"</p>"
+
+[[case]]
+id = "quote-tex-066"
+from = "html+smart+tex_math_dollars"
+input = "<p>'$x'</p>"
+
+[[case]]
+id = "quote-tex-067"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a $x b\"</p>"
+
+[[case]]
+id = "quote-tex-068"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a $x b'</p>"
+
+[[case]]
+id = "quote-tex-069"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'$x'\"</p>"
+
+[[case]]
+id = "quote-tex-070"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"$x\"'</p>"
+
+[[case]]
+id = "quote-tex-071"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x</p>"
+
+[[case]]
+id = "quote-tex-072"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b $x' c\"</p>"
+
+[[case]]
+id = "quote-tex-073"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x\"$\"</p>"
+
+[[case]]
+id = "quote-tex-074"
+from = "html+smart+tex_math_dollars"
+input = "<p>'$x\"$'</p>"
+
+[[case]]
+id = "quote-tex-075"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a $x\"$ b\"</p>"
+
+[[case]]
+id = "quote-tex-076"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a $x\"$ b'</p>"
+
+[[case]]
+id = "quote-tex-077"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'$x\"$'\"</p>"
+
+[[case]]
+id = "quote-tex-078"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"$x\"$\"'</p>"
+
+[[case]]
+id = "quote-tex-079"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x\"$</p>"
+
+[[case]]
+id = "quote-tex-080"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b $x\"$' c\"</p>"
+
+[[case]]
+id = "quote-tex-081"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x'$\"</p>"
+
+[[case]]
+id = "quote-tex-082"
+from = "html+smart+tex_math_dollars"
+input = "<p>'$x'$'</p>"
+
+[[case]]
+id = "quote-tex-083"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a $x'$ b\"</p>"
+
+[[case]]
+id = "quote-tex-084"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a $x'$ b'</p>"
+
+[[case]]
+id = "quote-tex-085"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'$x'$'\"</p>"
+
+[[case]]
+id = "quote-tex-086"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"$x'$\"'</p>"
+
+[[case]]
+id = "quote-tex-087"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$x'$</p>"
+
+[[case]]
+id = "quote-tex-088"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b $x'$' c\"</p>"
+
+[[case]]
+id = "quote-tex-089"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref{a\"}\"</p>"
+
+[[case]]
+id = "quote-tex-090"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\ref{a\"}'</p>"
+
+[[case]]
+id = "quote-tex-091"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\ref{a\"} b\"</p>"
+
+[[case]]
+id = "quote-tex-092"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\ref{a\"} b'</p>"
+
+[[case]]
+id = "quote-tex-093"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\ref{a\"}'\"</p>"
+
+[[case]]
+id = "quote-tex-094"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\ref{a\"}\"'</p>"
+
+[[case]]
+id = "quote-tex-095"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref{a\"}</p>"
+
+[[case]]
+id = "quote-tex-096"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\ref{a\"}' c\"</p>"
+
+[[case]]
+id = "quote-tex-097"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref{a'}\"</p>"
+
+[[case]]
+id = "quote-tex-098"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\ref{a'}'</p>"
+
+[[case]]
+id = "quote-tex-099"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\ref{a'} b\"</p>"
+
+[[case]]
+id = "quote-tex-100"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\ref{a'} b'</p>"
+
+[[case]]
+id = "quote-tex-101"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\ref{a'}'\"</p>"
+
+[[case]]
+id = "quote-tex-102"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\ref{a'}\"'</p>"
+
+[[case]]
+id = "quote-tex-103"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\ref{a'}</p>"
+
+[[case]]
+id = "quote-tex-104"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\ref{a'}' c\"</p>"
+
+[[case]]
+id = "quote-tex-105"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\(x\"\\)\"</p>"
+
+[[case]]
+id = "quote-tex-106"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\(x\"\\)'</p>"
+
+[[case]]
+id = "quote-tex-107"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\(x\"\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-108"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\(x\"\\) b'</p>"
+
+[[case]]
+id = "quote-tex-109"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\(x\"\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-110"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\(x\"\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-111"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\(x\"\\)</p>"
+
+[[case]]
+id = "quote-tex-112"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\(x\"\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-113"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$a$ b\"</p>"
+
+[[case]]
+id = "quote-tex-114"
+from = "html+smart+tex_math_dollars"
+input = "<p>'$a$ b'</p>"
+
+[[case]]
+id = "quote-tex-115"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a $a$ b b\"</p>"
+
+[[case]]
+id = "quote-tex-116"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a $a$ b b'</p>"
+
+[[case]]
+id = "quote-tex-117"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'$a$ b'\"</p>"
+
+[[case]]
+id = "quote-tex-118"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"$a$ b\"'</p>"
+
+[[case]]
+id = "quote-tex-119"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"$a$ b</p>"
+
+[[case]]
+id = "quote-tex-120"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b $a$ b' c\"</p>"
+
+[[case]]
+id = "quote-tex-121"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"--\"</p>"
+
+[[case]]
+id = "quote-tex-122"
+from = "html+smart+tex_math_dollars"
+input = "<p>'--'</p>"
+
+[[case]]
+id = "quote-tex-123"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a -- b\"</p>"
+
+[[case]]
+id = "quote-tex-124"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a -- b'</p>"
+
+[[case]]
+id = "quote-tex-125"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'--'\"</p>"
+
+[[case]]
+id = "quote-tex-126"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"--\"'</p>"
+
+[[case]]
+id = "quote-tex-127"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"--</p>"
+
+[[case]]
+id = "quote-tex-128"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b --' c\"</p>"
+
+[[case]]
+id = "quote-tex-129"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\text{x}\"</p>"
+
+[[case]]
+id = "quote-tex-130"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\\text{x}'</p>"
+
+[[case]]
+id = "quote-tex-131"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a \\text{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-132"
+from = "html+smart+tex_math_dollars"
+input = "<p>'a \\text{x} b'</p>"
+
+[[case]]
+id = "quote-tex-133"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"'\\text{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-134"
+from = "html+smart+tex_math_dollars"
+input = "<p>'\"\\text{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-135"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"\\text{x}</p>"
+
+[[case]]
+id = "quote-tex-136"
+from = "html+smart+tex_math_dollars"
+input = "<p>\"a 'b \\text{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-137"
+from = "html+smart+raw_tex"
+input = "<p>\"$x$\"</p>"
+
+[[case]]
+id = "quote-tex-138"
+from = "html+smart+raw_tex"
+input = "<p>'$x$'</p>"
+
+[[case]]
+id = "quote-tex-139"
+from = "html+smart+raw_tex"
+input = "<p>\"a $x$ b\"</p>"
+
+[[case]]
+id = "quote-tex-140"
+from = "html+smart+raw_tex"
+input = "<p>'a $x$ b'</p>"
+
+[[case]]
+id = "quote-tex-141"
+from = "html+smart+raw_tex"
+input = "<p>\"'$x$'\"</p>"
+
+[[case]]
+id = "quote-tex-142"
+from = "html+smart+raw_tex"
+input = "<p>'\"$x$\"'</p>"
+
+[[case]]
+id = "quote-tex-143"
+from = "html+smart+raw_tex"
+input = "<p>\"$x$</p>"
+
+[[case]]
+id = "quote-tex-144"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b $x$' c\"</p>"
+
+[[case]]
+id = "quote-tex-145"
+from = "html+smart+raw_tex"
+input = "<p>\"$$x$$\"</p>"
+
+[[case]]
+id = "quote-tex-146"
+from = "html+smart+raw_tex"
+input = "<p>'$$x$$'</p>"
+
+[[case]]
+id = "quote-tex-147"
+from = "html+smart+raw_tex"
+input = "<p>\"a $$x$$ b\"</p>"
+
+[[case]]
+id = "quote-tex-148"
+from = "html+smart+raw_tex"
+input = "<p>'a $$x$$ b'</p>"
+
+[[case]]
+id = "quote-tex-149"
+from = "html+smart+raw_tex"
+input = "<p>\"'$$x$$'\"</p>"
+
+[[case]]
+id = "quote-tex-150"
+from = "html+smart+raw_tex"
+input = "<p>'\"$$x$$\"'</p>"
+
+[[case]]
+id = "quote-tex-151"
+from = "html+smart+raw_tex"
+input = "<p>\"$$x$$</p>"
+
+[[case]]
+id = "quote-tex-152"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b $$x$$' c\"</p>"
+
+[[case]]
+id = "quote-tex-153"
+from = "html+smart+raw_tex"
+input = "<p>\"\\(x\\)\"</p>"
+
+[[case]]
+id = "quote-tex-154"
+from = "html+smart+raw_tex"
+input = "<p>'\\(x\\)'</p>"
+
+[[case]]
+id = "quote-tex-155"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\(x\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-156"
+from = "html+smart+raw_tex"
+input = "<p>'a \\(x\\) b'</p>"
+
+[[case]]
+id = "quote-tex-157"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\(x\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-158"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\(x\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-159"
+from = "html+smart+raw_tex"
+input = "<p>\"\\(x\\)</p>"
+
+[[case]]
+id = "quote-tex-160"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\(x\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-161"
+from = "html+smart+raw_tex"
+input = "<p>\"\\[x\\]\"</p>"
+
+[[case]]
+id = "quote-tex-162"
+from = "html+smart+raw_tex"
+input = "<p>'\\[x\\]'</p>"
+
+[[case]]
+id = "quote-tex-163"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\[x\\] b\"</p>"
+
+[[case]]
+id = "quote-tex-164"
+from = "html+smart+raw_tex"
+input = "<p>'a \\[x\\] b'</p>"
+
+[[case]]
+id = "quote-tex-165"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\[x\\]'\"</p>"
+
+[[case]]
+id = "quote-tex-166"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\[x\\]\"'</p>"
+
+[[case]]
+id = "quote-tex-167"
+from = "html+smart+raw_tex"
+input = "<p>\"\\[x\\]</p>"
+
+[[case]]
+id = "quote-tex-168"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\[x\\]' c\"</p>"
+
+[[case]]
+id = "quote-tex-169"
+from = "html+smart+raw_tex"
+input = "<p>\"\\\\(x\\\\)\"</p>"
+
+[[case]]
+id = "quote-tex-170"
+from = "html+smart+raw_tex"
+input = "<p>'\\\\(x\\\\)'</p>"
+
+[[case]]
+id = "quote-tex-171"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\\\(x\\\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-172"
+from = "html+smart+raw_tex"
+input = "<p>'a \\\\(x\\\\) b'</p>"
+
+[[case]]
+id = "quote-tex-173"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\\\(x\\\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-174"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\\\(x\\\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-175"
+from = "html+smart+raw_tex"
+input = "<p>\"\\\\(x\\\\)</p>"
+
+[[case]]
+id = "quote-tex-176"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\\\(x\\\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-177"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref{x}\"</p>"
+
+[[case]]
+id = "quote-tex-178"
+from = "html+smart+raw_tex"
+input = "<p>'\\ref{x}'</p>"
+
+[[case]]
+id = "quote-tex-179"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\ref{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-180"
+from = "html+smart+raw_tex"
+input = "<p>'a \\ref{x} b'</p>"
+
+[[case]]
+id = "quote-tex-181"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\ref{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-182"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\ref{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-183"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref{x}</p>"
+
+[[case]]
+id = "quote-tex-184"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\ref{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-185"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref[a]{x}\"</p>"
+
+[[case]]
+id = "quote-tex-186"
+from = "html+smart+raw_tex"
+input = "<p>'\\ref[a]{x}'</p>"
+
+[[case]]
+id = "quote-tex-187"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\ref[a]{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-188"
+from = "html+smart+raw_tex"
+input = "<p>'a \\ref[a]{x} b'</p>"
+
+[[case]]
+id = "quote-tex-189"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\ref[a]{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-190"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\ref[a]{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-191"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref[a]{x}</p>"
+
+[[case]]
+id = "quote-tex-192"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\ref[a]{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-193"
+from = "html+smart+raw_tex"
+input = "<p>\"\\begin{equation}x\\end{equation}\"</p>"
+
+[[case]]
+id = "quote-tex-194"
+from = "html+smart+raw_tex"
+input = "<p>'\\begin{equation}x\\end{equation}'</p>"
+
+[[case]]
+id = "quote-tex-195"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\begin{equation}x\\end{equation} b\"</p>"
+
+[[case]]
+id = "quote-tex-196"
+from = "html+smart+raw_tex"
+input = "<p>'a \\begin{equation}x\\end{equation} b'</p>"
+
+[[case]]
+id = "quote-tex-197"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\begin{equation}x\\end{equation}'\"</p>"
+
+[[case]]
+id = "quote-tex-198"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\begin{equation}x\\end{equation}\"'</p>"
+
+[[case]]
+id = "quote-tex-199"
+from = "html+smart+raw_tex"
+input = "<p>\"\\begin{equation}x\\end{equation}</p>"
+
+[[case]]
+id = "quote-tex-200"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\begin{equation}x\\end{equation}' c\"</p>"
+
+[[case]]
+id = "quote-tex-201"
+from = "html+smart+raw_tex"
+input = "<p>\"$x\"</p>"
+
+[[case]]
+id = "quote-tex-202"
+from = "html+smart+raw_tex"
+input = "<p>'$x'</p>"
+
+[[case]]
+id = "quote-tex-203"
+from = "html+smart+raw_tex"
+input = "<p>\"a $x b\"</p>"
+
+[[case]]
+id = "quote-tex-204"
+from = "html+smart+raw_tex"
+input = "<p>'a $x b'</p>"
+
+[[case]]
+id = "quote-tex-205"
+from = "html+smart+raw_tex"
+input = "<p>\"'$x'\"</p>"
+
+[[case]]
+id = "quote-tex-206"
+from = "html+smart+raw_tex"
+input = "<p>'\"$x\"'</p>"
+
+[[case]]
+id = "quote-tex-207"
+from = "html+smart+raw_tex"
+input = "<p>\"$x</p>"
+
+[[case]]
+id = "quote-tex-208"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b $x' c\"</p>"
+
+[[case]]
+id = "quote-tex-209"
+from = "html+smart+raw_tex"
+input = "<p>\"$x\"$\"</p>"
+
+[[case]]
+id = "quote-tex-210"
+from = "html+smart+raw_tex"
+input = "<p>'$x\"$'</p>"
+
+[[case]]
+id = "quote-tex-211"
+from = "html+smart+raw_tex"
+input = "<p>\"a $x\"$ b\"</p>"
+
+[[case]]
+id = "quote-tex-212"
+from = "html+smart+raw_tex"
+input = "<p>'a $x\"$ b'</p>"
+
+[[case]]
+id = "quote-tex-213"
+from = "html+smart+raw_tex"
+input = "<p>\"'$x\"$'\"</p>"
+
+[[case]]
+id = "quote-tex-214"
+from = "html+smart+raw_tex"
+input = "<p>\"$x\"$</p>"
+
+[[case]]
+id = "quote-tex-215"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b $x\"$' c\"</p>"
+
+[[case]]
+id = "quote-tex-216"
+from = "html+smart+raw_tex"
+input = "<p>\"$x'$\"</p>"
+
+[[case]]
+id = "quote-tex-217"
+from = "html+smart+raw_tex"
+input = "<p>'$x'$'</p>"
+
+[[case]]
+id = "quote-tex-218"
+from = "html+smart+raw_tex"
+input = "<p>\"a $x'$ b\"</p>"
+
+[[case]]
+id = "quote-tex-219"
+from = "html+smart+raw_tex"
+input = "<p>'a $x'$ b'</p>"
+
+[[case]]
+id = "quote-tex-220"
+from = "html+smart+raw_tex"
+input = "<p>\"'$x'$'\"</p>"
+
+[[case]]
+id = "quote-tex-221"
+from = "html+smart+raw_tex"
+input = "<p>'\"$x'$\"'</p>"
+
+[[case]]
+id = "quote-tex-222"
+from = "html+smart+raw_tex"
+input = "<p>\"$x'$</p>"
+
+[[case]]
+id = "quote-tex-223"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b $x'$' c\"</p>"
+
+[[case]]
+id = "quote-tex-224"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref{a\"}\"</p>"
+
+[[case]]
+id = "quote-tex-225"
+from = "html+smart+raw_tex"
+input = "<p>'\\ref{a\"}'</p>"
+
+[[case]]
+id = "quote-tex-226"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\ref{a\"} b\"</p>"
+
+[[case]]
+id = "quote-tex-227"
+from = "html+smart+raw_tex"
+input = "<p>'a \\ref{a\"} b'</p>"
+
+[[case]]
+id = "quote-tex-228"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\ref{a\"}'\"</p>"
+
+[[case]]
+id = "quote-tex-229"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\ref{a\"}\"'</p>"
+
+[[case]]
+id = "quote-tex-230"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref{a\"}</p>"
+
+[[case]]
+id = "quote-tex-231"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\ref{a\"}' c\"</p>"
+
+[[case]]
+id = "quote-tex-232"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref{a'}\"</p>"
+
+[[case]]
+id = "quote-tex-233"
+from = "html+smart+raw_tex"
+input = "<p>'\\ref{a'}'</p>"
+
+[[case]]
+id = "quote-tex-234"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\ref{a'} b\"</p>"
+
+[[case]]
+id = "quote-tex-235"
+from = "html+smart+raw_tex"
+input = "<p>'a \\ref{a'} b'</p>"
+
+[[case]]
+id = "quote-tex-236"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\ref{a'}'\"</p>"
+
+[[case]]
+id = "quote-tex-237"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\ref{a'}\"'</p>"
+
+[[case]]
+id = "quote-tex-238"
+from = "html+smart+raw_tex"
+input = "<p>\"\\ref{a'}</p>"
+
+[[case]]
+id = "quote-tex-239"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\ref{a'}' c\"</p>"
+
+[[case]]
+id = "quote-tex-240"
+from = "html+smart+raw_tex"
+input = "<p>\"\\(x\"\\)\"</p>"
+
+[[case]]
+id = "quote-tex-241"
+from = "html+smart+raw_tex"
+input = "<p>'\\(x\"\\)'</p>"
+
+[[case]]
+id = "quote-tex-242"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\(x\"\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-243"
+from = "html+smart+raw_tex"
+input = "<p>'a \\(x\"\\) b'</p>"
+
+[[case]]
+id = "quote-tex-244"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\(x\"\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-245"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\(x\"\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-246"
+from = "html+smart+raw_tex"
+input = "<p>\"\\(x\"\\)</p>"
+
+[[case]]
+id = "quote-tex-247"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\(x\"\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-248"
+from = "html+smart+raw_tex"
+input = "<p>\"$a$ b\"</p>"
+
+[[case]]
+id = "quote-tex-249"
+from = "html+smart+raw_tex"
+input = "<p>'$a$ b'</p>"
+
+[[case]]
+id = "quote-tex-250"
+from = "html+smart+raw_tex"
+input = "<p>\"a $a$ b b\"</p>"
+
+[[case]]
+id = "quote-tex-251"
+from = "html+smart+raw_tex"
+input = "<p>'a $a$ b b'</p>"
+
+[[case]]
+id = "quote-tex-252"
+from = "html+smart+raw_tex"
+input = "<p>\"'$a$ b'\"</p>"
+
+[[case]]
+id = "quote-tex-253"
+from = "html+smart+raw_tex"
+input = "<p>'\"$a$ b\"'</p>"
+
+[[case]]
+id = "quote-tex-254"
+from = "html+smart+raw_tex"
+input = "<p>\"$a$ b</p>"
+
+[[case]]
+id = "quote-tex-255"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b $a$ b' c\"</p>"
+
+[[case]]
+id = "quote-tex-256"
+from = "html+smart+raw_tex"
+input = "<p>\"--\"</p>"
+
+[[case]]
+id = "quote-tex-257"
+from = "html+smart+raw_tex"
+input = "<p>'--'</p>"
+
+[[case]]
+id = "quote-tex-258"
+from = "html+smart+raw_tex"
+input = "<p>\"a -- b\"</p>"
+
+[[case]]
+id = "quote-tex-259"
+from = "html+smart+raw_tex"
+input = "<p>'a -- b'</p>"
+
+[[case]]
+id = "quote-tex-260"
+from = "html+smart+raw_tex"
+input = "<p>\"'--'\"</p>"
+
+[[case]]
+id = "quote-tex-261"
+from = "html+smart+raw_tex"
+input = "<p>'\"--\"'</p>"
+
+[[case]]
+id = "quote-tex-262"
+from = "html+smart+raw_tex"
+input = "<p>\"--</p>"
+
+[[case]]
+id = "quote-tex-263"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b --' c\"</p>"
+
+[[case]]
+id = "quote-tex-264"
+from = "html+smart+raw_tex"
+input = "<p>\"\\text{x}\"</p>"
+
+[[case]]
+id = "quote-tex-265"
+from = "html+smart+raw_tex"
+input = "<p>'\\text{x}'</p>"
+
+[[case]]
+id = "quote-tex-266"
+from = "html+smart+raw_tex"
+input = "<p>\"a \\text{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-267"
+from = "html+smart+raw_tex"
+input = "<p>'a \\text{x} b'</p>"
+
+[[case]]
+id = "quote-tex-268"
+from = "html+smart+raw_tex"
+input = "<p>\"'\\text{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-269"
+from = "html+smart+raw_tex"
+input = "<p>'\"\\text{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-270"
+from = "html+smart+raw_tex"
+input = "<p>\"\\text{x}</p>"
+
+[[case]]
+id = "quote-tex-271"
+from = "html+smart+raw_tex"
+input = "<p>\"a 'b \\text{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-272"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x$\"</p>"
+
+[[case]]
+id = "quote-tex-273"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'$x$'</p>"
+
+[[case]]
+id = "quote-tex-274"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a $x$ b\"</p>"
+
+[[case]]
+id = "quote-tex-275"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a $x$ b'</p>"
+
+[[case]]
+id = "quote-tex-276"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'$x$'\"</p>"
+
+[[case]]
+id = "quote-tex-277"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"$x$\"'</p>"
+
+[[case]]
+id = "quote-tex-278"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x$</p>"
+
+[[case]]
+id = "quote-tex-279"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b $x$' c\"</p>"
+
+[[case]]
+id = "quote-tex-280"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$$x$$\"</p>"
+
+[[case]]
+id = "quote-tex-281"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'$$x$$'</p>"
+
+[[case]]
+id = "quote-tex-282"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a $$x$$ b\"</p>"
+
+[[case]]
+id = "quote-tex-283"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a $$x$$ b'</p>"
+
+[[case]]
+id = "quote-tex-284"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'$$x$$'\"</p>"
+
+[[case]]
+id = "quote-tex-285"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"$$x$$\"'</p>"
+
+[[case]]
+id = "quote-tex-286"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$$x$$</p>"
+
+[[case]]
+id = "quote-tex-287"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b $$x$$' c\"</p>"
+
+[[case]]
+id = "quote-tex-288"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\(x\\)\"</p>"
+
+[[case]]
+id = "quote-tex-289"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\(x\\)'</p>"
+
+[[case]]
+id = "quote-tex-290"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\(x\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-291"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\(x\\) b'</p>"
+
+[[case]]
+id = "quote-tex-292"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\(x\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-293"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\(x\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-294"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\(x\\)</p>"
+
+[[case]]
+id = "quote-tex-295"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\(x\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-296"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\[x\\]\"</p>"
+
+[[case]]
+id = "quote-tex-297"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\[x\\]'</p>"
+
+[[case]]
+id = "quote-tex-298"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\[x\\] b\"</p>"
+
+[[case]]
+id = "quote-tex-299"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\[x\\] b'</p>"
+
+[[case]]
+id = "quote-tex-300"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\[x\\]'\"</p>"
+
+[[case]]
+id = "quote-tex-301"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\[x\\]\"'</p>"
+
+[[case]]
+id = "quote-tex-302"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\[x\\]</p>"
+
+[[case]]
+id = "quote-tex-303"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\[x\\]' c\"</p>"
+
+[[case]]
+id = "quote-tex-304"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\\\(x\\\\)\"</p>"
+
+[[case]]
+id = "quote-tex-305"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\\\(x\\\\)'</p>"
+
+[[case]]
+id = "quote-tex-306"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\\\(x\\\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-307"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\\\(x\\\\) b'</p>"
+
+[[case]]
+id = "quote-tex-308"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\\\(x\\\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-309"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\\\(x\\\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-310"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\\\(x\\\\)</p>"
+
+[[case]]
+id = "quote-tex-311"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\\\(x\\\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-312"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref{x}\"</p>"
+
+[[case]]
+id = "quote-tex-313"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\ref{x}'</p>"
+
+[[case]]
+id = "quote-tex-314"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\ref{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-315"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\ref{x} b'</p>"
+
+[[case]]
+id = "quote-tex-316"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\ref{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-317"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\ref{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-318"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref{x}</p>"
+
+[[case]]
+id = "quote-tex-319"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\ref{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-320"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref[a]{x}\"</p>"
+
+[[case]]
+id = "quote-tex-321"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\ref[a]{x}'</p>"
+
+[[case]]
+id = "quote-tex-322"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\ref[a]{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-323"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\ref[a]{x} b'</p>"
+
+[[case]]
+id = "quote-tex-324"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\ref[a]{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-325"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\ref[a]{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-326"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref[a]{x}</p>"
+
+[[case]]
+id = "quote-tex-327"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\ref[a]{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-328"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\begin{equation}x\\end{equation}\"</p>"
+
+[[case]]
+id = "quote-tex-329"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\begin{equation}x\\end{equation}'</p>"
+
+[[case]]
+id = "quote-tex-330"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\begin{equation}x\\end{equation} b\"</p>"
+
+[[case]]
+id = "quote-tex-331"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\begin{equation}x\\end{equation} b'</p>"
+
+[[case]]
+id = "quote-tex-332"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\begin{equation}x\\end{equation}'\"</p>"
+
+[[case]]
+id = "quote-tex-333"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\begin{equation}x\\end{equation}\"'</p>"
+
+[[case]]
+id = "quote-tex-334"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\begin{equation}x\\end{equation}</p>"
+
+[[case]]
+id = "quote-tex-335"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\begin{equation}x\\end{equation}' c\"</p>"
+
+[[case]]
+id = "quote-tex-336"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x\"</p>"
+
+[[case]]
+id = "quote-tex-337"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'$x'</p>"
+
+[[case]]
+id = "quote-tex-338"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a $x b\"</p>"
+
+[[case]]
+id = "quote-tex-339"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a $x b'</p>"
+
+[[case]]
+id = "quote-tex-340"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'$x'\"</p>"
+
+[[case]]
+id = "quote-tex-341"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"$x\"'</p>"
+
+[[case]]
+id = "quote-tex-342"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x</p>"
+
+[[case]]
+id = "quote-tex-343"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b $x' c\"</p>"
+
+[[case]]
+id = "quote-tex-344"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x\"$\"</p>"
+
+[[case]]
+id = "quote-tex-345"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'$x\"$'</p>"
+
+[[case]]
+id = "quote-tex-346"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a $x\"$ b\"</p>"
+
+[[case]]
+id = "quote-tex-347"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a $x\"$ b'</p>"
+
+[[case]]
+id = "quote-tex-348"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'$x\"$'\"</p>"
+
+[[case]]
+id = "quote-tex-349"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"$x\"$\"'</p>"
+
+[[case]]
+id = "quote-tex-350"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x\"$</p>"
+
+[[case]]
+id = "quote-tex-351"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b $x\"$' c\"</p>"
+
+[[case]]
+id = "quote-tex-352"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x'$\"</p>"
+
+[[case]]
+id = "quote-tex-353"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'$x'$'</p>"
+
+[[case]]
+id = "quote-tex-354"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a $x'$ b\"</p>"
+
+[[case]]
+id = "quote-tex-355"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a $x'$ b'</p>"
+
+[[case]]
+id = "quote-tex-356"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'$x'$'\"</p>"
+
+[[case]]
+id = "quote-tex-357"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"$x'$\"'</p>"
+
+[[case]]
+id = "quote-tex-358"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$x'$</p>"
+
+[[case]]
+id = "quote-tex-359"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b $x'$' c\"</p>"
+
+[[case]]
+id = "quote-tex-360"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref{a\"}\"</p>"
+
+[[case]]
+id = "quote-tex-361"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\ref{a\"}'</p>"
+
+[[case]]
+id = "quote-tex-362"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\ref{a\"} b\"</p>"
+
+[[case]]
+id = "quote-tex-363"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\ref{a\"} b'</p>"
+
+[[case]]
+id = "quote-tex-364"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\ref{a\"}'\"</p>"
+
+[[case]]
+id = "quote-tex-365"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\ref{a\"}\"'</p>"
+
+[[case]]
+id = "quote-tex-366"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref{a\"}</p>"
+
+[[case]]
+id = "quote-tex-367"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\ref{a\"}' c\"</p>"
+
+[[case]]
+id = "quote-tex-368"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref{a'}\"</p>"
+
+[[case]]
+id = "quote-tex-369"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\ref{a'}'</p>"
+
+[[case]]
+id = "quote-tex-370"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\ref{a'} b\"</p>"
+
+[[case]]
+id = "quote-tex-371"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\ref{a'} b'</p>"
+
+[[case]]
+id = "quote-tex-372"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\ref{a'}'\"</p>"
+
+[[case]]
+id = "quote-tex-373"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\ref{a'}\"'</p>"
+
+[[case]]
+id = "quote-tex-374"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\ref{a'}</p>"
+
+[[case]]
+id = "quote-tex-375"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\ref{a'}' c\"</p>"
+
+[[case]]
+id = "quote-tex-376"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\(x\"\\)\"</p>"
+
+[[case]]
+id = "quote-tex-377"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\(x\"\\)'</p>"
+
+[[case]]
+id = "quote-tex-378"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\(x\"\\) b\"</p>"
+
+[[case]]
+id = "quote-tex-379"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\(x\"\\) b'</p>"
+
+[[case]]
+id = "quote-tex-380"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\(x\"\\)'\"</p>"
+
+[[case]]
+id = "quote-tex-381"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\(x\"\\)\"'</p>"
+
+[[case]]
+id = "quote-tex-382"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\(x\"\\)</p>"
+
+[[case]]
+id = "quote-tex-383"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\(x\"\\)' c\"</p>"
+
+[[case]]
+id = "quote-tex-384"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$a$ b\"</p>"
+
+[[case]]
+id = "quote-tex-385"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'$a$ b'</p>"
+
+[[case]]
+id = "quote-tex-386"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a $a$ b b\"</p>"
+
+[[case]]
+id = "quote-tex-387"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a $a$ b b'</p>"
+
+[[case]]
+id = "quote-tex-388"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'$a$ b'\"</p>"
+
+[[case]]
+id = "quote-tex-389"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"$a$ b\"'</p>"
+
+[[case]]
+id = "quote-tex-390"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"$a$ b</p>"
+
+[[case]]
+id = "quote-tex-391"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b $a$ b' c\"</p>"
+
+[[case]]
+id = "quote-tex-392"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"--\"</p>"
+
+[[case]]
+id = "quote-tex-393"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'--'</p>"
+
+[[case]]
+id = "quote-tex-394"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a -- b\"</p>"
+
+[[case]]
+id = "quote-tex-395"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a -- b'</p>"
+
+[[case]]
+id = "quote-tex-396"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'--'\"</p>"
+
+[[case]]
+id = "quote-tex-397"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"--\"'</p>"
+
+[[case]]
+id = "quote-tex-398"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"--</p>"
+
+[[case]]
+id = "quote-tex-399"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b --' c\"</p>"
+
+[[case]]
+id = "quote-tex-400"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\text{x}\"</p>"
+
+[[case]]
+id = "quote-tex-401"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\\text{x}'</p>"
+
+[[case]]
+id = "quote-tex-402"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a \\text{x} b\"</p>"
+
+[[case]]
+id = "quote-tex-403"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'a \\text{x} b'</p>"
+
+[[case]]
+id = "quote-tex-404"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"'\\text{x}'\"</p>"
+
+[[case]]
+id = "quote-tex-405"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>'\"\\text{x}\"'</p>"
+
+[[case]]
+id = "quote-tex-406"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"\\text{x}</p>"
+
+[[case]]
+id = "quote-tex-407"
+from = "html+smart+tex_math_dollars+raw_tex+tex_math_single_backslash"
+input = "<p>\"a 'b \\text{x}' c\"</p>"
+
+[[case]]
+id = "quote-tex-408"
+from = "html+raw_tex"
+input = "<p>\\ref -[</p>"
+
+[[case]]
+id = "quote-tex-409"
+from = "html+raw_tex"
+input = "<p>\\ref -}\\eqref\\eqref\\refname1</p>"
+
+[[case]]
+id = "quote-tex-410"
+from = "html+raw_tex"
+input = "<p>\\ref .]</p>"
+
+[[case]]
+id = "quote-tex-411"
+from = "html+raw_tex"
+input = "<p>\\ref 2.5</p>"
+
+[[case]]
+id = "quote-tex-412"
+from = "html+raw_tex"
+input = "<p>\\ref 2.5 -2.5-</p>"
+
+[[case]]
+id = "quote-tex-413"
+from = "html+raw_tex"
+input = "<p>\\ref 2.5[{}.][.</p>"
+
+[[case]]
+id = "quote-tex-414"
+from = "html+raw_tex"
+input = "<p>\\ref 2.5}2.5{.</p>"
+
+[[case]]
+id = "quote-tex-415"
+from = "html+raw_tex"
+input = "<p>\\ref [\\ref\\-][\\</p>"
+
+[[case]]
+id = "quote-tex-416"
+from = "html+raw_tex"
+input = "<p>\\ref \\1</p>"
+
+[[case]]
+id = "quote-tex-417"
+from = "html+raw_tex"
+input = "<p>\\ref \\[*}1-</p>"
+
+[[case]]
+id = "quote-tex-418"
+from = "html+raw_tex"
+input = "<p>\\ref \\ref[</p>"
+
+[[case]]
+id = "quote-tex-419"
+from = "html+raw_tex"
+input = "<p>\\ref \\ref\\refnamex}\\eqref1}</p>"
+
+[[case]]
+id = "quote-tex-420"
+from = "html+raw_tex"
+input = "<p>\\ref \\refnamex2.5</p>"
+
+[[case]]
+id = "quote-tex-421"
+from = "html+raw_tex"
+input = "<p>\\ref \\ref}</p>"
+
+[[case]]
+id = "quote-tex-422"
+from = "html+raw_tex"
+input = "<p>\\ref x\\] {</p>"
+
+[[case]]
+id = "quote-tex-423"
+from = "html+raw_tex"
+input = "<p>\\ref {-2.5</p>"
+
+[[case]]
+id = "quote-tex-424"
+from = "html+raw_tex"
+input = "<p>\\ref {2.5}1\\ref*}</p>"
+
+[[case]]
+id = "quote-tex-425"
+from = "html+raw_tex"
+input = "<p>\\ref }*]}</p>"
+
+[[case]]
+id = "quote-tex-426"
+from = "html+raw_tex"
+input = "<p>\\ref**}]}</p>"
+
+[[case]]
+id = "quote-tex-427"
+from = "html+raw_tex"
+input = "<p>\\ref*-{2.5]-</p>"
+
+[[case]]
+id = "quote-tex-428"
+from = "html+raw_tex"
+input = "<p>\\ref*.</p>"
+
+[[case]]
+id = "quote-tex-429"
+from = "html+raw_tex"
+input = "<p>\\ref*12.5</p>"
+
+[[case]]
+id = "quote-tex-430"
+from = "html+raw_tex"
+input = "<p>\\ref*2.5\\refname{*\\ }</p>"
+
+[[case]]
+id = "quote-tex-431"
+from = "html+raw_tex"
+input = "<p>\\ref*[*x2.5}</p>"
+
+[[case]]
+id = "quote-tex-432"
+from = "html+raw_tex"
+input = "<p>\\ref*[\\refname*.</p>"
+
+[[case]]
+id = "quote-tex-433"
+from = "html+raw_tex"
+input = "<p>\\ref*[]</p>"
+
+[[case]]
+id = "quote-tex-434"
+from = "html+raw_tex"
+input = "<p>\\ref*\\-\\eqref. \\ref-}</p>"
+
+[[case]]
+id = "quote-tex-435"
+from = "html+raw_tex"
+input = "<p>\\ref*\\\\ref\\ref</p>"
+
+[[case]]
+id = "quote-tex-436"
+from = "html+raw_tex"
+input = "<p>\\ref*\\eqref</p>"
+
+[[case]]
+id = "quote-tex-437"
+from = "html+raw_tex"
+input = "<p>\\ref*\\eqref{]]1 *</p>"
+
+[[case]]
+id = "quote-tex-438"
+from = "html+raw_tex"
+input = "<p>\\ref*\\ref2.52.5***</p>"
+
+[[case]]
+id = "quote-tex-439"
+from = "html+raw_tex"
+input = "<p>\\ref*\\ref\\eqref]}</p>"
+
+[[case]]
+id = "quote-tex-440"
+from = "html+raw_tex"
+input = "<p>\\ref*]\\ref\\ref1.\\eqref</p>"
+
+[[case]]
+id = "quote-tex-441"
+from = "html+raw_tex"
+input = "<p>\\ref*{</p>"
+
+[[case]]
+id = "quote-tex-442"
+from = "html+raw_tex"
+input = "<p>\\ref*{[1 \\eqref </p>"
+
+[[case]]
+id = "quote-tex-443"
+from = "html+raw_tex"
+input = "<p>\\ref*{{\\eqref2.5-{]</p>"
+
+[[case]]
+id = "quote-tex-444"
+from = "html+raw_tex"
+input = "<p>\\ref*}1{\\\\]2.5</p>"
+
+[[case]]
+id = "quote-tex-445"
+from = "html+raw_tex"
+input = "<p>\\ref*}}\\eqref1.[\\</p>"
+
+[[case]]
+id = "quote-tex-446"
+from = "html+raw_tex"
+input = "<p>\\ref- </p>"
+
+[[case]]
+id = "quote-tex-447"
+from = "html+raw_tex"
+input = "<p>\\ref-*x.\\refnamex</p>"
+
+[[case]]
+id = "quote-tex-448"
+from = "html+raw_tex"
+input = "<p>\\ref--}</p>"
+
+[[case]]
+id = "quote-tex-449"
+from = "html+raw_tex"
+input = "<p>\\ref-. ]-\\\\ref\\eqref]</p>"
+
+[[case]]
+id = "quote-tex-450"
+from = "html+raw_tex"
+input = "<p>\\ref-1.1\\eqref\\ref\\refname[</p>"
+
+[[case]]
+id = "quote-tex-451"
+from = "html+raw_tex"
+input = "<p>\\ref-2.5}\\refname</p>"
+
+[[case]]
+id = "quote-tex-452"
+from = "html+raw_tex"
+input = "<p>\\ref-\\ref\\}-\\eqref2.5</p>"
+
+[[case]]
+id = "quote-tex-453"
+from = "html+raw_tex"
+input = "<p>\\ref-\\refname\\eqref  ]</p>"
+
+[[case]]
+id = "quote-tex-454"
+from = "html+raw_tex"
+input = "<p>\\ref-\\refname\\eqref{</p>"
+
+[[case]]
+id = "quote-tex-455"
+from = "html+raw_tex"
+input = "<p>\\ref-x-2.5\\  x-</p>"
+
+[[case]]
+id = "quote-tex-456"
+from = "html+raw_tex"
+input = "<p>\\ref-x1</p>"
+
+[[case]]
+id = "quote-tex-457"
+from = "html+raw_tex"
+input = "<p>\\ref-x1\\refnamex[-.</p>"
+
+[[case]]
+id = "quote-tex-458"
+from = "html+raw_tex"
+input = "<p>\\ref-x\\eqrefx\\x\\ref]1</p>"
+
+[[case]]
+id = "quote-tex-459"
+from = "html+raw_tex"
+input = "<p>\\ref-x}1\\\\refname[</p>"
+
+[[case]]
+id = "quote-tex-460"
+from = "html+raw_tex"
+input = "<p>\\ref-}\\eqref1\\eqref2.5x{</p>"
+
+[[case]]
+id = "quote-tex-461"
+from = "html+raw_tex"
+input = "<p>\\ref-}x\\*\\refname[}</p>"
+
+[[case]]
+id = "quote-tex-462"
+from = "html+raw_tex"
+input = "<p>\\ref-}}.x</p>"
+
+[[case]]
+id = "quote-tex-463"
+from = "html+raw_tex"
+input = "<p>\\ref. 2.5</p>"
+
+[[case]]
+id = "quote-tex-464"
+from = "html+raw_tex"
+input = "<p>\\ref.*</p>"
+
+[[case]]
+id = "quote-tex-465"
+from = "html+raw_tex"
+input = "<p>\\ref.**]\\ref\\ref</p>"
+
+[[case]]
+id = "quote-tex-466"
+from = "html+raw_tex"
+input = "<p>\\ref.*1.\\refname1\\ref-x</p>"
+
+[[case]]
+id = "quote-tex-467"
+from = "html+raw_tex"
+input = "<p>\\ref.*1]</p>"
+
+[[case]]
+id = "quote-tex-468"
+from = "html+raw_tex"
+input = "<p>\\ref.[*\\eqref\\}1\\ref\\eqref</p>"
+
+[[case]]
+id = "quote-tex-469"
+from = "html+raw_tex"
+input = "<p>\\ref.[\\\\refname</p>"
+
+[[case]]
+id = "quote-tex-470"
+from = "html+raw_tex"
+input = "<p>\\ref.\\ref</p>"
+
+[[case]]
+id = "quote-tex-471"
+from = "html+raw_tex"
+input = "<p>\\ref.\\refname</p>"
+
+[[case]]
+id = "quote-tex-472"
+from = "html+raw_tex"
+input = "<p>\\ref.\\refname\\2.5\\refname2.5</p>"
+
+[[case]]
+id = "quote-tex-473"
+from = "html+raw_tex"
+input = "<p>\\ref.\\refname{[}}x]</p>"
+
+[[case]]
+id = "quote-tex-474"
+from = "html+raw_tex"
+input = "<p>\\ref.]\\[[</p>"
+
+[[case]]
+id = "quote-tex-475"
+from = "html+raw_tex"
+input = "<p>\\ref.]{[.}</p>"
+
+[[case]]
+id = "quote-tex-476"
+from = "html+raw_tex"
+input = "<p>\\ref.x-x -</p>"
+
+[[case]]
+id = "quote-tex-477"
+from = "html+raw_tex"
+input = "<p>\\ref.{  {</p>"
+
+[[case]]
+id = "quote-tex-478"
+from = "html+raw_tex"
+input = "<p>\\ref.{*--1 {\\eqref</p>"
+
+[[case]]
+id = "quote-tex-479"
+from = "html+raw_tex"
+input = "<p>\\ref.{1\\eqref 2.5{\\eqref</p>"
+
+[[case]]
+id = "quote-tex-480"
+from = "html+raw_tex"
+input = "<p>\\ref.}1}\\[*</p>"
+
+[[case]]
+id = "quote-tex-481"
+from = "html+raw_tex"
+input = "<p>\\ref.}2.5 1</p>"
+
+[[case]]
+id = "quote-tex-482"
+from = "html+raw_tex"
+input = "<p>\\ref1 </p>"
+
+[[case]]
+id = "quote-tex-483"
+from = "html+raw_tex"
+input = "<p>\\ref1 [}x\\eqref</p>"
+
+[[case]]
+id = "quote-tex-484"
+from = "html+raw_tex"
+input = "<p>\\ref1*\\eqref\\eqref[\\ref\\refname\\eqref}</p>"
+
+[[case]]
+id = "quote-tex-485"
+from = "html+raw_tex"
+input = "<p>\\ref1*x\\eqref2.5 </p>"
+
+[[case]]
+id = "quote-tex-486"
+from = "html+raw_tex"
+input = "<p>\\ref1-[x[.] \\ref</p>"
+
+[[case]]
+id = "quote-tex-487"
+from = "html+raw_tex"
+input = "<p>\\ref1.</p>"
+
+[[case]]
+id = "quote-tex-488"
+from = "html+raw_tex"
+input = "<p>\\ref1.*1*1</p>"
+
+[[case]]
+id = "quote-tex-489"
+from = "html+raw_tex"
+input = "<p>\\ref11[x1{\\\\</p>"
+
+[[case]]
+id = "quote-tex-490"
+from = "html+raw_tex"
+input = "<p>\\ref12.5{[\\refname</p>"
+
+[[case]]
+id = "quote-tex-491"
+from = "html+raw_tex"
+input = "<p>\\ref12.5{\\ref.</p>"
+
+[[case]]
+id = "quote-tex-492"
+from = "html+raw_tex"
+input = "<p>\\ref1\\\\\\refname</p>"
+
+[[case]]
+id = "quote-tex-493"
+from = "html+raw_tex"
+input = "<p>\\ref1\\eqref2.5\\eqref\\eqrefx\\\\refname</p>"
+
+[[case]]
+id = "quote-tex-494"
+from = "html+raw_tex"
+input = "<p>\\ref1\\ref..[</p>"
+
+[[case]]
+id = "quote-tex-495"
+from = "html+raw_tex"
+input = "<p>\\ref1\\ref.\\refname}</p>"
+
+[[case]]
+id = "quote-tex-496"
+from = "html+raw_tex"
+input = "<p>\\ref1\\ref\\ {</p>"
+
+[[case]]
+id = "quote-tex-497"
+from = "html+raw_tex"
+input = "<p>\\ref1\\ref\\refname</p>"
+
+[[case]]
+id = "quote-tex-498"
+from = "html+raw_tex"
+input = "<p>\\ref1\\refname\\eqref2.5-\\ref]</p>"
+
+[[case]]
+id = "quote-tex-499"
+from = "html+raw_tex"
+input = "<p>\\ref1\\refname\\ref]}</p>"
+
+[[case]]
+id = "quote-tex-500"
+from = "html+raw_tex"
+input = "<p>\\ref1]\\ref.</p>"
+
+[[case]]
+id = "quote-tex-501"
+from = "html+raw_tex"
+input = "<p>\\ref1]{x] .]</p>"
+
+[[case]]
+id = "quote-tex-502"
+from = "html+raw_tex"
+input = "<p>\\ref1x[ \\refname2.5]}\\refname</p>"
+
+[[case]]
+id = "quote-tex-503"
+from = "html+raw_tex"
+input = "<p>\\ref1xx\\refname1*[</p>"
+
+[[case]]
+id = "quote-tex-504"
+from = "html+raw_tex"
+input = "<p>\\ref1{].\\1</p>"
+
+[[case]]
+id = "quote-tex-505"
+from = "html+raw_tex"
+input = "<p>\\ref1}</p>"
+
+[[case]]
+id = "quote-tex-506"
+from = "html+raw_tex"
+input = "<p>\\ref1}[</p>"
+
+[[case]]
+id = "quote-tex-507"
+from = "html+raw_tex"
+input = "<p>\\ref2.5 -x}\\refname{*1</p>"
+
+[[case]]
+id = "quote-tex-508"
+from = "html+raw_tex"
+input = "<p>\\ref2.5 1*\\eqref\\[ x</p>"
+
+[[case]]
+id = "quote-tex-509"
+from = "html+raw_tex"
+input = "<p>\\ref2.5*-</p>"
+
+[[case]]
+id = "quote-tex-510"
+from = "html+raw_tex"
+input = "<p>\\ref2.5*2.5-</p>"
+
+[[case]]
+id = "quote-tex-511"
+from = "html+raw_tex"
+input = "<p>\\ref2.5-{\\eqref*x.</p>"
+
+[[case]]
+id = "quote-tex-512"
+from = "html+raw_tex"
+input = "<p>\\ref2.5.1\\eqref*</p>"
+
+[[case]]
+id = "quote-tex-513"
+from = "html+raw_tex"
+input = "<p>\\ref2.5.\\refname</p>"
+
+[[case]]
+id = "quote-tex-514"
+from = "html+raw_tex"
+input = "<p>\\ref2.51\\refname].</p>"
+
+[[case]]
+id = "quote-tex-515"
+from = "html+raw_tex"
+input = "<p>\\ref2.5[[]-2.5*2.5\\ref</p>"
+
+[[case]]
+id = "quote-tex-516"
+from = "html+raw_tex"
+input = "<p>\\ref2.5[\\refname*</p>"
+
+[[case]]
+id = "quote-tex-517"
+from = "html+raw_tex"
+input = "<p>\\ref2.5\\2.5}][  </p>"
+
+[[case]]
+id = "quote-tex-518"
+from = "html+raw_tex"
+input = "<p>\\ref2.5\\ref ]*\\eqref</p>"
+
+[[case]]
+id = "quote-tex-519"
+from = "html+raw_tex"
+input = "<p>\\ref2.5\\refname{1{2.52.5</p>"
+
+[[case]]
+id = "quote-tex-520"
+from = "html+raw_tex"
+input = "<p>\\ref2.5x </p>"
+
+[[case]]
+id = "quote-tex-521"
+from = "html+raw_tex"
+input = "<p>\\ref2.5x*]{\\}x</p>"
+
+[[case]]
+id = "quote-tex-522"
+from = "html+raw_tex"
+input = "<p>\\ref2.5x*{\\}\\</p>"
+
+[[case]]
+id = "quote-tex-523"
+from = "html+raw_tex"
+input = "<p>\\ref2.5x1</p>"
+
+[[case]]
+id = "quote-tex-524"
+from = "html+raw_tex"
+input = "<p>\\ref2.5}2.5\\refname[*\\refname.</p>"
+
+[[case]]
+id = "quote-tex-525"
+from = "html+raw_tex"
+input = "<p>\\ref[ \\eqrefx</p>"
+
+[[case]]
+id = "quote-tex-526"
+from = "html+raw_tex"
+input = "<p>\\ref[*[ \\2.5x{</p>"
+
+[[case]]
+id = "quote-tex-527"
+from = "html+raw_tex"
+input = "<p>\\ref[- ]\\refname</p>"
+
+[[case]]
+id = "quote-tex-528"
+from = "html+raw_tex"
+input = "<p>\\ref[1{\\ref.*\\ref-</p>"
+
+[[case]]
+id = "quote-tex-529"
+from = "html+raw_tex"
+input = "<p>\\ref[2.5*.</p>"
+
+[[case]]
+id = "quote-tex-530"
+from = "html+raw_tex"
+input = "<p>\\ref[2.52.5\\ref </p>"
+
+[[case]]
+id = "quote-tex-531"
+from = "html+raw_tex"
+input = "<p>\\ref[2.5\\ref.\\eqref</p>"
+
+[[case]]
+id = "quote-tex-532"
+from = "html+raw_tex"
+input = "<p>\\ref[[2.5</p>"
+
+[[case]]
+id = "quote-tex-533"
+from = "html+raw_tex"
+input = "<p>\\ref[\\1{-\\refname\\refname</p>"
+
+[[case]]
+id = "quote-tex-534"
+from = "html+raw_tex"
+input = "<p>\\ref[\\[2.5\\eqref</p>"
+
+[[case]]
+id = "quote-tex-535"
+from = "html+raw_tex"
+input = "<p>\\ref[\\eqref-</p>"
+
+[[case]]
+id = "quote-tex-536"
+from = "html+raw_tex"
+input = "<p>\\ref[\\ref\\ref\\refname]{x1\\refname</p>"
+
+[[case]]
+id = "quote-tex-537"
+from = "html+raw_tex"
+input = "<p>\\ref[\\refname</p>"
+
+[[case]]
+id = "quote-tex-538"
+from = "html+raw_tex"
+input = "<p>\\ref[\\refx}x \\refname-]</p>"
+
+[[case]]
+id = "quote-tex-539"
+from = "html+raw_tex"
+input = "<p>\\ref[]1\\eqref \\\\ref--</p>"
+
+[[case]]
+id = "quote-tex-540"
+from = "html+raw_tex"
+input = "<p>\\ref[{.*</p>"
+
+[[case]]
+id = "quote-tex-541"
+from = "html+raw_tex"
+input = "<p>\\ref\\ </p>"
+
+[[case]]
+id = "quote-tex-542"
+from = "html+raw_tex"
+input = "<p>\\ref\\-*</p>"
+
+[[case]]
+id = "quote-tex-543"
+from = "html+raw_tex"
+input = "<p>\\ref\\.-*2.5}</p>"
+
+[[case]]
+id = "quote-tex-544"
+from = "html+raw_tex"
+input = "<p>\\ref\\.x2.5\\eqref1x</p>"
+
+[[case]]
+id = "quote-tex-545"
+from = "html+raw_tex"
+input = "<p>\\ref\\1 \\eqref.-</p>"
+
+[[case]]
+id = "quote-tex-546"
+from = "html+raw_tex"
+input = "<p>\\ref\\2.5.\\refname</p>"
+
+[[case]]
+id = "quote-tex-547"
+from = "html+raw_tex"
+input = "<p>\\ref\\2.5\\refname2.5</p>"
+
+[[case]]
+id = "quote-tex-548"
+from = "html+raw_tex"
+input = "<p>\\ref\\2.5{.</p>"
+
+[[case]]
+id = "quote-tex-549"
+from = "html+raw_tex"
+input = "<p>\\ref\\2.5{{</p>"
+
+[[case]]
+id = "quote-tex-550"
+from = "html+raw_tex"
+input = "<p>\\ref\\[\\refx\\eqref2.5</p>"
+
+[[case]]
+id = "quote-tex-551"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\[.1x\\ref</p>"
+
+[[case]]
+id = "quote-tex-552"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\\\2.5[2.5[}</p>"
+
+[[case]]
+id = "quote-tex-553"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\eqref </p>"
+
+[[case]]
+id = "quote-tex-554"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\eqref{2.5-}2.5x</p>"
+
+[[case]]
+id = "quote-tex-555"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\ref.2.5[2.5</p>"
+
+[[case]]
+id = "quote-tex-556"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\ref.\\eqref</p>"
+
+[[case]]
+id = "quote-tex-557"
+from = "html+raw_tex"
+input = "<p>\\ref\\\\ref[x\\refx</p>"
+
+[[case]]
+id = "quote-tex-558"
+from = "html+raw_tex"
+input = "<p>\\ref\\] 2.5\\ref[\\-</p>"
+
+[[case]]
+id = "quote-tex-559"
+from = "html+raw_tex"
+input = "<p>\\ref\\]-\\eqref1*\\refname</p>"
+
+[[case]]
+id = "quote-tex-560"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref 2.5x\\eqrefx2.5\\ref\\ref</p>"
+
+[[case]]
+id = "quote-tex-561"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref ]\\refname</p>"
+
+[[case]]
+id = "quote-tex-562"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref**[]\\refname</p>"
+
+[[case]]
+id = "quote-tex-563"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref*1x-x]\\ref\\</p>"
+
+[[case]]
+id = "quote-tex-564"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref*]{\\refname\\eqref\\eqref x</p>"
+
+[[case]]
+id = "quote-tex-565"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref.x..\\{\\eqref.</p>"
+
+[[case]]
+id = "quote-tex-566"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref.}.</p>"
+
+[[case]]
+id = "quote-tex-567"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref1x]\\x\\eqref{</p>"
+
+[[case]]
+id = "quote-tex-568"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref2.5\\refname</p>"
+
+[[case]]
+id = "quote-tex-569"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref[</p>"
+
+[[case]]
+id = "quote-tex-570"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref[-\\ref{x\\refname\\eqref{</p>"
+
+[[case]]
+id = "quote-tex-571"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref[1</p>"
+
+[[case]]
+id = "quote-tex-572"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref\\2.5[}* </p>"
+
+[[case]]
+id = "quote-tex-573"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref\\\\eqref{} }x{</p>"
+
+[[case]]
+id = "quote-tex-574"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref\\ref..\\refname\\eqref*</p>"
+
+[[case]]
+id = "quote-tex-575"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref\\ref2.5{.2.51\\ref[</p>"
+
+[[case]]
+id = "quote-tex-576"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref]x\\2.5{]2.5</p>"
+
+[[case]]
+id = "quote-tex-577"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref{-{\\ref</p>"
+
+[[case]]
+id = "quote-tex-578"
+from = "html+raw_tex"
+input = "<p>\\ref\\eqref}2.52.5*</p>"
+
+[[case]]
+id = "quote-tex-579"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref {</p>"
+
+[[case]]
+id = "quote-tex-580"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref1\\ref\\eqref[x]\\eqref</p>"
+
+[[case]]
+id = "quote-tex-581"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref1{{1</p>"
+
+[[case]]
+id = "quote-tex-582"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref2.52.5 \\ref\\refname\\eqrefx</p>"
+
+[[case]]
+id = "quote-tex-583"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref2.5{*}\\ref1*</p>"
+
+[[case]]
+id = "quote-tex-584"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref[-2.5</p>"
+
+[[case]]
+id = "quote-tex-585"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref[\\refname\\\\}x\\</p>"
+
+[[case]]
+id = "quote-tex-586"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref\\ref </p>"
+
+[[case]]
+id = "quote-tex-587"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref\\ref[</p>"
+
+[[case]]
+id = "quote-tex-588"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref\\ref\\</p>"
+
+[[case]]
+id = "quote-tex-589"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref\\refname.2.5*x[x.</p>"
+
+[[case]]
+id = "quote-tex-590"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref][*]\\ref{\\refname\\eqref</p>"
+
+[[case]]
+id = "quote-tex-591"
+from = "html+raw_tex"
+input = "<p>\\ref\\ref]\\ref 2.5</p>"
+
+[[case]]
+id = "quote-tex-592"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname  [.2.52.5\\ref</p>"
+
+[[case]]
+id = "quote-tex-593"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname-[1*\\eqref\\ref1}</p>"
+
+[[case]]
+id = "quote-tex-594"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname..</p>"
+
+[[case]]
+id = "quote-tex-595"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname.x[ x[*\\</p>"
+
+[[case]]
+id = "quote-tex-596"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname.} 1].1.</p>"
+
+[[case]]
+id = "quote-tex-597"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname1</p>"
+
+[[case]]
+id = "quote-tex-598"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname1 -1\\refname-}\\refname</p>"
+
+[[case]]
+id = "quote-tex-599"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[</p>"
+
+[[case]]
+id = "quote-tex-600"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[ </p>"
+
+[[case]]
+id = "quote-tex-601"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[*</p>"
+
+[[case]]
+id = "quote-tex-602"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[-</p>"
+
+[[case]]
+id = "quote-tex-603"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[\\ref.]</p>"
+
+[[case]]
+id = "quote-tex-604"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[\\refname\\eqref[\\refname-\\refname]</p>"
+
+[[case]]
+id = "quote-tex-605"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname[}\\ref</p>"
+
+[[case]]
+id = "quote-tex-606"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname\\eqref\\ </p>"
+
+[[case]]
+id = "quote-tex-607"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname\\x .</p>"
+
+[[case]]
+id = "quote-tex-608"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname{[1[</p>"
+
+[[case]]
+id = "quote-tex-609"
+from = "html+raw_tex"
+input = "<p>\\ref\\refname} {*</p>"
+
+[[case]]
+id = "quote-tex-610"
+from = "html+raw_tex"
+input = "<p>\\ref\\refx]</p>"
+
+[[case]]
+id = "quote-tex-611"
+from = "html+raw_tex"
+input = "<p>\\ref\\x1-{]</p>"
+
+[[case]]
+id = "quote-tex-612"
+from = "html+raw_tex"
+input = "<p>\\ref\\x2.5]x[</p>"
+
+[[case]]
+id = "quote-tex-613"
+from = "html+raw_tex"
+input = "<p>\\ref\\{]</p>"
+
+[[case]]
+id = "quote-tex-614"
+from = "html+raw_tex"
+input = "<p>\\ref\\{x*xx</p>"
+
+[[case]]
+id = "quote-tex-615"
+from = "html+raw_tex"
+input = "<p>\\ref\\}x *]-\\\\ref</p>"
+
+[[case]]
+id = "quote-tex-616"
+from = "html+raw_tex"
+input = "<p>\\ref\\}x\\refname-11</p>"
+
+[[case]]
+id = "quote-tex-617"
+from = "html+raw_tex"
+input = "<p>\\ref]*\\eqref</p>"
+
+[[case]]
+id = "quote-tex-618"
+from = "html+raw_tex"
+input = "<p>\\ref]*x\\ref</p>"
+
+[[case]]
+id = "quote-tex-619"
+from = "html+raw_tex"
+input = "<p>\\ref]-</p>"
+
+[[case]]
+id = "quote-tex-620"
+from = "html+raw_tex"
+input = "<p>\\ref]-\\refnamexx</p>"
+
+[[case]]
+id = "quote-tex-621"
+from = "html+raw_tex"
+input = "<p>\\ref].}--2.5</p>"
+
+[[case]]
+id = "quote-tex-622"
+from = "html+raw_tex"
+input = "<p>\\ref]2.5-\\</p>"
+
+[[case]]
+id = "quote-tex-623"
+from = "html+raw_tex"
+input = "<p>\\ref]2.52.5\\refname.</p>"
+
+[[case]]
+id = "quote-tex-624"
+from = "html+raw_tex"
+input = "<p>\\ref]2.5[-</p>"
+
+[[case]]
+id = "quote-tex-625"
+from = "html+raw_tex"
+input = "<p>\\ref]2.5\\eqref**\\</p>"
+
+[[case]]
+id = "quote-tex-626"
+from = "html+raw_tex"
+input = "<p>\\ref]2.5\\ref{]\\refname.1[</p>"
+
+[[case]]
+id = "quote-tex-627"
+from = "html+raw_tex"
+input = "<p>\\ref]2.5}</p>"
+
+[[case]]
+id = "quote-tex-628"
+from = "html+raw_tex"
+input = "<p>\\ref][2.5</p>"
+
+[[case]]
+id = "quote-tex-629"
+from = "html+raw_tex"
+input = "<p>\\ref][[</p>"
+
+[[case]]
+id = "quote-tex-630"
+from = "html+raw_tex"
+input = "<p>\\ref]\\[[</p>"
+
+[[case]]
+id = "quote-tex-631"
+from = "html+raw_tex"
+input = "<p>\\ref]\\ref\\1{-]}\\eqref</p>"
+
+[[case]]
+id = "quote-tex-632"
+from = "html+raw_tex"
+input = "<p>\\ref]\\refname..\\eqref</p>"
+
+[[case]]
+id = "quote-tex-633"
+from = "html+raw_tex"
+input = "<p>\\ref]]</p>"
+
+[[case]]
+id = "quote-tex-634"
+from = "html+raw_tex"
+input = "<p>\\ref]]2.5{xx</p>"
+
+[[case]]
+id = "quote-tex-635"
+from = "html+raw_tex"
+input = "<p>\\ref]x\\*-2.5\\refname</p>"
+
+[[case]]
+id = "quote-tex-636"
+from = "html+raw_tex"
+input = "<p>\\ref]x\\refname2.5*\\eqref\\refname[ </p>"
+
+[[case]]
+id = "quote-tex-637"
+from = "html+raw_tex"
+input = "<p>\\ref]{ \\refname2.5\\\\</p>"
+
+[[case]]
+id = "quote-tex-638"
+from = "html+raw_tex"
+input = "<p>\\ref]}\\eqref</p>"
+
+[[case]]
+id = "quote-tex-639"
+from = "html+raw_tex"
+input = "<p>\\ref]}\\eqrefx] .</p>"
+
+[[case]]
+id = "quote-tex-640"
+from = "html+raw_tex"
+input = "<p>\\refx.-[\\\\eqref </p>"
+
+[[case]]
+id = "quote-tex-641"
+from = "html+raw_tex"
+input = "<p>\\refx.2.5[2.5</p>"
+
+[[case]]
+id = "quote-tex-642"
+from = "html+raw_tex"
+input = "<p>\\refx.\\refx{*\\ref\\\\eqref</p>"
+
+[[case]]
+id = "quote-tex-643"
+from = "html+raw_tex"
+input = "<p>\\refx.]\\]</p>"
+
+[[case]]
+id = "quote-tex-644"
+from = "html+raw_tex"
+input = "<p>\\refx1-\\eqref. \\.</p>"
+
+[[case]]
+id = "quote-tex-645"
+from = "html+raw_tex"
+input = "<p>\\refx1.</p>"
+
+[[case]]
+id = "quote-tex-646"
+from = "html+raw_tex"
+input = "<p>\\refx1.2.5x\\-{</p>"
+
+[[case]]
+id = "quote-tex-647"
+from = "html+raw_tex"
+input = "<p>\\refx11\\ref} }]x</p>"
+
+[[case]]
+id = "quote-tex-648"
+from = "html+raw_tex"
+input = "<p>\\refx2.5-\\eqref*]{\\</p>"
+
+[[case]]
+id = "quote-tex-649"
+from = "html+raw_tex"
+input = "<p>\\refx2.5]</p>"
+
+[[case]]
+id = "quote-tex-650"
+from = "html+raw_tex"
+input = "<p>\\refx[-11 ]\\ref[</p>"
+
+[[case]]
+id = "quote-tex-651"
+from = "html+raw_tex"
+input = "<p>\\refx[-x1</p>"
+
+[[case]]
+id = "quote-tex-652"
+from = "html+raw_tex"
+input = "<p>\\refx\\1\\eqref \\eqref*\\refname</p>"
+
+[[case]]
+id = "quote-tex-653"
+from = "html+raw_tex"
+input = "<p>\\refx\\2.5</p>"
+
+[[case]]
+id = "quote-tex-654"
+from = "html+raw_tex"
+input = "<p>\\refx\\]\\*\\*[]</p>"
+
+[[case]]
+id = "quote-tex-655"
+from = "html+raw_tex"
+input = "<p>\\refx\\eqref}x</p>"
+
+[[case]]
+id = "quote-tex-656"
+from = "html+raw_tex"
+input = "<p>\\refx\\ref</p>"
+
+[[case]]
+id = "quote-tex-657"
+from = "html+raw_tex"
+input = "<p>\\refx].}[</p>"
+
+[[case]]
+id = "quote-tex-658"
+from = "html+raw_tex"
+input = "<p>\\refx]\\ref\\eqref1</p>"
+
+[[case]]
+id = "quote-tex-659"
+from = "html+raw_tex"
+input = "<p>\\refx]}\\1\\eqref</p>"
+
+[[case]]
+id = "quote-tex-660"
+from = "html+raw_tex"
+input = "<p>\\refx{.\\</p>"
+
+[[case]]
+id = "quote-tex-661"
+from = "html+raw_tex"
+input = "<p>\\refx{\\eqref[}1\\ref2.5]</p>"
+
+[[case]]
+id = "quote-tex-662"
+from = "html+raw_tex"
+input = "<p>\\refx}[</p>"
+
+[[case]]
+id = "quote-tex-663"
+from = "html+raw_tex"
+input = "<p>\\ref{--{2.5</p>"
+
+[[case]]
+id = "quote-tex-664"
+from = "html+raw_tex"
+input = "<p>\\ref{. \\\\refx]</p>"
+
+[[case]]
+id = "quote-tex-665"
+from = "html+raw_tex"
+input = "<p>\\ref{.**x1\\refname1\\ref</p>"
+
+[[case]]
+id = "quote-tex-666"
+from = "html+raw_tex"
+input = "<p>\\ref{.[\\eqref*--\\.</p>"
+
+[[case]]
+id = "quote-tex-667"
+from = "html+raw_tex"
+input = "<p>\\ref{2.5</p>"
+
+[[case]]
+id = "quote-tex-668"
+from = "html+raw_tex"
+input = "<p>\\ref{2.5\\eqref{* 1</p>"
+
+[[case]]
+id = "quote-tex-669"
+from = "html+raw_tex"
+input = "<p>\\ref{[{]. </p>"
+
+[[case]]
+id = "quote-tex-670"
+from = "html+raw_tex"
+input = "<p>\\ref{\\*x-\\refname]*</p>"
+
+[[case]]
+id = "quote-tex-671"
+from = "html+raw_tex"
+input = "<p>\\ref{\\eqref</p>"
+
+[[case]]
+id = "quote-tex-672"
+from = "html+raw_tex"
+input = "<p>\\ref{\\eqref.</p>"
+
+[[case]]
+id = "quote-tex-673"
+from = "html+raw_tex"
+input = "<p>\\ref{\\eqref]{\\ref}</p>"
+
+[[case]]
+id = "quote-tex-674"
+from = "html+raw_tex"
+input = "<p>\\ref{\\refname.-</p>"
+
+[[case]]
+id = "quote-tex-675"
+from = "html+raw_tex"
+input = "<p>\\ref{\\refname1\\ref</p>"
+
+[[case]]
+id = "quote-tex-676"
+from = "html+raw_tex"
+input = "<p>\\ref{\\refname2.5</p>"
+
+[[case]]
+id = "quote-tex-677"
+from = "html+raw_tex"
+input = "<p>\\ref{x</p>"
+
+[[case]]
+id = "quote-tex-678"
+from = "html+raw_tex"
+input = "<p>\\ref{x\\refname]</p>"
+
+[[case]]
+id = "quote-tex-679"
+from = "html+raw_tex"
+input = "<p>\\ref{{ *\\refname</p>"
+
+[[case]]
+id = "quote-tex-680"
+from = "html+raw_tex"
+input = "<p>\\ref{}2.5-</p>"
+
+[[case]]
+id = "quote-tex-681"
+from = "html+raw_tex"
+input = "<p>\\ref{}2.512.5*1\\}</p>"
+
+[[case]]
+id = "quote-tex-682"
+from = "html+raw_tex"
+input = "<p>\\ref} 1\\eqref</p>"
+
+[[case]]
+id = "quote-tex-683"
+from = "html+raw_tex"
+input = "<p>\\ref} \\refname-</p>"
+
+[[case]]
+id = "quote-tex-684"
+from = "html+raw_tex"
+input = "<p>\\ref}-\\*</p>"
+
+[[case]]
+id = "quote-tex-685"
+from = "html+raw_tex"
+input = "<p>\\ref}.</p>"
+
+[[case]]
+id = "quote-tex-686"
+from = "html+raw_tex"
+input = "<p>\\ref}.}\\eqref</p>"
+
+[[case]]
+id = "quote-tex-687"
+from = "html+raw_tex"
+input = "<p>\\ref}11</p>"
+
+[[case]]
+id = "quote-tex-688"
+from = "html+raw_tex"
+input = "<p>\\ref}1\\ref1\\eqref\\eqref\\eqref.</p>"
+
+[[case]]
+id = "quote-tex-689"
+from = "html+raw_tex"
+input = "<p>\\ref}2.5</p>"
+
+[[case]]
+id = "quote-tex-690"
+from = "html+raw_tex"
+input = "<p>\\ref}2.5**1  </p>"
+
+[[case]]
+id = "quote-tex-691"
+from = "html+raw_tex"
+input = "<p>\\ref}2.5*2.5x</p>"
+
+[[case]]
+id = "quote-tex-692"
+from = "html+raw_tex"
+input = "<p>\\ref}2.5[1\\refname\\eqrefx</p>"
+
+[[case]]
+id = "quote-tex-693"
+from = "html+raw_tex"
+input = "<p>\\ref}2.5\\ref{2.5\\ref]*</p>"
+
+[[case]]
+id = "quote-tex-694"
+from = "html+raw_tex"
+input = "<p>\\ref}[*\\refname</p>"
+
+[[case]]
+id = "quote-tex-695"
+from = "html+raw_tex"
+input = "<p>\\ref}[2.5.\\eqref</p>"
+
+[[case]]
+id = "quote-tex-696"
+from = "html+raw_tex"
+input = "<p>\\ref}[\\ref]-\\1]</p>"
+
+[[case]]
+id = "quote-tex-697"
+from = "html+raw_tex"
+input = "<p>\\ref}\\</p>"
+
+[[case]]
+id = "quote-tex-698"
+from = "html+raw_tex"
+input = "<p>\\ref}\\\\ref</p>"
+
+[[case]]
+id = "quote-tex-699"
+from = "html+raw_tex"
+input = "<p>\\ref}\\eqref-</p>"
+
+[[case]]
+id = "quote-tex-700"
+from = "html+raw_tex"
+input = "<p>\\ref}\\eqref\\ref-.\\ref</p>"
+
+[[case]]
+id = "quote-tex-701"
+from = "html+raw_tex"
+input = "<p>\\ref}\\ref\\eqref</p>"
+
+[[case]]
+id = "quote-tex-702"
+from = "html+raw_tex"
+input = "<p>\\ref}\\refname\\{</p>"
+
+[[case]]
+id = "quote-tex-703"
+from = "html+raw_tex"
+input = "<p>\\ref}x\\ref\\[.}\\ref\\eqref</p>"
+
+[[case]]
+id = "quote-tex-704"
+from = "html+raw_tex"
+input = "<p>\\ref}{{\\{.\\refname  </p>"

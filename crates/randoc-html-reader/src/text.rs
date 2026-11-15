@@ -215,6 +215,7 @@ fn convert(chars: &[char], mode: TextMode, special: &mut Special, depth: usize, 
 /// delimiter that reaches the end of the text fails for each later start
 /// too, so it is not made a second time.
 struct Special {
+    extensions: Extensions,
     dollars: bool,
     single_backslash: bool,
     double_backslash: bool,
@@ -236,6 +237,11 @@ struct Special {
     math_ends: HashMap<(usize, usize, bool), MathEnd>,
     /// The `[` groups without an end that a `\ref` search found.
     bracket_failures: usize,
+    scans: ArgumentScans,
+    /// Test builds only: forget `scans` before each `\ref`, as the scan
+    /// without a memory does.
+    #[cfg(test)]
+    plain: bool,
     no_environment_end: Vec<&'static str>,
     /// The close of each quotation of the whole text token. Made on first use.
     quote_closes: Option<Rc<QuoteCloses>>,
@@ -250,6 +256,21 @@ struct Special {
     /// after the end of the quotation around it.
     full: Rc<[char]>,
     offset: usize,
+}
+
+/// The results of the `\ref` argument scans of one text, for each index that
+/// a scan passed. A scan from an index has one result, so a later command
+/// whose scan reaches the index stops there.
+#[derive(Default)]
+struct ArgumentScans {
+    /// For an index inside a `[` group: the index after its `]`, or `None`.
+    bracket_ends: HashMap<usize, Option<usize>>,
+    /// For a `[`: the end of the run of bracket groups from it, and whether
+    /// the run stops at a group without an end.
+    bracket_runs: HashMap<usize, (usize, bool)>,
+    /// For the index after the bracket groups: the end of the number and the
+    /// brace groups, or `None` when a brace group has no end.
+    tails: HashMap<usize, Option<usize>>,
 }
 
 /// The math delimiter kinds: `$`, `$$`, then `(` and `[` with one and with two
@@ -274,6 +295,7 @@ enum MathEnd {
 impl Special {
     fn new(extensions: Extensions, full: Rc<[char]>, offset: usize) -> Self {
         Special {
+            extensions,
             dollars: extensions.contains(Extension::TexMathDollars),
             single_backslash: extensions.contains(Extension::TexMathSingleBackslash),
             double_backslash: extensions.contains(Extension::TexMathDoubleBackslash),
@@ -285,6 +307,9 @@ impl Special {
             group_breaks: None,
             math_ends: HashMap::new(),
             bracket_failures: 0,
+            scans: ArgumentScans::default(),
+            #[cfg(test)]
+            plain: false,
             no_environment_end: Vec::new(),
             quote_closes: None,
             context: None,
@@ -443,22 +468,67 @@ impl Special {
         {
             return Some(at);
         }
-        while chars.get(at) == Some(&'[') && self.bracket_failures < MAX_GROUP_FAILURES {
-            match self.bracket_end(chars, at) {
-                Some(end) => at = skip_spaces(chars, end),
-                None => {
-                    self.bracket_failures += 1;
-                    break;
-                }
-            }
+        #[cfg(test)]
+        if self.plain {
+            self.scans = ArgumentScans::default();
         }
-        if let Some(end) = number_end(chars, at) {
+        if chars.get(at) == Some(&'[') && self.bracket_failures < MAX_GROUP_FAILURES {
+            let (end, failed) = self.bracket_run(chars, at);
+            self.bracket_failures += usize::from(failed);
             at = end;
         }
-        while chars.get(at) == Some(&'{') {
-            at = self.brace_end(chars, at)?;
+        self.argument_tail(chars, at)
+    }
+
+    /// Returns the end of the bracket groups from the `[` at `start`, each
+    /// with the spaces after it, and whether a group without an end stops
+    /// the run.
+    fn bracket_run(&mut self, chars: &[char], start: usize) -> (usize, bool) {
+        let mut at = start;
+        let mut visited = Vec::new();
+        let run = loop {
+            if let Some(run) = self.scans.bracket_runs.get(&at) {
+                break *run;
+            }
+            if chars.get(at) != Some(&'[') {
+                break (at, false);
+            }
+            count_tex_step();
+            visited.push(at);
+            match self.bracket_end(chars, at) {
+                Some(end) => at = skip_spaces(chars, end),
+                None => break (at, true),
+            }
+        };
+        for at in visited {
+            self.scans.bracket_runs.insert(at, run);
         }
-        Some(at)
+        run
+    }
+
+    /// Returns the end of the optional number and the adjacent brace groups
+    /// at `start`, or `None` when a brace group has no end.
+    fn argument_tail(&mut self, chars: &[char], start: usize) -> Option<usize> {
+        let mut at = number_end(chars, start).unwrap_or(start);
+        let mut visited = vec![start];
+        let end = loop {
+            if let Some(end) = self.scans.tails.get(&at) {
+                break *end;
+            }
+            count_tex_step();
+            if chars.get(at) != Some(&'{') {
+                break Some(at);
+            }
+            visited.push(at);
+            match self.brace_end(chars, at) {
+                Some(next) => at = next,
+                None => break None,
+            }
+        };
+        for at in visited {
+            self.scans.tails.insert(at, end);
+        }
+        end
     }
 
     /// Returns the index after the `}` that closes the `{` at `at`.
@@ -574,16 +644,30 @@ impl Special {
 
     /// Returns the index after the `]` that closes the `[` at `at`. A brace
     /// group and an escaped character inside are skipped.
-    fn bracket_end(&mut self, chars: &[char], at: usize) -> Option<usize> {
-        let mut at = at + 1;
-        loop {
-            match chars.get(at)? {
-                ']' => return Some(at + 1),
-                '{' => at = self.brace_end(chars, at)?,
-                '\\' => at += 2,
-                _ => at += 1,
+    fn bracket_end(&mut self, chars: &[char], open: usize) -> Option<usize> {
+        let mut at = open + 1;
+        let mut visited = Vec::new();
+        let end = loop {
+            if let Some(end) = self.scans.bracket_ends.get(&at) {
+                break *end;
             }
+            count_tex_step();
+            visited.push(at);
+            match chars.get(at) {
+                None => break None,
+                Some(']') => break Some(at + 1),
+                Some('{') => match self.brace_end(chars, at) {
+                    Some(next) => at = next,
+                    None => break None,
+                },
+                Some('\\') => at += 2,
+                Some(_) => at += 1,
+            }
+        };
+        for at in visited {
+            self.scans.bracket_ends.insert(at, end);
         }
+        end
     }
 
     /// Returns the end of a math environment after `\begin` at `at`: spaces,
@@ -678,10 +762,14 @@ impl Special {
         let opens =
             after_punctuation && after.is_some_and(|c| !is_space(c)) && self.context != Some(kind);
         if opens && depth < MAX_QUOTE_DEPTH {
-            let table = Rc::clone(
-                self.quote_closes
-                    .get_or_insert_with(|| Rc::new(QuoteCloses::new(&self.full))),
-            );
+            let table = match &self.quote_closes {
+                Some(table) => Rc::clone(table),
+                None => {
+                    let table = Rc::new(QuoteCloses::new(&self.full, &self.construct_ends()));
+                    self.quote_closes = Some(Rc::clone(&table));
+                    table
+                }
+            };
             if let Some(end) = table
                 .close(self.offset + index, quote)
                 .map(|close| close - self.offset)
@@ -690,7 +778,7 @@ impl Special {
                 let mut inner = Inlines::new();
                 let body = chars.get(index + 1..end).unwrap_or_default();
                 let mut special = Special::new(
-                    Extensions::from_list(&[Extension::Smart]),
+                    self.extensions,
                     Rc::clone(&self.full),
                     self.offset + index + 1,
                 );
@@ -708,6 +796,33 @@ impl Special {
             _ => "\u{2019}",
         };
         Some((Inline::Str(mark.to_owned()), index + 1))
+    }
+}
+
+impl Special {
+    /// For each index of the whole text token at which math or raw TeX
+    /// starts, the index after it. The constructs are read from the start in
+    /// order, as the conversion reads them, so an index inside a construct
+    /// has no entry. A quotation mark inside a construct does not close a
+    /// quotation.
+    fn construct_ends(&self) -> Vec<Option<usize>> {
+        let full = Rc::clone(&self.full);
+        let mut special = Special::new(self.extensions, Rc::clone(&full), 0);
+        special.smart = false;
+        let mut ends = vec![None; full.len()];
+        let mut at = 0;
+        while let Some(&c) = full.get(at) {
+            let end = special
+                .starts(c)
+                .then(|| special.parse(&full, at, 0))
+                .flatten()
+                .map(|(_, end)| end);
+            if let Some(slot) = ends.get_mut(at) {
+                *slot = end;
+            }
+            at = end.unwrap_or(at + 1);
+        }
+        ends
     }
 }
 
@@ -733,6 +848,7 @@ fn opens_inside(chars: &[char], at: usize) -> bool {
 /// mark. A quotation of the other kind inside it is skipped, so that its
 /// marks do not close the outer quotation; such a nested quotation can end
 /// after the end of the quotation around it, and then that one has no close.
+/// Math and raw TeX are skipped too.
 pub(crate) struct QuoteCloses {
     /// `walk[kind][at]`: the close mark of kind `kind` (0 double, 1 single)
     /// that a search from `at` finds.
@@ -742,7 +858,7 @@ pub(crate) struct QuoteCloses {
 }
 
 impl QuoteCloses {
-    fn new(chars: &[char]) -> Self {
+    fn new(chars: &[char], construct_ends: &[Option<usize>]) -> Self {
         let length = chars.len();
         let closes = |at: usize, quote: char| {
             chars.get(at) == Some(&quote)
@@ -754,6 +870,8 @@ impl QuoteCloses {
             for (kind, quote, other) in [(0, '"', 1), (1, '\'', 0)] {
                 let found = if closes(at, quote) {
                     Some(at)
+                } else if let Some(end) = construct_ends.get(at).copied().flatten() {
+                    walk[kind].get(end).copied().flatten()
                 } else {
                     let other_mark = if other == 0 { '"' } else { '\'' };
                     let nested = (chars.get(at) == Some(&other_mark) && opens_inside(chars, at))
@@ -929,6 +1047,13 @@ fn group_breaks(chars: &[char]) -> Vec<usize> {
 thread_local! {
     /// The steps of the math searches on this thread.
     pub(crate) static MATH_STEPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+    /// The steps of the raw TeX argument scans on this thread.
+    pub(crate) static TEX_STEPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+fn count_tex_step() {
+    #[cfg(test)]
+    TEX_STEPS.with(|steps| steps.set(steps.get() + 1));
 }
 
 /// Removes the white space at both ends of math content. A space that a
@@ -1322,6 +1447,74 @@ mod tests {
             large <= small * 6,
             "{small} steps for 500 escapes, {large} for 2000"
         );
+    }
+
+    fn special_inlines(text: &str, extensions: &[Extension], plain: bool) -> Vec<Inline> {
+        let chars: Rc<[char]> = text.chars().collect();
+        let mut special = Special::new(Extensions::from_list(extensions), Rc::clone(&chars), 0);
+        special.plain = plain;
+        let mut out = Inlines::new();
+        convert(&chars, TextMode::Normal, &mut special, 0, &mut out);
+        out.0
+    }
+
+    fn tex_steps(text: &str, plain: bool) -> u64 {
+        TEX_STEPS.with(|steps| steps.set(0));
+        special_inlines(text, &[Extension::RawTex], plain);
+        TEX_STEPS.with(std::cell::Cell::get)
+    }
+
+    // Each `\ref` reads the bracket groups up to the last `{`, which has no
+    // end, so each command fails. Pandoc 3.13 gives one `Str`.
+    #[test]
+    fn a_failed_reference_does_not_scan_its_brackets_again() {
+        let nested = |count: usize| format!("{}x]{{", r"\ref[".repeat(count));
+        let run = |count: usize| {
+            format!(
+                r"\ref[{}[a]{}{{",
+                r"\ref[".repeat(count),
+                " [a]".repeat(count)
+            )
+        };
+        let digits = |count: usize| format!("{}x]{}{{", r"\ref[".repeat(count), "1".repeat(count));
+        assert_eq!(
+            inlines(&nested(2), &[Extension::RawTex]),
+            vec![word(r"\ref[\ref[x]{")]
+        );
+        for family in [nested, run, digits] {
+            let (small, large) = (
+                tex_steps(&family(500), false),
+                tex_steps(&family(2000), false),
+            );
+            assert!(
+                large <= small * 5,
+                "{small} steps for 500 commands, {large} for 2000"
+            );
+            let (small, large) = (tex_steps(&family(100), true), tex_steps(&family(400), true));
+            assert!(large > small * 10, "the plain scan is not linear");
+        }
+    }
+
+    // The scans with a memory give the result of the scans without one.
+    #[test]
+    fn the_argument_memory_keeps_the_result() {
+        let pieces = [
+            r"\ref", r"\eqref", "[", "]", "{", "}", " ", "\t", "x", "1", ".", "*", r"\", "-",
+        ];
+        let mut seed: u64 = 7;
+        for _ in 0..4000 {
+            let mut text = String::new();
+            seed = seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1);
+            for _ in 0..(seed >> 59) * 2 {
+                seed = seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1);
+                text.push_str(pieces[(seed >> 33) as usize % pieces.len()]);
+            }
+            assert_eq!(
+                special_inlines(&text, &[Extension::RawTex], false),
+                special_inlines(&text, &[Extension::RawTex], true),
+                "{text:?}"
+            );
+        }
     }
 
     #[test]
