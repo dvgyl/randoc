@@ -317,8 +317,8 @@
     "markdown_in_html_blocks": {
       "status": "passing",
       "units": {
-        "passing": 8,
-        "total": 8
+        "passing": 14,
+        "total": 14
       }
     },
     "mmd_header_identifiers": {
@@ -541,8 +541,8 @@
     "tex_math_double_backslash": {
       "status": "passing",
       "units": {
-        "passing": 91,
-        "total": 91
+        "passing": 92,
+        "total": 92
       }
     },
     "tex_math_gfm": {
@@ -555,8 +555,8 @@
     "tex_math_single_backslash": {
       "status": "passing",
       "units": {
-        "passing": 142,
-        "total": 142
+        "passing": 143,
+        "total": 143
       }
     },
     "wikilinks_title_after_pipe": {
@@ -709,8 +709,8 @@
         "total": 1846
       },
       "read": {
-        "passing": 2852,
-        "total": 2897
+        "passing": 2876,
+        "total": 2920
       },
       "status": "partial"
     },
@@ -753,12 +753,12 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 585,
-        "total": 585
+        "passing": 587,
+        "total": 587
       },
       "read": {
-        "passing": 585,
-        "total": 585
+        "passing": 587,
+        "total": 587
       },
       "status": "passing"
     },
@@ -1654,13 +1654,13 @@
     },
     "csljson": {
       "end_to_end": {
-        "passing": 627,
-        "total": 627
+        "passing": 629,
+        "total": 629
       },
       "status": "passing",
       "write": {
-        "passing": 577,
-        "total": 577
+        "passing": 579,
+        "total": 579
       }
     },
     "djot": {
@@ -1984,8 +1984,8 @@
       "passing": 6
     },
     "units": {
-      "passing": 56218,
-      "total": 57674
+      "passing": 56248,
+      "total": 57703
     }
   }
 }

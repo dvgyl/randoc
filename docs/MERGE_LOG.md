@@ -2750,3 +2750,8 @@ documents differ) and the low rows 16 to 28 and 49. Suite
 peak of 637 MB under `limit-run 1500 300`. The corpus document cyrguide
 is byte-equal now. Not run: fuzzing after the parser changes, coverage,
 the mutation sample.
+
+`merge-ws check` of batch e (a plain script of the coordinator, no merge agent): passed at 08:05 UTC on the tree of `4f8a3f3`.
+Harness: 58123 units: 56248 pass, 1455 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56218 units: 0 regressions, 30 new passes.
+Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56248, "total": 57703}}`.
