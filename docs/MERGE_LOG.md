@@ -3267,3 +3267,8 @@ Open: I-LTXR-54 (low): the 38 open forms without an error and the parse
 errors of Pandoc in a macro body.
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+`merge-ws check` of batch h (a plain script of the coordinator, no merge agent): passed at 11:05 UTC on the tree of `d1d5d9e`.
+Harness: 61366 units: 59513 pass, 1433 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 57516 units: 0 regressions, 1997 new passes.
+Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 57516, "total": 58884}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 17, "passing": 61}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"not_started": 59, "partial": 11, "passing": 7}, "units": {"passing": 59513, "total": 60946}}`.

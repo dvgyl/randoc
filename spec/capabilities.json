@@ -198,8 +198,8 @@
     "grid_tables": {
       "status": "passing",
       "units": {
-        "passing": 1590,
-        "total": 1590
+        "passing": 1880,
+        "total": 1880
       }
     },
     "gutenberg": {
@@ -343,10 +343,10 @@
       }
     },
     "multiline_tables": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 1738,
-        "total": 1742
+        "passing": 1800,
+        "total": 1800
       }
     },
     "native_divs": {
@@ -386,8 +386,8 @@
     "pipe_tables": {
       "status": "passing",
       "units": {
-        "passing": 1224,
-        "total": 1224
+        "passing": 1514,
+        "total": 1514
       }
     },
     "raw_attribute": {
@@ -400,8 +400,8 @@
     "raw_html": {
       "status": "partial",
       "units": {
-        "passing": 1327,
-        "total": 1388
+        "passing": 1907,
+        "total": 1968
       }
     },
     "raw_markdown": {
@@ -436,10 +436,10 @@
       }
     },
     "simple_tables": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 1800,
-        "total": 1808
+        "passing": 1866,
+        "total": 1866
       }
     },
     "smart": {
@@ -684,19 +684,19 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 11902,
-        "total": 12017
+        "passing": 12607,
+        "total": 12713
       },
       "read": {
-        "passing": 2826,
-        "total": 2829
+        "passing": 2855,
+        "total": 2858
       },
       "status": "partial"
     },
     "latex": {
       "read": {
-        "passing": 5757,
-        "total": 6591
+        "passing": 6315,
+        "total": 7232
       },
       "status": "partial"
     },
@@ -1629,24 +1629,24 @@
     },
     "commonmark": {
       "end_to_end": {
-        "passing": 1502,
-        "total": 1508
+        "passing": 1560,
+        "total": 1566
       },
       "status": "partial",
       "write": {
-        "passing": 1502,
-        "total": 1508
+        "passing": 1560,
+        "total": 1566
       }
     },
     "commonmark_x": {
       "end_to_end": {
-        "passing": 754,
-        "total": 755
+        "passing": 812,
+        "total": 813
       },
       "status": "partial",
       "write": {
-        "passing": 754,
-        "total": 755
+        "passing": 812,
+        "total": 813
       }
     },
     "context": {
@@ -1701,13 +1701,13 @@
     },
     "gfm": {
       "end_to_end": {
-        "passing": 1681,
-        "total": 1693
+        "passing": 1768,
+        "total": 1780
       },
       "status": "partial",
       "write": {
-        "passing": 1681,
-        "total": 1693
+        "passing": 1768,
+        "total": 1780
       }
     },
     "haddock": {
@@ -1794,13 +1794,13 @@
     },
     "markdown": {
       "end_to_end": {
-        "passing": 3604,
-        "total": 3666
+        "passing": 3755,
+        "total": 3811
       },
       "status": "partial",
       "write": {
-        "passing": 3604,
-        "total": 3666
+        "passing": 3755,
+        "total": 3811
       }
     },
     "markdown_github": {
@@ -1816,46 +1816,46 @@
     },
     "markdown_mmd": {
       "end_to_end": {
-        "passing": 154,
-        "total": 155
+        "passing": 212,
+        "total": 213
       },
       "status": "partial",
       "write": {
-        "passing": 154,
-        "total": 155
+        "passing": 212,
+        "total": 213
       }
     },
     "markdown_phpextra": {
       "end_to_end": {
-        "passing": 218,
-        "total": 218
+        "passing": 276,
+        "total": 276
       },
       "status": "passing",
       "write": {
-        "passing": 218,
-        "total": 218
+        "passing": 276,
+        "total": 276
       }
     },
     "markdown_strict": {
       "end_to_end": {
-        "passing": 1071,
-        "total": 1081
+        "passing": 1129,
+        "total": 1139
       },
       "status": "partial",
       "write": {
-        "passing": 1071,
-        "total": 1081
+        "passing": 1129,
+        "total": 1139
       }
     },
     "markua": {
       "end_to_end": {
-        "passing": 0,
-        "total": 1
+        "passing": 59,
+        "total": 59
       },
-      "status": "failing",
+      "status": "passing",
       "write": {
-        "passing": 0,
-        "total": 1
+        "passing": 59,
+        "total": 59
       }
     },
     "mediawiki": {
@@ -1895,13 +1895,13 @@
     },
     "plain": {
       "end_to_end": {
-        "passing": 1637,
-        "total": 1656
+        "passing": 1755,
+        "total": 1772
       },
       "status": "partial",
       "write": {
-        "passing": 1637,
-        "total": 1656
+        "passing": 1755,
+        "total": 1772
       }
     },
     "pptx": {
@@ -1964,8 +1964,8 @@
     "extensions": {
       "failing": 1,
       "not_started": 11,
-      "partial": 19,
-      "passing": 59
+      "partial": 17,
+      "passing": 61
     },
     "input_formats": {
       "not_started": 39,
@@ -1978,14 +1978,13 @@
       "passing": 94
     },
     "output_formats": {
-      "failing": 1,
       "not_started": 59,
       "partial": 11,
-      "passing": 6
+      "passing": 7
     },
     "units": {
-      "passing": 57516,
-      "total": 58884
+      "passing": 59513,
+      "total": 60946
     }
   }
 }
