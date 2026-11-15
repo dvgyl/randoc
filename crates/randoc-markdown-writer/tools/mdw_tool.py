@@ -1182,6 +1182,41 @@ def define_cases():
     c("fallback-in-list", [BL([[Table([["h1", "h2"]], [["a", [BL(["x"])]]], caption="c")]])],
       to=["commonmark-raw_html", "markdown-grid_tables-raw_html", "plain-grid_tables"])
 
+    # Cells that span rows or columns: each writer x the table forms and raw HTML.
+    span_to = [
+        "plain", "plain-grid_tables", "plain-grid_tables-pipe_tables", "plain+raw_html",
+        "markdown", "markdown-grid_tables", "markdown-grid_tables-raw_html",
+        "markdown-grid_tables-raw_html-pipe_tables", "markdown-simple_tables-multiline_tables-pipe_tables",
+        "gfm", "gfm-raw_html", "gfm-raw_html-pipe_tables", "commonmark", "commonmark-raw_html",
+        "commonmark_x", "commonmark_x-raw_html", "markdown_strict", "markdown_strict-raw_html",
+        "markdown_mmd", "markdown_mmd-raw_html", "markdown_phpextra", "markdown_phpextra-raw_html",
+        "markua", "markua-pipe_tables",
+    ]
+    long_text = "words in a spanning cell that is long enough to wrap " * 2
+    span_shapes = {
+        "col-head": dict(head=[[cell("wide head", cs=2)]], body=[["a", "b"]]),
+        "col-body": dict(head=[["h1", "h2", "h3"]], body=[[cell("ab", cs=2), "c"], ["d", "e", "f"]]),
+        "col-foot": dict(head=[["h1", "h2"]], body=[["a", "b"]], foot=[[cell("sum", cs=2)]]),
+        "row-body": dict(head=[["h1", "h2"]], body=[[cell("tall", rs=2), "b"], ["c"]]),
+        "row-head": dict(head=[[cell("hh", rs=2), "h2"], ["h3"]], body=[["a", "b"]]),
+        "row-foot": dict(head=[["h1", "h2"]], body=[["a", "b"]], foot=[[cell("f", rs=2), "g"], ["k"]]),
+        "both": dict(head=[["h1", "h2", "h3"]], body=[[cell("big", rs=2, cs=2), "c"], ["f"], ["g", "h", "i"]]),
+        "long": dict(head=[["h1", "h2"]], body=[[cell(long_text, cs=2)], ["a", "b"]]),
+        "lines": dict(head=[["h1", "h2"]], body=[[cell([Plain("one", LB, "two", LB, "three")], rs=2), "b"], ["c"]]),
+        "widths": dict(head=[[cell("Head", cs=2)]], body=[["one", "two"]], widths=[0.3, 0.2]),
+        "aligns": dict(head=[[cell("h", cs=2), "z"]], body=[["a", "b", "c"]], aligns=[L, R, "AlignCenter"]),
+        "nohead": dict(head=[], body=[[cell("ab", cs=2)], ["c", "d"]]),
+        "ragged": dict(head=[["h1", "h2"]], body=[["a"], ["b", "c"]]),
+        "two-head-rows": dict(head=[["h1", "h2"], ["h3", "h4"]], body=[["a", "b"]]),
+    }
+    for shape, parts in span_shapes.items():
+        for cap_name, cap in (("", {}), ("-cap", dict(caption="c d"))):
+            c("span-%s%s" % (shape, cap_name), [Para("Before."), Table(**{**parts, **cap}), Para("After.")],
+              to=span_to)
+    two_bodies = Table([["h1", "h2"]], [[cell("x", rs=2), "y"], ["z"]])
+    two_bodies["c"][4].append([NA, 0, [], [row([cell("p", cs=2)]), row(["q", "r"])]])
+    c("span-two-bodies", [two_bodies], to=span_to)
+
     # ---------------------------------------------------------- edge matrix
     c = suite("edges", "Spaces at the edges of inline containers, spaces before list markers, block separation.",
               ["markdown", "gfm", "commonmark", "plain"])

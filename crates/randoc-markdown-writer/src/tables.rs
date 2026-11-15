@@ -1,6 +1,6 @@
 //! Tables: simple, pipe, multiline and grid tables, and the HTML form.
 
-use randoc_ast::{Alignment, Block, Cell, ColWidth, Inline, Table, Text};
+use randoc_ast::{Alignment, Attr, Block, Cell, ColWidth, Inline, Row, Table, Text};
 use randoc_core::{Extension, Result};
 use randoc_layout::{Doc, blankline, cr, empty, literal, nest, real_length};
 
@@ -40,8 +40,7 @@ fn grid(table: &Table) -> Grid<'_> {
         .chain(table.foot.rows.iter());
     let has_spans = all_rows
         .flat_map(|row| row.cells.iter())
-        .any(|cell| cell.row_span != 1 || cell.col_span != 1)
-        || table.head.rows.len() > 1;
+        .any(|cell| cell.row_span != 1 || cell.col_span != 1);
     let mut head_rows: Vec<Vec<&Cell>> = table
         .head
         .rows
@@ -70,6 +69,126 @@ fn grid(table: &Table) -> Grid<'_> {
         body,
         foot_start,
         has_spans,
+    }
+}
+
+/// A cell at its first row and column of the table grid.
+struct Placed<'t> {
+    cell: &'t Cell,
+    row: usize,
+    col: usize,
+    cols: usize,
+}
+
+/// A table on its grid of rows and columns, for the forms that show spans.
+struct Layout<'t> {
+    cells: Vec<Placed<'t>>,
+    /// The index in `cells` of the cell that covers each row and column.
+    owner: Vec<Vec<Option<usize>>>,
+    head_rows: usize,
+    /// The first row of the table foot.
+    foot_start: Option<usize>,
+}
+
+/// Places each cell at the first free column of its row. A span stops at
+/// the end of its table section and at a column that a cell above covers.
+fn layout(table: &Table, columns: usize) -> Layout<'_> {
+    let mut sections: Vec<Vec<&Row>> = vec![table.head.rows.iter().collect()];
+    for body in &table.bodies {
+        sections.push(body.head.iter().chain(body.body.iter()).collect());
+    }
+    sections.push(table.foot.rows.iter().collect());
+    let foot_rows = table.foot.rows.len();
+    let mut out = Layout {
+        cells: Vec::new(),
+        owner: Vec::new(),
+        head_rows: table.head.rows.len(),
+        foot_start: None,
+    };
+    for rows in &sections {
+        let start = out.owner.len();
+        out.owner.extend(rows.iter().map(|_| vec![None; columns]));
+        for (offset, row) in rows.iter().enumerate() {
+            let r = start + offset;
+            let mut c = 0;
+            for cell in &row.cells {
+                while out.owner[r].get(c).is_some_and(Option::is_some) {
+                    c += 1;
+                }
+                if c >= columns {
+                    break;
+                }
+                let wanted = usize::try_from(cell.col_span).unwrap_or(1).max(1);
+                let cols = out.owner[r][c..]
+                    .iter()
+                    .take(wanted)
+                    .take_while(|o| o.is_none())
+                    .count();
+                let span_rows = usize::try_from(cell.row_span).unwrap_or(1).max(1);
+                let span_rows = span_rows.min(rows.len() - offset);
+                let index = out.cells.len();
+                for line in &mut out.owner[r..r + span_rows] {
+                    for slot in &mut line[c..c + cols] {
+                        slot.get_or_insert(index);
+                    }
+                }
+                out.cells.push(Placed {
+                    cell,
+                    row: r,
+                    col: c,
+                    cols,
+                });
+                c += cols;
+            }
+        }
+    }
+    if foot_rows > 0 {
+        out.foot_start = Some(out.owner.len() - foot_rows);
+    }
+    out
+}
+
+impl<'t> Layout<'t> {
+    /// The cell that starts at a position, else `blank`: the first row is
+    /// the header and the other rows are the body.
+    fn positions<'a>(&self, g: &Grid<'a>, blank: &'a Cell) -> Grid<'a>
+    where
+        't: 'a,
+    {
+        let rows: Vec<Vec<&'a Cell>> = self
+            .owner
+            .iter()
+            .enumerate()
+            .map(|(r, line)| {
+                line.iter()
+                    .enumerate()
+                    .map(|(c, slot)| match slot.map(|i| &self.cells[i]) {
+                        Some(p) if p.row == r && p.col == c => p.cell,
+                        _ => blank,
+                    })
+                    .collect()
+            })
+            .collect();
+        let mut rows = rows.into_iter();
+        let head = if self.head_rows > 0 {
+            rows.next()
+        } else {
+            None
+        };
+        Grid {
+            aligns: g.aligns.clone(),
+            widths: g.widths.clone(),
+            head,
+            body: rows.collect(),
+            foot_start: self.foot_start.map(|f| f - usize::from(self.head_rows > 0)),
+            has_spans: false,
+        }
+    }
+
+    /// Returns `true` when two positions belong to one cell.
+    fn same(&self, row: usize, a: usize, b: usize) -> bool {
+        let line = &self.owner[row];
+        line[a].is_some() && line[a] == line[b]
     }
 }
 
@@ -125,13 +244,31 @@ fn is_simple_cell(cell: &Cell) -> bool {
 
 impl W<'_> {
     pub(crate) fn table(&mut self, block: &Block, table: &Table) -> Result<Doc> {
-        let g = grid(table);
-        let columns = g.aligns.len();
-        let rows_ok = g
-            .head
-            .iter()
-            .chain(g.body.iter())
-            .all(|row| row.len() == columns);
+        let blank = Cell {
+            attr: Attr::default(),
+            align: Alignment::AlignDefault,
+            row_span: 1,
+            col_span: 1,
+            content: Vec::new(),
+        };
+        let columns = table.col_specs.len();
+        let placed = layout(table, columns);
+        let many_heads = table.head.rows.len() > 1;
+        let regular = |g: &Grid<'_>| {
+            g.head
+                .iter()
+                .chain(g.body.iter())
+                .all(|row| row.len() == columns)
+        };
+        let first = grid(table);
+        // With no span, Pandoc fills short rows with empty cells, and the
+        // header rows after the first one go to the body.
+        let g = if !first.has_spans && (many_heads || !regular(&first)) {
+            placed.positions(&first, &blank)
+        } else {
+            first
+        };
+        let rows_ok = regular(&g);
         let all_simple = g
             .head
             .iter()
@@ -139,6 +276,8 @@ impl W<'_> {
             .flatten()
             .all(|cell| is_simple_cell(cell));
         let no_widths = g.widths.iter().all(|w| *w == 0.0);
+        // Markua has no table extensions and always writes pipe tables.
+        let pipe = self.has(Extension::PipeTables) || self.variant == crate::Variant::Markua;
         let plain_ok = rows_ok && !g.has_spans && columns > 0;
         // Only grid and pipe tables can show a table foot.
         let no_foot = g.foot_start.is_none();
@@ -148,7 +287,7 @@ impl W<'_> {
             (Some(Kind::Grid), false)
         } else if all_simple && no_widths && no_foot && self.has(Extension::SimpleTables) {
             (Some(Kind::Simple), true)
-        } else if all_simple && no_widths && self.has(Extension::PipeTables) {
+        } else if all_simple && no_widths && pipe {
             (Some(Kind::Pipe), false)
         } else if no_foot
             && self.has(Extension::MultilineTables)
@@ -161,23 +300,31 @@ impl W<'_> {
             (Some(Kind::Multiline), true)
         } else if self.has(Extension::GridTables) {
             (Some(Kind::Grid), false)
-        } else if all_simple && self.has(Extension::PipeTables) {
+        } else if all_simple && pipe {
             (Some(Kind::Pipe), false)
         } else {
             (None, false)
         };
         let Some(kind) = kind else {
-            if self.has(Extension::RawHtml) {
+            let spans_ok = !plain_ok && columns > 0;
+            let lines = if spans_ok && self.has(Extension::GridTables) {
+                self.span_grid_lines(&g, &placed)?
+            } else if self.has(Extension::RawHtml) {
                 // A blank line would end the HTML block in Markdown.
                 let html = self.html_text(std::slice::from_ref(block))?;
                 return Ok(literal(html.replace("\n\n", "\n&#10;")) + blankline());
-            }
-            return Ok(literal("[TABLE]") + self.caption_doc(table)?);
+            } else if spans_ok && all_simple && pipe {
+                self.pipe_lines(&placed.positions(&g, &blank))?
+            } else {
+                return Ok(literal("[TABLE]") + self.caption_doc(table)?);
+            };
+            return Ok(literal(lines.join("\n")) + cr() + self.caption_doc(table)?);
         };
         let lines = match kind {
             Kind::Simple => self.simple_lines(&g)?,
             Kind::Pipe => self.pipe_lines(&g)?,
             Kind::Multiline => self.multiline_lines(&g)?,
+            Kind::Grid if many_heads => self.span_grid_lines(&g, &placed)?,
             Kind::Grid => self.grid_lines(&g)?,
         };
         let body = literal(lines.join("\n")) + cr();
@@ -482,6 +629,195 @@ impl W<'_> {
         Ok(lines)
     }
 
+    /// Lays out a grid table whose cells can span rows and columns.
+    fn span_grid_lines(&mut self, g: &Grid<'_>, l: &Layout<'_>) -> Result<Vec<Text>> {
+        let columns = g.aligns.len();
+        let mut docs = Vec::with_capacity(l.cells.len());
+        for placed in &l.cells {
+            docs.push(self.cell_doc(placed.cell)?);
+        }
+        let relative = !g.widths.iter().all(|w| *w == 0.0);
+        let longest = |doc: &Doc, width: Option<usize>| {
+            doc_lines(doc, width)
+                .iter()
+                .map(|line| real_length(line))
+                .max()
+                .unwrap_or(0)
+        };
+        // The characters of a part of the line, less the border of a cell.
+        let room = |part: f64| {
+            let chars = (self.opts.columns.max(0) as f64 * part).floor();
+            let chars = if chars.is_finite() && chars > 0.0 {
+                (chars as usize).min(crate::MAX_RUN)
+            } else {
+                0
+            };
+            chars.saturating_sub(3)
+        };
+        let mut widths = vec![1usize; columns];
+        if relative {
+            for (slot, w) in widths.iter_mut().zip(&g.widths) {
+                *slot = room(*w).max(1);
+            }
+        }
+        for (placed, doc) in l.cells.iter().zip(&docs) {
+            if placed.cols == 1 {
+                let width = longest(doc, relative.then_some(1));
+                widths[placed.col] = widths[placed.col].max(width);
+            }
+        }
+        for (placed, doc) in l.cells.iter().zip(&docs) {
+            if placed.cols > 1 {
+                let span = placed.col..placed.col + placed.cols;
+                let width = if relative {
+                    room(g.widths[span.clone()].iter().sum())
+                } else {
+                    longest(doc, None)
+                };
+                // Pandoc gives each spanned column the quotient plus the remainder.
+                let share = width / placed.cols + width % placed.cols;
+                for slot in &mut widths[span] {
+                    *slot = (*slot).max(share);
+                }
+            }
+        }
+        // A table wider than the line shares the line by the natural widths.
+        let natural: usize = widths.iter().sum();
+        let borders = 3 * columns + 1;
+        let line_width = crate::run_length(self.opts.columns);
+        let shrunk = !relative && natural + borders > line_width;
+        if shrunk {
+            let room = line_width.saturating_sub(borders);
+            for slot in &mut widths {
+                *slot = (room * *slot / natural.max(1)).max(1);
+            }
+        }
+        let wrap = relative || shrunk;
+        let span_width =
+            |p: &Placed<'_>| widths[p.col..p.col + p.cols].iter().sum::<usize>() + 3 * (p.cols - 1);
+        let texts: Vec<Vec<Text>> = l
+            .cells
+            .iter()
+            .zip(&docs)
+            .map(|(p, doc)| doc_lines(doc, wrap.then(|| span_width(p))))
+            .collect();
+        let rows = l.owner.len();
+        // The text of a cell that spans rows stays in its first row.
+        let mut heights = vec![1usize; rows];
+        for (p, text) in l.cells.iter().zip(&texts) {
+            heights[p.row] = heights[p.row].max(text.len());
+        }
+        let mut tops = Vec::with_capacity(rows);
+        let mut y = 0;
+        for height in &heights {
+            tops.push(y);
+            y += height + 1;
+        }
+        // One line of the table at height `y`: the columns where `text` holds
+        // show the text of a cell, the others a border of `fill`.
+        let line = |y: usize,
+                    above: Option<usize>,
+                    below: Option<usize>,
+                    fill: char,
+                    aligns: bool|
+         -> Text {
+            let owner = |c: usize| {
+                let row = above.or(below)?;
+                let index = l.owner[row][c]?;
+                let shown = match (above, below) {
+                    (Some(a), Some(b)) => l.owner[a][c] == l.owner[b][c],
+                    _ => above == below,
+                };
+                shown.then_some(index)
+            };
+            let vertical = |row: Option<usize>, c: usize| row.is_some_and(|r| !l.same(r, c - 1, c));
+            let mut out = Text::new();
+            let mut c = 0;
+            while c < columns {
+                let shown = owner(c);
+                let junction = |filled: bool| {
+                    if c == 0 {
+                        if filled { '+' } else { '|' }
+                    } else {
+                        let before = owner(c - 1);
+                        match (before, shown) {
+                            (Some(_), Some(_)) => '|',
+                            (None, None)
+                                if !(aligns && above.is_none())
+                                    && !vertical(above, c)
+                                    && !vertical(below, c) =>
+                            {
+                                fill
+                            }
+                            _ => '+',
+                        }
+                    }
+                };
+                match shown {
+                    Some(index) => {
+                        let p = &l.cells[index];
+                        out.push(junction(false));
+                        let text = texts[index].get(y - tops[p.row]).map_or("", String::as_str);
+                        out.push(' ');
+                        out.push_str(&pad_text(Alignment::AlignLeft, span_width(p), text));
+                        out.push(' ');
+                        c = p.col + p.cols;
+                    }
+                    None => {
+                        out.push(if fill == ' ' { '|' } else { junction(true) });
+                        let align = g.aligns.get(c).copied().unwrap_or(Alignment::AlignDefault);
+                        let (left, right) = match (aligns, align) {
+                            (true, Alignment::AlignLeft) => (':', fill),
+                            (true, Alignment::AlignRight) => (fill, ':'),
+                            (true, Alignment::AlignCenter) => (':', ':'),
+                            _ => (fill, fill),
+                        };
+                        out.push(left);
+                        out.extend(std::iter::repeat_n(fill, widths[c]));
+                        out.push(right);
+                        c += 1;
+                    }
+                }
+            }
+            out.push(if fill == ' ' || owner(columns - 1).is_some() {
+                '|'
+            } else {
+                '+'
+            });
+            out
+        };
+        let fill_after = |r: usize| {
+            let foot_edge = l.foot_start.is_some_and(|f| r + 1 == f || r + 1 == rows);
+            if r + 1 == l.head_rows || foot_edge {
+                '='
+            } else {
+                '-'
+            }
+        };
+        let mut lines = vec![line(
+            0,
+            None,
+            (rows > 0).then_some(0),
+            '-',
+            l.head_rows == 0,
+        )];
+        for r in 0..rows {
+            for k in 0..heights[r] {
+                lines.push(line(tops[r] + k, Some(r), Some(r), ' ', false));
+            }
+            let below = (r + 1 < rows).then_some(r + 1);
+            let aligns = r + 1 == l.head_rows;
+            lines.push(line(
+                tops[r] + heights[r],
+                Some(r),
+                below,
+                fill_after(r),
+                aligns,
+            ));
+        }
+        Ok(lines)
+    }
+
     fn grid_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let docs = self.cell_docs(g)?;
         let relative = Self::relative_widths(g, &docs, self.opts.columns, 3, 0);
@@ -545,14 +881,14 @@ impl W<'_> {
             None => lines.push(border('-', true)),
         }
         for (index, row) in body.iter().enumerate() {
-            let in_foot = g.foot_start.is_some_and(|start| index >= start);
+            let foot_end = g.foot_start.is_some() && index + 1 == body.len();
             if g.foot_start == Some(index)
                 && let Some(last) = lines.last_mut()
             {
                 *last = border('=', false);
             }
             lines.extend(make_row(row));
-            lines.push(border(if in_foot { '=' } else { '-' }, false));
+            lines.push(border(if foot_end { '=' } else { '-' }, false));
         }
         Ok(lines)
     }

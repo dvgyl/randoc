@@ -3195,3 +3195,39 @@ Pandoc for a template without `pagetitle`. cli-R9-L02, cli-R9-L03 (low).
 The report names no other round 10 finding.
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+**markdown-writer**: branch `ws/markdown-writer-4`, commits
+`7283275..94d29c4` (one commit: `94d29c4`). It corrects R2-01: the
+writer wrote `[TABLE]` for a table with a cell span (cause: `f292078`
+of session 5). Now it writes a grid table, HTML or a pipe table. It
+also corrects short rows, header rows, `markua` and grid foot rows.
+
+Gate: no gate pass on the branch for `94d29c4`: the first gate run of
+the worker (09:20 to 09:44 UTC) failed only in one unit of another crate
+(`cli/reader-options/filter-python-changes-the-document#cmd`), which got
+no result in the time limit of 20 seconds under machine load and passes
+alone; 58,391 of 60,242 units passed in that run; the coordinator
+stopped the second run at 10:25 UTC, when the load average was above
+150. The merge check of batch H on the merged tree is the gate of this
+block.
+Measured by the worker: oracle matrix of item 0 (`span-*`, 24 writer and
+extension sets): 696 runs; the `main` build differs in 310, `94d29c4`
+in 0. Crate tests: 21 + 2 + 2 passed. Writer suite: 24,555 units,
+24,349 pass, 206 fail (outside the baseline), 0 regressions.
+
+Review state: Round 2 of the Markdown writer on `main` `eba317c`: the
+Opus reviewer requested changes with 1 critical (R2-01: the writer
+`plain` wrote `[TABLE]` for a table with a cell span and lost its text;
+the cause was the correction `f292078` of session 5), 5 high, 7 medium
+and 11 low findings; the Codex reviewer requested changes with three
+stack overflows through the library interface and about 30 other new
+high or medium findings. Both critical findings of round 1 are closed.
+This block corrects R2-01 only. With this block no finding with the
+level critical is open in the Markdown writer. The high and medium
+findings of both reports of round 2 are open: they are the first work
+of the next unit.
+
+Open: high and medium findings of round 2, among them R2-13, R2-02,
+R2-03, R2-04, R2-05 and Codex R2-03 (all high). I-MDW-02 (low).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
