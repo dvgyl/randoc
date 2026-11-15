@@ -132,7 +132,7 @@ pub fn compile(
                             .into_owned(),
                     );
                 }
-                Err(error) if is_local => unreadable_absolute_path(&candidate, &error)?,
+                Err(error) if is_local => unreadable_absolute_path(path, &candidate, &error)?,
                 Err(_) => {}
             }
         }
@@ -152,11 +152,13 @@ pub fn compile(
     })
 }
 
-/// Pandoc reads an absolute template path or partial path at once, so a
-/// path that exists and cannot be read (a folder) is an error. A relative
-/// path that cannot be read sends the search on.
-pub fn unreadable_absolute_path(path: &str, error: &std::io::Error) -> Result<()> {
-    if std::path::Path::new(path).is_absolute() && error.kind() != std::io::ErrorKind::NotFound {
+/// Pandoc reads an absolute template name or partial name at once, so a
+/// file that exists and cannot be read (a folder) is an error. For a
+/// relative name, a file of the resource path that cannot be read sends the
+/// search on, also when the folder of the resource path is absolute
+/// (cli-R10-02).
+pub fn unreadable_absolute_path(name: &str, path: &str, error: &std::io::Error) -> Result<()> {
+    if std::path::Path::new(name).is_absolute() && error.kind() != std::io::ErrorKind::NotFound {
         return Err(crate::convert::io_error(path, "withBinaryFile", error));
     }
     Ok(())

@@ -3159,3 +3159,39 @@ selection in them.
 Harness: 59304 units: 57516 pass, 1368 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56953 units: 0 regressions, 563 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56953, "total": 58401}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 57516, "total": 58884}}`.
+
+## Session 6 of 2026-11-15, batch H (three blocks: cli, markdown-writer, latex-reader)
+
+**cli**: branch `ws/cli-7`, commits `83c1183..2903fa5` (`a9a5627` and
+`2903fa5`). `a9a5627` makes one template attempt for each logical name
+(cli-R10-05, cli-R10-02, row I-CLI-37). `2903fa5` closes row I-CLI-52.
+
+Gate: no gate pass on the branch for `2903fa5`: the gate run of the
+worker passed the format, lint and documentation steps and was stopped
+at the time limit of the unit (10:20 UTC) in the test step, while the
+load average of the machine was above 100; each test binary that had
+ended had passed. The merge check of batch H on the merged tree is the
+gate of this block.
+Measured by the worker: oracle matrix `template-search`: 1080 oracle
+rows; the fixed program has 0 differences in 996 distinct rows. The code
+of `main` `83c1183` differed in 12 rows. The resource replay has 4749
+rows (1080 new).
+
+Review state: Round 10 of the command line on `main` `eba317c`: the Opus
+reviewer found each named correction of round 9 closed and no new
+finding above low; the Codex reviewer found 9 findings of round 9
+closed and 6 new findings: 1 critical (cli-R10-05: the fallback of the
+template search can remove each text of the document), 3 high and 2
+medium. The coordinator confirmed cli-R10-05 on `main` `83c1183`. This
+block corrects cli-R10-05 and cli-R10-02 and closes rows I-CLI-37 and
+I-CLI-52; the report says that cli-R10-04 was correct on this tree and
+that cli-R10-03 has its cause in `crates/randoc-templates` (open, a
+request to the coordinator). With this block no finding with the level
+critical is open in the command line. The verification by both
+reviewers is due.
+Open: cli-R10-03 (high; `p_partial` does not call `load` on a cache
+hit). A new low finding, no row yet: no `NoTitleElement` record in
+Pandoc for a template without `pagetitle`. cli-R9-L02, cli-R9-L03 (low).
+The report names no other round 10 finding.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.

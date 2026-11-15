@@ -769,10 +769,9 @@ pub fn clean_template(bytes: Vec<u8>) -> Vec<u8> {
 }
 
 /// Finds and compiles a template as Pandoc does: the first of the template
-/// candidates that can be read. A template of the user data directory gives
-/// no log record. The file must be UTF-8; the error names the template name.
-/// For a NAME without an extension, a file that is not UTF-8 or that does
-/// not compile sends the search on to NAME.FORMAT (cli-R9-24).
+/// candidates that can be read. For a NAME without an extension, a file
+/// that cannot be read, is not UTF-8 or does not compile sends the search
+/// on to NAME.FORMAT (cli-R9-24).
 fn find_template(
     name: &str,
     format: &str,
@@ -780,39 +779,31 @@ fn find_template(
     context: &mut Context,
 ) -> Result<(TemplateText, randoc_templates::Template)> {
     let candidates = template_candidates(name, format, files.data_dir, files.resource_path);
+    // The first file of a name that can be read is the one attempt for that
+    // name: when the attempt fails, the search goes on with the next name,
+    // not with the next file of the same name (cli-R10-05).
+    let mut failed_name: Option<&str> = None;
     for candidate in &candidates {
-        let bytes = match files.read(&candidate.path, context) {
-            Ok(bytes) => bytes,
-            Err(error) => {
-                if !candidate.in_data_dir {
-                    crate::template::unreadable_absolute_path(&candidate.path, &error)?;
-                }
-                continue;
-            }
-        };
-        if !candidate.in_data_dir {
-            context.report(LogMessage::LoadedResource(
-                candidate.name.clone(),
-                candidate.path.clone(),
-            ));
+        if failed_name == Some(candidate.name.as_str()) {
+            continue;
         }
-        let fallback = candidate.name == name && !has_extension(name);
-        match check_utf8(&candidate.name, &bytes) {
-            // Error messages and partial paths use the template name,
-            // not the path of the file that was found.
-            Ok(()) => {
-                let text = TemplateText {
-                    path: candidate.name.clone(),
-                    text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
-                    is_file: true,
-                };
-                match crate::template::compile(&text, files, context) {
-                    Ok(template) => return Ok((text, template)),
-                    Err(_) if fallback => {}
-                    Err(error) => return Err(error),
-                }
+        let attempt = match files.read(&candidate.path, context) {
+            Ok(bytes) => compile_template_file(candidate, bytes, files, context),
+            Err(_) if candidate.in_data_dir => continue,
+            Err(error) => match crate::template::unreadable_absolute_path(
+                &candidate.name,
+                &candidate.path,
+                &error,
+            ) {
+                Ok(()) => continue,
+                Err(error) => Err(error),
+            },
+        };
+        match attempt {
+            Ok(found) => return Ok(found),
+            Err(_) if candidate.name == name && !has_extension(name) => {
+                failed_name = Some(&candidate.name);
             }
-            Err(_) if fallback => {}
             Err(error) => return Err(error),
         }
     }
@@ -821,6 +812,31 @@ fn find_template(
         "templates/{}",
         file_name(last)
     )))
+}
+
+/// Decodes and compiles the template file that the search found. Error
+/// messages and partial paths use the template name, not the path of the
+/// file. A template of the user data directory gives no log record.
+fn compile_template_file(
+    candidate: &TemplateCandidate,
+    bytes: Vec<u8>,
+    files: &TemplateFiles,
+    context: &mut Context,
+) -> Result<(TemplateText, randoc_templates::Template)> {
+    if !candidate.in_data_dir {
+        context.report(LogMessage::LoadedResource(
+            candidate.name.clone(),
+            candidate.path.clone(),
+        ));
+    }
+    check_utf8(&candidate.name, &bytes)?;
+    let text = TemplateText {
+        path: candidate.name.clone(),
+        text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
+        is_file: true,
+    };
+    let template = crate::template::compile(&text, files, context)?;
+    Ok((text, template))
 }
 
 /// Returns the part of a path after the last `/`.

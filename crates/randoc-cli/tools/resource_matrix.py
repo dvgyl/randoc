@@ -6,7 +6,8 @@ Usage: resource_matrix.py PANDOC OUT.json [resources|utf8|GROUP [OLD.json ...]]
 `resources` records each group except `utf8`. GROUP is one of `base`,
 `lists`, `templates`, `defaults`, `named`, `datadir`, `aux`, `values`, `nested`,
 `inputs`, `numbering`, `review8`, `abbreviations`, `sandbox-templates`,
-`absolute`, `metadata-strings`, `page-title`, `filter-log`, `curdir`. A case that has a record with the
+`absolute`, `metadata-strings`, `page-title`, `filter-log`, `curdir`,
+`template-search`. A case that has a record with the
 same arguments and files in an OLD.json keeps that record; the oracle runs
 only for the other cases.
 
@@ -899,6 +900,70 @@ def curdir_cases():
             for lead in [[], ["--sandbox"]]]
 
 
+def template_search_cases():
+    """The search of `--template=NAME` (cli-R10-05, cli-R10-02, cli-R9-24).
+    NAME has no extension, the extension of the format, another extension,
+    a folder or an absolute path. Each layout puts the file of NAME and the
+    file of NAME.html in a place (the working folder, the resource folder
+    `r`, the folder `templates` of the data folder); each file is absent,
+    a valid template, empty, not UTF-8, a folder or a template that does not
+    compile. A layout can add a second, valid file of NAME at a later place.
+    The text of a valid template names its file. The document has a title,
+    so that the log does not depend on the title rule of the HTML writer."""
+    titled = ('{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines",'
+              '"c":[{"t":"Str","c":"T"}]}},"blocks":[]}')
+    states = ["absent", "valid", "empty", "bad", "folder", "broken"]
+    names = ["t", "t.html", "t.tpl", "s/t", "{root}/t"]
+    # LAYOUT: the resource path, the place of NAME, the place of NAME.html,
+    # the place of a second valid file of NAME.
+    layouts = [
+        ("r", "", "", None),
+        ("r", "r/", "", ""),
+        ("r", "r/", "r/", None),
+        ("r", "dd/templates/", "dd/templates/", None),
+        ("r", "", "dd/templates/", None),
+        ("{root}/r:{root}/q", "r/", "q/", "q/"),
+    ]
+
+    def put(files, folder, name, state, label):
+        # The data folder holds the file name without its folder part.
+        path = folder + (name.rsplit("/", 1)[-1] if folder.startswith("dd/") else name)
+        if state == "valid":
+            files[path] = label + ":$body$\n"
+        elif state == "empty":
+            files[path] = ""
+        elif state == "bad":
+            files[path] = "\udcff"
+        elif state == "folder":
+            files[path + "/keep"] = ""
+        elif state == "broken":
+            files[path] = "$if(x)$"
+
+    cases = []
+    for sandbox in [False, True]:
+        for name in names:
+            plain = name.replace("{root}/", "")
+            suffixed = ["absent"] if "." in name else states
+            for rp, at, suffix_at, second in layouts:
+                if name.startswith("{root}/") and (at, suffix_at) != ("", ""):
+                    continue
+                for state in states:
+                    for suffix_state in suffixed:
+                        files = {"r/keep": "", "q/keep": "", "s/keep": "",
+                                 "dd/templates/keep": "", "a.json": titled}
+                        put(files, at, plain, state, "N")
+                        put(files, suffix_at, plain + ".html", suffix_state, "S")
+                        if second is not None:
+                            put(files, second, plain, "valid", "M")
+                        lead = ["--sandbox"] if sandbox else []
+                        args = lead + ["-f", "json", "-t", "html", "--verbose",
+                                       "--log=log.json", "--data-dir=dd",
+                                       "--resource-path=" + rp, "--template=" + name,
+                                       "a.json"]
+                        cases.append({"args": args, "files": files})
+    return cases
+
+
 def encode(text):
     """Turns text with surrogate escapes into bytes."""
     return text.encode("utf-8", "surrogateescape")
@@ -982,6 +1047,7 @@ def main():
         "page-title": page_title_cases,
         "filter-log": filter_log_cases,
         "curdir": curdir_cases,
+        "template-search": template_search_cases,
     }
     try:
         if mode == "resources":
@@ -989,7 +1055,8 @@ def main():
                                     "datadir", "aux", "values", "nested", "inputs",
                                     "numbering", "review8", "abbreviations",
                                     "sandbox-templates", "absolute", "metadata-strings",
-                                    "page-title", "filter-log", "curdir"]
+                                    "page-title", "filter-log", "curdir",
+                                    "template-search"]
                      for c in groups[name]()]
         else:
             cases = groups[mode]()
