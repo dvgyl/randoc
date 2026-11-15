@@ -2597,3 +2597,44 @@ coverage, fuzzing or benchmarks for this range.
 Harness: 58094 units: 56218 pass, 1456 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56218 units: 0 regressions, 0 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
+
+## Session 6 of 2026-11-15, batch E (four blocks: markdown-reader, citeproc, lua, latex-reader)
+
+**markdown-reader**: branch `ws/markdown-reader-6`, commits
+`856692d..4ecf200` (one commit: `4ecf200`). The block corrects Codex
+R3-02 (critical) at its root: the HTML closer scans use one shared index
+of the literal inline tokens (`tokens.rs`). The first version came from a
+stopped worker of the model GPT-6.1 Sol (13 minutes, not committed). The
+Opus worker checked it against the brief. It kept the one index and
+corrected the nesting, title ends, step test and replay data.
+
+Gate: `05:37 UTC 4ecf200 gate passed: CRITICAL Codex R3-02: HTML closer
+scans use one shared index of the literal inline tokens (oracle matrix of
+10,752 cases, 0 differ; closes R3-11 and Opus R3-03 counterexamples)`.
+The worker ran the gate. A run on the commit before failed at lint.
+
+Measured by the worker: matrix of 10,752 cases, 0 differ (792 differed
+on the change of the stopped worker). Conformance `markdown/review/s6-*`:
+23 units, 23 pass.
+
+Review state: Round 4 of the Markdown reader (Codex, on `main` `a2fbf7d`,
+session 5) found that Codex R3-02 was still open at the level critical
+(the scans for HTML closers used literal tags inside code and math). It
+gave counterexamples against the closure of R3-11, R3-12, R3-15 and Opus
+R3-03, and found 4 new high and 3 new medium findings. This block
+corrects Codex R3-02 at its root and closes the counterexamples of
+R3-11 and Opus R3-03. Still open: row I-MD-12 (critical in the round 4
+table), the 4 high and 3 medium findings of round 4, the other
+counterexamples, and the new row I-MD-76. A new worker starts with
+I-MD-12. No Opus review of round 4 ran.
+
+Open: I-MD-12 (critical); I-MD-76 (high, new: more than linear time);
+4 high and 3 medium findings of round 4; R3-15, R3-12.
+Checks that did not run: the report states that fuzzing, coverage,
+mutation tests and a differential run did not run; no benchmark run.
+
+Licence scan of the block: 4 hits outside the licence texts in
+`block.rs` and `inline.rs`, each one judged by the coordinator: one is a
+list of HTML element names in the order of the alphabet (`"h1"` to
+`"header"`), three are comparisons of one character (`c == ' ' ||`).
+None is text or code of a kind that can be copied material.

@@ -398,6 +398,85 @@ fn time_grows_about_linearly() {
     }
 }
 
+/// Open HTML containers, each with a literal token that no later text
+/// closes. No blank line stops a search for the end of a token, and each
+/// container holds the rest of the input.
+const UNCLOSED_IN_CONTAINERS: &[(&str, &str)] = &[
+    ("markdown", "<div>\n`a\n"),
+    ("markdown", "<div>\n``a\n"),
+    ("markdown", "<section>\nq ```a\n"),
+    ("markdown", "<div>\n$a\n"),
+    ("markdown", "<div>\n$$a\n"),
+    ("markdown+tex_math_single_backslash", "<div>\n\\(a\n"),
+    ("markdown+tex_math_double_backslash", "<div>\n\\\\[a\n"),
+    ("markdown", "<div>\n<!--a\n"),
+    ("markdown", "<div>\n<b title=\"a\n"),
+    ("markdown", "<div>\n[a](b \"c\n"),
+    ("markdown", "<div>\n[a]{title=\"b\n"),
+    ("markdown", "<section>\n\\(a\n"),
+    ("markdown-native_divs", "<div>\n`a\n"),
+    ("markdown-markdown_in_html_blocks", "<div>\n`a\n"),
+];
+
+/// Returns the forms of `forms` whose steps at `large` repetitions exceed
+/// twice the steps at `small` repetitions times the size ratio.
+fn faster_than_linear(forms: &[(&str, &str)], small: usize, large: usize) -> Vec<String> {
+    let mut slow = Vec::new();
+    for (format, pattern) in forms {
+        let a = read_steps_in(format, &pattern.repeat(small), 16384);
+        let b = read_steps_in(format, &pattern.repeat(large), 16384);
+        if b > a * (large / small) as u64 * 2 {
+            slow.push(format!("{format} {pattern:?}: {a} then {b} steps"));
+        }
+    }
+    slow
+}
+
+#[test]
+fn html_closers_with_unclosed_tokens_grow_linearly() {
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let slow = faster_than_linear(UNCLOSED_IN_CONTAINERS, 1000, 4000);
+        assert!(slow.is_empty(), "faster than linear: {slow:?}");
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the HTML closer step test failed"
+    );
+}
+
+#[test]
+fn an_unclosed_code_span_in_20000_containers_is_linear() {
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let slow = faster_than_linear(&[("markdown", "<div>\n`a\n")], 100, 20_000);
+        assert!(slow.is_empty(), "faster than linear: {slow:?}");
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the 20,000 container step test failed"
+    );
+}
+
+#[test]
+fn headings_with_distinct_unmatched_code_grow_linearly() {
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let make = |n| -> String {
+            (1..=n).map(|i| format!("# {}a\n", "`".repeat(i))).collect()
+        };
+        let small = make(100);
+        let large = make(400);
+        let small_steps = read_steps(&small);
+        let large_steps = read_steps(&large);
+        let size_ratio = large.len().div_ceil(small.len()) as u64;
+        assert!(large_steps <= small_steps * size_ratio * 2,
+            "distinct heading code: {small_steps} steps for {} bytes, then {large_steps} for {} bytes",
+            small.len(), large.len());
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the distinct heading step test failed"
+    );
+}
+
 #[test]
 #[ignore]
 fn print_times() {

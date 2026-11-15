@@ -1,6 +1,6 @@
 //! The block phase and the driver of the reader.
 
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::ops::Range;
 use std::rc::Rc;
@@ -12,6 +12,7 @@ use randoc_ast::{
 use randoc_core::{Error, Extension, Extensions, LogMessage, ReaderOptions, Result, SourcePos};
 
 use crate::tables::{CellParser, GRID_MARK, TableOptions, parse_table};
+use crate::tokens::{TokenIndex, TokenRules, View};
 use randoc_core::shared::{IdentifierSet, auto_identifier};
 
 /// The format name of a placeholder inline that holds raw Markdown text.
@@ -36,7 +37,7 @@ pub(crate) struct Ln {
 }
 
 impl Ln {
-    fn new(t: impl Into<Text>, n: u32) -> Self {
+    pub(crate) fn new(t: impl Into<Text>, n: u32) -> Self {
         let t: Text = t.into();
         crate::step(t.len());
         Ln {
@@ -91,7 +92,7 @@ impl Ln {
     }
 
     /// Returns true when the line has only spaces and tabs.
-    fn is_blank(&self) -> bool {
+    pub(crate) fn is_blank(&self) -> bool {
         self.blank
     }
 
@@ -176,6 +177,9 @@ pub(crate) struct Parser {
     html_close: HashMap<HtmlOpener, (Option<HtmlCloser>, usize)>,
     /// The texts that the keys of `html_close` and `no_raw_end` name.
     kept_sources: Vec<Rc<str>>,
+    /// The token indexes of the slices that `blocks` parses now, innermost
+    /// last.
+    token_scopes: Vec<Tokens>,
     /// For a line (`Ln::src_id`, `Ln::text_start`) and a comment (`true`) or
     /// a processing instruction: the last line of a slice (the same names)
     /// such that no line from this one to it ends the token.
@@ -290,6 +294,61 @@ struct FenceMemo {
     /// For a comment and a processing instruction: the line where the last
     /// search for the line of its end started, and the line that it found.
     raw_ends: [Option<(usize, Option<usize>)>; 2],
+    tokens: Tokens,
+}
+
+/// The token index of a slice of lines. The blocks of a container are a
+/// part of the slice of the container, so they share its index: a token
+/// with no end makes one search to the end of the lines, not one at each
+/// level of nesting.
+#[derive(Clone, Default)]
+struct Tokens {
+    index: Rc<RefCell<TokenIndex>>,
+    /// The line of the index that is the first line of the slice.
+    offset: usize,
+    /// The address of the slice, which names it while it is parsed.
+    base: usize,
+    len: usize,
+}
+
+impl Tokens {
+    /// Returns the last line of `all`, the slice of this index, that the
+    /// complete tokens from line `j` on reach.
+    fn reach(&self, all: &[Ln], j: usize, rules: TokenRules) -> usize {
+        let view = View {
+            lines: all,
+            at: self.offset,
+        };
+        let reached = self.index.borrow_mut().reach(view, self.offset + j, rules);
+        reached - self.offset
+    }
+
+    /// Reads the lines of `all`, the slice of this index, up to line `j`, so
+    /// that a part of the slice from line `j + 1` on can share the index.
+    fn read_through(&self, all: &[Ln], j: usize) {
+        let view = View {
+            lines: all,
+            at: self.offset,
+        };
+        self.index.borrow_mut().read_through(view, self.offset + j);
+    }
+
+    /// Returns the tokens of `lines` when they are a part of this slice and
+    /// the index read the lines before them, so that it can go on with
+    /// their lines.
+    fn part(&self, lines: &[Ln]) -> Option<Tokens> {
+        let size = std::mem::size_of::<Ln>();
+        let distance = (lines.as_ptr() as usize).checked_sub(self.base)?;
+        let k = distance / size;
+        let inside = distance % size == 0 && k + lines.len() <= self.len;
+        let offset = self.offset + k;
+        (inside && self.index.borrow().frontier() >= offset).then(|| Tokens {
+            index: Rc::clone(&self.index),
+            offset,
+            base: lines.as_ptr() as usize,
+            len: lines.len(),
+        })
+    }
 }
 
 impl FenceMemo {
@@ -676,6 +735,25 @@ pub(crate) fn html_tag_len(s: &str) -> Option<usize> {
     None
 }
 
+/// Returns the length of the tag at the start of `s`, as `html_tag_len`
+/// does. The error tells whether a quoted value has no end: that value then
+/// holds the rest of the text.
+fn tag_extent(s: &str) -> std::result::Result<usize, bool> {
+    let mut quote: Option<char> = None;
+    for (i, c) in s.char_indices().skip(1) {
+        crate::step(1);
+        match quote {
+            Some(q) if c == q => quote = None,
+            Some(_) => {}
+            None if c == '"' || c == '\'' => quote = Some(c),
+            None if c == '>' => return Ok(i + 1),
+            None if c == '<' => return Err(false),
+            None => {}
+        }
+    }
+    Err(quote.is_some())
+}
+
 /// An opening tag of an HTML element: the `Ln::src_id` of its line, the
 /// position of the tag in that text, and the tag name.
 type HtmlOpener = (usize, usize, Text);
@@ -709,8 +787,7 @@ type HtmlCloser = (usize, usize, usize);
 #[derive(Clone, Copy)]
 struct CloserScan<'a> {
     name: &'a str,
-    raw_html: bool,
-    math: bool,
+    rules: TokenRules,
     /// The index of the first content line when the tag line has no
     /// content after the tag: an indented line there starts a code block.
     first_line: Option<usize>,
@@ -718,6 +795,10 @@ struct CloserScan<'a> {
     content_indent: usize,
     /// The element is a native div: its content starts with no spaces lost.
     native_div: bool,
+    /// Without `markdown_in_html_blocks`, a tag of a native div counts only
+    /// at the start of a line: a closing tag there ends a paragraph, and an
+    /// opening tag starts a nested div only where a block can start.
+    line_start_tags: bool,
 }
 
 impl<'a> CloserScan<'a> {
@@ -729,38 +810,49 @@ impl<'a> CloserScan<'a> {
     ) -> Self {
         CloserScan {
             name,
-            raw_html: parser.ext(Extension::RawHtml),
-            math: parser.ext(Extension::TexMathDollars),
+            rules: parser.token_rules(true),
             first_line,
             content_indent,
             native_div: name == "div" && parser.ext(Extension::NativeDivs),
+            line_start_tags: name == "div"
+                && parser.ext(Extension::NativeDivs)
+                && !parser.ext(Extension::MarkdownInHtmlBlocks),
         }
     }
 
     /// Returns the closer of the element that opens in `lines[0]`, as the
     /// line index and the byte position in its text. `found` gets the
     /// position of each opening tag and its closer, or `None` when it has
-    /// no closer, unless an indented line follows a nested tag.
+    /// no closer, unless an indented line follows a nested tag. `tokens` is
+    /// the token index of `lines`.
     fn run(
         self,
         lines: &[Ln],
+        tokens: &Tokens,
         mut found: impl FnMut((usize, usize), Option<(usize, usize)>),
     ) -> Option<(usize, usize)> {
         let mut stack: Vec<(usize, usize)> = Vec::new();
         let mut fence: Option<(char, usize)> = None;
         let mut no_fence_closer = FenceMemo::default();
-        let mut comment_until: Option<usize> = None;
-        let mut no_comment_end_from: Option<usize> = None;
+        let mut index = tokens.index.borrow_mut();
+        let off = tokens.offset;
+        let view = View { lines, at: off };
+        let local = |(line, byte): (usize, usize)| (line - off, byte);
+        let mut literal_until = None;
         let mut code_may_start = false;
         // The last line with four spaces or more. The indentation inside a
         // container differs, so an element that opens before such a line
         // has an answer only for this scan.
         let mut last_indented = 0;
+        // A block can start at the line: the line before it is blank or
+        // holds only a tag of the element.
+        let mut block_start = true;
         for (j, line) in lines.iter().enumerate() {
             let t = line.t();
             // The loop over the bytes below counts its own steps.
             crate::step(1);
             let mut i = 0;
+            let starts_block = std::mem::replace(&mut block_start, line.is_blank());
             if j > 0 && line.indent() >= 4 {
                 last_indented = j;
             }
@@ -769,18 +861,19 @@ impl<'a> CloserScan<'a> {
                 && line.indent() >= 4 + self.content_indent;
             code_may_start = j > 0 && (line.is_blank() || code_line);
             let mut bare_open = false;
-            if code_line && fence.is_none() && comment_until.is_none() {
+            if code_line && fence.is_none() && literal_until.is_none() {
                 continue;
             }
-            if let Some(end_line) = comment_until {
+            if let Some((end_line, end_byte)) = literal_until {
                 if j < end_line {
                     continue;
                 }
-                comment_until = None;
-                i = t.find("-->").map_or(t.len(), |k| k + 3);
+                literal_until = None;
+                i = end_byte;
             } else if let Some((c, n)) = fence {
                 if closes_fence(t, c, n) {
                     fence = None;
+                    block_start = true;
                 }
                 continue;
             } else if j > 0
@@ -799,39 +892,33 @@ impl<'a> CloserScan<'a> {
                 no_fence_closer.no_closer(c, j, n);
             }
             let bytes = t.as_bytes();
-            let mut no_code_closer: HashSet<usize> = HashSet::new();
-            let mut no_dollar = false;
+            // Only tags of the element precede position `i` on the line.
+            let mut lead = i == 0;
             while let Some(&b) = bytes.get(i) {
                 crate::step(1);
+                let at_lead = std::mem::replace(&mut lead, stack.is_empty() && b == b' ');
+                if let Some(end) = index.end(view, (off + j, i), self.rules).map(local) {
+                    if end.0 > j {
+                        literal_until = Some(end);
+                        break;
+                    }
+                    i = end.1;
+                    continue;
+                }
                 match b {
                     b'\\' => i += 2,
-                    b'`' => {
-                        let n = bytes
-                            .get(i..)
-                            .unwrap_or(&[])
-                            .iter()
-                            .take_while(|c| **c == b'`')
-                            .count();
-                        i += n;
-                        if !no_code_closer.contains(&n) {
-                            match backtick_run(bytes, i, n) {
-                                Some(end) => i = end,
-                                None => {
-                                    no_code_closer.insert(n);
-                                }
-                            }
-                        }
-                    }
-                    b'$' if self.math && !no_dollar => match math_end(bytes, i) {
-                        Ok(end) => i = end,
-                        Err(none_after) => {
-                            no_dollar = none_after;
-                            i += 1;
-                        }
-                    },
                     b'<' => {
                         let rest = t.get(i..).unwrap_or("");
-                        match self.tag_at(rest) {
+                        let tag = self.tag_at(rest).filter(|tag| {
+                            !self.line_start_tags
+                                || (at_lead
+                                    && (matches!(tag, Tag::Close)
+                                        || j == 0
+                                        || starts_block
+                                        || i > 0))
+                        });
+                        lead = tag.is_some();
+                        match tag {
                             Some(Tag::Close) => {
                                 if let Some(open) = stack.pop() {
                                     if open.0 == 0 || last_indented <= open.0 {
@@ -842,38 +929,41 @@ impl<'a> CloserScan<'a> {
                                     }
                                 }
                                 i += self.name.len() + 2;
+                                block_start = t.get(i..).is_some_and(|r| {
+                                    r.trim_start_matches(|c| c != '>')
+                                        .get(1..)
+                                        .is_some_and(blank)
+                                });
                             }
                             Some(Tag::Open) => {
-                                let len = html_tag_len(rest);
-                                // A nested div with no content after its tag
-                                // can start with an indented code block.
+                                let end = index.tag_end(view, (off + j, i)).map(local);
                                 bare_open = self.native_div
-                                    && len.is_some_and(|n| rest.get(n..).is_some_and(blank));
+                                    && end.is_some_and(|(line, byte)| {
+                                        line == j && t.get(byte..).is_some_and(blank)
+                                    });
                                 stack.push((j, i));
-                                i += len.unwrap_or(self.name.len() + 1);
-                            }
-                            None if self.raw_html
-                                && rest.starts_with("<!--")
-                                && starts_comment_or_pi(rest) =>
-                            {
-                                if let Some(k) = rest.get(4..).and_then(|r| r.find("-->")) {
-                                    i += k + 7;
-                                } else if no_comment_end_from.is_none_or(|from| j < from)
-                                    && let Some(k) = lines.get(j + 1..).and_then(|rest| {
-                                        rest.iter().position(|l| {
-                                            crate::step(1);
-                                            l.t().contains("-->")
-                                        })
-                                    })
-                                {
-                                    comment_until = Some(j + 1 + k);
-                                    break;
+                                if let Some(end) = end {
+                                    if end.0 > j {
+                                        literal_until = Some(end);
+                                        break;
+                                    }
+                                    i = end.1;
+                                    block_start = t.get(i..).is_some_and(blank);
                                 } else {
-                                    no_comment_end_from = Some(j);
+                                    i += self.name.len() + 1;
+                                }
+                            }
+                            None => {
+                                if let Some(end) = index.tag_end(view, (off + j, i)).map(local) {
+                                    if end.0 > j {
+                                        literal_until = Some(end);
+                                        break;
+                                    }
+                                    i = end.1;
+                                } else {
                                     i += 1;
                                 }
                             }
-                            None => i += html_tag_len(rest).unwrap_or(1),
                         }
                     }
                     _ => i += 1,
@@ -919,85 +1009,6 @@ enum Tag {
     Close,
 }
 
-/// Returns the end of the math span that starts with the `$` at `i`. The
-/// error tells whether no `$` follows, so that no later `$` starts one.
-fn math_end(bytes: &[u8], i: usize) -> std::result::Result<usize, bool> {
-    let space = |b: Option<&u8>| matches!(b, None | Some(b' ' | b'\t'));
-    if bytes.get(i + 1) == Some(&b'$') {
-        let body = bytes.get(i + 2..).unwrap_or(&[]);
-        return body
-            .windows(2)
-            .position(|w| w == b"$$")
-            .map(|k| i + k + 4)
-            .ok_or(false);
-    }
-    if space(bytes.get(i + 1)) {
-        return Err(false);
-    }
-    let k = i
-        + 1
-        + bytes
-            .get(i + 1..)
-            .unwrap_or(&[])
-            .iter()
-            .position(|c| *c == b'$')
-            .ok_or(true)?;
-    let ends =
-        k > i + 1 && !space(bytes.get(k - 1)) && !bytes.get(k + 1).is_some_and(u8::is_ascii_digit);
-    if ends { Ok(k + 1) } else { Err(false) }
-}
-
-/// Returns the number of lines of `next` that a code span open at the end of
-/// `text` takes: the lines up to the one where it closes, or 0 when no line
-/// before a blank line closes it.
-fn code_span_lines(text: &str, next: &[Ln]) -> usize {
-    let Some(mut open) = open_code_run(text, None) else {
-        return 0;
-    };
-    for (k, line) in next.iter().enumerate() {
-        if line.is_blank() {
-            return 0;
-        }
-        match open_code_run(line.t(), Some(open)) {
-            None => return k + 1,
-            Some(n) => open = n,
-        }
-    }
-    0
-}
-
-/// Returns the length of the backtick run of the code span that is open
-/// after `t`, when `open` is open before it. An escaped backtick opens
-/// nothing.
-fn open_code_run(t: &str, mut open: Option<usize>) -> Option<usize> {
-    let bytes = t.as_bytes();
-    let mut i = 0;
-    while let Some(&b) = bytes.get(i) {
-        crate::step(1);
-        if b == b'\\' && open.is_none() {
-            i += 2;
-            continue;
-        }
-        if b != b'`' {
-            i += 1;
-            continue;
-        }
-        let n = bytes
-            .get(i..)
-            .unwrap_or(&[])
-            .iter()
-            .take_while(|c| **c == b'`')
-            .count();
-        open = match open {
-            None => Some(n),
-            Some(m) if m == n => None,
-            other => other,
-        };
-        i += n;
-    }
-    open
-}
-
 /// Makes a line from `rest`, the end of `lines[at]`, that shares its text
 /// when it can: a cache keyed by the shared text then knows the line.
 fn rest_line(lines: &[Ln], at: usize, rest: &str, n: u32) -> Ln {
@@ -1014,13 +1025,14 @@ fn rest_line(lines: &[Ln], at: usize, rest: &str, n: u32) -> Ln {
 /// paragraph is text of the paragraph.
 fn div_closer_scan(
     lines: &[Ln],
-    raw_html: bool,
+    rules: TokenRules,
     mut found: impl FnMut(usize, Option<usize>),
 ) -> Option<usize> {
     let mut stack: Vec<usize> = vec![0];
     let mut in_fence: Option<(char, usize)> = None;
     let mut raw_end: Option<usize> = None;
-    let mut ends = RawEnds::default();
+    let mut tokens = TokenIndex::default();
+    let view = View { lines, at: 0 };
     let mut after_text = false;
     let mut j = 1;
     while let Some(line) = lines.get(j) {
@@ -1052,14 +1064,13 @@ fn div_closer_scan(
                 stack.push(j);
             }
         } else {
-            if raw_html {
-                raw_end = ends.open_raw_end(lines, j);
-            }
+            let covered = tokens.reach(view, j, rules);
+            raw_end = (covered > j).then_some(covered);
             let t = line.t().trim_start_matches(' ');
             text = raw_end.is_none()
                 && !line.is_blank()
                 && !t.starts_with(['#', '>'])
-                && !(raw_html && t.starts_with('<'));
+                && !(rules.raw_html && t.starts_with('<'));
         }
         after_text = text;
         j += 1;
@@ -1068,49 +1079,6 @@ fn div_closer_scan(
         found(open, None);
     }
     None
-}
-
-/// The lines that hold `-->` and the lines that hold `>`, found once for
-/// the scan of a div.
-#[derive(Default)]
-struct RawEnds {
-    lines: Option<(Vec<usize>, Vec<usize>)>,
-}
-
-impl RawEnds {
-    /// Returns the line that ends a comment or a processing instruction
-    /// that opens in `lines[j]` and does not end there.
-    fn open_raw_end(&mut self, lines: &[Ln], j: usize) -> Option<usize> {
-        let t = lines.get(j)?.t();
-        let lead = t.trim_start_matches(' ');
-        let pi_open = t.len() - lead.len() <= 3
-            && lead.starts_with("<?")
-            && starts_comment_or_pi(lead)
-            && !lead.get(2..).is_some_and(|r| r.contains('>'));
-        let comment_open = t
-            .match_indices("<!--")
-            .find(|(i, _)| t.get(*i..).is_some_and(starts_comment_or_pi))
-            .is_some_and(|(i, _)| t.get(i + 4..).is_some_and(|after| !after.contains("-->")));
-        if !comment_open && !pi_open {
-            return None;
-        }
-        let (comment_ends, pi_ends) = self.lines.get_or_insert_with(|| {
-            let mut c = Vec::new();
-            let mut p = Vec::new();
-            for (k, line) in lines.iter().enumerate() {
-                crate::step(1);
-                if line.t().contains("-->") {
-                    c.push(k);
-                }
-                if line.t().contains('>') {
-                    p.push(k);
-                }
-            }
-            (c, p)
-        });
-        let list = if comment_open { comment_ends } else { pi_ends };
-        list.get(list.partition_point(|k| *k <= j)).copied()
-    }
 }
 
 /// Returns the text of a line after its block quote and list markers.
@@ -1165,6 +1133,7 @@ impl Parser {
             div_close: HashMap::new(),
             html_close: HashMap::new(),
             kept_sources: Vec::new(),
+            token_scopes: Vec::new(),
             no_raw_end: HashMap::new(),
             rest: RestHandoff::Off,
             idset: IdentifierSet::new(),
@@ -1379,10 +1348,51 @@ impl Parser {
         result
     }
 
+    /// Returns the token index for `lines`: a part of the index of the
+    /// slice that `blocks` parses now when it can, or a new one.
+    fn tokens_for(&self, lines: &[Ln]) -> Tokens {
+        self.token_scopes
+            .last()
+            .and_then(|scope| scope.part(lines))
+            .unwrap_or_else(|| Tokens {
+                base: lines.as_ptr() as usize,
+                len: lines.len(),
+                ..Tokens::default()
+            })
+    }
+
+    /// Reads the token index of the slice that `blocks` parses now up to
+    /// line `j` of `lines`, a part of that slice.
+    fn cover_tokens(&self, lines: &[Ln], j: usize) {
+        if let Some(part) = self.token_scopes.last().and_then(|scope| scope.part(lines)) {
+            part.read_through(lines, j);
+        }
+    }
+
+    /// Makes the failed-search memory of `lines`.
+    fn fence_memo(&self, lines: &[Ln]) -> FenceMemo {
+        FenceMemo {
+            tokens: self.tokens_for(lines),
+            ..FenceMemo::default()
+        }
+    }
+
     /// Parses lines into blocks. Each block can start after up to `gobble` spaces.
     fn blocks_inner(&mut self, lines: &[Ln], gobble: usize) -> Result<Vec<Block>> {
+        let mut fences = self.fence_memo(lines);
+        self.token_scopes.push(fences.tokens.clone());
+        let result = self.blocks_in_scope(lines, gobble, &mut fences);
+        self.token_scopes.pop();
+        result
+    }
+
+    fn blocks_in_scope(
+        &mut self,
+        lines: &[Ln],
+        gobble: usize,
+        fences: &mut FenceMemo,
+    ) -> Result<Vec<Block>> {
         let mut out = Vec::new();
-        let mut fences = FenceMemo::default();
         let mut i = 0;
         while i < lines.len() {
             crate::step(1);
@@ -1393,7 +1403,8 @@ impl Parser {
             }
             line.gobble(gobble);
             let prev_blank = i == 0 || lines.get(i - 1).is_some_and(|l| l.is_blank());
-            let used = self.block_at(lines, i, prev_blank, &mut fences, &mut out)?;
+            fences.tokens.read_through(lines, i);
+            let used = self.block_at(lines, i, prev_blank, fences, &mut out)?;
             i += used.max(1);
         }
         Ok(out)
@@ -1438,7 +1449,7 @@ impl Parser {
         if let Some(n) = self.fenced_div(rest, out)? {
             return Ok(n);
         }
-        if let Some(n) = self.header(rest, out) {
+        if let Some(n) = self.header(lines, i, fences, out) {
             return Ok(n);
         }
         if let Some(n) = self.table(rest, out) {
@@ -1475,7 +1486,7 @@ impl Parser {
         if let Some(n) = self.abbreviation(rest) {
             return Ok(n);
         }
-        self.paragraph(rest, i, fences, out)
+        self.paragraph(lines, i, fences, out)
     }
 
     // ----- paragraphs -----
@@ -1555,15 +1566,15 @@ impl Parser {
             && is_block_tag(s.trim_start_matches(SPACE))
     }
 
-    /// Parses a paragraph at `lines`, which start at line `at` of the slice
-    /// of `fences`.
+    /// Parses a paragraph at line `at` of `all`, the slice of `fences`.
     fn paragraph(
         &mut self,
-        lines: &[Ln],
+        all: &[Ln],
         at: usize,
         fences: &mut FenceMemo,
         out: &mut Vec<Block>,
     ) -> Result<usize> {
+        let lines = all.get(at..).unwrap_or(&[]);
         let mut j = 1;
         let mut para = None;
         // The paragraph text ends at the first line with a block tag after
@@ -1572,12 +1583,12 @@ impl Parser {
         let mut tagged = lines.first().is_some_and(|l| has_tag(self, l));
         // The first line of the text that has no open comment yet.
         let mut scan_from = 0;
-        // The length of the backtick run of a code span that is open at the
-        // end of the lines read so far.
-        let mut open_ticks = lines.first().and_then(|l| open_code_run(l.t(), None));
+        let rules = self.token_rules(false);
+        let mut covered = fences.tokens.reach(all, at, rules) - at;
         while let Some(line) = lines.get(j).filter(|_| !tagged) {
             crate::step(1);
-            if line.is_blank() {
+            let inside = j <= covered;
+            if line.is_blank() && !inside {
                 // A comment or a processing instruction that is open at the
                 // blank line continues the paragraph to the line of its end.
                 if let Some(m) = self.open_raw_end(lines, scan_from..j, at, fences) {
@@ -1592,10 +1603,8 @@ impl Parser {
             // Only a backtick fence with no space before it ends a paragraph.
             // A tilde fence or an indented fence is text of the paragraph,
             // and so is a fence line that closes a code span of the text.
-            let closes_span =
-                open_ticks.is_some() && open_code_run(line.t(), open_ticks) != open_ticks;
-            if line.t().starts_with('`')
-                && !closes_span
+            if !inside
+                && line.t().starts_with('`')
                 && self
                     .fenced_code(
                         lines.get(j..).unwrap_or(&[]),
@@ -1608,12 +1617,14 @@ impl Parser {
                 para = Some(true);
                 break;
             }
-            if let Some(kind) = self.interrupts(line.t()) {
+            if !inside && let Some(kind) = self.interrupts(line.t()) {
                 para = Some(kind);
                 break;
             }
-            tagged = has_tag(self, line);
-            open_ticks = open_code_run(line.t(), open_ticks);
+            tagged = !inside && has_tag(self, line);
+            if !inside {
+                covered = fences.tokens.reach(all, at + j, rules) - at;
+            }
             j += 1;
         }
         let text: Vec<&str> = lines
@@ -1703,56 +1714,42 @@ impl Parser {
         }
         let bytes = text.as_bytes();
         let brackets = matching_brackets(bytes);
-        // The lengths of the backtick runs that have no closer after the
-        // current position. A later run of such a length has none either.
-        let mut no_closer: HashSet<usize> = HashSet::new();
-        let mut no_dollar = false;
-        let mut no_raw_end = [false; 2];
+        let lines: Vec<Ln> = text.split('\n').map(|t| Ln::new(t, 0)).collect();
+        let mut offsets = Vec::with_capacity(lines.len());
+        let mut offset = 0;
+        for line in &lines {
+            offsets.push(offset);
+            offset += line.t().len() + 1;
+        }
+        let view = View {
+            lines: &lines,
+            at: 0,
+        };
+        let mut tokens = TokenIndex::default();
         let mut i = 0;
+        let mut j = 0;
         while let Some(&b) = bytes.get(i) {
             crate::step(1);
+            while offsets.get(j + 1).is_some_and(|start| *start <= i) {
+                j += 1;
+            }
+            let here = (j, i - offsets[j]);
+            let absolute = |(line, byte): (usize, usize)| offsets[line] + byte;
+            if let Some(end) = tokens.end(view, here, self.token_rules(true)) {
+                i = absolute(end);
+                continue;
+            }
             match b {
                 b'\\' => i += 2,
-                b'`' => {
-                    let n = bytes.get(i..)?.iter().take_while(|c| **c == b'`').count();
-                    i += n;
-                    if no_closer.contains(&n) {
-                        continue;
-                    }
-                    match backtick_run(bytes, i, n) {
-                        Some(end) => i = end,
-                        None => {
-                            no_closer.insert(n);
-                        }
-                    }
-                }
-                b'[' => i = brackets.get(&i).map_or(i + 1, |close| close + 1),
-                b'$' if !no_dollar && self.ext(Extension::TexMathDollars) => {
-                    match bytes.get(i + 1..)?.iter().position(|c| *c == b'$') {
-                        Some(k) => i += k + 2,
-                        None => {
-                            no_dollar = true;
-                            i += 1;
-                        }
-                    }
-                }
+                // A bracket that a link destination follows is read at
+                // its closing bracket.
+                b'[' => i = brackets.get(&i).copied().unwrap_or(i + 1),
                 b'<' => {
                     let rest = text.get(i..)?;
                     if i > 0 && is_mid_line_block_tag(rest) {
                         return Some(i);
                     }
-                    // A comment or a processing instruction with no end is
-                    // not read again: a later one has no end either.
-                    let kind =
-                        starts_comment_or_pi(rest).then(|| usize::from(rest.starts_with("<?")));
-                    let len = match kind {
-                        Some(k) if no_raw_end[k] => None,
-                        _ => html_tag_len(rest),
-                    };
-                    if let (Some(k), None) = (kind, len) {
-                        no_raw_end[k] = true;
-                    }
-                    i += len.unwrap_or(1);
+                    i = tokens.tag_end(view, here).map_or(i + 1, absolute);
                 }
                 _ => i += 1,
             }
@@ -1936,7 +1933,18 @@ impl Parser {
         ))
     }
 
-    fn header(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
+    fn token_rules(&self, comment_over_blank: bool) -> TokenRules {
+        TokenRules::from_extensions(self.exts, comment_over_blank)
+    }
+
+    fn header(
+        &mut self,
+        all: &[Ln],
+        at: usize,
+        fences: &mut FenceMemo,
+        out: &mut Vec<Block>,
+    ) -> Option<usize> {
+        let lines = all.get(at..)?;
         let first = lines.first()?;
         let (level, content, used) = if let Some((level, content)) = self.atx(first.t()) {
             // A block tag in the text makes the line a paragraph.
@@ -1945,7 +1953,7 @@ impl Parser {
             }
             // A code span that opens in the heading and closes on a later
             // line of the same block holds those lines too.
-            let extra = code_span_lines(&content, lines.get(1..).unwrap_or(&[]));
+            let extra = fences.tokens.reach(all, at, self.token_rules(true)) - at;
             if extra == 0 {
                 (level, content, 1)
             } else {
@@ -2848,7 +2856,7 @@ impl Parser {
     /// each opener in it, so a nested div does not search again.
     fn div_closer(&mut self, lines: &[Ln]) -> Option<usize> {
         let first = lines.first()?;
-        let raw_html = self.ext(Extension::RawHtml);
+        let rules = self.token_rules(true);
         let key = |line: &Ln| (line.src_id(), line.text_start());
         // An answer holds for a slice that ends at the same line or before
         // it: a closer inside the slice, or no closer up to its end.
@@ -2864,7 +2872,7 @@ impl Parser {
             None => {
                 let mut results = Vec::new();
                 let found =
-                    div_closer_scan(lines, raw_html, |open, close| results.push((open, close)));
+                    div_closer_scan(lines, rules, |open, close| results.push((open, close)));
                 for (open, close) in results {
                     if let Some(line) = lines.get(open) {
                         self.kept_sources.push(Rc::clone(&line.src));
@@ -2877,7 +2885,7 @@ impl Parser {
             }
         };
         #[cfg(test)]
-        crate::check_cache(&found, || div_closer_scan(lines, raw_html, |_, _| {}));
+        crate::check_cache(&found, || div_closer_scan(lines, rules, |_, _| {}));
         found
     }
 
@@ -2906,7 +2914,8 @@ impl Parser {
             Some(found) => found,
             None => {
                 let mut results = Vec::new();
-                let found = scan.run(lines, |open, close| results.push((open, close)));
+                let tokens = self.tokens_for(lines);
+                let found = scan.run(lines, &tokens, |open, close| results.push((open, close)));
                 for ((open, open_pos), close) in results {
                     let Some(opener) = lines.get(open) else {
                         continue;
@@ -2932,7 +2941,7 @@ impl Parser {
             }
         };
         #[cfg(test)]
-        crate::check_cache(&found, || scan.run(lines, |_, _| {}));
+        crate::check_cache(&found, || scan.run(lines, &Tokens::default(), |_, _| {}));
         found
     }
 
@@ -3062,6 +3071,7 @@ impl Parser {
             let mut idx = 0;
             let mut end = None;
             while idx < lower.len() {
+                crate::step(1);
                 let rest = lower.get(idx..).unwrap_or("");
                 if rest.starts_with(&close) {
                     if depth <= 1 {
@@ -3077,8 +3087,23 @@ impl Parser {
                 } else if rest.starts_with(&open) && depth == 0 {
                     depth = 1;
                     idx += open.len();
-                } else {
+                } else if verbatim || !rest.starts_with('<') {
                     idx += rest.chars().next().map_or(1, char::len_utf8);
+                } else if rest.starts_with("<!--") {
+                    // A comment hides the tags in it. A comment with no end
+                    // holds the rest of the text, so no closer follows.
+                    match rest.get(4..).and_then(|r| r.find("-->")) {
+                        Some(k) => idx += k + 7,
+                        None => break,
+                    }
+                } else if html_tag_name(rest).is_some() {
+                    match tag_extent(rest) {
+                        Ok(n) => idx += n,
+                        Err(true) => break,
+                        Err(false) => idx += 1,
+                    }
+                } else {
+                    idx += 1;
                 }
             }
             // With no closing tag, and for an element that can be inline,
@@ -3142,6 +3167,7 @@ impl Parser {
                 attrs.push((html_attr(text.get(..len).unwrap_or("")), column));
                 text = text.get(len..).unwrap_or("").trim_start_matches(SPACE);
             }
+            self.cover_tokens(lines, tag_lines);
             let following = lines.get(tag_lines + 1..).unwrap_or(&[]);
             let saved = std::mem::replace(&mut self.in_list, false);
             let extra = attrs.len().saturating_sub(1);
@@ -3157,6 +3183,15 @@ impl Parser {
                     self.gobble = content_indent;
                 }
                 self.blocks_open(following, true)
+            } else if let Some(line) = lines.get(tag_lines).filter(|l| l.t().ends_with(text)) {
+                // The content starts after the tag on its line: the line
+                // starts there while the content is read, so the content is
+                // a part of these lines and shares their token index.
+                self.cover_tokens(lines, tag_lines.saturating_sub(1));
+                let saved = line.skip_to(line.t().len() - text.len());
+                let blocks = self.blocks_open(lines.get(tag_lines..).unwrap_or(&[]), true);
+                line.restore(saved);
+                blocks
             } else {
                 let mut inner = vec![rest_line(
                     lines,
@@ -3245,6 +3280,7 @@ impl Parser {
         let saved = std::mem::replace(&mut self.in_list, false);
         self.gobble = content_indent;
         let blocks = if whole_lines {
+            self.cover_tokens(lines, tag_lines);
             let content = lines.get(tag_lines + 1..close_line).unwrap_or(&[]);
             self.blocks_open(content, native_div)
         } else {
@@ -3330,7 +3366,9 @@ impl Parser {
             // The rest of a line inside a container is one more level of
             // recursion, so it counts against the depth limit.
             self.depth += 1;
-            let used = self.block_at(rest, 0, false, &mut FenceMemo::default(), out);
+            self.cover_tokens(lines, at.saturating_sub(1));
+            let mut fences = self.fence_memo(rest);
+            let used = self.block_at(rest, 0, false, &mut fences, out);
             self.depth -= 1;
             line.restore(saved);
             let handoff = std::mem::replace(&mut self.rest, RestHandoff::Off);

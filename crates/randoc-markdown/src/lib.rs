@@ -21,6 +21,7 @@ mod inline;
 #[cfg(test)]
 mod perf_tests;
 mod tables;
+mod tokens;
 mod yaml;
 
 use std::sync::Arc;

@@ -1915,3 +1915,103 @@ input = "See Dr\\. Lee and Dr. Who.\n"
 [[case]]
 id = "s4b-abbreviation-escaped-period-in-emphasis"
 input = "*See Dr\\. Lee* and **Mr\\. Smith**\n"
+
+[[case]]
+id = "s6-div-multiline-code-closer"
+input = "<div>\n`left\n</div>\nright`\n</div>\n"
+
+[[case]]
+id = "s6-div-multiline-math-closer"
+input = "<div>\n$left\n</div>\nright$\n</div>\n"
+
+[[case]]
+id = "s6-div-backslash-math-closer"
+from = "markdown+tex_math_single_backslash"
+input = "<div>\n\\(left\n</div>\nright\\)\n</div>\n"
+
+[[case]]
+id = "s6-div-double-backslash-math-closer"
+from = "markdown+tex_math_double_backslash"
+input = "<div>\n\\\\[left\n</div>\nright\\\\]\n</div>\n"
+
+[[case]]
+id = "s6-nested-div-multiline-code-closer"
+input = "<div>\n<div>\nq ```left\n</div>\nright```\n</div>\n</div>\n"
+
+[[case]]
+id = "s6-nested-span-multiline-code-closer"
+input = "<span><span>``left\n</span>\nright``</span></span>\n"
+
+[[case]]
+id = "s6-div-closer-in-destination"
+input = "<div>\n[go](route</div>tail)\n</div>\n"
+
+[[case]]
+id = "s6-div-closer-in-multiline-title"
+input = "<div>\n[go](route \"left\n</div>\nright\")\n</div>\n"
+
+[[case]]
+id = "s6-div-closer-in-second-comment"
+input = "<div>\n<!-- first --> <!-- second\n</div>\nend -->\n</div>\n"
+
+[[case]]
+id = "s6-div-closer-in-quoted-html-value"
+input = "<div>\n<em title=\"left\n</div>\nright\">text</em>\n</div>\n"
+
+[[case]]
+id = "s6-div-closer-in-code-fence"
+input = "<div>\n```\n</div>\n```\n</div>\n"
+
+[[case]]
+id = "s6-div-unmatched-code-before-closer"
+input = "<div>\n`left\n</div>\nafter\n"
+
+[[case]]
+id = "s6-raw-section-closer-in-open-comment"
+from = "markdown-markdown_in_html_blocks"
+input = "<section>\n<!--left </section> right\n</section>\n"
+
+[[case]]
+id = "s6-raw-section-closer-in-comment"
+from = "markdown-markdown_in_html_blocks"
+input = "<section>\n<!--left </section> right-->\n</section>\n"
+
+[[case]]
+id = "s6-raw-section-closer-in-open-quoted-value"
+from = "markdown-markdown_in_html_blocks"
+input = "<section>\n<em title=\"left </section> right\n</section>\n"
+
+[[case]]
+id = "s6-native-div-closer-mid-line-without-markdown-in-html"
+from = "markdown-markdown_in_html_blocks"
+input = "<div>\nleft </div> right\n</div>\n"
+
+[[case]]
+id = "s6-native-div-indented-closer-without-markdown-in-html"
+from = "markdown-markdown_in_html_blocks"
+input = "<div>\nleft\n  </div> right\n</div>\n"
+
+[[case]]
+id = "s6-native-div-opener-after-text-without-markdown-in-html"
+from = "markdown-markdown_in_html_blocks"
+input = "<div>\nleft <div> right\n</div>\nend\n</div>\n"
+
+[[case]]
+id = "s6-link-destination-with-a-closing-tag"
+input = "[go](left </p> right)\n"
+
+[[case]]
+id = "s6-link-title-line-break-with-spaces"
+input = "[go](route \"left  \n  right\")\n"
+
+[[case]]
+id = "s6-link-title-line-break-first"
+input = "[go](route \"\nright\")\n"
+
+[[case]]
+id = "s6-link-title-line-break-last"
+input = "[go](route \"left\n\")\n"
+
+[[case]]
+id = "s6-span-attribute-line-break"
+input = "[go]{title=\"left\nright\"}\n"

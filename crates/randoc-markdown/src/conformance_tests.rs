@@ -306,3 +306,49 @@ fn matrix_replay_matches_the_oracle() {
         );
     });
 }
+
+#[test]
+fn html_closer_replay_matches_the_oracle() {
+    on_big_stack(|| {
+        let text = std::fs::read_to_string(crate_dir().join("tests/html_closer_replay.json"))
+            .unwrap_or_default();
+        let cases: Vec<serde_json::Value> = serde_json::from_str(&text).unwrap_or_default();
+        let mut failures = Vec::new();
+        let filter = std::env::var("RANDOC_HTML_CLOSER_FILTER").unwrap_or_default();
+        for case in &cases {
+            if !case["id"].as_str().unwrap_or("").contains(&filter) {
+                continue;
+            }
+            let from = case["from"].as_str().unwrap_or("markdown");
+            let input = case["input"].as_str().unwrap_or("");
+            let (out, stderr, exit) = run_case(from, input);
+            let got: serde_json::Value = serde_json::from_str(&out).unwrap_or_default();
+            if exit != 0
+                || got["blocks"] != case["doc"]["blocks"]
+                || got["meta"] != case["doc"]["meta"]
+            {
+                failures.push(serde_json::json!({
+                    "id": case["id"], "from": from, "input": input,
+                    "got": got, "want": case["doc"], "stderr": stderr, "exit": exit,
+                }));
+            }
+        }
+        if let Some(path) = std::env::var_os("RANDOC_HTML_CLOSER_DIFFERENCES") {
+            std::fs::write(path, serde_json::to_string(&failures).unwrap_or_default())
+                .unwrap_or_default();
+        }
+        assert!(cases.len() >= 2000, "missing HTML closer matrix");
+        assert!(
+            failures.is_empty(),
+            "{} of {} HTML closer cases differ:\n{}",
+            failures.len(),
+            cases.len(),
+            failures
+                .iter()
+                .take(12)
+                .map(|case| format!("{} {:?}", case["id"], case["input"]))
+                .collect::<Vec<_>>()
+                .join("\n")
+        );
+    });
+}

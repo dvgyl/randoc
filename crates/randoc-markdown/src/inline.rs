@@ -507,32 +507,52 @@ impl Inl<'_> {
     ) -> HashMap<usize, usize> {
         let mut matches = HashMap::new();
         let mut stack: Vec<usize> = Vec::new();
+        let text = self.text(self.s.lo, self.s.hi);
+        let lines: Vec<crate::block::Ln> = text
+            .split('\n')
+            .map(|t| crate::block::Ln::new(t, 0))
+            .collect();
+        let mut offsets = Vec::with_capacity(lines.len());
+        let mut offset = 0;
+        for line in &lines {
+            offsets.push(offset);
+            offset += line.t().len() + 1;
+        }
+        let mut char_bytes: Vec<usize> = text.char_indices().map(|(i, _)| i).collect();
+        char_bytes.push(text.len());
+        let view = crate::tokens::View {
+            lines: &lines,
+            at: 0,
+        };
+        let rules = crate::tokens::TokenRules::from_extensions(self.p.exts, true);
+        let mut tokens = crate::tokens::TokenIndex::default();
         let mut k = from;
+        let mut j = 0;
         while let Some(&c) = self.s.get(k) {
             crate::step(1);
+            let byte = char_bytes[k - self.s.lo];
+            while offsets.get(j + 1).is_some_and(|start| *start <= byte) {
+                j += 1;
+            }
+            let here = (j, byte - offsets[j]);
+            let to_char = |(line, at): (usize, usize)| {
+                let absolute = offsets[line] + at;
+                self.s.lo + char_bytes.partition_point(|b| *b < absolute)
+            };
+            if let Some(end) = tokens.end(view, here, rules) {
+                k = to_char(end);
+                continue;
+            }
             match c {
                 '\\' => k += 2,
-                '`' => {
-                    let mut n = 0;
-                    while self.s.get(k + n) == Some(&'`') {
-                        n += 1;
-                    }
-                    k = self.code_closer(k, n).map_or(k + n, |end| end + n);
-                }
-                '$' if self.ext(Extension::TexMathDollars) => {
-                    let saved = self.i;
-                    self.i = k;
-                    let math = self.dollar_math().is_some();
-                    k = if math { self.i } else { k + 1 };
-                    self.i = saved;
-                }
                 '<' => {
-                    let window = self.tag_window(k);
-                    let lower = window.to_ascii_lowercase();
-                    let Some(len) = html_tag_len(&window) else {
+                    let Some(end) = tokens.tag_end(view, here) else {
                         k += 1;
                         continue;
                     };
+                    let end_byte = offsets[end.0] + end.1;
+                    let tag = text.get(byte..end_byte).unwrap_or("");
+                    let lower = tag.to_ascii_lowercase();
                     if names_tag(&lower, "</span") {
                         if let Some(o) = stack.pop() {
                             matches.insert(o, k);
@@ -540,12 +560,10 @@ impl Inl<'_> {
                                 break;
                             }
                         }
-                    } else if names_tag(&lower, "<span")
-                        && !window.get(..len).is_some_and(|t| t.ends_with("/>"))
-                    {
+                    } else if names_tag(&lower, "<span") && !tag.ends_with("/>") {
                         stack.push(k);
                     }
-                    k += window.get(..len).map_or(1, |t| t.chars().count());
+                    k = to_char(end);
                 }
                 _ => k += 1,
             }
@@ -1335,10 +1353,22 @@ impl Inl<'_> {
                             };
                             let end = self.find(kind, k + 1)?;
                             let mut v = Text::new();
+                            let mut visible = false;
                             let mut j = k + 1;
                             while j < end {
                                 let ch = *self.s.get(j)?;
                                 let next = self.s.get(j + 1).copied();
+                                if ch == '\n' {
+                                    // A line break is a space, but not
+                                    // before the first visible character.
+                                    if !visible {
+                                        return None;
+                                    }
+                                    v.push(' ');
+                                    j += 1;
+                                    continue;
+                                }
+                                visible |= !SPACE.contains(&ch);
                                 if ch == '\\'
                                     && j + 1 < end
                                     && next.is_some_and(|n| self.escapable(n))
@@ -1781,7 +1811,7 @@ impl Inl<'_> {
                 j += 1;
             }
             let (end, paren) = found?;
-            title = decode_entities(&unescape(&self.text(k + 1, end)));
+            title = decode_entities(&unescape(&title_lines(&self.text(k + 1, end))?));
             k = paren;
         }
         if self.s.get(k) != Some(&')') {
@@ -2515,6 +2545,27 @@ fn is_email(s: &str) -> bool {
         && domain
             .chars()
             .all(|c| c.is_alphanumeric() || c == '.' || c == '-')
+}
+
+/// Makes the text of a link title: a line break and the spaces around it
+/// are one space. A line break before the first visible character makes no
+/// title.
+fn title_lines(raw: &str) -> Option<String> {
+    let mut parts = raw.split('\n');
+    let first = parts.next().unwrap_or("");
+    let mut out = first.to_string();
+    for part in parts {
+        if out.trim_matches(SPACE).is_empty() {
+            return None;
+        }
+        out.truncate(out.trim_end_matches(SPACE).len());
+        let part = part.trim_start_matches(SPACE);
+        if !part.is_empty() {
+            out.push(' ');
+            out.push_str(part);
+        }
+    }
+    Some(out)
 }
 
 /// Returns the byte length of an automatic link `<...>` at the start of `s`.
