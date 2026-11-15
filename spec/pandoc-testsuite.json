@@ -2622,22 +2622,22 @@
   "program": "randoc",
   "totals": {
    "run": 2231,
-   "pass": 641,
-   "fail": 1590,
+   "pass": 646,
+   "fail": 1585,
    "excluded": 0,
    "unsupported": 1939
   },
   "groups": {
    "command": {
     "run": 1884,
-    "pass": 614,
-    "fail": 1270,
+    "pass": 618,
+    "fail": 1266,
     "excluded": 0
    },
    "old": {
     "run": 174,
-    "pass": 27,
-    "fail": 147,
+    "pass": 28,
+    "fail": 146,
     "excluded": 0
    },
    "readers/docx": {
@@ -3016,7 +3016,9 @@
    "command/10758.md#1",
    "command/10781.md#1",
    "command/10812.md#2",
+   "command/10848.md#1",
    "command/10848.md#3",
+   "command/10855.md#2",
    "command/10855.md#3",
    "command/10855.md#4",
    "command/10884.md#1",
@@ -3025,6 +3027,7 @@
    "command/10926.md#2",
    "command/11088.md#1",
    "command/11124.md#1",
+   "command/11128.md#1",
    "command/11140.md#3",
    "command/11253.md#2",
    "command/1126.md#1",
@@ -3341,6 +3344,7 @@
    "command/6034.md#1",
    "command/6062.md#1",
    "command/6107.md#1",
+   "command/6114.md#1",
    "command/6133.md#1",
    "command/6296.md#1",
    "command/6296.md#2",
@@ -3637,6 +3641,7 @@
    "old/markdown/writer/basic#2",
    "old/markdown/writer/lhs to normal",
    "old/markdown/writer/nordics table",
+   "old/markdown/writer/students table",
    "old/markdown/writer/tables",
    "old/markdown/writer/tables#2",
    "old/native/reader",
