@@ -12,7 +12,9 @@ build = "build.rs"
 [dependencies]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
+randoc-layout = { workspace = true }
 randoc-native = { workspace = true }
+randoc-templates = { workspace = true }
 
 # Lua is left out of a WebAssembly build (ADR 11).
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
@@ -23,7 +25,7 @@ mlua-sys = { workspace = true }
 cc = { workspace = true }
 
 # The same lints as the workspace, but `unsafe_code` is `deny` in place of
-# `forbid`: ADR 11 permits one `unsafe` call, and `forbid` cannot have an
+# `forbid`: ADR 11 and ADR 19 permit two `unsafe` calls, and `forbid` cannot have an
 # exception.
 [lints.rust]
 unsafe_code = "deny"

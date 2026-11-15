@@ -4228,6 +4228,546 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter options-objects empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('types', function() return P.utils.type(PANDOC_READER_OPTIONS), P.utils.type(PANDOC_WRITER_OPTIONS) end)
+  probe('metatables', function() return getmetatable(PANDOC_READER_OPTIONS), getmetatable(PANDOC_WRITER_OPTIONS) end)
+  probe('reader missing', function() return PANDOC_READER_OPTIONS.nothing, PANDOC_READER_OPTIONS[1] end)
+  probe('reader set', function() PANDOC_READER_OPTIONS.columns = 3 return PANDOC_READER_OPTIONS.columns end)
+  probe('reader set unknown', function() PANDOC_READER_OPTIONS.nothing = 3 end)
+  probe('writer set', function() PANDOC_WRITER_OPTIONS.toc_depth = 5 return PANDOC_WRITER_OPTIONS.toc_depth end)
+  probe('writer set nil field', function() PANDOC_WRITER_OPTIONS.slide_level = 2 return PANDOC_WRITER_OPTIONS.slide_level end)
+  probe('writer set unknown', function() PANDOC_WRITER_OPTIONS.nothing = 1 return PANDOC_WRITER_OPTIONS.nothing end)
+  probe('reader pairs', function() local t = {} for k in pairs(PANDOC_READER_OPTIONS) do t[#t + 1] = k end return table.concat(t, ',') end)
+  probe('writer pairs', function() local t = {} for k in pairs(PANDOC_WRITER_OPTIONS) do t[#t + 1] = k end return table.concat(t, ',') end)
+  probe('reader tostring', function() return tostring(PANDOC_READER_OPTIONS) end)
+  probe('reader equal', function() return PANDOC_READER_OPTIONS == PANDOC_READER_OPTIONS end)
+  probe('extensions', function() return PANDOC_READER_OPTIONS.extensions, PANDOC_WRITER_OPTIONS.extensions, getmetatable(PANDOC_WRITER_OPTIONS.extensions).__name end)
+  probe('variables', function() local v = PANDOC_WRITER_OPTIONS.variables return getmetatable(v).__name, tostring(v['pandoc-version']) end)
+  probe('abbreviations', function() local a = PANDOC_READER_OPTIONS.abbreviations return type(a), getmetatable(a), a['Mr.'], a['Dr.'] end)
+  probe('state options', function() return P.utils.type(PANDOC_STATE), FORMAT end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter lpeg-match empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('match P\039abc\039 on \039abcd\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'abc', 'abcd') end)
+  probe('match P\039abc\039 on \039abd\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'abc', 'abd') end)
+  probe('match P(2) on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(2), 'a') end)
+  probe('match P(2) on \039abc\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(2), 'abc') end)
+  probe('match P(-1) on \039\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(-1), '') end)
+  probe('match P(-1) on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(-1), 'a') end)
+  probe('match P(true) on \039x\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(true), 'x') end)
+  probe('match P(false) on \039x\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(false), 'x') end)
+  probe('match P(0) on \039\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(0), '') end)
+  probe('match S\039abc\039^1 on \039cabx\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(S'abc'^1, 'cabx') end)
+  probe('match S\039\039 on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(S'', 'a') end)
+  probe('match R(\039az\039)^1 on \039hello World\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(R('az')^1, 'hello World') end)
+  probe('match R(\039az\039, \039AZ\039)^1 on \039helloWorld1\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(R('az', 'AZ')^1, 'helloWorld1') end)
+  probe('match R() on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(R(), 'a') end)
+  probe('match P\039a\039^-1 on \039aaa\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a'^-1, 'aaa') end)
+  probe('match P\039a\039^-2 * \039b\039 on \039aab\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a'^-2 * 'b', 'aab') end)
+  probe('match P\039a\039^3 on \039aa\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a'^3, 'aa') end)
+  probe('match P\039a\039^3 on \039aaaa\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a'^3, 'aaaa') end)
+  probe('match P\039a\039 + \039b\039 on \039b\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a' + 'b', 'b') end)
+  probe('match P\039a\039 * \039b\039 on \039ab\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a' * 'b', 'ab') end)
+  probe('match P\039a\039 - \039ab\039 on \039ab\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a' - 'ab', 'ab') end)
+  probe('match 1 - P\039x\039 on \039y\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(1 - P'x', 'y') end)
+  probe('match -P\039x\039 on \039y\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(-P'x', 'y') end)
+  probe('match #P\039x\039 * 1 on \039xy\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(#P'x' * 1, 'xy') end)
+  probe('match #P\039x\039 on \039y\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(#P'x', 'y') end)
+  probe('match C(P\039a\039^1) on \039aaab\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(P'a'^1), 'aaab') end)
+  probe('match C(C\039a\039 * C\039b\039) on \039ab\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(C'a' * C'b'), 'ab') end)
+  probe('match Cc(1, \039x\039, true) on \039\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cc(1, 'x', true), '') end)
+  probe('match Cc() on \039\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cc(), '') end)
+  probe('match Ct(C(1)^0) on \039abc\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Ct(C(1)^0), 'abc') end)
+  probe('match Ct(Cg(C(1), \039k\039) * C(1)) on \039xy\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Ct(Cg(C(1), 'k') * C(1)), 'xy') end)
+  probe('match Cs((P\039a\039 / \039b\039 + 1)^0) on \039banana\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cs((P'a' / 'b' + 1)^0), 'banana') end)
+  probe('match Cs((S\039aeiou\039 / string.upper + 1)^0) on \039lpeg is fine\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cs((S'aeiou' / string.upper + 1)^0), 'lpeg is fine') end)
+  probe('match Cf(C(R\03909\039^1) * (\039,\039 * C(R\03909\039^1))^0, function(a, b) return a + b end) on \0391,2,3\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cf(C(R'09'^1) * (',' * C(R'09'^1))^0, function(a, b) return a + b end), '1,2,3') end)
+  probe('match Cp() * \039ab\039 * Cp() on \039abc\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cp() * 'ab' * Cp(), 'abc') end)
+  probe('match Carg(1) on \039x\039, 1, \039extra\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Carg(1), 'x', 1, 'extra') end)
+  probe('match Carg(2) on \039x\039, 1, \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Carg(2), 'x', 1, 'a') end)
+  probe('match Cg(C\039a\039, \039n\039) * Cb\039n\039 on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cg(C'a', 'n') * Cb'n', 'a') end)
+  probe('match Cmt(C(1), function(s, i, c) return c == \039q\039 end) on \039q\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cmt(C(1), function(s, i, c) return c == 'q' end), 'q') end)
+  probe('match Cmt(C(1), function(s, i, c) return c == \039q\039 end) on \039r\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cmt(C(1), function(s, i, c) return c == 'q' end), 'r') end)
+  probe('match Cmt(1, function(s, i) return i + 1, \039extra\039 end) on \039abc\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Cmt(1, function(s, i) return i + 1, 'extra' end), 'abc') end)
+  probe('match C(1) / \039%1%1\039 on \039z\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(1) / '%1%1', 'z') end)
+  probe('match C(1) / \039%0-%1\039 on \039z\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(1) / '%0-%1', 'z') end)
+  probe('match C(1) / {z = \039zed\039} on \039z\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(1) / {z = 'zed'}, 'z') end)
+  probe('match C(1) / {} on \039z\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(1) / {}, 'z') end)
+  probe('match C(1) / 3 on \039z\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(1) / 3, 'z') end)
+  probe('match (C(1) * C(1)) / 2 on \039zw\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match((C(1) * C(1)) / 2, 'zw') end)
+  probe('match P(1) / 0 on \039z\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P(1) / 0, 'z') end)
+  probe('match C(1) / function(c) return c, c end on \039k\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(1) / function(c) return c, c end, 'k') end)
+  probe('match B\039a\039 * \039b\039 on \039b\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(B'a' * 'b', 'b') end)
+  probe('match \039a\039 * B\039a\039 * \039b\039 on \039ab\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match('a' * B'a' * 'b', 'ab') end)
+  probe('match P{\039S\039, S = \039a\039 * V\039S\039 * \039b\039 + \039\039} on \039aaabbb\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P{'S', S = 'a' * V'S' * 'b' + ''}, 'aaabbb') end)
+  probe('match P{\039S\039, S = \039a\039 * V\039S\039 * \039b\039 + \039\039} on \039aabbb\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P{'S', S = 'a' * V'S' * 'b' + ''}, 'aabbb') end)
+  probe('match P{[1] = \039A\039, A = C(R\039az\039^1) * (\039,\039 * V\039A\039)^-1} on \039x,yy,zzz\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P{[1] = 'A', A = C(R'az'^1) * (',' * V'A')^-1}, 'x,yy,zzz') end)
+  probe('match utfR(0x41, 0x5A)^1 on \039ABc\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(utfR(0x41, 0x5A)^1, 'ABc') end)
+  probe('match utfR(0x3B1, 0x3C9) on \039\092206\092187\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(utfR(0x3B1, 0x3C9), '\206\187') end)
+  probe('match utfR(0x80, 0x10FFFF) on \039\092240\092159\092152\092128\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(utfR(0x80, 0x10FFFF), '\240\159\152\128') end)
+  probe('match C(utfR(0, 0x7F)^1) on \039abc\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(utfR(0, 0x7F)^1), 'abc') end)
+  probe('match locale().alpha^1 on \039abc1\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(locale().alpha^1, 'abc1') end)
+  probe('match locale().digit^1 on \039123a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(locale().digit^1, '123a') end)
+  probe('match locale().space^1 on \039 \092t\092nx\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(locale().space^1, ' \t\nx') end)
+  probe('match locale().punct on \039!\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(locale().punct, '!') end)
+  probe('match locale().upper on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(locale().upper, 'a') end)
+  probe('match locale().xdigit^1 on \039beefz\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(locale().xdigit^1, 'beefz') end)
+  probe('match P\039a\039 % function(acc, v) return acc end on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'a' % function(acc, v) return acc end, 'a') end)
+  probe('match Ct((C(R\039az\039^1) + 1)^0) on \039one two, three\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(Ct((C(R'az'^1) + 1)^0), 'one two, three') end)
+  probe('match (1 - P\039\092n\039)^0 * Cp() on \039line\092nnext\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match((1 - P'\n')^0 * Cp(), 'line\nnext') end)
+  probe('match P\039x\039^0 * -1 on \039xxx\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'x'^0 * -1, 'xxx') end)
+  probe('match P\039x\039^0 * -1 on \039xxy\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(P'x'^0 * -1, 'xxy') end)
+  probe('match C(P\039\039) on \039a\039', function() local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale return lpeg.match(C(P''), 'a') end)
+  probe('error P{\039A\039, A = V\039A\039 * \039a\039}', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P{'A', A = V'A' * 'a'} return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P{\039A\039, A = V\039B\039}', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P{'A', A = V'B'} return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P\039a\039^0^0', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P'a'^0^0 return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P(P\039\039)^0', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P(P'')^0 return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P{}', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P{} return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P(nil)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P(nil) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P{1}', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P{1} return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error R(\039abc\039)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = R('abc') return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error S(1)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = S(1) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error Cg(1, {})', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = Cg(1, {}) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error V()', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = V() return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error Cb()', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = Cb() return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error C()', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = C() return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P(1) / nil', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P(1) / nil return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error Cmt(1)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = Cmt(1) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error utfR(5, 2)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = utfR(5, 2) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error utfR(-1, 2)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = utfR(-1, 2) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error utfR(0, 0x80000000)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = utfR(0, 0x80000000) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error Carg(0)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = Carg(0) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error Carg(1e10)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = Carg(1e10) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error B(P\039a\039^1)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = B(P'a'^1) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error B(V\039x\039)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = B(V'x') return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P\039a\039 * 1.5', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P'a' * 1.5 return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error {} * P\039a\039', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = {} * P'a' return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P(-2^40)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P(-2^40) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error P\039a\039^\039x\039', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = P'a'^'x' return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error setmaxstack(0)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = setmaxstack(0) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('error setmaxstack(-1)', function() local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack local p = setmaxstack(-1) return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil end)
+  probe('re.match(\039hello world\039, \039{%a+}\039)', function() return re.match('hello world', '{%a+}') end)
+  probe('re.match(\039hello\039, \039%a+\039)', function() return re.match('hello', '%a+') end)
+  probe('re.match(\039123\039, \039[0-9]+ -> tonumber\039)', function() return re.match('123', '[0-9]+ -> tonumber') end)
+  probe('re.match(\039a,b,,c\039, \039{| ({[^,]*} ("," / !.))* |}\039)', function() return re.match('a,b,,c', '{| ({[^,]*} ("," / !.))* |}') end)
+  probe('re.match(\039x\039, \039"x" / "y"\039)', function() return re.match('x', '"x" / "y"') end)
+  probe('re.match(\039abcabc\039, \039{~ ("a" -> "A" / .)* ~}\039)', function() return re.match('abcabc', '{~ ("a" -> "A" / .)* ~}') end)
+  probe('re.match(\039  x\039, \039%s* {.}\039)', function() return re.match('  x', '%s* {.}') end)
+  probe('re.match(\039aaab\039, \039S <- "a" S / "b"\039)', function() return re.match('aaab', 'S <- "a" S / "b"') end)
+  probe('re.match(\039ab\039, \039{:k: . :} =k\039)', function() return re.match('ab', '{:k: . :} =k') end)
+  probe('re.match(\039aa\039, \039{:k: . :} =k\039)', function() return re.match('aa', '{:k: . :} =k') end)
+  probe('re.match(\039xy\039, \039{} . {}\039)', function() return re.match('xy', '{} . {}') end)
+  probe('re.match(\039xyz\039, \039. -> {}\039)', function() return re.match('xyz', '. -> {}') end)
+  probe('re.match(\039abc\039, \039{.}^2\039)', function() return re.match('abc', '{.}^2') end)
+  probe('re.match(\039abc\039, \039{.}^+2\039)', function() return re.match('abc', '{.}^+2') end)
+  probe('re.match(\039abc\039, \039{.}^-2\039)', function() return re.match('abc', '{.}^-2') end)
+  probe('re.match(\039abc\039, \039{.}?\039)', function() return re.match('abc', '{.}?') end)
+  probe('re.match(\039_x9\039, \039[_%a][_%w]*\039)', function() return re.match('_x9', '[_%a][_%w]*') end)
+  probe('re.match(\039A\039, \039[^a-z]\039)', function() return re.match('A', '[^a-z]') end)
+  probe('re.match(\039q\039, \039%nl\039)', function() return re.match('q', '%nl') end)
+  probe('re.match(\039\092n\039, \039%nl\039)', function() return re.match('\n', '%nl') end)
+  probe('re.match(\039abc\039, \039&"a" {.}\039)', function() return re.match('abc', '&"a" {.}') end)
+  probe('re.match(\039abc\039, \039!"b" .\039)', function() return re.match('abc', '!"b" .') end)
+  probe('re.match(\039ab\039, \039<a> <- "a" <b> ; b <- "b"\039)', function() return re.match('ab', '<a> <- "a" <b> ; b <- "b"') end)
+  probe('re.match(\039x\039, \039%D\039)', function() return re.match('x', '%D') end)
+  probe('re.match(\0399\039, \039%W\039)', function() return re.match('9', '%W') end)
+  probe('re.match(\039x\039, \039%zz\039)', function() return re.match('x', '%zz') end)
+  probe('re.match(\039x\039, \039[\039)', function() return re.match('x', '[') end)
+  probe('re.match(\039x\039, \039a <- b\039)', function() return re.match('x', 'a <- b') end)
+  probe('re.match(\039x\039, \039(.\039)', function() return re.match('x', '(.') end)
+  probe('re.match(\039x\039, \039a <- . a <- .\039)', function() return re.match('x', 'a <- . a <- .') end)
+  probe('re.match(\039x\039, \039"unterminated\039)', function() return re.match('x', '"unterminated') end)
+  probe('re.match(\0395\039, \039. => tonumber\039)', function() return re.match('5', '. => tonumber') end)
+  probe('re.find(\039hello world\039, \039o\039)', function() return re.find('hello world', 'o') end)
+  probe('re.find(\039hello world\039, \039{%s}\039)', function() return re.find('hello world', '{%s}') end)
+  probe('re.find(\039abc\039, \039z\039)', function() return re.find('abc', 'z') end)
+  probe('re.find(\039abcabc\039, \039c\039, 4)', function() return re.find('abcabc', 'c', 4) end)
+  probe('re.gsub(\039hello world\039, \039o\039, \0390\039)', function() return re.gsub('hello world', 'o', '0') end)
+  probe('re.gsub(\039hello world\039, \039%a+\039, \039<%0>\039)', function() return re.gsub('hello world', '%a+', '<%0>') end)
+  probe('re.gsub(\039abc\039, \039.\039, {a = 1, b = true})', function() return re.gsub('abc', '.', {a = 1, b = true}) end)
+  probe('re.gsub(\039abc\039, \039{.}\039, function(c) return c:upper() end)', function() return re.gsub('abc', '{.}', function(c) return c:upper() end) end)
+  probe('re.compile(\039x\039, {})', function() return re.compile('x', {}) end)
+  probe('re.compile(\039%foo\039, {foo = lpeg.P\039z\039})', function() return re.compile('%foo', {foo = lpeg.P'z'}) end)
+  probe('re.compile(\039%foo\039)', function() return re.compile('%foo') end)
+  probe('re.compile(12)', function() return re.compile(12) end)
+  probe('re.compile(nil)', function() return re.compile(nil) end)
+  probe('re compiled match', function() return re.compile('{%d+}'):match('42x') end)
+  probe('re compile pattern', function() return lpeg.type(re.compile(lpeg.P'a')) end)
+  probe('names', function() local k = {} for n in pairs(lpeg) do k[#k + 1] = n end table.sort(k) local r = {} for n in pairs(re) do r[#r + 1] = n end table.sort(r) return table.concat(k, ' '), table.concat(r, ' ') end)
+  probe('version', function() return lpeg.version, lpeg.type(1), lpeg.type(lpeg.P(1)), lpeg.type('x') end)
+  probe('pattern metatable', function() local m = getmetatable(lpeg.P'a') return m.__name, type(m.__index), type(m.__add) end)
+  probe('pattern tostring', function() return (tostring(lpeg.P'a'):gsub('0x%x+', 'ADDR')) end)
+  probe('debug only', function() return lpeg.pcode(lpeg.P'a') end)
+  probe('debug only tree', function() return lpeg.ptree(lpeg.P'a') end)
+  probe('method match', function() return (lpeg.P'a' * lpeg.C(1)):match('ab') end)
+  probe('match init', function() return lpeg.match(lpeg.C(1), 'abc', 2), lpeg.match(lpeg.C(1), 'abc', -1), lpeg.match(lpeg.C(1), 'abc', 10), lpeg.match(lpeg.C(1), 'abc', 0) end)
+  probe('match bad subject', function() return lpeg.match(lpeg.P(1), {}) end)
+  probe('match number subject', function() return lpeg.match(lpeg.C(1), 42) end)
+  probe('setmaxstack', function() lpeg.setmaxstack(5) local p = lpeg.P{'S', S = ('(' * lpeg.V'S' * ')') + ''} local r = table.pack(pcall(lpeg.match, p, string.rep('(', 20) .. string.rep(')', 20))) lpeg.setmaxstack(400) return r[1], r[2] end)
+  probe('backtrack overflow', function() local p = (lpeg.P'a' * lpeg.P'b'^-1)^0 * -1 + lpeg.P'z' local q = lpeg.P{'S', S = lpeg.P'x' * lpeg.V'S' * 'y' + 'x' * lpeg.V'S' + ''} return pcall(lpeg.match, q, string.rep('x', 1000)) end)
+  probe('deep grammar', function() local p = lpeg.P{'S', S = lpeg.P'x' * lpeg.V'S' * 'y' + ''} return lpeg.match(p, string.rep('x', 500) .. string.rep('y', 500)) end)
+  probe('capture limit', function() return select('#', lpeg.match(lpeg.C(1)^0, string.rep('a', 300))) end)
+  probe('required', function() return require('lpeg') == lpeg, require('re') == re, package.loaded.lpeg == lpeg end)
+  probe('searcher', function() return package.searchers[5]('lpeg') ~= nil, package.searchers[5]('re') ~= nil, package.searchers[5]('x'), select('#', package.searchers[5]('x')) end)
+  probe('searcher args', function() return pcall(package.searchers[5]), pcall(package.searchers[5], 1), pcall(package.searchers[5], {}) end)
+  probe('reload', function() package.loaded.lpeg = nil package.loaded.re = nil local l = require 'lpeg' local r = require 're' local same = l == lpeg package.loaded.lpeg = lpeg package.loaded.re = re return same, r == re, type(l.P), r.match('ab', '{.}') end)
+  probe('re updatelocale', function() re.updatelocale() return re.match('x', '%a') end)
+  probe('re source', function() return debug.getinfo(re.compile, 'S').short_src end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter lpeg-re-generated empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+
+local function run(document)
+  probe('re %d {|""|} on ab', function() return re.match('ab', '%d {|""|}') end)
+  probe('re {{%d} / {|[a-c]|}} on a', function() return re.match('a', '{{%d} / {|[a-c]|}}') end)
+  probe('re {"" ""} on abc', function() return re.match('abc', '{"" ""}') end)
+  probe('re &("b") on 12 ab', function() return re.match('12 ab', '&("b")') end)
+  probe('re {~ ("a" -> "X" / .)* ~} / "" / %d / {~ (([a-c]) -> 1 -> "X" / .)* ~} on a b a', function() return re.match('a b a', '{~ ("a" -> "X" / .)* ~} / "" / %d / {~ (([a-c]) -> 1 -> "X" / .)* ~}') end)
+  probe('re {~ (. -> "X" / .)* ~} on a b a', function() return re.match('a b a', '{~ (. -> "X" / .)* ~}') end)
+  probe('re !({~ (. -> "X" / .)* ~}) / (("b") -> 1)^+1 on bbb', function() return re.match('bbb', '!({~ (. -> "X" / .)* ~}) / (("b") -> 1)^+1') end)
+  probe('re (%s) -> 1 on a', function() return re.match('a', '(%s) -> 1') end)
+  probe('re ({}) -> "<%0>" on ', function() return re.match('', '({}) -> "<%0>"') end)
+  probe('re "a" / %s on 12 ab', function() return re.match('12 ab', '"a" / %s') end)
+  probe('re {\039ab\039} / ([a-c]) -> {} on 12 ab', function() return re.match('12 ab', '{\039ab\039} / ([a-c]) -> {}') end)
+  probe('re ((%s) -> {})? on ', function() return re.match('', '((%s) -> {})?') end)
+  probe('re &([a-c]) on a', function() return re.match('a', '&([a-c])') end)
+  probe('re ({}) -> {} / \039ab\039 %d on ba', function() return re.match('ba', '({}) -> {} / \039ab\039 %d') end)
+  probe('re \039ab\039 / \039ab\039 on 12 ab', function() return re.match('12 ab', '\039ab\039 / \039ab\039') end)
+  probe('re (. / "") -> {} on a', function() return re.match('a', '(. / "") -> {}') end)
+  probe('re (%d "")^+1 on ba', function() return re.match('ba', '(%d "")^+1') end)
+  probe('re . {"a"} on ', function() return re.match('', '. {"a"}') end)
+  probe('re &(. / [a-c]) on a b a', function() return re.match('a b a', '&(. / [a-c])') end)
+  probe('re {|{}|} on ba', function() return re.match('ba', '{|{}|}') end)
+  probe('re {""} on 12 ab', function() return re.match('12 ab', '{""}') end)
+  probe('re !(\039ab\039) ("b") -> 1 on a', function() return re.match('a', '!(\039ab\039) ("b") -> 1') end)
+  probe('re ({~ ([^b] -> "X" / .)* ~}) -> {} on aab1 c', function() return re.match('aab1 c', '({~ ([^b] -> "X" / .)* ~}) -> {}') end)
+  probe('re ([^b]) -> 1 on a', function() return re.match('a', '([^b]) -> 1') end)
+  probe('re [^b] on a', function() return re.match('a', '[^b]') end)
+  probe('re {~ ({|%s|} -> "X" / .)* ~} on aab1 c', function() return re.match('aab1 c', '{~ ({|%s|} -> "X" / .)* ~}') end)
+  probe('re {[a-c]} on ba', function() return re.match('ba', '{[a-c]}') end)
+  probe('re !(%d) on ab', function() return re.match('ab', '!(%d)') end)
+  probe('re ({}) -> "<%0>" on a b a', function() return re.match('a b a', '({}) -> "<%0>"') end)
+  probe('re "" %d on ', function() return re.match('', '"" %d') end)
+  probe('re ({|!({})|})? on abc', function() return re.match('abc', '({|!({})|})?') end)
+  probe('re !([a-c]) on bbb', function() return re.match('bbb', '!([a-c])') end)
+  probe('re %s / [a-c] on a b a', function() return re.match('a b a', '%s / [a-c]') end)
+  probe('re !({|"b"|}) on ba', function() return re.match('ba', '!({|"b"|})') end)
+  probe('re {|%s|} on a b a', function() return re.match('a b a', '{|%s|}') end)
+  probe('re [a-c] on ', function() return re.match('', '[a-c]') end)
+  probe('re (!("") / (\039ab\039) -> {}) -> 1 on ba', function() return re.match('ba', '(!("") / (\039ab\039) -> {}) -> 1') end)
+  probe('re {|("a") -> 1|} on 12 ab', function() return re.match('12 ab', '{|("a") -> 1|}') end)
+  probe('re !([a-c]) on a', function() return re.match('a', '!([a-c])') end)
+  probe('re {~ (({})+ -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ (({})+ -> "X" / .)* ~}') end)
+  probe('re (("b") -> {})^2 on bbb', function() return re.match('bbb', '(("b") -> {})^2') end)
+  probe('re &("b") !(%s) / %s on 12 ab', function() return re.match('12 ab', '&("b") !(%s) / %s') end)
+  probe('re ("b")+ on 12 ab', function() return re.match('12 ab', '("b")+') end)
+  probe('re {""} on bbb', function() return re.match('bbb', '{""}') end)
+  probe('re {|!({\039ab\039})|} on a b a', function() return re.match('a b a', '{|!({\039ab\039})|}') end)
+  probe('re "b" / "a" {} / %s on a', function() return re.match('a', '"b" / "a" {} / %s') end)
+  probe('re %d / %s on ba', function() return re.match('ba', '%d / %s') end)
+  probe('re {|{\039ab\039}|} on a', function() return re.match('a', '{|{\039ab\039}|}') end)
+  probe('re {|\039ab\039|} [^b] / %s {|{%s}|} on a', function() return re.match('a', '{|\039ab\039|} [^b] / %s {|{%s}|}') end)
+  probe('re !(([a-c])^-1 {~ ([^b] -> "X" / .)* ~}) on abc', function() return re.match('abc', '!(([a-c])^-1 {~ ([^b] -> "X" / .)* ~})') end)
+  probe('re (%s . / (\039ab\039)+) -> 1 on 12 ab', function() return re.match('12 ab', '(%s . / (\039ab\039)+) -> 1') end)
+  probe('re . on ba', function() return re.match('ba', '.') end)
+  probe('re (%s)^-1 on a b a', function() return re.match('a b a', '(%s)^-1') end)
+  probe('re &("") on aab1 c', function() return re.match('aab1 c', '&("")') end)
+  probe('re !({|""|}) on ', function() return re.match('', '!({|""|})') end)
+  probe('re {[a-c]} on 12 ab', function() return re.match('12 ab', '{[a-c]}') end)
+  probe('re (%d)^-1 on ', function() return re.match('', '(%d)^-1') end)
+  probe('re ({[a-c]}) -> {} on 12 ab', function() return re.match('12 ab', '({[a-c]}) -> {}') end)
+  probe('re {|(\039ab\039) -> 1 / \039ab\039|} on ', function() return re.match('', '{|(\039ab\039) -> 1 / \039ab\039|}') end)
+  probe('re {~ (&(!("b")) -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ (&(!("b")) -> "X" / .)* ~}') end)
+  probe('re {~ ({|"b"|} -> "X" / .)* ~} on a b a', function() return re.match('a b a', '{~ ({|"b"|} -> "X" / .)* ~}') end)
+  probe('re (({})* (\039ab\039) -> {}) -> {} on bbb', function() return re.match('bbb', '(({})* (\039ab\039) -> {}) -> {}') end)
+  probe('re {\039ab\039} on ba', function() return re.match('ba', '{\039ab\039}') end)
+  probe('re {%d} on ba', function() return re.match('ba', '{%d}') end)
+  probe('re {~ ({~ (. {} -> "X" / .)* ~} -> "X" / .)* ~} on abc', function() return re.match('abc', '{~ ({~ (. {} -> "X" / .)* ~} -> "X" / .)* ~}') end)
+  probe('re (!("a"))^+1 on ', function() return re.match('', '(!("a"))^+1') end)
+  probe('re {{|{}|} / {|%s|}} on aab1 c', function() return re.match('aab1 c', '{{|{}|} / {|%s|}}') end)
+  probe('re {~ ({~ ((%s) -> "<%0>" -> "X" / .)* ~} -> "X" / .)* ~} on a', function() return re.match('a', '{~ ({~ ((%s) -> "<%0>" -> "X" / .)* ~} -> "X" / .)* ~}') end)
+  probe('re {|{|(.)?|}|} on ab', function() return re.match('ab', '{|{|(.)?|}|}') end)
+  probe('re {%s} on aab1 c', function() return re.match('aab1 c', '{%s}') end)
+  probe('re {|[^b]|} on a b a', function() return re.match('a b a', '{|[^b]|}') end)
+  probe('re {~ (%s -> "X" / .)* ~} on ba', function() return re.match('ba', '{~ (%s -> "X" / .)* ~}') end)
+  probe('re \039ab\039 on abc', function() return re.match('abc', '\039ab\039') end)
+  probe('re (%d)^2 on ba', function() return re.match('ba', '(%d)^2') end)
+  probe('re {|(.)^2|} on ', function() return re.match('', '{|(.)^2|}') end)
+  probe('re ("") -> "<%0>" on aab1 c', function() return re.match('aab1 c', '("") -> "<%0>"') end)
+  probe('re {[^b] %d} on ab', function() return re.match('ab', '{[^b] %d}') end)
+  probe('re "b" on bbb', function() return re.match('bbb', '"b"') end)
+  probe('re {{|[a-c]|}} {{[a-c]}} on ab', function() return re.match('ab', '{{|[a-c]|}} {{[a-c]}}') end)
+  probe('re {|"a"|} / {~ ({[a-c]} -> "X" / .)* ~} on bbb', function() return re.match('bbb', '{|"a"|} / {~ ({[a-c]} -> "X" / .)* ~}') end)
+  probe('re (%s) -> "<%0>" on aab1 c', function() return re.match('aab1 c', '(%s) -> "<%0>"') end)
+  probe('re {{} .} on aab1 c', function() return re.match('aab1 c', '{{} .}') end)
+  probe('re {|%s|} on a', function() return re.match('a', '{|%s|}') end)
+  probe('re &((("") -> "<%0>") -> "<%0>") on 12 ab', function() return re.match('12 ab', '&((("") -> "<%0>") -> "<%0>")') end)
+  probe('re {~ (("b")* -> "X" / .)* ~} on aab1 c', function() return re.match('aab1 c', '{~ (("b")* -> "X" / .)* ~}') end)
+  probe('re !([^b]) on ab', function() return re.match('ab', '!([^b])') end)
+  probe('re {~ (. -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ (. -> "X" / .)* ~}') end)
+  probe('re (("a") -> 1) -> "<%0>" on ab', function() return re.match('ab', '(("a") -> 1) -> "<%0>"') end)
+  probe('re {~ ({} -> "X" / .)* ~} on a', function() return re.match('a', '{~ ({} -> "X" / .)* ~}') end)
+  probe('re "" / {|(%d)+|} on abc', function() return re.match('abc', '"" / {|(%d)+|}') end)
+  probe('re ({~ (\039ab\039 -> "X" / .)* ~})^-1 on bbb', function() return re.match('bbb', '({~ (\039ab\039 -> "X" / .)* ~})^-1') end)
+  probe('re (%s) -> {} / !(%s) on ', function() return re.match('', '(%s) -> {} / !(%s)') end)
+  probe('re &([^b]) on aab1 c', function() return re.match('aab1 c', '&([^b])') end)
+  probe('re ([a-c]) -> "<%0>" on bbb', function() return re.match('bbb', '([a-c]) -> "<%0>"') end)
+  probe('re {|(!([a-c])) -> "<%0>"|} on bbb', function() return re.match('bbb', '{|(!([a-c])) -> "<%0>"|}') end)
+  probe('re [^b] on aab1 c', function() return re.match('aab1 c', '[^b]') end)
+  probe('re (.)^2 on aab1 c', function() return re.match('aab1 c', '(.)^2') end)
+  probe('re ("")+ on a', function() return re.match('a', '("")+') end)
+  probe('re {~ ({~ ("a" -> "X" / .)* ~} -> "X" / .)* ~} on aab1 c', function() return re.match('aab1 c', '{~ ({~ ("a" -> "X" / .)* ~} -> "X" / .)* ~}') end)
+  probe('re "a" / [^b] on abc', function() return re.match('abc', '"a" / [^b]') end)
+  probe('re ({~ ({|{}|} -> "X" / .)* ~}) -> "<%0>" on ba', function() return re.match('ba', '({~ ({|{}|} -> "X" / .)* ~}) -> "<%0>"') end)
+  probe('re {|"b"|} on ', function() return re.match('', '{|"b"|}') end)
+  probe('re ({{|"b"|}}) -> "<%0>" on aab1 c', function() return re.match('aab1 c', '({{|"b"|}}) -> "<%0>"') end)
+  probe('re {([a-c] / .)?} on a', function() return re.match('a', '{([a-c] / .)?}') end)
+  probe('re {} / "a" / ("a") -> "<%0>" on ba', function() return re.match('ba', '{} / "a" / ("a") -> "<%0>"') end)
+  probe('re &("") on 12 ab', function() return re.match('12 ab', '&("")') end)
+  probe('re (. "a" / !({})) -> {} on ba', function() return re.match('ba', '(. "a" / !({})) -> {}') end)
+  probe('re {|[^b]|} on ba', function() return re.match('ba', '{|[^b]|}') end)
+  probe('re %d / %s on 12 ab', function() return re.match('12 ab', '%d / %s') end)
+  probe('re (&("") / &(%s))* on aab1 c', function() return re.match('aab1 c', '(&("") / &(%s))*') end)
+  probe('re {~ (%d -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ (%d -> "X" / .)* ~}') end)
+  probe('re {([^b] / \039ab\039)^-1} on ba', function() return re.match('ba', '{([^b] / \039ab\039)^-1}') end)
+  probe('re ((\039ab\039)+)^2 on bbb', function() return re.match('bbb', '((\039ab\039)+)^2') end)
+  probe('re ({[a-c]}) -> 1 on aab1 c', function() return re.match('aab1 c', '({[a-c]}) -> 1') end)
+  probe('re %d on abc', function() return re.match('abc', '%d') end)
+  probe('re &({|([^b])^+1|}) on aab1 c', function() return re.match('aab1 c', '&({|([^b])^+1|})') end)
+  probe('re {~ (!("") -> "X" / .)* ~} on ba', function() return re.match('ba', '{~ (!("") -> "X" / .)* ~}') end)
+  probe('re {[^b]} on aab1 c', function() return re.match('aab1 c', '{[^b]}') end)
+  probe('re !("b") on abc', function() return re.match('abc', '!("b")') end)
+  probe('re {~ ({~ (&("") -> "X" / .)* ~} -> "X" / .)* ~} on ', function() return re.match('', '{~ ({~ (&("") -> "X" / .)* ~} -> "X" / .)* ~}') end)
+  probe('re {|{}|} {|{[a-c]}|} on abc', function() return re.match('abc', '{|{}|} {|{[a-c]}|}') end)
+  probe('re (([^b])*)^+1 on bbb', function() return re.match('bbb', '(([^b])*)^+1') end)
+  probe('re {|\039ab\039|} on ba', function() return re.match('ba', '{|\039ab\039|}') end)
+  probe('re {~ ({|(%d)^2|} -> "X" / .)* ~} on ba', function() return re.match('ba', '{~ ({|(%d)^2|} -> "X" / .)* ~}') end)
+  probe('re {{}} on ba', function() return re.match('ba', '{{}}') end)
+  probe('re . / "a" / %s / \039ab\039 on abc', function() return re.match('abc', '. / "a" / %s / \039ab\039') end)
+  probe('re (([a-c])^2)^-1 on a', function() return re.match('a', '(([a-c])^2)^-1') end)
+  probe('re "a" on bbb', function() return re.match('bbb', '"a"') end)
+  probe('re !((\039ab\039) -> {}) on bbb', function() return re.match('bbb', '!((\039ab\039) -> {})') end)
+  probe('re ({~ ({} -> "X" / .)* ~})+ on 12 ab', function() return re.match('12 ab', '({~ ({} -> "X" / .)* ~})+') end)
+  probe('re &((.)+) on bbb', function() return re.match('bbb', '&((.)+)') end)
+  probe('re {{}} on ab', function() return re.match('ab', '{{}}') end)
+  probe('re {\039ab\039 / [a-c]} on 12 ab', function() return re.match('12 ab', '{\039ab\039 / [a-c]}') end)
+  probe('re {|({}) -> {}|} on a b a', function() return re.match('a b a', '{|({}) -> {}|}') end)
+  probe('re !(&({})) on abc', function() return re.match('abc', '!(&({}))') end)
+  probe('re ((!([a-c]))?)+ on aab1 c', function() return re.match('aab1 c', '((!([a-c]))?)+') end)
+  probe('re {%s / (\039ab\039) -> "<%0>"} on a b a', function() return re.match('a b a', '{%s / (\039ab\039) -> "<%0>"}') end)
+  probe('re !(%d / .) on a b a', function() return re.match('a b a', '!(%d / .)') end)
+  probe('re %d on ', function() return re.match('', '%d') end)
+  probe('re %s / \039ab\039 on ba', function() return re.match('ba', '%s / \039ab\039') end)
+  probe('re {\039ab\039 [a-c]} on 12 ab', function() return re.match('12 ab', '{\039ab\039 [a-c]}') end)
+  probe('re (%d)^2 on aab1 c', function() return re.match('aab1 c', '(%d)^2') end)
+  probe('re %s on ba', function() return re.match('ba', '%s') end)
+  probe('re ({&([^b])})^2 on 12 ab', function() return re.match('12 ab', '({&([^b])})^2') end)
+  probe('re (\039ab\039) -> 1 / ("a")^-1 on abc', function() return re.match('abc', '(\039ab\039) -> 1 / ("a")^-1') end)
+  probe('re {!({~ ("b" -> "X" / .)* ~})} on bbb', function() return re.match('bbb', '{!({~ ("b" -> "X" / .)* ~})}') end)
+  probe('re (({~ ("b" -> "X" / .)* ~}) -> "<%0>") -> {} on ab', function() return re.match('ab', '(({~ ("b" -> "X" / .)* ~}) -> "<%0>") -> {}') end)
+  probe('re (("b") -> {} / {%s}) -> 1 on abc', function() return re.match('abc', '(("b") -> {} / {%s}) -> 1') end)
+  probe('re ((.) -> "<%0>")* on ba', function() return re.match('ba', '((.) -> "<%0>")*') end)
+  probe('re ({|(.)^+1|})^2 on bbb', function() return re.match('bbb', '({|(.)^+1|})^2') end)
+  probe('re {{~ ("" -> "X" / .)* ~}} on abc', function() return re.match('abc', '{{~ ("" -> "X" / .)* ~}}') end)
+  probe('re ("") -> 1 on 12 ab', function() return re.match('12 ab', '("") -> 1') end)
+  probe('re {|""|} on aab1 c', function() return re.match('aab1 c', '{|""|}') end)
+  probe('re {|({~ (%s -> "X" / .)* ~}) -> "<%0>"|} on ab', function() return re.match('ab', '{|({~ (%s -> "X" / .)* ~}) -> "<%0>"|}') end)
+  probe('re {~ ("b" -> "X" / .)* ~} {} on ba', function() return re.match('ba', '{~ ("b" -> "X" / .)* ~} {}') end)
+  probe('re {|{}|} on a b a', function() return re.match('a b a', '{|{}|}') end)
+  probe('re {"b"} on ', function() return re.match('', '{"b"}') end)
+  probe('re {|(%s) -> {}|} on ab', function() return re.match('ab', '{|(%s) -> {}|}') end)
+  probe('re (("") -> {}) -> 1 on abc', function() return re.match('abc', '(("") -> {}) -> 1') end)
+  probe('re {|(%s)*|} on aab1 c', function() return re.match('aab1 c', '{|(%s)*|}') end)
+  probe('re {!([^b] {})} on 12 ab', function() return re.match('12 ab', '{!([^b] {})}') end)
+  probe('re {"a"} {~ (%s -> "X" / .)* ~} on aab1 c', function() return re.match('aab1 c', '{"a"} {~ (%s -> "X" / .)* ~}') end)
+  probe('re (%d)^-1 on a b a', function() return re.match('a b a', '(%d)^-1') end)
+  probe('re {[^b]} on ab', function() return re.match('ab', '{[^b]}') end)
+  probe('re "a" on bbb', function() return re.match('bbb', '"a"') end)
+  probe('re ("") -> "<%0>" [^b] "a" on aab1 c', function() return re.match('aab1 c', '("") -> "<%0>" [^b] "a"') end)
+  probe('re {~ ("" -> "X" / .)* ~} on abc', function() return re.match('abc', '{~ ("" -> "X" / .)* ~}') end)
+  probe('re {~ (!({}) / {[a-c]} -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ (!({}) / {[a-c]} -> "X" / .)* ~}') end)
+  probe('re &((!(%d))?) on abc', function() return re.match('abc', '&((!(%d))?)') end)
+  probe('re {~ ({} -> "X" / .)* ~} on abc', function() return re.match('abc', '{~ ({} -> "X" / .)* ~}') end)
+  probe('re \039ab\039 on ab', function() return re.match('ab', '\039ab\039') end)
+  probe('re {[a-c]} on a b a', function() return re.match('a b a', '{[a-c]}') end)
+  probe('re (%d)? on ab', function() return re.match('ab', '(%d)?') end)
+  probe('re %d on aab1 c', function() return re.match('aab1 c', '%d') end)
+  probe('re {~ ({{~ ([^b] -> "X" / .)* ~}} -> "X" / .)* ~} on a b a', function() return re.match('a b a', '{~ ({{~ ([^b] -> "X" / .)* ~}} -> "X" / .)* ~}') end)
+  probe('re ({}) -> {} on 12 ab', function() return re.match('12 ab', '({}) -> {}') end)
+  probe('re {~ ({~ ("b" -> "X" / .)* ~} "b" -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ ({~ ("b" -> "X" / .)* ~} "b" -> "X" / .)* ~}') end)
+  probe('re (%s)? on a', function() return re.match('a', '(%s)?') end)
+  probe('re ({}) -> 1 on a b a', function() return re.match('a b a', '({}) -> 1') end)
+  probe('re ({~ ({} -> "X" / .)* ~})* on bbb', function() return re.match('bbb', '({~ ({} -> "X" / .)* ~})*') end)
+  probe('re {[^b]} on aab1 c', function() return re.match('aab1 c', '{[^b]}') end)
+  probe('re {{%d .}} on ba', function() return re.match('ba', '{{%d .}}') end)
+  probe('re [a-c] on a', function() return re.match('a', '[a-c]') end)
+  probe('re (&("")) -> {} on ba', function() return re.match('ba', '(&("")) -> {}') end)
+  probe('re {{~ ({~ (\039ab\039 -> "X" / .)* ~} -> "X" / .)* ~}} on ', function() return re.match('', '{{~ ({~ (\039ab\039 -> "X" / .)* ~} -> "X" / .)* ~}}') end)
+  probe('re \039ab\039 / {|%s / "b"|} on bbb', function() return re.match('bbb', '\039ab\039 / {|%s / "b"|}') end)
+  probe('re ("")* on aab1 c', function() return re.match('aab1 c', '("")*') end)
+  probe('re {(({})?)^2} on a', function() return re.match('a', '{(({})?)^2}') end)
+  probe('re {} / %s on ba', function() return re.match('ba', '{} / %s') end)
+  probe('re &({|%d|}) on ba', function() return re.match('ba', '&({|%d|})') end)
+  probe('re ({~ ([a-c] -> "X" / .)* ~})* on a b a', function() return re.match('a b a', '({~ ([a-c] -> "X" / .)* ~})*') end)
+  probe('re (("b") -> {})^-1 on ', function() return re.match('', '(("b") -> {})^-1') end)
+  probe('re {~ ((.) -> 1 -> "X" / .)* ~} on a', function() return re.match('a', '{~ ((.) -> 1 -> "X" / .)* ~}') end)
+  probe('re {|"a"|} on a b a', function() return re.match('a b a', '{|"a"|}') end)
+  probe('re {(\039ab\039)+} on a', function() return re.match('a', '{(\039ab\039)+}') end)
+  probe('re (({}) -> {} (.)*) -> {} on bbb', function() return re.match('bbb', '(({}) -> {} (.)*) -> {}') end)
+  probe('re {&(&(.))} on a b a', function() return re.match('a b a', '{&(&(.))}') end)
+  probe('re {~ (("a")* -> "X" / .)* ~} on a b a', function() return re.match('a b a', '{~ (("a")* -> "X" / .)* ~}') end)
+  probe('re ((.)^-1) -> 1 on ab', function() return re.match('ab', '((.)^-1) -> 1') end)
+  probe('re {~ (. -> "X" / .)* ~} on ab', function() return re.match('ab', '{~ (. -> "X" / .)* ~}') end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter raw-bom empty small
 ﻿function Pandoc(d) d.meta.r = 'ok' return d end
 @@@ filter raw-bom-shebang empty small

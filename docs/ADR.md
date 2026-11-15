@@ -587,3 +587,36 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   and a body needs a dependency or `unsafe`. Pandoc 3.13 permits each of
   these Lua functions under `--sandbox` (probed); a refusal in Randoc is a
   difference that the command-line workstream must decide.
+
+## ADR 19: `lpeg` and `re` are the unchanged LPeg 1.1.0 release (2026-11-14)
+
+- **Context.** Pandoc 3.13 gives each Lua state the C library LPeg and its
+  Lua module `re`: the globals `lpeg` and `re`, `package.loaded`, and a
+  fifth entry of `package.searchers` that loads both again (probed;
+  `lpeg.version` is `LPeg 1.1.0`). Filters of real use call both. No Rust
+  crate gives the same results and error texts, and the registration of a
+  C library needs `unsafe` (`mlua::Lua::create_c_function`).
+- **Decision.** The coordinator permits a second `unsafe` call. The 13 C
+  files and `re.lua` of the upstream release `lpeg-1.1.0.tar.gz` are a
+  copy in `crates/randoc-lua/lpeg-1.1.0/`, with a SHA-256 test of each
+  file (`sources.rs`), as the Lua sources of ADR 11. `build.rs` compiles
+  the 6 C files into the Lua library, without `LPEG_DEBUG` (the reference
+  gives "function only implemented in debug mode" for `lpeg.pcode`).
+  `src/lpeg.rs` holds the `unsafe extern` block, the one `unsafe` call
+  with its safety argument, and the installation for both modes.
+  Restricted mode gets the globals `lpeg` and `re` too, because LPeg has
+  no file, network or process access; `re` gets a local `require` that
+  gives `lpeg`. `re.lua` is loaded as a string chunk whose name is its
+  text, so its error texts have the prefix `[string "--..."]` of Pandoc.
+- **Why.** The release is the code that the reference runs, so each
+  pattern, capture and error text agrees (matrix groups `lpeg-match` and
+  `lpeg-re-generated`, 363 probes, all equal). A port to Rust would be
+  large and would differ in error texts and limits.
+- **Consequences.** A match is one call of a C function, so the
+  instruction limit does not stop a long match, as for `string.find`
+  (ADR 11). A match ends for each pattern, because LPeg refuses an empty
+  loop and a left-recursive rule when it compiles them; its stacks are Lua
+  userdata, so the memory limit stops a large match
+  (`lpeg_errors_cross_the_c_boundary_as_lua_errors`). The backtrack limit
+  of LPeg is the default 400 (`MAXBACK`), changeable with
+  `lpeg.setmaxstack`. A WebAssembly build has no Lua and so no LPeg.

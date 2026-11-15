@@ -1504,10 +1504,88 @@ fn with_environment_needs_linear_time() {
             })
             .fold(f64::INFINITY, f64::min)
     };
-    let small = seconds(500).max(1e-4);
-    let large = seconds(2000);
+    let small = seconds(2000).max(1e-3);
+    let large = seconds(8000);
     assert!(
         large / small < 10.0,
-        "500 calls {small} s, 2000 calls {large} s"
+        "2000 calls {small} s, 8000 calls {large} s"
     );
+}
+
+#[test]
+fn lpeg_and_re_load_in_both_modes() {
+    for mode in [Mode::Full, Mode::Restricted] {
+        let runtime = state(mode);
+        assert_eq!(
+            eval(
+                &runtime,
+                "return table.concat({lpeg.version, \
+                 lpeg.match(lpeg.C(lpeg.R'az'^1), 'abc1'), \
+                 re.match('k=v', '{%a} \"=\" {%a}') == 'k' and 'k' or 'no', \
+                 re.gsub('a.b', '%p', '-')}, ' ')"
+            ),
+            "LPeg 1.1.0 abc k a-b"
+        );
+    }
+    let restricted = state(Mode::Restricted);
+    assert_eq!(
+        eval(&restricted, "return tostring(require) .. tostring(package)"),
+        "nilnil"
+    );
+    let full = state(Mode::Full);
+    assert_eq!(
+        eval(
+            &full,
+            "package.loaded.re = nil \
+             return tostring(require('re') ~= re and package.loaded.lpeg == lpeg)"
+        ),
+        "true"
+    );
+}
+
+/// The checks of the safety argument of `lpeg::lpeg_opener`: an error of
+/// LPeg, an error of a Rust function that a capture calls, a yield inside a
+/// capture and the memory limit each give a Lua error, and the state works
+/// after each one.
+#[test]
+fn lpeg_errors_cross_the_c_boundary_as_lua_errors() {
+    let limits = RuntimeLimits {
+        max_instructions: Some(100_000_000),
+        max_memory: Some(16 << 20),
+    };
+    let runtime = LuaRuntime::with_limits(Mode::Restricted, limits).unwrap();
+    let fail = runtime
+        .lua()
+        .create_function(|_, _: mlua::MultiValue| Err::<(), _>(mlua::Error::runtime("from rust")))
+        .unwrap();
+    runtime.lua().globals().set("FAIL", fail).unwrap();
+    let works = "lpeg.match(lpeg.C(1), 'z')";
+    for (code, expected) in [
+        (
+            "return lpeg.P(lpeg.P'')^0",
+            "loop body may accept empty string",
+        ),
+        ("return lpeg.match(lpeg.P(1) / FAIL, 'x')", "from rust"),
+        (
+            "return coroutine.wrap(function() \
+               return lpeg.match(lpeg.P(1) / coroutine.yield, 'x') end)()",
+            "attempt to yield across a C-call boundary",
+        ),
+        (
+            "return lpeg.match(lpeg.Ct(lpeg.C(1)^0), ('a'):rep(1 << 20))",
+            "not enough memory",
+        ),
+    ] {
+        let text = eval(
+            &runtime,
+            &format!(
+                "local ok, e = pcall(function() {code} end) return tostring(ok) .. ' ' .. tostring(e)"
+            ),
+        );
+        assert!(
+            text.starts_with("false ") && text.contains(expected),
+            "{code}: {text}"
+        );
+        assert_eq!(eval(&runtime, &format!("return {works}")), "z");
+    }
 }

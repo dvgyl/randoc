@@ -408,7 +408,9 @@ dependencies = [
  "mlua-sys",
  "randoc-ast",
  "randoc-core",
+ "randoc-layout",
  "randoc-native",
+ "randoc-templates",
 ]
 
 [[package]]

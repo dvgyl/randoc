@@ -25,9 +25,12 @@ local function operation(op)
   return function(...) return check(call(op, ...)) end
 end
 
+-- The type names of the proxies whose metatable is hidden (`__metatable`).
+local proxy_names = setmetatable({}, { __mode = 'k' })
+
 -- The name of the type of a value, as `luaL_typeerror` shows it.
 local function described(value)
-  local name = typename(value)
+  local name = typename(value) or proxy_names[value]
   if name then return name end
   local mt = getmetatable(value)
   if type(mt) == 'table' and type(rawget(mt, '__name')) == 'string' then
@@ -447,7 +450,7 @@ for kind, names in pairs { Inline = INLINE_KINDS, Block = BLOCK_KINDS } do
 end
 
 local function type_of(value)
-  local name = typename(value)
+  local name = typename(value) or proxy_names[value]
   if name then return name end
   local mt = getmetatable(value)
   if type(mt) == 'table' then
@@ -554,6 +557,37 @@ function native.install_warn(report)
       report(message, on)
     end
   end
+end
+-- `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS`: a proxy with the
+-- fields `names` in this order. Only a writable object takes a new value,
+-- and only for a known field.
+function native.options_object(name, values, names, writable)
+  local known = {}
+  for _, key in ipairs(names) do known[key] = true end
+  local metatable = { __name = name, __metatable = true }
+  function metatable.__index(_, key) return values[key] end
+  function metatable.__newindex(_, key, value)
+    if not writable then error('This ReaderOptions value is read-only.', 0) end
+    if not known[key] then error('Cannot set unknown property.', 0) end
+    values[key] = value
+  end
+  function metatable.__pairs()
+    local index = 0
+    return function()
+      index = index + 1
+      local key = names[index]
+      if key ~= nil then return key, values[key] end
+    end
+  end
+  if not writable then
+    function metatable.__tostring()
+      error('ReaderOptions expected, got ReaderOptions (read-only)\n' ..
+        '\twhile retrieving function argument opts\n\twhile retrieving arguments for function ', 0)
+    end
+  end
+  local proxy = setmetatable({}, metatable)
+  proxy_names[proxy] = name
+  return proxy
 end
 function native.system_functions(system_call)
   local system = pandoc.system
@@ -694,8 +728,6 @@ globals.getmetatable = function(...)
   if typename((...)) then return true end
   return getmetatable(...)
 end
-globals.lpeg = missing_module('lpeg')
-globals.re = missing_module('re')
 globals.PANDOC_READER_OPTIONS = missing_module('PANDOC_READER_OPTIONS')
 globals.PANDOC_WRITER_OPTIONS = missing_module('PANDOC_WRITER_OPTIONS')
 
@@ -712,8 +744,6 @@ if type(package) == 'table' and type(package.loaded) == 'table' then
   loaded['pandoc.structure'] = pandoc.structure
   loaded['pandoc.format'] = pandoc.format
   loaded['pandoc.system'] = pandoc.system
-  loaded.lpeg = globals.lpeg
-  loaded.re = globals.re
   for _, name in ipairs(missing_modules) do
     if name ~= 'readers' and name ~= 'writers' then
       loaded['pandoc.' .. name] = pandoc[name]

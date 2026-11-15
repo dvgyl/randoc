@@ -811,8 +811,180 @@ GROUPS["encoding-recovery"] = [
     for data, name in _IGNORE_INPUTS
 ]
 
+GROUPS["options-objects"] = [
+    ("types", "return P.utils.type(PANDOC_READER_OPTIONS), P.utils.type(PANDOC_WRITER_OPTIONS)"),
+    ("metatables", "return getmetatable(PANDOC_READER_OPTIONS), getmetatable(PANDOC_WRITER_OPTIONS)"),
+    ("reader missing", "return PANDOC_READER_OPTIONS.nothing, PANDOC_READER_OPTIONS[1]"),
+    ("reader set", "PANDOC_READER_OPTIONS.columns = 3 return PANDOC_READER_OPTIONS.columns"),
+    ("reader set unknown", "PANDOC_READER_OPTIONS.nothing = 3"),
+    ("writer set", "PANDOC_WRITER_OPTIONS.toc_depth = 5 return PANDOC_WRITER_OPTIONS.toc_depth"),
+    ("writer set nil field", "PANDOC_WRITER_OPTIONS.slide_level = 2 return PANDOC_WRITER_OPTIONS.slide_level"),
+    ("writer set unknown", "PANDOC_WRITER_OPTIONS.nothing = 1 return PANDOC_WRITER_OPTIONS.nothing"),
+    ("reader pairs", "local t = {} for k in pairs(PANDOC_READER_OPTIONS) do t[#t + 1] = k end return table.concat(t, ',')"),
+    ("writer pairs", "local t = {} for k in pairs(PANDOC_WRITER_OPTIONS) do t[#t + 1] = k end return table.concat(t, ',')"),
+    ("reader tostring", "return tostring(PANDOC_READER_OPTIONS)"),
+    ("reader equal", "return PANDOC_READER_OPTIONS == PANDOC_READER_OPTIONS"),
+    ("extensions", "return PANDOC_READER_OPTIONS.extensions, PANDOC_WRITER_OPTIONS.extensions, "
+     "getmetatable(PANDOC_WRITER_OPTIONS.extensions).__name"),
+    ("variables", "local v = PANDOC_WRITER_OPTIONS.variables return getmetatable(v).__name, tostring(v['pandoc-version'])"),
+    ("abbreviations", "local a = PANDOC_READER_OPTIONS.abbreviations return type(a), getmetatable(a), a['Mr.'], a['Dr.']"),
+    ("state options", "return P.utils.type(PANDOC_STATE), FORMAT"),
+]
+
+# Each LPeg probe matches a fixed subject of at most 40 bytes, so each
+# match ends: LPeg rejects a loop on a pattern that can match the empty
+# string and a left-recursive rule when it compiles them.
+LPEG_MATCHES = [
+    ("P'abc'", "'abcd'"), ("P'abc'", "'abd'"), ("P(2)", "'a'"), ("P(2)", "'abc'"),
+    ("P(-1)", "''"), ("P(-1)", "'a'"), ("P(true)", "'x'"), ("P(false)", "'x'"),
+    ("P(0)", "''"), ("S'abc'^1", "'cabx'"), ("S''", "'a'"), ("R('az')^1", "'hello World'"),
+    ("R('az', 'AZ')^1", "'helloWorld1'"), ("R()", "'a'"), ("P'a'^-1", "'aaa'"),
+    ("P'a'^-2 * 'b'", "'aab'"), ("P'a'^3", "'aa'"), ("P'a'^3", "'aaaa'"),
+    ("P'a' + 'b'", "'b'"), ("P'a' * 'b'", "'ab'"), ("P'a' - 'ab'", "'ab'"),
+    ("1 - P'x'", "'y'"), ("-P'x'", "'y'"), ("#P'x' * 1", "'xy'"), ("#P'x'", "'y'"),
+    ("C(P'a'^1)", "'aaab'"), ("C(C'a' * C'b')", "'ab'"), ("Cc(1, 'x', true)", "''"),
+    ("Cc()", "''"), ("Ct(C(1)^0)", "'abc'"), ("Ct(Cg(C(1), 'k') * C(1))", "'xy'"),
+    ("Cs((P'a' / 'b' + 1)^0)", "'banana'"), ("Cs((S'aeiou' / string.upper + 1)^0)", "'lpeg is fine'"),
+    ("Cf(C(R'09'^1) * (',' * C(R'09'^1))^0, function(a, b) return a + b end)", "'1,2,3'"),
+    ("Cp() * 'ab' * Cp()", "'abc'"), ("Carg(1)", "'x', 1, 'extra'"), ("Carg(2)", "'x', 1, 'a'"),
+    ("Cg(C'a', 'n') * Cb'n'", "'a'"), ("Cmt(C(1), function(s, i, c) return c == 'q' end)", "'q'"),
+    ("Cmt(C(1), function(s, i, c) return c == 'q' end)", "'r'"),
+    ("Cmt(1, function(s, i) return i + 1, 'extra' end)", "'abc'"),
+    ("C(1) / '%1%1'", "'z'"), ("C(1) / '%0-%1'", "'z'"), ("C(1) / {z = 'zed'}", "'z'"),
+    ("C(1) / {}", "'z'"), ("C(1) / 3", "'z'"), ("(C(1) * C(1)) / 2", "'zw'"),
+    ("P(1) / 0", "'z'"), ("C(1) / function(c) return c, c end", "'k'"),
+    ("B'a' * 'b'", "'b'"), ("'a' * B'a' * 'b'", "'ab'"),
+    ("P{'S', S = 'a' * V'S' * 'b' + ''}", "'aaabbb'"), ("P{'S', S = 'a' * V'S' * 'b' + ''}", "'aabbb'"),
+    ("P{[1] = 'A', A = C(R'az'^1) * (',' * V'A')^-1}", "'x,yy,zzz'"),
+    ("utfR(0x41, 0x5A)^1", "'ABc'"), ("utfR(0x3B1, 0x3C9)", lua_string("λ")),
+    ("utfR(0x80, 0x10FFFF)", "'\\240\\159\\152\\128'"), ("C(utfR(0, 0x7F)^1)", "'abc'"),
+    ("locale().alpha^1", "'abc1'"), ("locale().digit^1", "'123a'"), ("locale().space^1", "' \\t\\nx'"),
+    ("locale().punct", "'!'"), ("locale().upper", "'a'"), ("locale().xdigit^1", "'beefz'"),
+    ("P'a' % function(acc, v) return acc end", "'a'"),
+    ("Ct((C(R'az'^1) + 1)^0)", "'one two, three'"), ("(1 - P'\\n')^0 * Cp()", "'line\\nnext'"),
+    ("P'x'^0 * -1", "'xxx'"), ("P'x'^0 * -1", "'xxy'"), ("C(P'')", "'a'"),
+]
+
+LPEG_ERRORS = [
+    "P{'A', A = V'A' * 'a'}", "P{'A', A = V'B'}", "P'a'^0^0", "P(P'')^0", "P{}",
+    "P(nil)", "P{1}", "R('abc')", "S(1)", "Cg(1, {})", "V()", "Cb()", "C()",
+    "P(1) / nil", "Cmt(1)", "utfR(5, 2)", "utfR(-1, 2)", "utfR(0, 0x80000000)",
+    "Carg(0)", "Carg(1e10)", "B(P'a'^1)", "B(V'x')", "P'a' * 1.5", "{} * P'a'",
+    "P(-2^40)", "P'a'^'x'", "setmaxstack(0)", "setmaxstack(-1)",
+]
+
+RE_CALLS = [
+    ("match", "'hello world', '{%a+}'"), ("match", "'hello', '%a+'"), ("match", "'123', '[0-9]+ -> tonumber'"),
+    ("match", "'a,b,,c', '{| ({[^,]*} (\",\" / !.))* |}'"), ("match", "'x', '\"x\" / \"y\"'"),
+    ("match", "'abcabc', '{~ (\"a\" -> \"A\" / .)* ~}'"), ("match", "'  x', '%s* {.}'"),
+    ("match", "'aaab', 'S <- \"a\" S / \"b\"'"), ("match", "'ab', '{:k: . :} =k'"),
+    ("match", "'aa', '{:k: . :} =k'"), ("match", "'xy', '{} . {}'"), ("match", "'xyz', '. -> {}'"),
+    ("match", "'abc', '{.}^2'"), ("match", "'abc', '{.}^+2'"), ("match", "'abc', '{.}^-2'"),
+    ("match", "'abc', '{.}?'"), ("match", "'_x9', '[_%a][_%w]*'"), ("match", "'A', '[^a-z]'"),
+    ("match", "'q', '%nl'"), ("match", "'\\n', '%nl'"), ("match", "'abc', '&\"a\" {.}'"),
+    ("match", "'abc', '!\"b\" .'"), ("match", "'ab', '<a> <- \"a\" <b> ; b <- \"b\"'"),
+    ("match", "'x', '%D'"), ("match", "'9', '%W'"), ("match", "'x', '%zz'"), ("match", "'x', '['"),
+    ("match", "'x', 'a <- b'"), ("match", "'x', '(.'"), ("match", "'x', 'a <- . a <- .'"),
+    ("match", "'x', '\"unterminated'"), ("match", "'5', '. => tonumber'"),
+    ("find", "'hello world', 'o'"), ("find", "'hello world', '{%s}'"), ("find", "'abc', 'z'"),
+    ("find", "'abcabc', 'c', 4"), ("gsub", "'hello world', 'o', '0'"),
+    ("gsub", "'hello world', '%a+', '<%0>'"), ("gsub", "'abc', '.', {a = 1, b = true}"),
+    ("gsub", "'abc', '{.}', function(c) return c:upper() end"),
+    ("compile", "'x', {}"), ("compile", "'%foo', {foo = lpeg.P'z'}"), ("compile", "'%foo'"),
+    ("compile", "12"), ("compile", "nil"),
+]
+
+GROUPS["lpeg-match"] = [
+    (f"match {pattern} on {subject}",
+     f"local P, S, R, V, C, Cc, Ct, Cs, Cf, Cg, Cp, Carg, Cb, Cmt, B, utfR, locale = "
+     "lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Ct, lpeg.Cs, lpeg.Cf, lpeg.Cg, "
+     "lpeg.Cp, lpeg.Carg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.locale "
+     f"return lpeg.match({pattern}, {subject})")
+    for pattern, subject in LPEG_MATCHES
+] + [
+    (f"error {pattern}",
+     f"local P, S, R, V, C, Cg, Cb, Cmt, B, utfR, Carg, setmaxstack = lpeg.P, lpeg.S, lpeg.R, "
+     "lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb, lpeg.Cmt, lpeg.B, lpeg.utfR, lpeg.Carg, lpeg.setmaxstack "
+     f"local p = {pattern} return lpeg.type(p), p ~= nil and lpeg.match(p, 'aaa') or nil")
+    for pattern in LPEG_ERRORS
+] + [
+    (f"re.{function}({args})", f"return re.{function}({args})")
+    for function, args in RE_CALLS
+] + [
+    ("re compiled match", "return re.compile('{%d+}'):match('42x')"),
+    ("re compile pattern", "return lpeg.type(re.compile(lpeg.P'a'))"),
+    ("names", "local k = {} for n in pairs(lpeg) do k[#k + 1] = n end table.sort(k) "
+     "local r = {} for n in pairs(re) do r[#r + 1] = n end table.sort(r) "
+     "return table.concat(k, ' '), table.concat(r, ' ')"),
+    ("version", "return lpeg.version, lpeg.type(1), lpeg.type(lpeg.P(1)), lpeg.type('x')"),
+    ("pattern metatable", "local m = getmetatable(lpeg.P'a') return m.__name, type(m.__index), type(m.__add)"),
+    ("pattern tostring", "return (tostring(lpeg.P'a'):gsub('0x%x+', 'ADDR'))"),
+    ("debug only", "return lpeg.pcode(lpeg.P'a')"),
+    ("debug only tree", "return lpeg.ptree(lpeg.P'a')"),
+    ("method match", "return (lpeg.P'a' * lpeg.C(1)):match('ab')"),
+    ("match init", "return lpeg.match(lpeg.C(1), 'abc', 2), lpeg.match(lpeg.C(1), 'abc', -1), "
+     "lpeg.match(lpeg.C(1), 'abc', 10), lpeg.match(lpeg.C(1), 'abc', 0)"),
+    ("match bad subject", "return lpeg.match(lpeg.P(1), {})"),
+    ("match number subject", "return lpeg.match(lpeg.C(1), 42)"),
+    ("setmaxstack", "lpeg.setmaxstack(5) local p = lpeg.P{'S', S = ('(' * lpeg.V'S' * ')') + ''} "
+     "local r = table.pack(pcall(lpeg.match, p, string.rep('(', 20) .. string.rep(')', 20))) "
+     "lpeg.setmaxstack(400) return r[1], r[2]"),
+    ("backtrack overflow", "local p = (lpeg.P'a' * lpeg.P'b'^-1)^0 * -1 + lpeg.P'z' "
+     "local q = lpeg.P{'S', S = lpeg.P'x' * lpeg.V'S' * 'y' + 'x' * lpeg.V'S' + ''} "
+     "return pcall(lpeg.match, q, string.rep('x', 1000))"),
+    ("deep grammar", "local p = lpeg.P{'S', S = lpeg.P'x' * lpeg.V'S' * 'y' + ''} "
+     "return lpeg.match(p, string.rep('x', 500) .. string.rep('y', 500))"),
+    ("capture limit", "return select('#', lpeg.match(lpeg.C(1)^0, string.rep('a', 300)))"),
+    ("required", "return require('lpeg') == lpeg, require('re') == re, package.loaded.lpeg == lpeg"),
+    ("searcher", "return package.searchers[5]('lpeg') ~= nil, package.searchers[5]('re') ~= nil, "
+     "package.searchers[5]('x'), select('#', package.searchers[5]('x'))"),
+    ("searcher args", "return pcall(package.searchers[5]), pcall(package.searchers[5], 1), "
+     "pcall(package.searchers[5], {})"),
+    ("reload", "package.loaded.lpeg = nil package.loaded.re = nil local l = require 'lpeg' "
+     "local r = require 're' local same = l == lpeg package.loaded.lpeg = lpeg package.loaded.re = re "
+     "return same, r == re, type(l.P), r.match('ab', '{.}')"),
+    ("re updatelocale", "re.updatelocale() return re.match('x', '%a')"),
+    ("re source", "return debug.getinfo(re.compile, 'S').short_src"),
+]
+
+_re_rng = random.Random(19)
+
+
+def _re_expression(depth):
+    atoms = ['"a"', '"b"', "'ab'", ".", "[a-c]", "[^b]", "%d", "%s", "{}", '""']
+    if depth == 0:
+        return _re_rng.choice(atoms)
+    kind = _re_rng.randrange(9)
+    inner = _re_expression(depth - 1)
+    if kind == 0:
+        return inner + " " + _re_expression(depth - 1)
+    if kind == 1:
+        return inner + " / " + _re_expression(depth - 1)
+    if kind == 2:
+        return "(" + inner + ")" + _re_rng.choice(["*", "+", "?", "^2", "^-1", "^+1"])
+    if kind == 3:
+        return _re_rng.choice(["!", "&"]) + "(" + inner + ")"
+    if kind == 4:
+        return "{" + inner + "}"
+    if kind == 5:
+        return "{|" + inner + "|}"
+    if kind == 6:
+        return "{~ (" + inner + ' -> "X" / .)* ~}'
+    if kind == 7:
+        return "(" + inner + ") -> " + _re_rng.choice(['"<%0>"', "{}", "1"])
+    return _re_rng.choice(atoms)
+
+
+_RE_SUBJECTS = ["", "a", "ab", "abc", "ba", "aab1 c", "12 ab", "bbb", "a b a"]
+GROUPS["lpeg-re-generated"] = [
+    (f"re {pattern} on {subject}", f"return re.match({lua_string(subject)}, {lua_string(pattern)})")
+    for pattern, subject in (
+        (_re_expression(_re_rng.randrange(1, 4)), _re_rng.choice(_RE_SUBJECTS)) for _ in range(200)
+    )
+]
+
 RAW_FILTERS = {
-    "raw-bom": "﻿function Pandoc(d) d.meta.r = 'ok' return d end\n",
+    "raw-bom":"﻿function Pandoc(d) d.meta.r = 'ok' return d end\n",
     "raw-bom-shebang": "﻿#!/usr/bin/env pandoc lua\nfunction Pandoc(d) d.meta.r = 'ok' return d end\n",
     "raw-bom-twice": "﻿﻿function Pandoc(d) return d end\n",
     "raw-lookup-order": "local log = {}\nlocal f = setmetatable({}, {__index = function(_, k) log[#log + 1] = k return nil end})\n"

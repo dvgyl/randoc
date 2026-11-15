@@ -2,9 +2,10 @@
 
 use mlua::{Function, Lua, MultiValue, Table, Value, Variadic};
 use randoc_ast::{Pandoc, Text};
-use randoc_core::{Context, Error, LogMessage, SourcePos};
+use randoc_core::{Context, Error, LogMessage, ReaderOptions, SourcePos, WriterOptions};
 
 use crate::module;
+use crate::options::{default_reader_options, default_writer_options};
 use crate::os::Os;
 use crate::peek::{Cx, LuaText, Peek, PeekError, mismatch, retrieving};
 use crate::runtime::{self, LuaRuntime, Mode, RuntimeLimits};
@@ -22,7 +23,7 @@ pub struct LuaFilter<'a> {
 }
 
 /// What a filter can see of the conversion that runs it.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct FilterEnvironment {
     /// The output format: the value of the global `FORMAT`.
     pub format: Text,
@@ -47,16 +48,24 @@ pub struct FilterEnvironment {
     pub mode: Mode,
     /// The limits of the Lua state.
     pub limits: RuntimeLimits,
+    /// `PANDOC_READER_OPTIONS`.
+    pub reader_options: ReaderOptions,
+    /// `PANDOC_WRITER_OPTIONS`.
+    pub writer_options: WriterOptions,
 }
 
 impl FilterEnvironment {
     /// Returns the environment of a conversion to `format` with the
     /// defaults of Pandoc: full mode, no input file, the resource path `.`,
-    /// the request header `User-Agent: pandoc/3.13` and the verbosity
-    /// `WARNING`.
+    /// the request header `User-Agent: pandoc/3.13`, the verbosity
+    /// `WARNING`, the reader options of the input format `json` and the
+    /// writer options of `format`.
     pub fn new(format: impl Into<Text>) -> Self {
+        let format = format.into();
         FilterEnvironment {
-            format: format.into(),
+            reader_options: default_reader_options("json"),
+            writer_options: default_writer_options(&format),
+            format,
             input_files: Vec::new(),
             output_file: None,
             resource_path: vec![".".to_string()],
@@ -228,6 +237,13 @@ fn system_result(lua: &Lua, result: Peek<Vec<Value>>) -> mlua::Result<MultiValue
 fn set_globals(lua: &Lua, filter: &LuaFilter, environment: &FilterEnvironment) -> mlua::Result<()> {
     let globals = lua.globals();
     globals.set("FORMAT", environment.format.as_str())?;
+    let native: Table = lua.named_registry_value(module::NATIVE)?;
+    crate::options::set_globals(
+        lua,
+        &native,
+        &environment.reader_options,
+        &environment.writer_options,
+    )?;
     globals.set("PANDOC_SCRIPT_FILE", filter.path)?;
     let state = lua.create_table()?;
     state.set(

@@ -2292,3 +2292,56 @@ Open findings: I-MDW-06 (high); the other rows of review round 1 that
 are in work; the low rows. Open checks: the time of nested tables and
 inlines (Codex R1-02, Opus R1-09), fuzzing, coverage, the mutation
 sample.
+
+## Workstream lua (branch `ws/lua-3`, commit 0e11bed, one squashed commit, session 5 of 2026-11-15, batch D)
+
+Merged as a small block under owner instruction 17. `main` holds the
+earlier commit 40920d1 of the branch as 9c224f6 (batch C); this record
+holds the commits after 40920d1 up to 0e11bed. Content (`git log
+--format='%h %s' main..0e11bed`): e0535e6 adds `PANDOC_READER_OPTIONS`
+and `PANDOC_WRITER_OPTIONS`; 70e7330 builds the option objects from the
+options of `randoc-core` (oracle matrix of 26 command lines); 0e11bed
+adds the Lua modules `lpeg` and `re` from the unchanged LPeg 1.1.0
+release (14 files in `crates/randoc-lua/lpeg-1.1.0/`, MIT, a hash test
+of each file; a second `unsafe` use that the coordinator permitted;
+ADR 19). Rows: I-LUA-27 (low) added, I-LUA-05 changed.
+
+Checks of the diff for the copied C sources: the licence text is in
+`third_party/licences/lpeg.txt`; `THIRD_PARTY_NOTICES.md` and
+`docs/PRIOR_ART.md` have one LPeg row each; `docs/ADR.md` has ADR 19;
+`src/lpeg.rs` has a written safety argument (a `SAFETY:` comment of
+four parts) next to the `unsafe` block, and a test of the argument
+(`lpeg_errors_cross_the_c_boundary_as_lua_errors`). Nothing is missing.
+
+The gate evidence comes from the inbox lines of 70e7330 and 0e11bed
+(`env/store/inbox/lua.log`, 23:37:38 and 00:18:17 UTC), from the commit
+list above and from the top section of `env/store/reports/lua.md`
+(00:35 UTC; it also describes b05ab81, the next block).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on 0e11bed. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Report: option objects equal to the oracle for 26 command lines; module matrix 29 filters, 3196 probes, all equal. |
+| 3. Tests | `cargo test -p randoc-lua` on the merged tree: 47 pass, 0 fail, 4 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Not run in this unit. |
+| 5. Reviews | Round 3 findings are corrected on `main`; no review of this new code yet. |
+| 6. No slowdowns | Not measured. |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: seven in files of `crates/randoc-lua`
+(`src/filter.rs`, `src/lib.rs`, `src/prelude.lua`, `src/tests.rs`,
+`tests/replay/modules-expected.txt`, `tests/replay/modules.txt`,
+`tools/module-matrix.py`; `main` holds an earlier state of the branch);
+the versions of 0e11bed are taken, so the crate is equal to 0e11bed.
+One in `docs/ISSUES.md`: `resolve-tables` kept `main` and added I-LUA-27;
+the text of 0e11bed is taken for I-LUA-05. The row I-CLI-49 of `main`
+stays; its text says that `require "lpeg"` and the option globals fail,
+which this block changes (a correction for the owner of the row).
+Licence scan of 0e11bed: the licence text in `NOTICE.md`, a list of
+interface names in `src/prelude.lua`, native output text in a replay
+file and format names in `tools/module-matrix.py`; accepted (names and
+data, no copied text).
+
+Open findings: I-LUA-11 and I-LUA-15 (medium); the low rows. Open
+checks: a review of the new code, fuzzing, coverage, the mutation
+sample.

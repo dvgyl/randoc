@@ -2,7 +2,9 @@
 //!
 //! The Haskell package `lua` 2.3.4 compiles the same 32 C files with one
 //! platform define and without `LUA_COMPAT_5_3` (ADR 11). The crate
-//! `mlua-sys` has the feature `external`, so it links nothing.
+//! `mlua-sys` has the feature `external`, so it links nothing. The same
+//! library holds the 6 C files of LPeg 1.1.0 without `LPEG_DEBUG`, as the
+//! reference has them (ADR 19).
 
 use std::path::Path;
 
@@ -43,9 +45,20 @@ const SOURCES: [&str; 32] = [
     "lzio.c",
 ];
 
+/// The C files of LPeg: each `.c` file of `lpeg-1.1.0.tar.gz`.
+const LPEG_SOURCES: [&str; 6] = [
+    "lpcap.c",
+    "lpcode.c",
+    "lpcset.c",
+    "lpprint.c",
+    "lptree.c",
+    "lpvm.c",
+];
+
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=lua-5.4.8");
+    println!("cargo:rerun-if-changed=lpeg-1.1.0");
     let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap_or_default();
     if arch == "wasm32" {
         return;
@@ -68,6 +81,10 @@ fn main() {
     }
     for name in SOURCES {
         build.file(folder.join(name));
+    }
+    let lpeg = Path::new("lpeg-1.1.0");
+    for name in LPEG_SOURCES {
+        build.file(lpeg.join(name));
     }
     build.compile("randoclua54");
 }

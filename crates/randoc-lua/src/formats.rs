@@ -13,21 +13,23 @@ pub(crate) fn call(call: &Call, name: &str) -> Peek<Vec<Value>> {
     let cx = call.cx;
     let lua = cx.lua;
     let names = |extensions: Extensions| -> Peek<Vec<Value>> {
-        let values = in_pandoc_order(extensions)
+        let values = extension_names(extensions)
             .into_iter()
             .map(|name| push::text(lua, name))
             .collect::<mlua::Result<Vec<_>>>()?;
         Ok(vec![push::list_of(lua, "List", values)?])
     };
     match name {
-        "default_extensions" => names(defaults(&call.required(0, "format", |v| cx.text(v))?)),
+        "default_extensions" => names(default_extensions_of(
+            &call.required(0, "format", |v| cx.text(v))?,
+        )),
         "all_extensions" => {
             let format = call.required(0, "format", |v| cx.text(v))?;
             names(all(&format))
         }
         "extensions" => {
             let format = call.required(0, "format", |v| cx.text(v))?;
-            let on = defaults(&format);
+            let on = default_extensions_of(&format);
             let table = lua.create_table()?;
             let mut keys = all(&format);
             for extension in on.iter() {
@@ -59,7 +61,7 @@ pub(crate) fn call(call: &Call, name: &str) -> Peek<Vec<Value>> {
 
 /// The extension names in the order of the `Extension` type of Pandoc:
 /// the order of the names, except three names that Pandoc declares later.
-fn in_pandoc_order(extensions: Extensions) -> Vec<&'static str> {
+pub(crate) fn extension_names(extensions: Extensions) -> Vec<&'static str> {
     let key = |name: &'static str| -> (&'static str, bool) {
         match name {
             "table_attributes" => ("header_attributes", true),
@@ -76,7 +78,7 @@ fn in_pandoc_order(extensions: Extensions) -> Vec<&'static str> {
 /// The default extensions of `getDefaultExtensions` of Pandoc. They are
 /// the defaults of the extension tables, with the differences that the
 /// oracle matrix shows; each other format gets `auto_identifiers`.
-fn defaults(format: &str) -> Extensions {
+pub(crate) fn default_extensions_of(format: &str) -> Extensions {
     let mut defaults = default_extensions(format);
     match format {
         "gfm" => defaults.enable(Extension::AutoIdentifiers),

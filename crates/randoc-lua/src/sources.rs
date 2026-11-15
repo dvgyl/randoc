@@ -1,9 +1,12 @@
-//! A test that the Lua sources are the files of lua.org.
+//! A test that the copied C and Lua sources are the upstream files.
 //!
 //! ADR 11 permits the copy of the Lua 5.4.8 sources on one condition: each
 //! file stays byte-identical to the file in the folder `src` of
 //! `lua-5.4.8.tar.gz` (SHA-256
 //! `4f18ddae154e793e46eeab727c59ef1c0c0c2b744e7b94219710d76f530629ae`).
+//! ADR 19 has the same condition for the LPeg 1.1.0 files and
+//! `lpeg-1.1.0.tar.gz` (SHA-256
+//! `4b155d67d2246c1ffa7ad7bc466c1ea899bbc40fef0257cc9c03cecbaed4352a`).
 
 /// The SHA-256 of each file of `lua-5.4.8/`, computed from the archive.
 const SOURCE_HASHES: [(&str, &str); 59] = [
@@ -245,6 +248,66 @@ const SOURCE_HASHES: [(&str, &str); 59] = [
     ),
 ];
 
+/// The SHA-256 of each file of `lpeg-1.1.0/`, computed from the archive.
+const LPEG_HASHES: [(&str, &str); 14] = [
+    (
+        "lpcap.c",
+        "b96c8b6373610e41ef505e56f9b6e14924e6baf6783fade4ec9316062a2db399",
+    ),
+    (
+        "lpcap.h",
+        "ad1236e183251cc2d7746ff732de323d79b5f2e02a6061c5962ebbc21958e1d3",
+    ),
+    (
+        "lpcode.c",
+        "2e83c829e420ef3841874e9fc1f5d53ecfe2f8870d96db807f957ab7a08a357a",
+    ),
+    (
+        "lpcode.h",
+        "ee828050d2d9f9513deca2946b0be8a87fd3a526615d8c1537772a2b4b03b26d",
+    ),
+    (
+        "lpcset.c",
+        "4bd61ac71d4038fe4ae4a03d02d878f478c90562537923b024f1f8ad12475227",
+    ),
+    (
+        "lpcset.h",
+        "20873e9389c56ca051bab02d0b8518174d02a5db0b551e943a8afaa6e265c45c",
+    ),
+    (
+        "lpprint.c",
+        "f638c7589ee0046aa11a50012daf93e0cef9eff195f5974add4c8c09f95956ef",
+    ),
+    (
+        "lpprint.h",
+        "5af8e24fd50290116339954afca75b70c190a64a35584ea16b8d3882ba576857",
+    ),
+    (
+        "lptree.c",
+        "c0d7ea584d6707034e155cf6423810510cfee12f7c8a7a16dd875323a67b55dd",
+    ),
+    (
+        "lptree.h",
+        "a90b1c27cf82e5ac4cf26ccdec353e96dd9cd15da8eae8865d5ccb12fb29121d",
+    ),
+    (
+        "lptypes.h",
+        "45f6689878369cb929b991eca00d4cdda2b6adb9f7eeca01857efd07e1cf7c8a",
+    ),
+    (
+        "lpvm.c",
+        "15a0c83ef8284126dd02f7b25c1149ea04e0247241288fccd73beddb7143b919",
+    ),
+    (
+        "lpvm.h",
+        "58b9c1c8689b7926b9365ad300d9eb9d058f4bb8432cf0efe878fb1d969cf7d2",
+    ),
+    (
+        "re.lua",
+        "528f74b290e0fccde47eb6ce322338e51275fd71886d1484b745cf46d01d2511",
+    ),
+];
+
 /// Returns the SHA-256 of `data` as lowercase hexadecimal text.
 fn sha256_hex(data: &[u8]) -> String {
     const K: [u32; 64] = [
@@ -327,25 +390,31 @@ fn sha256_gives_the_standard_test_vectors() {
     );
 }
 
-#[test]
-fn each_lua_source_file_is_the_file_of_lua_org() {
-    let folder = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lua-5.4.8");
-    for (name, expected) in SOURCE_HASHES {
+/// Checks that `folder` holds exactly the files of `hashes`, each with its
+/// SHA-256.
+fn check_copy(folder: &str, hashes: &[(&str, &str)]) {
+    let folder = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(folder);
+    for (name, expected) in hashes {
         let data = std::fs::read(folder.join(name)).unwrap_or_else(|e| panic!("{name}: {e}"));
-        assert_eq!(sha256_hex(&data), expected, "{name} differs from lua.org");
+        assert_eq!(&sha256_hex(&data), expected, "{name} differs from upstream");
     }
-}
-
-#[test]
-fn the_folder_holds_no_other_file() {
-    let folder = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lua-5.4.8");
     let mut names: Vec<String> = std::fs::read_dir(folder)
         .unwrap()
         .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
         .filter(|name| !name.starts_with("._"))
         .collect();
     names.sort();
-    let mut expected: Vec<&str> = SOURCE_HASHES.iter().map(|(name, _)| *name).collect();
+    let mut expected: Vec<&str> = hashes.iter().map(|(name, _)| *name).collect();
     expected.sort();
     assert_eq!(names, expected);
+}
+
+#[test]
+fn each_lua_source_file_is_the_file_of_lua_org() {
+    check_copy("lua-5.4.8", &SOURCE_HASHES);
+}
+
+#[test]
+fn each_lpeg_source_file_is_the_file_of_the_lpeg_release() {
+    check_copy("lpeg-1.1.0", &LPEG_HASHES);
 }

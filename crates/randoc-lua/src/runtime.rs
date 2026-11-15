@@ -88,13 +88,6 @@ load = function(chunk, chunkname, mode, ...)
 end
 "#;
 
-/// Adds the fifth entry of `package.searchers`. Pandoc has it for the
-/// modules `lpeg` and `re`, which this crate does not have: the searcher
-/// finds no module.
-const FIFTH_SEARCHER: &str = r#"
-package.searchers[#package.searchers + 1] = function(name) return nil end
-"#;
-
 /// Sets the character locale of the process (`LC_CTYPE`) from the
 /// environment, one time, before the first Lua state exists. Pandoc runs
 /// Lua in that locale, so the character classes, `string.upper`,
@@ -142,14 +135,13 @@ impl LuaRuntime {
                 Lua::new_with(libs, LuaOptions::default()).map_err(|e| to_error(&e))?
             }
         };
-        let setup = match mode {
-            Mode::Full => FIFTH_SEARCHER,
-            Mode::Restricted => RESTRICT,
-        };
-        lua.load(setup)
-            .set_name("=randoc setup")
-            .exec()
-            .map_err(|e| to_error(&e))?;
+        if mode == Mode::Restricted {
+            lua.load(RESTRICT)
+                .set_name("=randoc setup")
+                .exec()
+                .map_err(|e| to_error(&e))?;
+        }
+        crate::lpeg::install(&lua, mode).map_err(|e| to_error(&e))?;
         if let Some(bytes) = limits.max_memory {
             lua.set_memory_limit(bytes).map_err(|e| to_error(&e))?;
         }
@@ -193,7 +185,8 @@ pub(crate) fn load_code<'a>(lua: &'a Lua, mode: Mode, source: &'a [u8]) -> mlua:
 
 /// Makes the state of full mode.
 ///
-/// This function holds the one `unsafe` call of the crate (ADR 11).
+/// This function holds the first `unsafe` call of the crate (ADR 11); the
+/// second is in `lpeg.rs` (ADR 19).
 #[allow(unsafe_code)]
 fn full_state() -> Lua {
     // SAFETY: `Lua::unsafe_new_with` is `unsafe` because the libraries

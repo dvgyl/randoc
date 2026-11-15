@@ -4,6 +4,8 @@ This crate contains material from the projects below. Each one keeps its own
 licence. The rest of the crate has the licence `MIT OR Apache-2.0`.
 
 - `lua-5.4.8/`: the 59 source files of Lua 5.4.8, unchanged (MIT).
+- `lpeg-1.1.0/`: the 13 C files and `re.lua` of LPeg 1.1.0, unchanged (MIT,
+  ADR 19).
 - The document types in Lua (`src/peek.rs`, `src/push.rs`,
   `src/properties.rs`, `src/construct.rs`, `src/object.rs`, `src/show.rs`,
   `src/prelude.lua`): a port of `pandoc-lua-marshal` 0.3.2.1,
@@ -53,6 +55,35 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+## LPeg 1.1.0
+
+```text
+LPeg 1.1.0 (https://www.inf.puc-rio.br/~roberto/lpeg/lpeg-1.1.0.tar.gz,
+SHA-256 4b155d67d2246c1ffa7ad7bc466c1ea899bbc40fef0257cc9c03cecbaed4352a).
+The release has no licence file. Each source file says "see 'lpeg.html' for
+license". The text below is the section "License" of `lpeg.html`.
+
+Copyright (c) 2007-2023 Lua.org, PUC-Rio.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
 ## `pandoc-lua-marshal` and `hslua`
