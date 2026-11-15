@@ -2108,3 +2108,32 @@ other low rows. The modules `names`, `date`, sorting, disambiguation,
 collapsing, positions and locators are not ported. Open checks: a
 review of the new modules, fuzzing of the new modules, coverage, the
 mutation sample.
+
+## Session 5 of 2026-11-14, batch C (one documents commit and four blocks)
+
+Commits: owner instruction 21 in `docs/OWNER_INSTRUCTIONS.md` (1b427c7);
+markdown-writer 7227395 (f292078), lua 40920d1 (9c224f6),
+markdown-reader 2640d8b (4333b6e), citeproc ecb6687 (11e9493). Each
+worker continues on its branch; each block holds the named commit only.
+
+`merge-ws check`, first run: the gate step "tests without the
+conformance suite" failed in the time test
+`tests::with_environment_needs_linear_time` of `randoc-lua` (2000 calls
+took 10.6 times as long as 500 calls; the limit is 10). Five workers
+built and tested at the same time. Second run, without a change:
+passed. The watchdog stopped no process. Gate times of the second run:
+format 23:55:52, lints 23:55:59, documentation 23:57:10, tests
+23:57:14, conformance harness 00:15:28, end 00:20:41 UTC (about 25
+minutes).
+
+| Harness | Units | Pass | Fail | Skipped | Regressions | New passes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Before (`main` a2fbf7d) | 51037 | 48194 | 2423 | 420 | 0 | 0 |
+| After | 53648 | 50817 | 2411 | 420 | 0 | 2623 |
+
+Capability summary: extensions 54 passing, 24 partial, 1 failing, 11
+not started; input formats 4 passing, 9 partial, 39 not started;
+options 90 passing, 18 partial, 1 not started; output formats 5
+passing, 12 partial, 1 failing, 59 not started; units 50817 of 53228
+passing. `spec/baseline.json` and `spec/capabilities.json` are updated
+in the next commit.
