@@ -2519,3 +2519,36 @@ are in stored reference results (`resources.json`,
 `writer-capabilities.json`): text of the default templates `styles.html`
 and `hypersetup.latex`, which `crates/randoc-data` holds under their
 BSD-3-Clause option (ADR 5).
+
+**latex-reader**: branch `ws/latex-reader-4`, commits `8c1eebd..280a340`
+(`main` holds `4fad0ed` as `c46be2e`). The block holds 681bac3 (merge of
+`origin/main` `a627007`, made by the stopped worker) and 280a340. The
+commit 280a340 applies the patch of the stopped unit in a corrected
+form. It adds a TeX save stack (`src/scope.rs`) for macros,
+environments and `\newif` flags. It adds the `enumerate` counter and
+label rules and a rule for lists without items. It adds the option
+rules, the `\texttt` code rules and `\newline` as `LineBreak`.
+
+Gate: `scripts/gate.sh` passed on `280a340` at 03:56 UTC (run by the
+worker; the first run was stopped by a `pkill` of another worker).
+
+Measured by the worker: suite `latex-reader/` 6,372 units, 5,458 pass;
+baseline 54,488 units: 0 regressions, 822 new passes. Crate tests: 28
+pass, 2 ignored. Whole test binary under `limit-run 1500 300`: peak
+memory 384 to 765 MB over 5 runs. `licence-scan`: no hit.
+
+Review state: Round 1 of the LaTeX reader (session 5, on `main`
+`890ef9f`): the Opus reviewer requested changes with 4 high and 5 medium
+findings, the Codex reviewer with 21 high and 8 medium findings. About
+half is corrected on `main` since `c46be2e`. This block corrects the
+findings that the patch of the stopped unit held (the report names
+them). Each finding that is still open is a row I-LTXR-16 to I-LTXR-49
+of `docs/ISSUES.md`; the worker continues with them. The verification by
+both reviewers is due when the open rows are corrected.
+
+Open: I-LTXR-50 (high; matrix `eofarg` 0/60); I-LTXR-44, 36, 42
+(medium); low rests of I-LTXR-35, 37, 43, 46; I-LTXR-52 (low, new);
+I-LTXR-03 (move the language table to `randoc_core::shared`).
+
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.

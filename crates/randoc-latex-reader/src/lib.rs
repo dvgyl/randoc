@@ -8,6 +8,7 @@
 
 mod inlines;
 mod parse;
+mod scope;
 #[cfg(test)]
 mod stress;
 mod tokens;
@@ -313,6 +314,149 @@ mod tests {
             tree.blocks[1],
             Block::Para(vec![Inline::Str("after".into())])
         );
+    }
+
+    fn para(text: &str) -> Vec<Block> {
+        vec![Block::Para(vec![Inline::Str(text.into())])]
+    }
+
+    /// Oracle results: a local definition ends with its TeX group (a brace
+    /// group, a command argument, an environment); a global one stays.
+    #[test]
+    fn a_definition_in_a_group_ends_with_the_group() {
+        let test = "\\iffoo a\\else b\\fi";
+        for (input, expected) in [
+            (format!("\\newif\\iffoo{{\\footrue}}{test}"), para("b")),
+            (format!("\\newif\\iffoo\\emph{{\\footrue}}{test}"), {
+                vec![Block::Para(vec![
+                    Inline::Emph(vec![]),
+                    Inline::Str("b".into()),
+                ])]
+            }),
+            (
+                format!("\\newif\\iffoo{{\\global\\footrue}}{test}"),
+                para("a"),
+            ),
+            (
+                format!("\\newif\\iffoo\\footrue{{\\foofalse}}{test}"),
+                para("a"),
+            ),
+            ("{\\gdef\\x{a}}\\x".into(), para("a")),
+            ("{\\def\\x{a}}\\x".into(), vec![]),
+            ("\\def\\x{b}{\\def\\x{a}}\\x".into(), para("b")),
+        ] {
+            assert_eq!(
+                convert(&input, "latex").expect("tree").blocks,
+                expected,
+                "{input}"
+            );
+        }
+    }
+
+    /// Oracle results (matrix `errors/emptylist-*`): a list without items
+    /// is a list only when nothing but what the list reads itself stands
+    /// before its end; else it is a `Div` with the class of the list.
+    #[test]
+    fn a_list_without_items_is_a_list_only_with_a_bare_body() {
+        for (input, list) in [
+            ("\\begin{itemize}\\end{itemize}", true),
+            ("\\begin{itemize}\n\\end{itemize}", false),
+            ("\\begin{itemize}[a]\\end{itemize}", false),
+            ("\\begin{description}\\end{description}", true),
+            ("\\begin{description} \\end{description}", false),
+            ("\\begin{enumerate}[a]\n\n\\end{enumerate}", true),
+            (
+                "\\begin{enumerate}\n\\setcounter{enumi}{3}\\end{enumerate}",
+                true,
+            ),
+            (
+                "\\begin{enumerate}\\setcounter{enumi}{3}\n\\end{enumerate}",
+                false,
+            ),
+            (
+                "\\begin{enumerate}\\setcounter{page}{3}\\end{enumerate}",
+                false,
+            ),
+            ("\\begin{enumerate}{}\\end{enumerate}", false),
+        ] {
+            let tree = convert(input, "latex").expect("tree");
+            assert_eq!(
+                !matches!(tree.blocks.as_slice(), [Block::Div(..)]),
+                list,
+                "{input:?}: {:?}",
+                tree.blocks
+            );
+        }
+        let tree = convert(
+            "\\begin{description}[a]\\item[b] x\\end{description}",
+            "latex",
+        )
+        .expect("tree");
+        assert_eq!(
+            tree.blocks,
+            vec![Block::Div(
+                Attr::new("", vec!["description".into()], vec![]),
+                para("x")
+            )]
+        );
+    }
+
+    /// Oracle results: the first command of an `enumerate` sets its start.
+    #[test]
+    fn a_counter_at_the_start_of_a_list_sets_its_start_number() {
+        for (counter, start) in [
+            ("\\setcounter{enumi}{4}", Some(5)),
+            ("\\setcounter {enumii} { -3 }", Some(-2)),
+            (
+                "\\setcounter{enumi}{99999999999999999999}",
+                Some(7_766_279_631_452_241_920),
+            ),
+            ("\\setcounter{enumx}{4}", None),
+            ("\\setcounter{enumi}{+4}", None),
+            ("x\\setcounter{enumi}{4}", None),
+        ] {
+            let input = format!("\\begin{{enumerate}}{counter}\\item y\\end{{enumerate}}");
+            let tree = convert(&input, "latex").expect("tree");
+            let Block::OrderedList(attributes, _) = &tree.blocks[0] else {
+                panic!("{:?}", tree.blocks);
+            };
+            assert_eq!(attributes.start, start.unwrap_or(1), "{counter}");
+        }
+    }
+
+    /// Oracle results: `\texttt` keeps dashes and quotation marks as text,
+    /// and gives code inside containers.
+    #[test]
+    fn code_text_keeps_its_punctuation_and_reaches_into_containers() {
+        let code = |text: &str| Inline::Code(Attr::default(), text.into());
+        let tree = convert("\\texttt{a--b ``q'' \\enquote{c}}", "latex").expect("tree");
+        assert_eq!(
+            tree.blocks,
+            vec![Block::Para(vec![code("a--b ``q'' \u{201c}c\u{201d}")])]
+        );
+        let tree = convert("\\texttt{\\textsc{x}}", "latex").expect("tree");
+        assert_eq!(
+            tree.blocks,
+            vec![Block::Para(vec![Inline::SmallCaps(vec![code("x")])])]
+        );
+    }
+
+    /// Oracle results: spaces and one line end can come before an option.
+    #[test]
+    fn an_option_after_spaces_is_an_option() {
+        for input in [
+            "\\footnote [0]{x}",
+            "\\footnote\n[0]{x}",
+            "\\footnote  [0] [1]{x}",
+            "\\footnote[0]\n[1][2]{x}",
+        ] {
+            let tree = convert(input, "latex").expect("tree");
+            assert_eq!(
+                tree.blocks,
+                vec![Block::Para(vec![Inline::Note(para("x"))])],
+                "{input:?}"
+            );
+        }
     }
 
     #[test]

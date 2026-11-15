@@ -4888,6 +4888,2982 @@ input = "\\def\\!{kx}\\def\\m{\\!}\\begin{zz}\\m\\end{zz}\n"
 from = "latex+raw_tex"
 
 [[case]]
+id = "counter-01-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{1}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-01-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{1}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-01-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{1}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-01-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{1}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-01-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{1}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-01-06"
+input = "\\begin{itemize}\\setcounter{enumi}{1}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-02-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{0}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-02-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{0}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-02-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{0}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-02-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{0}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-02-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{0}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-02-06"
+input = "\\begin{itemize}\\setcounter{enumi}{0}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-03-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{-3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-03-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{-3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-03-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{-3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-03-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{-3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-03-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{-3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-03-06"
+input = "\\begin{itemize}\\setcounter{enumi}{-3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-04-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{a}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-04-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{a}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-04-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{a}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-04-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{a}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-04-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{a}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-04-06"
+input = "\\begin{itemize}\\setcounter{enumi}{a}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-05-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{ 2 }\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-05-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{ 2 }\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-05-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{ 2 }\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-05-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{ 2 }\\end{enumerate}\n"
+
+[[case]]
+id = "counter-05-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{ 2 }\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-05-06"
+input = "\\begin{itemize}\\setcounter{enumi}{ 2 }\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-06-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter {enumi} {2}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-06-02"
+input = "\\begin{enumerate}[(i)]\\setcounter {enumi} {2}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-06-03"
+input = "\\begin{enumerate}[a]\\setcounter {enumi} {2}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-06-04"
+input = "\\begin{enumerate}\\setcounter {enumi} {2}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-06-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter {enumi} {2}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-06-06"
+input = "\\begin{itemize}\\setcounter {enumi} {2}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-07-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumii}{2}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-07-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumii}{2}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-07-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumii}{2}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-07-04"
+input = "\\begin{enumerate}\\setcounter{enumii}{2}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-07-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumii}{2}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-07-06"
+input = "\\begin{itemize}\\setcounter{enumii}{2}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-08-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumv}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-08-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumv}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-08-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumv}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-08-04"
+input = "\\begin{enumerate}\\setcounter{enumv}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-08-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumv}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-08-06"
+input = "\\begin{itemize}\\setcounter{enumv}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-09-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enum}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-09-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enum}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-09-03"
+input = "\\begin{enumerate}[a]\\setcounter{enum}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-09-04"
+input = "\\begin{enumerate}\\setcounter{enum}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-09-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enum}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-09-06"
+input = "\\begin{itemize}\\setcounter{enum}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-10-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumx}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-10-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumx}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-10-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumx}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-10-04"
+input = "\\begin{enumerate}\\setcounter{enumx}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-10-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumx}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-10-06"
+input = "\\begin{itemize}\\setcounter{enumx}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-11-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumI}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-11-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumI}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-11-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumI}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-11-04"
+input = "\\begin{enumerate}\\setcounter{enumI}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-11-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumI}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-11-06"
+input = "\\begin{itemize}\\setcounter{enumI}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-12-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi }{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-12-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi }{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-12-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi }{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-12-04"
+input = "\\begin{enumerate}\\setcounter{enumi }{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-12-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi }{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-12-06"
+input = "\\begin{itemize}\\setcounter{enumi }{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-13-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{page}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-13-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{page}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-13-03"
+input = "\\begin{enumerate}[a]\\setcounter{page}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-13-04"
+input = "\\begin{enumerate}\\setcounter{page}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-13-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{page}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-13-06"
+input = "\\begin{itemize}\\setcounter{page}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-14-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{+3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-14-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{+3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-14-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{+3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-14-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{+3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-14-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{+3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-14-06"
+input = "\\begin{itemize}\\setcounter{enumi}{+3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-15-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{1+1}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-15-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{1+1}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-15-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{1+1}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-15-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{1+1}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-15-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{1+1}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-15-06"
+input = "\\begin{itemize}\\setcounter{enumi}{1+1}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-16-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-16-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-16-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-16-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-16-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-16-06"
+input = "\\begin{itemize}\\setcounter{enumi}{}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-17-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}3\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-17-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}3\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-17-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}3\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-17-04"
+input = "\\begin{enumerate}\\setcounter{enumi}3\\end{enumerate}\n"
+
+[[case]]
+id = "counter-17-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}3\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-17-06"
+input = "\\begin{itemize}\\setcounter{enumi}3\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-18-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{007}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-18-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{007}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-18-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{007}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-18-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{007}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-18-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{007}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-18-06"
+input = "\\begin{itemize}\\setcounter{enumi}{007}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-19-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{99999999999999999999}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-19-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{99999999999999999999}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-19-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{99999999999999999999}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-19-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{99999999999999999999}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-19-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{99999999999999999999}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-19-06"
+input = "\\begin{itemize}\\setcounter{enumi}{99999999999999999999}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-20-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{1}\\setcounter{enumi}{5}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-20-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{1}\\setcounter{enumi}{5}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-20-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{1}\\setcounter{enumi}{5}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-20-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{1}\\setcounter{enumi}{5}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-20-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{1}\\setcounter{enumi}{5}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-20-06"
+input = "\\begin{itemize}\\setcounter{enumi}{1}\\setcounter{enumi}{5}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-21-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{a}\\setcounter{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-21-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{a}\\setcounter{enumi}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-21-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{a}\\setcounter{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-21-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{a}\\setcounter{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-21-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{a}\\setcounter{enumi}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-21-06"
+input = "\\begin{itemize}\\setcounter{enumi}{a}\\setcounter{enumi}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-22-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{page}{1}\\setcounter{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-22-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{page}{1}\\setcounter{enumi}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-22-03"
+input = "\\begin{enumerate}[a]\\setcounter{page}{1}\\setcounter{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-22-04"
+input = "\\begin{enumerate}\\setcounter{page}{1}\\setcounter{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-22-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{page}{1}\\setcounter{enumi}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-22-06"
+input = "\\begin{itemize}\\setcounter{page}{1}\\setcounter{enumi}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-23-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{3}x\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-23-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{3}x\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-23-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{3}x\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-23-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{3}x\\end{enumerate}\n"
+
+[[case]]
+id = "counter-23-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{3}x\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-23-06"
+input = "\\begin{itemize}\\setcounter{enumi}{3}x\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-24-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}x\\setcounter{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-24-02"
+input = "\\begin{enumerate}[(i)]x\\setcounter{enumi}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-24-03"
+input = "\\begin{enumerate}[a]x\\setcounter{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-24-04"
+input = "\\begin{enumerate}x\\setcounter{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-24-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}x\\setcounter{enumi}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-24-06"
+input = "\\begin{itemize}x\\setcounter{enumi}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-25-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}{\\setcounter{enumi}{3}}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-25-02"
+input = "\\begin{enumerate}[(i)]{\\setcounter{enumi}{3}}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-25-03"
+input = "\\begin{enumerate}[a]{\\setcounter{enumi}{3}}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-25-04"
+input = "\\begin{enumerate}{\\setcounter{enumi}{3}}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-25-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}{\\setcounter{enumi}{3}}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-25-06"
+input = "\\begin{itemize}{\\setcounter{enumi}{3}}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-26-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}%c\n\\setcounter{enumi}{3}\n\n\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-26-02"
+input = "\\begin{enumerate}[(i)]%c\n\\setcounter{enumi}{3}\n\n\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-26-03"
+input = "\\begin{enumerate}[a]%c\n\\setcounter{enumi}{3}\n\n\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-26-04"
+input = "\\begin{enumerate}%c\n\\setcounter{enumi}{3}\n\n\\end{enumerate}\n"
+
+[[case]]
+id = "counter-26-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}%c\n\\setcounter{enumi}{3}\n\n\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-26-06"
+input = "\\begin{itemize}%c\n\\setcounter{enumi}{3}\n\n\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-27-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\addtocounter{enumi}{2}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-27-02"
+input = "\\begin{enumerate}[(i)]\\addtocounter{enumi}{2}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-27-03"
+input = "\\begin{enumerate}[a]\\addtocounter{enumi}{2}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-27-04"
+input = "\\begin{enumerate}\\addtocounter{enumi}{2}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-27-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\addtocounter{enumi}{2}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-27-06"
+input = "\\begin{itemize}\\addtocounter{enumi}{2}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-28-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter*{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-28-02"
+input = "\\begin{enumerate}[(i)]\\setcounter*{enumi}{3}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-28-03"
+input = "\\begin{enumerate}[a]\\setcounter*{enumi}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-28-04"
+input = "\\begin{enumerate}\\setcounter*{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-28-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter*{enumi}{3}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-28-06"
+input = "\\begin{itemize}\\setcounter*{enumi}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-29-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\s\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-29-02"
+input = "\\begin{enumerate}[(i)]\\s\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-29-03"
+input = "\\begin{enumerate}[a]\\s\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-29-04"
+input = "\\begin{enumerate}\\s\\end{enumerate}\n"
+
+[[case]]
+id = "counter-29-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\s\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-29-06"
+input = "\\begin{itemize}\\s\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-30-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\setcounter{enumi}{\\x}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-30-02"
+input = "\\begin{enumerate}[(i)]\\setcounter{enumi}{\\x}\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-30-03"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{\\x}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-30-04"
+input = "\\begin{enumerate}\\setcounter{enumi}{\\x}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-30-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\setcounter{enumi}{\\x}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-30-06"
+input = "\\begin{itemize}\\setcounter{enumi}{\\x}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "counter-31-01"
+input = "\\def\\s{\\setcounter{enumi}{4}}\\def\\x{6}\\begin{enumerate}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-31-02"
+input = "\\begin{enumerate}[(i)]\\item y\\item z\\end{enumerate}\n"
+
+[[case]]
+id = "counter-31-03"
+input = "\\begin{enumerate}[a]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "counter-31-04"
+input = "\\begin{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-31-05"
+input = "\\begin{enumerate}\\item a\\begin{enumerate}\\item x\\end{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "counter-31-06"
+input = "\\begin{itemize}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "label-01-01"
+input = "\\begin{enumerate}[a]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-01-02"
+input = "\\begin{enumerate} [a]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-02-01"
+input = "\\begin{enumerate}[a.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-02-02"
+input = "\\begin{enumerate} [a.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-03-01"
+input = "\\begin{enumerate}[A]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-03-02"
+input = "\\begin{enumerate} [A]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-04-01"
+input = "\\begin{enumerate}[i]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-04-02"
+input = "\\begin{enumerate} [i]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-05-01"
+input = "\\begin{enumerate}[I]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-05-02"
+input = "\\begin{enumerate} [I]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-06-01"
+input = "\\begin{enumerate}[1]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-06-02"
+input = "\\begin{enumerate} [1]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-07-01"
+input = "\\begin{enumerate}[(a)]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-07-02"
+input = "\\begin{enumerate} [(a)]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-08-01"
+input = "\\begin{enumerate}[a)]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-08-02"
+input = "\\begin{enumerate} [a)]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-09-01"
+input = "\\begin{enumerate}[(1)]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-09-02"
+input = "\\begin{enumerate} [(1)]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-10-01"
+input = "\\begin{enumerate}[i.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-10-02"
+input = "\\begin{enumerate} [i.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-11-01"
+input = "\\begin{enumerate}[1.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-11-02"
+input = "\\begin{enumerate} [1.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-12-01"
+input = "\\begin{enumerate}[x]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-12-02"
+input = "\\begin{enumerate} [x]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-13-01"
+input = "\\begin{enumerate}[(i]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-13-02"
+input = "\\begin{enumerate} [(i]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-14-01"
+input = "\\begin{enumerate}[a:]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-14-02"
+input = "\\begin{enumerate} [a:]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-15-01"
+input = "\\begin{enumerate}[ a. ]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-15-02"
+input = "\\begin{enumerate} [ a. ]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-16-01"
+input = "\\begin{enumerate}[Step 1.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-16-02"
+input = "\\begin{enumerate} [Step 1.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-17-01"
+input = "\\begin{enumerate}[\\alph*.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "label-17-02"
+input = "\\begin{enumerate} [\\alph*.]\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "scope-01-01"
+input = "\\newif\\iffoo{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-01-02"
+input = "\\newif\\iffoo{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-01-03"
+input = "\\newif\\iffoo\\texttt{{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-02-01"
+input = "\\newif\\iffoo\\footrue{\\foofalse}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-02-02"
+input = "\\newif\\iffoo\\footrue{\\foofalse}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-02-03"
+input = "\\newif\\iffoo\\texttt{\\footrue{\\foofalse}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-03-01"
+input = "\\newif\\iffoo{\\footrue\\iffoo a\\else b\\fi}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-03-02"
+input = "\\newif\\iffoo{\\footrue\\iffoo a\\else b\\fi}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-03-03"
+input = "\\newif\\iffoo\\texttt{{\\footrue\\iffoo a\\else b\\fi}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-04-01"
+input = "\\newif\\iffoo{{\\footrue}}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-04-02"
+input = "\\newif\\iffoo{{\\footrue}}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-04-03"
+input = "\\newif\\iffoo\\texttt{{{\\footrue}}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-05-01"
+input = "\\newif\\iffoo{\\global\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-05-02"
+input = "\\newif\\iffoo{\\global\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-05-03"
+input = "\\newif\\iffoo\\texttt{{\\global\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-06-01"
+input = "\\newif\\iffoo\\begin{quote}\\footrue\\end{quote}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-06-02"
+input = "\\newif\\iffoo\\begin{quote}\\footrue\\end{quote}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-06-03"
+input = "\\newif\\iffoo\\texttt{\\begin{quote}\\footrue\\end{quote}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-07-01"
+input = "\\newif\\iffoo\\emph{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-07-02"
+input = "\\newif\\iffoo\\emph{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-07-03"
+input = "\\newif\\iffoo\\texttt{\\emph{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-08-01"
+input = "\\newif\\iffoo\\footnote{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-08-02"
+input = "\\newif\\iffoo\\footnote{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-08-03"
+input = "\\newif\\iffoo\\texttt{\\footnote{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-09-01"
+input = "\\newif\\iffoo\\begin{itemize}\\item\\footrue\\end{itemize}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-09-02"
+input = "\\newif\\iffoo\\begin{itemize}\\item\\footrue\\end{itemize}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-09-03"
+input = "\\newif\\iffoo\\texttt{\\begin{itemize}\\item\\footrue\\end{itemize}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-10-01"
+input = "\\newif\\iffoo\\begin{tabular}{l}\\footrue\\\\\\end{tabular}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-10-02"
+input = "\\newif\\iffoo\\begin{tabular}{l}\\footrue\\\\\\end{tabular}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-10-03"
+input = "\\newif\\iffoo\\texttt{\\begin{tabular}{l}\\footrue\\\\\\end{tabular}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-11-01"
+input = "\\newif\\iffoo\\def\\y{\\footrue}{\\y}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-11-02"
+input = "\\newif\\iffoo\\def\\y{\\footrue}{\\y}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-11-03"
+input = "\\newif\\iffoo\\texttt{\\def\\y{\\footrue}{\\y}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-12-01"
+input = "\\newif\\iffoo\\newcommand{\\y}[1]{#1}\\y{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-12-02"
+input = "\\newif\\iffoo\\newcommand{\\y}[1]{#1}\\y{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-12-03"
+input = "\\newif\\iffoo\\texttt{\\newcommand{\\y}[1]{#1}\\y{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-13-01"
+input = "\\newif\\iffoo\\textbf{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-13-02"
+input = "\\newif\\iffoo\\textbf{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-13-03"
+input = "\\newif\\iffoo\\texttt{\\textbf{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-14-01"
+input = "\\newif\\iffoo\\section{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-14-02"
+input = "\\newif\\iffoo\\section{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-14-03"
+input = "\\newif\\iffoo\\texttt{\\section{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-15-01"
+input = "\\newif\\iffoo\\x{\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-15-02"
+input = "\\newif\\iffoo\\x{\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-15-03"
+input = "\\newif\\iffoo\\texttt{\\x{\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-16-01"
+input = "\\newif\\iffoo{\\newif\\iffoo}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-16-02"
+input = "\\newif\\iffoo{\\newif\\iffoo}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-16-03"
+input = "\\newif\\iffoo\\texttt{{\\newif\\iffoo}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-17-01"
+input = "\\newif\\iffoo{\\newif\\iffoo\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-17-02"
+input = "\\newif\\iffoo{\\newif\\iffoo\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-17-03"
+input = "\\newif\\iffoo\\texttt{{\\newif\\iffoo\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-18-01"
+input = "\\newif\\iffoo\n\n{\\footrue}\n\n\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-18-02"
+input = "\\newif\\iffoo\n\n{\\footrue}\n\n{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-18-03"
+input = "\\newif\\iffoo\\texttt{\n\n{\\footrue}\n\n\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-19-01"
+input = "\\newif\\iffoo{\\footrue}{\\foofalse\\global\\footrue}\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-19-02"
+input = "\\newif\\iffoo{\\footrue}{\\foofalse\\global\\footrue}{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-19-03"
+input = "\\newif\\iffoo\\texttt{{\\footrue}{\\foofalse\\global\\footrue}\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-20-01"
+input = "\\newif\\iffoo\\begingroup\\footrue\\endgroup\\iffoo a\\else b\\fi\n"
+
+[[case]]
+id = "scope-20-02"
+input = "\\newif\\iffoo\\begingroup\\footrue\\endgroup{\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "scope-20-03"
+input = "\\newif\\iffoo\\texttt{\\begingroup\\footrue\\endgroup\\iffoo a\\else b\\fi}\n"
+
+[[case]]
+id = "macroscope-01-01"
+input = "\\def\\x{b}{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-01-02"
+input = "{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-02-01"
+input = "\\def\\x{b}{\\newcommand{\\x}{a}}\\x\n"
+
+[[case]]
+id = "macroscope-02-02"
+input = "{\\newcommand{\\x}{a}}\\x\n"
+
+[[case]]
+id = "macroscope-03-01"
+input = "\\def\\x{b}\\emph{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-03-02"
+input = "\\emph{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-04-01"
+input = "\\def\\x{b}\\begin{quote}\\def\\x{a}\\end{quote}\\x\n"
+
+[[case]]
+id = "macroscope-04-02"
+input = "\\begin{quote}\\def\\x{a}\\end{quote}\\x\n"
+
+[[case]]
+id = "macroscope-05-01"
+input = "\\def\\x{b}{\\renewcommand{\\x}{a}}\\x\n"
+
+[[case]]
+id = "macroscope-05-02"
+input = "{\\renewcommand{\\x}{a}}\\x\n"
+
+[[case]]
+id = "macroscope-06-01"
+input = "\\def\\x{b}{\\gdef\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-06-02"
+input = "{\\gdef\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-07-01"
+input = "\\def\\x{b}{\\global\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-07-02"
+input = "{\\global\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-08-01"
+input = "\\def\\x{b}{\\xdef\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-08-02"
+input = "{\\xdef\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-09-01"
+input = "\\def\\x{b}{\\let\\x\\relax}\\x\n"
+
+[[case]]
+id = "macroscope-09-02"
+input = "{\\let\\x\\relax}\\x\n"
+
+[[case]]
+id = "macroscope-10-01"
+input = "\\def\\x{b}{\\def\\x{a}\\x}\\x\n"
+
+[[case]]
+id = "macroscope-10-02"
+input = "{\\def\\x{a}\\x}\\x\n"
+
+[[case]]
+id = "macroscope-11-01"
+input = "\\def\\x{b}{\\newenvironment{e}{(}{)}}\\begin{e}e\\end{e}\\x\n"
+
+[[case]]
+id = "macroscope-11-02"
+input = "{\\newenvironment{e}{(}{)}}\\begin{e}e\\end{e}\\x\n"
+
+[[case]]
+id = "macroscope-12-01"
+input = "\\def\\x{b}{\\def\\x{a}{\\gdef\\x{c}}\\x}\\x\n"
+
+[[case]]
+id = "macroscope-12-02"
+input = "{\\def\\x{a}{\\gdef\\x{c}}\\x}\\x\n"
+
+[[case]]
+id = "macroscope-13-01"
+input = "\\def\\x{b}\\begin{itemize}\\item\\def\\x{a}\\end{itemize}\\x\n"
+
+[[case]]
+id = "macroscope-13-02"
+input = "\\begin{itemize}\\item\\def\\x{a}\\end{itemize}\\x\n"
+
+[[case]]
+id = "macroscope-14-01"
+input = "\\def\\x{b}\\section{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-14-02"
+input = "\\section{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-15-01"
+input = "\\def\\x{b}\\footnote{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "macroscope-15-02"
+input = "\\footnote{\\def\\x{a}}\\x\n"
+
+[[case]]
+id = "optspace-01-01"
+input = "\\footnote[0]{x}\n"
+
+[[case]]
+id = "optspace-01-02"
+input = "\\cite[p][q]{k}\n"
+
+[[case]]
+id = "optspace-01-03"
+input = "\\cite[p]{k}\n"
+
+[[case]]
+id = "optspace-01-04"
+input = "\\citep[p]{k}\n"
+
+[[case]]
+id = "optspace-01-05"
+input = "\\textcite[p][q]{k}\n"
+
+[[case]]
+id = "optspace-01-06"
+input = "\\includegraphics[width=1cm]{x}\n"
+
+[[case]]
+id = "optspace-01-07"
+input = "\\section[s]{x}\n"
+
+[[case]]
+id = "optspace-01-08"
+input = "\\section*[s]{x}\n"
+
+[[case]]
+id = "optspace-01-09"
+input = "\\begin{figure}[h]\\includegraphics{a}\\caption[s]{c}\\end{figure}\n"
+
+[[case]]
+id = "optspace-01-10"
+input = "\\begin{itemize}\\item[a] x\\end{itemize}\n"
+
+[[case]]
+id = "optspace-01-11"
+input = "\\begin{description}\\item[a] x\\end{description}\n"
+
+[[case]]
+id = "optspace-01-12"
+input = "a\\\\[2pt] b\n"
+
+[[case]]
+id = "optspace-01-13"
+input = "\\newcommand{\\x}[1][d]{(#1)}\\x[o]\n"
+
+[[case]]
+id = "optspace-01-14"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\n"
+
+[[case]]
+id = "optspace-01-15"
+input = "\\begin{enumerate}[a.]\\item x\\end{enumerate}\n"
+
+[[case]]
+id = "optspace-01-16"
+input = "\\begin{minipage}[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optspace-01-17"
+input = "\\footnote[0]{x}\n"
+
+[[case]]
+id = "optspace-01-18"
+input = "\\autocite[p][q]{k}\n"
+
+[[case]]
+id = "optspace-01-19"
+input = "\\cites[a]{k}[b]{l}\n"
+
+[[case]]
+id = "optspace-01-20"
+input = "\\begin{lstlisting}[language=C]\nx\n\\end{lstlisting}\n"
+
+[[case]]
+id = "optspace-01-21"
+input = "\\caption[s]{x}\n"
+
+[[case]]
+id = "optspace-01-22"
+input = "\\parencite[p]{k}\n"
+
+[[case]]
+id = "optspace-01-23"
+input = "\\href{u}{t}\n"
+
+[[case]]
+id = "optspace-01-24"
+input = "\\begin{tabular}{l}a\\end{tabular}\n"
+
+[[case]]
+id = "optspace-01-25"
+input = "\\newenvironment{e}[1][d]{(#1)}{.}\\begin{e}[o]x\\end{e}\n"
+
+[[case]]
+id = "optspace-01-26"
+input = "\\cite{k}\n"
+
+[[case]]
+id = "optspace-01-27"
+input = "\\textbf[x]{y}\n"
+
+[[case]]
+id = "optspace-01-28"
+input = "\\footnote%c\n[0]{x}\n"
+
+[[case]]
+id = "optspace-02-01"
+input = "\\footnote [0]{x}\n"
+
+[[case]]
+id = "optspace-02-02"
+input = "\\cite [p] [q] {k}\n"
+
+[[case]]
+id = "optspace-02-03"
+input = "\\cite [p] {k}\n"
+
+[[case]]
+id = "optspace-02-04"
+input = "\\citep [p] {k}\n"
+
+[[case]]
+id = "optspace-02-05"
+input = "\\textcite [p] [q] {k}\n"
+
+[[case]]
+id = "optspace-02-06"
+input = "\\includegraphics [width=1cm] {x}\n"
+
+[[case]]
+id = "optspace-02-07"
+input = "\\section [s] {x}\n"
+
+[[case]]
+id = "optspace-02-08"
+input = "\\section* [s] {x}\n"
+
+[[case]]
+id = "optspace-02-09"
+input = "\\begin{figure} [h]\\includegraphics{a}\\caption [s] {c}\\end{figure}\n"
+
+[[case]]
+id = "optspace-02-10"
+input = "\\begin{itemize}\\item [a] x\\end{itemize}\n"
+
+[[case]]
+id = "optspace-02-11"
+input = "\\begin{description}\\item [a] x\\end{description}\n"
+
+[[case]]
+id = "optspace-02-12"
+input = "a\\\\ [2pt] b\n"
+
+[[case]]
+id = "optspace-02-13"
+input = "\\newcommand{\\x}[1][d]{(#1)}\\x [o]\n"
+
+[[case]]
+id = "optspace-02-14"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x [o] {y}\n"
+
+[[case]]
+id = "optspace-02-15"
+input = "\\begin{enumerate} [a.]\\item x\\end{enumerate}\n"
+
+[[case]]
+id = "optspace-02-16"
+input = "\\begin{minipage} [t] {3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optspace-02-17"
+input = "\\footnote [0] {x}\n"
+
+[[case]]
+id = "optspace-02-18"
+input = "\\autocite [p] [q] {k}\n"
+
+[[case]]
+id = "optspace-02-19"
+input = "\\cites [a] {k} [b] {l}\n"
+
+[[case]]
+id = "optspace-02-20"
+input = "\\begin{lstlisting} [language=C]\nx\n\\end{lstlisting}\n"
+
+[[case]]
+id = "optspace-02-21"
+input = "\\caption [s] {x}\n"
+
+[[case]]
+id = "optspace-02-22"
+input = "\\parencite [p] {k}\n"
+
+[[case]]
+id = "optspace-02-23"
+input = "\\href {u} {t}\n"
+
+[[case]]
+id = "optspace-02-24"
+input = "\\begin{tabular} {l}a\\end{tabular}\n"
+
+[[case]]
+id = "optspace-02-25"
+input = "\\newenvironment{e}[1][d]{(#1)}{.}\\begin{e} [o]x\\end{e}\n"
+
+[[case]]
+id = "optspace-02-26"
+input = "\\cite {k}\n"
+
+[[case]]
+id = "optspace-02-27"
+input = "\\textbf [x]{y}\n"
+
+[[case]]
+id = "optspace-02-28"
+input = "\\footnote %c\n[0]{x}\n"
+
+[[case]]
+id = "optspace-03-01"
+input = "\\footnote  [0]{x}\n"
+
+[[case]]
+id = "optspace-03-02"
+input = "\\cite  [p]  [q]  {k}\n"
+
+[[case]]
+id = "optspace-03-03"
+input = "\\cite  [p]  {k}\n"
+
+[[case]]
+id = "optspace-03-04"
+input = "\\citep  [p]  {k}\n"
+
+[[case]]
+id = "optspace-03-05"
+input = "\\textcite  [p]  [q]  {k}\n"
+
+[[case]]
+id = "optspace-03-06"
+input = "\\includegraphics  [width=1cm]  {x}\n"
+
+[[case]]
+id = "optspace-03-07"
+input = "\\section  [s]  {x}\n"
+
+[[case]]
+id = "optspace-03-08"
+input = "\\section*  [s]  {x}\n"
+
+[[case]]
+id = "optspace-03-09"
+input = "\\begin{figure}  [h]\\includegraphics{a}\\caption  [s]  {c}\\end{figure}\n"
+
+[[case]]
+id = "optspace-03-10"
+input = "\\begin{itemize}\\item  [a] x\\end{itemize}\n"
+
+[[case]]
+id = "optspace-03-11"
+input = "\\begin{description}\\item  [a] x\\end{description}\n"
+
+[[case]]
+id = "optspace-03-12"
+input = "a\\\\  [2pt] b\n"
+
+[[case]]
+id = "optspace-03-13"
+input = "\\newcommand{\\x}[1][d]{(#1)}\\x  [o]\n"
+
+[[case]]
+id = "optspace-03-14"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x  [o]  {y}\n"
+
+[[case]]
+id = "optspace-03-15"
+input = "\\begin{enumerate}  [a.]\\item x\\end{enumerate}\n"
+
+[[case]]
+id = "optspace-03-16"
+input = "\\begin{minipage}  [t]  {3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optspace-03-17"
+input = "\\footnote  [0]  {x}\n"
+
+[[case]]
+id = "optspace-03-18"
+input = "\\autocite  [p]  [q]  {k}\n"
+
+[[case]]
+id = "optspace-03-19"
+input = "\\cites  [a]  {k}  [b]  {l}\n"
+
+[[case]]
+id = "optspace-03-20"
+input = "\\begin{lstlisting}  [language=C]\nx\n\\end{lstlisting}\n"
+
+[[case]]
+id = "optspace-03-21"
+input = "\\caption  [s]  {x}\n"
+
+[[case]]
+id = "optspace-03-22"
+input = "\\parencite  [p]  {k}\n"
+
+[[case]]
+id = "optspace-03-23"
+input = "\\href  {u}  {t}\n"
+
+[[case]]
+id = "optspace-03-24"
+input = "\\begin{tabular}  {l}a\\end{tabular}\n"
+
+[[case]]
+id = "optspace-03-25"
+input = "\\newenvironment{e}[1][d]{(#1)}{.}\\begin{e}  [o]x\\end{e}\n"
+
+[[case]]
+id = "optspace-03-26"
+input = "\\cite  {k}\n"
+
+[[case]]
+id = "optspace-03-27"
+input = "\\textbf  [x]{y}\n"
+
+[[case]]
+id = "optspace-03-28"
+input = "\\footnote  %c\n[0]{x}\n"
+
+[[case]]
+id = "optspace-04-01"
+input = "\\footnote\n[0]{x}\n"
+
+[[case]]
+id = "optspace-04-02"
+input = "\\cite\n[p]\n[q]\n{k}\n"
+
+[[case]]
+id = "optspace-04-03"
+input = "\\cite\n[p]\n{k}\n"
+
+[[case]]
+id = "optspace-04-04"
+input = "\\citep\n[p]\n{k}\n"
+
+[[case]]
+id = "optspace-04-05"
+input = "\\textcite\n[p]\n[q]\n{k}\n"
+
+[[case]]
+id = "optspace-04-06"
+input = "\\includegraphics\n[width=1cm]\n{x}\n"
+
+[[case]]
+id = "optspace-04-07"
+input = "\\section\n[s]\n{x}\n"
+
+[[case]]
+id = "optspace-04-08"
+input = "\\section*\n[s]\n{x}\n"
+
+[[case]]
+id = "optspace-04-09"
+input = "\\begin{figure}\n[h]\\includegraphics{a}\\caption\n[s]\n{c}\\end{figure}\n"
+
+[[case]]
+id = "optspace-04-10"
+input = "\\begin{itemize}\\item\n[a] x\\end{itemize}\n"
+
+[[case]]
+id = "optspace-04-11"
+input = "\\begin{description}\\item\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optspace-04-12"
+input = "a\\\\\n[2pt] b\n"
+
+[[case]]
+id = "optspace-04-13"
+input = "\\newcommand{\\x}[1][d]{(#1)}\\x\n[o]\n"
+
+[[case]]
+id = "optspace-04-14"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n[o]\n{y}\n"
+
+[[case]]
+id = "optspace-04-15"
+input = "\\begin{enumerate}\n[a.]\\item x\\end{enumerate}\n"
+
+[[case]]
+id = "optspace-04-16"
+input = "\\begin{minipage}\n[t]\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optspace-04-17"
+input = "\\footnote\n[0]\n{x}\n"
+
+[[case]]
+id = "optspace-04-18"
+input = "\\autocite\n[p]\n[q]\n{k}\n"
+
+[[case]]
+id = "optspace-04-19"
+input = "\\cites\n[a]\n{k}\n[b]\n{l}\n"
+
+[[case]]
+id = "optspace-04-20"
+input = "\\begin{lstlisting}\n[language=C]\nx\n\\end{lstlisting}\n"
+
+[[case]]
+id = "optspace-04-21"
+input = "\\caption\n[s]\n{x}\n"
+
+[[case]]
+id = "optspace-04-22"
+input = "\\parencite\n[p]\n{k}\n"
+
+[[case]]
+id = "optspace-04-23"
+input = "\\href\n{u}\n{t}\n"
+
+[[case]]
+id = "optspace-04-24"
+input = "\\begin{tabular}\n{l}a\\end{tabular}\n"
+
+[[case]]
+id = "optspace-04-25"
+input = "\\newenvironment{e}[1][d]{(#1)}{.}\\begin{e}\n[o]x\\end{e}\n"
+
+[[case]]
+id = "optspace-04-26"
+input = "\\cite\n{k}\n"
+
+[[case]]
+id = "optspace-04-27"
+input = "\\textbf\n[x]{y}\n"
+
+[[case]]
+id = "optspace-04-28"
+input = "\\footnote\n%c\n[0]{x}\n"
+
+[[case]]
+id = "optspace-05-01"
+input = "\\footnote \n [0]{x}\n"
+
+[[case]]
+id = "optspace-05-02"
+input = "\\cite \n [p] \n [q] \n {k}\n"
+
+[[case]]
+id = "optspace-05-03"
+input = "\\cite \n [p] \n {k}\n"
+
+[[case]]
+id = "optspace-05-04"
+input = "\\citep \n [p] \n {k}\n"
+
+[[case]]
+id = "optspace-05-05"
+input = "\\textcite \n [p] \n [q] \n {k}\n"
+
+[[case]]
+id = "optspace-05-06"
+input = "\\includegraphics \n [width=1cm] \n {x}\n"
+
+[[case]]
+id = "optspace-05-07"
+input = "\\section \n [s] \n {x}\n"
+
+[[case]]
+id = "optspace-05-08"
+input = "\\section* \n [s] \n {x}\n"
+
+[[case]]
+id = "optspace-05-09"
+input = "\\begin{figure} \n [h]\\includegraphics{a}\\caption \n [s] \n {c}\\end{figure}\n"
+
+[[case]]
+id = "optspace-05-10"
+input = "\\begin{itemize}\\item \n [a] x\\end{itemize}\n"
+
+[[case]]
+id = "optspace-05-11"
+input = "\\begin{description}\\item \n [a] x\\end{description}\n"
+
+[[case]]
+id = "optspace-05-12"
+input = "a\\\\ \n [2pt] b\n"
+
+[[case]]
+id = "optspace-05-13"
+input = "\\newcommand{\\x}[1][d]{(#1)}\\x \n [o]\n"
+
+[[case]]
+id = "optspace-05-14"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x \n [o] \n {y}\n"
+
+[[case]]
+id = "optspace-05-15"
+input = "\\begin{enumerate} \n [a.]\\item x\\end{enumerate}\n"
+
+[[case]]
+id = "optspace-05-16"
+input = "\\begin{minipage} \n [t] \n {3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optspace-05-17"
+input = "\\footnote \n [0] \n {x}\n"
+
+[[case]]
+id = "optspace-05-18"
+input = "\\autocite \n [p] \n [q] \n {k}\n"
+
+[[case]]
+id = "optspace-05-19"
+input = "\\cites \n [a] \n {k} \n [b] \n {l}\n"
+
+[[case]]
+id = "optspace-05-20"
+input = "\\begin{lstlisting} \n [language=C]\nx\n\\end{lstlisting}\n"
+
+[[case]]
+id = "optspace-05-21"
+input = "\\caption \n [s] \n {x}\n"
+
+[[case]]
+id = "optspace-05-22"
+input = "\\parencite \n [p] \n {k}\n"
+
+[[case]]
+id = "optspace-05-23"
+input = "\\href \n {u} \n {t}\n"
+
+[[case]]
+id = "optspace-05-24"
+input = "\\begin{tabular} \n {l}a\\end{tabular}\n"
+
+[[case]]
+id = "optspace-05-25"
+input = "\\newenvironment{e}[1][d]{(#1)}{.}\\begin{e} \n [o]x\\end{e}\n"
+
+[[case]]
+id = "optspace-05-26"
+input = "\\cite \n {k}\n"
+
+[[case]]
+id = "optspace-05-27"
+input = "\\textbf \n [x]{y}\n"
+
+[[case]]
+id = "optspace-05-28"
+input = "\\footnote \n %c\n[0]{x}\n"
+
+[[case]]
+id = "optspace-06-01"
+input = "\\footnote\n\n[0]{x}\n"
+
+[[case]]
+id = "optspace-06-02"
+input = "\\cite\n\n[p]\n\n[q]\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-03"
+input = "\\cite\n\n[p]\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-04"
+input = "\\citep\n\n[p]\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-05"
+input = "\\textcite\n\n[p]\n\n[q]\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-06"
+input = "\\includegraphics\n\n[width=1cm]\n\n{x}\n"
+
+[[case]]
+id = "optspace-06-07"
+input = "\\section\n\n[s]\n\n{x}\n"
+
+[[case]]
+id = "optspace-06-08"
+input = "\\section*\n\n[s]\n\n{x}\n"
+
+[[case]]
+id = "optspace-06-09"
+input = "\\begin{figure}\n\n[h]\\includegraphics{a}\\caption\n\n[s]\n\n{c}\\end{figure}\n"
+
+[[case]]
+id = "optspace-06-10"
+input = "\\begin{itemize}\\item\n\n[a] x\\end{itemize}\n"
+
+[[case]]
+id = "optspace-06-11"
+input = "\\begin{description}\\item\n\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optspace-06-12"
+input = "a\\\\\n\n[2pt] b\n"
+
+[[case]]
+id = "optspace-06-13"
+input = "\\newcommand{\\x}[1][d]{(#1)}\\x\n\n[o]\n"
+
+[[case]]
+id = "optspace-06-14"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n\n[o]\n\n{y}\n"
+
+[[case]]
+id = "optspace-06-15"
+input = "\\begin{enumerate}\n\n[a.]\\item x\\end{enumerate}\n"
+
+[[case]]
+id = "optspace-06-16"
+input = "\\begin{minipage}\n\n[t]\n\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optspace-06-17"
+input = "\\footnote\n\n[0]\n\n{x}\n"
+
+[[case]]
+id = "optspace-06-18"
+input = "\\autocite\n\n[p]\n\n[q]\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-19"
+input = "\\cites\n\n[a]\n\n{k}\n\n[b]\n\n{l}\n"
+
+[[case]]
+id = "optspace-06-20"
+input = "\\begin{lstlisting}\n\n[language=C]\nx\n\\end{lstlisting}\n"
+
+[[case]]
+id = "optspace-06-21"
+input = "\\caption\n\n[s]\n\n{x}\n"
+
+[[case]]
+id = "optspace-06-22"
+input = "\\parencite\n\n[p]\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-23"
+input = "\\href\n\n{u}\n\n{t}\n"
+
+[[case]]
+id = "optspace-06-24"
+input = "\\begin{tabular}\n\n{l}a\\end{tabular}\n"
+
+[[case]]
+id = "optspace-06-25"
+input = "\\newenvironment{e}[1][d]{(#1)}{.}\\begin{e}\n\n[o]x\\end{e}\n"
+
+[[case]]
+id = "optspace-06-26"
+input = "\\cite\n\n{k}\n"
+
+[[case]]
+id = "optspace-06-27"
+input = "\\textbf\n\n[x]{y}\n"
+
+[[case]]
+id = "optspace-06-28"
+input = "\\footnote\n\n%c\n[0]{x}\n"
+
+[[case]]
+id = "mathspace-01-01"
+input = "\\begin{math} x\\end{math}\n"
+
+[[case]]
+id = "mathspace-01-02"
+input = "\\begin{displaymath} x\\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-01-03"
+input = "\\begin{equation} x\\end{equation}\n"
+
+[[case]]
+id = "mathspace-01-04"
+input = "\\begin{align*} x\\end{align*}\n"
+
+[[case]]
+id = "mathspace-01-05"
+input = "a \\begin{math} x\\end{math} b\n"
+
+[[case]]
+id = "mathspace-02-01"
+input = "\\begin{math}x \\end{math}\n"
+
+[[case]]
+id = "mathspace-02-02"
+input = "\\begin{displaymath}x \\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-02-03"
+input = "\\begin{equation}x \\end{equation}\n"
+
+[[case]]
+id = "mathspace-02-04"
+input = "\\begin{align*}x \\end{align*}\n"
+
+[[case]]
+id = "mathspace-02-05"
+input = "a \\begin{math}x \\end{math} b\n"
+
+[[case]]
+id = "mathspace-03-01"
+input = "\\begin{math} x \\end{math}\n"
+
+[[case]]
+id = "mathspace-03-02"
+input = "\\begin{displaymath} x \\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-03-03"
+input = "\\begin{equation} x \\end{equation}\n"
+
+[[case]]
+id = "mathspace-03-04"
+input = "\\begin{align*} x \\end{align*}\n"
+
+[[case]]
+id = "mathspace-03-05"
+input = "a \\begin{math} x \\end{math} b\n"
+
+[[case]]
+id = "mathspace-04-01"
+input = "\\begin{math}\nx\n\\end{math}\n"
+
+[[case]]
+id = "mathspace-04-02"
+input = "\\begin{displaymath}\nx\n\\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-04-03"
+input = "\\begin{equation}\nx\n\\end{equation}\n"
+
+[[case]]
+id = "mathspace-04-04"
+input = "\\begin{align*}\nx\n\\end{align*}\n"
+
+[[case]]
+id = "mathspace-04-05"
+input = "a \\begin{math}\nx\n\\end{math} b\n"
+
+[[case]]
+id = "mathspace-05-01"
+input = "\\begin{math}  x  \\end{math}\n"
+
+[[case]]
+id = "mathspace-05-02"
+input = "\\begin{displaymath}  x  \\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-05-03"
+input = "\\begin{equation}  x  \\end{equation}\n"
+
+[[case]]
+id = "mathspace-05-04"
+input = "\\begin{align*}  x  \\end{align*}\n"
+
+[[case]]
+id = "mathspace-05-05"
+input = "a \\begin{math}  x  \\end{math} b\n"
+
+[[case]]
+id = "mathspace-06-01"
+input = "\\begin{math}\n x \n\\end{math}\n"
+
+[[case]]
+id = "mathspace-06-02"
+input = "\\begin{displaymath}\n x \n\\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-06-03"
+input = "\\begin{equation}\n x \n\\end{equation}\n"
+
+[[case]]
+id = "mathspace-06-04"
+input = "\\begin{align*}\n x \n\\end{align*}\n"
+
+[[case]]
+id = "mathspace-06-05"
+input = "a \\begin{math}\n x \n\\end{math} b\n"
+
+[[case]]
+id = "mathspace-07-01"
+input = "\\begin{math}%c\nx\\end{math}\n"
+
+[[case]]
+id = "mathspace-07-02"
+input = "\\begin{displaymath}%c\nx\\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-07-03"
+input = "\\begin{equation}%c\nx\\end{equation}\n"
+
+[[case]]
+id = "mathspace-07-04"
+input = "\\begin{align*}%c\nx\\end{align*}\n"
+
+[[case]]
+id = "mathspace-07-05"
+input = "a \\begin{math}%c\nx\\end{math} b\n"
+
+[[case]]
+id = "mathspace-08-01"
+input = "\\begin{math}x\n\n\\end{math}\n"
+
+[[case]]
+id = "mathspace-08-02"
+input = "\\begin{displaymath}x\n\n\\end{displaymath}\n"
+
+[[case]]
+id = "mathspace-08-03"
+input = "\\begin{equation}x\n\n\\end{equation}\n"
+
+[[case]]
+id = "mathspace-08-04"
+input = "\\begin{align*}x\n\n\\end{align*}\n"
+
+[[case]]
+id = "mathspace-08-05"
+input = "a \\begin{math}x\n\n\\end{math} b\n"
+
+[[case]]
+id = "code-01-01"
+input = "\\texttt{--}\n"
+
+[[case]]
+id = "code-01-02"
+input = "a \\texttt{--} b\n"
+
+[[case]]
+id = "code-01-03"
+input = "\\emph{\\texttt{--}}\n"
+
+[[case]]
+id = "code-02-01"
+input = "\\texttt{---}\n"
+
+[[case]]
+id = "code-02-02"
+input = "a \\texttt{---} b\n"
+
+[[case]]
+id = "code-02-03"
+input = "\\emph{\\texttt{---}}\n"
+
+[[case]]
+id = "code-03-01"
+input = "\\texttt{a--b c}\n"
+
+[[case]]
+id = "code-03-02"
+input = "a \\texttt{a--b c} b\n"
+
+[[case]]
+id = "code-03-03"
+input = "\\emph{\\texttt{a--b c}}\n"
+
+[[case]]
+id = "code-04-01"
+input = "\\texttt{``q''}\n"
+
+[[case]]
+id = "code-04-02"
+input = "a \\texttt{``q''} b\n"
+
+[[case]]
+id = "code-04-03"
+input = "\\emph{\\texttt{``q''}}\n"
+
+[[case]]
+id = "code-05-01"
+input = "\\texttt{`q'}\n"
+
+[[case]]
+id = "code-05-02"
+input = "a \\texttt{`q'} b\n"
+
+[[case]]
+id = "code-05-03"
+input = "\\emph{\\texttt{`q'}}\n"
+
+[[case]]
+id = "code-06-01"
+input = "\\texttt{a~b}\n"
+
+[[case]]
+id = "code-06-02"
+input = "a \\texttt{a~b} b\n"
+
+[[case]]
+id = "code-06-03"
+input = "\\emph{\\texttt{a~b}}\n"
+
+[[case]]
+id = "code-07-01"
+input = "\\texttt{\\url{x}}\n"
+
+[[case]]
+id = "code-07-02"
+input = "a \\texttt{\\url{x}} b\n"
+
+[[case]]
+id = "code-07-03"
+input = "\\emph{\\texttt{\\url{x}}}\n"
+
+[[case]]
+id = "code-08-01"
+input = "\\texttt{\\emph{a--b}}\n"
+
+[[case]]
+id = "code-08-02"
+input = "a \\texttt{\\emph{a--b}} b\n"
+
+[[case]]
+id = "code-08-03"
+input = "\\emph{\\texttt{\\emph{a--b}}}\n"
+
+[[case]]
+id = "code-09-01"
+input = "\\texttt{\\textsc{ab}}\n"
+
+[[case]]
+id = "code-09-02"
+input = "a \\texttt{\\textsc{ab}} b\n"
+
+[[case]]
+id = "code-09-03"
+input = "\\emph{\\texttt{\\textsc{ab}}}\n"
+
+[[case]]
+id = "code-10-01"
+input = "\\texttt{\\underline{ab}}\n"
+
+[[case]]
+id = "code-10-02"
+input = "a \\texttt{\\underline{ab}} b\n"
+
+[[case]]
+id = "code-10-03"
+input = "\\emph{\\texttt{\\underline{ab}}}\n"
+
+[[case]]
+id = "code-11-01"
+input = "\\texttt{\\textsuperscript{ab}}\n"
+
+[[case]]
+id = "code-11-02"
+input = "a \\texttt{\\textsuperscript{ab}} b\n"
+
+[[case]]
+id = "code-11-03"
+input = "\\emph{\\texttt{\\textsuperscript{ab}}}\n"
+
+[[case]]
+id = "code-12-01"
+input = "\\texttt{\\textsubscript{ab}}\n"
+
+[[case]]
+id = "code-12-02"
+input = "a \\texttt{\\textsubscript{ab}} b\n"
+
+[[case]]
+id = "code-12-03"
+input = "\\emph{\\texttt{\\textsubscript{ab}}}\n"
+
+[[case]]
+id = "code-13-01"
+input = "\\texttt{\\sout{ab}}\n"
+
+[[case]]
+id = "code-13-02"
+input = "a \\texttt{\\sout{ab}} b\n"
+
+[[case]]
+id = "code-13-03"
+input = "\\emph{\\texttt{\\sout{ab}}}\n"
+
+[[case]]
+id = "code-14-01"
+input = "\\texttt{a\\footnote{b--c}}\n"
+
+[[case]]
+id = "code-14-02"
+input = "a \\texttt{a\\footnote{b--c}} b\n"
+
+[[case]]
+id = "code-14-03"
+input = "\\emph{\\texttt{a\\footnote{b--c}}}\n"
+
+[[case]]
+id = "code-15-01"
+input = "\\texttt{\\cite{k}}\n"
+
+[[case]]
+id = "code-15-02"
+input = "a \\texttt{\\cite{k}} b\n"
+
+[[case]]
+id = "code-15-03"
+input = "\\emph{\\texttt{\\cite{k}}}\n"
+
+[[case]]
+id = "code-16-01"
+input = "\\texttt{\\enquote{ab}}\n"
+
+[[case]]
+id = "code-16-02"
+input = "a \\texttt{\\enquote{ab}} b\n"
+
+[[case]]
+id = "code-16-03"
+input = "\\emph{\\texttt{\\enquote{ab}}}\n"
+
+[[case]]
+id = "code-17-01"
+input = "\\texttt{\\href{u}{ab}}\n"
+
+[[case]]
+id = "code-17-02"
+input = "a \\texttt{\\href{u}{ab}} b\n"
+
+[[case]]
+id = "code-17-03"
+input = "\\emph{\\texttt{\\href{u}{ab}}}\n"
+
+[[case]]
+id = "code-18-01"
+input = "\\texttt{\\includegraphics{x}}\n"
+
+[[case]]
+id = "code-18-02"
+input = "a \\texttt{\\includegraphics{x}} b\n"
+
+[[case]]
+id = "code-18-03"
+input = "\\emph{\\texttt{\\includegraphics{x}}}\n"
+
+[[case]]
+id = "code-19-01"
+input = "\\texttt{$x$}\n"
+
+[[case]]
+id = "code-19-02"
+input = "a \\texttt{$x$} b\n"
+
+[[case]]
+id = "code-19-03"
+input = "\\emph{\\texttt{$x$}}\n"
+
+[[case]]
+id = "code-20-01"
+input = "\\texttt{a\\\\b}\n"
+
+[[case]]
+id = "code-20-02"
+input = "a \\texttt{a\\\\b} b\n"
+
+[[case]]
+id = "code-20-03"
+input = "\\emph{\\texttt{a\\\\b}}\n"
+
+[[case]]
+id = "code-21-01"
+input = "\\texttt{a\\textbf{b}c}\n"
+
+[[case]]
+id = "code-21-02"
+input = "a \\texttt{a\\textbf{b}c} b\n"
+
+[[case]]
+id = "code-21-03"
+input = "\\emph{\\texttt{a\\textbf{b}c}}\n"
+
+[[case]]
+id = "code-22-01"
+input = "\\texttt{a\\ b}\n"
+
+[[case]]
+id = "code-22-02"
+input = "a \\texttt{a\\ b} b\n"
+
+[[case]]
+id = "code-22-03"
+input = "\\emph{\\texttt{a\\ b}}\n"
+
+[[case]]
+id = "code-23-01"
+input = "\\texttt{\\ldots}\n"
+
+[[case]]
+id = "code-23-02"
+input = "a \\texttt{\\ldots} b\n"
+
+[[case]]
+id = "code-23-03"
+input = "\\emph{\\texttt{\\ldots}}\n"
+
+[[case]]
+id = "code-24-01"
+input = "\\texttt{?`}\n"
+
+[[case]]
+id = "code-24-02"
+input = "a \\texttt{?`} b\n"
+
+[[case]]
+id = "code-24-03"
+input = "\\emph{\\texttt{?`}}\n"
+
+[[case]]
+id = "code-25-01"
+input = "\\texttt{a\nb}\n"
+
+[[case]]
+id = "code-25-02"
+input = "a \\texttt{a\nb} b\n"
+
+[[case]]
+id = "code-25-03"
+input = "\\emph{\\texttt{a\nb}}\n"
+
+[[case]]
+id = "code-26-01"
+input = "\\texttt{\\emph{x} y}\n"
+
+[[case]]
+id = "code-26-02"
+input = "a \\texttt{\\emph{x} y} b\n"
+
+[[case]]
+id = "code-26-03"
+input = "\\emph{\\texttt{\\emph{x} y}}\n"
+
+[[case]]
+id = "code-27-01"
+input = "\\texttt{\\textbf{--}}\n"
+
+[[case]]
+id = "code-27-02"
+input = "a \\texttt{\\textbf{--}} b\n"
+
+[[case]]
+id = "code-27-03"
+input = "\\emph{\\texttt{\\textbf{--}}}\n"
+
+[[case]]
+id = "code-28-01"
+input = "\\texttt{x\\verb|y|}\n"
+
+[[case]]
+id = "code-28-02"
+input = "a \\texttt{x\\verb|y|} b\n"
+
+[[case]]
+id = "code-28-03"
+input = "\\emph{\\texttt{x\\verb|y|}}\n"
+
+[[case]]
+id = "code-29-01"
+input = "\\texttt{\\LaTeX}\n"
+
+[[case]]
+id = "code-29-02"
+input = "a \\texttt{\\LaTeX} b\n"
+
+[[case]]
+id = "code-29-03"
+input = "\\emph{\\texttt{\\LaTeX}}\n"
+
+[[case]]
+id = "code-30-01"
+input = "\\texttt{\\$}\n"
+
+[[case]]
+id = "code-30-02"
+input = "a \\texttt{\\$} b\n"
+
+[[case]]
+id = "code-30-03"
+input = "\\emph{\\texttt{\\$}}\n"
+
+[[case]]
+id = "code-31-01"
+input = "x\\enquote{a}y\n"
+
+[[case]]
+id = "code-31-02"
+input = "a x\\enquote{a}y b\n"
+
+[[case]]
+id = "code-31-03"
+input = "\\emph{x\\enquote{a}y}\n"
+
+[[case]]
+id = "code-32-01"
+input = "\\enquote*{a}\n"
+
+[[case]]
+id = "code-32-02"
+input = "a \\enquote*{a} b\n"
+
+[[case]]
+id = "code-32-03"
+input = "\\emph{\\enquote*{a}}\n"
+
+[[case]]
+id = "code-33-01"
+input = "\\enquote{\\emph{a}}\n"
+
+[[case]]
+id = "code-33-02"
+input = "a \\enquote{\\emph{a}} b\n"
+
+[[case]]
+id = "code-33-03"
+input = "\\emph{\\enquote{\\emph{a}}}\n"
+
+[[case]]
+id = "code-34-01"
+input = "!`\n"
+
+[[case]]
+id = "code-34-02"
+input = "a !` b\n"
+
+[[case]]
+id = "code-34-03"
+input = "\\emph{!`}\n"
+
+[[case]]
+id = "code-35-01"
+input = "a'b\n"
+
+[[case]]
+id = "code-35-02"
+input = "a a'b b\n"
+
+[[case]]
+id = "code-35-03"
+input = "\\emph{a'b}\n"
+
+[[case]]
+id = "code-36-01"
+input = "\\'e\n"
+
+[[case]]
+id = "code-36-02"
+input = "a \\'e b\n"
+
+[[case]]
+id = "code-36-03"
+input = "\\emph{\\'e}\n"
+
+[[case]]
+id = "plaingroup-01-01"
+input = "{{x}}\n"
+
+[[case]]
+id = "plaingroup-01-02"
+input = "\\emph{{{x}}}\n"
+
+[[case]]
+id = "plaingroup-01-03"
+input = "\\section{{{x}}}\n"
+
+[[case]]
+id = "plaingroup-01-04"
+input = "\\begin{itemize}\\item {{x}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-02-01"
+input = "{{x}y}\n"
+
+[[case]]
+id = "plaingroup-02-02"
+input = "\\emph{{{x}y}}\n"
+
+[[case]]
+id = "plaingroup-02-03"
+input = "\\section{{{x}y}}\n"
+
+[[case]]
+id = "plaingroup-02-04"
+input = "\\begin{itemize}\\item {{x}y}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-03-01"
+input = "{{{x}}}\n"
+
+[[case]]
+id = "plaingroup-03-02"
+input = "\\emph{{{{x}}}}\n"
+
+[[case]]
+id = "plaingroup-03-03"
+input = "\\section{{{{x}}}}\n"
+
+[[case]]
+id = "plaingroup-03-04"
+input = "\\begin{itemize}\\item {{{x}}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-04-01"
+input = "{ {x}}\n"
+
+[[case]]
+id = "plaingroup-04-02"
+input = "\\emph{{ {x}}}\n"
+
+[[case]]
+id = "plaingroup-04-03"
+input = "\\section{{ {x}}}\n"
+
+[[case]]
+id = "plaingroup-04-04"
+input = "\\begin{itemize}\\item { {x}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-05-01"
+input = "{{x} }\n"
+
+[[case]]
+id = "plaingroup-05-02"
+input = "\\emph{{{x} }}\n"
+
+[[case]]
+id = "plaingroup-05-03"
+input = "\\section{{{x} }}\n"
+
+[[case]]
+id = "plaingroup-05-04"
+input = "\\begin{itemize}\\item {{x} }\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-06-01"
+input = "{{x}{y}}\n"
+
+[[case]]
+id = "plaingroup-06-02"
+input = "\\emph{{{x}{y}}}\n"
+
+[[case]]
+id = "plaingroup-06-03"
+input = "\\section{{{x}{y}}}\n"
+
+[[case]]
+id = "plaingroup-06-04"
+input = "\\begin{itemize}\\item {{x}{y}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-07-01"
+input = "a{{x}}b\n"
+
+[[case]]
+id = "plaingroup-07-02"
+input = "\\emph{a{{x}}b}\n"
+
+[[case]]
+id = "plaingroup-07-03"
+input = "\\section{a{{x}}b}\n"
+
+[[case]]
+id = "plaingroup-07-04"
+input = "\\begin{itemize}\\item a{{x}}b\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-08-01"
+input = "{{}}\n"
+
+[[case]]
+id = "plaingroup-08-02"
+input = "\\emph{{{}}}\n"
+
+[[case]]
+id = "plaingroup-08-03"
+input = "\\section{{{}}}\n"
+
+[[case]]
+id = "plaingroup-08-04"
+input = "\\begin{itemize}\\item {{}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-09-01"
+input = "{{\\emph{x}}}\n"
+
+[[case]]
+id = "plaingroup-09-02"
+input = "\\emph{{{\\emph{x}}}}\n"
+
+[[case]]
+id = "plaingroup-09-03"
+input = "\\section{{{\\emph{x}}}}\n"
+
+[[case]]
+id = "plaingroup-09-04"
+input = "\\begin{itemize}\\item {{\\emph{x}}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-10-01"
+input = "{x{y}}\n"
+
+[[case]]
+id = "plaingroup-10-02"
+input = "\\emph{{x{y}}}\n"
+
+[[case]]
+id = "plaingroup-10-03"
+input = "\\section{{x{y}}}\n"
+
+[[case]]
+id = "plaingroup-10-04"
+input = "\\begin{itemize}\\item {x{y}}\\end{itemize}\n"
+
+[[case]]
+id = "plaingroup-11-01"
+input = "{{x\n\ny}}\n"
+
+[[case]]
+id = "plaingroup-11-02"
+input = "\\emph{{{x\n\ny}}}\n"
+
+[[case]]
+id = "plaingroup-11-03"
+input = "\\section{{{x\n\ny}}}\n"
+
+[[case]]
+id = "plaingroup-11-04"
+input = "\\begin{itemize}\\item {{x\n\ny}}\\end{itemize}\n"
+
+[[case]]
+id = "metagroup-01-01"
+input = "{\\title{x}}\n"
+
+[[case]]
+id = "metagroup-01-02"
+input = "{\\title{x}}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "metagroup-02-01"
+input = "{\\author{a}}\n"
+
+[[case]]
+id = "metagroup-02-02"
+input = "{\\author{a}}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "metagroup-03-01"
+input = "{\\date{d}}\n"
+
+[[case]]
+id = "metagroup-03-02"
+input = "{\\date{d}}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "metagroup-04-01"
+input = "{\\title{x} y}\n"
+
+[[case]]
+id = "metagroup-04-02"
+input = "{\\title{x} y}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "metagroup-05-01"
+input = "{a \\title{x}}\n"
+
+[[case]]
+id = "metagroup-05-02"
+input = "{a \\title{x}}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "metagroup-06-01"
+input = "{{\\title{x}}}\n"
+
+[[case]]
+id = "metagroup-06-02"
+input = "{{\\title{x}}}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "metagroup-07-01"
+input = "\\emph{\\title{x}}\n"
+
+[[case]]
+id = "metagroup-07-02"
+input = "\\emph{\\title{x}}\\begin{document}\\maketitle\\end{document}\n"
+
+[[case]]
+id = "eofarg-01-01"
+input = "\\emph\n"
+
+[[case]]
+id = "eofarg-01-02"
+input = "a \\emph\n"
+
+[[case]]
+id = "eofarg-01-03"
+input = "\\begin{quote}x\\end{quote}\\emph\n"
+
+[[case]]
+id = "eofarg-02-01"
+input = "\\textbf\n"
+
+[[case]]
+id = "eofarg-02-02"
+input = "a \\textbf\n"
+
+[[case]]
+id = "eofarg-02-03"
+input = "\\begin{quote}x\\end{quote}\\textbf\n"
+
+[[case]]
+id = "eofarg-03-01"
+input = "\\section\n"
+
+[[case]]
+id = "eofarg-03-02"
+input = "a \\section\n"
+
+[[case]]
+id = "eofarg-03-03"
+input = "\\begin{quote}x\\end{quote}\\section\n"
+
+[[case]]
+id = "eofarg-04-01"
+input = "\\footnote\n"
+
+[[case]]
+id = "eofarg-04-02"
+input = "a \\footnote\n"
+
+[[case]]
+id = "eofarg-04-03"
+input = "\\begin{quote}x\\end{quote}\\footnote\n"
+
+[[case]]
+id = "eofarg-05-01"
+input = "\\texttt\n"
+
+[[case]]
+id = "eofarg-05-02"
+input = "a \\texttt\n"
+
+[[case]]
+id = "eofarg-05-03"
+input = "\\begin{quote}x\\end{quote}\\texttt\n"
+
+[[case]]
+id = "eofarg-06-01"
+input = "\\mbox\n"
+
+[[case]]
+id = "eofarg-06-02"
+input = "a \\mbox\n"
+
+[[case]]
+id = "eofarg-06-03"
+input = "\\begin{quote}x\\end{quote}\\mbox\n"
+
+[[case]]
+id = "eofarg-07-01"
+input = "\\url\n"
+
+[[case]]
+id = "eofarg-07-02"
+input = "a \\url\n"
+
+[[case]]
+id = "eofarg-07-03"
+input = "\\begin{quote}x\\end{quote}\\url\n"
+
+[[case]]
+id = "eofarg-08-01"
+input = "\\label\n"
+
+[[case]]
+id = "eofarg-08-02"
+input = "a \\label\n"
+
+[[case]]
+id = "eofarg-08-03"
+input = "\\begin{quote}x\\end{quote}\\label\n"
+
+[[case]]
+id = "eofarg-09-01"
+input = "\\cite\n"
+
+[[case]]
+id = "eofarg-09-02"
+input = "a \\cite\n"
+
+[[case]]
+id = "eofarg-09-03"
+input = "\\begin{quote}x\\end{quote}\\cite\n"
+
+[[case]]
+id = "eofarg-10-01"
+input = "\\href{u}\n"
+
+[[case]]
+id = "eofarg-10-02"
+input = "a \\href{u}\n"
+
+[[case]]
+id = "eofarg-10-03"
+input = "\\begin{quote}x\\end{quote}\\href{u}\n"
+
+[[case]]
+id = "eofarg-11-01"
+input = "\\textsc\n"
+
+[[case]]
+id = "eofarg-11-02"
+input = "a \\textsc\n"
+
+[[case]]
+id = "eofarg-11-03"
+input = "\\begin{quote}x\\end{quote}\\textsc\n"
+
+[[case]]
+id = "eofarg-12-01"
+input = "\\emph \n"
+
+[[case]]
+id = "eofarg-12-02"
+input = "a \\emph \n"
+
+[[case]]
+id = "eofarg-12-03"
+input = "\\begin{quote}x\\end{quote}\\emph \n"
+
+[[case]]
+id = "eofarg-13-01"
+input = "\\emph\n\n"
+
+[[case]]
+id = "eofarg-13-02"
+input = "a \\emph\n\n"
+
+[[case]]
+id = "eofarg-13-03"
+input = "\\begin{quote}x\\end{quote}\\emph\n\n"
+
+[[case]]
+id = "eofarg-14-01"
+input = "\\underline\n"
+
+[[case]]
+id = "eofarg-14-02"
+input = "a \\underline\n"
+
+[[case]]
+id = "eofarg-14-03"
+input = "\\begin{quote}x\\end{quote}\\underline\n"
+
+[[case]]
+id = "eofarg-15-01"
+input = "\\textsuperscript\n"
+
+[[case]]
+id = "eofarg-15-02"
+input = "a \\textsuperscript\n"
+
+[[case]]
+id = "eofarg-15-03"
+input = "\\begin{quote}x\\end{quote}\\textsuperscript\n"
+
+[[case]]
+id = "eofarg-16-01"
+input = "\\enquote\n"
+
+[[case]]
+id = "eofarg-16-02"
+input = "a \\enquote\n"
+
+[[case]]
+id = "eofarg-16-03"
+input = "\\begin{quote}x\\end{quote}\\enquote\n"
+
+[[case]]
+id = "eofarg-17-01"
+input = "\\ref\n"
+
+[[case]]
+id = "eofarg-17-02"
+input = "a \\ref\n"
+
+[[case]]
+id = "eofarg-17-03"
+input = "\\begin{quote}x\\end{quote}\\ref\n"
+
+[[case]]
+id = "eofarg-18-01"
+input = "\\includegraphics\n"
+
+[[case]]
+id = "eofarg-18-02"
+input = "a \\includegraphics\n"
+
+[[case]]
+id = "eofarg-18-03"
+input = "\\begin{quote}x\\end{quote}\\includegraphics\n"
+
+[[case]]
+id = "eofarg-19-01"
+input = "\\title\n"
+
+[[case]]
+id = "eofarg-19-02"
+input = "a \\title\n"
+
+[[case]]
+id = "eofarg-19-03"
+input = "\\begin{quote}x\\end{quote}\\title\n"
+
+[[case]]
+id = "eofarg-20-01"
+input = "\\verb\n"
+
+[[case]]
+id = "eofarg-20-02"
+input = "a \\verb\n"
+
+[[case]]
+id = "eofarg-20-03"
+input = "\\begin{quote}x\\end{quote}\\verb\n"
+
+[[case]]
 id = "tikz-01-01"
 input = "\\begin{tikzpicture}\n\\draw (0,0);\n\\end{tikzpicture}\n"
 
@@ -4918,3 +7894,701 @@ input = "\\begin{tabular}{ll}\n\\begin{tikzpicture}[s]{w}\nb\n\\end{tikzpicture}
 [[case]]
 id = "tikz-02-04"
 input = "\\begin{itemize}\\item \\begin{tikzpicture}[s]{w}\nb\n\\end{tikzpicture}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-01-01"
+input = "\\begin{itemize}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-01-02"
+input = "\\begin{enumerate}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-01-03"
+input = "\\begin{description}\\end{description}\n"
+
+[[case]]
+id = "emptylist-02-01"
+input = "\\begin{itemize}\n\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-02-02"
+input = "\\begin{enumerate}\n\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-02-03"
+input = "\\begin{description}\n\\end{description}\n"
+
+[[case]]
+id = "emptylist-03-01"
+input = "\\begin{itemize} \\end{itemize}\n"
+
+[[case]]
+id = "emptylist-03-02"
+input = "\\begin{enumerate} \\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-03-03"
+input = "\\begin{description} \\end{description}\n"
+
+[[case]]
+id = "emptylist-04-01"
+input = "\\begin{itemize}%c\n\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-04-02"
+input = "\\begin{enumerate}%c\n\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-04-03"
+input = "\\begin{description}%c\n\\end{description}\n"
+
+[[case]]
+id = "emptylist-05-01"
+input = "\\begin{itemize}\n\n\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-05-02"
+input = "\\begin{enumerate}\n\n\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-05-03"
+input = "\\begin{description}\n\n\\end{description}\n"
+
+[[case]]
+id = "emptylist-06-01"
+input = "\\begin{itemize}{}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-06-02"
+input = "\\begin{enumerate}{}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-06-03"
+input = "\\begin{description}{}\\end{description}\n"
+
+[[case]]
+id = "emptylist-07-01"
+input = "\\begin{itemize}\\relax\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-07-02"
+input = "\\begin{enumerate}\\relax\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-07-03"
+input = "\\begin{description}\\relax\\end{description}\n"
+
+[[case]]
+id = "emptylist-08-01"
+input = "\\begin{itemize} x\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-08-02"
+input = "\\begin{enumerate} x\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-08-03"
+input = "\\begin{description} x\\end{description}\n"
+
+[[case]]
+id = "emptylist-09-01"
+input = "\\begin{itemize}\\label{a}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-09-02"
+input = "\\begin{enumerate}\\label{a}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-09-03"
+input = "\\begin{description}\\label{a}\\end{description}\n"
+
+[[case]]
+id = "emptylist-10-01"
+input = "\\begin{itemize}[a]\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-10-02"
+input = "\\begin{enumerate}[a]\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-10-03"
+input = "\\begin{description}[a]\\end{description}\n"
+
+[[case]]
+id = "emptylist-11-01"
+input = "\\begin{itemize}[a]\n\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-11-02"
+input = "\\begin{enumerate}[a]\n\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-11-03"
+input = "\\begin{description}[a]\n\\end{description}\n"
+
+[[case]]
+id = "emptylist-12-01"
+input = "\\begin{itemize}[a] \\end{itemize}\n"
+
+[[case]]
+id = "emptylist-12-02"
+input = "\\begin{enumerate}[a] \\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-12-03"
+input = "\\begin{description}[a] \\end{description}\n"
+
+[[case]]
+id = "emptylist-13-01"
+input = "\\begin{itemize}\\setcounter{enumi}{3}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-13-02"
+input = "\\begin{enumerate}\\setcounter{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-13-03"
+input = "\\begin{description}\\setcounter{enumi}{3}\\end{description}\n"
+
+[[case]]
+id = "emptylist-14-01"
+input = "\\begin{itemize}\\setcounter{enumi}{3}\n\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-14-02"
+input = "\\begin{enumerate}\\setcounter{enumi}{3}\n\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-14-03"
+input = "\\begin{description}\\setcounter{enumi}{3}\n\\end{description}\n"
+
+[[case]]
+id = "emptylist-15-01"
+input = "\\begin{itemize}\n\\setcounter{enumi}{3}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-15-02"
+input = "\\begin{enumerate}\n\\setcounter{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-15-03"
+input = "\\begin{description}\n\\setcounter{enumi}{3}\\end{description}\n"
+
+[[case]]
+id = "emptylist-16-01"
+input = "\\begin{itemize}\\setcounter{enumi}{3}x\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-16-02"
+input = "\\begin{enumerate}\\setcounter{enumi}{3}x\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-16-03"
+input = "\\begin{description}\\setcounter{enumi}{3}x\\end{description}\n"
+
+[[case]]
+id = "emptylist-17-01"
+input = "\\begin{itemize}\\setcounter{enumx}{3}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-17-02"
+input = "\\begin{enumerate}\\setcounter{enumx}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-17-03"
+input = "\\begin{description}\\setcounter{enumx}{3}\\end{description}\n"
+
+[[case]]
+id = "emptylist-18-01"
+input = "\\begin{itemize}\\setcounter{page}{3}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-18-02"
+input = "\\begin{enumerate}\\setcounter{page}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-18-03"
+input = "\\begin{description}\\setcounter{page}{3}\\end{description}\n"
+
+[[case]]
+id = "emptylist-19-01"
+input = "\\begin{itemize}\\setcounter{enumi}{a}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-19-02"
+input = "\\begin{enumerate}\\setcounter{enumi}{a}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-19-03"
+input = "\\begin{description}\\setcounter{enumi}{a}\\end{description}\n"
+
+[[case]]
+id = "emptylist-20-01"
+input = "\\begin{itemize}\\setcounter{enumi}3\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-20-02"
+input = "\\begin{enumerate}\\setcounter{enumi}3\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-20-03"
+input = "\\begin{description}\\setcounter{enumi}3\\end{description}\n"
+
+[[case]]
+id = "emptylist-21-01"
+input = "\\begin{itemize}\\addtocounter{enumi}{2}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-21-02"
+input = "\\begin{enumerate}\\addtocounter{enumi}{2}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-21-03"
+input = "\\begin{description}\\addtocounter{enumi}{2}\\end{description}\n"
+
+[[case]]
+id = "emptylist-22-01"
+input = "\\begin{itemize}[a]\\setcounter{enumi}{3}\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-22-02"
+input = "\\begin{enumerate}[a]\\setcounter{enumi}{3}\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-22-03"
+input = "\\begin{description}[a]\\setcounter{enumi}{3}\\end{description}\n"
+
+[[case]]
+id = "emptylist-23-01"
+input = "\\begin{itemize}[a]\\item[b] x\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-23-02"
+input = "\\begin{enumerate}[a]\\item[b] x\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-23-03"
+input = "\\begin{description}[a]\\item[b] x\\end{description}\n"
+
+[[case]]
+id = "emptylist-24-01"
+input = "\\begin{itemize}\\setcounter{enumx}{3}\\item y\\end{itemize}\n"
+
+[[case]]
+id = "emptylist-24-02"
+input = "\\begin{enumerate}\\setcounter{enumx}{3}\\item y\\end{enumerate}\n"
+
+[[case]]
+id = "emptylist-24-03"
+input = "\\begin{description}\\setcounter{enumx}{3}\\item y\\end{description}\n"
+
+[[case]]
+id = "manyopts-01-01"
+input = "\\footnote[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-01-02"
+input = "\\thanks[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-01-03"
+input = "\\section[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-01-04"
+input = "\\section*[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-01-05"
+input = "\\paragraph[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-01-06"
+input = "\\begin{minipage}[a][b]{1cm}x\\end{minipage}\n"
+
+[[case]]
+id = "manyopts-01-07"
+input = "\\begin{table}[a][b]x\\end{table}\n"
+
+[[case]]
+id = "manyopts-01-08"
+input = "\\begin{figure}[a][b]\\includegraphics{x}\\end{figure}\n"
+
+[[case]]
+id = "manyopts-01-09"
+input = "\\begin{zzz}[a][b]x\\end{zzz}\n"
+
+[[case]]
+id = "manyopts-01-10"
+input = "\\begin{center}[a][b]x\\end{center}\n"
+
+[[case]]
+id = "manyopts-01-11"
+input = "\\begin{flushleft}[a][b]x\\end{flushleft}\n"
+
+[[case]]
+id = "manyopts-01-12"
+input = "\\begin{tabular}[a][b]{l}x\\end{tabular}\n"
+
+[[case]]
+id = "manyopts-01-13"
+input = "\\begin{itemize}\\item[a][b] x\\end{itemize}\n"
+
+[[case]]
+id = "manyopts-01-14"
+input = "\\begin{enumerate}\\item[a][b] x\\end{enumerate}\n"
+
+[[case]]
+id = "manyopts-01-15"
+input = "\\begin{description}\\item[a][b] x\\end{description}\n"
+
+[[case]]
+id = "manyopts-01-16"
+input = "\\caption[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-01-17"
+input = "\\includegraphics[a][b]{x}\n"
+
+[[case]]
+id = "manyopts-02-01"
+input = "\\footnote[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-02-02"
+input = "\\thanks[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-02-03"
+input = "\\section[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-02-04"
+input = "\\section*[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-02-05"
+input = "\\paragraph[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-02-06"
+input = "\\begin{minipage}[a] [b]{1cm}x\\end{minipage}\n"
+
+[[case]]
+id = "manyopts-02-07"
+input = "\\begin{table}[a] [b]x\\end{table}\n"
+
+[[case]]
+id = "manyopts-02-08"
+input = "\\begin{figure}[a] [b]\\includegraphics{x}\\end{figure}\n"
+
+[[case]]
+id = "manyopts-02-09"
+input = "\\begin{zzz}[a] [b]x\\end{zzz}\n"
+
+[[case]]
+id = "manyopts-02-10"
+input = "\\begin{center}[a] [b]x\\end{center}\n"
+
+[[case]]
+id = "manyopts-02-11"
+input = "\\begin{flushleft}[a] [b]x\\end{flushleft}\n"
+
+[[case]]
+id = "manyopts-02-12"
+input = "\\begin{tabular}[a] [b]{l}x\\end{tabular}\n"
+
+[[case]]
+id = "manyopts-02-13"
+input = "\\begin{itemize}\\item[a] [b] x\\end{itemize}\n"
+
+[[case]]
+id = "manyopts-02-14"
+input = "\\begin{enumerate}\\item[a] [b] x\\end{enumerate}\n"
+
+[[case]]
+id = "manyopts-02-15"
+input = "\\begin{description}\\item[a] [b] x\\end{description}\n"
+
+[[case]]
+id = "manyopts-02-16"
+input = "\\caption[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-02-17"
+input = "\\includegraphics[a] [b]{x}\n"
+
+[[case]]
+id = "manyopts-03-01"
+input = "\\footnote[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-03-02"
+input = "\\thanks[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-03-03"
+input = "\\section[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-03-04"
+input = "\\section*[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-03-05"
+input = "\\paragraph[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-03-06"
+input = "\\begin{minipage}[a][b][c]{1cm}x\\end{minipage}\n"
+
+[[case]]
+id = "manyopts-03-07"
+input = "\\begin{table}[a][b][c]x\\end{table}\n"
+
+[[case]]
+id = "manyopts-03-08"
+input = "\\begin{figure}[a][b][c]\\includegraphics{x}\\end{figure}\n"
+
+[[case]]
+id = "manyopts-03-09"
+input = "\\begin{zzz}[a][b][c]x\\end{zzz}\n"
+
+[[case]]
+id = "manyopts-03-10"
+input = "\\begin{center}[a][b][c]x\\end{center}\n"
+
+[[case]]
+id = "manyopts-03-11"
+input = "\\begin{flushleft}[a][b][c]x\\end{flushleft}\n"
+
+[[case]]
+id = "manyopts-03-12"
+input = "\\begin{tabular}[a][b][c]{l}x\\end{tabular}\n"
+
+[[case]]
+id = "manyopts-03-13"
+input = "\\begin{itemize}\\item[a][b][c] x\\end{itemize}\n"
+
+[[case]]
+id = "manyopts-03-14"
+input = "\\begin{enumerate}\\item[a][b][c] x\\end{enumerate}\n"
+
+[[case]]
+id = "manyopts-03-15"
+input = "\\begin{description}\\item[a][b][c] x\\end{description}\n"
+
+[[case]]
+id = "manyopts-03-16"
+input = "\\caption[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-03-17"
+input = "\\includegraphics[a][b][c]{x}\n"
+
+[[case]]
+id = "manyopts-04-01"
+input = "\\footnote[a]\n[b]{x}\n"
+
+[[case]]
+id = "manyopts-04-02"
+input = "\\thanks[a]\n[b]{x}\n"
+
+[[case]]
+id = "manyopts-04-03"
+input = "\\section[a]\n[b]{x}\n"
+
+[[case]]
+id = "manyopts-04-04"
+input = "\\section*[a]\n[b]{x}\n"
+
+[[case]]
+id = "manyopts-04-05"
+input = "\\paragraph[a]\n[b]{x}\n"
+
+[[case]]
+id = "manyopts-04-06"
+input = "\\begin{minipage}[a]\n[b]{1cm}x\\end{minipage}\n"
+
+[[case]]
+id = "manyopts-04-07"
+input = "\\begin{table}[a]\n[b]x\\end{table}\n"
+
+[[case]]
+id = "manyopts-04-08"
+input = "\\begin{figure}[a]\n[b]\\includegraphics{x}\\end{figure}\n"
+
+[[case]]
+id = "manyopts-04-09"
+input = "\\begin{zzz}[a]\n[b]x\\end{zzz}\n"
+
+[[case]]
+id = "manyopts-04-10"
+input = "\\begin{center}[a]\n[b]x\\end{center}\n"
+
+[[case]]
+id = "manyopts-04-11"
+input = "\\begin{flushleft}[a]\n[b]x\\end{flushleft}\n"
+
+[[case]]
+id = "manyopts-04-12"
+input = "\\begin{tabular}[a]\n[b]{l}x\\end{tabular}\n"
+
+[[case]]
+id = "manyopts-04-13"
+input = "\\begin{itemize}\\item[a]\n[b] x\\end{itemize}\n"
+
+[[case]]
+id = "manyopts-04-14"
+input = "\\begin{enumerate}\\item[a]\n[b] x\\end{enumerate}\n"
+
+[[case]]
+id = "manyopts-04-15"
+input = "\\begin{description}\\item[a]\n[b] x\\end{description}\n"
+
+[[case]]
+id = "manyopts-04-16"
+input = "\\caption[a]\n[b]{x}\n"
+
+[[case]]
+id = "manyopts-04-17"
+input = "\\includegraphics[a]\n[b]{x}\n"
+
+[[case]]
+id = "newline-01-01"
+input = "a\\newline b\n"
+
+[[case]]
+id = "newline-01-02"
+input = "\\emph{a\\newline b}\n"
+
+[[case]]
+id = "newline-01-03"
+input = "\\begin{itemize}\\item a\\newline b\\end{itemize}\n"
+
+[[case]]
+id = "newline-01-04"
+input = "\\begin{tabular}{l}a\\newline b\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-02-01"
+input = "a\\newline [a] b\n"
+
+[[case]]
+id = "newline-02-02"
+input = "\\emph{a\\newline [a] b}\n"
+
+[[case]]
+id = "newline-02-03"
+input = "\\begin{itemize}\\item a\\newline [a] b\\end{itemize}\n"
+
+[[case]]
+id = "newline-02-04"
+input = "\\begin{tabular}{l}a\\newline [a] b\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-03-01"
+input = "a\\newline{x} b\n"
+
+[[case]]
+id = "newline-03-02"
+input = "\\emph{a\\newline{x} b}\n"
+
+[[case]]
+id = "newline-03-03"
+input = "\\begin{itemize}\\item a\\newline{x} b\\end{itemize}\n"
+
+[[case]]
+id = "newline-03-04"
+input = "\\begin{tabular}{l}a\\newline{x} b\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-04-01"
+input = "a\\newline\n\nb\n"
+
+[[case]]
+id = "newline-04-02"
+input = "\\emph{a\\newline\n\nb}\n"
+
+[[case]]
+id = "newline-04-03"
+input = "\\begin{itemize}\\item a\\newline\n\nb\\end{itemize}\n"
+
+[[case]]
+id = "newline-04-04"
+input = "\\begin{tabular}{l}a\\newline\n\nb\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-05-01"
+input = "a \\newline b\n"
+
+[[case]]
+id = "newline-05-02"
+input = "\\emph{a \\newline b}\n"
+
+[[case]]
+id = "newline-05-03"
+input = "\\begin{itemize}\\item a \\newline b\\end{itemize}\n"
+
+[[case]]
+id = "newline-05-04"
+input = "\\begin{tabular}{l}a \\newline b\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-06-01"
+input = "\\newline a\n"
+
+[[case]]
+id = "newline-06-02"
+input = "\\emph{\\newline a}\n"
+
+[[case]]
+id = "newline-06-03"
+input = "\\begin{itemize}\\item \\newline a\\end{itemize}\n"
+
+[[case]]
+id = "newline-06-04"
+input = "\\begin{tabular}{l}\\newline a\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-07-01"
+input = "a\\newline\n"
+
+[[case]]
+id = "newline-07-02"
+input = "\\emph{a\\newline}\n"
+
+[[case]]
+id = "newline-07-03"
+input = "\\begin{itemize}\\item a\\newline\\end{itemize}\n"
+
+[[case]]
+id = "newline-07-04"
+input = "\\begin{tabular}{l}a\\newline\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-08-01"
+input = "a\\\\ \\newline b\n"
+
+[[case]]
+id = "newline-08-02"
+input = "\\emph{a\\\\ \\newline b}\n"
+
+[[case]]
+id = "newline-08-03"
+input = "\\begin{itemize}\\item a\\\\ \\newline b\\end{itemize}\n"
+
+[[case]]
+id = "newline-08-04"
+input = "\\begin{tabular}{l}a\\\\ \\newline b\\\\\\end{tabular}\n"
+
+[[case]]
+id = "newline-raw-01-01"
+input = "a\\newline b\n"
+from = "latex+raw_tex"
+
+[[case]]
+id = "newline-raw-02-01"
+input = "a\\newline [a] b\n"
+from = "latex+raw_tex"
