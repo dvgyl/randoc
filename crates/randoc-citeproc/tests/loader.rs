@@ -41,17 +41,10 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
     std::fs::write(format!("{folder}/parent.csl"), PARENT).unwrap();
     std::fs::create_dir_all(format!("{folder}/sp ace")).unwrap();
     std::fs::write(format!("{folder}/sp ace/p.csl"), PARENT).unwrap();
-    // A `file:` URL keeps its percent escapes, and a space becomes `%20`, so
-    // an absolute URL fails when the folder name has a space.
-    let (abs_code, abs_text) = if folder.contains(' ') {
-        (
-            1,
-            "D/parent.csl: withBinaryFile: does not exist (No such file or directory)",
-        )
-    } else {
-        (0, "ok")
-    };
-    let parents: [(&str, String, i32, &str); 28] = [
+    // The file name of a link is found in `D` first, so each absolute
+    // `file:` URL of `D/parent.csl` gives the parent, also when the folder
+    // name has a space (oracle probe of 2026-11-15, Opus citeproc-R3b-04).
+    let parents: [(&str, String, i32, &str); 33] = [
         (
             "missing-escape",
             "missing%65.csl".into(),
@@ -105,12 +98,7 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
             "File 'dir' not found in resource path",
         ),
         ("file-rel", "file:parent.csl".into(), 0, "ok"),
-        (
-            "file-abs",
-            format!("file://{folder}/parent.csl"),
-            abs_code,
-            abs_text,
-        ),
+        ("file-abs", format!("file://{folder}/parent.csl"), 0, "ok"),
         (
             "file-abs-missing",
             "file:///nonexistent/p.csl".into(),
@@ -120,20 +108,20 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
         (
             "file-localhost",
             format!("file://localhost{folder}/parent.csl"),
-            abs_code,
-            abs_text,
+            0,
+            "ok",
         ),
         (
             "file-one-slash",
             format!("file:{folder}/parent.csl"),
-            abs_code,
-            abs_text,
+            0,
+            "ok",
         ),
         (
             "file-encoded",
             format!("file://{folder}/par%65nt.csl"),
-            1,
-            "D/par%65nt.csl: withBinaryFile: does not exist (No such file or directory)",
+            0,
+            "ok",
         ),
         (
             "file-rel-space",
@@ -147,11 +135,23 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
             99,
             "File 'par%65nt.csl' not found in resource path",
         ),
+        // The file name of the link is found first (Opus citeproc-R3b-04;
+        // probe of 2026-11-15 in a copy of `D`).
+        ("file-host", "file://dir/parent.csl".into(), 0, "ok"),
+        ("name-abs", "/nonexistent/dir/parent.csl".into(), 0, "ok"),
         (
-            "file-host",
-            "file://dir/parent.csl".into(),
-            1,
-            "/parent.csl: withBinaryFile: does not exist (No such file or directory)",
+            "name-file-url",
+            "file:///nonexistent/dir/parent.csl".into(),
+            0,
+            "ok",
+        ),
+        ("name-no-extension", "nonexistent/parent".into(), 0, "ok"),
+        ("name-escape", "x/par%65nt.csl".into(), 0, "ok"),
+        (
+            "name-fragment",
+            "x/parent.csl#frag".into(),
+            99,
+            "File 'x/parent.csl#frag' not found in resource path",
         ),
         ("file-fragment", "file:parent.csl#x".into(), 0, "ok"),
         ("file-query", "file:parent.csl?x".into(), 0, "ok"),

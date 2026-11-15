@@ -161,6 +161,19 @@ pub fn parse_style(context: &mut Context, text: &str) -> Result<Style, Error> {
 }
 
 fn read_parent(context: &mut Context, href: &str) -> Result<String, Error> {
+    // The oracle first looks for the file name of the link, with `.csl` when
+    // it has no extension (Opus citeproc-R3b-04).
+    let name = unescape(href.rsplit('/').next().unwrap_or(href));
+    if !name.is_empty() {
+        let name = if name.contains('.') {
+            name
+        } else {
+            format!("{name}.csl")
+        };
+        if context.host().file_exists(&name) {
+            return read_style_file(context, &name);
+        }
+    }
     if href.starts_with("http://") || href.starts_with("https://") {
         let headers = context.state.request_headers.clone();
         let (bytes, _) = context.host().fetch_url(href, &headers)?;

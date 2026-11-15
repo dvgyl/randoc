@@ -142,6 +142,18 @@ fn variable_names_compare_without_case() {
     );
 }
 
+/// 2 references x 4 display values x 4 layout suffixes and delimiters x 5
+/// layouts: the layout suffix moves into a last display part
+/// (`moveSuffixInsideDisplay`; review Opus citeproc-R3b-03).
+#[test]
+fn the_layout_suffix_moves_into_a_display_part() {
+    replay(
+        include_str!("replay/display.txt"),
+        include_str!("replay/display-refs.json"),
+        160,
+    );
+}
+
 /// The locale that the merged locale of each style falls back to.
 fn base_locale() -> Locale {
     Locale {

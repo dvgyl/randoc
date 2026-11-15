@@ -1,0 +1,160 @@
+d1	suffix="."	<text value="x"/><text variable="title" display="block"/>
+d1	suffix="."	<text variable="title" display="block"/>
+d1	suffix="."	<group display="block"><text value="a"/><text variable="title"/></group>
+d1	suffix="."	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d1	suffix="."	<text variable="title" display="block"/><text value="y"/>
+d1	suffix=". "	<text value="x"/><text variable="title" display="block"/>
+d1	suffix=". "	<text variable="title" display="block"/>
+d1	suffix=". "	<group display="block"><text value="a"/><text variable="title"/></group>
+d1	suffix=". "	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d1	suffix=". "	<text variable="title" display="block"/><text value="y"/>
+d1	suffix=";"	<text value="x"/><text variable="title" display="block"/>
+d1	suffix=";"	<text variable="title" display="block"/>
+d1	suffix=";"	<group display="block"><text value="a"/><text variable="title"/></group>
+d1	suffix=";"	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d1	suffix=";"	<text variable="title" display="block"/><text value="y"/>
+d1	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="block"/>
+d1	delimiter=", " suffix="."	<text variable="title" display="block"/>
+d1	delimiter=", " suffix="."	<group display="block"><text value="a"/><text variable="title"/></group>
+d1	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d1	delimiter=", " suffix="."	<text variable="title" display="block"/><text value="y"/>
+d1	suffix="."	<text value="x"/><text variable="title" display="left-margin"/>
+d1	suffix="."	<text variable="title" display="left-margin"/>
+d1	suffix="."	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d1	suffix="."	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d1	suffix="."	<text variable="title" display="left-margin"/><text value="y"/>
+d1	suffix=". "	<text value="x"/><text variable="title" display="left-margin"/>
+d1	suffix=". "	<text variable="title" display="left-margin"/>
+d1	suffix=". "	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d1	suffix=". "	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d1	suffix=". "	<text variable="title" display="left-margin"/><text value="y"/>
+d1	suffix=";"	<text value="x"/><text variable="title" display="left-margin"/>
+d1	suffix=";"	<text variable="title" display="left-margin"/>
+d1	suffix=";"	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d1	suffix=";"	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d1	suffix=";"	<text variable="title" display="left-margin"/><text value="y"/>
+d1	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="left-margin"/>
+d1	delimiter=", " suffix="."	<text variable="title" display="left-margin"/>
+d1	delimiter=", " suffix="."	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d1	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d1	delimiter=", " suffix="."	<text variable="title" display="left-margin"/><text value="y"/>
+d1	suffix="."	<text value="x"/><text variable="title" display="right-inline"/>
+d1	suffix="."	<text variable="title" display="right-inline"/>
+d1	suffix="."	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d1	suffix="."	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d1	suffix="."	<text variable="title" display="right-inline"/><text value="y"/>
+d1	suffix=". "	<text value="x"/><text variable="title" display="right-inline"/>
+d1	suffix=". "	<text variable="title" display="right-inline"/>
+d1	suffix=". "	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d1	suffix=". "	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d1	suffix=". "	<text variable="title" display="right-inline"/><text value="y"/>
+d1	suffix=";"	<text value="x"/><text variable="title" display="right-inline"/>
+d1	suffix=";"	<text variable="title" display="right-inline"/>
+d1	suffix=";"	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d1	suffix=";"	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d1	suffix=";"	<text variable="title" display="right-inline"/><text value="y"/>
+d1	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="right-inline"/>
+d1	delimiter=", " suffix="."	<text variable="title" display="right-inline"/>
+d1	delimiter=", " suffix="."	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d1	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d1	delimiter=", " suffix="."	<text variable="title" display="right-inline"/><text value="y"/>
+d1	suffix="."	<text value="x"/><text variable="title" display="indent"/>
+d1	suffix="."	<text variable="title" display="indent"/>
+d1	suffix="."	<group display="indent"><text value="a"/><text variable="title"/></group>
+d1	suffix="."	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d1	suffix="."	<text variable="title" display="indent"/><text value="y"/>
+d1	suffix=". "	<text value="x"/><text variable="title" display="indent"/>
+d1	suffix=". "	<text variable="title" display="indent"/>
+d1	suffix=". "	<group display="indent"><text value="a"/><text variable="title"/></group>
+d1	suffix=". "	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d1	suffix=". "	<text variable="title" display="indent"/><text value="y"/>
+d1	suffix=";"	<text value="x"/><text variable="title" display="indent"/>
+d1	suffix=";"	<text variable="title" display="indent"/>
+d1	suffix=";"	<group display="indent"><text value="a"/><text variable="title"/></group>
+d1	suffix=";"	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d1	suffix=";"	<text variable="title" display="indent"/><text value="y"/>
+d1	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="indent"/>
+d1	delimiter=", " suffix="."	<text variable="title" display="indent"/>
+d1	delimiter=", " suffix="."	<group display="indent"><text value="a"/><text variable="title"/></group>
+d1	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d1	delimiter=", " suffix="."	<text variable="title" display="indent"/><text value="y"/>
+d2	suffix="."	<text value="x"/><text variable="title" display="block"/>
+d2	suffix="."	<text variable="title" display="block"/>
+d2	suffix="."	<group display="block"><text value="a"/><text variable="title"/></group>
+d2	suffix="."	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d2	suffix="."	<text variable="title" display="block"/><text value="y"/>
+d2	suffix=". "	<text value="x"/><text variable="title" display="block"/>
+d2	suffix=". "	<text variable="title" display="block"/>
+d2	suffix=". "	<group display="block"><text value="a"/><text variable="title"/></group>
+d2	suffix=". "	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d2	suffix=". "	<text variable="title" display="block"/><text value="y"/>
+d2	suffix=";"	<text value="x"/><text variable="title" display="block"/>
+d2	suffix=";"	<text variable="title" display="block"/>
+d2	suffix=";"	<group display="block"><text value="a"/><text variable="title"/></group>
+d2	suffix=";"	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d2	suffix=";"	<text variable="title" display="block"/><text value="y"/>
+d2	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="block"/>
+d2	delimiter=", " suffix="."	<text variable="title" display="block"/>
+d2	delimiter=", " suffix="."	<group display="block"><text value="a"/><text variable="title"/></group>
+d2	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="block" suffix=";"/></group>
+d2	delimiter=", " suffix="."	<text variable="title" display="block"/><text value="y"/>
+d2	suffix="."	<text value="x"/><text variable="title" display="left-margin"/>
+d2	suffix="."	<text variable="title" display="left-margin"/>
+d2	suffix="."	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d2	suffix="."	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d2	suffix="."	<text variable="title" display="left-margin"/><text value="y"/>
+d2	suffix=". "	<text value="x"/><text variable="title" display="left-margin"/>
+d2	suffix=". "	<text variable="title" display="left-margin"/>
+d2	suffix=". "	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d2	suffix=". "	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d2	suffix=". "	<text variable="title" display="left-margin"/><text value="y"/>
+d2	suffix=";"	<text value="x"/><text variable="title" display="left-margin"/>
+d2	suffix=";"	<text variable="title" display="left-margin"/>
+d2	suffix=";"	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d2	suffix=";"	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d2	suffix=";"	<text variable="title" display="left-margin"/><text value="y"/>
+d2	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="left-margin"/>
+d2	delimiter=", " suffix="."	<text variable="title" display="left-margin"/>
+d2	delimiter=", " suffix="."	<group display="left-margin"><text value="a"/><text variable="title"/></group>
+d2	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="left-margin" suffix=";"/></group>
+d2	delimiter=", " suffix="."	<text variable="title" display="left-margin"/><text value="y"/>
+d2	suffix="."	<text value="x"/><text variable="title" display="right-inline"/>
+d2	suffix="."	<text variable="title" display="right-inline"/>
+d2	suffix="."	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d2	suffix="."	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d2	suffix="."	<text variable="title" display="right-inline"/><text value="y"/>
+d2	suffix=". "	<text value="x"/><text variable="title" display="right-inline"/>
+d2	suffix=". "	<text variable="title" display="right-inline"/>
+d2	suffix=". "	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d2	suffix=". "	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d2	suffix=". "	<text variable="title" display="right-inline"/><text value="y"/>
+d2	suffix=";"	<text value="x"/><text variable="title" display="right-inline"/>
+d2	suffix=";"	<text variable="title" display="right-inline"/>
+d2	suffix=";"	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d2	suffix=";"	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d2	suffix=";"	<text variable="title" display="right-inline"/><text value="y"/>
+d2	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="right-inline"/>
+d2	delimiter=", " suffix="."	<text variable="title" display="right-inline"/>
+d2	delimiter=", " suffix="."	<group display="right-inline"><text value="a"/><text variable="title"/></group>
+d2	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="right-inline" suffix=";"/></group>
+d2	delimiter=", " suffix="."	<text variable="title" display="right-inline"/><text value="y"/>
+d2	suffix="."	<text value="x"/><text variable="title" display="indent"/>
+d2	suffix="."	<text variable="title" display="indent"/>
+d2	suffix="."	<group display="indent"><text value="a"/><text variable="title"/></group>
+d2	suffix="."	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d2	suffix="."	<text variable="title" display="indent"/><text value="y"/>
+d2	suffix=". "	<text value="x"/><text variable="title" display="indent"/>
+d2	suffix=". "	<text variable="title" display="indent"/>
+d2	suffix=". "	<group display="indent"><text value="a"/><text variable="title"/></group>
+d2	suffix=". "	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d2	suffix=". "	<text variable="title" display="indent"/><text value="y"/>
+d2	suffix=";"	<text value="x"/><text variable="title" display="indent"/>
+d2	suffix=";"	<text variable="title" display="indent"/>
+d2	suffix=";"	<group display="indent"><text value="a"/><text variable="title"/></group>
+d2	suffix=";"	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d2	suffix=";"	<text variable="title" display="indent"/><text value="y"/>
+d2	delimiter=", " suffix="."	<text value="x"/><text variable="title" display="indent"/>
+d2	delimiter=", " suffix="."	<text variable="title" display="indent"/>
+d2	delimiter=", " suffix="."	<group display="indent"><text value="a"/><text variable="title"/></group>
+d2	delimiter=", " suffix="."	<text value="x"/><group><text variable="title" display="indent" suffix=";"/></group>
+d2	delimiter=", " suffix="."	<text variable="title" display="indent"/><text value="y"/>

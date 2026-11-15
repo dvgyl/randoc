@@ -3065,3 +3065,37 @@ coordinator made the squash by hand: the branch version of
 `crates/randoc-cli` and of the cli suite, and the empty list of known
 differences of `24b77b6` again. The merged tree builds, and the writer
 matrix test passes.
+
+**citeproc**: branch `ws/citeproc-3`, commits `4812a9f..44ad490` (the
+state of `4812a9f` goes to `main` in batch F; one commit).
+The loader looks for the parent style by the file name of its link first
+(with `.csl` when it has no extension). An oracle replay compares the
+display suffix rule. Row I-CITE-16 lists the parts of the entry that are
+not ported. New probes of the reference contradicted 5 stored loader
+rows. The worker changed those rows to the probe results.
+
+Gate: `08:06:25 UTC 44ad490 gate passed: citeproc parent style by its file
+name first (Opus R3b-04), display suffix replay (Opus R3b-03), scope rows
+(Opus R3b-06)`. The worker ran the gate.
+Measured by the worker: replay `the_layout_suffix_moves_into_a_display_part`
+160 of 160 equal. 11 loader rows come from new oracle probes. The `http`
+form of a parent link is not probed (no network).
+
+Review state: Round 3b on `main` `856692d`: the Codex reviewer requested
+changes with 3 high and 5 medium findings, the Opus reviewer with 1 high,
+5 medium and 3 low findings. The blocks of batch F correct the Codex
+findings and the high Opus finding. This block corrects the medium
+findings of the Opus report that the report of the worker names (a parent
+style is looked for by its file name first; the scope gaps are in row
+I-CITE-16). With this block each finding of round 3b with the level
+medium or higher has a correction or a recorded scope gap. The
+verification by both reviewers is due. No program path calls the
+evaluation yet.
+
+Open: I-CITE-16 (scope gap; the report states no level). Codex R3b-11
+(low; `docs/PRIOR_ART.md` line 106; outside the scope of the worker).
+Opus R3b-08 (low; stack need in the documentation of `eval_citation`,
+`render_output`, `finish`). Opus R3b-09 (low; entity chain limit text).
+Unit 4 (sorting, disambiguation, collapse): not started.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
