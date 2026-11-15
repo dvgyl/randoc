@@ -2552,3 +2552,8 @@ I-LTXR-03 (move the language table to `randoc_core::shared`).
 
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+`merge-ws check` of batch c (a plain script of the coordinator, no merge agent): passed at 05:08 UTC on the tree of `9a3d42d`.
+Harness: 58094 units: 56218 pass, 1456 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 55396 units: 0 regressions, 822 new passes.
+Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 55396, "total": 56756}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.

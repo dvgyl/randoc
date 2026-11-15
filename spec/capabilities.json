@@ -410,8 +410,8 @@
     "raw_tex": {
       "status": "partial",
       "units": {
-        "passing": 803,
-        "total": 937
+        "passing": 806,
+        "total": 939
       }
     },
     "rebase_relative_paths": {
@@ -695,8 +695,8 @@
     },
     "latex": {
       "read": {
-        "passing": 4636,
-        "total": 5454
+        "passing": 5458,
+        "total": 6372
       },
       "status": "partial"
     },
@@ -1984,8 +1984,8 @@
       "passing": 6
     },
     "units": {
-      "passing": 55396,
-      "total": 56756
+      "passing": 56218,
+      "total": 57674
     }
   }
 }
