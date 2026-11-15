@@ -5,7 +5,8 @@ Usage: resource_matrix.py PANDOC OUT.json [resources|utf8|GROUP [OLD.json ...]]
 
 `resources` records each group except `utf8`. GROUP is one of `base`,
 `lists`, `templates`, `defaults`, `named`, `datadir`, `aux`, `values`, `nested`,
-`inputs`, `numbering`, `review8`, `abbreviations`, `sandbox-templates`. A case that has a record with the
+`inputs`, `numbering`, `review8`, `abbreviations`, `sandbox-templates`,
+`absolute`, `metadata-strings`, `page-title`, `filter-log`, `curdir`. A case that has a record with the
 same arguments and files in an OLD.json keeps that record; the oracle runs
 only for the other cases.
 
@@ -765,6 +766,139 @@ def utf8_cases():
     return cases
 
 
+def absolute_name_cases():
+    """A Lua filter, a JSON filter, a defaults file and a metadata file named by
+    an absolute path. The copy `dd/FOLDER/PATH` under the user data folder must
+    not replace the named file. A file path that holds `{root}` names the same
+    folder without its leading `/`. The control cases use a relative name."""
+    kinds = {
+        "lua": ("-L", "filters", "f.lua",
+                "function Pandoc(d) return pandoc.Pandoc{pandoc.Para{pandoc.Str('%s')}} end\n"),
+        "json": ("-F", "filters", "f.sh",
+                 "#!/bin/sh\ncat >/dev/null\necho '{\"pandoc-api-version\":[1,23,1,2],"
+                 "\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\","
+                 "\"c\":\"%s\"}]}]}'\n"),
+        "defaults": ("-d", "defaults", "d.yaml", "metadata: {source: %s}\n"),
+        "metadata": ("--metadata-file", "metadata", "m.yaml", "source: %s\n"),
+    }
+    spellings = ["{root}/%s", "{root}/./%s", "{root}//%s"]
+    cases = []
+    for sandbox in [False, True]:
+        lead = ["--sandbox"] if sandbox else []
+        for option, folder, name, text in kinds.values():
+            for spelling in spellings:
+                for own, mirror in [(False, True), (True, False), (True, True),
+                                    (False, False)]:
+                    files = {"dd/keep": ""}
+                    if own:
+                        files[name] = text % "own"
+                    if mirror:
+                        files["dd/" + folder + "/{root}/" + name] = text % "mirror"
+                    cases.append({"args": lead + ["-f", "json", "-t", "json", "--data-dir=dd",
+                                                  option, spelling % name],
+                                  "files": files})
+            cases.append({"args": lead + ["-f", "json", "-t", "json", "--data-dir=dd",
+                                          option, name],
+                          "files": {"dd/" + folder + "/" + name: text % "data"}})
+    return cases
+
+
+def metadata_string_cases():
+    """The strings of a metadata file: the choice of inlines or blocks (a final
+    line break, an empty string, spaces at the end), and the reader options
+    that parse them (the input format, `--abbreviations`, `--strip-comments`)."""
+    shapes = ["a", "a\n", "", "\n", "a\n\n", "a\nb", "a\n\nb", "a\n\nb\n", "# h", "# h\n",
+              "- x", "- x\n", " a", "a  ", "a\n ", "  \n", "```\nc\n```", "<!-- c -->",
+              "<!-- c -->\n", "a\\", "\\\n", "1. x", "> q", "    code", "a\n\n    code",
+              "*a\n\nb*", "*a\nb*", "a\r\nb", "x\n\n# h", "a\tb", "\"q\" \\\"e"]
+    forms = ['"a" -- b', "a<!--b-->c", "ZZZ. X", "Mr. X", "~~s~~ H~2~O", "$x$", "a^b^",
+             "<b>x</b>", "a\\\nb", "'b' c"]
+    formats = ["json", "markdown", "markdown-smart", "commonmark", "commonmark+smart", "gfm",
+               "markdown_strict", "commonmark_x", "html"]
+
+    def meta_case(text, reader, extra):
+        files = {"m": "x: " + json.dumps(text) + "\n", "ab": "ZZZ.\n"}
+        if reader == "json":
+            files["a.json"] = DOC
+            source = "a.json"
+        else:
+            files["e.txt"] = ""
+            source = "e.txt"
+        return {"args": ["-f", reader, "-t", "json", "--metadata-file=m"] + extra + [source],
+                "files": files}
+
+    cases = [meta_case(text, "json", []) for text in shapes]
+    for reader in formats:
+        for extra in [[], ["--abbreviations=ab"], ["--strip-comments"]]:
+            cases.extend(meta_case(text, reader, extra) for text in forms)
+    return cases
+
+
+def page_title_cases():
+    """The title fallback of the HTML formats: each kind of `title` and
+    `pagetitle` value in the metadata, and `-V pagetitle` forms, with a
+    template that prints `pagetitle`. The source file name is `doc.json`."""
+    def s(text):
+        return {"t": "Str", "c": text}
+    attr = ["", [], []]
+    values = [
+        {"t": "MetaString", "c": ""}, {"t": "MetaString", "c": "a"},
+        {"t": "MetaString", "c": " "}, {"t": "MetaString", "c": " a "},
+        {"t": "MetaString", "c": "\n"}, {"t": "MetaInlines", "c": []},
+        {"t": "MetaInlines", "c": [s("a")]}, {"t": "MetaInlines", "c": [{"t": "Space"}]},
+        {"t": "MetaInlines", "c": [{"t": "SoftBreak"}]}, {"t": "MetaInlines", "c": [s("")]},
+        {"t": "MetaInlines", "c": [{"t": "LineBreak"}]},
+        {"t": "MetaInlines", "c": [{"t": "Emph", "c": [s("a")]}]},
+        {"t": "MetaInlines", "c": [{"t": "Emph", "c": []}]},
+        {"t": "MetaInlines", "c": [{"t": "Span", "c": [attr, []]}]},
+        {"t": "MetaInlines", "c": [{"t": "Image", "c": [attr, [], ["i", ""]]}]},
+        {"t": "MetaInlines", "c": [{"t": "RawInline", "c": ["html", "<b>"]}]},
+        {"t": "MetaInlines", "c": [{"t": "Code", "c": [attr, "c"]}]},
+        {"t": "MetaBlocks", "c": []}, {"t": "MetaBlocks", "c": [{"t": "Para", "c": [s("a")]}]},
+        {"t": "MetaBlocks", "c": [{"t": "Plain", "c": []}]},
+        {"t": "MetaBlocks", "c": [{"t": "HorizontalRule"}]},
+        {"t": "MetaBool", "c": True}, {"t": "MetaBool", "c": False},
+        {"t": "MetaMap", "c": {}}, {"t": "MetaMap", "c": {"k": {"t": "MetaString", "c": "a"}}},
+        {"t": "MetaList", "c": []}, {"t": "MetaList", "c": [{"t": "MetaString", "c": "a"}]},
+    ]
+    title = {"t": "MetaInlines", "c": [s("T")]}
+    page = {"t": "MetaInlines", "c": [s("P")]}
+    metas = [{}] + [{key: value} for key in ["title", "pagetitle"] for value in values]
+    metas += [{"title": title, "pagetitle": {"t": "MetaString", "c": " "}},
+              {"title": title, "pagetitle": {"t": "MetaBool", "c": True}}]
+    variable_forms = [[], ["-V", "pagetitle="], ["-V", "pagetitle= "], ["-V", "pagetitle=a"],
+                      ["-V", "pagetitle=a", "-V", "pagetitle=b"], ["-V", "pagetitle"],
+                      ["-M", "pagetitle="], ["-M", "title="], ["-V", "title=a"]]
+    cases = []
+    for meta in metas:
+        for variables in (variable_forms if meta in [{}, {"title": title}, {"pagetitle": page}]
+                          else [[]]):
+            document = json.dumps({"pandoc-api-version": [1, 23, 1, 2], "meta": meta,
+                                   "blocks": []})
+            cases.append({"args": ["-f", "json", "-t", "html", "--template=t.html",
+                                   "--verbose", "doc.json"] + variables,
+                          "files": {"doc.json": document, "t.html": "[$pagetitle$]\n"}})
+    return cases
+
+
+def filter_log_cases():
+    """The log of a JSON and a Lua filter below the verbosity `INFO`: Pandoc
+    makes no filter records then. The rows with `--verbose` are not here,
+    because their records hold the run time of the filter."""
+    files = {"same.sh": "#!/bin/sh\ncat\n", "f.lua": "function Pandoc(d) return d end\n"}
+    return [{"args": ["-f", "json", "-t", "json", "--log=log.json"] + level + filter,
+             "files": files}
+            for level in [[], ["--quiet"], ["--verbose", "--quiet"]]
+            for filter in [["-F", "./same.sh"], ["-L", "f.lua"]]]
+
+
+def curdir_cases():
+    """The variable `curdir` of a template, with and without `--sandbox`."""
+    return [{"args": lead + ["-f", "json", "-t", "html", "--template=t.html"],
+             "files": {"t.html": "[$curdir$]\n"}}
+            for lead in [[], ["--sandbox"]]]
+
+
 def encode(text):
     """Turns text with surrogate escapes into bytes."""
     return text.encode("utf-8", "surrogateescape")
@@ -792,7 +926,7 @@ def run(pandoc, case, home):
     root = tempfile.mkdtemp(prefix="cli-resource-")
     try:
         for path, text in case["files"].items():
-            full = os.path.join(root, path)
+            full = os.path.join(root, path.replace("{root}", root.lstrip("/")))
             os.makedirs(os.path.dirname(full), exist_ok=True)
             with open(full, "wb") as handle:
                 handle.write(encode(text))
@@ -843,13 +977,19 @@ def main():
         "review8": review_eight_cases,
         "abbreviations": abbreviation_cases,
         "sandbox-templates": sandbox_template_cases,
+        "absolute": absolute_name_cases,
+        "metadata-strings": metadata_string_cases,
+        "page-title": page_title_cases,
+        "filter-log": filter_log_cases,
+        "curdir": curdir_cases,
     }
     try:
         if mode == "resources":
             cases = [c for name in ["base", "lists", "templates", "defaults", "named",
                                     "datadir", "aux", "values", "nested", "inputs",
                                     "numbering", "review8", "abbreviations",
-                                    "sandbox-templates"]
+                                    "sandbox-templates", "absolute", "metadata-strings",
+                                    "page-title", "filter-log", "curdir"]
                      for c in groups[name]()]
         else:
             cases = groups[mode]()

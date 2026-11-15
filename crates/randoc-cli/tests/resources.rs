@@ -94,6 +94,11 @@ fn replay(data: &str, name: &str) {
                             if found.load(Ordering::Relaxed) >= limit {
                                 break;
                             }
+                            // A record with `known` names the row of `docs/ISSUES.md`
+                            // that records its difference; the replay does not judge it.
+                            if records[index].get("known").is_some() {
+                                continue;
+                            }
                             if let Some(text) = difference(index, &records[index], &root, home) {
                                 found.fetch_add(1, Ordering::Relaxed);
                                 differences.push(text);
@@ -124,8 +129,14 @@ fn replay(data: &str, name: &str) {
 /// Makes the files of a case in the folder `root`.
 fn make_files(root: &std::path::Path, files: &Value) {
     std::fs::create_dir_all(root).expect("the case folder is made");
+    // A file path that holds `{root}` names the case folder without its
+    // leading `/`: a copy of an absolute name under the user data folder.
+    let inner = root
+        .to_str()
+        .expect("a UTF-8 folder name")
+        .trim_start_matches('/');
     for (path, bytes) in files.as_object().expect("files") {
-        let full = root.join(path);
+        let full = root.join(path.replace("{root}", inner));
         std::fs::create_dir_all(full.parent().expect("a parent")).expect("a folder");
         // A file `keep` only makes its folder exist. The folder is sufficient.
         if full.file_name().is_some_and(|name| name == "keep") {

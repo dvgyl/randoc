@@ -447,3 +447,83 @@ id = "lua-sandbox-missing"
 cmd = ["-f", "json", "-t", "native", "--sandbox", "-L", "nosuch.lua"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
 covers = ["opt:lua-filter"]
+
+# The request headers of PANDOC_STATE: the first value of each exact name (cli-R9-18).
+
+[[case]]
+id = "request-headers-1"
+cmd = ["-f", "json", "-t", "native", "-L", "h.lua", "--request-header=user-agent:x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+[case.files]
+"h.lua" = '''
+function Pandoc(d)
+  local t = {}
+  for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t+1] = p[1] .. "=" .. p[2] end
+  return pandoc.Pandoc{pandoc.Para{pandoc.Str(table.concat(t, ";"))}}
+end
+'''
+
+[[case]]
+id = "request-headers-2"
+cmd = ["-f", "json", "-t", "native", "-L", "h.lua", "--request-header=A:1", "--request-header=A:2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+[case.files]
+"h.lua" = '''
+function Pandoc(d)
+  local t = {}
+  for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t+1] = p[1] .. "=" .. p[2] end
+  return pandoc.Pandoc{pandoc.Para{pandoc.Str(table.concat(t, ";"))}}
+end
+'''
+
+[[case]]
+id = "request-headers-3"
+cmd = ["-f", "json", "-t", "native", "-L", "h.lua", "--request-header=B:1", "--request-header=A:1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+[case.files]
+"h.lua" = '''
+function Pandoc(d)
+  local t = {}
+  for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t+1] = p[1] .. "=" .. p[2] end
+  return pandoc.Pandoc{pandoc.Para{pandoc.Str(table.concat(t, ";"))}}
+end
+'''
+
+[[case]]
+id = "request-headers-4"
+cmd = ["-f", "json", "-t", "native", "-L", "h.lua", "--request-header=User-Agent:x", "--request-header=User-Agent:y"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+[case.files]
+"h.lua" = '''
+function Pandoc(d)
+  local t = {}
+  for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t+1] = p[1] .. "=" .. p[2] end
+  return pandoc.Pandoc{pandoc.Para{pandoc.Str(table.concat(t, ";"))}}
+end
+'''
+
+[[case]]
+id = "request-headers-5"
+cmd = ["-f", "json", "-t", "native", "-L", "h.lua", "--request-header=a:1", "--request-header=A:2"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+[case.files]
+"h.lua" = '''
+function Pandoc(d)
+  local t = {}
+  for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t+1] = p[1] .. "=" .. p[2] end
+  return pandoc.Pandoc{pandoc.Para{pandoc.Str(table.concat(t, ";"))}}
+end
+'''
+
+[[case]]
+id = "request-headers-6"
+cmd = ["-f", "json", "-t", "native", "-L", "h.lua", "--request-header=A:1", "--request-header=B:2", "--request-header=A:3"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+[case.files]
+"h.lua" = '''
+function Pandoc(d)
+  local t = {}
+  for _, p in ipairs(PANDOC_STATE.request_headers) do t[#t+1] = p[1] .. "=" .. p[2] end
+  return pandoc.Pandoc{pandoc.Para{pandoc.Str(table.concat(t, ";"))}}
+end
+'''

@@ -2937,3 +2937,131 @@ coverage, fuzzing or benchmarks for this range.
 Harness: 58821 units: 56953 pass, 1448 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56246 units: 0 regressions, 707 new passes.
 Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56248, "total": 57703}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56953, "total": 58401}}`.
+
+## Correction of the record of batch E (session 6, 2026-11-15)
+
+The record of batch E above is wrong in two points. The coordinator
+found this at 08:10 UTC, after a record clerk could not find the commit
+of the Lua block.
+
+- The commit `5ec6dcf` has the title of the LaTeX reader block, but it
+  holds the Lua block (`5f094ba` of `ws/lua-3`: 21 files of
+  `crates/randoc-lua`, with its rows of `docs/ISSUES.md`) and no file of
+  the LaTeX reader.
+- The LaTeX reader block (`f92d211` of `ws/latex-reader-4`) was NOT
+  merged in batch E. The paragraph `**latex-reader**` of that record
+  describes a block that reached `main` only in batch G (below).
+
+Cause: the merge tool `env/bin/merge-batch-s6` left the Lua block out,
+because the test of that block failed (the known-difference list for
+the `csljson` line feed, which the commit `4f8a3f3` corrected later).
+Its undo step (`git reset --merge`) failed without a message on this
+drive, so the files of the Lua block stayed in the index. The squash of
+the next block then failed, the tool did not see that, and it committed
+the staged Lua files with the message and the record of the LaTeX
+reader block.
+
+What holds: the three merge checks of batch E ran on the tree that
+`main` has, with the Lua block and without the new LaTeX reader block.
+The third check passed (0 regressions). So the code of `main` passed
+the full gate; only the title of one commit and the record were wrong.
+The history stays as it is (no rewrite of published history). The tool
+now stops when the tree is not clean after an undo or before a squash,
+and it treats a failed squash with no conflict file as an error.
+
+The record of the Lua block, which batch E did not write:
+
+**lua**: branch `ws/lua-3`, commits `b05ab81..5f094ba` (one merge of
+`origin/main` inside; `main` holds `b05ab81` as `54ae392`). 4c3374d adds
+`pandoc.read`, `pandoc.write`, `pandoc.readers` and `pandoc.writers`.
+4f5ec78 bounds the depth of the template variables (lua-R4-01). a7c4b39
+adds `MODULES.md`, the measured state of each name of the Lua interface.
+7438f01 and 5f094ba add the entrances for custom readers, custom writers
+and the interpreter. No program path calls the entrances yet.
+`pandoc.read` and `pandoc.write` need two lines of the command line,
+which its worker adds.
+
+Gate: `5f094ba` gate passed at 05:18 UTC; `4f5ec78` gate passed at 04:14
+UTC. The worker ran both gates.
+
+Measured by the worker: convert matrix 33 filters, 769 probes, 66 oracle
+runs, 0 differences outside 75 known probes (full and restricted mode).
+Script matrix 34 cases, all equal to the oracle except `writer-classic`
+(known). `MODULES.md`: 468 names; 279 equal, 2 different, 187 absent.
+
+Review state: Round 3 (session 5, on `main` `890ef9f`) requested
+changes; its high and medium findings are corrected on `main` since
+`9c224f6`. The Codex verification of round 4 (on `main` `856692d`) was
+stopped by its service after 1,133,488 tokens and gave no verdict. Its
+partial report says that the round 3 corrections that it ran again hold,
+that I-LUA-15 is open, and it confirms one new high finding, lua-R4-01,
+which this block corrects (`4f5ec78`). The new parts of this block are a
+major block with no review round yet: both reviews are due after merge.
+
+Open: I-LUA-15, I-LUA-11, I-LUA-31 (Medium); I-LUA-29 (scope gap: classic
+custom writer, `Extensions`, `Template`); I-LUA-16 to 28, 30, 32, 33 (Low).
+
+Checks that did not run: mutation sample (not run); fuzzing (not run);
+coverage (the run failed in the report step, no percentage); benchmarks
+(the report states no run).
+
+Licence scan of the block: 1 hit outside the licence texts, judged by
+the coordinator: `prelude.lua` holds the function names of the module
+`pandoc.path` in the order of the alphabet, and a test file of Pandoc
+holds the same list. The names are the documented interface.
+
+## Session 6 of 2026-11-15, batch G (four blocks: cli, citeproc, latex-reader, html-reader)
+
+**cli**: branch `ws/cli-5`, commits `3c478df..83a0422`, with a merge of
+`origin/main`. `main` holds `3c478df` as `47c7f1b`. Commit `513f0c5`
+corrects the high findings cli-R9-17, 04, 06, 07, 23 and the medium
+findings cli-R9-08 to 14, 16, 18, 24. It gives Lua filters the reader
+and writer options. Commit `b4b024c` changes `randoc-core` by permission
+of the coordinator: two defects of `NativeHost` and the new error kind
+`Error::Fatal`. Commit `83a0422` corrects the low findings L01, L04, L05.
+
+Gate: `06:43 UTC b4b024c gate passed` and `07:33 UTC 83a0422 gate
+passed`. The worker ran the gate.
+
+Measured by the worker: 89 of 89 new cli harness units pass. Resource
+replay: 3667 rows, 3656 judged, 0 differences. Lua options matrix: 44
+command lines, 0 differences outside the known lines. `randoc-cli` lib
+tests: 78. `randoc-core --lib`: 59 pass.
+
+Review state: Round 9 of the command line (Codex, on `main` `a2fbf7d`,
+session 5): 2 critical, 12 high and 10 medium findings. The blocks
+`023405c` and `47c7f1b` on `main` correct both critical findings, the
+safety findings and three high findings. This block corrects the other
+high findings (cli-R9-17, 04, 06, 07, 23) and the medium findings
+(cli-R9-08 to 14, 16, 18, 24), and three low findings. So each finding of
+round 9 with the level medium or higher has a correction, except the part
+of cli-R9-16 that row I-CLI-53 records. The block also changes
+`randoc-core` by permission of the coordinator (two defects of
+`NativeHost` and `Error::Fatal`, items 1 and 2 of `cli-s5b.md`) and gives
+Lua filters their reader and writer options (item 3). The Codex
+verification of round 10 and the first Opus review of the command line
+run now on `main` `eba317c`; they do not cover this block.
+
+Open: I-CLI-52, 53, 54, 55 (all low); cli-R9-L02 and L03 (low, not
+started); items 7 and 8 of `cli-s5b.md` (not started).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+Licence scan of the block: the hits outside the licence texts are of
+three kinds, each one judged by the coordinator. Error texts of the
+reference that the program must print, in `cli.rs`, in `error.rs` of
+`randoc-core` and in two stored results (for example the text for a
+wrong argument of `--tab-stop`): the task asks for the same error
+messages. Text of the default template `styles.html` in a stored
+result (`crates/randoc-data` holds it under its BSD-3-Clause option).
+The same short comparisons and the list of element names in the
+Markdown reader as in batch E.
+
+Addition of the coordinator: batch F left this block out, because its
+squash had conflicts in three files of the crate (`main` held the state
+of `3c478df` of the same branch and one later commit of the coordinator,
+`24b77b6`, in `tests/writer_capabilities.rs`). In batch G the
+coordinator made the squash by hand: the branch version of
+`crates/randoc-cli` and of the cli suite, and the empty list of known
+differences of `24b77b6` again. The merged tree builds, and the writer
+matrix test passes.

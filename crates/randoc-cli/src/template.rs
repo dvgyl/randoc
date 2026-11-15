@@ -2,7 +2,7 @@
 //! from the command line and the environment. The writer adds the variables
 //! that depend on the document and renders the template.
 
-use randoc::ast::{MetaValue, Pandoc};
+use randoc::ast::{Block, Inline, MetaValue, Pandoc};
 use randoc::{Context, Error, LogMessage, Result};
 use randoc_templates::{CompileError, Context as Variables, Template, Val};
 
@@ -218,8 +218,17 @@ pub fn variables(
     } else {
         inputs.iter().map(String::as_str).collect()
     };
-    for source in sources {
-        add(&mut vars, "sourcefile", Val::text(source));
+    // `sourcefile` is a list, also for one input (oracle matrix of the Lua
+    // writer options).
+    if vars.get("sourcefile").is_none() {
+        vars.insert(
+            "sourcefile",
+            Val::List(sources.into_iter().map(Val::text).collect()),
+        );
+    } else {
+        for source in sources {
+            add(&mut vars, "sourcefile", Val::text(source));
+        }
     }
     let output = settings.output_file.as_deref().unwrap_or("-");
     for (name, value) in [
@@ -238,7 +247,7 @@ pub fn variables(
 /// values make a list.
 fn add(vars: &mut Variables, name: &str, value: Val) {
     let new = match vars.0.remove(name) {
-        None | Some(Val::Null) => value,
+        None => value,
         Some(Val::List(mut items)) => {
             items.push(value);
             Val::List(items)
@@ -279,22 +288,147 @@ fn json_val(json: &serde_json::Value, depth: usize) -> Option<Val> {
 
 /// The text of a JSON number: an integer without a fraction.
 fn number_text(n: &serde_json::Number) -> String {
-    match n.as_f64() {
-        Some(f) if n.is_f64() && f.fract() == 0.0 && f.abs() < 1e15 => format!("{f:.0}"),
-        _ => n.to_string(),
-    }
+    number_display(&n.to_string()).unwrap_or_else(|| n.to_string())
 }
 
-/// Sets `pagetitle` for an HTML format when the document has no title and
-/// no `pagetitle`, from the first `sourcefile` without folder and extension.
-pub fn page_title_fallback(vars: &mut Variables, doc: &Pandoc, context: &mut Context) {
-    let has_meta = |key: &str| {
-        doc.meta
-            .0
-            .get(key)
-            .is_some_and(|value| !matches!(value, MetaValue::MetaString(s) if s.is_empty()))
+/// The most zeros that an integral number gets in its text. A larger one
+/// takes the floating-point form.
+const MAX_ZEROS: i64 = 100_000;
+
+/// The text of a template variable for the decimal number `token`, as
+/// Pandoc 3.13 gives it (oracle probes of cli-R9-16): an exact integer
+/// gives all its digits (`1e22`, `2.0`, `9007199254740993.0`), and another
+/// number gives the text of the nearest `f64` in the Haskell form (`1.5`,
+/// `1.0e-6`, `1.23456785e7`). `None` for a token that is not a number.
+pub fn number_display(token: &str) -> Option<String> {
+    let (negative, unsigned) = match token.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, token.strip_prefix('+').unwrap_or(token)),
     };
-    if vars.get("pagetitle").is_some() || has_meta("title") || has_meta("pagetitle") {
+    let (mantissa, exponent) = match unsigned.find(['e', 'E']) {
+        Some(at) => (&unsigned[..at], unsigned[at + 1..].parse::<i64>().ok()?),
+        None => (unsigned, 0),
+    };
+    let (whole, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
+    let digits = format!("{whole}{fraction}");
+    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let length = i64::try_from(digits.len()).ok()?;
+    let point = i64::try_from(whole.len()).ok()?.saturating_add(exponent);
+    let after_point = usize::try_from(point.clamp(0, length)).ok()?;
+    if digits[after_point..].bytes().all(|b| b == b'0') && point.saturating_sub(length) <= MAX_ZEROS
+    {
+        let zeros = usize::try_from(point.saturating_sub(length).max(0)).ok()?;
+        let integer = format!("{}{}", &digits[..after_point], "0".repeat(zeros));
+        let integer = integer.trim_start_matches('0');
+        return Some(match (integer.is_empty(), negative) {
+            (true, _) => "0".to_owned(),
+            (false, true) => format!("-{integer}"),
+            (false, false) => integer.to_owned(),
+        });
+    }
+    let value: f64 = token.parse().ok()?;
+    Some(haskell_double(value))
+}
+
+/// The text of `show` of a Haskell `Double`: the shortest digits, in fixed
+/// form from 0.1 to 10^7 and in exponent form otherwise.
+fn haskell_double(value: f64) -> String {
+    let sign = if value < 0.0 { "-" } else { "" };
+    let scientific = format!("{:e}", value.abs());
+    let (mantissa, exponent) = scientific.split_once('e').unwrap_or((&scientific, "0"));
+    let exponent: i64 = exponent.parse().unwrap_or(0);
+    let digits = mantissa.replace('.', "");
+    let (first, rest) = digits.split_at(1.min(digits.len()));
+    let rest = if rest.is_empty() { "0" } else { rest };
+    if !(0.1..1e7).contains(&value.abs()) {
+        return format!("{sign}{first}.{rest}e{exponent}");
+    }
+    if exponent < 0 {
+        return format!("{sign}0.{digits}");
+    }
+    let whole = usize::try_from(exponent).unwrap_or(0) + 1;
+    let padded = format!("{digits:0<whole$}");
+    let (integer, fraction) = padded.split_at(whole);
+    let fraction = if fraction.is_empty() { "0" } else { fraction };
+    format!("{sign}{integer}.{fraction}")
+}
+
+/// Replaces each number of the JSON text `text` with a string that holds its
+/// [`number_display`] text, so that no digit is lost to `f64`. A template
+/// variable shows a number and a string in the same way.
+pub fn exact_numbers(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut chars = text.char_indices().peekable();
+    let mut in_string = false;
+    while let Some((start, c)) = chars.next() {
+        if in_string {
+            out.push(c);
+            match c {
+                '\\' => {
+                    if let Some((_, escaped)) = chars.next() {
+                        out.push(escaped);
+                    }
+                }
+                '"' => in_string = false,
+                _ => {}
+            }
+            continue;
+        }
+        if c == '"' {
+            in_string = true;
+            out.push(c);
+            continue;
+        }
+        if c == '-' || c.is_ascii_digit() {
+            let mut end = start + c.len_utf8();
+            while let Some(&(at, next)) = chars.peek() {
+                if !(next.is_ascii_digit() || matches!(next, '.' | 'e' | 'E' | '+' | '-')) {
+                    break;
+                }
+                end = at + next.len_utf8();
+                chars.next();
+            }
+            let token = &text[start..end];
+            match number_display(token) {
+                Some(display) => {
+                    out.push('"');
+                    out.push_str(&display);
+                    out.push('"');
+                }
+                None => out.push_str(token),
+            }
+            continue;
+        }
+        out.push(c);
+    }
+    out
+}
+
+/// Sets `pagetitle` for an HTML format when the page has no usable title,
+/// from the first `sourcefile` without folder and extension.
+///
+/// The page title is the variable `pagetitle`, else the metadata field
+/// `pagetitle`, else the plain text of the metadata field `title`. Oracle
+/// probes of cli-R9-06 give the rule for a usable value: a list (a repeated
+/// `-V`), a Boolean value and a map are never usable; a variable needs text;
+/// the `pagetitle` field needs more than white space; the `title` field needs
+/// plain text with more than line breaks.
+pub fn page_title_fallback(vars: &mut Variables, doc: &Pandoc, context: &mut Context) {
+    let usable = match (vars.get("pagetitle"), doc.meta.0.get("pagetitle")) {
+        (Some(variable), _) => matches!(variable, Val::Simple(_)) && !val_text(variable).is_empty(),
+        (None, Some(field)) => renders_text(field),
+        (None, None) => doc.meta.0.get("title").is_some_and(|title| {
+            matches!(
+                title,
+                MetaValue::MetaString(_) | MetaValue::MetaInlines(_) | MetaValue::MetaBlocks(_)
+            ) && !randoc::shared::stringify_meta(title)
+                .trim_matches('\n')
+                .is_empty()
+        }),
+    };
+    if usable {
         return;
     }
     let first = match vars.get("sourcefile") {
@@ -305,6 +439,26 @@ pub fn page_title_fallback(vars: &mut Variables, doc: &Pandoc, context: &mut Con
     let fallback = base_name(&source);
     context.report(LogMessage::NoTitleElement(fallback.clone()));
     vars.insert("pagetitle", Val::text(fallback));
+}
+
+/// Returns true when the HTML form of a metadata value has more than white
+/// space: an empty `Str`, a space and a soft line break give none.
+fn renders_text(value: &MetaValue) -> bool {
+    let inline_text = |inlines: &[Inline]| {
+        inlines.iter().any(|inline| {
+            !matches!(inline, Inline::Space | Inline::SoftBreak)
+                && !matches!(inline, Inline::Str(text) if text.is_empty())
+        })
+    };
+    match value {
+        MetaValue::MetaString(text) => !text.trim().is_empty(),
+        MetaValue::MetaInlines(inlines) => inline_text(inlines),
+        MetaValue::MetaBlocks(blocks) => blocks.iter().any(|block| match block {
+            Block::Plain(inlines) | Block::Para(inlines) => inline_text(inlines),
+            _ => true,
+        }),
+        MetaValue::MetaBool(_) | MetaValue::MetaMap(_) | MetaValue::MetaList(_) => false,
+    }
 }
 
 fn val_text(val: &Val) -> String {
@@ -473,8 +627,12 @@ mod tests {
             vars.get("sourcefile"),
             Some(&Val::List(vec![Val::text("m.md"), Val::text("abbr")]))
         );
+        // Pandoc 3.13: a Lua filter sees `sourcefile={1="-"}` for standard input.
         let vars = variables(&settings, &[], &none, "/c", 128).unwrap();
-        assert_eq!(vars.get("sourcefile"), Some(&Val::text("-")));
+        assert_eq!(
+            vars.get("sourcefile"),
+            Some(&Val::List(vec![Val::text("-")]))
+        );
     }
 
     /// Nests `depth` lists or maps around a string, without recursion.
@@ -534,6 +692,43 @@ mod tests {
             .unwrap()
             .join()
             .unwrap();
+    }
+
+    // Pandoc 3.13 for `--variable-json=x:TOKEN` and the template `$x$`.
+    #[test]
+    fn numbers_give_the_text_of_pandoc() {
+        let pairs = [
+            ("9007199254740993.0", "9007199254740993"),
+            ("1e-6", "1.0e-6"),
+            ("1e15", "1000000000000000"),
+            ("1.5", "1.5"),
+            ("2.0", "2"),
+            ("1e22", "10000000000000000000000"),
+            ("1e7", "10000000"),
+            ("1234567.5", "1234567.5"),
+            ("12345678.5", "1.23456785e7"),
+            ("0.1", "0.1"),
+            ("0.01", "1.0e-2"),
+            ("-0.0", "0"),
+            ("-2.50", "-2.5"),
+            (
+                "123456789012345678901234567890",
+                "123456789012345678901234567890",
+            ),
+            ("0.5e1", "5"),
+            ("1E2", "100"),
+            ("-1e-7", "-1.0e-7"),
+            ("3.14159265358979323846", "3.141592653589793"),
+        ];
+        for (token, text) in pairs {
+            assert_eq!(number_display(token).as_deref(), Some(text), "{token}");
+        }
+        assert_eq!(number_display("1e400").map(|t| t.len()), Some(401));
+        assert_eq!(number_display("-").as_deref(), None);
+        assert_eq!(
+            exact_numbers(r#"{"a":[1e-6,"2.0\"",-0.0]}"#),
+            r#"{"a":["1.0e-6","2.0\"","0"]}"#
+        );
     }
 
     #[test]

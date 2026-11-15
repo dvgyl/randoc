@@ -284,7 +284,18 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         Opt::VariableJson => {
             let (key, value) = match split_key_value(arg) {
                 (key, Some(text)) => {
-                    let json = parse_json(text).map_err(|message| {
+                    // Each number becomes the text of Pandoc before `serde_json`
+                    // rounds it. Only a number beyond `f64` makes the text as
+                    // given fail where Pandoc accepts it.
+                    let exact = || parse_json(&crate::template::exact_numbers(text));
+                    let json = match parse_json(text) {
+                        Ok(_) => exact(),
+                        Err(message) if message.contains("number out of range") => {
+                            exact().map_err(|_| message)
+                        }
+                        Err(message) => Err(message),
+                    }
+                    .map_err(|message| {
                         option_error(format!("Could not parse '{text}' as JSON:\n{message}"))
                     })?;
                     (key, VarValue::Json(json))
@@ -403,7 +414,8 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         Opt::NoCheckCertificate => s.no_check_certificate = bool_arg(opt, value)?,
         Opt::Abbreviations => s.abbreviations = Some(arg.to_owned()),
         Opt::TypstInput => {
-            let (key, value) = arg.split_once('=').unwrap_or((arg, ""));
+            // A name without `=` gets the value `true`, as in Pandoc.
+            let (key, value) = arg.split_once('=').unwrap_or((arg, "true"));
             s.typst_inputs.push((key.to_owned(), value.to_owned()));
         }
         Opt::IndentedCodeClasses => {
@@ -617,9 +629,11 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
     Ok(Step::Continue)
 }
 
-/// Returns the filter for `--filter`: a file with the extension `.lua` is a Lua filter.
+/// Returns the filter for a name in the `filters` list of a defaults file: a
+/// name that ends with `.lua` is a Lua filter. Case counts: `a.LUA` is a JSON
+/// filter (cli-R9-14).
 pub fn filter_for(path: &str) -> Filter {
-    if path.to_ascii_lowercase().ends_with(".lua") {
+    if path.ends_with(".lua") {
         Filter::Lua(path.to_owned())
     } else {
         Filter::Json(path.to_owned())
@@ -1200,7 +1214,8 @@ mod tests {
 
     #[test]
     fn lua_filters_are_known_by_the_extension() {
-        assert_eq!(filter_for("a.LUA"), Filter::Lua("a.LUA".to_owned()));
+        assert_eq!(filter_for("a.LUA"), Filter::Json("a.LUA".to_owned()));
+        assert_eq!(filter_for("a.lua"), Filter::Lua("a.lua".to_owned()));
         assert_eq!(filter_for("a.py"), Filter::Json("a.py".to_owned()));
     }
 }

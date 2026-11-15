@@ -505,6 +505,180 @@
       "stdout": "",
       "stderr": "Argument of --split-level must be a number between 1 and 6\n"
     },
+    "template-fallback-bad-name-bad-format#cmd": {
+      "key": "7bdd536cbc6c6ac0",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "Error compiling template '\"t.html\" (line 2, column 1):\nunexpected end of input\nexpecting \"$--\", \"\\n\", \"\\r\\n\", \"\\r\", \"$\", \"${\" or \"$$\"'\n"
+    },
+    "template-fallback-bad-name-good-format#cmd": {
+      "key": "fa922ed6750dc781",
+      "exit": 0,
+      "stdout": "x\n",
+      "stderr": ""
+    },
+    "template-fallback-bad-name-no-format#cmd": {
+      "key": "5e033cc153eec064",
+      "exit": 97,
+      "stdout": "",
+      "stderr": "Could not find data file 'templates/t.html'\n"
+    },
+    "template-fallback-bad-name-with-extension#cmd": {
+      "key": "37e899cb8f2681f1",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "Error compiling template '\"t.x\" (line 2, column 1):\nunexpected end of input\nexpecting \"$--\", \"\\n\", \"\\r\\n\", \"\\r\", \"$\", \"${\" or \"$$\"'\n"
+    },
+    "template-fallback-good-name#cmd": {
+      "key": "a0b694797748099f",
+      "exit": 0,
+      "stdout": "n\n",
+      "stderr": ""
+    },
+    "template-fallback-missing-partial-good-format#cmd": {
+      "key": "99e0c0e08fd0f551",
+      "exit": 0,
+      "stdout": "x\n",
+      "stderr": ""
+    },
+    "variable-json-number-1#cmd": {
+      "key": "0298e2751e161889",
+      "exit": 0,
+      "stdout": "9007199254740993|<9007199254740993>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-10#cmd": {
+      "key": "82a173333266fc80",
+      "exit": 0,
+      "stdout": "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000|<10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-11#cmd": {
+      "key": "e9a91af7d460752c",
+      "exit": 0,
+      "stdout": "123456789012345678901234567890|<123456789012345678901234567890>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-12#cmd": {
+      "key": "186c32027c678de2",
+      "exit": 0,
+      "stdout": "3.141592653589793|<3.141592653589793>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-13#cmd": {
+      "key": "3560fe02744679e8",
+      "exit": 0,
+      "stdout": "12.5e-3|<1><2.5e-3>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-14#cmd": {
+      "key": "ccc2bac27a8eec89",
+      "exit": 0,
+      "stdout": "true|<true>|100\n",
+      "stderr": ""
+    },
+    "variable-json-number-2#cmd": {
+      "key": "63a7db146c757842",
+      "exit": 0,
+      "stdout": "1.0e-6|<1.0e-6>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-3#cmd": {
+      "key": "a2206a5daabfcde5",
+      "exit": 0,
+      "stdout": "1000000000000000|<1000000000000000>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-4#cmd": {
+      "key": "b38ac21398809352",
+      "exit": 0,
+      "stdout": "1.5|<1.5>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-5#cmd": {
+      "key": "fd33bfcfc291965c",
+      "exit": 0,
+      "stdout": "2|<2>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-6#cmd": {
+      "key": "42456858b10adf3b",
+      "exit": 0,
+      "stdout": "10000000000000000000000|<10000000000000000000000>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-7#cmd": {
+      "key": "cfedd345c4a2fde4",
+      "exit": 0,
+      "stdout": "1.23456785e7|<1.23456785e7>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-8#cmd": {
+      "key": "caf8c5e2b2ed3086",
+      "exit": 0,
+      "stdout": "1.0e-2|<1.0e-2>|\n",
+      "stderr": ""
+    },
+    "variable-json-number-9#cmd": {
+      "key": "d002a8c8b1acb858",
+      "exit": 0,
+      "stdout": "0|<0>|\n",
+      "stderr": ""
+    },
+    "variable-null-append-1#cmd": {
+      "key": "4fd4637774367160",
+      "exit": 0,
+      "stdout": "<><a>|y\n",
+      "stderr": ""
+    },
+    "variable-null-append-2#cmd": {
+      "key": "d2ce73da8aeb677e",
+      "exit": 0,
+      "stdout": "|\n",
+      "stderr": ""
+    },
+    "variable-null-append-3#cmd": {
+      "key": "0e501430093cb6c8",
+      "exit": 0,
+      "stdout": "|\n",
+      "stderr": ""
+    },
+    "variable-null-append-4#cmd": {
+      "key": "f22a35d702103ecb",
+      "exit": 0,
+      "stdout": "<><a><b>|y\n",
+      "stderr": ""
+    },
+    "variable-null-append-5#cmd": {
+      "key": "74e5642d9e92d845",
+      "exit": 0,
+      "stdout": "<><b>|y\n",
+      "stderr": ""
+    },
+    "variable-null-append-6#cmd": {
+      "key": "ff5384c4f7a7c7f3",
+      "exit": 0,
+      "stdout": "<a>|y\n",
+      "stderr": ""
+    },
+    "variable-null-append-7#cmd": {
+      "key": "91326f3654f8a4bf",
+      "exit": 0,
+      "stdout": "<false><a>|y\n",
+      "stderr": ""
+    },
+    "variable-null-append-8#cmd": {
+      "key": "e4aebe030a304f07",
+      "exit": 0,
+      "stdout": "<><a>|y\n",
+      "stderr": ""
+    },
+    "variable-null-append-9#cmd": {
+      "key": "cc0693c9263ebe36",
+      "exit": 0,
+      "stdout": "<1>|y\n",
+      "stderr": ""
+    },
     "webtex#cmd": {
       "key": "7f4a5644a28a28a5",
       "exit": 0,

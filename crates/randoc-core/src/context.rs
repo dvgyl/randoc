@@ -242,6 +242,54 @@ fn environment_changes() -> std::sync::MutexGuard<'static, BTreeMap<Text, Option
         .unwrap_or_else(std::sync::PoisonError::into_inner)
 }
 
+/// Makes a new file `.copyFilePROCESS-COUNT.tmp` in `folder` for
+/// [`NativeHost::copy_file`].
+fn new_copy_file(folder: &str) -> io::Result<(String, std::fs::File)> {
+    let process = std::process::id();
+    let mut last_error = io::Error::from(io::ErrorKind::AlreadyExists);
+    for count in 0..100_u32 {
+        let path = format!("{folder}/.copyFile{process}-{count}.tmp");
+        match std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+        {
+            Ok(file) => return Ok((path, file)),
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists => last_error = error,
+            Err(error) => return Err(error),
+        }
+    }
+    Err(last_error)
+}
+
+/// The text of an environment name or value: each byte that is not part of
+/// a valid UTF-8 sequence gives one U+FFFD, as Pandoc decodes such bytes.
+fn os_text(text: &std::ffi::OsStr) -> Text {
+    #[cfg(unix)]
+    let bytes = std::os::unix::ffi::OsStrExt::as_bytes(text);
+    #[cfg(not(unix))]
+    let lossy = text.to_string_lossy();
+    #[cfg(not(unix))]
+    let bytes = lossy.as_bytes();
+    let mut out = Text::with_capacity(bytes.len());
+    let mut rest = bytes;
+    loop {
+        match std::str::from_utf8(rest) {
+            Ok(valid) => {
+                out.push_str(valid);
+                return out;
+            }
+            Err(error) => {
+                let (valid, invalid) = rest.split_at(error.valid_up_to());
+                out.push_str(std::str::from_utf8(valid).unwrap_or_default());
+                let count = error.error_len().unwrap_or(invalid.len());
+                out.extend(std::iter::repeat_n('\u{FFFD}', count));
+                rest = invalid.get(count..).unwrap_or_default();
+            }
+        }
+    }
+}
+
 /// A host that uses the real file system, clock and environment.
 ///
 /// Network access, random bytes and the processor time are not available in
@@ -319,8 +367,34 @@ impl Host for NativeHost {
         std::fs::rename(from, to)
     }
 
+    /// Copies through a new file in the folder of `to`, then renames it, as
+    /// the `copyFile` of the Haskell `directory` library does: a copy of a
+    /// file onto itself (also through another form of the path or a link)
+    /// keeps its bytes, and a failed copy leaves `to` as it was.
     fn copy_file(&mut self, from: &str, to: &str) -> io::Result<()> {
-        std::fs::copy(from, to).map(drop)
+        let folder = match to.rsplit_once('/') {
+            Some(("", _)) => "/",
+            Some((folder, _)) => folder,
+            None => ".",
+        };
+        let (temporary, mut file) = new_copy_file(folder)?;
+        let copied = (|| {
+            let mut input = std::fs::File::open(from)?;
+            let metadata = input.metadata()?;
+            if metadata.is_dir() {
+                return Err(io::Error::from(io::ErrorKind::IsADirectory));
+            }
+            io::copy(&mut input, &mut file)?;
+            drop(file);
+            // A file system without permissions (exFAT) refuses the change;
+            // the copy is still correct.
+            let _ = std::fs::set_permissions(&temporary, metadata.permissions());
+            std::fs::rename(&temporary, to)
+        })();
+        if copied.is_err() {
+            let _ = std::fs::remove_file(&temporary);
+        }
+        copied
     }
 
     fn path_kind(&mut self, path: &str, follow_links: bool) -> io::Result<PathKind> {
@@ -356,7 +430,9 @@ impl Host for NativeHost {
 
     fn environment(&mut self) -> io::Result<Vec<(Text, Text)>> {
         let changes = environment_changes();
-        let mut variables: Vec<(Text, Text)> = std::env::vars()
+        // `vars` panics for a variable that is not UTF-8; `vars_os` does not.
+        let mut variables: Vec<(Text, Text)> = std::env::vars_os()
+            .map(|(name, value)| (os_text(&name), os_text(&value)))
             .filter(|(name, _)| !changes.contains_key(name))
             .collect();
         variables.extend(
@@ -817,6 +893,45 @@ mod tests {
         fn show_log_message(&mut self, message: &LogMessage) {
             self.shown.lock().unwrap().push(message.render());
         }
+    }
+
+    #[test]
+    fn a_copy_onto_the_same_file_keeps_its_bytes() {
+        let folder = std::env::temp_dir().join(format!("randoc-core-copy-{}", std::process::id()));
+        std::fs::create_dir_all(folder.join("sub")).unwrap();
+        let file = folder.join("a.txt");
+        std::fs::write(&file, "text").unwrap();
+        let path = file.to_str().unwrap().to_owned();
+        let other_form = folder.join("sub/../a.txt").to_str().unwrap().to_owned();
+        let mut host = NativeHost;
+        host.copy_file(&path, &path).unwrap();
+        host.copy_file(&path, &other_form).unwrap();
+        assert_eq!(std::fs::read_to_string(&file).unwrap(), "text");
+        let copy = folder.join("b.txt").to_str().unwrap().to_owned();
+        host.copy_file(&path, &copy).unwrap();
+        assert_eq!(std::fs::read_to_string(&copy).unwrap(), "text");
+        // A failed copy leaves the target as it was and no temporary file.
+        let missing = folder.join("nosuch").to_str().unwrap().to_owned();
+        assert!(host.copy_file(&missing, &copy).is_err());
+        assert_eq!(std::fs::read_to_string(&copy).unwrap(), "text");
+        let names: Vec<_> = std::fs::read_dir(&folder)
+            .unwrap()
+            .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
+            .filter(|name| !name.starts_with("._"))
+            .collect();
+        assert!(
+            names.iter().all(|name| !name.starts_with(".copyFile")),
+            "{names:?}"
+        );
+        std::fs::remove_dir_all(&folder).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn environment_text_that_is_not_utf8_gives_one_replacement_for_each_byte() {
+        use std::os::unix::ffi::OsStrExt;
+        let text = std::ffi::OsStr::from_bytes(b"a\xffb\xe2\xa0");
+        assert_eq!(os_text(text), "a\u{FFFD}b\u{FFFD}\u{FFFD}");
     }
 
     #[test]

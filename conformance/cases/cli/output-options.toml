@@ -515,3 +515,183 @@ id = "include-directory"
 cmd = ["-f", "json", "-t", "json", "-H", "dir"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 files = { "dir/x" = "x" }
+
+# A later -V value joins an earlier JSON null; --variable-json replaces (cli-R9-09).
+
+[[case]]
+id = "variable-null-append-1"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:null", "-V", "x=a"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-2"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "-V", "x=a", "--variable-json=x:null"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-3"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:null"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-4"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:null", "-V", "x=a", "-V", "x=b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-5"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "-V", "x=a", "--variable-json=x:null", "-V", "x=b"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-6"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:[]", "-V", "x=a"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-7"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:false", "-V", "x=a"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-8"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "-V", "x=", "-V", "x=a"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+[[case]]
+id = "variable-null-append-9"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:null", "--variable-json=x:1"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$for(x)$<$x$>$endfor$|$if(x)$y$endif$\n" }
+
+# A template NAME without an extension that does not compile sends the search on to NAME.FORMAT (cli-R9-24).
+
+[[case]]
+id = "template-fallback-bad-name-good-format"
+cmd = ["-f", "json", "-t", "html", "--template=t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t" = "$if(x)$\n", "t.html" = "x\n" }
+
+[[case]]
+id = "template-fallback-bad-name-no-format"
+cmd = ["-f", "json", "-t", "html", "--template=t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t" = "$if(x)$\n" }
+
+[[case]]
+id = "template-fallback-missing-partial-good-format"
+cmd = ["-f", "json", "-t", "html", "--template=t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t" = "$nosuch()$\n", "t.html" = "x\n" }
+
+[[case]]
+id = "template-fallback-good-name"
+cmd = ["-f", "json", "-t", "html", "--template=t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t" = "n\n", "t.html" = "x\n" }
+
+[[case]]
+id = "template-fallback-bad-name-bad-format"
+cmd = ["-f", "json", "-t", "html", "--template=t"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t" = "$if(x)$\n", "t.html" = "$if(y)$\n" }
+
+[[case]]
+id = "template-fallback-bad-name-with-extension"
+cmd = ["-f", "json", "-t", "html", "--template=t.x"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.x" = "$if(x)$\n", "t.x.html" = "x\n" }
+
+# Numbers of --variable-json in a template (cli-R9-16).
+
+[[case]]
+id = "variable-json-number-1"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:9007199254740993.0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-2"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:1e-6"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-3"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:1e15"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-4"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:1.5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-5"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:2.0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-6"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:1e22"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-7"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:12345678.5"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-8"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:0.01"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-9"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:-0.0"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-10"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:1e400"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-11"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:123456789012345678901234567890"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-12"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:3.14159265358979323846"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-13"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:[1.0,2.5e-3]"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }
+
+[[case]]
+id = "variable-json-number-14"
+cmd = ["-f", "json", "-t", "html", "--template=t.html", "--variable-json=x:{\"k\":1e2}"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+files = { "t.html" = "$x$|$for(x)$<$x$>$endfor$|$x.k$\n" }

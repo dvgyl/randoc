@@ -114,6 +114,11 @@ pub enum Error {
     CouldNotFindMetadataFile(Text),
     /// A resource is not in the resource path.
     ResourceNotFound(Text),
+    /// A failure that stops the whole program at once with exit code 1,
+    /// also inside a Lua `pcall`: for example a program that
+    /// `pandoc.system.command` cannot start (row I-LUA-15). The text is the
+    /// message after the `pandoc: ` prefix of Pandoc.
+    Fatal(Text),
 }
 
 impl Error {
@@ -152,6 +157,7 @@ impl Error {
             Error::CouldNotFindDataFile(_) => 97,
             Error::CouldNotFindMetadataFile(_) => 98,
             Error::ResourceNotFound(_) => 99,
+            Error::Fatal(_) => 1,
         }
     }
 }
@@ -160,6 +166,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::Io(message)
+            | Error::Fatal(message)
             | Error::Format(message)
             | Error::App(message)
             | Error::Option(message)
@@ -379,6 +386,7 @@ mod tests {
             (Error::CouldNotFindDataFile(text()), 97),
             (Error::CouldNotFindMetadataFile(text()), 98),
             (Error::ResourceNotFound(text()), 99),
+            (Error::Fatal(text()), 1),
         ];
         for (error, code) in cases {
             assert_eq!(error.exit_code(), code, "{error:?}");

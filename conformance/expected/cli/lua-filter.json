@@ -312,6 +312,42 @@
       "exit": 0,
       "stdout": "[ Para [] ]\n",
       "stderr": ""
+    },
+    "request-headers-1#cmd": {
+      "key": "3f710d6879b69f7d",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"user-agent=x;User-Agent=pandoc/3.13\" ] ]\n",
+      "stderr": ""
+    },
+    "request-headers-2#cmd": {
+      "key": "7a737ee1f9dd537c",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A=1;User-Agent=pandoc/3.13\" ] ]\n",
+      "stderr": ""
+    },
+    "request-headers-3#cmd": {
+      "key": "87bcf655109920e8",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"B=1;A=1;User-Agent=pandoc/3.13\" ] ]\n",
+      "stderr": ""
+    },
+    "request-headers-4#cmd": {
+      "key": "2545874a1a47fcae",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"User-Agent=x\" ] ]\n",
+      "stderr": ""
+    },
+    "request-headers-5#cmd": {
+      "key": "01a83d2bd4edcc5c",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"a=1;A=2;User-Agent=pandoc/3.13\" ] ]\n",
+      "stderr": ""
+    },
+    "request-headers-6#cmd": {
+      "key": "aa2c19b6989271a7",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"A=1;B=2;User-Agent=pandoc/3.13\" ] ]\n",
+      "stderr": ""
     }
   }
 }

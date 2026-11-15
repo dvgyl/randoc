@@ -301,12 +301,12 @@ fn keeps_tabs(reader: &str) -> bool {
 }
 
 /// Converts a YAML metadata node: a string is Markdown text.
-fn yaml_to_meta(node: &Node, context: &mut Context) -> Result<MetaValue> {
+fn yaml_to_meta(node: &Node, options: &ReaderOptions, context: &mut Context) -> Result<MetaValue> {
     Ok(match node.resolve() {
         Value::Sequence(items) => MetaValue::MetaList(
             items
                 .iter()
-                .map(|item| yaml_to_meta(item, context))
+                .map(|item| yaml_to_meta(item, options, context))
                 .collect::<Result<_>>()?,
         ),
         Value::Mapping(entries) => {
@@ -314,31 +314,64 @@ fn yaml_to_meta(node: &Node, context: &mut Context) -> Result<MetaValue> {
             for (key, value) in entries {
                 map.insert(
                     key.as_str().unwrap_or_default().to_owned(),
-                    yaml_to_meta(value, context)?,
+                    yaml_to_meta(value, options, context)?,
                 );
             }
             MetaValue::MetaMap(map)
         }
         Value::Bool(b) => MetaValue::MetaBool(b),
         Value::Null => MetaValue::MetaString(String::new()),
-        _ => markdown_meta(&node.text_form().unwrap_or_default(), context)?,
+        _ => markdown_meta(&node.text_form().unwrap_or_default(), options, context)?,
     })
 }
 
-/// Parses a metadata string as Markdown.
+/// The reader options of the strings of a metadata file: the options of the
+/// input, with the extensions of `markdown` unless the input format is
+/// `markdown` or `commonmark` (oracle probes of cli-R9-23).
+fn metadata_options(reader_options: &ReaderOptions, from: &str) -> ReaderOptions {
+    let mut options = reader_options.clone();
+    if !matches!(from, "markdown" | "commonmark") {
+        options.extensions = randoc::default_extensions("markdown");
+    }
+    options.extensions.enable(Extension::YamlMetadataBlock);
+    options
+}
+
+/// A YAML double-quoted scalar with the characters of `text`.
+fn yaml_quoted(text: &str) -> String {
+    let mut out = String::with_capacity(text.len() + 2);
+    out.push('"');
+    for c in text.chars() {
+        match c {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            c if c.is_control() || matches!(c, '\u{2028}' | '\u{2029}' | '\u{feff}') => {
+                out.push_str(&format!("\\u{:04x}", u32::from(c)));
+            }
+            c => out.push(c),
+        }
+    }
+    out.push('"');
+    out
+}
+
+/// Parses a metadata string as Markdown. The Markdown reader reads it as the
+/// value of a metadata block, so that the string gets the rules of a YAML
+/// metadata block: blocks for a final line break, else inlines (cli-R9-04).
 ///
 /// Without a Markdown reader the text becomes words and spaces.
-fn markdown_meta(text: &str, context: &mut Context) -> Result<MetaValue> {
+fn markdown_meta(text: &str, options: &ReaderOptions, context: &mut Context) -> Result<MetaValue> {
     if let Some(reader) = formats::text_reader("markdown") {
-        let mut options = ReaderOptions::default();
-        options.extensions = randoc::default_extensions("markdown");
-        let doc = reader.read(&Sources::from_text(text), &options, context)?;
-        return Ok(match doc.blocks.as_slice() {
-            [Block::Para(inlines)] | [Block::Plain(inlines)] => {
-                MetaValue::MetaInlines(inlines.clone())
-            }
-            _ => MetaValue::MetaBlocks(doc.blocks),
-        });
+        let source = format!("---\nx: {}\n---\n", yaml_quoted(text));
+        let mut doc = reader.read(&Sources::from_text(&source), options, context)?;
+        return Ok(doc
+            .meta
+            .0
+            .remove("x")
+            .unwrap_or(MetaValue::MetaInlines(Vec::new())));
     }
     let mut inlines = Vec::new();
     for (index, line) in text.trim().split('\n').enumerate() {
@@ -362,11 +395,16 @@ fn data_abbreviations(data_dir: &str) -> String {
 
 /// The second place of a metadata file: the `metadata` folder of the user data folder.
 fn data_metadata_file(path: &str, data_dir: &str) -> String {
-    data_path(data_dir, &format!("metadata/{path}"))
+    data_file(data_dir, "metadata", path)
 }
 
 /// Reads a metadata file from the working directory or the user data directory.
-fn read_metadata_file(path: &str, data_dir: &str, context: &mut Context) -> Result<Meta> {
+fn read_metadata_file(
+    path: &str,
+    data_dir: &str,
+    options: &ReaderOptions,
+    context: &mut Context,
+) -> Result<Meta> {
     let in_data_dir = data_metadata_file(path, data_dir);
     let bytes = match context.host().read_file(path) {
         Ok(bytes) => bytes,
@@ -388,7 +426,7 @@ fn read_metadata_file(path: &str, data_dir: &str, context: &mut Context) -> Resu
     match &root.kind {
         Kind::Mapping(entries) => {
             for (key, value) in entries {
-                let value = yaml_to_meta(value, context)?;
+                let value = yaml_to_meta(value, options, context)?;
                 meta.insert(key.as_str().unwrap_or_default().to_owned(), value);
             }
         }
@@ -405,10 +443,15 @@ fn read_metadata_file(path: &str, data_dir: &str, context: &mut Context) -> Resu
 }
 
 /// Reads the metadata files. A later file replaces a key of an earlier file.
-fn read_metadata_files(settings: &Settings, data_dir: &str, context: &mut Context) -> Result<Meta> {
+fn read_metadata_files(
+    settings: &Settings,
+    data_dir: &str,
+    options: &ReaderOptions,
+    context: &mut Context,
+) -> Result<Meta> {
     let mut from_files = Meta::default();
     for path in &settings.metadata_files {
-        let meta = read_metadata_file(path, data_dir, context)?;
+        let meta = read_metadata_file(path, data_dir, options, context)?;
         for (key, value) in meta.0 {
             from_files.0.insert(key, value);
         }
@@ -725,15 +768,17 @@ pub fn clean_template(bytes: Vec<u8>) -> Vec<u8> {
     bytes.into_iter().filter(|&b| b != b'\r').collect()
 }
 
-/// Finds a template as Pandoc does: the first of the template candidates
-/// that can be read. A template of the user data directory gives no log
-/// record. The file must be UTF-8; the error names the template name.
+/// Finds and compiles a template as Pandoc does: the first of the template
+/// candidates that can be read. A template of the user data directory gives
+/// no log record. The file must be UTF-8; the error names the template name.
+/// For a NAME without an extension, a file that is not UTF-8 or that does
+/// not compile sends the search on to NAME.FORMAT (cli-R9-24).
 fn find_template(
     name: &str,
     format: &str,
     files: &TemplateFiles,
     context: &mut Context,
-) -> Result<TemplateText> {
+) -> Result<(TemplateText, randoc_templates::Template)> {
     let candidates = template_candidates(name, format, files.data_dir, files.resource_path);
     for candidate in &candidates {
         let bytes = match files.read(&candidate.path, context) {
@@ -751,19 +796,23 @@ fn find_template(
                 candidate.path.clone(),
             ));
         }
+        let fallback = candidate.name == name && !has_extension(name);
         match check_utf8(&candidate.name, &bytes) {
             // Error messages and partial paths use the template name,
             // not the path of the file that was found.
             Ok(()) => {
-                return Ok(TemplateText {
+                let text = TemplateText {
                     path: candidate.name.clone(),
                     text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
                     is_file: true,
-                });
+                };
+                match crate::template::compile(&text, files, context) {
+                    Ok(template) => return Ok((text, template)),
+                    Err(_) if fallback => {}
+                    Err(error) => return Err(error),
+                }
             }
-            // Pandoc goes on to NAME.FORMAT when NAME without an
-            // extension is not UTF-8.
-            Err(_) if candidate.name == name && !has_extension(name) => {}
+            Err(_) if fallback => {}
             Err(error) => return Err(error),
         }
     }
@@ -917,6 +966,12 @@ impl randoc::Host for SandboxHost {
         randoc::Host::environment_variable(&mut randoc::NativeHost, name)
     }
 
+    /// Gives the working directory to the variable `curdir`: Pandoc fills it
+    /// also with `--sandbox` (oracle probe of cli-R9-L01).
+    fn working_directory(&mut self) -> std::io::Result<randoc::Text> {
+        randoc::Host::working_directory(&mut randoc::NativeHost)
+    }
+
     /// Sets a variable of the environment of a filter.
     fn set_environment_variable(&mut self, name: &str, value: Option<&str>) -> std::io::Result<()> {
         randoc::Host::set_environment_variable(&mut randoc::NativeHost, name, value)
@@ -1043,6 +1098,17 @@ pub fn data_path(data_dir: &str, rest: &str) -> String {
         format!("{data_dir}{rest}")
     } else {
         format!("{data_dir}/{rest}")
+    }
+}
+
+/// The file `name` in the subfolder `folder` of the user data folder. An
+/// absolute `name` stays as it is, as with the Haskell `</>`: the data
+/// folder never gives a different file for an absolute name.
+pub fn data_file(data_dir: &str, folder: &str, name: &str) -> String {
+    if name.starts_with('/') {
+        name.to_owned()
+    } else {
+        data_path(data_dir, &format!("{folder}/{name}"))
     }
 }
 
@@ -1378,17 +1444,13 @@ fn convert(
     read_named_files(ReadPoint::BeforeTemplate, settings, context)?;
     let files = TemplateFiles::new(settings, data_dir);
     let template = match &settings.template {
-        Some(name) => Some(find_template(name, &to_spec.name, &files, context)?),
-        None if settings.is_standalone() => Some(crate::template::default_template(
-            &to_spec.name,
-            &files,
-            context,
-        )?),
+        Some(name) => Some(find_template(name, &to_spec.name, &files, context)?.1),
+        None if settings.is_standalone() => {
+            let text = crate::template::default_template(&to_spec.name, &files, context)?;
+            Some(crate::template::compile(&text, &files, context)?)
+        }
         None => None,
     };
-    let template = template
-        .map(|text| crate::template::compile(&text, &files, context))
-        .transpose()?;
     read_named_files(ReadPoint::AfterTemplate, settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
     let style = settings.syntax_highlighting.as_str();
@@ -1416,7 +1478,12 @@ fn convert(
         }
     }
     reader_options.abbreviations = abbreviations(settings, data_dir, context)?;
-    let file_metadata = read_metadata_files(settings, data_dir, context)?;
+    let file_metadata = read_metadata_files(
+        settings,
+        data_dir,
+        &metadata_options(&reader_options, &from_spec.name),
+        context,
+    )?;
 
     let raw = read_inputs(inputs, context)?;
     read_named_files(ReadPoint::AfterInputs, settings, context)?;
@@ -1480,6 +1547,44 @@ fn convert(
             .extensions
             .enable(Extension::EastAsianLineBreaks);
     }
+    // Pandoc gives a format without default extensions (`json`, `native`,
+    // `docbook`) the extension set of its option defaults, `auto_identifiers`
+    // (cli-R9-13). The filters see it; the reader has run.
+    if randoc::default_extensions(&from_spec.name).is_empty() {
+        reader_options.extensions.enable(Extension::AutoIdentifiers);
+    }
+    // A Lua filter sees the writer options, so they are ready before the filters.
+    let mut writer_options = writer_options;
+    // Pandoc ignores the template text of a format without a default
+    // template; its writer takes the presence of a template as the
+    // standalone flag.
+    writer_options.template = template.map(|template| {
+        if writer.renders_template() {
+            template
+        } else {
+            Default::default()
+        }
+    });
+    let curdir = context.host().working_directory().unwrap_or_default();
+    writer_options.variables = crate::template::variables(
+        settings,
+        inputs,
+        &includes,
+        &curdir,
+        context.limits.max_nesting_depth,
+    )?;
+    // The writer options as a Lua filter sees them: the option defaults of
+    // Pandoc for a format without default extensions, and no number offset
+    // when the command line gives none (oracle matrix `tests/data/lua-options.json`).
+    let mut lua_writer_options = writer_options.clone();
+    if randoc::default_extensions(&to_spec.name).is_empty() {
+        lua_writer_options
+            .extensions
+            .enable(Extension::AutoIdentifiers);
+    }
+    if settings.number_offset == Settings::default().number_offset {
+        lua_writer_options.number_offset.clear();
+    }
     for filter in &settings.filters {
         doc = match filter {
             Filter::Json(path) => crate::filter::run(
@@ -1488,10 +1593,23 @@ fn convert(
                 &to_spec.name,
                 data_dir,
                 &reader_options,
+                &settings.typst_inputs,
                 context,
             )?,
             Filter::Lua(path) => {
-                crate::lua::run(path, &mut doc, &to_spec.name, settings, data_dir, context)?;
+                let options = crate::lua::Options {
+                    reader: &reader_options,
+                    writer: &lua_writer_options,
+                };
+                crate::lua::run(
+                    path,
+                    &mut doc,
+                    &to_spec.name,
+                    settings,
+                    data_dir,
+                    options,
+                    context,
+                )?;
                 doc
             }
             Filter::Citeproc => return Err(citeproc_error(settings, context)),
@@ -1506,27 +1624,6 @@ fn convert(
         return Err(subsystem::missing(Subsystem::EmbedResources));
     }
 
-    let mut writer_options = writer_options;
-    // Pandoc ignores the template text of a format without a default
-    // template; its writer takes the presence of a template as the
-    // standalone flag.
-    writer_options.template = template.map(|template| {
-        if writer.renders_template() {
-            template
-        } else {
-            Default::default()
-        }
-    });
-    let curdir = std::env::current_dir()
-        .map(|dir| dir.to_string_lossy().into_owned())
-        .unwrap_or_default();
-    writer_options.variables = crate::template::variables(
-        settings,
-        inputs,
-        &includes,
-        &curdir,
-        context.limits.max_nesting_depth,
-    )?;
     if is_html_format(&to_spec.name) && writer_options.template.is_some() {
         crate::template::page_title_fallback(&mut writer_options.variables, &doc, context);
     }
@@ -1927,6 +2024,7 @@ mod tests {
         assert_eq!(
             find_template("t.json", "json", &files, &mut context)
                 .unwrap()
+                .0
                 .text,
             "t"
         );
@@ -1937,6 +2035,7 @@ mod tests {
         assert_eq!(
             find_template("d.json", "json", &files, &mut context)
                 .unwrap()
+                .0
                 .text,
             "d"
         );

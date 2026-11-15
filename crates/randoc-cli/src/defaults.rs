@@ -66,7 +66,7 @@ fn apply_file(
         .chain(
             names
                 .iter()
-                .map(|n| crate::convert::data_path(&data_dir, &format!("defaults/{n}"))),
+                .map(|n| crate::convert::data_file(&data_dir, "defaults", n)),
         )
         .collect();
     // Pandoc takes the first candidate that is a regular file. When no
@@ -224,8 +224,8 @@ fn empty_value_mark(cursor: &mut Cursor, key: &Node, value: &Node) -> Option<Mar
     if !empty || value.tag.is_some() {
         return None;
     }
-    let start = key.mark.column.checked_sub(1)? + key.as_str()?.chars().count();
-    cursor.seek(key.mark.line, start)?;
+    cursor.seek(key.mark.line, key.mark.column.checked_sub(1)?)?;
+    cursor.skip_key(key.as_str()?.chars().count())?;
     let mark = Mark {
         line: key.mark.line,
         column: cursor.find_colon()? + 2,
@@ -283,6 +283,39 @@ impl<'a> Cursor<'a> {
             }
             self.next_on_line()?;
         }
+    }
+
+    /// Moves over the source text of a key that starts here: a quoted key
+    /// to its closing quote, so that a `:` inside the quotes or an escape
+    /// does not move the mark (cli-R9-L05); a plain key over its `length`
+    /// characters.
+    fn skip_key(&mut self, length: usize) -> Option<()> {
+        let quote = self.peek()?;
+        if !matches!(quote, '"' | '\'') {
+            for _ in 0..length {
+                self.next_on_line()?;
+            }
+            return Some(());
+        }
+        self.next_on_line()?;
+        loop {
+            let c = self.peek()?;
+            self.next_on_line()?;
+            if quote == '"' && c == '\\' {
+                self.next_on_line()?;
+            } else if c == quote {
+                // Two single quotes are one quote inside a single-quoted key.
+                if quote == '\'' && self.peek() == Some('\'') {
+                    self.next_on_line()?;
+                } else {
+                    return Some(());
+                }
+            }
+        }
+    }
+
+    fn peek(&self) -> Option<char> {
+        self.text.get(self.byte..)?.chars().next()
     }
 
     /// Moves one character forward on the line.
@@ -450,12 +483,16 @@ fn boolean(node: &Node) -> std::result::Result<bool, KeyError> {
 fn int(node: &Node) -> std::result::Result<i64, KeyError> {
     match node.resolve() {
         Value::Integer(n) => Ok(n),
-        Value::Float(text) => Err((
-            format!(
-                "parsing Int failed, value is either floating or will cause over or underflow {text}"
-            ),
-            node.mark(),
-        )),
+        // `randoc-yaml` gives an integral float in the range of `i64` as
+        // integer text, and Pandoc accepts it as an integer (cli-R9-08).
+        Value::Float(text) => text.parse().map_err(|_| {
+            (
+                format!(
+                    "parsing Int failed, value is either floating or will cause over or underflow {text}"
+                ),
+                node.mark(),
+            )
+        }),
         _ => Err((
             format!(
                 "parsing Int failed, expected Number, but encountered {}",
@@ -1206,6 +1243,25 @@ mod tests {
             warnings,
             ["[WARNING] Undefined environment variable NO in defaults file.\n"]
         );
+    }
+
+    // Pandoc 3.13 puts the mark of an empty value after the `:` that ends
+    // the key, also when the quoted key holds a `:` or an escape.
+    #[test]
+    fn the_mark_of_an_empty_value_follows_a_quoted_key() {
+        for (text, column) in [
+            ("\"\\u0061:x\":\n", 12),
+            ("'a''b:c':\n", 10),
+            ("\"a\\\":b\":\n", 9),
+            ("abc:\n", 5),
+        ] {
+            let (result, _) = load(&[("d", text)], "d");
+            let message = result.unwrap_err().to_string();
+            assert!(
+                message.contains(&format!("d:1:{column}: ")),
+                "{text:?}: {message}"
+            );
+        }
     }
 
     #[test]

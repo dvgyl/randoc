@@ -4,9 +4,9 @@
 use std::io::Write;
 
 use randoc::ast::Pandoc;
-use randoc::{Context, Error, LogMessage, ReaderOptions, Result, TrackChanges};
+use randoc::{Context, Error, LogMessage, ReaderOptions, Result, TrackChanges, Verbosity};
 
-use crate::convert::data_path;
+use crate::convert::data_file;
 
 /// The interpreter that Pandoc selects by the file extension of a filter
 /// that is not executable.
@@ -28,10 +28,7 @@ fn interpreter(path: &str) -> Option<&'static str> {
 /// path itself, `filters/PATH` of the user data folder, and for a name
 /// without `/` each folder of `path_variable`.
 pub fn candidates(path: &str, data_dir: &str, path_variable: &str) -> Vec<String> {
-    let mut out = vec![
-        path.to_owned(),
-        data_path(data_dir, &format!("filters/{path}")),
-    ];
+    let mut out = vec![path.to_owned(), data_file(data_dir, "filters", path)];
     if !path.contains('/') {
         out.extend(
             path_variable
@@ -106,25 +103,82 @@ pub fn run(
     format: &str,
     data_dir: &str,
     reader_options: &ReaderOptions,
+    typst_inputs: &[(String, String)],
     context: &mut Context,
 ) -> Result<Pandoc> {
     let Some(found) = find(path, data_dir, context) else {
-        context.report(LogMessage::RunningFilter(path.into()));
+        report_progress(context, LogMessage::RunningFilter(path.into()));
         return Err(failure(path, format!("Could not find executable {path}")));
     };
     let label = found.label.as_str();
-    context.report(LogMessage::RunningFilter(label.into()));
+    report_progress(context, LogMessage::RunningFilter(label.into()));
     let started = std::time::Instant::now();
     let input = randoc::ast::json::to_json(doc).into_bytes();
-    let host = context.host();
-    for (name, value) in [
+    // The variables are for the filter alone: a later Lua filter sees the
+    // environment of the program (cli-R9-11).
+    let variables = [
         ("PANDOC_VERSION", randoc::PANDOC_VERSION.to_owned()),
-        ("PANDOC_READER_OPTIONS", reader_options_json(reader_options)),
-    ] {
-        host.set_environment_variable(name, Some(&value))
-            .map_err(|error| failure(label, error.to_string()))?;
+        (
+            "PANDOC_READER_OPTIONS",
+            reader_options_json(reader_options, typst_inputs),
+        ),
+    ];
+    let saved: Vec<(&str, Option<String>)> = variables
+        .iter()
+        .map(|(name, _)| (*name, context.host().environment_variable(name)))
+        .collect();
+    let output = variables
+        .iter()
+        .try_for_each(|(name, value)| context.host().set_environment_variable(name, Some(value)))
+        .map_err(|error| failure(label, error.to_string()))
+        .and_then(|()| start(&found, format, &input, context));
+    for (name, value) in saved {
+        let _ = context
+            .host()
+            .set_environment_variable(name, value.as_deref());
     }
-    let output = match host.run_process(&found.program, &[format.into()], &input) {
+    let output = output?;
+    // The filter shares the standard error of Pandoc.
+    let _ = std::io::stderr().write_all(&output.stderr);
+    if output.exit_code != 0 {
+        return Err(failure(
+            label,
+            format!("Filter returned error status {}", output.exit_code),
+        ));
+    }
+    let text = String::from_utf8_lossy(&output.stdout);
+    let doc = randoc::ast::json::from_json_with_limit(&text, context.limits.max_nesting_depth)
+        .map_err(|error| failure(label, error.to_string()))?;
+    // Pandoc checks the JSON syntax first and decodes the bytes of each
+    // string strictly: a byte that is not UTF-8 outside a string is a
+    // syntax error, and one inside a string is this error.
+    if std::str::from_utf8(&output.stdout).is_err() {
+        return Err(failure(
+            label,
+            "Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream"
+                .to_owned(),
+        ));
+    }
+    let milliseconds = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
+    report_progress(
+        context,
+        LogMessage::FilterCompleted(label.into(), milliseconds),
+    );
+    Ok(doc)
+}
+
+/// Starts the filter program with the output format as its argument.
+fn start(
+    found: &Found,
+    format: &str,
+    input: &[u8],
+    context: &mut Context,
+) -> Result<randoc::ProcessOutput> {
+    let label = found.label.as_str();
+    match context
+        .host()
+        .run_process(&found.program, &[format.into()], input)
+    {
         // The system does not run a file that is not executable; Pandoc
         // then starts the interpreter of its extension.
         Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied => {
@@ -132,7 +186,7 @@ pub fn run(
                 Some(interpreter) if on_path(interpreter, context) => context.host().run_process(
                     interpreter,
                     &[found.program.as_str().into(), format.into()],
-                    &input,
+                    input,
                 ),
                 Some(interpreter) => {
                     return Err(failure(
@@ -148,26 +202,20 @@ pub fn run(
             context.host().run_process(
                 "/bin/sh",
                 &[found.program.as_str().into(), format.into()],
-                &input,
+                input,
             )
         }
         other => other,
     }
-    .map_err(|error| failure(label, error.to_string()))?;
-    // The filter shares the standard error of Pandoc.
-    let _ = std::io::stderr().write_all(&output.stderr);
-    if output.exit_code != 0 {
-        return Err(failure(
-            label,
-            format!("Filter returned error status {}", output.exit_code),
-        ));
+    .map_err(|error| failure(label, error.to_string()))
+}
+
+/// Reports the start or the end of a filter. Pandoc makes these records
+/// only at the verbosity `INFO`, so the log file has them only then.
+pub fn report_progress(context: &mut Context, message: LogMessage) {
+    if context.state.verbosity >= Verbosity::Info {
+        context.report(message);
     }
-    let text = String::from_utf8_lossy(&output.stdout);
-    let doc = randoc::ast::json::from_json_with_limit(&text, context.limits.max_nesting_depth)
-        .map_err(|error| failure(label, error.to_string()))?;
-    let milliseconds = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
-    context.report(LogMessage::FilterCompleted(label.into(), milliseconds));
-    Ok(doc)
 }
 
 fn failure(label: &str, message: String) -> Error {
@@ -178,8 +226,9 @@ fn failure(label: &str, message: String) -> Error {
 }
 
 /// The JSON form of the reader options that a filter gets in
-/// `PANDOC_READER_OPTIONS`, with the fields in the order of Pandoc.
-fn reader_options_json(options: &ReaderOptions) -> String {
+/// `PANDOC_READER_OPTIONS`, with the fields in the order of Pandoc. The
+/// `--typst-input` pairs come last first, as in Pandoc.
+fn reader_options_json(options: &ReaderOptions, typst_inputs: &[(String, String)]) -> String {
     use serde_json::Value;
     let texts = |items: Vec<String>| Value::Array(items.into_iter().map(Value::String).collect());
     let mut extensions: Vec<&str> = options.extensions.iter().map(|e| e.name()).collect();
@@ -223,7 +272,16 @@ fn reader_options_json(options: &ReaderOptions) -> String {
         ),
         ("track-changes", Value::String(track_changes.to_owned())),
         ("strip-comments", Value::Bool(options.strip_comments)),
-        ("typst-inputs", Value::Array(Vec::new())),
+        (
+            "typst-inputs",
+            Value::Array(
+                typst_inputs
+                    .iter()
+                    .rev()
+                    .map(|(key, value)| texts(vec![key.clone(), value.clone()]))
+                    .collect(),
+            ),
+        ),
     ];
     let body: Vec<String> = fields
         .iter()
@@ -265,11 +323,17 @@ mod tests {
         options.abbreviations = ["Mr.".into(), "Dr.".into()].into_iter().collect();
         options.columns = 72;
         assert_eq!(
-            reader_options_json(&options),
+            reader_options_json(&options, &[]),
             "{\"extensions\":[\"all_symbols_escapable\",\"smart\"],\"standalone\":false,\
              \"columns\":72,\"tab-stop\":4,\"indented-code-classes\":[],\
              \"abbreviations\":[\"Dr.\",\"Mr.\"],\"default-image-extension\":\"\",\
              \"track-changes\":\"accept-changes\",\"strip-comments\":false,\"typst-inputs\":[]}"
+        );
+        // Pandoc 3.13 for `--typst-input=b=1 --typst-input=a=2 --typst-input=b=3`.
+        let pairs = [("b", "1"), ("a", "2"), ("b", "3")].map(|(k, v)| (k.to_owned(), v.to_owned()));
+        assert!(
+            reader_options_json(&options, &pairs)
+                .ends_with("\"typst-inputs\":[[\"b\",\"3\"],[\"a\",\"2\"],[\"b\",\"1\"]]}")
         );
     }
 }

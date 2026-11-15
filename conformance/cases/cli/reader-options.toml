@@ -604,3 +604,203 @@ input = "a\n"
 "d.yaml" = "filters: [./up.sh]\n"
 "up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
 "two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+
+# The standard output of a JSON filter that is not valid UTF-8 (cli-R9-07).
+
+[[case]]
+id = "filter-output-utf8-ff-in-a-string"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"a\377b"}]}]}'
+'''
+
+[[case]]
+id = "filter-output-utf8-overlong-form"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"\300\200"}]}]}'
+'''
+
+[[case]]
+id = "filter-output-utf8-surrogate"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"\355\240\200"}]}]}'
+'''
+
+[[case]]
+id = "filter-output-utf8-above-the-last-code-point"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"\364\220\200\200"}]}]}'
+'''
+
+[[case]]
+id = "filter-output-utf8-cut-sequence"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"\342\202"}]}]}'
+'''
+
+[[case]]
+id = "filter-output-utf8-ff-after-the-document"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"x"}]}]}\377'
+'''
+
+[[case]]
+id = "filter-output-utf8-valid-text"
+cmd = ["-f", "markdown", "-t", "native", "-F", "./out.sh"]
+input = "a\n"
+covers = ["opt:filter"]
+[case.files]
+"out.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do :; done
+printf '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Para","c":[{"t":"Str","c":"\342\202\254"}]}]}'
+'''
+
+# A JSON filter sets its variables for itself alone (cli-R9-11).
+
+[[case]]
+id = "filter-environment-stays-with-the-filter"
+cmd = ["-f", "json", "-t", "native", "-F", "./same.sh", "-L", "env.lua"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"same.sh" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+"env.lua" = "function Pandoc(d) return pandoc.Pandoc{pandoc.Para{pandoc.Str(tostring(os.getenv('PANDOC_VERSION')))}} end\n"
+
+# The reader options that a JSON filter sees (cli-R9-12, cli-R9-13).
+
+[[case]]
+id = "filter-reader-options-1"
+cmd = ["-f", "json", "--typst-input=x=y", "-t", "json", "--abbreviations=/dev/null", "-F", "./env.sh"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+printf '%s\n' "$PANDOC_READER_OPTIONS" >&2
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+[[case]]
+id = "filter-reader-options-2"
+cmd = ["-f", "json", "--typst-input=b=1", "--typst-input=a=2", "--typst-input=b=3", "-t", "json", "--abbreviations=/dev/null", "-F", "./env.sh"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+printf '%s\n' "$PANDOC_READER_OPTIONS" >&2
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+[[case]]
+id = "filter-reader-options-3"
+cmd = ["-f", "json", "--typst-input=x", "--typst-input==v", "--typst-input=k=a=b", "-t", "json", "--abbreviations=/dev/null", "-F", "./env.sh"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+printf '%s\n' "$PANDOC_READER_OPTIONS" >&2
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+[[case]]
+id = "filter-reader-options-4"
+cmd = ["-f", "json", "-t", "json", "--abbreviations=/dev/null", "-F", "./env.sh"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+printf '%s\n' "$PANDOC_READER_OPTIONS" >&2
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+[[case]]
+id = "filter-reader-options-5"
+cmd = ["-f", "native", "-t", "json", "--abbreviations=/dev/null", "-F", "./env.sh"]
+input = "[Para [Str \"a\"]]\n"
+covers = ["opt:filter"]
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+printf '%s\n' "$PANDOC_READER_OPTIONS" >&2
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+[[case]]
+id = "filter-reader-options-6"
+cmd = ["-f", "html", "-t", "json", "--abbreviations=/dev/null", "-F", "./env.sh"]
+input = "<p>a</p>\n"
+covers = ["opt:filter"]
+[case.files]
+"env.sh" = '''
+#!/bin/sh
+printf '%s\n' "$PANDOC_READER_OPTIONS" >&2
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+# A defaults file names a Lua filter by `.lua` in this case only (cli-R9-14).
+
+[[case]]
+id = "filter-defaults-extension-LUA"
+cmd = ["-f", "json", "-t", "native", "-d", "d"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"d" = "filters: [u.LUA]\n"
+"u.LUA" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''
+
+[[case]]
+id = "filter-defaults-extension-Lua"
+cmd = ["-f", "json", "-t", "native", "-d", "d"]
+input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
+covers = ["opt:filter"]
+[case.files]
+"d" = "filters: [u.Lua]\n"
+"u.Lua" = '''
+#!/bin/sh
+while IFS= read -r l || [ -n "$l" ]; do printf '%s' "$l"; done
+'''

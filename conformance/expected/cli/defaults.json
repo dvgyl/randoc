@@ -732,6 +732,132 @@
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
       "stderr": ""
+    },
+    "integer-key-exponent#cmd": {
+      "key": "b8c313d0fd7a1d3b",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-float#cmd": {
+      "key": "2eaf4ecf8d2622ce",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-float-tag#cmd": {
+      "key": "b28a0701457a9582",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-half#cmd": {
+      "key": "2ec038cf8d34709f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:25: shift-heading-level-by: parsing Int failed, value is either floating or will cause over or underflow 2.5\n  |\n1 | shift-heading-level-by: 2.5\n  |                         ^\n"
+    },
+    "integer-key-hex#cmd": {
+      "key": "ace490bf4c53e6c4",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-huge#cmd": {
+      "key": "8046b4ae1292a2ab",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:25: shift-heading-level-by: parsing Int failed, value is either floating or will cause over or underflow 1.0e100\n  |\n1 | shift-heading-level-by: 1e100\n  |                         ^\n"
+    },
+    "integer-key-int#cmd": {
+      "key": "c106ad3188f59846",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-int-tag#cmd": {
+      "key": "7c639b8d3a531ab5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:31: shift-heading-level-by: invalid value for the tag !!int\n  |\n1 | shift-heading-level-by: !!int 2.0\n  |                               ^\n"
+    },
+    "integer-key-leading-point#cmd": {
+      "key": "7c24fb93b4a6a880",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:25: shift-heading-level-by: parsing Int failed, value is either floating or will cause over or underflow 0.5\n  |\n1 | shift-heading-level-by: .5\n  |                         ^\n"
+    },
+    "integer-key-long-fraction#cmd": {
+      "key": "b8c31fe412aebee5",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:25: shift-heading-level-by: parsing Int failed, value is either floating or will cause over or underflow 2.0000000000000000001\n  |\n1 | shift-heading-level-by: 2.0000000000000000001\n  |                         ^\n"
+    },
+    "integer-key-max#cmd": {
+      "key": "5095d8a1b3ca0362",
+      "exit": 0,
+      "stdout": "[ Para [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-negative-exponent#cmd": {
+      "key": "adc329ba51067829",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-negative-zero#cmd": {
+      "key": "080f1c78cad67b3c",
+      "exit": 0,
+      "stdout": "[ Header 1 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-octal#cmd": {
+      "key": "5f5c01bf20885ead",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-over#cmd": {
+      "key": "eea5887fb45748e9",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:25: shift-heading-level-by: parsing Int failed, value is either floating or will cause over or underflow 9.223372036854775808e18\n  |\n1 | shift-heading-level-by: 9223372036854775808\n  |                         ^\n"
+    },
+    "integer-key-plus#cmd": {
+      "key": "15c5d446b9c464ec",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-point#cmd": {
+      "key": "cee409935283fb2b",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-scaled#cmd": {
+      "key": "59e876e50253900a",
+      "exit": 0,
+      "stdout": "[ Header 3 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-ten#cmd": {
+      "key": "f80733c650b7ed21",
+      "exit": 0,
+      "stdout": "[ Header 11 ( \"\" , [] , [] ) [ Str \"h\" ] ]\n",
+      "stderr": ""
+    },
+    "integer-key-tenth#cmd": {
+      "key": "7284776a7d089f11",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error parsing d:\nd:1:25: shift-heading-level-by: parsing Int failed, value is either floating or will cause over or underflow 0.1\n  |\n1 | shift-heading-level-by: 1e-1\n  |                         ^\n"
+    },
+    "integer-list-floats#cmd": {
+      "key": "a23664db7388de09",
+      "exit": 0,
+      "stdout": "<h1 data-number=\"2\"><span class=\"header-section-number\">2</span> h</h1>\n",
+      "stderr": ""
     }
   }
 }

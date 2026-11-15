@@ -715,3 +715,131 @@ id = "defaults-json-document"
 cmd = ["-f", "json", "-t", "json", "-d", "a.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
+
+# Integral floating-point values for integer keys (cli-R9-08).
+
+[[case]]
+id = "integer-key-int"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 2\n" }
+
+[[case]]
+id = "integer-key-float"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 2.0\n" }
+
+[[case]]
+id = "integer-key-half"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 2.5\n" }
+
+[[case]]
+id = "integer-key-exponent"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 2e0\n" }
+
+[[case]]
+id = "integer-key-scaled"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 0.2e1\n" }
+
+[[case]]
+id = "integer-key-negative-exponent"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 20e-1\n" }
+
+[[case]]
+id = "integer-key-ten"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 1e1\n" }
+
+[[case]]
+id = "integer-key-negative-zero"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: -0.0\n" }
+
+[[case]]
+id = "integer-key-plus"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: +2.0\n" }
+
+[[case]]
+id = "integer-key-point"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 2.\n" }
+
+[[case]]
+id = "integer-key-leading-point"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: .5\n" }
+
+[[case]]
+id = "integer-key-huge"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 1e100\n" }
+
+[[case]]
+id = "integer-key-max"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 9223372036854775807.0\n" }
+
+[[case]]
+id = "integer-key-over"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 9223372036854775808\n" }
+
+[[case]]
+id = "integer-key-tenth"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 1e-1\n" }
+
+[[case]]
+id = "integer-key-hex"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 0x2\n" }
+
+[[case]]
+id = "integer-key-octal"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 0o2\n" }
+
+[[case]]
+id = "integer-key-long-fraction"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: 2.0000000000000000001\n" }
+
+[[case]]
+id = "integer-key-float-tag"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: !!float 2\n" }
+
+[[case]]
+id = "integer-key-int-tag"
+cmd = ["-f", "native", "-t", "native", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "shift-heading-level-by: !!int 2.0\n" }
+
+[[case]]
+id = "integer-list-floats"
+cmd = ["-f", "native", "-t", "html", "-d", "d"]
+input = "[Header 1 (\"\",[],[]) [Str \"h\"]]\n"
+files = { "d" = "number-sections: true\nnumber-offset: [1.0, 2e0]\n" }

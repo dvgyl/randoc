@@ -5,12 +5,12 @@
 //! sandbox (ADR 11).
 
 use randoc::ast::Pandoc;
-use randoc::{Context, Result};
+use randoc::{Context, ReaderOptions, Result, WriterOptions};
 #[cfg(feature = "lua")]
 use randoc::{Host, LogMessage, NativeHost};
 
 #[cfg(feature = "lua")]
-use crate::convert::data_path;
+use crate::convert::data_file;
 use crate::settings::Settings;
 
 /// The file that Pandoc runs for the Lua filter `path`: the path itself,
@@ -18,7 +18,7 @@ use crate::settings::Settings;
 /// path stays, so that the error names it.
 #[cfg(feature = "lua")]
 fn find(path: &str, data_dir: &str) -> String {
-    let in_data_dir = data_path(data_dir, &format!("filters/{path}"));
+    let in_data_dir = data_file(data_dir, "filters", path);
     if !NativeHost.file_exists(path) && NativeHost.file_exists(&in_data_dir) {
         in_data_dir
     } else {
@@ -26,21 +26,36 @@ fn find(path: &str, data_dir: &str) -> String {
     }
 }
 
-/// The request headers that a filter sees: the headers of the command line,
-/// then the default `User-Agent` when the command line gives none.
+/// The request headers that a filter sees: the first value of each header
+/// name of the command line, then the default `User-Agent` when the command
+/// line has no header of that exact name. Names are compared with their case
+/// (oracle probes of cli-R9-18).
 #[cfg(feature = "lua")]
 fn request_headers(settings: &Settings) -> Vec<(String, String)> {
-    let mut headers = settings.request_headers.clone();
-    if !headers
+    let mut seen = std::collections::HashSet::new();
+    let mut headers: Vec<(String, String)> = settings
+        .request_headers
         .iter()
-        .any(|(name, _)| name.eq_ignore_ascii_case("User-Agent"))
-    {
+        .filter(|(name, _)| seen.insert(name.as_str()))
+        .cloned()
+        .collect();
+    if !seen.contains("User-Agent") {
         headers.push((
             "User-Agent".to_owned(),
             format!("pandoc/{}", randoc::PANDOC_VERSION),
         ));
     }
     headers
+}
+
+/// The options of the conversion that a Lua filter sees as
+/// `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS`.
+#[derive(Clone, Copy)]
+pub struct Options<'a> {
+    /// The options of the reader.
+    pub reader: &'a ReaderOptions,
+    /// The options of the writer, with the template and the variables.
+    pub writer: &'a WriterOptions,
 }
 
 /// Runs the Lua filter `path` on the document. `format` is the output
@@ -52,10 +67,11 @@ pub fn run(
     format: &str,
     settings: &Settings,
     data_dir: &str,
+    options: Options<'_>,
     context: &mut Context,
 ) -> Result<()> {
     let label = find(path, data_dir);
-    context.report(LogMessage::RunningFilter(label.clone()));
+    crate::filter::report_progress(context, LogMessage::RunningFilter(label.clone()));
     let started = std::time::Instant::now();
     let mut environment = randoc_lua::FilterEnvironment::new(format);
     // Standard input is the input file `-`.
@@ -78,9 +94,11 @@ pub fn run(
     environment.request_headers = request_headers(settings);
     environment.trace = settings.trace;
     environment.verbosity = settings.verbosity.label().to_owned();
+    environment.reader_options = options.reader.clone();
+    environment.writer_options = options.writer.clone();
     randoc_lua::apply_filter_files(doc, &[label.as_str()], &environment, context)?;
     let milliseconds = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
-    context.report(LogMessage::FilterCompleted(label, milliseconds));
+    crate::filter::report_progress(context, LogMessage::FilterCompleted(label, milliseconds));
     Ok(())
 }
 
@@ -93,6 +111,7 @@ pub fn run(
     _format: &str,
     _settings: &Settings,
     _data_dir: &str,
+    _options: Options<'_>,
     _context: &mut Context,
 ) -> Result<()> {
     Err(randoc::Error::NoScriptingEngine)
@@ -119,6 +138,28 @@ mod tests {
         assert_eq!(
             request_headers(&settings),
             [("User-Agent".to_owned(), "me".to_owned())]
+        );
+    }
+
+    /// Pandoc 3.13 for `--request-header` with `A:1 B:2 A:3 user-agent:x`:
+    /// `A=1;B=2;user-agent=x;User-Agent=pandoc/3.13`.
+    #[test]
+    fn the_first_value_of_each_exact_name_stays() {
+        let pairs = [("A", "1"), ("B", "2"), ("A", "3"), ("user-agent", "x")];
+        let settings = Settings {
+            request_headers: pairs
+                .iter()
+                .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
+                .collect(),
+            ..Settings::default()
+        };
+        let text: Vec<String> = request_headers(&settings)
+            .into_iter()
+            .map(|(k, v)| format!("{k}={v}"))
+            .collect();
+        assert_eq!(
+            text.join(";"),
+            "A=1;B=2;user-agent=x;User-Agent=pandoc/3.13"
         );
     }
 }
