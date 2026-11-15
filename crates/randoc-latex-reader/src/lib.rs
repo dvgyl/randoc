@@ -45,7 +45,6 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
 
     use randoc_ast::{Attr, Block, Inline};
     use randoc_core::FormatSpec;
@@ -353,6 +352,88 @@ mod tests {
         }
     }
 
+    /// Oracle results (matrices `errors/eofarg-*` and `errors/argap-*`): a
+    /// missing argument is the parse error of Pandoc, by the kind of the
+    /// command.
+    #[test]
+    fn a_missing_argument_is_the_parse_error_of_pandoc() {
+        for (input, message) in [
+            (
+                "a \\emph\n\n",
+                "Error at (line 3, column 2):\nunexpected end of input\n\n ^",
+            ),
+            (
+                "a \\section\n",
+                "Error at (line 2, column 2):\nunexpected ()\n\n ^",
+            ),
+            (
+                "a \\footnote\n\n\nx\n",
+                "Error at (line 3, column 1):\nunexpected ()\n\n^",
+            ),
+            (
+                "a \\label\n{a}\n",
+                "Error at (line 1, column 9):\nunexpected \n\na \\label\n        ^",
+            ),
+            (
+                "a \\url%c\n{a}\n",
+                "Error at (line 1, column 7):\nunexpected %c\na \\url%c\n      ^",
+            ),
+        ] {
+            let error = convert(input, "latex").expect_err(input);
+            assert_eq!(error, Error::Parse(message.into()), "{input:?}");
+        }
+        let tree = convert("a \\emph\n\n{b}\n", "latex").expect("tree");
+        assert_eq!(
+            tree.blocks,
+            vec![Block::Para(vec![
+                Inline::Str("a".into()),
+                Inline::Space,
+                Inline::Emph(vec![Inline::Str("b".into())])
+            ])]
+        );
+    }
+
+    /// Oracle results (matrix `errors/secref-*`): `\ref` to the label of a
+    /// numbered section gives its number, also before the section.
+    #[test]
+    fn a_reference_to_a_section_gives_its_number() {
+        let tree = convert(
+            "\\ref{c} \\ref{a}\n\n\\section{A}\\label{a}\\section*{U}\\label{u}\\section{B}\\subsection{C}\\label{c}\\ref{u}",
+            "latex",
+        )
+        .expect("tree");
+        let mut blocks = tree.blocks;
+        let mut texts = Vec::new();
+        randoc_ast::walk::walk_inlines_mut(&mut blocks, |inline| {
+            if let Inline::Link(_, text, _) = inline {
+                texts.push(text.clone());
+            }
+        });
+        let str = |text: &str| vec![Inline::Str(text.into())];
+        assert_eq!(texts, [str("2.1"), str("1"), str("[u]")]);
+    }
+
+    /// Oracle results (matrix `errors/accentgroup-*` and corpus probes).
+    #[test]
+    fn an_accent_on_markup_and_the_copyright_sign() {
+        for (input, inlines) in [
+            (
+                "\\'{\\emph{e}}",
+                vec![Inline::Emph(vec![Inline::Str("e".into())])],
+            ),
+            ("\\'{\\relax e}", vec![Inline::Str("\u{e9}".into())]),
+            ("\\'{e~}", vec![Inline::Str("\u{e9}\u{a0}".into())]),
+            ("\\copyright~x", vec![Inline::Str("\u{a9}\u{a0}x".into())]),
+            (
+                "\\NeedsTeXFormat{LaTeX2e}[1995/12/01]",
+                vec![Inline::Str("[1995/12/01]".into())],
+            ),
+        ] {
+            let tree = convert(input, "latex").expect("tree");
+            assert_eq!(tree.blocks, vec![Block::Para(inlines)], "{input:?}");
+        }
+    }
+
     /// Oracle results (matrix `errors/emptylist-*`): a list without items
     /// is a list only when nothing but what the list reads itself stands
     /// before its end; else it is a `Div` with the class of the list.
@@ -494,17 +575,6 @@ mod tests {
         assert!(!format!("{:?}", tree.blocks).contains("\"y\""));
     }
 
-    /// The minimum time of five runs.
-    fn time(input: &str) -> f64 {
-        (0..5)
-            .map(|_| {
-                let start = Instant::now();
-                let _ = convert(input, "latex+raw_tex");
-                start.elapsed().as_secs_f64()
-            })
-            .fold(f64::INFINITY, f64::min)
-    }
-
     /// The parser steps for each construct repeated: four times the input
     /// takes at most five times the steps.
     #[test]
@@ -566,6 +636,16 @@ mod tests {
         "LETTER ARGUMENTS",
         "VERB DELIMITERS",
         "IF WITHOUT FI",
+        "SCOPED FLAGS",
+        "\\texttt{a--b} ",
+        "\\footnote [x] [y]{z} ",
+        "\\begin{enumerate}\\setcounter{enumi}{3}\\item x\\end{enumerate}\n",
+        "\\begin{itemize}\n\\end{itemize}\n",
+        "{{x}} ",
+        "{\\def\\x{a}}\\x ",
+        "\\'{\\emph{e}} ",
+        "a\\newline b ",
+        "\\section{x",
     ];
 
     fn wrap_unit(unit: &str, n: usize) -> String {
@@ -581,6 +661,7 @@ mod tests {
                 .map(|delimiter| format!("\\verb{delimiter}x "))
                 .collect(),
             "IF WITHOUT FI" => format!("\\def\\a{{{}}}\\a", "\\iftrue ".repeat(n)),
+            "SCOPED FLAGS" => format!("\\newif\\iffoo{}", "{\\footrue}".repeat(n)),
             _ => unit.repeat(n),
         }
     }
@@ -652,20 +733,6 @@ mod tests {
             let plain = format!("{:?}", convert(&input, "latex"));
             crate::parse::PLAIN_SCANS.with(|plain| plain.set(false));
             assert_eq!(with_caches, plain, "{input:?}");
-        }
-    }
-
-    /// Each construct repeated: the time for four times the input stays
-    /// below ten times the time of the small input. Wall time depends on
-    /// the load of the machine, so the gate runs the step test above.
-    #[test]
-    #[ignore]
-    fn repeated_constructs_take_linear_time() {
-        for unit in LINEAR_UNITS {
-            let wrap = |n: usize| wrap_unit(unit, n);
-            let small = time(&wrap(4_000)).max(5e-3);
-            let large = time(&wrap(16_000));
-            assert!(large / small < 10.0, "{unit:?}: {small} s, then {large} s");
         }
     }
 }

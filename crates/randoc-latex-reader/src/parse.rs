@@ -130,6 +130,7 @@ struct Snapshot {
     pending: Vec<Tok>,
     recorders: Vec<usize>,
     quote_kinds: usize,
+    sections: [u64; 6],
     /// The source line and column of the `\begin`; `None` for a token of a
     /// macro expansion. Copies of tokens keep the source positions.
     source_position: Option<(u32, u32)>,
@@ -171,6 +172,10 @@ pub(crate) struct Parser<'c> {
     floats: Vec<Float>,
     level_offset: i64,
     identifiers: IdentifierSet,
+    /// The counters of the numbered sections, from `\chapter` to
+    /// `\subparagraph`, and the number of each section label.
+    sections: [u64; 6],
+    section_numbers: HashMap<Text, Text>,
     pub(crate) meta: Meta,
     pub(crate) context: &'c mut Context,
     finished: bool,
@@ -263,6 +268,8 @@ impl<'c> Parser<'c> {
             floats: Vec::new(),
             level_offset,
             identifiers: IdentifierSet::new(),
+            sections: [0; 6],
+            section_numbers: HashMap::new(),
             meta: Meta::default(),
             context,
             finished: false,
@@ -296,7 +303,18 @@ impl<'c> Parser<'c> {
     }
 
     pub(crate) fn document(&mut self) -> R<Vec<Block>> {
-        self.blocks(End::Input)
+        let mut blocks = self.blocks(End::Input)?;
+        if !self.section_numbers.is_empty() {
+            let numbers = &self.section_numbers;
+            walk_inlines_mut(&mut blocks, |inline| {
+                if let Inline::Link(attr, text, _) = inline
+                    && let Some(number) = section_reference(attr, numbers)
+                {
+                    *text = vec![Inline::Str(number)];
+                }
+            });
+        }
+        Ok(blocks)
     }
 
     // The token stream.
@@ -1650,7 +1668,12 @@ impl<'c> Parser<'c> {
             let star = self.star();
             self.skip_options()?;
             let title = self.argument_inlines_untrimmed()?;
-            self.heading(base + self.level_offset, star, title, blocks)?;
+            self.heading(
+                base + self.level_offset,
+                (!star).then_some(base),
+                title,
+                blocks,
+            )?;
             return Ok(true);
         }
         match name {
@@ -1716,22 +1739,29 @@ impl<'c> Parser<'c> {
         }
     }
 
+    /// A heading. `numbered` is the LaTeX level of a numbered section
+    /// (`-1` for `\part`, `0` for `\chapter`); a label directly after it
+    /// gets the section number for `\ref`.
     fn heading(
         &mut self,
         level: i64,
-        star: bool,
+        numbered: Option<i64>,
         title: Vec<Inline>,
         blocks: &mut Vec<Block>,
     ) -> R<()> {
         let mut attr = Attr::default();
-        if star {
+        if numbered.is_none() {
             attr.classes.push("unnumbered".into());
         }
+        let number = numbered.and_then(|unit| self.count_section(unit));
         self.skip_blank();
         if self.peek_raw().is_some_and(|tok| tok.is_word("label")) {
             self.bump();
             attr.id = self.argument_text()?;
             self.identifiers.register(&attr.id);
+            if let Some(number) = number {
+                self.section_numbers.insert(attr.id.clone(), number);
+            }
         }
         if attr.id.is_empty() && self.extensions.contains(Extension::AutoIdentifiers) {
             attr.id = self
@@ -1740,6 +1770,22 @@ impl<'c> Parser<'c> {
         }
         blocks.push(Block::Header(level, attr, title));
         Ok(())
+    }
+
+    /// Counts a numbered section of LaTeX level `unit` and gives its number,
+    /// as Pandoc prints it for `\ref`: from the chapter when a chapter was
+    /// counted, else from the section (`0.1` for a first `\subsection`).
+    /// A part has no number.
+    fn count_section(&mut self, unit: i64) -> Option<Text> {
+        let unit = usize::try_from(unit).ok()?.min(self.sections.len() - 1);
+        self.sections[unit] = self.sections[unit].saturating_add(1);
+        self.sections[unit + 1..].fill(0);
+        let first = usize::from(self.sections[0] == 0);
+        let parts: Vec<Text> = self.sections[first.min(unit)..=unit]
+            .iter()
+            .map(u64::to_string)
+            .collect();
+        Some(parts.join("."))
     }
 
     /// `\input` and `\include` put the tokens of the file in the input.
@@ -2008,6 +2054,7 @@ impl<'c> Parser<'c> {
             pending: self.pending.clone(),
             recorders: self.recorders.iter().map(Text::len).collect(),
             quote_kinds: self.quote_kinds.len(),
+            sections: self.sections,
             source_position: self
                 .peek_raw()
                 .filter(|tok| tok.depth == 0)
@@ -2024,6 +2071,7 @@ impl<'c> Parser<'c> {
             record.truncate(len);
         }
         self.quote_kinds.truncate(snapshot.quote_kinds);
+        self.sections = snapshot.sections;
     }
 
     /// An environment by the rule of its name.
@@ -2118,12 +2166,30 @@ impl<'c> Parser<'c> {
 
     /// The error of Pandoc for a construct that the input ends inside.
     fn ends_inside(&self, message: &str) -> R<()> {
+        let lines = self.input.matches('\n').count() + usize::from(!self.input.ends_with('\n'));
+        let line = u32::try_from(lines + 1).unwrap_or(u32::MAX);
+        self.stop_at(line, 2, message)
+    }
+
+    /// The parse error at a position of the input. A rule that reads a copy
+    /// of tokens has no such error, as in [`Parser::ends_inside`].
+    fn stop_at(&self, line: u32, column: u32, message: &str) -> R<()> {
         if self.copies > self.cell_copies {
             return Ok(());
         }
-        let lines = self.input.matches('\n').count() + usize::from(!self.input.ends_with('\n'));
-        let line = u32::try_from(lines + 1).unwrap_or(u32::MAX);
-        Err(self.error_at_position(line, 2, message))
+        Err(self.error_at_position(line, column, message))
+    }
+
+    /// Pandoc stops when the argument of a text style command is not
+    /// there. Oracle matrices `errors/eofarg-*` and `errors/argap-*`: the
+    /// command reads its argument after spaces, line ends and blank lines,
+    /// and stops only at the end of the input.
+    fn require_text_argument(&mut self) -> R<()> {
+        self.skip_blank();
+        if self.peek_raw().is_none() {
+            self.ends_inside("unexpected end of input")?;
+        }
+        Ok(())
     }
 
     fn end_environment(&mut self) {
@@ -2792,6 +2858,25 @@ impl<'c> Parser<'c> {
         let grouped = self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open);
         let tokens = self.argument_tokens().unwrap_or_default();
         let tokens = self.expand_tokens(tokens)?;
+        let markup = |tok: &Tok| {
+            matches!(
+                tok.kind,
+                Kind::Word(_) | Kind::Symbol(_) | Kind::Open | Kind::Tilde
+            )
+        };
+        if grouped && tokens.len() > 1 && tokens.iter().any(markup) {
+            // Oracle probes: the argument is read as inlines, and the accent
+            // goes on the first character of a leading `Str` only.
+            let mut inlines = self.inlines_of(tokens)?;
+            if let Some(Inline::Str(text)) = inlines.first_mut() {
+                let mut chars = text.chars();
+                if let Some(base) = chars.next() {
+                    *text = format!("{}{}", nfc(&format!("{base}{combining}")), chars.as_str());
+                }
+            }
+            out.append(Inlines(inlines));
+            return Ok(());
+        }
         let text = match tokens.as_slice() {
             [
                 Tok {
@@ -3018,6 +3103,7 @@ impl<'c> Parser<'c> {
             _ => None,
         };
         if let Some(wrap) = wrapper {
+            self.require_text_argument()?;
             let content = self.argument_inlines_untrimmed()?;
             if matches!(name, "underline" | "uline") {
                 out.push(wrap(content));
@@ -3036,6 +3122,7 @@ impl<'c> Parser<'c> {
         }
         match name {
             "texttt" => {
+                self.require_text_argument()?;
                 self.code_text += 1;
                 let content = self.argument_inlines_untrimmed();
                 self.code_text -= 1;
@@ -3043,6 +3130,7 @@ impl<'c> Parser<'c> {
             }
             "mbox" | "hbox" if self.raw_tex() => self.unknown_inline(source, out)?,
             "mbox" | "hbox" => {
+                self.require_text_argument()?;
                 let mut content = self.argument_inlines_untrimmed()?;
                 walk_inlines_mut(&mut content, |inline| match inline {
                     Inline::Space | Inline::SoftBreak => *inline = Inline::Str(NBSP.into()),
@@ -3067,6 +3155,15 @@ impl<'c> Parser<'c> {
                 self.skip_word_spaces();
                 out.push(Inline::LineBreak);
             }
+            "NeedsTeXFormat" => {
+                let argument = self.argument_source_text();
+                if self.raw_tex() {
+                    out.push(Inline::RawInline(
+                        Format::new("latex"),
+                        format!("{source}{{{argument}}}"),
+                    ));
+                }
+            }
             "footnote" | "thanks" => {
                 self.skip_options()?;
                 let content = self.argument_blocks()?;
@@ -3084,6 +3181,7 @@ impl<'c> Parser<'c> {
             "href" => {
                 let url = self.argument_text()?;
                 let url = unescape(&self.expand_text(url)?);
+                self.require_text_argument()?;
                 let text = self.argument_inlines_untrimmed()?;
                 out.push(Inline::Link(Attr::default(), text, Target::new(url, "")));
             }
@@ -3190,6 +3288,7 @@ impl<'c> Parser<'c> {
                 } else {
                     QuoteType::DoubleQuote
                 };
+                self.require_text_argument()?;
                 self.quote_kinds.push(kind);
                 let content = self.argument_inlines_untrimmed();
                 self.quote_kinds.pop();
@@ -3327,8 +3426,8 @@ impl<'c> Parser<'c> {
     /// Pandoc stops with a parse error when a command that needs an
     /// argument group, or a definition that needs a name, has another
     /// token there. `skip` is 1 when the next token is the command itself.
-    /// An argument that a macro, a conditional, a paragraph break or the
-    /// end of the input can give is not checked.
+    /// An argument that a macro or a conditional can give is not checked.
+    /// The end of the input, or a paragraph break, is `unexpected ()`.
     fn check_argument(&self, name: &str, skip: usize) -> R<()> {
         let Some(rule) = argument_rule(name) else {
             return Ok(());
@@ -3337,7 +3436,11 @@ impl<'c> Parser<'c> {
             return Ok(());
         }
         let mut tokens = self.scan().skip(skip).peekable();
-        let blank = |tok: &&Tok| matches!(tok.kind, Kind::Space | Kind::Newline | Kind::Comment);
+        let verbatim = takes_verbatim_argument(name);
+        let blank = |tok: &&Tok| {
+            matches!(tok.kind, Kind::Space)
+                || (!verbatim && matches!(tok.kind, Kind::Newline | Kind::Comment))
+        };
         if !matches!(name, "begin" | "let")
             && !is_def_word(name)
             && tokens
@@ -3394,8 +3497,15 @@ impl<'c> Parser<'c> {
             }
         }
         let Some(mut tok) = tokens.next() else {
-            return Ok(());
+            return self.ends_inside("unexpected ()");
         };
+        if tok.kind == Kind::Par && !verbatim {
+            if !tok.text.contains("\n\n") && tokens.next().is_none() {
+                return self.ends_inside("unexpected ()");
+            }
+            // Pandoc stops at the line after the first blank line.
+            return self.stop_at(tok.line + 2, 1, "unexpected ()");
+        }
         let is_name = |tok: &Tok| matches!(tok.kind, Kind::Word(_) | Kind::Symbol(_));
         match rule {
             ArgumentRule::Group if tok.kind == Kind::Open => return Ok(()),
@@ -3424,10 +3534,14 @@ impl<'c> Parser<'c> {
             }
             _ => {}
         }
-        if self.expands(tok) || matches!(tok.kind, Kind::Par) {
+        if self.expands(tok) || (matches!(tok.kind, Kind::Par) && !verbatim) {
             return Ok(());
         }
-        let mut shown = tok.text.clone();
+        let mut shown = match tok.kind {
+            Kind::Newline | Kind::Par => Text::from("\n"),
+            Kind::Comment => tok.text.trim_end_matches('\n').into(),
+            _ => tok.text.clone(),
+        };
         if matches!(tok.kind, Kind::Word(_))
             && let Some(space) = tokens.next().filter(|next| next.kind == Kind::Space)
         {
@@ -4151,6 +4265,7 @@ fn letter_symbol(name: &str) -> Option<&'static str> {
         "i" => "\u{131}",
         "j" => "\u{237}",
         "textbackslash" => "\\",
+        "copyright" | "textcopyright" => "\u{a9}",
         _ => return None,
     })
 }
@@ -4209,6 +4324,23 @@ enum Counter {
     Enum(Option<i64>),
     /// `\setcounter` of another counter, or without its two groups.
     Other,
+}
+
+/// The section number for the text of a `\ref`, `\autoref` or `\cref` link.
+fn section_reference(attr: &Attr, numbers: &HashMap<Text, Text>) -> Option<Text> {
+    let value = |key: &str| {
+        attr.attributes
+            .iter()
+            .find(|(name, _)| name == key)
+            .map(|(_, value)| value)
+    };
+    if !matches!(
+        value("reference-type")?.as_str(),
+        "ref" | "ref+label" | "ref+Label"
+    ) {
+        return None;
+    }
+    numbers.get(value("reference")?).cloned()
 }
 
 /// What a star after a citation command does.
@@ -4306,6 +4438,29 @@ fn argument_rule(name: &str) -> Option<ArgumentRule> {
         | "parbox" | "graphicspath" => Some(ArgumentRule::Group),
         _ => None,
     }
+}
+
+/// The commands whose argument group must follow after spaces only: a
+/// line end or a comment there is the parse error of Pandoc (matrix
+/// `errors/eofarg-*`).
+fn takes_verbatim_argument(name: &str) -> bool {
+    matches!(
+        name,
+        "label"
+            | "ref"
+            | "eqref"
+            | "autoref"
+            | "cref"
+            | "Cref"
+            | "includegraphics"
+            | "nolinkurl"
+            | "ensuremath"
+            | "url"
+            | "href"
+            | "hypertarget"
+            | "hyperlink"
+            | "foreignquote"
+    )
 }
 
 /// The number of `[n]`. A number too large for `usize` is `usize::MAX`:
@@ -4489,6 +4644,7 @@ fn is_unknown_command(name: &str) -> bool {
             | "TeX"
             | "ldots"
             | "newline"
+            | "NeedsTeXFormat"
             | "dots"
             | "footnote"
             | "thanks"

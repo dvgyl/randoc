@@ -8584,6 +8584,882 @@ id = "newline-08-04"
 input = "\\begin{tabular}{l}a\\\\ \\newline b\\\\\\end{tabular}\n"
 
 [[case]]
+id = "argap-01-01"
+input = "a \\emph \n"
+
+[[case]]
+id = "argap-01-02"
+input = "a \\emph\n\n"
+
+[[case]]
+id = "argap-01-03"
+input = "a \\emph%c\n\n"
+
+[[case]]
+id = "argap-01-04"
+input = "a \\emph\n\n\n"
+
+[[case]]
+id = "argap-01-05"
+input = "a \\emph {a}\n"
+
+[[case]]
+id = "argap-01-06"
+input = "a \\emph\n{a}\n"
+
+[[case]]
+id = "argap-01-07"
+input = "a \\emph%c\n{a}\n"
+
+[[case]]
+id = "argap-01-08"
+input = "a \\emph\n\n{a}\n"
+
+[[case]]
+id = "argap-01-09"
+input = "a \\emph x\n"
+
+[[case]]
+id = "argap-01-10"
+input = "a \\emph\nx\n"
+
+[[case]]
+id = "argap-01-11"
+input = "a \\emph%c\nx\n"
+
+[[case]]
+id = "argap-01-12"
+input = "a \\emph\n\nx\n"
+
+[[case]]
+id = "argap-02-01"
+input = "a \\label \n"
+
+[[case]]
+id = "argap-02-02"
+input = "a \\label\n\n"
+
+[[case]]
+id = "argap-02-03"
+input = "a \\label%c\n\n"
+
+[[case]]
+id = "argap-02-04"
+input = "a \\label\n\n\n"
+
+[[case]]
+id = "argap-02-05"
+input = "a \\label {a}\n"
+
+[[case]]
+id = "argap-02-06"
+input = "a \\label\n{a}\n"
+
+[[case]]
+id = "argap-02-07"
+input = "a \\label%c\n{a}\n"
+
+[[case]]
+id = "argap-02-08"
+input = "a \\label\n\n{a}\n"
+
+[[case]]
+id = "argap-02-09"
+input = "a \\label x\n"
+
+[[case]]
+id = "argap-02-10"
+input = "a \\label\nx\n"
+
+[[case]]
+id = "argap-02-11"
+input = "a \\label%c\nx\n"
+
+[[case]]
+id = "argap-02-12"
+input = "a \\label\n\nx\n"
+
+[[case]]
+id = "argap-03-01"
+input = "a \\section \n"
+
+[[case]]
+id = "argap-03-02"
+input = "a \\section\n\n"
+
+[[case]]
+id = "argap-03-03"
+input = "a \\section%c\n\n"
+
+[[case]]
+id = "argap-03-04"
+input = "a \\section\n\n\n"
+
+[[case]]
+id = "argap-03-05"
+input = "a \\section {a}\n"
+
+[[case]]
+id = "argap-03-06"
+input = "a \\section\n{a}\n"
+
+[[case]]
+id = "argap-03-07"
+input = "a \\section%c\n{a}\n"
+
+[[case]]
+id = "argap-03-08"
+input = "a \\section\n\n{a}\n"
+
+[[case]]
+id = "argap-03-09"
+input = "a \\section x\n"
+
+[[case]]
+id = "argap-03-10"
+input = "a \\section\nx\n"
+
+[[case]]
+id = "argap-03-11"
+input = "a \\section%c\nx\n"
+
+[[case]]
+id = "argap-03-12"
+input = "a \\section\n\nx\n"
+
+[[case]]
+id = "argap-04-01"
+input = "a \\footnote \n"
+
+[[case]]
+id = "argap-04-02"
+input = "a \\footnote\n\n"
+
+[[case]]
+id = "argap-04-03"
+input = "a \\footnote%c\n\n"
+
+[[case]]
+id = "argap-04-04"
+input = "a \\footnote\n\n\n"
+
+[[case]]
+id = "argap-04-05"
+input = "a \\footnote {a}\n"
+
+[[case]]
+id = "argap-04-06"
+input = "a \\footnote\n{a}\n"
+
+[[case]]
+id = "argap-04-07"
+input = "a \\footnote%c\n{a}\n"
+
+[[case]]
+id = "argap-04-08"
+input = "a \\footnote\n\n{a}\n"
+
+[[case]]
+id = "argap-04-09"
+input = "a \\footnote x\n"
+
+[[case]]
+id = "argap-04-10"
+input = "a \\footnote\nx\n"
+
+[[case]]
+id = "argap-04-11"
+input = "a \\footnote%c\nx\n"
+
+[[case]]
+id = "argap-04-12"
+input = "a \\footnote\n\nx\n"
+
+[[case]]
+id = "argap-05-01"
+input = "a \\url \n"
+
+[[case]]
+id = "argap-05-02"
+input = "a \\url\n\n"
+
+[[case]]
+id = "argap-05-03"
+input = "a \\url%c\n\n"
+
+[[case]]
+id = "argap-05-04"
+input = "a \\url\n\n\n"
+
+[[case]]
+id = "argap-05-05"
+input = "a \\url {a}\n"
+
+[[case]]
+id = "argap-05-06"
+input = "a \\url\n{a}\n"
+
+[[case]]
+id = "argap-05-07"
+input = "a \\url%c\n{a}\n"
+
+[[case]]
+id = "argap-05-08"
+input = "a \\url\n\n{a}\n"
+
+[[case]]
+id = "argap-05-09"
+input = "a \\url x\n"
+
+[[case]]
+id = "argap-05-10"
+input = "a \\url\nx\n"
+
+[[case]]
+id = "argap-05-11"
+input = "a \\url%c\nx\n"
+
+[[case]]
+id = "argap-05-12"
+input = "a \\url\n\nx\n"
+
+[[case]]
+id = "argap-06-01"
+input = "a \\cite \n"
+
+[[case]]
+id = "argap-06-02"
+input = "a \\cite\n\n"
+
+[[case]]
+id = "argap-06-03"
+input = "a \\cite%c\n\n"
+
+[[case]]
+id = "argap-06-04"
+input = "a \\cite\n\n\n"
+
+[[case]]
+id = "argap-06-05"
+input = "a \\cite {a}\n"
+
+[[case]]
+id = "argap-06-06"
+input = "a \\cite\n{a}\n"
+
+[[case]]
+id = "argap-06-07"
+input = "a \\cite%c\n{a}\n"
+
+[[case]]
+id = "argap-06-08"
+input = "a \\cite\n\n{a}\n"
+
+[[case]]
+id = "argap-06-09"
+input = "a \\cite x\n"
+
+[[case]]
+id = "argap-06-10"
+input = "a \\cite\nx\n"
+
+[[case]]
+id = "argap-06-11"
+input = "a \\cite%c\nx\n"
+
+[[case]]
+id = "argap-06-12"
+input = "a \\cite\n\nx\n"
+
+[[case]]
+id = "argap-07-01"
+input = "a \\title \n"
+
+[[case]]
+id = "argap-07-02"
+input = "a \\title\n\n"
+
+[[case]]
+id = "argap-07-03"
+input = "a \\title%c\n\n"
+
+[[case]]
+id = "argap-07-04"
+input = "a \\title\n\n\n"
+
+[[case]]
+id = "argap-07-05"
+input = "a \\title {a}\n"
+
+[[case]]
+id = "argap-07-06"
+input = "a \\title\n{a}\n"
+
+[[case]]
+id = "argap-07-07"
+input = "a \\title%c\n{a}\n"
+
+[[case]]
+id = "argap-07-08"
+input = "a \\title\n\n{a}\n"
+
+[[case]]
+id = "argap-07-09"
+input = "a \\title x\n"
+
+[[case]]
+id = "argap-07-10"
+input = "a \\title\nx\n"
+
+[[case]]
+id = "argap-07-11"
+input = "a \\title%c\nx\n"
+
+[[case]]
+id = "argap-07-12"
+input = "a \\title\n\nx\n"
+
+[[case]]
+id = "argap-08-01"
+input = "a \\ref \n"
+
+[[case]]
+id = "argap-08-02"
+input = "a \\ref\n\n"
+
+[[case]]
+id = "argap-08-03"
+input = "a \\ref%c\n\n"
+
+[[case]]
+id = "argap-08-04"
+input = "a \\ref\n\n\n"
+
+[[case]]
+id = "argap-08-05"
+input = "a \\ref {a}\n"
+
+[[case]]
+id = "argap-08-06"
+input = "a \\ref\n{a}\n"
+
+[[case]]
+id = "argap-08-07"
+input = "a \\ref%c\n{a}\n"
+
+[[case]]
+id = "argap-08-08"
+input = "a \\ref\n\n{a}\n"
+
+[[case]]
+id = "argap-08-09"
+input = "a \\ref x\n"
+
+[[case]]
+id = "argap-08-10"
+input = "a \\ref\nx\n"
+
+[[case]]
+id = "argap-08-11"
+input = "a \\ref%c\nx\n"
+
+[[case]]
+id = "argap-08-12"
+input = "a \\ref\n\nx\n"
+
+[[case]]
+id = "argap-09-01"
+input = "a \\includegraphics \n"
+
+[[case]]
+id = "argap-09-02"
+input = "a \\includegraphics\n\n"
+
+[[case]]
+id = "argap-09-03"
+input = "a \\includegraphics%c\n\n"
+
+[[case]]
+id = "argap-09-04"
+input = "a \\includegraphics\n\n\n"
+
+[[case]]
+id = "argap-09-05"
+input = "a \\includegraphics {a}\n"
+
+[[case]]
+id = "argap-09-06"
+input = "a \\includegraphics\n{a}\n"
+
+[[case]]
+id = "argap-09-07"
+input = "a \\includegraphics%c\n{a}\n"
+
+[[case]]
+id = "argap-09-08"
+input = "a \\includegraphics\n\n{a}\n"
+
+[[case]]
+id = "argap-09-09"
+input = "a \\includegraphics x\n"
+
+[[case]]
+id = "argap-09-10"
+input = "a \\includegraphics\nx\n"
+
+[[case]]
+id = "argap-09-11"
+input = "a \\includegraphics%c\nx\n"
+
+[[case]]
+id = "argap-09-12"
+input = "a \\includegraphics\n\nx\n"
+
+[[case]]
+id = "argap-10-01"
+input = "a \\href{u} \n"
+
+[[case]]
+id = "argap-10-02"
+input = "a \\href{u}\n\n"
+
+[[case]]
+id = "argap-10-03"
+input = "a \\href{u}%c\n\n"
+
+[[case]]
+id = "argap-10-04"
+input = "a \\href{u}\n\n\n"
+
+[[case]]
+id = "argap-10-05"
+input = "a \\href{u} {a}\n"
+
+[[case]]
+id = "argap-10-06"
+input = "a \\href{u}\n{a}\n"
+
+[[case]]
+id = "argap-10-07"
+input = "a \\href{u}%c\n{a}\n"
+
+[[case]]
+id = "argap-10-08"
+input = "a \\href{u}\n\n{a}\n"
+
+[[case]]
+id = "argap-10-09"
+input = "a \\href{u} x\n"
+
+[[case]]
+id = "argap-10-10"
+input = "a \\href{u}\nx\n"
+
+[[case]]
+id = "argap-10-11"
+input = "a \\href{u}%c\nx\n"
+
+[[case]]
+id = "argap-10-12"
+input = "a \\href{u}\n\nx\n"
+
+[[case]]
+id = "argap-11-01"
+input = "a \\textbf \n"
+
+[[case]]
+id = "argap-11-02"
+input = "a \\textbf\n\n"
+
+[[case]]
+id = "argap-11-03"
+input = "a \\textbf%c\n\n"
+
+[[case]]
+id = "argap-11-04"
+input = "a \\textbf\n\n\n"
+
+[[case]]
+id = "argap-11-05"
+input = "a \\textbf {a}\n"
+
+[[case]]
+id = "argap-11-06"
+input = "a \\textbf\n{a}\n"
+
+[[case]]
+id = "argap-11-07"
+input = "a \\textbf%c\n{a}\n"
+
+[[case]]
+id = "argap-11-08"
+input = "a \\textbf\n\n{a}\n"
+
+[[case]]
+id = "argap-11-09"
+input = "a \\textbf x\n"
+
+[[case]]
+id = "argap-11-10"
+input = "a \\textbf\nx\n"
+
+[[case]]
+id = "argap-11-11"
+input = "a \\textbf%c\nx\n"
+
+[[case]]
+id = "argap-11-12"
+input = "a \\textbf\n\nx\n"
+
+[[case]]
+id = "argap-12-01"
+input = "a \\enquote \n"
+
+[[case]]
+id = "argap-12-02"
+input = "a \\enquote\n\n"
+
+[[case]]
+id = "argap-12-03"
+input = "a \\enquote%c\n\n"
+
+[[case]]
+id = "argap-12-04"
+input = "a \\enquote\n\n\n"
+
+[[case]]
+id = "argap-12-05"
+input = "a \\enquote {a}\n"
+
+[[case]]
+id = "argap-12-06"
+input = "a \\enquote\n{a}\n"
+
+[[case]]
+id = "argap-12-07"
+input = "a \\enquote%c\n{a}\n"
+
+[[case]]
+id = "argap-12-08"
+input = "a \\enquote\n\n{a}\n"
+
+[[case]]
+id = "argap-12-09"
+input = "a \\enquote x\n"
+
+[[case]]
+id = "argap-12-10"
+input = "a \\enquote\nx\n"
+
+[[case]]
+id = "argap-12-11"
+input = "a \\enquote%c\nx\n"
+
+[[case]]
+id = "argap-12-12"
+input = "a \\enquote\n\nx\n"
+
+[[case]]
+id = "argap-13-01"
+input = "a \\nocite \n"
+
+[[case]]
+id = "argap-13-02"
+input = "a \\nocite\n\n"
+
+[[case]]
+id = "argap-13-03"
+input = "a \\nocite%c\n\n"
+
+[[case]]
+id = "argap-13-04"
+input = "a \\nocite\n\n\n"
+
+[[case]]
+id = "argap-13-05"
+input = "a \\nocite {a}\n"
+
+[[case]]
+id = "argap-13-06"
+input = "a \\nocite\n{a}\n"
+
+[[case]]
+id = "argap-13-07"
+input = "a \\nocite%c\n{a}\n"
+
+[[case]]
+id = "argap-13-08"
+input = "a \\nocite\n\n{a}\n"
+
+[[case]]
+id = "argap-13-09"
+input = "a \\nocite x\n"
+
+[[case]]
+id = "argap-13-10"
+input = "a \\nocite\nx\n"
+
+[[case]]
+id = "argap-13-11"
+input = "a \\nocite%c\nx\n"
+
+[[case]]
+id = "argap-13-12"
+input = "a \\nocite\n\nx\n"
+
+[[case]]
+id = "argap-14-01"
+input = "a \\footnotetext \n"
+
+[[case]]
+id = "argap-14-02"
+input = "a \\footnotetext\n\n"
+
+[[case]]
+id = "argap-14-03"
+input = "a \\footnotetext%c\n\n"
+
+[[case]]
+id = "argap-14-04"
+input = "a \\footnotetext\n\n\n"
+
+[[case]]
+id = "argap-14-05"
+input = "a \\footnotetext {a}\n"
+
+[[case]]
+id = "argap-14-06"
+input = "a \\footnotetext\n{a}\n"
+
+[[case]]
+id = "argap-14-07"
+input = "a \\footnotetext%c\n{a}\n"
+
+[[case]]
+id = "argap-14-08"
+input = "a \\footnotetext\n\n{a}\n"
+
+[[case]]
+id = "argap-14-09"
+input = "a \\footnotetext x\n"
+
+[[case]]
+id = "argap-14-10"
+input = "a \\footnotetext\nx\n"
+
+[[case]]
+id = "argap-14-11"
+input = "a \\footnotetext%c\nx\n"
+
+[[case]]
+id = "argap-14-12"
+input = "a \\footnotetext\n\nx\n"
+
+[[case]]
+id = "accentgroup-01-01"
+input = "\\'{\\emph{e}}\n"
+
+[[case]]
+id = "accentgroup-01-02"
+input = "a \\'{\\emph{e}} b\n"
+
+[[case]]
+id = "accentgroup-01-03"
+input = "\\emph{\\'{\\emph{e}}}\n"
+
+[[case]]
+id = "accentgroup-02-01"
+input = "\\'{\\textbf{e}x}\n"
+
+[[case]]
+id = "accentgroup-02-02"
+input = "a \\'{\\textbf{e}x} b\n"
+
+[[case]]
+id = "accentgroup-02-03"
+input = "\\emph{\\'{\\textbf{e}x}}\n"
+
+[[case]]
+id = "accentgroup-03-01"
+input = "\\'{e~}\n"
+
+[[case]]
+id = "accentgroup-03-02"
+input = "a \\'{e~} b\n"
+
+[[case]]
+id = "accentgroup-03-03"
+input = "\\emph{\\'{e~}}\n"
+
+[[case]]
+id = "accentgroup-04-01"
+input = "\\\"{\\textit{o}}\n"
+
+[[case]]
+id = "accentgroup-04-02"
+input = "a \\\"{\\textit{o}} b\n"
+
+[[case]]
+id = "accentgroup-04-03"
+input = "\\emph{\\\"{\\textit{o}}}\n"
+
+[[case]]
+id = "accentgroup-05-01"
+input = "\\'{\\relax e}\n"
+
+[[case]]
+id = "accentgroup-05-02"
+input = "a \\'{\\relax e} b\n"
+
+[[case]]
+id = "accentgroup-05-03"
+input = "\\emph{\\'{\\relax e}}\n"
+
+[[case]]
+id = "accentgroup-06-01"
+input = "\\^{\\i x}\n"
+
+[[case]]
+id = "accentgroup-06-02"
+input = "a \\^{\\i x} b\n"
+
+[[case]]
+id = "accentgroup-06-03"
+input = "\\emph{\\^{\\i x}}\n"
+
+[[case]]
+id = "accentgroup-07-01"
+input = "\\'{{e}}\n"
+
+[[case]]
+id = "accentgroup-07-02"
+input = "a \\'{{e}} b\n"
+
+[[case]]
+id = "accentgroup-07-03"
+input = "\\emph{\\'{{e}}}\n"
+
+[[case]]
+id = "accentgroup-08-01"
+input = "\\'{e\\,}\n"
+
+[[case]]
+id = "accentgroup-08-02"
+input = "a \\'{e\\,} b\n"
+
+[[case]]
+id = "accentgroup-08-03"
+input = "\\emph{\\'{e\\,}}\n"
+
+[[case]]
+id = "accentgroup-09-01"
+input = "\\`{\\emph{a} b}\n"
+
+[[case]]
+id = "accentgroup-09-02"
+input = "a \\`{\\emph{a} b} b\n"
+
+[[case]]
+id = "accentgroup-09-03"
+input = "\\emph{\\`{\\emph{a} b}}\n"
+
+[[case]]
+id = "secref-01-01"
+input = "see \\ref{b}\n\n\\section{A}\\label{a}\n\\section{B}\\label{b}\\subsection{C}\\label{c}\n\\ref{c} \\ref{a}\n"
+
+[[case]]
+id = "secref-01-02"
+input = "\\begin{document}see \\ref{b}\n\n\\section{A}\\label{a}\n\\section{B}\\label{b}\\subsection{C}\\label{c}\n\\ref{c} \\ref{a}\\end{document}\n"
+
+[[case]]
+id = "secref-02-01"
+input = "\\section*{A}\\label{a}\\section{B}\\label{b}\\ref{a} \\ref{b}\n"
+
+[[case]]
+id = "secref-02-02"
+input = "\\begin{document}\\section*{A}\\label{a}\\section{B}\\label{b}\\ref{a} \\ref{b}\\end{document}\n"
+
+[[case]]
+id = "secref-03-01"
+input = "\\chapter{A}\\section{B}\\label{b}\\ref{b}\n"
+
+[[case]]
+id = "secref-03-02"
+input = "\\begin{document}\\chapter{A}\\section{B}\\label{b}\\ref{b}\\end{document}\n"
+
+[[case]]
+id = "secref-04-01"
+input = "\\subsection{A}\\label{a}\\ref{a}\n"
+
+[[case]]
+id = "secref-04-02"
+input = "\\begin{document}\\subsection{A}\\label{a}\\ref{a}\\end{document}\n"
+
+[[case]]
+id = "secref-05-01"
+input = "\\section{A}\n\nx\\label{a}\\ref{a}\n"
+
+[[case]]
+id = "secref-05-02"
+input = "\\begin{document}\\section{A}\n\nx\\label{a}\\ref{a}\\end{document}\n"
+
+[[case]]
+id = "secref-06-01"
+input = "\\section{A}\\label{a}\\eqref{a} \\autoref{a} \\cref{a} \\Cref{a}\n"
+
+[[case]]
+id = "secref-06-02"
+input = "\\begin{document}\\section{A}\\label{a}\\eqref{a} \\autoref{a} \\cref{a} \\Cref{a}\\end{document}\n"
+
+[[case]]
+id = "secref-07-01"
+input = "\\section{A}\\label{a}\\label{b}\\ref{b}\n"
+
+[[case]]
+id = "secref-07-02"
+input = "\\begin{document}\\section{A}\\label{a}\\label{b}\\ref{b}\\end{document}\n"
+
+[[case]]
+id = "secref-08-01"
+input = "\\part{P}\\section{A}\\label{a}\\ref{a}\n"
+
+[[case]]
+id = "secref-08-02"
+input = "\\begin{document}\\part{P}\\section{A}\\label{a}\\ref{a}\\end{document}\n"
+
+[[case]]
+id = "secref-09-01"
+input = "\\section{A}\\subsubsection{B}\\label{b}\\ref{b}\n"
+
+[[case]]
+id = "secref-09-02"
+input = "\\begin{document}\\section{A}\\subsubsection{B}\\label{b}\\ref{b}\\end{document}\n"
+
+[[case]]
+id = "secref-10-01"
+input = "\\section{A}\\section{B}\\subsection{C}\\label{c}\\ref{c}\n"
+
+[[case]]
+id = "secref-10-02"
+input = "\\begin{document}\\section{A}\\section{B}\\subsection{C}\\label{c}\\ref{c}\\end{document}\n"
+
+[[case]]
+id = "secref-11-01"
+input = "\\section{A}\\label{a}\\footnote{\\ref{a}}\n"
+
+[[case]]
+id = "secref-11-02"
+input = "\\begin{document}\\section{A}\\label{a}\\footnote{\\ref{a}}\\end{document}\n"
+
+[[case]]
+id = "secref-12-01"
+input = "\\paragraph{A}\\label{a}\\ref{a}\n"
+
+[[case]]
+id = "secref-12-02"
+input = "\\begin{document}\\paragraph{A}\\label{a}\\ref{a}\\end{document}\n"
+
+[[case]]
 id = "newline-raw-01-01"
 input = "a\\newline b\n"
 from = "latex+raw_tex"

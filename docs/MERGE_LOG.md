@@ -3099,3 +3099,13 @@ Opus R3b-08 (low; stack need in the documentation of `eval_citation`,
 Unit 4 (sorting, disambiguation, collapse): not started.
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+**latex-reader**: branch `ws/latex-reader-4`, the commits to `f92d211`
+after the block `9a3d42d` on `main`. The record of batch E above
+describes this block (the paragraph `**latex-reader**` and the addition
+of the coordinator); it reached `main` in this batch, not in batch E
+(see the correction above).
+
+Gate: the worker ran `scripts/gate.sh` on `f92d211` (passed at 06:00
+UTC). Checks that did not run: fuzzing after the parser changes,
+coverage, the mutation sample, benchmarks.
