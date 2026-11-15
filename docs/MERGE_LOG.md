@@ -2592,3 +2592,8 @@ Open: cli-R9-17, 04, 06, 07, 23 (high); 10 medium findings of round 9
 (the report says they are not started); I-CLI-52 (low).
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+`merge-ws check` of batch d (a plain script of the coordinator, no merge agent): passed at 06:14 UTC on the tree of `47c7f1b`.
+Harness: 58094 units: 56218 pass, 1456 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56218 units: 0 regressions, 0 new passes.
+Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56218, "total": 57674}}`.
