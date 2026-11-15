@@ -4,7 +4,6 @@
 # writers: beamer commonmark commonmark_x csljson gfm html html4 html5 json latex markdown markdown_github markdown_mmd markdown_phpextra markdown_strict markua native plain
 # known I-LUA-30 convert-final-newline end of commonmark
 # known I-LUA-30 convert-final-newline end of commonmark_x
-# known I-LUA-30 convert-final-newline end of csljson
 # known I-LUA-30 convert-final-newline end of gfm
 # known I-LUA-30 convert-final-newline end of markdown
 # known I-LUA-30 convert-final-newline end of markdown_github

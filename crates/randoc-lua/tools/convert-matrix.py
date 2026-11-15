@@ -314,7 +314,7 @@ _MARKDOWN_READERS = ["markdown", "markdown_github", "markdown_mmd", "markdown_ph
                      "markdown_strict"]
 KNOWN = (
     [("I-LUA-30", "convert-final-newline", f"end of {name}")
-     for name in ["commonmark", "commonmark_x", "csljson", "gfm", "markdown", "markdown_github",
+     for name in ["commonmark", "commonmark_x", "gfm", "markdown", "markdown_github",
                   "markdown_mmd", "markdown_phpextra", "markdown_strict", "markua", "plain"]]
     + [("I-LUA-30", "convert-arguments", label)
        for label in ["write default format", "write spec table markdown list"]]
