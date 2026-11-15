@@ -410,7 +410,7 @@
     "raw_tex": {
       "status": "partial",
       "units": {
-        "passing": 1374,
+        "passing": 1376,
         "total": 1507
       }
     },
@@ -668,8 +668,8 @@
     },
     "html": {
       "read": {
-        "passing": 9910,
-        "total": 9914
+        "passing": 10102,
+        "total": 10106
       },
       "status": "partial"
     },
@@ -695,8 +695,8 @@
     },
     "latex": {
       "read": {
-        "passing": 5458,
-        "total": 6372
+        "passing": 5757,
+        "total": 6591
       },
       "status": "partial"
     },
@@ -818,8 +818,8 @@
     "abbreviations": {
       "status": "passing",
       "units": {
-        "passing": 10,
-        "total": 10
+        "passing": 16,
+        "total": 16
       }
     },
     "ascii": {
@@ -1031,8 +1031,8 @@
     "filter": {
       "status": "passing",
       "units": {
-        "passing": 7,
-        "total": 7
+        "passing": 23,
+        "total": 23
       }
     },
     "from": {
@@ -1374,8 +1374,8 @@
     "request-header": {
       "status": "passing",
       "units": {
-        "passing": 5,
-        "total": 5
+        "passing": 11,
+        "total": 11
       }
     },
     "resource-path": {
@@ -1472,8 +1472,8 @@
     "template": {
       "status": "passing",
       "units": {
-        "passing": 844,
-        "total": 844
+        "passing": 873,
+        "total": 873
       }
     },
     "title-prefix": {
@@ -1528,8 +1528,8 @@
     "typst-input": {
       "status": "passing",
       "units": {
-        "passing": 3,
-        "total": 3
+        "passing": 6,
+        "total": 6
       }
     },
     "variable": {
@@ -1542,8 +1542,8 @@
     "variable-json": {
       "status": "passing",
       "units": {
-        "passing": 26,
-        "total": 26
+        "passing": 48,
+        "total": 48
       }
     },
     "verbose": {
@@ -1984,8 +1984,8 @@
       "passing": 6
     },
     "units": {
-      "passing": 56953,
-      "total": 58401
+      "passing": 57516,
+      "total": 58884
     }
   }
 }

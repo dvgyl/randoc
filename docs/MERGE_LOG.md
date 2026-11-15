@@ -3154,3 +3154,8 @@ the sorted lists of element names in `parse.rs` (for example
 block does not change them, they were found with the reference from a
 list of candidates, and both reviews of round 3 found no creative
 selection in them.
+
+`merge-ws check` of batch g (a plain script of the coordinator, no merge agent): passed at 09:07 UTC on the tree of `ea3c976`.
+Harness: 59304 units: 57516 pass, 1368 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 56953 units: 0 regressions, 563 new passes.
+Capability summary before: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 56953, "total": 58401}}`.
+Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 19, "passing": 59}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 14, "passing": 94}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 57516, "total": 58884}}`.
