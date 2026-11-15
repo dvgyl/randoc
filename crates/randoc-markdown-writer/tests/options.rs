@@ -1,6 +1,7 @@
 //! Runs the writer-option cases of `conformance/cases/markdown-writer/options.toml`
 //! through the library with a `WriterOptions` value, and compares the output with
-//! the stored oracle results. The program cannot pass these options yet.
+//! the stored oracle results. `-s` sets the default template of `randoc-data`,
+//! as the program does.
 #![allow(clippy::unwrap_used, clippy::panic)]
 
 use std::collections::BTreeMap;
@@ -46,12 +47,26 @@ fn root() -> &'static Path {
         .unwrap_or_else(|| Path::new("."))
 }
 
-/// Applies the command-line options to writer options. Returns `None` for an
-/// option that the library cannot apply, for example standalone output.
-fn apply(args: &[String], options: &mut WriterOptions) -> Option<()> {
+/// The default template of a format, compiled.
+fn default_template(format: &str) -> randoc_templates::Template {
+    let name = match format {
+        "gfm" | "commonmark" | "commonmark_x" => "commonmark",
+        "plain" | "markua" => format,
+        _ => "markdown",
+    };
+    let source = randoc_data::default_template(name).unwrap();
+    let mut load = |_: &str| Err("no partials");
+    randoc_templates::Template::compile(name, source, 64, &mut load).unwrap()
+}
+
+/// Applies the command-line options to writer options for a format. Returns
+/// `None` for an option that the library cannot apply, for example metadata
+/// from the command line.
+fn apply(args: &[String], format: &str, options: &mut WriterOptions) -> Option<()> {
     for arg in args {
         let (name, value) = arg.split_once('=').unwrap_or((arg.as_str(), ""));
         match name {
+            "-s" => options.template = Some(default_template(format)),
             "--wrap" => {
                 options.wrap_text = match value {
                     "none" => WrapOption::WrapNone,
@@ -126,10 +141,10 @@ fn run_file(name: &str) -> BTreeMap<String, bool> {
         for format in to {
             let unit = format!("{id}#write:{format}");
             let mut options = WriterOptions::default();
-            if apply(&args, &mut options).is_none() {
+            let spec = FormatSpec::parse(&format);
+            if apply(&args, &spec.name, &mut options).is_none() {
                 continue;
             }
-            let spec = FormatSpec::parse(&format);
             options.extensions = spec.extensions().unwrap();
             let writer = randoc_markdown_writer::writer(&spec.name).unwrap();
             let Output::Text(mut text) =
@@ -137,7 +152,8 @@ fn run_file(name: &str) -> BTreeMap<String, bool> {
             else {
                 panic!("text output expected")
             };
-            if !text.ends_with('\n') {
+            // The program adds the final newline of a fragment only.
+            if options.template.is_none() && !text.ends_with('\n') {
                 text.push('\n');
             }
             let want = expected["units"][&unit]["stdout"].as_str().unwrap();

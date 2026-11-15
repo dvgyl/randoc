@@ -739,7 +739,7 @@ impl W<'_> {
 
     fn ordered_list(&mut self, attrs: &ListAttributes, items: &[Vec<Block>]) -> Result<Doc> {
         let tight = items.iter().all(|item| starts_plain(item));
-        let fancy = self.has(Extension::FancyLists) && !self.plain() || self.plain();
+        let fancy = self.has(Extension::FancyLists);
         let start = if self.has(Extension::Startnum) || self.variant == Variant::Commonmark {
             attrs.start
         } else {
@@ -799,8 +799,9 @@ impl W<'_> {
         let mut out = empty();
         for (term, definitions) in items {
             let term_doc = self.inlines(term)?;
+            // The first definition sets the spacing of all definitions.
+            let tight = definitions.first().is_none_or(|d| starts_plain(d));
             if self.plain() {
-                let tight = definitions.iter().all(|d| starts_plain(d));
                 let mut defs = empty();
                 for definition in definitions {
                     self.list_level += 1;
@@ -826,7 +827,6 @@ impl W<'_> {
                 out += term_doc + literal(brk) + cr() + defs + blankline();
                 continue;
             }
-            let tight = definitions.iter().all(|d| starts_plain(d));
             let mut defs = empty();
             for definition in definitions {
                 self.list_level += 1;
@@ -841,7 +841,13 @@ impl W<'_> {
             }
             out += term_doc + cr() + defs + blankline();
         }
-        Ok(out)
+        // Pandoc starts a definition list with a blank line, which shows at
+        // the start of a quote, a list item or a note.
+        Ok(if self.has(Extension::DefinitionLists) || self.plain() {
+            blankline() + out
+        } else {
+            out
+        })
     }
 
     fn div(&mut self, attr: &Attr, blocks: &[Block]) -> Result<Doc> {

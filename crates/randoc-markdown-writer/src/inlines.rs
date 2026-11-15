@@ -129,6 +129,15 @@ fn subscript_char(c: char) -> Option<char> {
     })
 }
 
+fn is_space(inline: &Inline) -> bool {
+    matches!(inline, Inline::Space | Inline::SoftBreak)
+}
+
+/// The first (`first`) or the last element of a list.
+fn edge(list: &[Inline], first: bool) -> Option<&Inline> {
+    if first { list.first() } else { list.last() }
+}
+
 /// Returns `true` when the element ends a line or a word for the purpose of
 /// line-start escapes.
 fn is_separator(inline: Option<&Inline>) -> bool {
@@ -187,11 +196,10 @@ impl W<'_> {
                 other => self.inline(other, &inlines[index + 1..])?,
             };
             let doc = match (inline, next) {
-                (Inline::Math(MathType::InlineMath, _), Some(Inline::Str(s)))
-                    if s.starts_with(|c: char| c.is_ascii_digit())
-                        && self.has(Extension::TexMathDollars)
-                        && !self.has(Extension::TexMathGfm)
-                        && !self.plain() =>
+                // Pandoc separates math from a following digit in each form of
+                // the math, also when it converts the math.
+                (Inline::Math(..), Some(Inline::Str(s)))
+                    if s.starts_with(|c: char| c.is_ascii_digit()) && !self.plain() =>
                 {
                     if self.has(Extension::RawAttribute) {
                         doc + literal("`<!-- -->`{=html}")
@@ -346,6 +354,17 @@ impl W<'_> {
     /// content, also inside nested emphasis, go outside the delimiters, and
     /// empty content gives nothing.
     fn delimited(&mut self, content: &[Inline], open: &str, close: &str) -> Result<Doc> {
+        // The results that this element stores are for lists inside its
+        // content, so they stay valid only while the content is written.
+        let mark = self.edge_keys.len();
+        let result = self.delimited_content(content, open, close);
+        for key in self.edge_keys.drain(mark..) {
+            self.edge_memo.remove(&key);
+        }
+        result
+    }
+
+    fn delimited_content(&mut self, content: &[Inline], open: &str, close: &str) -> Result<Doc> {
         let (cut_lead, cut_trail) = std::mem::take(&mut self.cut_edges);
         if content.is_empty() {
             return Ok(empty());
@@ -355,7 +374,6 @@ impl W<'_> {
             let inner = self.inline_list(content, false)?;
             return Ok(literal(open) + inner + literal(close));
         }
-        let is_space = |i: &Inline| matches!(i, Inline::Space | Inline::SoftBreak);
         let start = content
             .iter()
             .position(|i| !is_space(i))
@@ -413,8 +431,62 @@ impl W<'_> {
 
     /// Returns `true` when a space goes before (`first`) or after the
     /// delimited `content`. Content of spaces only gives a space before.
-    fn edge_space(&self, content: &[Inline], first: bool) -> bool {
-        let is_space = |i: &Inline| matches!(i, Inline::Space | Inline::SoftBreak);
+    fn edge_space(&mut self, content: &[Inline], first: bool) -> bool {
+        match edge(content, first) {
+            Some(i) if is_space(i) => true,
+            Some(i) => match self.hoisting_content(i) {
+                Some(inner) => self.edge_chain(inner, first),
+                None => false,
+            },
+            None => false,
+        }
+    }
+
+    /// The result of [`Self::edge_space`] for a list inside delimited
+    /// content: a walk down the chain of elements whose edge spaces go
+    /// outside. Each list of the chain has the same result, and the walk
+    /// stores it for each one, so that the nested elements do not walk the
+    /// chain again.
+    fn edge_chain(&mut self, start: &[Inline], first: bool) -> bool {
+        let mut walked = Vec::new();
+        let mut list = start;
+        let result = loop {
+            let key = (list.as_ptr() as usize, list.len(), first);
+            if let Some(&known) = self.edge_memo.get(&key) {
+                break known;
+            }
+            // A chain deeper than the nesting limit fails later.
+            if walked.len() > self.max_depth {
+                break false;
+            }
+            walked.push(key);
+            #[cfg(test)]
+            {
+                self.edge_steps += 1;
+            }
+            if !first && list.iter().all(is_space) {
+                break false;
+            }
+            match edge(list, first) {
+                Some(i) if is_space(i) => break true,
+                Some(i) => match self.hoisting_content(i) {
+                    Some(inner) => list = inner,
+                    None => break false,
+                },
+                None => break false,
+            }
+        };
+        for key in walked {
+            if self.edge_memo.insert(key, result).is_none() {
+                self.edge_keys.push(key);
+            }
+        }
+        result
+    }
+
+    /// The plain walk that [`Self::edge_space`] replaces, for the tests.
+    #[cfg(test)]
+    fn edge_space_scan(&self, content: &[Inline], first: bool) -> bool {
         let mut list = content;
         // A chain deeper than the nesting limit fails later, so the walk
         // can stop there.
@@ -704,18 +776,36 @@ impl W<'_> {
             }
             return Ok(inner);
         }
-        let text_plain = stringify(content);
-        let is_uri_auto =
-            matches!(content, [Inline::Str(s)] if *s == target.url) && target.url.contains(':');
-        let is_mail_auto =
-            matches!(content, [Inline::Str(s)] if format!("mailto:{s}") == target.url);
-        let auto_attr = attr.id.is_empty()
-            && attr.attributes.is_empty()
-            && attr.classes.iter().all(|c| c == "uri" || c == "email");
-        if (is_uri_auto || is_mail_auto) && auto_attr {
-            return Ok(literal(format!("<{text_plain}>")));
+        let after_pipe = self.has(Extension::WikilinksTitleAfterPipe);
+        if (after_pipe || self.has(Extension::WikilinksTitleBeforePipe))
+            && attr.classes.iter().any(|c| c == "wikilink")
+        {
+            let text = self.inline_list(content, false)?.render(None);
+            let url = &target.url;
+            return Ok(literal(if text == *url {
+                format!("[[{url}]]")
+            } else if after_pipe {
+                format!("[[{url}|{text}]]")
+            } else {
+                format!("[[{text}|{url}]]")
+            }));
         }
-        if !attr.is_empty() && !self.link_attributes() && self.has(Extension::RawHtml) {
+        if let [Inline::Str(text)] = content {
+            let is_uri_auto = *text == target.url && target.url.contains(':');
+            let is_mail_auto = format!("mailto:{text}") == target.url;
+            let auto_attr = attr.id.is_empty()
+                && attr.attributes.is_empty()
+                && attr.classes.iter().all(|c| c == "uri" || c == "email");
+            if (is_uri_auto || is_mail_auto) && auto_attr {
+                return Ok(literal(format!("<{text}>")));
+            }
+        }
+        // A reference link drops the attributes that the format cannot write.
+        if !attr.is_empty()
+            && !self.link_attributes()
+            && self.has(Extension::RawHtml)
+            && !self.opts.reference_links
+        {
             let inner = self.inline_list(content, false)?;
             let mut open = literal(format!("<a href=\"{}\"", escape_html(&target.url)));
             let mut parts = html_attr_parts(attr);
@@ -872,5 +962,137 @@ fn destination(target: &Target) -> Doc {
         literal(url)
     } else {
         literal(url) + literal(format!(" \"{}\"", target.title))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use randoc_ast::{Attr, Inline};
+    use randoc_core::{WriterOptions, default_extensions};
+
+    use crate::{Variant, W};
+
+    const FORMATS: [(&str, Variant); 4] = [
+        ("markdown", Variant::Markdown),
+        ("markdown_strict", Variant::Markdown),
+        ("gfm", Variant::Commonmark),
+        ("plain", Variant::Plain),
+    ];
+
+    fn options(format: &str) -> WriterOptions {
+        let mut options = WriterOptions::default();
+        options.extensions = default_extensions(format);
+        options
+    }
+
+    /// A random inline list: spaces, words and the elements whose edge
+    /// spaces can go outside, with a linear congruential generator.
+    fn random_list(seed: &mut u64, depth: usize) -> Vec<Inline> {
+        fn next(seed: &mut u64, n: u64) -> u64 {
+            *seed = seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1);
+            (*seed >> 33) % n
+        }
+        let length = next(seed, 4);
+        let mut out = Vec::new();
+        for _ in 0..length {
+            let kind = next(seed, if depth == 0 { 3 } else { 8 });
+            out.push(match kind {
+                0 => Inline::Space,
+                1 => Inline::SoftBreak,
+                2 => Inline::Str("w".into()),
+                _ => {
+                    let inner = random_list(seed, depth - 1);
+                    match kind {
+                        3 => Inline::Emph(inner),
+                        4 => Inline::Strong(inner),
+                        5 => Inline::Strikeout(inner),
+                        6 => Inline::Underline(inner),
+                        _ => Inline::Span(Attr::default(), inner),
+                    }
+                }
+            });
+        }
+        out
+    }
+
+    /// Each list of the tree, also without its outer spaces.
+    fn lists<'a>(list: &'a [Inline], out: &mut Vec<&'a [Inline]>) {
+        out.push(list);
+        let start = list.iter().position(|i| !super::is_space(i));
+        let end = list.iter().rposition(|i| !super::is_space(i));
+        if let (Some(start), Some(end)) = (start, end) {
+            out.push(&list[start..=end]);
+        }
+        for inline in list {
+            if let Inline::Emph(inner)
+            | Inline::Strong(inner)
+            | Inline::Strikeout(inner)
+            | Inline::Underline(inner)
+            | Inline::Span(_, inner) = inline
+            {
+                lists(inner, out);
+            }
+        }
+    }
+
+    #[test]
+    fn the_stored_edge_spaces_equal_the_plain_walk() {
+        let mut seed = 7;
+        let mut compared = 0;
+        for _ in 0..2000 {
+            let tree = random_list(&mut seed, 5);
+            let mut all = Vec::new();
+            lists(&tree, &mut all);
+            for (format, variant) in FORMATS {
+                let options = options(format);
+                let mut w = W::new(&options, variant, 128);
+                for list in &all {
+                    for first in [true, false] {
+                        let plain = w.edge_space_scan(list, first);
+                        assert_eq!(w.edge_space(list, first), plain, "{format} {list:?}");
+                        compared += 1;
+                    }
+                }
+            }
+        }
+        assert!(compared > 100_000, "{compared}");
+    }
+
+    /// Nested emphasis, `n` levels of `Emph` and `Strong` in turn, with a
+    /// space at each end of the innermost text.
+    fn nested(n: usize) -> Vec<Inline> {
+        let mut inner = vec![Inline::Space, Inline::Str("x".into()), Inline::Space];
+        for level in 0..n {
+            inner = vec![if level % 2 == 0 {
+                Inline::Emph(inner)
+            } else {
+                Inline::Strong(inner)
+            }];
+        }
+        inner
+    }
+
+    #[test]
+    fn the_edge_space_walk_is_linear_in_the_depth() {
+        std::thread::Builder::new()
+            .stack_size(1 << 28)
+            .spawn(|| {
+                for n in [1000, 4000] {
+                    let list = nested(n);
+                    let options = options("markdown");
+                    let mut w = W::new(&options, Variant::Markdown, 2 * n + 10);
+                    let text = w.inline_list(&list, true).map(|doc| doc.render(None));
+                    assert!(
+                        text.is_ok_and(|t| t.trim().starts_with("**") && t.contains('x')),
+                        "{n}"
+                    );
+                    // Each list of the chain is walked once for each side.
+                    assert!(w.edge_steps <= 2 * n + 2, "{n}: {} steps", w.edge_steps);
+                    assert!(w.edge_memo.is_empty() && w.edge_keys.is_empty());
+                    std::mem::forget(list);
+                }
+            })
+            .map(|thread| thread.join().is_ok())
+            .map_or_else(|_| unreachable!("the thread starts"), |ok| assert!(ok));
     }
 }

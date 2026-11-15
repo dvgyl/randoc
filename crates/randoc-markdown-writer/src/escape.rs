@@ -28,8 +28,11 @@ impl W<'_> {
         }
         let commonmark = self.variant == Variant::Commonmark;
         let escapable = commonmark || self.has(Extension::AllSymbolsEscapable);
-        let escapable_all = self.has(Extension::AllSymbolsEscapable);
+        // Pandoc escapes each backslash only where a backslash can start raw TeX.
+        let raw_tex = self.variant == Variant::Markdown && self.has(Extension::RawTex);
         let smart = self.has(Extension::Smart);
+        // A run of three colons could open or close a fenced div.
+        let fenced_divs = self.has(Extension::FencedDivs);
         let chars: Vec<char> = text.chars().collect();
         let offsets: Vec<usize> = text.char_indices().map(|(offset, _)| offset).collect();
         let mut out = Text::with_capacity(text.len() + 8);
@@ -47,7 +50,7 @@ impl W<'_> {
                     out.push_str("\\![");
                     i += 1;
                 }
-                '\\' if !escapable_all
+                '\\' if !raw_tex
                     && next.is_some_and(|n| !n.is_ascii_punctuation() && !n.is_whitespace()) =>
                 {
                     out.push('\\');
@@ -111,6 +114,10 @@ impl W<'_> {
                 '#' if i == 0 && (commonmark || chars.iter().all(|&h| h == '#')) => {
                     out.push_str("\\#");
                 }
+                ':' if fenced_divs && next == Some(':') && chars.get(i + 2) == Some(&':') => {
+                    out.push_str("\\:::");
+                    i += 2;
+                }
                 '\u{2019}' | '\u{2018}' if smart => out.push('\''),
                 '\u{201C}' | '\u{201D}' if smart => out.push('"'),
                 '\u{2014}' if smart => out.push_str("---"),
@@ -132,7 +139,7 @@ impl W<'_> {
             return escaped;
         }
         if raw.starts_with(":::") && self.has(Extension::FencedDivs) {
-            return format!("\\{escaped}");
+            return escaped;
         }
         if self.in_heading {
             return escaped;

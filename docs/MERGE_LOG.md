@@ -2389,3 +2389,41 @@ options 90 passing, 18 partial, 1 not started; output formats 5
 passing, 12 partial, 1 failing, 59 not started; units 54488 of 56756
 passing. `spec/baseline.json` and `spec/capabilities.json` are updated
 in the next commit.
+
+## Session 6 of 2026-11-15, batch A (one block: markdown-writer)
+
+**markdown-writer**: branch `ws/markdown-writer-3`, commits
+`34a4339..2b01b4a` (`main` holds `34a4339` as `ff5a64b`). The block
+holds 5498568 of the stopped worker, 172e6bf (merge of `origin/main`
+by the coordinator; one conflict in `escape.rs`, resolved with the
+branch version of the crate) and 2b01b4a (`cargo fmt` only).
+5498568 renders the template for standalone output (`src/standalone.rs`:
+title blocks, table of contents, variables) and makes nested inlines
+linear. It corrects 9 high Codex findings (R1-07, R1-10 to R1-17).
+
+Gate: `scripts/gate.sh` passed on `2b01b4a` at 01:46 UTC (a plain gate
+run of the coordinator, tool `env/bin/gate-branch`, 22 minutes; the
+first run on `172e6bf` failed in the format step, so the coordinator
+ran `cargo fmt` and committed `2b01b4a`). The stopped worker had no
+gate pass on `5498568`.
+
+Measured by the worker: `cargo test -p randoc-markdown-writer` passes
+on 5498568 (21 unit tests, `limits.rs` 2, `options.rs` 2). Replay: 330
+`options/standalone-*` write units pass. `limits.rs`: 5.3 to 9.3 s.
+
+Review state: Round 1 on `main` `890ef9f` (session 5): the Opus reviewer
+requested changes with 2 high and 7 medium findings, the Codex reviewer
+with 2 critical, 16 high and 3 medium findings. Both critical findings
+are corrected on `main` since `f292078`. This block corrects 9 of the
+high Codex findings (the report names them). The verification by both
+reviewers is due after this merge. The block also closes the Markdown
+and plain part of the critical finding cli-R9-19 of the command line
+review at its root: these writers now render the template.
+
+Open: I-MDW-06 (high); I-MDW-16, I-MDW-17 (low); colon runs of 4 or
+more (low, no row yet); time of nested tables and lists (in
+`randoc-layout`, no row yet); medium findings of both reports (not
+started); the math separator change (patch, not committed).
+
+Checks that did not run: the report does not state a run of mutation
+tests, coverage, fuzzing or benchmarks for this range. Licence scan: no.

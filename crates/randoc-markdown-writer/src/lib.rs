@@ -10,6 +10,7 @@ mod blocks;
 mod escape;
 mod html;
 mod inlines;
+mod standalone;
 mod tables;
 
 use std::sync::Arc;
@@ -19,7 +20,7 @@ use randoc_core::{
     Context, Error, Extension, Extensions, LogMessage, ReferenceLocation, Result, WrapOption,
     Writer, WriterOptions,
 };
-use randoc_layout::{Doc, blankline, cr, empty, hang, literal, nest};
+use randoc_layout::{Doc, blankline, cr, empty, hang, literal, nest, space};
 
 /// The syntax family of an output format.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -69,16 +70,23 @@ fn write(
     variant: Variant,
 ) -> Result<Text> {
     let mut w = W::new(options, variant, context.limits.max_nesting_depth);
-    // Pandoc converts the metadata before the body, also for a fragment, so
-    // the notes of the metadata take the first numbers.
-    w.meta_context(&doc.meta)?;
-    let body = w.document(&doc.blocks)?;
+    let output = match &options.template {
+        Some(template) => w.standalone(doc, template)?,
+        None => {
+            // Pandoc converts the metadata before the body, also for a
+            // fragment, so the notes of the metadata take the first numbers.
+            w.meta_context(&doc.meta)?;
+            w.document(&doc.blocks)?
+        }
+    };
     for message in std::mem::take(&mut w.messages) {
         context.report(message);
     }
-    let mut text = body.render(line_width(options));
-    while text.ends_with('\n') {
-        text.pop();
+    let mut text = output.render(line_width(options));
+    if options.template.is_none() {
+        while text.ends_with('\n') {
+            text.pop();
+        }
     }
     Ok(text)
 }
@@ -138,10 +146,19 @@ pub(crate) struct W<'a> {
     pub cut_edges: (bool, bool),
     /// The automatic identifiers of the headings written so far.
     pub heading_ids: randoc_core::shared::IdentifierSet,
+    /// The edge-space results of lists inside the delimited elements that
+    /// are being written, by address, length and side of the list.
+    pub edge_memo: std::collections::HashMap<(usize, usize, bool), bool>,
+    /// The keys of `edge_memo` in the order of insertion, so that each
+    /// delimited element removes its own keys at its end.
+    pub edge_keys: Vec<(usize, usize, bool)>,
+    /// The number of lists that the edge-space walk visited.
+    #[cfg(test)]
+    pub edge_steps: usize,
 }
 
 impl<'a> W<'a> {
-    fn new(opts: &'a WriterOptions, variant: Variant, max_depth: usize) -> Self {
+    pub(crate) fn new(opts: &'a WriterOptions, variant: Variant, max_depth: usize) -> Self {
         W {
             opts,
             variant,
@@ -164,6 +181,10 @@ impl<'a> W<'a> {
             cut_list: (false, false),
             cut_edges: (false, false),
             heading_ids: randoc_core::shared::IdentifierSet::new(),
+            edge_memo: std::collections::HashMap::new(),
+            edge_keys: Vec::new(),
+            #[cfg(test)]
+            edge_steps: 0,
         }
     }
 
@@ -199,14 +220,13 @@ impl<'a> W<'a> {
         self.depth = self.depth.saturating_sub(1);
     }
 
-    /// Converts the metadata with this writer, as the template context.
+    /// Converts the metadata with this writer, without the variables.
     fn meta_context(&mut self, meta: &randoc_ast::Meta) -> Result<randoc_templates::Context> {
         let max_depth = self.max_depth;
-        let variables = &self.opts.variables;
         let writer = std::cell::RefCell::new(&mut *self);
         randoc_core::shared::meta_context::meta_to_context(
             meta,
-            variables,
+            &randoc_templates::Context::new(),
             max_depth,
             &mut |blocks| writer.borrow_mut().block_list(blocks),
             &mut |inlines| writer.borrow_mut().inline_list(inlines, false),
@@ -273,15 +293,22 @@ impl<'a> W<'a> {
     }
 
     fn reference_line(&self, reference: &LinkRef) -> Doc {
-        let mut line = format!("[{}]: {}", reference.label, url_text(&reference.target.url));
+        let mut line = literal(format!(
+            "[{}]: {}",
+            reference.label,
+            url_text(&reference.target.url)
+        ));
+        // The title can go to the next line.
         if !reference.target.title.is_empty() {
-            line.push_str(&format!(" \"{}\"", reference.target.title));
+            line += nest(
+                2,
+                space() + literal(format!("\"{}\"", reference.target.title)),
+            );
         }
         if !reference.attrs.is_empty() {
-            line.push(' ');
-            line.push_str(&reference.attrs);
+            line += literal(format!(" {}", reference.attrs));
         }
-        literal(line)
+        line
     }
 }
 
