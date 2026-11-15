@@ -4369,3 +4369,109 @@ input = "<table><tr><td>a</td></tr></tbody></tbody></table>"
 [[case]]
 id = "straytbody-104"
 input = "<table><tr><td>a</td></tr></tbody><tr><td>b</td></tr></tbody></table>"
+
+[[case]]
+id = "lowfix-001"
+input = "<table><col style=\"width:25%\n\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-002"
+input = "<table><col style=\"width:25%\n;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-003"
+input = "<table><col style=\"width:25%;\n\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-004"
+input = "<table><col style=\"width:25% \n \"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-005"
+input = "<table><col style=\"width:25%\t\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-006"
+input = "<table><col style=\"width:25%\n\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-007"
+input = "<table><col style=\"width:25%\n\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-008"
+input = "<table><col style=\"width:25%\f\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-009"
+input = "<table><col style=\"width:25%\u000b\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-010"
+input = "<table><col style=\"width:25%\n\n\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-011"
+input = "<table><col style=\"width:25%; \n;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-012"
+input = "<table><col style=\"width:25%\nx\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-013"
+input = "<table><col style=\"width:25% \"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-014"
+input = "<table><col style=\"width:25%&#10;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-015"
+input = "<table><col style=\"width:25%&#13;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-016"
+input = "<table><col style=\"width:25% \"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-017"
+input = "<table><col style=\"width:25%;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-018"
+input = "<table><col style=\"width:25%;;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-019"
+input = "<table><col style=\"width:25% ; \"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-020"
+input = "<table><col style=\"width:25%\t;\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-021"
+input = "<table><col style=\"width:25%;\t\"><col><tr><td>a</td><td>b</td></tr></table>"
+
+[[case]]
+id = "lowfix-022"
+input = "<p>a<?xml version=\"1.0\"?>b</p>"
+
+[[case]]
+id = "lowfix-023"
+from = "html+raw_html"
+input = "<p>a<?xml version=\"1.0\"?>b</p>"
+
+[[case]]
+id = "lowfix-024"
+input = "<p>a<?XML x?>b</p>"
+
+[[case]]
+id = "lowfix-025"
+input = "<table><tr><th colspan=\"0\">h</th><td>a</td></tr></table>"
+
+[[case]]
+id = "lowfix-026"
+input = "<table><tr><th rowspan=\"0\">h</th><td>a</td></tr></table>"
+

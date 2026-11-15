@@ -5079,3 +5079,616 @@ input = "<head><title>a</isindex>b</title></head><p>p</p>"
 id = "titleclose-152"
 from = "html"
 input = "<head><title>a</a>b</title></head><p>p</p>"
+
+[[case]]
+id = "baseuri-001"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"[x]\">x</a> <img src=\"[x]\">"
+
+[[case]]
+id = "baseuri-002"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"1a:b\">x</a> <img src=\"1a:b\">"
+
+[[case]]
+id = "baseuri-003"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"#f\">x</a> <img src=\"#f\">"
+
+[[case]]
+id = "baseuri-004"
+input = "<head><base href=\"//h/\"></head><a href=\"//[::1]x/a\">x</a> <img src=\"//[::1]x/a\">"
+
+[[case]]
+id = "baseuri-005"
+input = "<head><base href=\"//h/\"></head><a href=\"//u@h@x/\">x</a> <img src=\"//u@h@x/\">"
+
+[[case]]
+id = "baseuri-006"
+input = "<head><base href=\"//h/\"></head><a href=\"//[1::8]/a\">x</a> <img src=\"//[1::8]/a\">"
+
+[[case]]
+id = "baseuri-007"
+input = "<head><base href=\"//h/\"></head><a href=\"//[vg.x]/a\">x</a> <img src=\"//[vg.x]/a\">"
+
+[[case]]
+id = "baseuri-008"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//h[x]/\">x</a> <img src=\"//h[x]/\">"
+
+[[case]]
+id = "baseuri-009"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"%41\">x</a> <img src=\"%41\">"
+
+[[case]]
+id = "baseuri-010"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"?%4\">x</a> <img src=\"?%4\">"
+
+[[case]]
+id = "baseuri-011"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//h:8a/\">x</a> <img src=\"//h:8a/\">"
+
+[[case]]
+id = "baseuri-012"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"http://[x]/\">x</a> <img src=\"http://[x]/\">"
+
+[[case]]
+id = "baseuri-013"
+input = "<head><base href=\"//h/\"></head><a href=\"//u[@h/a\">x</a> <img src=\"//u[@h/a\">"
+
+[[case]]
+id = "baseuri-014"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//u[@h/a\">x</a> <img src=\"//u[@h/a\">"
+
+[[case]]
+id = "baseuri-015"
+input = "<head><base href=\"[x]\"></head><a href=\"a%2F\">x</a> <img src=\"a%2F\">"
+
+[[case]]
+id = "baseuri-016"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//1.2.3.4/a\">x</a> <img src=\"//1.2.3.4/a\">"
+
+[[case]]
+id = "baseuri-017"
+input = "<head><base href=\"//h/\"></head><a href=\"//[v.x]/a\">x</a> <img src=\"//[v.x]/a\">"
+
+[[case]]
+id = "baseuri-018"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"[x]\">x</a> <img src=\"[x]\">"
+
+[[case]]
+id = "baseuri-019"
+input = "<head><base href=\"/\"></head><a href=\"//[1:2:3:4:5:6:7:8]/a\">x</a> <img src=\"//[1:2:3:4:5:6:7:8]/a\">"
+
+[[case]]
+id = "baseuri-020"
+input = "<head><base href=\"[x]\"></head><a href=\"http://[::1]/x\">x</a> <img src=\"http://[::1]/x\">"
+
+[[case]]
+id = "baseuri-021"
+input = "<head><base href=\"//h/\"></head><a href=\"//[1:2:3:4:5:6:7]/a\">x</a> <img src=\"//[1:2:3:4:5:6:7]/a\">"
+
+[[case]]
+id = "baseuri-022"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//[1::2::3]/a\">x</a> <img src=\"//[1::2::3]/a\">"
+
+[[case]]
+id = "baseuri-023"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"#%\">x</a> <img src=\"#%\">"
+
+[[case]]
+id = "baseuri-024"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"a%2\">x</a> <img src=\"a%2\">"
+
+[[case]]
+id = "baseuri-025"
+input = "<head><base href=\"/\"></head><a href=\"a:b\">x</a> <img src=\"a:b\">"
+
+[[case]]
+id = "baseuri-026"
+input = "<head><base href=\"a/b\"></head><a href=\"a|b\">x</a> <img src=\"a|b\">"
+
+[[case]]
+id = "baseuri-027"
+input = "<head><base href=\"/\"></head><a href=\"a%2F\">x</a> <img src=\"a%2F\">"
+
+[[case]]
+id = "baseuri-028"
+input = "<head><base href=\"//h/\"></head><a href=\"#[x]\">x</a> <img src=\"#[x]\">"
+
+[[case]]
+id = "baseuri-029"
+input = "<head><base href=\"//h/\"></head><a href=\"//[::1]:80/a\">x</a> <img src=\"//[::1]:80/a\">"
+
+[[case]]
+id = "baseuri-030"
+input = "<head><base href=\"[x]\"></head><a href=\"//u:p@h/a\">x</a> <img src=\"//u:p@h/a\">"
+
+[[case]]
+id = "baseuri-031"
+input = "<head><base href=\"/\"></head><a href=\"a b\">x</a> <img src=\"a b\">"
+
+[[case]]
+id = "baseuri-032"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"http://[x]/\">x</a> <img src=\"http://[x]/\">"
+
+[[case]]
+id = "baseuri-033"
+input = "<head><base href=\"//h/\"></head><a href=\"?[x]\">x</a> <img src=\"?[x]\">"
+
+[[case]]
+id = "baseuri-034"
+input = "<head><base href=\"//h/\"></head><a href=\"..\">x</a> <img src=\"..\">"
+
+[[case]]
+id = "baseuri-035"
+input = "<head><base href=\"/\"></head><a href=\"//[1::2::3]/a\">x</a> <img src=\"//[1::2::3]/a\">"
+
+[[case]]
+id = "baseuri-036"
+input = "<head><base href=\"//h/\"></head><a href=\"//h:80/\">x</a> <img src=\"//h:80/\">"
+
+[[case]]
+id = "baseuri-037"
+input = "<head><base href=\"//h/\"></head><a href=\"a%2\">x</a> <img src=\"a%2\">"
+
+[[case]]
+id = "baseuri-038"
+input = "<head><base href=\"//h/\"></head><a href=\"1a:b\">x</a> <img src=\"1a:b\">"
+
+[[case]]
+id = "baseuri-039"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"%4\">x</a> <img src=\"%4\">"
+
+[[case]]
+id = "baseuri-040"
+input = "<head><base href=\"a/b\"></head><a href=\"#[x]\">x</a> <img src=\"#[x]\">"
+
+[[case]]
+id = "baseuri-041"
+input = "<head><base href=\"//h/\"></head><a href=\"//[1::2::3]/a\">x</a> <img src=\"//[1::2::3]/a\">"
+
+[[case]]
+id = "baseuri-042"
+input = "<head><base href=\"a/b\"></head><a href=\"a`b\">x</a> <img src=\"a`b\">"
+
+[[case]]
+id = "baseuri-043"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a#b#c\">x</a> <img src=\"a#b#c\">"
+
+[[case]]
+id = "baseuri-044"
+input = "<head><base href=\"//h/\"></head><a href=\"a/b[c]\">x</a> <img src=\"a/b[c]\">"
+
+[[case]]
+id = "baseuri-045"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"%C3%A9\">x</a> <img src=\"%C3%A9\">"
+
+[[case]]
+id = "baseuri-046"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"mailto:a@b\">x</a> <img src=\"mailto:a@b\">"
+
+[[case]]
+id = "baseuri-047"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"\">x</a> <img src=\"\">"
+
+[[case]]
+id = "baseuri-048"
+input = "<head><base href=\"a/b\"></head><a href=\"#%\">x</a> <img src=\"#%\">"
+
+[[case]]
+id = "baseuri-049"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"x/./y\">x</a> <img src=\"x/./y\">"
+
+[[case]]
+id = "baseuri-050"
+input = "<head><base href=\"[x]\"></head><a href=\"./a:b\">x</a> <img src=\"./a:b\">"
+
+[[case]]
+id = "baseuri-051"
+input = "<head><base href=\"[x]\"></head><a href=\"a^b\">x</a> <img src=\"a^b\">"
+
+[[case]]
+id = "baseuri-052"
+input = "<head><base href=\"a/b\"></head><a href=\"#f#g\">x</a> <img src=\"#f#g\">"
+
+[[case]]
+id = "baseuri-053"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//u@h/x\">x</a> <img src=\"//u@h/x\">"
+
+[[case]]
+id = "baseuri-054"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"..\">x</a> <img src=\"..\">"
+
+[[case]]
+id = "baseuri-055"
+input = "<head><base href=\"//h/\"></head><a href=\"//[::1.2.3.256]/a\">x</a> <img src=\"//[::1.2.3.256]/a\">"
+
+[[case]]
+id = "baseuri-056"
+input = "<head><base href=\"[x]\"></head><a href=\"//[::1]:80/a\">x</a> <img src=\"//[::1]:80/a\">"
+
+[[case]]
+id = "baseuri-057"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"x[y\">x</a> <img src=\"x[y\">"
+
+[[case]]
+id = "baseuri-058"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"a#b#c\">x</a> <img src=\"a#b#c\">"
+
+[[case]]
+id = "baseuri-059"
+input = "<head><base href=\"/\"></head><a href=\"//[v1.]/a\">x</a> <img src=\"//[v1.]/a\">"
+
+[[case]]
+id = "baseuri-060"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"//1.2.3.4/a\">x</a> <img src=\"//1.2.3.4/a\">"
+
+[[case]]
+id = "baseuri-061"
+input = "<head><base href=\"[x]\"></head><a href=\"//[::1.2.3.256]/a\">x</a> <img src=\"//[::1.2.3.256]/a\">"
+
+[[case]]
+id = "baseuri-062"
+input = "<head><base href=\"[x]\"></head><a href=\"//[v1.]/a\">x</a> <img src=\"//[v1.]/a\">"
+
+[[case]]
+id = "baseuri-063"
+input = "<head><base href=\"//h/\"></head><a href=\"a\\b\">x</a> <img src=\"a\\b\">"
+
+[[case]]
+id = "baseuri-064"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"a{b}\">x</a> <img src=\"a{b}\">"
+
+[[case]]
+id = "baseuri-065"
+input = "<head><base href=\"a/b\"></head><a href=\"?[x]\">x</a> <img src=\"?[x]\">"
+
+[[case]]
+id = "baseuri-066"
+input = "<head><base href=\"[x]\"></head><a href=\"?q\">x</a> <img src=\"?q\">"
+
+[[case]]
+id = "baseuri-067"
+input = "<head><base href=\"[x]\"></head><a href=\"//u:@h/a\">x</a> <img src=\"//u:@h/a\">"
+
+[[case]]
+id = "baseuri-068"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"\">x</a> <img src=\"\">"
+
+[[case]]
+id = "baseuri-069"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"%41\">x</a> <img src=\"%41\">"
+
+[[case]]
+id = "baseuri-070"
+input = "<head><base href=\"a/b\"></head><a href=\"a\\b\">x</a> <img src=\"a\\b\">"
+
+[[case]]
+id = "baseuri-071"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"1a:b\">x</a> <img src=\"1a:b\">"
+
+[[case]]
+id = "baseuri-072"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//[1::2::3]/a\">x</a> <img src=\"//[1::2::3]/a\">"
+
+[[case]]
+id = "baseuri-073"
+input = "<head><base href=\"a/b\"></head><a href=\"//h[x]/\">x</a> <img src=\"//h[x]/\">"
+
+[[case]]
+id = "baseuri-074"
+input = "<head><base href=\"[x]\"></head><a href=\"//h:80/\">x</a> <img src=\"//h:80/\">"
+
+[[case]]
+id = "baseuri-075"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a^b\">x</a> <img src=\"a^b\">"
+
+[[case]]
+id = "baseuri-076"
+input = "<head><base href=\"//h/\"></head><a href=\"//[::]/a\">x</a> <img src=\"//[::]/a\">"
+
+[[case]]
+id = "baseuri-077"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//[1:2:3:4:5:6:7]/a\">x</a> <img src=\"//[1:2:3:4:5:6:7]/a\">"
+
+[[case]]
+id = "baseuri-078"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a`b\">x</a> <img src=\"a`b\">"
+
+[[case]]
+id = "baseuri-079"
+input = "<head><base href=\"[x]\"></head><a href=\"%41\">x</a> <img src=\"%41\">"
+
+[[case]]
+id = "baseuri-080"
+input = "<head><base href=\"//h/\"></head><a href=\"#f\">x</a> <img src=\"#f\">"
+
+[[case]]
+id = "baseuri-081"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//[::1]x/a\">x</a> <img src=\"//[::1]x/a\">"
+
+[[case]]
+id = "baseuri-082"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"//[v.x]/a\">x</a> <img src=\"//[v.x]/a\">"
+
+[[case]]
+id = "baseuri-083"
+input = "<head><base href=\"a/b\"></head><a href=\"//[1:2:3:4:5:6:7]/a\">x</a> <img src=\"//[1:2:3:4:5:6:7]/a\">"
+
+[[case]]
+id = "baseuri-084"
+input = "<head><base href=\"//h/\"></head><a href=\"%41\">x</a> <img src=\"%41\">"
+
+[[case]]
+id = "baseuri-085"
+input = "<head><base href=\"[x]\"></head><a href=\"//h%41/a\">x</a> <img src=\"//h%41/a\">"
+
+[[case]]
+id = "baseuri-086"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"//h:8a/\">x</a> <img src=\"//h:8a/\">"
+
+[[case]]
+id = "baseuri-087"
+input = "<head><base href=\"a/b\"></head><a href=\"%zz\">x</a> <img src=\"%zz\">"
+
+[[case]]
+id = "baseuri-088"
+input = "<head><base href=\"//h/\"></head><a href=\"//u:@h/a\">x</a> <img src=\"//u:@h/a\">"
+
+[[case]]
+id = "baseuri-089"
+input = "<head><base href=\"[x]\"></head><a href=\"?[x]\">x</a> <img src=\"?[x]\">"
+
+[[case]]
+id = "baseuri-090"
+input = "<head><base href=\"a/b\"></head><a href=\"\">x</a> <img src=\"\">"
+
+[[case]]
+id = "baseuri-091"
+input = "<head><base href=\"//h/\"></head><a href=\"x[y\">x</a> <img src=\"x[y\">"
+
+[[case]]
+id = "baseuri-092"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"..\">x</a> <img src=\"..\">"
+
+[[case]]
+id = "baseuri-093"
+input = "<head><base href=\"[x]\"></head><a href=\"a`b\">x</a> <img src=\"a`b\">"
+
+[[case]]
+id = "baseuri-094"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//[::1.2.3.256]/a\">x</a> <img src=\"//[::1.2.3.256]/a\">"
+
+[[case]]
+id = "baseuri-095"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//[v1.x]/a\">x</a> <img src=\"//[v1.x]/a\">"
+
+[[case]]
+id = "baseuri-096"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//h[x]/\">x</a> <img src=\"//h[x]/\">"
+
+[[case]]
+id = "baseuri-097"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"../../x\">x</a> <img src=\"../../x\">"
+
+[[case]]
+id = "baseuri-098"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"%x\">x</a> <img src=\"%x\">"
+
+[[case]]
+id = "baseuri-099"
+input = "<head><base href=\"/\"></head><a href=\"//[1:2:3:4:5:6:7]/a\">x</a> <img src=\"//[1:2:3:4:5:6:7]/a\">"
+
+[[case]]
+id = "baseuri-100"
+input = "<head><base href=\"//h/\"></head><a href=\"//h:8a/\">x</a> <img src=\"//h:8a/\">"
+
+[[case]]
+id = "baseuri-101"
+input = "<head><base href=\"//h/\"></head><a href=\"//[V1.x]/a\">x</a> <img src=\"//[V1.x]/a\">"
+
+[[case]]
+id = "baseuri-102"
+input = "<head><base href=\"[x]\"></head><a href=\"//[v.x]/a\">x</a> <img src=\"//[v.x]/a\">"
+
+[[case]]
+id = "baseuri-103"
+input = "<head><base href=\"a/b\"></head><a href=\"//[::1.2.3.4]/a\">x</a> <img src=\"//[::1.2.3.4]/a\">"
+
+[[case]]
+id = "baseuri-104"
+input = "<head><base href=\"a/b\"></head><a href=\"%x\">x</a> <img src=\"%x\">"
+
+[[case]]
+id = "baseuri-105"
+input = "<head><base href=\"/\"></head><a href=\"%x\">x</a> <img src=\"%x\">"
+
+[[case]]
+id = "baseuri-106"
+input = "<head><base href=\"a/b\"></head><a href=\"?q\">x</a> <img src=\"?q\">"
+
+[[case]]
+id = "baseuri-107"
+input = "<head><base href=\"/\"></head><a href=\"a|b\">x</a> <img src=\"a|b\">"
+
+[[case]]
+id = "baseuri-108"
+input = "<head><base href=\"//h/\"></head><a href=\"?%4\">x</a> <img src=\"?%4\">"
+
+[[case]]
+id = "baseuri-109"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a?b?c\">x</a> <img src=\"a?b?c\">"
+
+[[case]]
+id = "baseuri-110"
+input = "<head><base href=\"a/b\"></head><a href=\"x/./y\">x</a> <img src=\"x/./y\">"
+
+[[case]]
+id = "baseuri-111"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"//[vg.x]/a\">x</a> <img src=\"//[vg.x]/a\">"
+
+[[case]]
+id = "baseuri-112"
+input = "<head><base href=\"[x]\"></head><a href=\"//[::1]x/a\">x</a> <img src=\"//[::1]x/a\">"
+
+[[case]]
+id = "baseuri-113"
+input = "<head><base href=\"//h/\"></head><a href=\"a`b\">x</a> <img src=\"a`b\">"
+
+[[case]]
+id = "baseuri-114"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a:b\">x</a> <img src=\"a:b\">"
+
+[[case]]
+id = "baseuri-115"
+input = "<head><base href=\"a/b\"></head><a href=\"//u@h/x\">x</a> <img src=\"//u@h/x\">"
+
+[[case]]
+id = "baseuri-116"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//[::1]:80/a\">x</a> <img src=\"//[::1]:80/a\">"
+
+[[case]]
+id = "baseuri-117"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"//u:p@h/a\">x</a> <img src=\"//u:p@h/a\">"
+
+[[case]]
+id = "baseuri-118"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"../../x\">x</a> <img src=\"../../x\">"
+
+[[case]]
+id = "baseuri-119"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"a/b[c]\">x</a> <img src=\"a/b[c]\">"
+
+[[case]]
+id = "baseuri-120"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"//[vg.x]/a\">x</a> <img src=\"//[vg.x]/a\">"
+
+[[case]]
+id = "baseuri-121"
+input = "<head><base href=\"[x]\"></head><a href=\"%4\">x</a> <img src=\"%4\">"
+
+[[case]]
+id = "baseuri-122"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"a?b?c\">x</a> <img src=\"a?b?c\">"
+
+[[case]]
+id = "baseuri-123"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"%zz\">x</a> <img src=\"%zz\">"
+
+[[case]]
+id = "baseuri-124"
+input = "<head><base href=\"[x]\"></head><a href=\"//[12345::]/a\">x</a> <img src=\"//[12345::]/a\">"
+
+[[case]]
+id = "baseuri-125"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"../../x\">x</a> <img src=\"../../x\">"
+
+[[case]]
+id = "baseuri-126"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"a|b\">x</a> <img src=\"a|b\">"
+
+[[case]]
+id = "baseuri-127"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"//[::]/a\">x</a> <img src=\"//[::]/a\">"
+
+[[case]]
+id = "baseuri-128"
+input = "<head><base href=\"[x]\"></head><a href=\"?%4\">x</a> <img src=\"?%4\">"
+
+[[case]]
+id = "baseuri-129"
+input = "<head><base href=\"/\"></head><a href=\"#f#g\">x</a> <img src=\"#f#g\">"
+
+[[case]]
+id = "baseuri-130"
+input = "<head><base href=\"[x]\"></head><a href=\"//[v1.x]/a\">x</a> <img src=\"//[v1.x]/a\">"
+
+[[case]]
+id = "baseuri-131"
+input = "<head><base href=\"[x]\"></head><a href=\"//[1::8]/a\">x</a> <img src=\"//[1::8]/a\">"
+
+[[case]]
+id = "baseuri-132"
+input = "<head><base href=\"/\"></head><a href=\"?q\">x</a> <img src=\"?q\">"
+
+[[case]]
+id = "baseuri-133"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"#%\">x</a> <img src=\"#%\">"
+
+[[case]]
+id = "baseuri-134"
+input = "<head><base href=\"[x]\"></head><a href=\"//[::g]/a\">x</a> <img src=\"//[::g]/a\">"
+
+[[case]]
+id = "baseuri-135"
+input = "<head><base href=\"[x]\"></head><a href=\"a\\b\">x</a> <img src=\"a\\b\">"
+
+[[case]]
+id = "baseuri-136"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"//[::]/a\">x</a> <img src=\"//[::]/a\">"
+
+[[case]]
+id = "baseuri-137"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a\\b\">x</a> <img src=\"a\\b\">"
+
+[[case]]
+id = "baseuri-138"
+input = "<head><base href=\"http://u:p@h/x/\"></head><a href=\"?q\">x</a> <img src=\"?q\">"
+
+[[case]]
+id = "baseuri-139"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"#[x]\">x</a> <img src=\"#[x]\">"
+
+[[case]]
+id = "baseuri-140"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"a%2\">x</a> <img src=\"a%2\">"
+
+[[case]]
+id = "baseuri-141"
+input = "<head><base href=\"[x]\"></head><a href=\"#f\">x</a> <img src=\"#f\">"
+
+[[case]]
+id = "baseuri-142"
+input = "<head><base href=\"/\"></head><a href=\"//[V1.x]/a\">x</a> <img src=\"//[V1.x]/a\">"
+
+[[case]]
+id = "baseuri-143"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"a^b\">x</a> <img src=\"a^b\">"
+
+[[case]]
+id = "baseuri-144"
+input = "<head><base href=\"http://h/a/b?q\"></head><a href=\"?q\">x</a> <img src=\"?q\">"
+
+[[case]]
+id = "baseuri-145"
+input = "<head><base href=\"/\"></head><a href=\"//h:/a\">x</a> <img src=\"//h:/a\">"
+
+[[case]]
+id = "baseuri-146"
+input = "<head><base href=\"//h/\"></head><a href=\"//[v1.x%41]/a\">x</a> <img src=\"//[v1.x%41]/a\">"
+
+[[case]]
+id = "baseuri-147"
+input = "<head><base href=\"//h/\"></head><a href=\"a#b#c\">x</a> <img src=\"a#b#c\">"
+
+[[case]]
+id = "baseuri-148"
+input = "<head><base href=\"[x]\"></head><a href=\"//[V1.x]/a\">x</a> <img src=\"//[V1.x]/a\">"
+
+[[case]]
+id = "baseuri-149"
+input = "<head><base href=\"[x]\"></head><a href=\"//u@h@x/\">x</a> <img src=\"//u@h@x/\">"
+
+[[case]]
+id = "baseuri-150"
+input = "<head><base href=\"http://h:8a/\"></head><a href=\"[x]\">x</a> <img src=\"[x]\">"
+
+[[case]]
+id = "baseuri-151"
+input = "<head><base href=\"/\"></head><a href=\"[x]\">x</a>"
+
+[[case]]
+id = "baseuri-152"
+input = "<head><base href=\"/\"></head><a href=\"%x\">x</a>"
+
+[[case]]
+id = "baseuri-153"
+input = "<head><base href=\"http://h/a/\"></head><a href=\"//u:p@h/b\">x</a><img src=\"%C3%A9.png\">"
+

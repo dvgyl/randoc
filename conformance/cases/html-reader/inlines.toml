@@ -2464,3 +2464,542 @@ input = "<p>-.1'<em>b\"<em>1'.</p>"
 id = "nestedquote-229"
 from = "html+smart"
 input = "<p></em>1\u2019</em>b\"'a\"1\u2019</p>"
+
+[[case]]
+id = "mathtex-001"
+from = "html+raw_html"
+input = "<math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math>"
+
+[[case]]
+id = "mathtex-002"
+input = "<p><em><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math></em></p>"
+
+[[case]]
+id = "mathtex-003"
+input = "<td><math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-004"
+from = "html+raw_html"
+input = "<h1><math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</semantics></math></h1>"
+
+[[case]]
+id = "mathtex-005"
+from = "html+raw_html"
+input = "<h1><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-006"
+input = "<p><em><math display=\"inline\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-007"
+from = "html+raw_html"
+input = "<math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math>"
+
+[[case]]
+id = "mathtex-008"
+from = "html+raw_html"
+input = "<h1><math display=\"inline\"><annotation encoding=\"application/x-tex\">a</math></h1>"
+
+[[case]]
+id = "mathtex-009"
+from = "html+raw_html"
+input = "<math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math>"
+
+[[case]]
+id = "mathtex-010"
+from = "html+raw_html"
+input = "<p>q <math><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-011"
+from = "html+raw_html"
+input = "<h1><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-012"
+from = "html+raw_html"
+input = "<td><math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-013"
+input = "<p>q <math display=\"block\"><annotation encoding=\"application/x-tex\">a+b</annotation></math> r</p>"
+
+[[case]]
+id = "mathtex-014"
+from = "html+raw_html"
+input = "<h1><math><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-015"
+from = "html+raw_html"
+input = "<td><math display=\"block\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</semantics></math></td>"
+
+[[case]]
+id = "mathtex-016"
+from = "html+raw_html"
+input = "<math display=\"inline\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math>"
+
+[[case]]
+id = "mathtex-017"
+from = "html+raw_html"
+input = "<td><math><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></td>"
+
+[[case]]
+id = "mathtex-018"
+from = "html+raw_html"
+input = "<p>q <math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\">a</mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-019"
+input = "<p>q <math><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-020"
+from = "html+raw_html"
+input = "<p><em><math><annotation encoding=\"application/x-tex\">a+b</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-021"
+input = "<p>q <math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-022"
+from = "html+raw_html"
+input = "<p>q <math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math> r</p>"
+
+[[case]]
+id = "mathtex-023"
+from = "html+raw_html"
+input = "<math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</semantics></math>"
+
+[[case]]
+id = "mathtex-024"
+input = "<p>q <math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math> r</p>"
+
+[[case]]
+id = "mathtex-025"
+input = "<p><em><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-026"
+from = "html+raw_html"
+input = "<p>q <math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"></annotation></math> r</p>"
+
+[[case]]
+id = "mathtex-027"
+input = "<td><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></td>"
+
+[[case]]
+id = "mathtex-028"
+input = "<td><math display=\"inline\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></td>"
+
+[[case]]
+id = "mathtex-029"
+input = "<td><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math></td>"
+
+[[case]]
+id = "mathtex-030"
+input = "<h1><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-031"
+from = "html+raw_html"
+input = "<math display=\"inline\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math>"
+
+[[case]]
+id = "mathtex-032"
+from = "html+raw_html"
+input = "<p><em><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></em></p>"
+
+[[case]]
+id = "mathtex-033"
+input = "<math display=\"inline\"><annotation encoding=\"application/x-tex\">a+b</annotation></math>"
+
+[[case]]
+id = "mathtex-034"
+input = "<td><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math></td>"
+
+[[case]]
+id = "mathtex-035"
+input = "<h1><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\">a</mrow></math></h1>"
+
+[[case]]
+id = "mathtex-036"
+input = "<math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math>"
+
+[[case]]
+id = "mathtex-037"
+input = "<td><math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-038"
+input = "<td><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\">a</mrow></math></td>"
+
+[[case]]
+id = "mathtex-039"
+input = "<math><annotation encoding=\"application/x-tex\"></annotation></math>"
+
+[[case]]
+id = "mathtex-040"
+from = "html+raw_html"
+input = "<p><em><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-041"
+input = "<h1><math display=\"inline\"><annotation encoding=\"application/x-tex\">a</math></h1>"
+
+[[case]]
+id = "mathtex-042"
+from = "html+raw_html"
+input = "<h1><math><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></h1>"
+
+[[case]]
+id = "mathtex-043"
+from = "html+raw_html"
+input = "<td><math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-044"
+input = "<h1><math><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></math></h1>"
+
+[[case]]
+id = "mathtex-045"
+from = "html+raw_html"
+input = "<h1><math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math></h1>"
+
+[[case]]
+id = "mathtex-046"
+from = "html+raw_html"
+input = "<p><em><math display=\"inline\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-047"
+input = "<math><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math>"
+
+[[case]]
+id = "mathtex-048"
+from = "html+raw_html"
+input = "<h1><math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\">a</mrow></math></h1>"
+
+[[case]]
+id = "mathtex-049"
+input = "<p>q <math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-050"
+input = "<td><math display=\"inline\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></td>"
+
+[[case]]
+id = "mathtex-051"
+from = "html+raw_html"
+input = "<math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math>"
+
+[[case]]
+id = "mathtex-052"
+from = "html+raw_html"
+input = "<p><em><math display=\"inline\"><annotation encoding=\"application/x-tex\"></annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-053"
+from = "html+raw_html"
+input = "<h1><math display=\"block\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math></h1>"
+
+[[case]]
+id = "mathtex-054"
+input = "<p><em><math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></em></p>"
+
+[[case]]
+id = "mathtex-055"
+from = "html+raw_html"
+input = "<p>q <math display=\"block\"><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></math> r</p>"
+
+[[case]]
+id = "mathtex-056"
+from = "html+raw_html"
+input = "<p><em><math><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-057"
+from = "html+raw_html"
+input = "<p><em><math display=\"block\"><annotation encoding=\"application/x-tex\"></annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-058"
+input = "<h1><math><annotation encoding=\"application/x-tex\"></annotation></math></h1>"
+
+[[case]]
+id = "mathtex-059"
+input = "<td><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\">a</math></td>"
+
+[[case]]
+id = "mathtex-060"
+input = "<td><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></math></td>"
+
+[[case]]
+id = "mathtex-061"
+input = "<h1><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-062"
+input = "<math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"></annotation></semantics></math>"
+
+[[case]]
+id = "mathtex-063"
+input = "<math display=\"inline\"><annotation encoding=\"application/x-tex\">a</math>"
+
+[[case]]
+id = "mathtex-064"
+input = "<p>q <math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a</mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-065"
+from = "html+raw_html"
+input = "<td><math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-066"
+input = "<td><math display=\"inline\"><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></math></td>"
+
+[[case]]
+id = "mathtex-067"
+from = "html+raw_html"
+input = "<p><em><math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></em></p>"
+
+[[case]]
+id = "mathtex-068"
+from = "html+raw_html"
+input = "<p><em><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</semantics></math></em></p>"
+
+[[case]]
+id = "mathtex-069"
+input = "<td><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></td>"
+
+[[case]]
+id = "mathtex-070"
+input = "<h1><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></h1>"
+
+[[case]]
+id = "mathtex-071"
+from = "html+raw_html"
+input = "<p><em><math display=\"block\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-072"
+from = "html+raw_html"
+input = "<math><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math>"
+
+[[case]]
+id = "mathtex-073"
+input = "<p>q <math display=\"inline\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math> r</p>"
+
+[[case]]
+id = "mathtex-074"
+from = "html+raw_html"
+input = "<h1><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"></annotation></math></h1>"
+
+[[case]]
+id = "mathtex-075"
+input = "<p>q <math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-076"
+input = "<math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math>"
+
+[[case]]
+id = "mathtex-077"
+input = "<td><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math></td>"
+
+[[case]]
+id = "mathtex-078"
+input = "<td><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"></annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-079"
+input = "<p>q <math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-080"
+from = "html+raw_html"
+input = "<math display=\"BLOCK\"><annotation encoding=\"application/x-tex\">a</math>"
+
+[[case]]
+id = "mathtex-081"
+input = "<math display=\"block\"><annotation encoding=\"application/x-tex\"></annotation></math>"
+
+[[case]]
+id = "mathtex-082"
+from = "html+raw_html"
+input = "<p><em><math display=\"block\"><annotation encoding=\"application/x-tex\">a+b</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-083"
+from = "html+raw_html"
+input = "<p>q <math><mrow><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-084"
+input = "<td><math><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></td>"
+
+[[case]]
+id = "mathtex-085"
+input = "<td><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-086"
+input = "<p>q <math display=\"block\"><annotation encoding=\"application/x-tex\"></annotation></math> r</p>"
+
+[[case]]
+id = "mathtex-087"
+input = "<h1><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math></h1>"
+
+[[case]]
+id = "mathtex-088"
+input = "<p><em><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math></em></p>"
+
+[[case]]
+id = "mathtex-089"
+from = "html+raw_html"
+input = "<p><em><math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math></em></p>"
+
+[[case]]
+id = "mathtex-090"
+input = "<p><em><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-091"
+from = "html+raw_html"
+input = "<td><math display=\"block\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></td>"
+
+[[case]]
+id = "mathtex-092"
+input = "<p>q <math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math> r</p>"
+
+[[case]]
+id = "mathtex-093"
+from = "html+raw_html"
+input = "<p><em><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-094"
+from = "html+raw_html"
+input = "<td><math display=\"inline\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"></annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-095"
+from = "html+raw_html"
+input = "<h1><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-096"
+input = "<td><math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\">a</mrow></math></td>"
+
+[[case]]
+id = "mathtex-097"
+input = "<h1><math display=\"block\"><mrow><annotation encoding=\"application/x-tex\"><b>a</b>c</annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-098"
+from = "html+raw_html"
+input = "<td><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"></annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-099"
+from = "html+raw_html"
+input = "<td><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></td>"
+
+[[case]]
+id = "mathtex-100"
+from = "html+raw_html"
+input = "<math><annotation encoding=\"application/x-tex\">a</math>"
+
+[[case]]
+id = "mathtex-101"
+from = "html+raw_html"
+input = "<h1><math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a+b</annotation></semantics></math></h1>"
+
+[[case]]
+id = "mathtex-102"
+input = "<td><math display=\"inline\"><annotation encoding=\"application/x-tex\">a+b</annotation></math></td>"
+
+[[case]]
+id = "mathtex-103"
+input = "<p><em><math display=\"inline\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-104"
+from = "html+raw_html"
+input = "<h1><math display=\"block\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math></h1>"
+
+[[case]]
+id = "mathtex-105"
+input = "<h1><math><mrow><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></mrow></math></h1>"
+
+[[case]]
+id = "mathtex-106"
+from = "html+raw_html"
+input = "<math display=\"inline\"><mrow><annotation encoding=\"application/x-tex\">a+b</annotation></mrow></math>"
+
+[[case]]
+id = "mathtex-107"
+from = "html+raw_html"
+input = "<math display=\"block\"><annotation encoding=\"application/x-tex\">a+b</annotation></math>"
+
+[[case]]
+id = "mathtex-108"
+from = "html+raw_html"
+input = "<p><em><math display=\"BLOCK\"><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></math></em></p>"
+
+[[case]]
+id = "mathtex-109"
+input = "<p>q <math display=\"inline\"><annotation encoding=\"application/x-tex\"></annotation></math> r</p>"
+
+[[case]]
+id = "mathtex-110"
+input = "<td><math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math></td>"
+
+[[case]]
+id = "mathtex-111"
+from = "html+raw_html"
+input = "<p>q <math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math> r</p>"
+
+[[case]]
+id = "mathtex-112"
+from = "html+raw_html"
+input = "<p>q <math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</semantics></math> r</p>"
+
+[[case]]
+id = "mathtex-113"
+from = "html+raw_html"
+input = "<p>q <math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\"></annotation></mrow></math> r</p>"
+
+[[case]]
+id = "mathtex-114"
+input = "<td><math><annotation encoding=\"application/x-tex\">a+b</annotation></math></td>"
+
+[[case]]
+id = "mathtex-115"
+input = "<math><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math>"
+
+[[case]]
+id = "mathtex-116"
+input = "<p>q <math display=\"BLOCK\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></semantics></math> r</p>"
+
+[[case]]
+id = "mathtex-117"
+input = "<h1><math display=\"block\"><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></math></h1>"
+
+[[case]]
+id = "mathtex-118"
+input = "<p><em><math display=\"block\"><semantics><mi>x</mi><annotation encoding=\"application/x-tex\"> a &amp; b </annotation></semantics></math></em></p>"
+
+[[case]]
+id = "mathtex-119"
+input = "<p><em><math display=\"BLOCK\"><mrow><annotation encoding=\"application/x-tex\">a</annotation><annotation encoding=\"application/x-tex\">b</annotation></mrow></math></em></p>"
+
+[[case]]
+id = "mathtex-120"
+from = "html+raw_html"
+input = "<td><math display=\"inline\"><annotation encoding=\"application/x-tex\">a</math></td>"
+

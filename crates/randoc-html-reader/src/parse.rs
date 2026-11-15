@@ -119,6 +119,9 @@ const CLOSES_P: &[&str] = &[
     "ul",
 ];
 
+/// A rule that reads one block element of the parser `P`.
+type BlockRule<P> = fn(&mut P, &mut Vec<Block>) -> Parse<()>;
+
 fn in_list(list: &[&str], name: &str) -> bool {
     list.binary_search(&name).is_ok()
 }
@@ -506,6 +509,24 @@ impl<'a> Parser<'a> {
         attributes: &'a [(Text, Text)],
         out: &mut Vec<Block>,
     ) -> Parse<()> {
+        if self.has(Extension::EpubHtmlExts) && (is_block_name(name) || is_either_name(name)) {
+            let clean = clean_attributes(attributes);
+            let kinds = attribute(&clean, "epub:type").unwrap_or_default();
+            let rule: Option<BlockRule<Self>> = match kinds {
+                "footnote" | "rearnote" => Some(Self::epub_note),
+                "footnotes" | "rearnotes" => Some(Self::epub_notes_division),
+                "toc" => Some(Self::epub_contents),
+                _ if matches!(name, "section" | "aside" | "nav" | "article")
+                    && kinds.contains("chapter") =>
+                {
+                    Some(Self::epub_chapter)
+                }
+                _ => None,
+            };
+            if let Some(rule) = rule {
+                return self.attempt(out, rule);
+            }
+        }
         let divs = self.has(Extension::NativeDivs);
         match name {
             "html" | "body" => {
@@ -703,23 +724,6 @@ impl<'a> Parser<'a> {
         if attribute(&clean, "role") == Some("doc-endnotes") {
             return self.endnotes(name, attr, out);
         }
-        if self.has(Extension::EpubHtmlExts) {
-            let kinds = attribute(&clean, "epub:type").unwrap_or_default();
-            if kinds
-                .split_whitespace()
-                .any(|kind| matches!(kind, "footnote" | "rearnote"))
-            {
-                let first = self.heading_ends.len();
-                let content = self.blocks_in(name)?;
-                let headings = first..self.heading_ends.len();
-                self.notes.push((attr.id, content, headings));
-                return Ok(());
-            }
-            if name == "section" && !kinds.is_empty() {
-                out.append(&mut self.blocks_in(name)?);
-                return Ok(());
-            }
-        }
         match name.as_str() {
             "section" | "header" | "aside" => attr.classes.insert(0, name.clone()),
             "main" if attr.get("role").is_none() => {
@@ -733,6 +737,58 @@ impl<'a> Parser<'a> {
         Ok(())
     }
 
+    /// A block or either element whose `epub:type` is exactly `footnote` or
+    /// `rearnote`: its blocks are the note with its identifier, also without
+    /// `native_divs`.
+    fn epub_note(&mut self, _out: &mut Vec<Block>) -> Parse<()> {
+        let Some(TokenKind::Open(name, attributes)) = self.peek() else {
+            return Err(Stop::Fail);
+        };
+        let id = attribute(&clean_attributes(attributes), "id")
+            .unwrap_or_default()
+            .to_owned();
+        let first = self.heading_ends.len();
+        let content = self.blocks_in(name)?;
+        let headings = first..self.heading_ends.len();
+        self.notes.push((id, content, headings));
+        Ok(())
+    }
+
+    /// A block or either element whose `epub:type` is exactly `footnotes` or
+    /// `rearnotes`: a `Div` without the element name as a class, also
+    /// without `native_divs`, and nothing when it has no blocks.
+    fn epub_notes_division(&mut self, out: &mut Vec<Block>) -> Parse<()> {
+        let Some(TokenKind::Open(name, attributes)) = self.peek() else {
+            return Err(Stop::Fail);
+        };
+        let attr = to_attr(&clean_attributes(attributes));
+        let content = self.blocks_in(name)?;
+        if !content.is_empty() {
+            out.push(Block::Div(attr, content));
+        }
+        Ok(())
+    }
+
+    /// A block or either element whose `epub:type` is exactly `toc`: Pandoc
+    /// drops it with its content.
+    fn epub_contents(&mut self, _out: &mut Vec<Block>) -> Parse<()> {
+        let Some(TokenKind::Open(name, _)) = self.peek() else {
+            return Err(Stop::Fail);
+        };
+        self.blocks_in(name)?;
+        Ok(())
+    }
+
+    /// A `section`, `aside`, `nav` or `article` whose `epub:type` contains
+    /// `chapter`: its blocks without a `Div`.
+    fn epub_chapter(&mut self, out: &mut Vec<Block>) -> Parse<()> {
+        let Some(TokenKind::Open(name, _)) = self.peek() else {
+            return Err(Stop::Fail);
+        };
+        out.append(&mut self.blocks_in(name)?);
+        Ok(())
+    }
+
     /// The section of the notes that the HTML writer of Pandoc makes: each
     /// list item with an identifier is a note. The rest stays in a `Div`.
     fn endnotes(&mut self, name: &str, attr: Attr, out: &mut Vec<Block>) -> Parse<()> {
@@ -743,7 +799,7 @@ impl<'a> Parser<'a> {
                 parser.step()?;
                 match parser.peek() {
                     Some(TokenKind::Open(tag, _)) if tag == "ol" => {
-                        parser.note_list(tag)?;
+                        parser.attempt(&mut content, Self::note_list)?;
                     }
                     Some(TokenKind::Open(tag, _)) if tag == "hr" => {
                         parser.pos += 1;
@@ -760,10 +816,16 @@ impl<'a> Parser<'a> {
         Ok(())
     }
 
-    fn note_list(&mut self, tag: &str) -> Parse<()> {
+    /// The `ol` of a note section. Each item with an identifier is a note.
+    /// Blocks before the first item are dropped. After an item, a block is
+    /// dropped; inline content fails the list, except inline content that
+    /// starts with a tag and that an item follows. The list needs its close
+    /// tag. When the list fails, its tags are unknown markup.
+    fn note_list(&mut self, _out: &mut Vec<Block>) -> Parse<()> {
         self.nested(|parser| {
             parser.pos += 1;
-            while !parser.ends(tag) {
+            let mut after_item = false;
+            while !parser.ends("ol") {
                 parser.step()?;
                 match parser.peek() {
                     Some(TokenKind::Open(item, attributes)) if item == "li" => {
@@ -771,16 +833,31 @@ impl<'a> Parser<'a> {
                             .unwrap_or_default()
                             .to_owned();
                         let first = parser.heading_ends.len();
-                        let content = fix_plains(parser.blocks_in("li")?, true);
+                        let content = parser.blocks_in("li")?;
                         if !id.is_empty() {
                             let headings = first..parser.heading_ends.len();
                             parser.notes.push((id, content, headings));
                         }
+                        after_item = true;
                     }
                     Some(TokenKind::Text(text)) if is_blank(text) => parser.pos += 1,
+                    Some(TokenKind::Comment(_)) => parser.pos += 1,
                     Some(TokenKind::Close(_)) => return Err(Stop::Fail),
-                    _ => parser.block(&mut Vec::new())?,
+                    other => {
+                        let text = matches!(other, Some(TokenKind::Text(_)));
+                        let mut blocks = Vec::new();
+                        parser.block(&mut blocks)?;
+                        let inline = blocks.iter().any(|block| matches!(block, Block::Plain(_)));
+                        let item_next =
+                            matches!(parser.peek(), Some(TokenKind::Open(item, _)) if item == "li");
+                        if after_item && inline && (text || !item_next) {
+                            return Err(Stop::Fail);
+                        }
+                    }
                 }
+            }
+            if parser.ended_at_eof {
+                return Err(Stop::Fail);
             }
             Ok(())
         })
@@ -1239,7 +1316,8 @@ impl<'a> Parser<'a> {
         if self.in_plain {
             !is_block_name(name) && !is_either_name(name)
         } else {
-            !is_block_name(name)
+            // An XML declaration is a processing instruction here.
+            !is_block_name(name) || name == "?xml"
         }
     }
 
@@ -1329,6 +1407,13 @@ impl<'a> Parser<'a> {
                 } else {
                     self.raw_element_end("style")
                 };
+                if name == "math"
+                    && let Some(math) = self.tex_annotation(attributes, end)
+                {
+                    self.pos = end;
+                    out.push(math);
+                    return Ok(());
+                }
                 if let Some(raw) = self.skip_raw(end) {
                     out.push(Inline::RawInline(Format::new("html"), raw));
                 }
@@ -1340,6 +1425,33 @@ impl<'a> Parser<'a> {
             }
             _ => Err(Stop::Fail),
         }
+    }
+
+    /// The TeX of the first `annotation` with the encoding
+    /// `application/x-tex` in the `math` element from the current token to
+    /// `end`: its text, without a MathML conversion. Display math when the
+    /// attribute `display` is `block`.
+    fn tex_annotation(&self, attributes: &[(Text, Text)], end: usize) -> Option<Inline> {
+        let tokens = self.toks.get(self.pos + 1..end)?;
+        let start = tokens.iter().position(|token| {
+            matches!(&token.kind, TokenKind::Open(name, annotation)
+                if name == "annotation"
+                    && attribute(annotation, "encoding") == Some("application/x-tex"))
+        })?;
+        let mut tex = String::new();
+        for token in tokens.get(start + 1..).unwrap_or_default() {
+            match &token.kind {
+                TokenKind::Close(name) if name == "annotation" => break,
+                TokenKind::Text(text) => tex.push_str(text),
+                _ => {}
+            }
+        }
+        let kind = if attribute(attributes, "display") == Some("block") {
+            MathType::DisplayMath
+        } else {
+            MathType::InlineMath
+        };
+        Some(Inline::Math(kind, tex))
     }
 
     /// Reads the inline content of an element that Pandoc does not read a
@@ -1775,14 +1887,147 @@ struct UriParts<'a> {
     fragment: Option<&'a str>,
 }
 
-/// Splits a URI reference into its parts. `None` when it has a character
-/// that a URI cannot have, or a colon in its first segment that does not
-/// end a scheme.
-fn uri_parts(text: &str) -> Option<UriParts<'_>> {
-    let valid = |c: char| c.is_ascii_alphanumeric() || "-._~:/?#[]@!$&'()*+,;=%".contains(c);
-    if !text.chars().all(valid) {
-        return None;
+/// Returns whether each character of `text` is unreserved, a sub-delimiter,
+/// one of `extra`, or the start of a percent escape with two hexadecimal
+/// digits (RFC 3986, section 2).
+fn is_uri_component(text: &str, extra: &str) -> bool {
+    let bytes = text.as_bytes();
+    let mut at = 0;
+    while let Some(&byte) = bytes.get(at) {
+        if byte == b'%' {
+            let escape = bytes.get(at + 1..at + 3);
+            if !escape.is_some_and(|digits| digits.iter().all(u8::is_ascii_hexdigit)) {
+                return false;
+            }
+            at += 3;
+            continue;
+        }
+        let allowed = byte.is_ascii_alphanumeric()
+            || b"-._~!$&'()*+,;=".contains(&byte)
+            || extra.as_bytes().contains(&byte);
+        if !allowed {
+            return false;
+        }
+        at += 1;
     }
+    true
+}
+
+/// An IPv6 address of RFC 3986: eight groups of one to four hexadecimal
+/// digits, at most one `::` for one or more groups of zeros, and an IPv4
+/// address in the place of the last two groups.
+fn is_ipv6(text: &str) -> bool {
+    let (head, tail, compressed) = match text.split_once("::") {
+        Some((head, tail)) => (head, tail, true),
+        None => (text, "", false),
+    };
+    let groups = |part: &str| -> Option<usize> {
+        if part.is_empty() {
+            return Some(0);
+        }
+        let pieces: Vec<&str> = part.split(':').collect();
+        let mut count = 0;
+        for (index, piece) in pieces.iter().enumerate() {
+            let last = index + 1 == pieces.len();
+            if last && piece.contains('.') {
+                is_ipv4(piece).then_some(())?;
+                count += 2;
+            } else if (1..=4).contains(&piece.len())
+                && piece.bytes().all(|byte| byte.is_ascii_hexdigit())
+            {
+                count += 1;
+            } else {
+                return None;
+            }
+        }
+        Some(count)
+    };
+    if compressed && (tail.contains("::") || head.contains('.')) {
+        return false;
+    }
+    match (groups(head), groups(tail)) {
+        (Some(head), Some(tail)) if compressed => head + tail <= 7,
+        (Some(head), Some(_)) => head == 8,
+        _ => false,
+    }
+}
+
+fn is_ipv4(text: &str) -> bool {
+    let parts: Vec<&str> = text.split('.').collect();
+    parts.len() == 4
+        && parts.iter().all(|part| {
+            !part.is_empty()
+                && part.len() <= 3
+                && part.bytes().all(|byte| byte.is_ascii_digit())
+                && part.parse::<u16>().is_ok_and(|value| value <= 255)
+        })
+}
+
+/// An authority of RFC 3986: an optional user part and `@`, a host (a name,
+/// or an IP literal in brackets), and an optional `:` with a port of digits.
+fn is_authority(authority: &str) -> bool {
+    let (user, host_port) = match authority.split_once('@') {
+        Some((user, rest)) => (Some(user), rest),
+        None => (None, authority),
+    };
+    if user.is_some_and(|user| !is_uri_component(user, ":")) {
+        return false;
+    }
+    let (host_ok, port) = match host_port.strip_prefix('[') {
+        Some(rest) => match rest.split_once(']') {
+            Some((literal, port)) => (is_ip_literal(literal), port),
+            None => return false,
+        },
+        None => match host_port.split_once(':') {
+            Some((host, _)) => (is_uri_component(host, ""), &host_port[host.len()..]),
+            None => (is_uri_component(host_port, ""), ""),
+        },
+    };
+    let port_ok = port.is_empty()
+        || port
+            .strip_prefix(':')
+            .is_some_and(|digits| digits.bytes().all(|byte| byte.is_ascii_digit()));
+    host_ok && port_ok
+}
+
+/// An IPv6 address or a future IP literal (`v`, hexadecimal digits, `.`,
+/// then unreserved characters, sub-delimiters or `:`).
+fn is_ip_literal(literal: &str) -> bool {
+    if let Some(rest) = literal.strip_prefix('v') {
+        return rest.split_once('.').is_some_and(|(version, address)| {
+            !version.is_empty()
+                && version.bytes().all(|byte| byte.is_ascii_hexdigit())
+                && !address.is_empty()
+                && !address.contains('%')
+                && is_uri_component(address, ":")
+        });
+    }
+    is_ipv6(literal)
+}
+
+/// Writes an authority as the URI library of Pandoc shows it: a password
+/// after the user name is `...`.
+fn push_authority(out: &mut String, authority: &str) {
+    match authority.split_once('@') {
+        Some((user, host)) => {
+            match user.split_once(':') {
+                Some((name, password)) if !password.is_empty() => {
+                    out.push_str(name);
+                    out.push_str(":...");
+                }
+                _ => out.push_str(user),
+            }
+            out.push('@');
+            out.push_str(host);
+        }
+        None => out.push_str(authority),
+    }
+}
+
+/// Splits a URI reference into its parts. `None` when a part has a
+/// character or a form that RFC 3986 does not permit there, or a colon in
+/// its first segment that does not end a scheme.
+fn uri_parts(text: &str) -> Option<UriParts<'_>> {
     let (rest, fragment) = match text.split_once('#') {
         Some((rest, fragment)) => (rest, Some(fragment)),
         None => (text, None),
@@ -1815,7 +2060,11 @@ fn uri_parts(text: &str) -> Option<UriParts<'_>> {
         }
         None => (None, rest),
     };
-    Some(UriParts {
+    let valid = authority.is_none_or(is_authority)
+        && is_uri_component(path, ":@/")
+        && query.is_none_or(|query| is_uri_component(query, ":@/?"))
+        && fragment.is_none_or(|fragment| is_uri_component(fragment, ":@/?"));
+    valid.then_some(UriParts {
         scheme,
         authority,
         path,
@@ -1883,7 +2132,7 @@ fn resolve_reference(base: &str, reference: &str) -> Option<Text> {
     }
     if let Some(authority) = authority {
         out.push_str("//");
-        out.push_str(authority);
+        push_authority(&mut out, authority);
     }
     out.push_str(&path);
     if let Some(query) = query {
@@ -1961,6 +2210,42 @@ mod tests {
         assert_eq!(resolve("z z.html"), None);
         // Pandoc 3.13: an empty segment before `..` is the segment that goes.
         assert_eq!(resolve("/a//../b").as_deref(), Some("http://e.com/a/b"));
+    }
+
+    // Pandoc 3.13 keeps a reference that is not a URI reference of RFC 3986
+    // and shows a password as `...`.
+    #[test]
+    fn an_invalid_reference_is_not_resolved() {
+        let resolve = |reference: &str| resolve_reference("/", reference);
+        for invalid in [
+            "[x]",
+            "%x",
+            "%4",
+            "a#b#c",
+            "//u@h@x/",
+            "//[::g]/a",
+            "//[V1.x]/a",
+            "//[1::2::3]/a",
+            "//[::1.2.3.256]/a",
+            "//h:8a/x",
+            "a\\b",
+            "x[y",
+        ] {
+            assert_eq!(resolve(invalid), None, "{invalid}");
+        }
+        assert_eq!(resolve("%41").as_deref(), Some("/%41"));
+        assert_eq!(resolve("a?b?c").as_deref(), Some("/a?b?c"));
+        assert_eq!(resolve("//[v1.x]/a").as_deref(), Some("//[v1.x]/a"));
+        assert_eq!(
+            resolve("//[::1.2.3.4]/a").as_deref(),
+            Some("//[::1.2.3.4]/a")
+        );
+        assert_eq!(
+            resolve("//[1:2:3:4:5:6:7:8]/a").as_deref(),
+            Some("//[1:2:3:4:5:6:7:8]/a")
+        );
+        assert_eq!(resolve("//u:p@h/a").as_deref(), Some("//u:...@h/a"));
+        assert_eq!(resolve("//u:@h/a").as_deref(), Some("//u:@h/a"));
     }
 
     #[test]

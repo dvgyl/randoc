@@ -9,7 +9,9 @@ use randoc_ast::{
 };
 
 use crate::parse::{Parse, Parser, Stop};
-use crate::text::{attribute, clean_attributes, is_blank, read_decimal, read_integer, to_attr};
+use crate::text::{
+    attribute, clean_attributes, is_blank, is_haskell_space, read_decimal, read_integer, to_attr,
+};
 use crate::tokens::TokenKind;
 
 /// The cost of a table for the budget of the document: one for each column
@@ -205,11 +207,15 @@ fn column(parser: &mut Parser<'_>, widths: &mut Vec<Width>) {
     let (text, relative_allowed) = match attribute(&clean, "width") {
         Some(width) => (Some(width.to_owned()), true),
         // The oracle reads a style only of the form `width:VALUE`, with
-        // semicolons and spaces after the value.
+        // semicolons and white space after the value.
         None => (
             attribute(&clean, "style")
                 .and_then(|style| style.strip_prefix("width:"))
-                .map(|value| value.trim_end_matches([';', ' ']).to_owned()),
+                .map(|value| {
+                    value
+                        .trim_end_matches(|c| c == ';' || is_haskell_space(c))
+                        .to_owned()
+                }),
             false,
         ),
     };

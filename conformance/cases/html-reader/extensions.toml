@@ -9736,3 +9736,913 @@ input = "<p>\\begin{equation}a\\\\end{equation}\\end{equation}</p>"
 id = "tex-136"
 from = "html+raw_tex"
 input = "<p>\\begin{equation}\\end{equation}</p>"
+
+[[case]]
+id = "rawtexnum-001"
+from = "html+raw_tex"
+input = "<p>\\ref</p>"
+
+[[case]]
+id = "rawtexnum-002"
+from = "html+raw_tex"
+input = "<p>\\ref1</p>"
+
+[[case]]
+id = "rawtexnum-003"
+from = "html+raw_tex"
+input = "<p>\\ref12</p>"
+
+[[case]]
+id = "rawtexnum-004"
+from = "html+raw_tex"
+input = "<p>\\ref-1</p>"
+
+[[case]]
+id = "rawtexnum-005"
+from = "html+raw_tex"
+input = "<p>\\ref.5</p>"
+
+[[case]]
+id = "rawtexnum-006"
+from = "html+raw_tex"
+input = "<p>\\ref1.5</p>"
+
+[[case]]
+id = "rawtexnum-007"
+from = "html+raw_tex"
+input = "<p>\\ref1.</p>"
+
+[[case]]
+id = "rawtexnum-008"
+from = "html+raw_tex"
+input = "<p>\\ref1.x</p>"
+
+[[case]]
+id = "rawtexnum-009"
+from = "html+raw_tex"
+input = "<p>\\ref1x</p>"
+
+[[case]]
+id = "rawtexnum-010"
+from = "html+raw_tex"
+input = "<p>\\ref-</p>"
+
+[[case]]
+id = "rawtexnum-011"
+from = "html+raw_tex"
+input = "<p>\\ref-x</p>"
+
+[[case]]
+id = "rawtexnum-012"
+from = "html+raw_tex"
+input = "<p>\\ref1.5x</p>"
+
+[[case]]
+id = "rawtexnum-013"
+from = "html+raw_tex"
+input = "<p>\\ref١</p>"
+
+[[case]]
+id = "rawtexnum-014"
+from = "html+raw_tex"
+input = "<p>\\ref1é</p>"
+
+[[case]]
+id = "rawtexnum-015"
+from = "html+raw_tex"
+input = "<p>\\ref--1</p>"
+
+[[case]]
+id = "rawtexnum-016"
+from = "html+raw_tex"
+input = "<p>\\ref1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-017"
+from = "html+raw_tex"
+input = "<p>\\ref-.5</p>"
+
+[[case]]
+id = "rawtexnum-018"
+from = "html+raw_tex"
+input = "<p>\\ref1e5</p>"
+
+[[case]]
+id = "rawtexnum-019"
+from = "html+raw_tex"
+input = "<p>\\ref1_</p>"
+
+[[case]]
+id = "rawtexnum-020"
+from = "html+raw_tex"
+input = "<p>\\ref1,2</p>"
+
+[[case]]
+id = "rawtexnum-021"
+from = "html+raw_tex"
+input = "<p>\\eqref</p>"
+
+[[case]]
+id = "rawtexnum-022"
+from = "html+raw_tex"
+input = "<p>\\eqref1</p>"
+
+[[case]]
+id = "rawtexnum-023"
+from = "html+raw_tex"
+input = "<p>\\eqref12</p>"
+
+[[case]]
+id = "rawtexnum-024"
+from = "html+raw_tex"
+input = "<p>\\eqref-1</p>"
+
+[[case]]
+id = "rawtexnum-025"
+from = "html+raw_tex"
+input = "<p>\\eqref.5</p>"
+
+[[case]]
+id = "rawtexnum-026"
+from = "html+raw_tex"
+input = "<p>\\eqref1.5</p>"
+
+[[case]]
+id = "rawtexnum-027"
+from = "html+raw_tex"
+input = "<p>\\eqref1.</p>"
+
+[[case]]
+id = "rawtexnum-028"
+from = "html+raw_tex"
+input = "<p>\\eqref1.x</p>"
+
+[[case]]
+id = "rawtexnum-029"
+from = "html+raw_tex"
+input = "<p>\\eqref1x</p>"
+
+[[case]]
+id = "rawtexnum-030"
+from = "html+raw_tex"
+input = "<p>\\eqref-</p>"
+
+[[case]]
+id = "rawtexnum-031"
+from = "html+raw_tex"
+input = "<p>\\eqref-x</p>"
+
+[[case]]
+id = "rawtexnum-032"
+from = "html+raw_tex"
+input = "<p>\\eqref1.5x</p>"
+
+[[case]]
+id = "rawtexnum-033"
+from = "html+raw_tex"
+input = "<p>\\eqref١</p>"
+
+[[case]]
+id = "rawtexnum-034"
+from = "html+raw_tex"
+input = "<p>\\eqref1é</p>"
+
+[[case]]
+id = "rawtexnum-035"
+from = "html+raw_tex"
+input = "<p>\\eqref--1</p>"
+
+[[case]]
+id = "rawtexnum-036"
+from = "html+raw_tex"
+input = "<p>\\eqref1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-037"
+from = "html+raw_tex"
+input = "<p>\\eqref-.5</p>"
+
+[[case]]
+id = "rawtexnum-038"
+from = "html+raw_tex"
+input = "<p>\\eqref1e5</p>"
+
+[[case]]
+id = "rawtexnum-039"
+from = "html+raw_tex"
+input = "<p>\\eqref1_</p>"
+
+[[case]]
+id = "rawtexnum-040"
+from = "html+raw_tex"
+input = "<p>\\eqref1,2</p>"
+
+[[case]]
+id = "rawtexnum-041"
+from = "html+raw_tex"
+input = "<p>\\refname</p>"
+
+[[case]]
+id = "rawtexnum-042"
+from = "html+raw_tex"
+input = "<p>\\refname1</p>"
+
+[[case]]
+id = "rawtexnum-043"
+from = "html+raw_tex"
+input = "<p>\\refname12</p>"
+
+[[case]]
+id = "rawtexnum-044"
+from = "html+raw_tex"
+input = "<p>\\refname-1</p>"
+
+[[case]]
+id = "rawtexnum-045"
+from = "html+raw_tex"
+input = "<p>\\refname.5</p>"
+
+[[case]]
+id = "rawtexnum-046"
+from = "html+raw_tex"
+input = "<p>\\refname1.5</p>"
+
+[[case]]
+id = "rawtexnum-047"
+from = "html+raw_tex"
+input = "<p>\\refname1.</p>"
+
+[[case]]
+id = "rawtexnum-048"
+from = "html+raw_tex"
+input = "<p>\\refname1.x</p>"
+
+[[case]]
+id = "rawtexnum-049"
+from = "html+raw_tex"
+input = "<p>\\refname1x</p>"
+
+[[case]]
+id = "rawtexnum-050"
+from = "html+raw_tex"
+input = "<p>\\refname-</p>"
+
+[[case]]
+id = "rawtexnum-051"
+from = "html+raw_tex"
+input = "<p>\\refname-x</p>"
+
+[[case]]
+id = "rawtexnum-052"
+from = "html+raw_tex"
+input = "<p>\\refname1.5x</p>"
+
+[[case]]
+id = "rawtexnum-053"
+from = "html+raw_tex"
+input = "<p>\\refname١</p>"
+
+[[case]]
+id = "rawtexnum-054"
+from = "html+raw_tex"
+input = "<p>\\refname1é</p>"
+
+[[case]]
+id = "rawtexnum-055"
+from = "html+raw_tex"
+input = "<p>\\refname--1</p>"
+
+[[case]]
+id = "rawtexnum-056"
+from = "html+raw_tex"
+input = "<p>\\refname1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-057"
+from = "html+raw_tex"
+input = "<p>\\refname-.5</p>"
+
+[[case]]
+id = "rawtexnum-058"
+from = "html+raw_tex"
+input = "<p>\\refname1e5</p>"
+
+[[case]]
+id = "rawtexnum-059"
+from = "html+raw_tex"
+input = "<p>\\refname1_</p>"
+
+[[case]]
+id = "rawtexnum-060"
+from = "html+raw_tex"
+input = "<p>\\refname1,2</p>"
+
+[[case]]
+id = "rawtexnum-061"
+from = "html+raw_tex"
+input = "<p>\\refx</p>"
+
+[[case]]
+id = "rawtexnum-062"
+from = "html+raw_tex"
+input = "<p>\\refx1</p>"
+
+[[case]]
+id = "rawtexnum-063"
+from = "html+raw_tex"
+input = "<p>\\refx12</p>"
+
+[[case]]
+id = "rawtexnum-064"
+from = "html+raw_tex"
+input = "<p>\\refx-1</p>"
+
+[[case]]
+id = "rawtexnum-065"
+from = "html+raw_tex"
+input = "<p>\\refx.5</p>"
+
+[[case]]
+id = "rawtexnum-066"
+from = "html+raw_tex"
+input = "<p>\\refx1.5</p>"
+
+[[case]]
+id = "rawtexnum-067"
+from = "html+raw_tex"
+input = "<p>\\refx1.</p>"
+
+[[case]]
+id = "rawtexnum-068"
+from = "html+raw_tex"
+input = "<p>\\refx1.x</p>"
+
+[[case]]
+id = "rawtexnum-069"
+from = "html+raw_tex"
+input = "<p>\\refx1x</p>"
+
+[[case]]
+id = "rawtexnum-070"
+from = "html+raw_tex"
+input = "<p>\\refx-</p>"
+
+[[case]]
+id = "rawtexnum-071"
+from = "html+raw_tex"
+input = "<p>\\refx-x</p>"
+
+[[case]]
+id = "rawtexnum-072"
+from = "html+raw_tex"
+input = "<p>\\refx1.5x</p>"
+
+[[case]]
+id = "rawtexnum-073"
+from = "html+raw_tex"
+input = "<p>\\refx١</p>"
+
+[[case]]
+id = "rawtexnum-074"
+from = "html+raw_tex"
+input = "<p>\\refx1é</p>"
+
+[[case]]
+id = "rawtexnum-075"
+from = "html+raw_tex"
+input = "<p>\\refx--1</p>"
+
+[[case]]
+id = "rawtexnum-076"
+from = "html+raw_tex"
+input = "<p>\\refx1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-077"
+from = "html+raw_tex"
+input = "<p>\\refx-.5</p>"
+
+[[case]]
+id = "rawtexnum-078"
+from = "html+raw_tex"
+input = "<p>\\refx1e5</p>"
+
+[[case]]
+id = "rawtexnum-079"
+from = "html+raw_tex"
+input = "<p>\\refx1_</p>"
+
+[[case]]
+id = "rawtexnum-080"
+from = "html+raw_tex"
+input = "<p>\\refx1,2</p>"
+
+[[case]]
+id = "rawtexnum-081"
+from = "html+raw_tex"
+input = "<p>\\reflectbox</p>"
+
+[[case]]
+id = "rawtexnum-082"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1</p>"
+
+[[case]]
+id = "rawtexnum-083"
+from = "html+raw_tex"
+input = "<p>\\reflectbox12</p>"
+
+[[case]]
+id = "rawtexnum-084"
+from = "html+raw_tex"
+input = "<p>\\reflectbox-1</p>"
+
+[[case]]
+id = "rawtexnum-085"
+from = "html+raw_tex"
+input = "<p>\\reflectbox.5</p>"
+
+[[case]]
+id = "rawtexnum-086"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1.5</p>"
+
+[[case]]
+id = "rawtexnum-087"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1.</p>"
+
+[[case]]
+id = "rawtexnum-088"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1.x</p>"
+
+[[case]]
+id = "rawtexnum-089"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1x</p>"
+
+[[case]]
+id = "rawtexnum-090"
+from = "html+raw_tex"
+input = "<p>\\reflectbox-</p>"
+
+[[case]]
+id = "rawtexnum-091"
+from = "html+raw_tex"
+input = "<p>\\reflectbox-x</p>"
+
+[[case]]
+id = "rawtexnum-092"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1.5x</p>"
+
+[[case]]
+id = "rawtexnum-093"
+from = "html+raw_tex"
+input = "<p>\\reflectbox١</p>"
+
+[[case]]
+id = "rawtexnum-094"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1é</p>"
+
+[[case]]
+id = "rawtexnum-095"
+from = "html+raw_tex"
+input = "<p>\\reflectbox--1</p>"
+
+[[case]]
+id = "rawtexnum-096"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-097"
+from = "html+raw_tex"
+input = "<p>\\reflectbox-.5</p>"
+
+[[case]]
+id = "rawtexnum-098"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1e5</p>"
+
+[[case]]
+id = "rawtexnum-099"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1_</p>"
+
+[[case]]
+id = "rawtexnum-100"
+from = "html+raw_tex"
+input = "<p>\\reflectbox1,2</p>"
+
+[[case]]
+id = "rawtexnum-101"
+from = "html+raw_tex"
+input = "<p>\\refé</p>"
+
+[[case]]
+id = "rawtexnum-102"
+from = "html+raw_tex"
+input = "<p>\\refé1</p>"
+
+[[case]]
+id = "rawtexnum-103"
+from = "html+raw_tex"
+input = "<p>\\refé12</p>"
+
+[[case]]
+id = "rawtexnum-104"
+from = "html+raw_tex"
+input = "<p>\\refé-1</p>"
+
+[[case]]
+id = "rawtexnum-105"
+from = "html+raw_tex"
+input = "<p>\\refé.5</p>"
+
+[[case]]
+id = "rawtexnum-106"
+from = "html+raw_tex"
+input = "<p>\\refé1.5</p>"
+
+[[case]]
+id = "rawtexnum-107"
+from = "html+raw_tex"
+input = "<p>\\refé1.</p>"
+
+[[case]]
+id = "rawtexnum-108"
+from = "html+raw_tex"
+input = "<p>\\refé1.x</p>"
+
+[[case]]
+id = "rawtexnum-109"
+from = "html+raw_tex"
+input = "<p>\\refé1x</p>"
+
+[[case]]
+id = "rawtexnum-110"
+from = "html+raw_tex"
+input = "<p>\\refé-</p>"
+
+[[case]]
+id = "rawtexnum-111"
+from = "html+raw_tex"
+input = "<p>\\refé-x</p>"
+
+[[case]]
+id = "rawtexnum-112"
+from = "html+raw_tex"
+input = "<p>\\refé1.5x</p>"
+
+[[case]]
+id = "rawtexnum-113"
+from = "html+raw_tex"
+input = "<p>\\refé١</p>"
+
+[[case]]
+id = "rawtexnum-114"
+from = "html+raw_tex"
+input = "<p>\\refé1é</p>"
+
+[[case]]
+id = "rawtexnum-115"
+from = "html+raw_tex"
+input = "<p>\\refé--1</p>"
+
+[[case]]
+id = "rawtexnum-116"
+from = "html+raw_tex"
+input = "<p>\\refé1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-117"
+from = "html+raw_tex"
+input = "<p>\\refé-.5</p>"
+
+[[case]]
+id = "rawtexnum-118"
+from = "html+raw_tex"
+input = "<p>\\refé1e5</p>"
+
+[[case]]
+id = "rawtexnum-119"
+from = "html+raw_tex"
+input = "<p>\\refé1_</p>"
+
+[[case]]
+id = "rawtexnum-120"
+from = "html+raw_tex"
+input = "<p>\\refé1,2</p>"
+
+[[case]]
+id = "rawtexnum-121"
+from = "html+raw_tex"
+input = "<p>\\Ref</p>"
+
+[[case]]
+id = "rawtexnum-122"
+from = "html+raw_tex"
+input = "<p>\\Ref1</p>"
+
+[[case]]
+id = "rawtexnum-123"
+from = "html+raw_tex"
+input = "<p>\\Ref12</p>"
+
+[[case]]
+id = "rawtexnum-124"
+from = "html+raw_tex"
+input = "<p>\\Ref-1</p>"
+
+[[case]]
+id = "rawtexnum-125"
+from = "html+raw_tex"
+input = "<p>\\Ref.5</p>"
+
+[[case]]
+id = "rawtexnum-126"
+from = "html+raw_tex"
+input = "<p>\\Ref1.5</p>"
+
+[[case]]
+id = "rawtexnum-127"
+from = "html+raw_tex"
+input = "<p>\\Ref1.</p>"
+
+[[case]]
+id = "rawtexnum-128"
+from = "html+raw_tex"
+input = "<p>\\Ref1.x</p>"
+
+[[case]]
+id = "rawtexnum-129"
+from = "html+raw_tex"
+input = "<p>\\Ref1x</p>"
+
+[[case]]
+id = "rawtexnum-130"
+from = "html+raw_tex"
+input = "<p>\\Ref-</p>"
+
+[[case]]
+id = "rawtexnum-131"
+from = "html+raw_tex"
+input = "<p>\\Ref-x</p>"
+
+[[case]]
+id = "rawtexnum-132"
+from = "html+raw_tex"
+input = "<p>\\Ref1.5x</p>"
+
+[[case]]
+id = "rawtexnum-133"
+from = "html+raw_tex"
+input = "<p>\\Ref١</p>"
+
+[[case]]
+id = "rawtexnum-134"
+from = "html+raw_tex"
+input = "<p>\\Ref1é</p>"
+
+[[case]]
+id = "rawtexnum-135"
+from = "html+raw_tex"
+input = "<p>\\Ref--1</p>"
+
+[[case]]
+id = "rawtexnum-136"
+from = "html+raw_tex"
+input = "<p>\\Ref1.2.3</p>"
+
+[[case]]
+id = "rawtexnum-137"
+from = "html+raw_tex"
+input = "<p>\\Ref-.5</p>"
+
+[[case]]
+id = "rawtexnum-138"
+from = "html+raw_tex"
+input = "<p>\\Ref1e5</p>"
+
+[[case]]
+id = "rawtexnum-139"
+from = "html+raw_tex"
+input = "<p>\\Ref1_</p>"
+
+[[case]]
+id = "rawtexnum-140"
+from = "html+raw_tex"
+input = "<p>\\Ref1,2</p>"
+
+[[case]]
+id = "rawtexnum-141"
+from = "html+raw_tex"
+input = "<p>\\ref1{a}</p>"
+
+[[case]]
+id = "rawtexnum-142"
+from = "html+raw_tex"
+input = "<p>\\ref1 {a}</p>"
+
+[[case]]
+id = "rawtexnum-143"
+from = "html+raw_tex"
+input = "<p>\\ref1 x</p>"
+
+[[case]]
+id = "rawtexnum-144"
+from = "html+raw_tex"
+input = "<p>\\ref1[b]</p>"
+
+[[case]]
+id = "rawtexnum-145"
+from = "html+raw_tex"
+input = "<p>\\ref1{a}{b}</p>"
+
+[[case]]
+id = "rawtexnum-146"
+from = "html+raw_tex"
+input = "<p>\\ref*1</p>"
+
+[[case]]
+id = "rawtexnum-147"
+from = "html+raw_tex"
+input = "<p>\\ref*1{a}</p>"
+
+[[case]]
+id = "rawtexnum-148"
+from = "html+raw_tex"
+input = "<p>\\ref*1 {a}</p>"
+
+[[case]]
+id = "rawtexnum-149"
+from = "html+raw_tex"
+input = "<p>\\ref*1 x</p>"
+
+[[case]]
+id = "rawtexnum-150"
+from = "html+raw_tex"
+input = "<p>\\ref*1[b]</p>"
+
+[[case]]
+id = "rawtexnum-151"
+from = "html+raw_tex"
+input = "<p>\\ref*1{a}{b}</p>"
+
+[[case]]
+id = "rawtexnum-152"
+from = "html+raw_tex"
+input = "<p>\\ref 1</p>"
+
+[[case]]
+id = "rawtexnum-153"
+from = "html+raw_tex"
+input = "<p>\\ref 1{a}</p>"
+
+[[case]]
+id = "rawtexnum-154"
+from = "html+raw_tex"
+input = "<p>\\ref 1 {a}</p>"
+
+[[case]]
+id = "rawtexnum-155"
+from = "html+raw_tex"
+input = "<p>\\ref 1 x</p>"
+
+[[case]]
+id = "rawtexnum-156"
+from = "html+raw_tex"
+input = "<p>\\ref 1[b]</p>"
+
+[[case]]
+id = "rawtexnum-157"
+from = "html+raw_tex"
+input = "<p>\\ref 1{a}{b}</p>"
+
+[[case]]
+id = "rawtexnum-158"
+from = "html+raw_tex"
+input = "<p>\\ref[a]1</p>"
+
+[[case]]
+id = "rawtexnum-159"
+from = "html+raw_tex"
+input = "<p>\\ref[a]1{a}</p>"
+
+[[case]]
+id = "rawtexnum-160"
+from = "html+raw_tex"
+input = "<p>\\ref[a]1 {a}</p>"
+
+[[case]]
+id = "rawtexnum-161"
+from = "html+raw_tex"
+input = "<p>\\ref[a]1 x</p>"
+
+[[case]]
+id = "rawtexnum-162"
+from = "html+raw_tex"
+input = "<p>\\ref[a]1[b]</p>"
+
+[[case]]
+id = "rawtexnum-163"
+from = "html+raw_tex"
+input = "<p>\\ref[a]1{a}{b}</p>"
+
+[[case]]
+id = "rawtexnum-164"
+from = "html+raw_tex"
+input = "<p>\\ref[a] 1</p>"
+
+[[case]]
+id = "rawtexnum-165"
+from = "html+raw_tex"
+input = "<p>\\ref[a] 1{a}</p>"
+
+[[case]]
+id = "rawtexnum-166"
+from = "html+raw_tex"
+input = "<p>\\ref[a] 1 {a}</p>"
+
+[[case]]
+id = "rawtexnum-167"
+from = "html+raw_tex"
+input = "<p>\\ref[a] 1 x</p>"
+
+[[case]]
+id = "rawtexnum-168"
+from = "html+raw_tex"
+input = "<p>\\ref[a] 1[b]</p>"
+
+[[case]]
+id = "rawtexnum-169"
+from = "html+raw_tex"
+input = "<p>\\ref[a] 1{a}{b}</p>"
+
+[[case]]
+id = "rawtexnum-170"
+from = "html+raw_tex"
+input = "<p>\\ref* 1</p>"
+
+[[case]]
+id = "rawtexnum-171"
+from = "html+raw_tex"
+input = "<p>\\ref* 1{a}</p>"
+
+[[case]]
+id = "rawtexnum-172"
+from = "html+raw_tex"
+input = "<p>\\ref* 1 {a}</p>"
+
+[[case]]
+id = "rawtexnum-173"
+from = "html+raw_tex"
+input = "<p>\\ref* 1 x</p>"
+
+[[case]]
+id = "rawtexnum-174"
+from = "html+raw_tex"
+input = "<p>\\ref* 1[b]</p>"
+
+[[case]]
+id = "rawtexnum-175"
+from = "html+raw_tex"
+input = "<p>\\ref* 1{a}{b}</p>"
+
+[[case]]
+id = "rawtexnum-176"
+from = "html+raw_tex"
+input = "<p>\\refname{x}</p>"
+
+[[case]]
+id = "rawtexnum-177"
+from = "html+raw_tex"
+input = "<p>\\refname*{x}</p>"
+
+[[case]]
+id = "rawtexnum-178"
+from = "html+raw_tex"
+input = "<p>\\refname[x]</p>"
+
+[[case]]
+id = "rawtexnum-179"
+from = "html+raw_tex"
+input = "<p>\\refname 1</p>"
+
+[[case]]
+id = "rawtexnum-180"
+from = "html+raw_tex"
+input = "<p>\\refnames</p>"
+
+[[case]]
+id = "rawtexnum-181"
+from = "html+raw_tex"
+input = "<p>\\refname x</p>"
+
+[[case]]
+id = "rawtexnum-182"
+from = "html+raw_tex"
+input = "<p>\\refname\\ref1</p>"

@@ -406,12 +406,18 @@ impl Special {
     /// `\begin{name}...\end{name}`, as raw TeX.
     fn raw_tex(&mut self, chars: &[char], index: usize) -> Option<(Inline, usize)> {
         let mut at = index + 1;
-        while chars.get(at).is_some_and(char::is_ascii_alphabetic) {
+        while chars.get(at).is_some_and(|c| c.is_alphabetic()) {
             at += 1;
         }
         let name = collect(chars, index + 1, at);
         let end = if name == "begin" {
             self.environment(chars, at)?
+        } else if name == "refname" {
+            // A macro of the reference without arguments.
+            if chars.get(at) == Some(&'*') {
+                at += 1;
+            }
+            skip_spaces(chars, at)
         } else if name.starts_with("ref") || name.starts_with("eqref") {
             self.reference_arguments(chars, at)?
         } else {
@@ -422,21 +428,15 @@ impl Special {
     }
 
     /// Returns the end of the arguments of `\ref` after the name at `at`: an
-    /// optional `*`, spaces, groups in brackets with spaces between, then
-    /// adjacent groups in braces. A brace group without an end fails. After a
-    /// tab, no group follows.
+    /// optional `*`, spaces, groups in brackets with the spaces after each, an
+    /// optional number, then adjacent groups in braces. A brace group without
+    /// an end fails. After a tab, no group follows.
     fn reference_arguments(&mut self, chars: &[char], mut at: usize) -> Option<usize> {
         if chars.get(at) == Some(&'*') {
             at += 1;
         }
-        let skip_spaces = |mut at: usize| {
-            while matches!(chars.get(at), Some(' ' | '\t')) {
-                at += 1;
-            }
-            at
-        };
         let name_end = at;
-        at = skip_spaces(at);
+        at = skip_spaces(chars, at);
         if chars
             .get(name_end..at)
             .is_some_and(|run| run.contains(&'\t'))
@@ -445,19 +445,15 @@ impl Special {
         }
         while chars.get(at) == Some(&'[') && self.bracket_failures < MAX_GROUP_FAILURES {
             match self.bracket_end(chars, at) {
-                Some(end) => {
-                    let next = skip_spaces(end);
-                    at = if matches!(chars.get(next), Some('[' | '{')) {
-                        next
-                    } else {
-                        end
-                    };
-                }
+                Some(end) => at = skip_spaces(chars, end),
                 None => {
                     self.bracket_failures += 1;
                     break;
                 }
             }
+        }
+        if let Some(end) = number_end(chars, at) {
+            at = end;
         }
         while chars.get(at) == Some(&'{') {
             at = self.brace_end(chars, at)?;
@@ -828,6 +824,48 @@ const MATH_ENVIRONMENTS: &[&str] = &[
 
 /// Returns, for each `{` of the text, the index of the `}` that closes it.
 /// A backslash escapes the next character.
+/// Returns the index after the spaces and tabs at `at`.
+fn skip_spaces(chars: &[char], mut at: usize) -> usize {
+    while matches!(chars.get(at), Some(' ' | '\t')) {
+        at += 1;
+    }
+    at
+}
+
+/// Returns the end of a number argument of a TeX command at `at`: an
+/// optional `-`, then ASCII digits with an optional `.` and digits, or a `.`
+/// and digits. The digits are a whole word: a letter or a digit that is not
+/// ASCII after them fails the number. A `.` that no word follows ends the
+/// number before it.
+fn number_end(chars: &[char], start: usize) -> Option<usize> {
+    let word_end = |from: usize| {
+        let mut at = from;
+        while chars.get(at).is_some_and(|c| c.is_alphanumeric()) {
+            at += 1;
+        }
+        at
+    };
+    let digits = |from: usize| {
+        let end = word_end(from);
+        let all_digits = chars
+            .get(from..end)
+            .is_some_and(|word| word.iter().all(char::is_ascii_digit));
+        (end > from && all_digits).then_some(end)
+    };
+    let mut at = start;
+    if chars.get(at) == Some(&'-') {
+        at += 1;
+    }
+    if chars.get(at) == Some(&'.') {
+        return digits(at + 1);
+    }
+    let end = digits(at)?;
+    if chars.get(end) != Some(&'.') || word_end(end + 1) == end + 1 {
+        return Some(end);
+    }
+    digits(end + 1)
+}
+
 fn brace_ends(chars: &[char]) -> Vec<Option<usize>> {
     let mut ends = vec![None; chars.len()];
     let mut open: Vec<usize> = Vec::new();
@@ -1007,7 +1045,7 @@ pub(crate) fn escape_uri(url: &str) -> Text {
 
 /// White space as `isSpace` of Haskell: the Latin-1 spaces, and the space
 /// separators above U+0377.
-fn is_haskell_space(c: char) -> bool {
+pub(crate) fn is_haskell_space(c: char) -> bool {
     matches!(c, ' ' | '\t'..='\r' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}')
         || matches!(c, '\u{202f}' | '\u{205f}' | '\u{3000}')
 }
@@ -1115,6 +1153,41 @@ mod tests {
 
     fn word(text: &str) -> Inline {
         Inline::Str(text.to_owned())
+    }
+
+    // Pandoc 3.13 with `html+raw_tex`: the raw TeX part of `\ref` with a
+    // number argument, and of `\refname`, which takes no argument.
+    #[test]
+    fn a_reference_takes_a_number_that_is_a_whole_word() {
+        let raw = |text: &str| Inline::RawInline(Format::new("tex"), text.to_owned());
+        for (input, tex, rest) in [
+            ("\\ref1", "\\ref1", ""),
+            ("\\ref12x", "\\ref", "12x"),
+            ("\\ref1.5", "\\ref1.5", ""),
+            ("\\ref1.x", "\\ref", "1.x"),
+            ("\\ref1.,", "\\ref1", ".,"),
+            ("\\ref-.5", "\\ref-.5", ""),
+            ("\\ref--1", "\\ref", "--1"),
+            ("\\ref1.2.3", "\\ref1.2", ".3"),
+            ("\\ref1\u{e9}", "\\ref", "1\u{e9}"),
+            ("\\ref\u{661}", "\\ref", "\u{661}"),
+            ("\\ref1{a}", "\\ref1{a}", ""),
+            ("\\ref[a]1", "\\ref[a]1", ""),
+            ("\\ref[a]x", "\\ref[a]", "x"),
+            ("\\refname{x}", "\\refname", "{x}"),
+            ("\\refname*{x}", "\\refname*", "{x}"),
+            ("\\refnamex{y}", "\\refnamex{y}", ""),
+        ] {
+            let mut expected = vec![raw(tex)];
+            if !rest.is_empty() {
+                expected.push(word(rest));
+            }
+            assert_eq!(inlines(input, &[Extension::RawTex]), expected, "{input}");
+        }
+        assert_eq!(
+            inlines("\\ref[a] x", &[Extension::RawTex]),
+            vec![raw("\\ref[a] "), word("x")]
+        );
     }
 
     #[test]

@@ -1975,6 +1975,726 @@
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"u\"}],[\"a%3Cb%3Ec%7Cd%22e%7Bf%7Dg%5Bh%5Di%5Ej%60k\\\\l%20m%20n%o\",\"\"]]},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"v\"}],[\"é/ü?x=ñ#frag%20ment\",\"\"]]},{\"t\":\"Image\",\"c\":[[\"\",[],[]],[],[\"a%3Cb\",\"\"]]}]}]}\n",
       "stderr": ""
     },
+    "mathtex-001#read": {
+      "key": "5a8ad402600b0171",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-002#read": {
+      "key": "9577e321bf95d89f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-003#read": {
+      "key": "60361f94db36a6bf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-004#read": {
+      "key": "e9398a1fd95610ef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-005#read": {
+      "key": "b0f2bd7310d82d3c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"section\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-006#read": {
+      "key": "f9e4e09b7d92eb04",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-007#read": {
+      "key": "4478f336af50d842",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-008#read": {
+      "key": "3ca40cab824db1ee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-009#read": {
+      "key": "d0f7c71c476e34ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-010#read": {
+      "key": "8dae9ddfa77f2978",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-011#read": {
+      "key": "cd43365636085a3b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a-b\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-012#read": {
+      "key": "2c8924d2e5fedc81",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-013#read": {
+      "key": "a166d7a8179c54f8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a+b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-014#read": {
+      "key": "0a4885eadfbc7786",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ac\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-015#read": {
+      "key": "f365cb6aae939900",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-016#read": {
+      "key": "977c9782e2e269ca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-017#read": {
+      "key": "1bf7e2137ffd5311",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-018#read": {
+      "key": "54d30648090e8525",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-019#read": {
+      "key": "f283fa1cc7e871bb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-020#read": {
+      "key": "850ed780a1144f4d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-021#read": {
+      "key": "63d433db424865ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-022#read": {
+      "key": "451cb528c263f194",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-023#read": {
+      "key": "abcd592409fb2900",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-024#read": {
+      "key": "209804d731ae06a2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-025#read": {
+      "key": "d750a1919bc23de6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-026#read": {
+      "key": "5b34aa5567120acb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-027#read": {
+      "key": "2c2996311e36ab47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-028#read": {
+      "key": "2045d6777d5dc234",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-029#read": {
+      "key": "d9f722514798538b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-030#read": {
+      "key": "405c9372989bc2dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-031#read": {
+      "key": "37cd1748b1a4bc70",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-032#read": {
+      "key": "244cff940cacdb9f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-033#read": {
+      "key": "966a13005d78be6a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-034#read": {
+      "key": "d9a88c0298292c84",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-035#read": {
+      "key": "48b9ce5f16346599",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-036#read": {
+      "key": "58d458af4202dd87",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-037#read": {
+      "key": "d5f3ae43d84fbf62",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-038#read": {
+      "key": "e25fe237d77fee93",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-039#read": {
+      "key": "fd928c4586e755ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-040#read": {
+      "key": "39d7f26078546488",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-041#read": {
+      "key": "49e6b6879699dec8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-042#read": {
+      "key": "ce248914c2268fa1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-043#read": {
+      "key": "ffa12c01c64a63cb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-044#read": {
+      "key": "2449d66899363a12",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ac\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-045#read": {
+      "key": "54b6e5d233aee0dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ac\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-046#read": {
+      "key": "a11a03e6f108375a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-047#read": {
+      "key": "3fc460ab51077660",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-048#read": {
+      "key": "02dbb9b0c128a136",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-049#read": {
+      "key": "835193bb80e5d7af",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-050#read": {
+      "key": "a9c75b425afb8882",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-051#read": {
+      "key": "abb0785e8c545bd4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-052#read": {
+      "key": "6e5a70fb2b37d617",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-053#read": {
+      "key": "20088b9e1d23873d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ac\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"ac\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-054#read": {
+      "key": "e868c67f1d2c43dc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-055#read": {
+      "key": "705b44b3ed05d029",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"ac\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-056#read": {
+      "key": "92f16006897380a1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-057#read": {
+      "key": "5201557a278690a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-058#read": {
+      "key": "7ffbdae3f2a2900e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"section\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-059#read": {
+      "key": "c023cb0b3cdd5897",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-060#read": {
+      "key": "91ff1dbec1e6500c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-061#read": {
+      "key": "d6aef29781a9617d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-062#read": {
+      "key": "ac9e4483a423ac58",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-063#read": {
+      "key": "7bf3e3af65c79436",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-064#read": {
+      "key": "024ed95be72b144a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-065#read": {
+      "key": "720b167223722081",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-066#read": {
+      "key": "86f9523e24f8eeff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-067#read": {
+      "key": "fbfffe8feb2d8202",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-068#read": {
+      "key": "6978825dfcc3835e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-069#read": {
+      "key": "c0e8dcb611487b67",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-070#read": {
+      "key": "05734cb61f6b6c3f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-071#read": {
+      "key": "23f8e1d05c5b4869",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-072#read": {
+      "key": "a3e269010cfc6da2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-073#read": {
+      "key": "b3ab3fef1cadc2bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-074#read": {
+      "key": "b6267d7c1bbccb68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"section\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-075#read": {
+      "key": "574301c5c0286ea2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a+b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-076#read": {
+      "key": "a95a83952d21dc69",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-077#read": {
+      "key": "cdfb214c32f5bbcc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-078#read": {
+      "key": "1d385a3cf426eb03",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-079#read": {
+      "key": "9f8180590e72237d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-080#read": {
+      "key": "537cf58c29c12dbf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-081#read": {
+      "key": "c34fc8f89f015542",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-082#read": {
+      "key": "cb101c1862d22da9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a+b\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-083#read": {
+      "key": "8349307b22af9daa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-084#read": {
+      "key": "034bd6e857992e4f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-085#read": {
+      "key": "9fc2225298affb37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-086#read": {
+      "key": "a29843975bc7ebcd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-087#read": {
+      "key": "cb1855c829cc0796",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ab\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-088#read": {
+      "key": "5adf424230a5f027",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a+b\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-089#read": {
+      "key": "45684501d7292d39",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-090#read": {
+      "key": "aa8fba2b0eb72de9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-091#read": {
+      "key": "bda7c8768b55b951",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\" a & b \"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-092#read": {
+      "key": "95388bedbfd4cbf5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-093#read": {
+      "key": "554969385b1041c9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-094#read": {
+      "key": "e88d94d2acb10c7a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-095#read": {
+      "key": "51ffd408a8da4cca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ac\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"ac\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-096#read": {
+      "key": "1f00b39516e0ad18",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-097#read": {
+      "key": "b0faa269cef5ce44",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ac\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"ac\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-098#read": {
+      "key": "cade223e27a270d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-099#read": {
+      "key": "9c3e9a4eafda4931",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-100#read": {
+      "key": "158eb7d9a2f42197",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-101#read": {
+      "key": "d3cca8239e9a6428",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"ab\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-102#read": {
+      "key": "47fa605376f92b1e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-103#read": {
+      "key": "29963ba5c47d19bc",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-104#read": {
+      "key": "16404c276334c452",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a-b\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\" a & b \"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-105#read": {
+      "key": "6ab0be651deafc89",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a-b\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-106#read": {
+      "key": "decd0dad2206ba90",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-107#read": {
+      "key": "2e1b48fd2e2bb011",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-108#read": {
+      "key": "e6754c21d1251d83",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-109#read": {
+      "key": "b3b7f92ddd8ab836",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-110#read": {
+      "key": "1f0896457eaa8b44",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-111#read": {
+      "key": "024785db64e4ba21",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-112#read": {
+      "key": "1cf9680e770d2f47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-113#read": {
+      "key": "fafaada0837854fd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-114#read": {
+      "key": "99dcec28274336fd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a+b\"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-115#read": {
+      "key": "d4bb71eaa95acd00",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\" a & b \"]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-116#read": {
+      "key": "907b32a7103824ad",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"q\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"r\"}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-117#read": {
+      "key": "c5a26bff7f6c555f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"a\",[],[]],[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\"a\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-118#read": {
+      "key": "1e6dfb4defdc9054",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"DisplayMath\"},\" a & b \"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-119#read": {
+      "key": "1a0dad29c447064d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]}]}]}\n",
+      "stderr": ""
+    },
+    "mathtex-120#read": {
+      "key": "6e4a93a84e58b1b4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<td>\"]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"a\"]}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"</td>\"]}]}\n",
+      "stderr": ""
+    },
     "nestedquote-001#read": {
       "key": "c3652a23acb10eec",
       "exit": 0,

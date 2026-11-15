@@ -2211,3 +2211,2849 @@ input = "<p><a role=\"doc-noteref\" href=\"#n\">1</a><a role=\"doc-noteref\" hre
 [[case]]
 id = "ids-112"
 input = "<h1>A</h1><section role=\"doc-endnotes\"><ol><li id=\"n\"><h1>A</h1></li></ol></section><h1>A</h1>"
+
+[[case]]
+id = "epubnote-001"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><video epub:type=\"Footnote\" id=\"n\">N</video><p>z</p>"
+
+[[case]]
+id = "epubnote-002"
+from = "html+epub_html_exts"
+input = "<noscript epub:type=\"rearnote\" id=\"n\">N</noscript><p>z</p>"
+
+[[case]]
+id = "epubnote-003"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><video epub:type=\"footnote \">N</video><p>z</p>"
+
+[[case]]
+id = "epubnote-004"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><button epub:type=\"footnote \">N</button><p>z</p>"
+
+[[case]]
+id = "epubnote-005"
+from = "html+epub_html_exts-native_divs"
+input = "<h6 epub:type=\"chapter\" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-006"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><h6 epub:type=\"footnote\" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-007"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><button epub:type=\"\">N</button><p>z</p>"
+
+[[case]]
+id = "epubnote-008"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><del epub:type=\"footnote \" id=\"n\">N</del><p>z</p>"
+
+[[case]]
+id = "epubnote-009"
+from = "html-epub_html_exts"
+input = "<h6 epub:type=\"rearnote\" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-010"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dd epub:type=\"\" id=\"n\">N</dd><p>z</p>"
+
+[[case]]
+id = "epubnote-011"
+from = "html+epub_html_exts-native_divs"
+input = "<audio epub:type=\"\" id=\"n\">N</audio><p>z</p>"
+
+[[case]]
+id = "epubnote-012"
+from = "html+epub_html_exts"
+input = "<pre epub:type=\"\" id=\"n\">N</pre><p>z</p>"
+
+[[case]]
+id = "epubnote-013"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><fieldset epub:type=\"chapter\" id=\"n\">N</fieldset><p>z</p>"
+
+[[case]]
+id = "epubnote-014"
+from = "html+epub_html_exts-native_divs"
+input = "<dd epub:type=\"footnote \" id=\"n\">N</dd><p>z</p>"
+
+[[case]]
+id = "epubnote-015"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><em epub:type=\"footnotes\">N</em><p>z</p>"
+
+[[case]]
+id = "epubnote-016"
+from = "html-epub_html_exts"
+input = "<body epub:type=\"x footnote\" id=\"n\">N</body><p>z</p>"
+
+[[case]]
+id = "epubnote-017"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tr epub:type=\"Footnote\">N</tr><p>z</p>"
+
+[[case]]
+id = "epubnote-018"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><video epub:type=\"Footnote\">N</video><p>z</p>"
+
+[[case]]
+id = "epubnote-019"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><figure epub:type=\"chapter\" id=\"n\">N</figure><p>z</p>"
+
+[[case]]
+id = "epubnote-020"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><address epub:type=\"\">N</address><p>z</p>"
+
+[[case]]
+id = "epubnote-021"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><span epub:type=\"\">N</span><p>z</p>"
+
+[[case]]
+id = "epubnote-022"
+from = "html+epub_html_exts-native_divs"
+input = "<center epub:type=\"footnote\" id=\"n\">N</center><p>z</p>"
+
+[[case]]
+id = "epubnote-023"
+from = "html+epub_html_exts-native_divs"
+input = "<caption epub:type=\"Footnote\" id=\"n\">N</caption><p>z</p>"
+
+[[case]]
+id = "epubnote-024"
+from = "html+epub_html_exts"
+input = "<blockquote epub:type=\"Footnote\" id=\"n\">N</blockquote><p>z</p>"
+
+[[case]]
+id = "epubnote-025"
+from = "html+epub_html_exts"
+input = "<h6 epub:type=\"chapter\" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-026"
+from = "html+epub_html_exts-native_divs"
+input = "<main epub:type=\"rearnote\" id=\"n\">N</main><p>z</p>"
+
+[[case]]
+id = "epubnote-027"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><aside epub:type=\"\" id=\"n\">N</aside><p>z</p>"
+
+[[case]]
+id = "epubnote-028"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><iframe epub:type=\"footnotes\">N</iframe><p>z</p>"
+
+[[case]]
+id = "epubnote-029"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><style epub:type=\"\">N</style><p>z</p>"
+
+[[case]]
+id = "epubnote-030"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><audio epub:type=\"footnote\">N</audio><p>z</p>"
+
+[[case]]
+id = "epubnote-031"
+from = "html-epub_html_exts"
+input = "<head epub:type=\"x footnote\" id=\"n\">N</head><p>z</p>"
+
+[[case]]
+id = "epubnote-032"
+from = "html+epub_html_exts-native_divs"
+input = "<custom epub:type=\"\" id=\"n\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubnote-033"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><li epub:type=\"rearnote\" id=\"n\">N</li><p>z</p>"
+
+[[case]]
+id = "epubnote-034"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><p epub:type=\"chapter\" id=\"n\">N</p><p>z</p>"
+
+[[case]]
+id = "epubnote-035"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><svg epub:type=\"footnote \">N</svg><p>z</p>"
+
+[[case]]
+id = "epubnote-036"
+from = "html+epub_html_exts-native_divs"
+input = "<!DOCTYPE epub:type=\"Footnote\" id=\"n\">N</!DOCTYPE><p>z</p>"
+
+[[case]]
+id = "epubnote-037"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><colgroup epub:type=\"chapter\" id=\"n\">N</colgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-038"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><iframe epub:type=\"rearnote\">N</iframe><p>z</p>"
+
+[[case]]
+id = "epubnote-039"
+from = "html+epub_html_exts"
+input = "<ol epub:type=\"chapter\" id=\"n\">N</ol><p>z</p>"
+
+[[case]]
+id = "epubnote-040"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><ul epub:type=\"\">N</ul><p>z</p>"
+
+[[case]]
+id = "epubnote-041"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><b epub:type=\"footnote \" id=\"n\">N</b><p>z</p>"
+
+[[case]]
+id = "epubnote-042"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><colgroup epub:type=\"footnote \" id=\"n\">N</colgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-043"
+from = "html-epub_html_exts"
+input = "<menu epub:type=\"Footnote\" id=\"n\">N</menu><p>z</p>"
+
+[[case]]
+id = "epubnote-044"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><section epub:type=\"x footnote\">N</section><p>z</p>"
+
+[[case]]
+id = "epubnote-045"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><html epub:type=\"Footnote\" id=\"n\">N</html><p>z</p>"
+
+[[case]]
+id = "epubnote-046"
+from = "html+epub_html_exts"
+input = "<custom epub:type=\"footnote\" id=\"n\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubnote-047"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><p epub:type=\"footnote\" id=\"n\">N</p><p>z</p>"
+
+[[case]]
+id = "epubnote-048"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><aside epub:type=\"\" id=\"n\">N</aside><p>z</p>"
+
+[[case]]
+id = "epubnote-049"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><center epub:type=\"\">N</center><p>z</p>"
+
+[[case]]
+id = "epubnote-050"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dir epub:type=\"Footnote\">N</dir><p>z</p>"
+
+[[case]]
+id = "epubnote-051"
+from = "html-epub_html_exts"
+input = "<ul epub:type=\"footnote\" id=\"n\">N</ul><p>z</p>"
+
+[[case]]
+id = "epubnote-052"
+from = "html+epub_html_exts-native_divs"
+input = "<dir epub:type=\"Footnote\" id=\"n\">N</dir><p>z</p>"
+
+[[case]]
+id = "epubnote-053"
+from = "html+epub_html_exts"
+input = "<p epub:type=\"x footnote\" id=\"n\">N</p><p>z</p>"
+
+[[case]]
+id = "epubnote-054"
+from = "html-epub_html_exts"
+input = "<thead epub:type=\"x footnote\" id=\"n\">N</thead><p>z</p>"
+
+[[case]]
+id = "epubnote-055"
+from = "html+epub_html_exts"
+input = "<center epub:type=\"footnote \" id=\"n\">N</center><p>z</p>"
+
+[[case]]
+id = "epubnote-056"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><article epub:type=\"footnote\" id=\"n\">N</article><p>z</p>"
+
+[[case]]
+id = "epubnote-057"
+from = "html+epub_html_exts"
+input = "<!DOCTYPE epub:type=\"footnote\" id=\"n\">N</!DOCTYPE><p>z</p>"
+
+[[case]]
+id = "epubnote-058"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><hgroup epub:type=\"Footnote\" id=\"n\">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-059"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><hgroup epub:type=\"rearnote\">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-060"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><canvas epub:type=\"Footnote\">N</canvas><p>z</p>"
+
+[[case]]
+id = "epubnote-061"
+from = "html+epub_html_exts"
+input = "<noscript epub:type=\"chapter\" id=\"n\">N</noscript><p>z</p>"
+
+[[case]]
+id = "epubnote-062"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><th epub:type=\"footnote\" id=\"n\">N</th><p>z</p>"
+
+[[case]]
+id = "epubnote-063"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tr epub:type=\"chapter\" id=\"n\">N</tr><p>z</p>"
+
+[[case]]
+id = "epubnote-064"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><note epub:type=\"footnote \" id=\"n\">N</note><p>z</p>"
+
+[[case]]
+id = "epubnote-065"
+from = "html-epub_html_exts"
+input = "<col epub:type=\"rearnote\" id=\"n\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-066"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><head epub:type=\"chapter\" id=\"n\">N</head><p>z</p>"
+
+[[case]]
+id = "epubnote-067"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><nav epub:type=\"Footnote\">N</nav><p>z</p>"
+
+[[case]]
+id = "epubnote-068"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><table epub:type=\"rearnote\">N</table><p>z</p>"
+
+[[case]]
+id = "epubnote-069"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><colgroup epub:type=\"footnotes\">N</colgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-070"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><script epub:type=\"\">N</script><p>z</p>"
+
+[[case]]
+id = "epubnote-071"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><summary epub:type=\"chapter\" id=\"n\">N</summary><p>z</p>"
+
+[[case]]
+id = "epubnote-072"
+from = "html+epub_html_exts"
+input = "<address epub:type=\"\" id=\"n\">N</address><p>z</p>"
+
+[[case]]
+id = "epubnote-073"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><para epub:type=\"x footnote\">N</para><p>z</p>"
+
+[[case]]
+id = "epubnote-074"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><div epub:type=\"\" id=\"n\">N</div><p>z</p>"
+
+[[case]]
+id = "epubnote-075"
+from = "html+epub_html_exts-native_divs"
+input = "<dt epub:type=\"\" id=\"n\">N</dt><p>z</p>"
+
+[[case]]
+id = "epubnote-076"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><main epub:type=\"chapter\">N</main><p>z</p>"
+
+[[case]]
+id = "epubnote-077"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><details epub:type=\"chapter\">N</details><p>z</p>"
+
+[[case]]
+id = "epubnote-078"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><address epub:type=\"x footnote\">N</address><p>z</p>"
+
+[[case]]
+id = "epubnote-079"
+from = "html+epub_html_exts"
+input = "<caption epub:type=\"Footnote\" id=\"n\">N</caption><p>z</p>"
+
+[[case]]
+id = "epubnote-080"
+from = "html-epub_html_exts"
+input = "<noscript epub:type=\"footnote\" id=\"n\">N</noscript><p>z</p>"
+
+[[case]]
+id = "epubnote-081"
+from = "html+epub_html_exts-native_divs"
+input = "<ins epub:type=\"\" id=\"n\">N</ins><p>z</p>"
+
+[[case]]
+id = "epubnote-082"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><h1 epub:type=\"rearnote\" id=\"n\">N</h1><p>z</p>"
+
+[[case]]
+id = "epubnote-083"
+from = "html-epub_html_exts"
+input = "<h6 epub:type=\"footnote \" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-084"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><audio epub:type=\"\">N</audio><p>z</p>"
+
+[[case]]
+id = "epubnote-085"
+from = "html+epub_html_exts-native_divs"
+input = "<button epub:type=\"Footnote\" id=\"n\">N</button><p>z</p>"
+
+[[case]]
+id = "epubnote-086"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><h6 epub:type=\"chapter\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-087"
+from = "html-epub_html_exts"
+input = "<dt epub:type=\"x footnote\" id=\"n\">N</dt><p>z</p>"
+
+[[case]]
+id = "epubnote-088"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><note epub:type=\"footnote \">N</note><p>z</p>"
+
+[[case]]
+id = "epubnote-089"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><thead epub:type=\"footnote\">N</thead><p>z</p>"
+
+[[case]]
+id = "epubnote-090"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><div epub:type=\"Footnote\" id=\"n\">N</div><p>z</p>"
+
+[[case]]
+id = "epubnote-091"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tr epub:type=\"footnote \" id=\"n\">N</tr><p>z</p>"
+
+[[case]]
+id = "epubnote-092"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><note epub:type=\"Footnote\">N</note><p>z</p>"
+
+[[case]]
+id = "epubnote-093"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><hgroup epub:type=\"Footnote\" id=\"n\">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-094"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><!DOCTYPE epub:type=\"footnote\" id=\"n\">N</!DOCTYPE><p>z</p>"
+
+[[case]]
+id = "epubnote-095"
+from = "html-epub_html_exts"
+input = "<pre epub:type=\"footnotes\" id=\"n\">N</pre><p>z</p>"
+
+[[case]]
+id = "epubnote-096"
+from = "html+epub_html_exts-native_divs"
+input = "<article epub:type=\"footnote \" id=\"n\">N</article><p>z</p>"
+
+[[case]]
+id = "epubnote-097"
+from = "html+epub_html_exts-native_divs"
+input = "<hgroup epub:type=\"x footnote\" id=\"n\">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-098"
+from = "html-epub_html_exts"
+input = "<h6 epub:type=\"x footnote\" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-099"
+from = "html+epub_html_exts"
+input = "<tr epub:type=\"x footnote\" id=\"n\">N</tr><p>z</p>"
+
+[[case]]
+id = "epubnote-100"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><details epub:type=\"Footnote\">N</details><p>z</p>"
+
+[[case]]
+id = "epubnote-101"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><body epub:type=\"x footnote\">N</body><p>z</p>"
+
+[[case]]
+id = "epubnote-102"
+from = "html+epub_html_exts-native_divs"
+input = "<figcaption epub:type=\"x footnote\" id=\"n\">N</figcaption><p>z</p>"
+
+[[case]]
+id = "epubnote-103"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><hgroup epub:type=\"Footnote\" id=\"n\">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-104"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><audio epub:type=\"rearnote\">N</audio><p>z</p>"
+
+[[case]]
+id = "epubnote-105"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><meta epub:type=\"rearnote\" id=\"n\">N</meta><p>z</p>"
+
+[[case]]
+id = "epubnote-106"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><address epub:type=\"rearnote\" id=\"n\">N</address><p>z</p>"
+
+[[case]]
+id = "epubnote-107"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><summary epub:type=\"rearnote\" id=\"n\">N</summary><p>z</p>"
+
+[[case]]
+id = "epubnote-108"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><pre epub:type=\"footnote\" id=\"n\">N</pre><p>z</p>"
+
+[[case]]
+id = "epubnote-109"
+from = "html+epub_html_exts"
+input = "<thead epub:type=\"x footnote\" id=\"n\">N</thead><p>z</p>"
+
+[[case]]
+id = "epubnote-110"
+from = "html+epub_html_exts-native_divs"
+input = "<col epub:type=\"x footnote\" id=\"n\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-111"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><col epub:type=\"x footnote\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-112"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dd epub:type=\"x footnote\" id=\"n\">N</dd><p>z</p>"
+
+[[case]]
+id = "epubnote-113"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><hgroup epub:type=\"footnote\">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-114"
+from = "html+epub_html_exts-native_divs"
+input = "<main epub:type=\"x footnote\" id=\"n\">N</main><p>z</p>"
+
+[[case]]
+id = "epubnote-115"
+from = "html-epub_html_exts"
+input = "<address epub:type=\"\" id=\"n\">N</address><p>z</p>"
+
+[[case]]
+id = "epubnote-116"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tfoot epub:type=\"rearnote\">N</tfoot><p>z</p>"
+
+[[case]]
+id = "epubnote-117"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tfoot epub:type=\"footnote \">N</tfoot><p>z</p>"
+
+[[case]]
+id = "epubnote-118"
+from = "html-epub_html_exts"
+input = "<video epub:type=\"Footnote\" id=\"n\">N</video><p>z</p>"
+
+[[case]]
+id = "epubnote-119"
+from = "html-epub_html_exts"
+input = "<dl epub:type=\"\" id=\"n\">N</dl><p>z</p>"
+
+[[case]]
+id = "epubnote-120"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><ins epub:type=\"footnote \">N</ins><p>z</p>"
+
+[[case]]
+id = "epubnote-121"
+from = "html-epub_html_exts"
+input = "<dt epub:type=\"footnotes\" id=\"n\">N</dt><p>z</p>"
+
+[[case]]
+id = "epubnote-122"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><thead epub:type=\"x footnote\" id=\"n\">N</thead><p>z</p>"
+
+[[case]]
+id = "epubnote-123"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><h1 epub:type=\"\" id=\"n\">N</h1><p>z</p>"
+
+[[case]]
+id = "epubnote-124"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><figure epub:type=\"rearnote\">N</figure><p>z</p>"
+
+[[case]]
+id = "epubnote-125"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><script epub:type=\"chapter\">N</script><p>z</p>"
+
+[[case]]
+id = "epubnote-126"
+from = "html+epub_html_exts"
+input = "<html epub:type=\"footnote \" id=\"n\">N</html><p>z</p>"
+
+[[case]]
+id = "epubnote-127"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><menu epub:type=\"footnote\" id=\"n\">N</menu><p>z</p>"
+
+[[case]]
+id = "epubnote-128"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><h6 epub:type=\"chapter\" id=\"n\">N</h6><p>z</p>"
+
+[[case]]
+id = "epubnote-129"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><figure epub:type=\"chapter\">N</figure><p>z</p>"
+
+[[case]]
+id = "epubnote-130"
+from = "html-epub_html_exts"
+input = "<b epub:type=\"chapter\" id=\"n\">N</b><p>z</p>"
+
+[[case]]
+id = "epubnote-131"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><head epub:type=\"footnote \">N</head><p>z</p>"
+
+[[case]]
+id = "epubnote-132"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><thead epub:type=\"Footnote\" id=\"n\">N</thead><p>z</p>"
+
+[[case]]
+id = "epubnote-133"
+from = "html+epub_html_exts-native_divs"
+input = "<ins epub:type=\"x footnote\" id=\"n\">N</ins><p>z</p>"
+
+[[case]]
+id = "epubnote-134"
+from = "html-epub_html_exts"
+input = "<col epub:type=\"\" id=\"n\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-135"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><note epub:type=\"chapter\">N</note><p>z</p>"
+
+[[case]]
+id = "epubnote-136"
+from = "html+epub_html_exts"
+input = "<canvas epub:type=\"footnote\" id=\"n\">N</canvas><p>z</p>"
+
+[[case]]
+id = "epubnote-137"
+from = "html+epub_html_exts"
+input = "<dir epub:type=\"footnote\" id=\"n\">N</dir><p>z</p>"
+
+[[case]]
+id = "epubnote-138"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dir epub:type=\"chapter\">N</dir><p>z</p>"
+
+[[case]]
+id = "epubnote-139"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><blockquote epub:type=\"footnotes\">N</blockquote><p>z</p>"
+
+[[case]]
+id = "epubnote-140"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><custom epub:type=\"footnote\" id=\"n\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubnote-141"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><menu epub:type=\"chapter\">N</menu><p>z</p>"
+
+[[case]]
+id = "epubnote-142"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><li epub:type=\"chapter\" id=\"n\">N</li><p>z</p>"
+
+[[case]]
+id = "epubnote-143"
+from = "html+epub_html_exts-native_divs"
+input = "<tr epub:type=\"footnote\" id=\"n\">N</tr><p>z</p>"
+
+[[case]]
+id = "epubnote-144"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><meta epub:type=\"footnote\">N</meta><p>z</p>"
+
+[[case]]
+id = "epubnote-145"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><note epub:type=\"Footnote\" id=\"n\">N</note><p>z</p>"
+
+[[case]]
+id = "epubnote-146"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><object epub:type=\"x footnote\">N</object><p>z</p>"
+
+[[case]]
+id = "epubnote-147"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><p epub:type=\"Footnote\" id=\"n\">N</p><p>z</p>"
+
+[[case]]
+id = "epubnote-148"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><custom epub:type=\"footnotes\" id=\"n\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubnote-149"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><form epub:type=\"\" id=\"n\">N</form><p>z</p>"
+
+[[case]]
+id = "epubnote-150"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><center epub:type=\"chapter\">N</center><p>z</p>"
+
+[[case]]
+id = "epubnote-151"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dl epub:type=\"\" id=\"n\">N</dl><p>z</p>"
+
+[[case]]
+id = "epubnote-152"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><html epub:type=\"footnote \">N</html><p>z</p>"
+
+[[case]]
+id = "epubnote-153"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><del epub:type=\"\">N</del><p>z</p>"
+
+[[case]]
+id = "epubnote-154"
+from = "html-epub_html_exts"
+input = "<col epub:type=\"x footnote\" id=\"n\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-155"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><output epub:type=\"footnote\" id=\"n\">N</output><p>z</p>"
+
+[[case]]
+id = "epubnote-156"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><hgroup epub:type=\"footnote \">N</hgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-157"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><header epub:type=\"footnote \">N</header><p>z</p>"
+
+[[case]]
+id = "epubnote-158"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><article epub:type=\"footnote\" id=\"n\">N</article><p>z</p>"
+
+[[case]]
+id = "epubnote-159"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><center epub:type=\"chapter\">N</center><p>z</p>"
+
+[[case]]
+id = "epubnote-160"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><nav epub:type=\"Footnote\" id=\"n\">N</nav><p>z</p>"
+
+[[case]]
+id = "epubnote-161"
+from = "html+epub_html_exts"
+input = "<para epub:type=\"footnote \" id=\"n\">N</para><p>z</p>"
+
+[[case]]
+id = "epubnote-162"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><audio epub:type=\"chapter\" id=\"n\">N</audio><p>z</p>"
+
+[[case]]
+id = "epubnote-163"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><menu epub:type=\"footnote\" id=\"n\">N</menu><p>z</p>"
+
+[[case]]
+id = "epubnote-164"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><caption epub:type=\"chapter\" id=\"n\">N</caption><p>z</p>"
+
+[[case]]
+id = "epubnote-165"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><body epub:type=\"footnotes\" id=\"n\">N</body><p>z</p>"
+
+[[case]]
+id = "epubnote-166"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><h1 epub:type=\"footnote\" id=\"n\">N</h1><p>z</p>"
+
+[[case]]
+id = "epubnote-167"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><output epub:type=\"rearnote\">N</output><p>z</p>"
+
+[[case]]
+id = "epubnote-168"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tfoot epub:type=\"rearnote\" id=\"n\">N</tfoot><p>z</p>"
+
+[[case]]
+id = "epubnote-169"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><em epub:type=\"footnote\">N</em><p>z</p>"
+
+[[case]]
+id = "epubnote-170"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dt epub:type=\"footnote \" id=\"n\">N</dt><p>z</p>"
+
+[[case]]
+id = "epubnote-171"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dd epub:type=\"Footnote\">N</dd><p>z</p>"
+
+[[case]]
+id = "epubnote-172"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><textarea epub:type=\"x footnote\">N</textarea><p>z</p>"
+
+[[case]]
+id = "epubnote-173"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><fieldset epub:type=\"x footnote\">N</fieldset><p>z</p>"
+
+[[case]]
+id = "epubnote-174"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><video epub:type=\"x footnote\">N</video><p>z</p>"
+
+[[case]]
+id = "epubnote-175"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><summary epub:type=\"footnote \">N</summary><p>z</p>"
+
+[[case]]
+id = "epubnote-176"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><span epub:type=\"footnote\" id=\"n\">N</span><p>z</p>"
+
+[[case]]
+id = "epubnote-177"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><fieldset epub:type=\"Footnote\" id=\"n\">N</fieldset><p>z</p>"
+
+[[case]]
+id = "epubnote-178"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><blockquote epub:type=\"footnote \">N</blockquote><p>z</p>"
+
+[[case]]
+id = "epubnote-179"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><article epub:type=\"rearnote\">N</article><p>z</p>"
+
+[[case]]
+id = "epubnote-180"
+from = "html+epub_html_exts"
+input = "<del epub:type=\"x footnote\" id=\"n\">N</del><p>z</p>"
+
+[[case]]
+id = "epubnote-181"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><td epub:type=\"chapter\" id=\"n\">N</td><p>z</p>"
+
+[[case]]
+id = "epubnote-182"
+from = "html-epub_html_exts"
+input = "<script epub:type=\"\" id=\"n\">N</script><p>z</p>"
+
+[[case]]
+id = "epubnote-183"
+from = "html+epub_html_exts"
+input = "<blockquote epub:type=\"x footnote\" id=\"n\">N</blockquote><p>z</p>"
+
+[[case]]
+id = "epubnote-184"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><article epub:type=\"Footnote\" id=\"n\">N</article><p>z</p>"
+
+[[case]]
+id = "epubnote-185"
+from = "html+epub_html_exts"
+input = "<col epub:type=\"footnote \" id=\"n\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-186"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><ins epub:type=\"rearnote\">N</ins><p>z</p>"
+
+[[case]]
+id = "epubnote-187"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><center epub:type=\"footnote \">N</center><p>z</p>"
+
+[[case]]
+id = "epubnote-188"
+from = "html+epub_html_exts-native_divs"
+input = "<script epub:type=\"\" id=\"n\">N</script><p>z</p>"
+
+[[case]]
+id = "epubnote-189"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><section epub:type=\"footnotes\">N</section><p>z</p>"
+
+[[case]]
+id = "epubnote-190"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><fieldset epub:type=\"footnote\" id=\"n\">N</fieldset><p>z</p>"
+
+[[case]]
+id = "epubnote-191"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><col epub:type=\"rearnote\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-192"
+from = "html-epub_html_exts"
+input = "<col epub:type=\"footnote \" id=\"n\">N</col><p>z</p>"
+
+[[case]]
+id = "epubnote-193"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><video epub:type=\"Footnote\" id=\"n\">N</video><p>z</p>"
+
+[[case]]
+id = "epubnote-194"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><a epub:type=\"\" id=\"n\">N</a><p>z</p>"
+
+[[case]]
+id = "epubnote-195"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><tfoot epub:type=\"footnote\" id=\"n\">N</tfoot><p>z</p>"
+
+[[case]]
+id = "epubnote-196"
+from = "html+epub_html_exts-native_divs"
+input = "<body epub:type=\"chapter\" id=\"n\">N</body><p>z</p>"
+
+[[case]]
+id = "epubnote-197"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><dt epub:type=\"rearnote\">N</dt><p>z</p>"
+
+[[case]]
+id = "epubnote-198"
+from = "html-epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><table epub:type=\"chapter\">N</table><p>z</p>"
+
+[[case]]
+id = "epubnote-199"
+from = "html+epub_html_exts"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><td epub:type=\"footnote\">N</td><p>z</p>"
+
+[[case]]
+id = "epubnote-200"
+from = "html+epub_html_exts-native_divs"
+input = "<p>a<a epub:type=\"noteref\" href=\"#n\">1</a></p><colgroup epub:type=\"chapter\">N</colgroup><p>z</p>"
+
+[[case]]
+id = "epubnote-201"
+from = "html+epub_html_exts-native_divs"
+input = "<p><a epub:type=\"noteref\" href=\"#n\">1</a></p><aside epub:type=\"footnote\" id=\"n\">N</aside>"
+
+[[case]]
+id = "epubnote-202"
+from = "html+epub_html_exts"
+input = "<p><a epub:type=\"noteref\" href=\"#n\">1</a></p><pre epub:type=\"footnote\" id=\"n\">x</pre>"
+
+[[case]]
+id = "epubnote-203"
+from = "html+epub_html_exts"
+input = "<p><a epub:type=\"noteref\" href=\"#n\">1</a></p><div epub:type=\"x footnote\" id=\"n\">N</div>"
+
+
+[[case]]
+id = "notelist-001"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n><p>a</p></li>x</section>"
+
+[[case]]
+id = "notelist-002"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n>a</li><!-- c --><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-003"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=n><p>a</p></li> <li id=n>a</li>"
+
+[[case]]
+id = "notelist-004"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n>a <li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-005"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li>a</li></p>"
+
+[[case]]
+id = "notelist-006"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li id=n><p>a</p></li><!-- c --><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-007"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n><div>a</li><!-- c --><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-008"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li>a</li><span>t</span><li id=n>a"
+
+[[case]]
+id = "notelist-009"
+input = "<section role=doc-endnotes><ol> <li id=n><p>a</p></li><br><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-010"
+input = "<section role=doc-endnotes><ol></p><li id=n><p>a</p></li><div>t</div><li>a</li>"
+
+[[case]]
+id = "notelist-011"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=m>b</li>x<li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-012"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n><p>a</p></li>x<li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-013"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=n>a</li>x</ol>"
+
+[[case]]
+id = "notelist-014"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n><p>a</p></li><br><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-015"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n>a</li><h2>t</h2><li id=n>a"
+
+[[case]]
+id = "notelist-016"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n>a </ol></section>"
+
+[[case]]
+id = "notelist-017"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n><div>a</li><h2>t</h2><li id=n>a</li></ol></section>"
+
+[[case]]
+id = "notelist-018"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n>a<span>t</span><li>a</li></section>"
+
+[[case]]
+id = "notelist-019"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><div>t</div><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-020"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n><em>a</li><div>t</div><li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-021"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li id=n>a</li><div>t</div><li id=n>a</li>"
+
+[[case]]
+id = "notelist-022"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n>ax<li id=n>a</ol>"
+
+[[case]]
+id = "notelist-023"
+input = "<section role=doc-endnotes><ol>x<li>a</li><br></ol>x</section>"
+
+[[case]]
+id = "notelist-024"
+input = "<section role=doc-endnotes><ol> <li id=m>b</li><!-- c --><li>a</li>"
+
+[[case]]
+id = "notelist-025"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li id=n>a</li><div>t</div><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-026"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=m>b</li><div>t</div></ol></section>"
+
+[[case]]
+id = "notelist-027"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li>a</li><p>t</p><li id=n>a</ol>x</section>"
+
+[[case]]
+id = "notelist-028"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><em>a</li></p><li id=n>a</ol>x</section>"
+
+[[case]]
+id = "notelist-029"
+input = "<section role=doc-endnotes><ol> <li id=n><div>a</li><span>t</span><li>a</li></ol>"
+
+[[case]]
+id = "notelist-030"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n><p>a</p></li><p>t</p><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-031"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n>a</li><!-- c --><li id=n>a</section>"
+
+[[case]]
+id = "notelist-032"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n><div>a</li></p></ol></section>"
+
+[[case]]
+id = "notelist-033"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=n><p>a</p></li><p>t</p><li id=n>a</li>"
+
+[[case]]
+id = "notelist-034"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=n><p>a</p></li><li id=n>a</section>"
+
+[[case]]
+id = "notelist-035"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li>a</li><br></OL></section>"
+
+[[case]]
+id = "notelist-036"
+input = "<section role=doc-endnotes><ol><!-- c --><li>a</li><div>t</div></ol></section>"
+
+[[case]]
+id = "notelist-037"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n><div>a</li><p>t</p><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-038"
+input = "<section role=doc-endnotes><ol><li id=n>a</li><li id=n>a</li></ol></section>"
+
+[[case]]
+id = "notelist-039"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><p>a</p></li><h2>t</h2></ol>"
+
+[[case]]
+id = "notelist-040"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n><div>a</li><br><li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-041"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=n>a</li></p><li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-042"
+input = "<section role=doc-endnotes><ol><br><li id=n><em>a</li><div>t</div><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-043"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li>a</li><!-- c --><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-044"
+input = "<section role=doc-endnotes><ol><p>t</p><li>a</li>x<li>a</li></section>"
+
+[[case]]
+id = "notelist-045"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li id=n>a</li>x</ol>x</section>"
+
+[[case]]
+id = "notelist-046"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=m>b</li>x<li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-047"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=n><div>a</li><br><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-048"
+input = "<section role=doc-endnotes><ol>x<li id=n><div>a</li><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-049"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n><em>a</li><!-- c --></ol>"
+
+[[case]]
+id = "notelist-050"
+input = "<section role=doc-endnotes><ol></p><li id=n>a</li><!-- c --><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-051"
+input = "<section role=doc-endnotes><ol><br><li id=n>a<!-- c -->"
+
+[[case]]
+id = "notelist-052"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=n><em>a</li>x<li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-053"
+input = "<section role=doc-endnotes><ol><div>t</div><li>a</li>x<li id=n>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-054"
+input = "<section role=doc-endnotes><ol></p><li id=n>a<br><li>a</li></ol>"
+
+[[case]]
+id = "notelist-055"
+input = "<section role=doc-endnotes><ol></p><li id=n><em>a</li> <li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-056"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n>a<br></ol></section>"
+
+[[case]]
+id = "notelist-057"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li>a</li><h2>t</h2><li id=n>a"
+
+[[case]]
+id = "notelist-058"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=m>b</li></p><li>a</li></section>"
+
+[[case]]
+id = "notelist-059"
+input = "<section role=doc-endnotes><ol><span>t</span><li>a</li></p><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-060"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n><div>a</li><div>t</div>"
+
+[[case]]
+id = "notelist-061"
+input = "<section role=doc-endnotes><ol><br><li id=n><em>a</li><p>t</p><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-062"
+input = "<section role=doc-endnotes><ol>x<li id=n><em>a</li> <li>a</li></section>"
+
+[[case]]
+id = "notelist-063"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=m>b</li> <li>a</li></ol>"
+
+[[case]]
+id = "notelist-064"
+input = "<section role=doc-endnotes><ol><!-- c --><li>a</li><br></OL></section>"
+
+[[case]]
+id = "notelist-065"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=n>a</li><li>a</li></section>"
+
+[[case]]
+id = "notelist-066"
+input = "<section role=doc-endnotes><ol>x<li id=n>a<p>t</p><li id=n>a"
+
+[[case]]
+id = "notelist-067"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><div>t</div><li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-068"
+input = "<section role=doc-endnotes><ol><li>a</li><div>t</div><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-069"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=m>b</li><li id=n>a"
+
+[[case]]
+id = "notelist-070"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=m>b</li>x<li id=n>a</ol>x</section>"
+
+[[case]]
+id = "notelist-071"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li>a</li><h2>t</h2><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-072"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n><div>a</li><br></ol>"
+
+[[case]]
+id = "notelist-073"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=n><div>a</li><br></section>"
+
+[[case]]
+id = "notelist-074"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><div>t</div><li id=n>a</ol>x</section>"
+
+[[case]]
+id = "notelist-075"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n>a<li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-076"
+input = "<section role=doc-endnotes><ol> <li id=n><div>a</li>x<li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-077"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=n><em>a</li> <li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-078"
+input = "<section role=doc-endnotes><ol><br><li id=n><em>a</li><br><li>a</li>"
+
+[[case]]
+id = "notelist-079"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=n>a</li><div>t</div>"
+
+[[case]]
+id = "notelist-080"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=m>b</li><p>t</p><li id=n>a</ol>x</section>"
+
+[[case]]
+id = "notelist-081"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n>a</li></p><li>a</li></ol>"
+
+[[case]]
+id = "notelist-082"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=n><div>a</li>x<li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-083"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><em>a</li><p>t</p></ol></section>"
+
+[[case]]
+id = "notelist-084"
+input = "<section role=doc-endnotes><ol><br><li id=n><p>a</p></li><!-- c --></ol></section>"
+
+[[case]]
+id = "notelist-085"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=m>b</li><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-086"
+input = "<section role=doc-endnotes><ol><li id=m>b</li> </ol></section>"
+
+[[case]]
+id = "notelist-087"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li>a</li>x<li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-088"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=m>b</li></p><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-089"
+input = "<section role=doc-endnotes><ol><li id=m>b</li><div>t</div><li id=n>a</li>"
+
+[[case]]
+id = "notelist-090"
+input = "<section role=doc-endnotes><ol><br><li id=n><p>a</p></li><div>t</div><li id=n>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-091"
+input = "<section role=doc-endnotes><ol><br><li id=n>ax<li>a</li>"
+
+[[case]]
+id = "notelist-092"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n><p>a</p></li><br><li id=n>a</li></ol>"
+
+[[case]]
+id = "notelist-093"
+input = "<section role=doc-endnotes><ol></p><li id=m>b</li><span>t</span><li id=n>a</li>"
+
+[[case]]
+id = "notelist-094"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><div>t</div><li>a</li></section>"
+
+[[case]]
+id = "notelist-095"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n>a</li></p><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-096"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=n><p>a</p></li><br></ol></section>"
+
+[[case]]
+id = "notelist-097"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=n><div>a</li><div>t</div><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-098"
+input = "<section role=doc-endnotes><ol></p><li>a</li><br></OL></section>"
+
+[[case]]
+id = "notelist-099"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li id=n>a</li><p>t</p></ol>x</section>"
+
+[[case]]
+id = "notelist-100"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n>a</li><h2>t</h2><li>a</li></ol>"
+
+[[case]]
+id = "notelist-101"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n>a</li><h2>t</h2><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-102"
+input = "<section role=doc-endnotes><ol>x<li id=n><em>a</li><!-- c --><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-103"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n>a<h2>t</h2><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-104"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol></p><li id=n>a</p><li>a</li>"
+
+[[case]]
+id = "notelist-105"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=n><p>a</p></li></p><li id=n>a</section>"
+
+[[case]]
+id = "notelist-106"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li id=n>a<p>t</p><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-107"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=m>b</li><li id=n>a</li>"
+
+[[case]]
+id = "notelist-108"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><em>a</li><h2>t</h2><li id=n>a</li></ol></section>"
+
+[[case]]
+id = "notelist-109"
+input = "<section role=doc-endnotes><ol><li id=n><div>a</li><p>t</p><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-110"
+input = "<section role=doc-endnotes><ol><span>t</span><li>a</li></ol>"
+
+[[case]]
+id = "notelist-111"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=n>a</li></p><li id=n>a</li></ol></section>"
+
+[[case]]
+id = "notelist-112"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=n><div>a</li><h2>t</h2><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-113"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=n>a </ol></section>"
+
+[[case]]
+id = "notelist-114"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li>a</li><h2>t</h2><li id=n>a"
+
+[[case]]
+id = "notelist-115"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n>a "
+
+[[case]]
+id = "notelist-116"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=m>b</li>x<li id=n>a</ol>"
+
+[[case]]
+id = "notelist-117"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=n><em>a</li><li id=n>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-118"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=m>b</li>x<li>a</li></section>"
+
+[[case]]
+id = "notelist-119"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n><p>a</p></li><h2>t</h2><li id=n>a</section>"
+
+[[case]]
+id = "notelist-120"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n>a<!-- c --><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-121"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-122"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n>a</li><div>t</div><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-123"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n>a<div>t</div><li id=n>a</section>"
+
+[[case]]
+id = "notelist-124"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n>a</li> </OL></section>"
+
+[[case]]
+id = "notelist-125"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=m>b</li><div>t</div><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-126"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=m>b</li></OL></section>"
+
+[[case]]
+id = "notelist-127"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n>a</li><div>t</div><li>a</li></ol>"
+
+[[case]]
+id = "notelist-128"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=m>b</li><div>t</div><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-129"
+input = "<section role=doc-endnotes><ol><li id=n><em>a</li><br><li id=n>a</li></ol>"
+
+[[case]]
+id = "notelist-130"
+input = "<section role=doc-endnotes><ol><li id=n><div>a</li><p>t</p><li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-131"
+input = "<section role=doc-endnotes><ol><div>t</div><li>a</li> <li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-132"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n><em>a</li><div>t</div></ol>"
+
+[[case]]
+id = "notelist-133"
+input = "<section role=doc-endnotes><ol><li>a</li><li>a</li></ol>"
+
+[[case]]
+id = "notelist-134"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n><div>a</li><p>t</p><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-135"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n>a</li> <li id=n>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-136"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li>a</li><!-- c --><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-137"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=m>b</li><h2>t</h2><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-138"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li id=n>a<div>t</div><li id=n>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-139"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n><div>a</li><h2>t</h2></ol>"
+
+[[case]]
+id = "notelist-140"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><!-- c --><li id=n><em>a</li><!-- c --><li id=n>a</ol>x</section>"
+
+[[case]]
+id = "notelist-141"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li> <li>a</li>"
+
+[[case]]
+id = "notelist-142"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n><em>a</li> </ol></section>"
+
+[[case]]
+id = "notelist-143"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=m>b</li><br><li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-144"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=m>b</li> <li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-145"
+input = "<section role=doc-endnotes><ol></p><li id=n><p>a</p></li><div>t</div><li id=n>a</li></ol>"
+
+[[case]]
+id = "notelist-146"
+input = "<section role=doc-endnotes><ol>x<li id=n><div>a</li><li id=n>a</li></ol>"
+
+[[case]]
+id = "notelist-147"
+input = "<section role=doc-endnotes><ol><li id=n><p>a</p></li><li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-148"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n>a</li><br><li>a</li>"
+
+[[case]]
+id = "notelist-149"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><div>a</li><br><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-150"
+input = "<section role=doc-endnotes><ol></p><li id=n>a<p>t</p></ol>"
+
+[[case]]
+id = "notelist-151"
+input = "<section role=doc-endnotes><ol> <li id=n><div>a</li><br><li id=n>a</li>"
+
+[[case]]
+id = "notelist-152"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n><p>a</p></li> <li>a</li></ol>"
+
+[[case]]
+id = "notelist-153"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n><div>a</li></p><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-154"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n>a</li></p><li id=n>a</section>"
+
+[[case]]
+id = "notelist-155"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li id=n><em>a</li><p>t</p><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-156"
+input = "<section role=doc-endnotes><ol><h2>t</h2><li id=n>a<h2>t</h2><li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-157"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li>a</li><br><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-158"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><h2>t</h2><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-159"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=m>b</li><br><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-160"
+input = "<section role=doc-endnotes><ol><span>t</span><li id=n><div>a</li><p>t</p><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-161"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=m>b</li><div>t</div>"
+
+[[case]]
+id = "notelist-162"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=m>b</li>x<li id=n>a"
+
+[[case]]
+id = "notelist-163"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><p>t</p></OL></section>"
+
+[[case]]
+id = "notelist-164"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><div>a</li><br><li id=n>a</li></ol>"
+
+[[case]]
+id = "notelist-165"
+input = "<section role=doc-endnotes><ol><br><li id=n><em>a</li><h2>t</h2></ol>"
+
+[[case]]
+id = "notelist-166"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n>a</li></p></OL></section>"
+
+[[case]]
+id = "notelist-167"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=n>a</p></ol></section>"
+
+[[case]]
+id = "notelist-168"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=m>b</li><!-- c --><li id=n>a"
+
+[[case]]
+id = "notelist-169"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><br><li id=m>b</li><!-- c --><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-170"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n><div>a</li> </ol>x</section>"
+
+[[case]]
+id = "notelist-171"
+input = "<section role=doc-endnotes><ol></p><li id=n><p>a</p></li><span>t</span><li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-172"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li>a</li><h2>t</h2></ol></section>"
+
+[[case]]
+id = "notelist-173"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=m>b</li><br><li id=n>a</li>"
+
+[[case]]
+id = "notelist-174"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n><div>a</li><h2>t</h2><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-175"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n><p>a</p></li><br><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-176"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n>a</p><li>a</li></section>"
+
+[[case]]
+id = "notelist-177"
+input = "<section role=doc-endnotes><ol></p><li id=n><div>a</li><div>t</div><li id=n>a</section>"
+
+[[case]]
+id = "notelist-178"
+input = "<section role=doc-endnotes><ol>x<li id=n><em>a</li> <li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-179"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n><p>a</p></li><h2>t</h2><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-180"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n><p>a</p></li><div>t</div><li id=n>a</li></ol></section>"
+
+[[case]]
+id = "notelist-181"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n>a</li></p><li>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-182"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><!-- c --></section>"
+
+[[case]]
+id = "notelist-183"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li id=n><div>a</li> <li>a</li></section>"
+
+[[case]]
+id = "notelist-184"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n>a</li>x<li id=n>a</OL></section>"
+
+[[case]]
+id = "notelist-185"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><h2>t</h2><li id=n><p>a</p></li><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-186"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li id=m>b</li><!-- c --><li id=n>a</ol>"
+
+[[case]]
+id = "notelist-187"
+input = "<section role=doc-endnotes><ol>x<li id=n><em>a</li><span>t</span></ol></section>"
+
+[[case]]
+id = "notelist-188"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol>x<li id=n><p>a</p></li><h2>t</h2><li id=n>a"
+
+[[case]]
+id = "notelist-189"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol> <li id=n><div>a</li> </ol>x</section>"
+
+[[case]]
+id = "notelist-190"
+input = "<section role=doc-endnotes><ol> <li id=n>a<p>t</p></OL></section>"
+
+[[case]]
+id = "notelist-191"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><span>t</span><li id=n><div>a</li><!-- c --></section>"
+
+[[case]]
+id = "notelist-192"
+input = "<section role=doc-endnotes><ol><br><li id=n><em>a</li><li>a</li></section>"
+
+[[case]]
+id = "notelist-193"
+input = "<section role=doc-endnotes><ol><!-- c --><li id=n>a</li><br><li>a</li></ol></section>"
+
+[[case]]
+id = "notelist-194"
+input = "<section role=doc-endnotes><ol><div>t</div><li id=n><div>a</li><p>t</p><li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-195"
+input = "<section role=doc-endnotes><ol></p><li id=n><div>a</li><li id=n>a</section>"
+
+[[case]]
+id = "notelist-196"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><p>t</p><li id=n><p>a</p></li><h2>t</h2><li>a</li></OL></section>"
+
+[[case]]
+id = "notelist-197"
+input = "<section role=doc-endnotes><ol> <li>a</li>x<li>a</li>"
+
+[[case]]
+id = "notelist-198"
+input = "<section role=doc-endnotes><ol><p>t</p><li id=n><p>a</p></li><br><li id=n>a</li></OL></section>"
+
+[[case]]
+id = "notelist-199"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><div>t</div><li>a</li><p>t</p><li id=n>a</li></ol>x</section>"
+
+[[case]]
+id = "notelist-200"
+input = "<section role=doc-endnotes><ol> <li id=n><em>a</li>x<li id=n>a</ol></section>"
+
+[[case]]
+id = "notelist-201"
+input = "<section role=doc-endnotes><ol><li>a"
+
+[[case]]
+id = "notelist-202"
+input = "<section role=\"doc-endnotes\"><ol><li id=\"n\"><div>a</li></ol></section>"
+
+[[case]]
+id = "notelist-203"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=\"doc-endnotes\"><ol><li id=\"n\"><div>a</li></ol></section>"
+
+[[case]]
+id = "notelist-204"
+input = "<section role=doc-endnotes><ol><li id=n>a</li></section>"
+
+[[case]]
+id = "notelist-205"
+input = "<section role=doc-endnotes><ol><li id=n>a</li>x</ol></section>"
+
+[[case]]
+id = "notelist-206"
+input = "<section role=doc-endnotes><ol><li id=n>a</li><br><li id=m>b</li></ol></section>"
+
+[[case]]
+id = "notelist-207"
+input = "<p><a href=\"#n\" role=\"doc-noteref\">1</a></p><section role=doc-endnotes><ol><li id=n>a<p>t</p></ol></section>"
+
+
+[[case]]
+id = "epubsect-001"
+from = "html+epub_html_exts"
+input = "<header epub:type=\"chapter\" id=\"i\" class=\"c\">N</header><p>z</p>"
+
+[[case]]
+id = "epubsect-002"
+from = "html+epub_html_exts"
+input = "<pre epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-003"
+from = "html-epub_html_exts"
+input = "<address epub:type=\"Chapter\">N"
+
+[[case]]
+id = "epubsect-004"
+from = "html+epub_html_exts"
+input = "<p epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</p><p>z</p>"
+
+[[case]]
+id = "epubsect-005"
+from = "html+epub_html_exts"
+input = "<custom epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubsect-006"
+from = "html+epub_html_exts"
+input = "<footer epub:type=\"footnotes x\">N"
+
+[[case]]
+id = "epubsect-007"
+from = "html+epub_html_exts"
+input = "<custom epub:type=\"footnotes\" id=\"i\" class=\"c\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubsect-008"
+from = "html+epub_html_exts"
+input = "<span epub:type=\"footnotes x\">N"
+
+[[case]]
+id = "epubsect-009"
+from = "html+epub_html_exts-native_divs"
+input = "<header epub:type=\"footnotes x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></header><p>z</p>"
+
+[[case]]
+id = "epubsect-010"
+from = "html-epub_html_exts"
+input = "<span epub:type=\"toc\" id=\"i\" class=\"c\"><p>a</p><p>b</p></span><p>z</p>"
+
+[[case]]
+id = "epubsect-011"
+from = "html+epub_html_exts"
+input = "<figure epub:type=\"chapter\" id=\"i\" class=\"c\">N</figure><p>z</p>"
+
+[[case]]
+id = "epubsect-012"
+from = "html+epub_html_exts-native_divs"
+input = "<main epub:type=\"chapter x\" id=\"i\" class=\"c\">N</main><p>z</p>"
+
+[[case]]
+id = "epubsect-013"
+from = "html+epub_html_exts-native_divs"
+input = "<section epub:type=\"x chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></section><p>z</p>"
+
+[[case]]
+id = "epubsect-014"
+from = "html+epub_html_exts-native_divs"
+input = "<section epub:type=\"footnotes\" id=\"i\" class=\"c\">N</section><p>z</p>"
+
+[[case]]
+id = "epubsect-015"
+from = "html-epub_html_exts"
+input = "<blockquote epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-016"
+from = "html+epub_html_exts-native_divs"
+input = "<details epub:type=\"bodymatter\" id=\"i\" class=\"c\">N</details><p>z</p>"
+
+[[case]]
+id = "epubsect-017"
+from = "html-epub_html_exts"
+input = "<pre epub:type=\"chapters\" id=\"i\" class=\"c\"><p>a</p><p>b</p></pre><p>z</p>"
+
+[[case]]
+id = "epubsect-018"
+from = "html+epub_html_exts-native_divs"
+input = "<nav epub:type=\"x chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></nav><p>z</p>"
+
+[[case]]
+id = "epubsect-019"
+from = "html-epub_html_exts"
+input = "<div epub:type=\"toc x\">N"
+
+[[case]]
+id = "epubsect-020"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"chapter\" id=\"i\" class=\"c\">N</main><p>z</p>"
+
+[[case]]
+id = "epubsect-021"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"chapter\">N"
+
+[[case]]
+id = "epubsect-022"
+from = "html+epub_html_exts"
+input = "<aside epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-023"
+from = "html-epub_html_exts"
+input = "<table epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></table><p>z</p>"
+
+[[case]]
+id = "epubsect-024"
+from = "html+epub_html_exts"
+input = "<pre epub:type=\"toc x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></pre><p>z</p>"
+
+[[case]]
+id = "epubsect-025"
+from = "html+epub_html_exts"
+input = "<li epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-026"
+from = "html+epub_html_exts"
+input = "<table epub:type=\"footnotes\" id=\"i\" class=\"c\">N</table><p>z</p>"
+
+[[case]]
+id = "epubsect-027"
+from = "html+epub_html_exts-native_divs"
+input = "<aside epub:type=\"chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></aside><p>z</p>"
+
+[[case]]
+id = "epubsect-028"
+from = "html-epub_html_exts"
+input = "<h2 epub:type=\"chapters\" id=\"i\" class=\"c\">N</h2><p>z</p>"
+
+[[case]]
+id = "epubsect-029"
+from = "html-epub_html_exts"
+input = "<figure epub:type=\"toc x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></figure><p>z</p>"
+
+[[case]]
+id = "epubsect-030"
+from = "html+epub_html_exts-native_divs"
+input = "<span epub:type=\"x chapter\" id=\"i\" class=\"c\">N</span><p>z</p>"
+
+[[case]]
+id = "epubsect-031"
+from = "html-epub_html_exts"
+input = "<article epub:type=\"rearnotes\" id=\"i\" class=\"c\">N</article><p>z</p>"
+
+[[case]]
+id = "epubsect-032"
+from = "html+epub_html_exts"
+input = "<address epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-033"
+from = "html-epub_html_exts"
+input = "<blockquote epub:type=\"chapter x\" id=\"i\" class=\"c\">N</blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-034"
+from = "html+epub_html_exts-native_divs"
+input = "<section epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-035"
+from = "html+epub_html_exts-native_divs"
+input = "<div epub:type=\"x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></div><p>z</p>"
+
+[[case]]
+id = "epubsect-036"
+from = "html+epub_html_exts"
+input = "<nav epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-037"
+from = "html-epub_html_exts"
+input = "<article epub:type=\"bodymatter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></article><p>z</p>"
+
+[[case]]
+id = "epubsect-038"
+from = "html-epub_html_exts"
+input = "<section epub:type=\"footnotes x\">N"
+
+[[case]]
+id = "epubsect-039"
+from = "html+epub_html_exts"
+input = "<table epub:type=\"bodymatter\">N"
+
+[[case]]
+id = "epubsect-040"
+from = "html+epub_html_exts"
+input = "<div epub:type=\"landmarks\">N"
+
+[[case]]
+id = "epubsect-041"
+from = "html+epub_html_exts"
+input = "<figure epub:type=\"bodymatter\">N"
+
+[[case]]
+id = "epubsect-042"
+from = "html+epub_html_exts"
+input = "<ul epub:type=\"footnotes\" id=\"i\" class=\"c\">N</ul><p>z</p>"
+
+[[case]]
+id = "epubsect-043"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"chapter x\">N"
+
+[[case]]
+id = "epubsect-044"
+from = "html+epub_html_exts-native_divs"
+input = "<custom epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-045"
+from = "html-epub_html_exts"
+input = "<div epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-046"
+from = "html+epub_html_exts"
+input = "<header epub:type=\"x\" id=\"i\" class=\"c\">N</header><p>z</p>"
+
+[[case]]
+id = "epubsect-047"
+from = "html-epub_html_exts"
+input = "<aside epub:type=\"x chapter\">N"
+
+[[case]]
+id = "epubsect-048"
+from = "html-epub_html_exts"
+input = "<custom epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></custom><p>z</p>"
+
+[[case]]
+id = "epubsect-049"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"x chapter\">N"
+
+[[case]]
+id = "epubsect-050"
+from = "html-epub_html_exts"
+input = "<nav epub:type=\"Chapter\">N"
+
+[[case]]
+id = "epubsect-051"
+from = "html-epub_html_exts"
+input = "<header epub:type=\"chapters\" id=\"i\" class=\"c\"><p>a</p><p>b</p></header><p>z</p>"
+
+[[case]]
+id = "epubsect-052"
+from = "html-epub_html_exts"
+input = "<footer epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-053"
+from = "html+epub_html_exts-native_divs"
+input = "<address epub:type=\"chapters\" id=\"i\" class=\"c\"><p>a</p><p>b</p></address><p>z</p>"
+
+[[case]]
+id = "epubsect-054"
+from = "html+epub_html_exts"
+input = "<details epub:type=\"part\">N"
+
+[[case]]
+id = "epubsect-055"
+from = "html+epub_html_exts"
+input = "<nav epub:type=\"chapter x\">N"
+
+[[case]]
+id = "epubsect-056"
+from = "html-epub_html_exts"
+input = "<article epub:type=\"x\" id=\"i\" class=\"c\">N</article><p>z</p>"
+
+[[case]]
+id = "epubsect-057"
+from = "html-epub_html_exts"
+input = "<figure epub:type=\"chapters\">N"
+
+[[case]]
+id = "epubsect-058"
+from = "html-epub_html_exts"
+input = "<custom epub:type=\"footnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></custom><p>z</p>"
+
+[[case]]
+id = "epubsect-059"
+from = "html+epub_html_exts-native_divs"
+input = "<figure epub:type=\"chapters\" id=\"i\" class=\"c\">N</figure><p>z</p>"
+
+[[case]]
+id = "epubsect-060"
+from = "html+epub_html_exts-native_divs"
+input = "<blockquote epub:type=\"bodymatter\">N"
+
+[[case]]
+id = "epubsect-061"
+from = "html+epub_html_exts-native_divs"
+input = "<footer epub:type=\"x chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></footer><p>z</p>"
+
+[[case]]
+id = "epubsect-062"
+from = "html+epub_html_exts"
+input = "<ul epub:type=\"toc x\">N"
+
+[[case]]
+id = "epubsect-063"
+from = "html+epub_html_exts-native_divs"
+input = "<div epub:type=\"footnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></div><p>z</p>"
+
+[[case]]
+id = "epubsect-064"
+from = "html-epub_html_exts"
+input = "<figure epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></figure><p>z</p>"
+
+[[case]]
+id = "epubsect-065"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"footnotes\" id=\"i\" class=\"c\">N</pre><p>z</p>"
+
+[[case]]
+id = "epubsect-066"
+from = "html-epub_html_exts"
+input = "<p epub:type=\"\" id=\"i\" class=\"c\"><p>a</p><p>b</p></p><p>z</p>"
+
+[[case]]
+id = "epubsect-067"
+from = "html+epub_html_exts"
+input = "<blockquote epub:type=\"x chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-068"
+from = "html+epub_html_exts-native_divs"
+input = "<table epub:type=\"x\" id=\"i\" class=\"c\">N</table><p>z</p>"
+
+[[case]]
+id = "epubsect-069"
+from = "html+epub_html_exts"
+input = "<span epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></span><p>z</p>"
+
+[[case]]
+id = "epubsect-070"
+from = "html+epub_html_exts-native_divs"
+input = "<blockquote epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-071"
+from = "html-epub_html_exts"
+input = "<h2 epub:type=\"part\" id=\"i\" class=\"c\">N</h2><p>z</p>"
+
+[[case]]
+id = "epubsect-072"
+from = "html+epub_html_exts-native_divs"
+input = "<custom epub:type=\"x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></custom><p>z</p>"
+
+[[case]]
+id = "epubsect-073"
+from = "html-epub_html_exts"
+input = "<blockquote epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-074"
+from = "html-epub_html_exts"
+input = "<p epub:type=\"chapter\">N"
+
+[[case]]
+id = "epubsect-075"
+from = "html+epub_html_exts"
+input = "<section epub:type=\"\" id=\"i\" class=\"c\"><p>a</p><p>b</p></section><p>z</p>"
+
+[[case]]
+id = "epubsect-076"
+from = "html+epub_html_exts-native_divs"
+input = "<nav epub:type=\"\" id=\"i\" class=\"c\"><p>a</p><p>b</p></nav><p>z</p>"
+
+[[case]]
+id = "epubsect-077"
+from = "html+epub_html_exts-native_divs"
+input = "<div epub:type=\"\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-078"
+from = "html-epub_html_exts"
+input = "<span epub:type=\"chapter\" id=\"i\" class=\"c\">N</span><p>z</p>"
+
+[[case]]
+id = "epubsect-079"
+from = "html+epub_html_exts"
+input = "<section epub:type=\"x chapter\">N"
+
+[[case]]
+id = "epubsect-080"
+from = "html-epub_html_exts"
+input = "<custom epub:type=\"landmarks\" id=\"i\" class=\"c\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubsect-081"
+from = "html-epub_html_exts"
+input = "<nav epub:type=\"x chapter\">N"
+
+[[case]]
+id = "epubsect-082"
+from = "html+epub_html_exts-native_divs"
+input = "<figure epub:type=\"x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></figure><p>z</p>"
+
+[[case]]
+id = "epubsect-083"
+from = "html-epub_html_exts"
+input = "<li epub:type=\"chapter x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></li><p>z</p>"
+
+[[case]]
+id = "epubsect-084"
+from = "html+epub_html_exts-native_divs"
+input = "<span epub:type=\"\">N"
+
+[[case]]
+id = "epubsect-085"
+from = "html+epub_html_exts"
+input = "<footer epub:type=\"bodymatter\" id=\"i\" class=\"c\">N</footer><p>z</p>"
+
+[[case]]
+id = "epubsect-086"
+from = "html+epub_html_exts"
+input = "<details epub:type=\"toc x\" id=\"i\" class=\"c\">N</details><p>z</p>"
+
+[[case]]
+id = "epubsect-087"
+from = "html+epub_html_exts"
+input = "<li epub:type=\"rearnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></li><p>z</p>"
+
+[[case]]
+id = "epubsect-088"
+from = "html+epub_html_exts"
+input = "<h2 epub:type=\"x\" id=\"i\" class=\"c\">N</h2><p>z</p>"
+
+[[case]]
+id = "epubsect-089"
+from = "html+epub_html_exts"
+input = "<figure epub:type=\"landmarks\">N"
+
+[[case]]
+id = "epubsect-090"
+from = "html+epub_html_exts-native_divs"
+input = "<li epub:type=\"landmarks\" id=\"i\" class=\"c\">N</li><p>z</p>"
+
+[[case]]
+id = "epubsect-091"
+from = "html+epub_html_exts"
+input = "<article epub:type=\"footnotes\">N"
+
+[[case]]
+id = "epubsect-092"
+from = "html+epub_html_exts"
+input = "<header epub:type=\"rearnotes\">N"
+
+[[case]]
+id = "epubsect-093"
+from = "html+epub_html_exts-native_divs"
+input = "<header epub:type=\"chapter x\" id=\"i\" class=\"c\">N</header><p>z</p>"
+
+[[case]]
+id = "epubsect-094"
+from = "html+epub_html_exts"
+input = "<address epub:type=\"chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></address><p>z</p>"
+
+[[case]]
+id = "epubsect-095"
+from = "html+epub_html_exts-native_divs"
+input = "<ul epub:type=\"footnotes x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></ul><p>z</p>"
+
+[[case]]
+id = "epubsect-096"
+from = "html+epub_html_exts"
+input = "<ul epub:type=\"x chapter\">N"
+
+[[case]]
+id = "epubsect-097"
+from = "html-epub_html_exts"
+input = "<ul epub:type=\"rearnotes\" id=\"i\" class=\"c\">N</ul><p>z</p>"
+
+[[case]]
+id = "epubsect-098"
+from = "html-epub_html_exts"
+input = "<li epub:type=\"x chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></li><p>z</p>"
+
+[[case]]
+id = "epubsect-099"
+from = "html+epub_html_exts-native_divs"
+input = "<h2 epub:type=\"toc\" id=\"i\" class=\"c\"><p>a</p><p>b</p></h2><p>z</p>"
+
+[[case]]
+id = "epubsect-100"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"footnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></main><p>z</p>"
+
+[[case]]
+id = "epubsect-101"
+from = "html+epub_html_exts"
+input = "<article epub:type=\"chapter x\" id=\"i\" class=\"c\">N</article><p>z</p>"
+
+[[case]]
+id = "epubsect-102"
+from = "html-epub_html_exts"
+input = "<header epub:type=\"x chapter\" id=\"i\" class=\"c\">N</header><p>z</p>"
+
+[[case]]
+id = "epubsect-103"
+from = "html-epub_html_exts"
+input = "<aside epub:type=\"chapters\" id=\"i\" class=\"c\"><p>a</p><p>b</p></aside><p>z</p>"
+
+[[case]]
+id = "epubsect-104"
+from = "html+epub_html_exts"
+input = "<header epub:type=\"toc\" id=\"i\" class=\"c\"><p>a</p><p>b</p></header><p>z</p>"
+
+[[case]]
+id = "epubsect-105"
+from = "html+epub_html_exts"
+input = "<table epub:type=\"chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></table><p>z</p>"
+
+[[case]]
+id = "epubsect-106"
+from = "html+epub_html_exts-native_divs"
+input = "<blockquote epub:type=\"toc x\">N"
+
+[[case]]
+id = "epubsect-107"
+from = "html-epub_html_exts"
+input = "<div epub:type=\"\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-108"
+from = "html-epub_html_exts"
+input = "<aside epub:type=\"x chapter\" id=\"i\" class=\"c\">N</aside><p>z</p>"
+
+[[case]]
+id = "epubsect-109"
+from = "html+epub_html_exts-native_divs"
+input = "<span epub:type=\"bodymatter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></span><p>z</p>"
+
+[[case]]
+id = "epubsect-110"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-111"
+from = "html+epub_html_exts"
+input = "<pre epub:type=\"toc x\">N"
+
+[[case]]
+id = "epubsect-112"
+from = "html+epub_html_exts"
+input = "<div epub:type=\"chapters\">N"
+
+[[case]]
+id = "epubsect-113"
+from = "html-epub_html_exts"
+input = "<details epub:type=\"landmarks\" id=\"i\" class=\"c\">N</details><p>z</p>"
+
+[[case]]
+id = "epubsect-114"
+from = "html+epub_html_exts-native_divs"
+input = "<section epub:type=\"footnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></section><p>z</p>"
+
+[[case]]
+id = "epubsect-115"
+from = "html+epub_html_exts-native_divs"
+input = "<custom epub:type=\"landmarks\" id=\"i\" class=\"c\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubsect-116"
+from = "html+epub_html_exts-native_divs"
+input = "<span epub:type=\"toc x\" id=\"i\" class=\"c\">N</span><p>z</p>"
+
+[[case]]
+id = "epubsect-117"
+from = "html-epub_html_exts"
+input = "<blockquote epub:type=\"toc x\">N"
+
+[[case]]
+id = "epubsect-118"
+from = "html+epub_html_exts-native_divs"
+input = "<main epub:type=\"rearnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></main><p>z</p>"
+
+[[case]]
+id = "epubsect-119"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"footnotes\">N"
+
+[[case]]
+id = "epubsect-120"
+from = "html-epub_html_exts"
+input = "<div epub:type=\"landmarks\" id=\"i\" class=\"c\"><p>a</p><p>b</p></div><p>z</p>"
+
+[[case]]
+id = "epubsect-121"
+from = "html-epub_html_exts"
+input = "<details epub:type=\"chapter\" id=\"i\" class=\"c\">N</details><p>z</p>"
+
+[[case]]
+id = "epubsect-122"
+from = "html-epub_html_exts"
+input = "<table epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-123"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"toc x\" id=\"i\" class=\"c\">N</pre><p>z</p>"
+
+[[case]]
+id = "epubsect-124"
+from = "html-epub_html_exts"
+input = "<custom epub:type=\"part\">N"
+
+[[case]]
+id = "epubsect-125"
+from = "html+epub_html_exts"
+input = "<aside epub:type=\"bodymatter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></aside><p>z</p>"
+
+[[case]]
+id = "epubsect-126"
+from = "html+epub_html_exts"
+input = "<p epub:type=\"bodymatter\" id=\"i\" class=\"c\">N</p><p>z</p>"
+
+[[case]]
+id = "epubsect-127"
+from = "html-epub_html_exts"
+input = "<aside epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</aside><p>z</p>"
+
+[[case]]
+id = "epubsect-128"
+from = "html+epub_html_exts-native_divs"
+input = "<main epub:type=\"\" id=\"i\" class=\"c\">N</main><p>z</p>"
+
+[[case]]
+id = "epubsect-129"
+from = "html+epub_html_exts-native_divs"
+input = "<address epub:type=\"chapters\">N"
+
+[[case]]
+id = "epubsect-130"
+from = "html-epub_html_exts"
+input = "<p epub:type=\"bodymatter\">N"
+
+[[case]]
+id = "epubsect-131"
+from = "html-epub_html_exts"
+input = "<aside epub:type=\"chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></aside><p>z</p>"
+
+[[case]]
+id = "epubsect-132"
+from = "html-epub_html_exts"
+input = "<pre epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-133"
+from = "html+epub_html_exts"
+input = "<main epub:type=\"footnotes x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></main><p>z</p>"
+
+[[case]]
+id = "epubsect-134"
+from = "html+epub_html_exts-native_divs"
+input = "<header epub:type=\"chapter x\">N"
+
+[[case]]
+id = "epubsect-135"
+from = "html+epub_html_exts-native_divs"
+input = "<blockquote epub:type=\"chapters\" id=\"i\" class=\"c\"><p>a</p><p>b</p></blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-136"
+from = "html+epub_html_exts-native_divs"
+input = "<nav epub:type=\"x chapter\">N"
+
+[[case]]
+id = "epubsect-137"
+from = "html-epub_html_exts"
+input = "<ul epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></ul><p>z</p>"
+
+[[case]]
+id = "epubsect-138"
+from = "html-epub_html_exts"
+input = "<address epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</address><p>z</p>"
+
+[[case]]
+id = "epubsect-139"
+from = "html-epub_html_exts"
+input = "<div epub:type=\"footnotes x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></div><p>z</p>"
+
+[[case]]
+id = "epubsect-140"
+from = "html-epub_html_exts"
+input = "<custom epub:type=\"rearnotes\">N"
+
+[[case]]
+id = "epubsect-141"
+from = "html+epub_html_exts-native_divs"
+input = "<aside epub:type=\"rearnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></aside><p>z</p>"
+
+[[case]]
+id = "epubsect-142"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"part\" id=\"i\" class=\"c\"><p>a</p><p>b</p></main><p>z</p>"
+
+[[case]]
+id = "epubsect-143"
+from = "html+epub_html_exts-native_divs"
+input = "<div epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></div><p>z</p>"
+
+[[case]]
+id = "epubsect-144"
+from = "html-epub_html_exts"
+input = "<address epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-145"
+from = "html+epub_html_exts"
+input = "<span epub:type=\"chapters\" id=\"i\" class=\"c\"><p>a</p><p>b</p></span><p>z</p>"
+
+[[case]]
+id = "epubsect-146"
+from = "html-epub_html_exts"
+input = "<section epub:type=\"\" id=\"i\" class=\"c\"><p>a</p><p>b</p></section><p>z</p>"
+
+[[case]]
+id = "epubsect-147"
+from = "html+epub_html_exts-native_divs"
+input = "<footer epub:type=\"footnotes\" id=\"i\" class=\"c\"><p>a</p><p>b</p></footer><p>z</p>"
+
+[[case]]
+id = "epubsect-148"
+from = "html+epub_html_exts-native_divs"
+input = "<blockquote epub:type=\"x chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-149"
+from = "html+epub_html_exts"
+input = "<div epub:type=\"x\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-150"
+from = "html-epub_html_exts"
+input = "<blockquote epub:type=\"chapter x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-151"
+from = "html-epub_html_exts"
+input = "<li epub:type=\"Chapter\" id=\"i\" class=\"c\">N</li><p>z</p>"
+
+[[case]]
+id = "epubsect-152"
+from = "html-epub_html_exts"
+input = "<pre epub:type=\"landmarks\">N"
+
+[[case]]
+id = "epubsect-153"
+from = "html+epub_html_exts-native_divs"
+input = "<details epub:type=\"part\" id=\"i\" class=\"c\"><p>a</p><p>b</p></details><p>z</p>"
+
+[[case]]
+id = "epubsect-154"
+from = "html+epub_html_exts"
+input = "<custom epub:type=\"rearnotes\" id=\"i\" class=\"c\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubsect-155"
+from = "html+epub_html_exts"
+input = "<h2 epub:type=\"toc x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></h2><p>z</p>"
+
+[[case]]
+id = "epubsect-156"
+from = "html+epub_html_exts"
+input = "<div epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></div><p>z</p>"
+
+[[case]]
+id = "epubsect-157"
+from = "html+epub_html_exts"
+input = "<figure epub:type=\"Chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></figure><p>z</p>"
+
+[[case]]
+id = "epubsect-158"
+from = "html-epub_html_exts"
+input = "<details epub:type=\"\" id=\"i\" class=\"c\"><p>a</p><p>b</p></details><p>z</p>"
+
+[[case]]
+id = "epubsect-159"
+from = "html+epub_html_exts-native_divs"
+input = "<p epub:type=\"toc x\">N"
+
+[[case]]
+id = "epubsect-160"
+from = "html+epub_html_exts-native_divs"
+input = "<div epub:type=\"Chapter\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-161"
+from = "html+epub_html_exts-native_divs"
+input = "<section epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-162"
+from = "html+epub_html_exts"
+input = "<blockquote epub:type=\"part\" id=\"i\" class=\"c\">N</blockquote><p>z</p>"
+
+[[case]]
+id = "epubsect-163"
+from = "html+epub_html_exts"
+input = "<article epub:type=\"\">N"
+
+[[case]]
+id = "epubsect-164"
+from = "html-epub_html_exts"
+input = "<section epub:type=\"x\" id=\"i\" class=\"c\">N</section><p>z</p>"
+
+[[case]]
+id = "epubsect-165"
+from = "html+epub_html_exts-native_divs"
+input = "<p epub:type=\"chapter\" id=\"i\" class=\"c\">N</p><p>z</p>"
+
+[[case]]
+id = "epubsect-166"
+from = "html+epub_html_exts"
+input = "<li epub:type=\"chapter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></li><p>z</p>"
+
+[[case]]
+id = "epubsect-167"
+from = "html+epub_html_exts-native_divs"
+input = "<h2 epub:type=\"landmarks\" id=\"i\" class=\"c\">N</h2><p>z</p>"
+
+[[case]]
+id = "epubsect-168"
+from = "html+epub_html_exts"
+input = "<address epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</address><p>z</p>"
+
+[[case]]
+id = "epubsect-169"
+from = "html-epub_html_exts"
+input = "<main epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</main><p>z</p>"
+
+[[case]]
+id = "epubsect-170"
+from = "html-epub_html_exts"
+input = "<details epub:type=\"x\">N"
+
+[[case]]
+id = "epubsect-171"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"bodymatter\">N"
+
+[[case]]
+id = "epubsect-172"
+from = "html+epub_html_exts"
+input = "<main epub:type=\"\" id=\"i\" class=\"c\">N</main><p>z</p>"
+
+[[case]]
+id = "epubsect-173"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-174"
+from = "html+epub_html_exts"
+input = "<div epub:type=\"Chapter\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-175"
+from = "html-epub_html_exts"
+input = "<div epub:type=\"chapter\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-176"
+from = "html+epub_html_exts-native_divs"
+input = "<div epub:type=\"toc\">N"
+
+[[case]]
+id = "epubsect-177"
+from = "html+epub_html_exts"
+input = "<nav epub:type=\"landmarks\" id=\"i\" class=\"c\"><p>a</p><p>b</p></nav><p>z</p>"
+
+[[case]]
+id = "epubsect-178"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"chapter\">N"
+
+[[case]]
+id = "epubsect-179"
+from = "html-epub_html_exts"
+input = "<nav epub:type=\"\" id=\"i\" class=\"c\">N</nav><p>z</p>"
+
+[[case]]
+id = "epubsect-180"
+from = "html-epub_html_exts"
+input = "<header epub:type=\"part\">N"
+
+[[case]]
+id = "epubsect-181"
+from = "html+epub_html_exts-native_divs"
+input = "<section epub:type=\"bodymatter\" id=\"i\" class=\"c\"><p>a</p><p>b</p></section><p>z</p>"
+
+[[case]]
+id = "epubsect-182"
+from = "html+epub_html_exts"
+input = "<address epub:type=\"rearnotes\" id=\"i\" class=\"c\">N</address><p>z</p>"
+
+[[case]]
+id = "epubsect-183"
+from = "html+epub_html_exts-native_divs"
+input = "<table epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</table><p>z</p>"
+
+[[case]]
+id = "epubsect-184"
+from = "html+epub_html_exts"
+input = "<div epub:type=\"toc\" id=\"i\" class=\"c\">N</div><p>z</p>"
+
+[[case]]
+id = "epubsect-185"
+from = "html-epub_html_exts"
+input = "<nav epub:type=\"chapter x\" id=\"i\" class=\"c\">N</nav><p>z</p>"
+
+[[case]]
+id = "epubsect-186"
+from = "html+epub_html_exts"
+input = "<article epub:type=\"part\" id=\"i\" class=\"c\"><p>a</p><p>b</p></article><p>z</p>"
+
+[[case]]
+id = "epubsect-187"
+from = "html+epub_html_exts"
+input = "<address epub:type=\"landmarks\">N"
+
+[[case]]
+id = "epubsect-188"
+from = "html+epub_html_exts-native_divs"
+input = "<article epub:type=\"\">N"
+
+[[case]]
+id = "epubsect-189"
+from = "html+epub_html_exts-native_divs"
+input = "<h2 epub:type=\"Chapter\" id=\"i\" class=\"c\">N</h2><p>z</p>"
+
+[[case]]
+id = "epubsect-190"
+from = "html+epub_html_exts"
+input = "<figure epub:type=\"toc x\" id=\"i\" class=\"c\"><p>a</p><p>b</p></figure><p>z</p>"
+
+[[case]]
+id = "epubsect-191"
+from = "html+epub_html_exts-native_divs"
+input = "<h2 epub:type=\"\">N"
+
+[[case]]
+id = "epubsect-192"
+from = "html+epub_html_exts-native_divs"
+input = "<pre epub:type=\"chapter\" id=\"i\" class=\"c\">N</pre><p>z</p>"
+
+[[case]]
+id = "epubsect-193"
+from = "html-epub_html_exts"
+input = "<custom epub:type=\"chapters\" id=\"i\" class=\"c\">N</custom><p>z</p>"
+
+[[case]]
+id = "epubsect-194"
+from = "html-epub_html_exts"
+input = "<footer epub:type=\"part\">N"
+
+[[case]]
+id = "epubsect-195"
+from = "html-epub_html_exts"
+input = "<li epub:type=\"\" id=\"i\" class=\"c\">N</li><p>z</p>"
+
+[[case]]
+id = "epubsect-196"
+from = "html+epub_html_exts-native_divs"
+input = "<header epub:type=\"chapter\">N"
+
+[[case]]
+id = "epubsect-197"
+from = "html+epub_html_exts-native_divs"
+input = "<header epub:type=\"rearnotes\">N"
+
+[[case]]
+id = "epubsect-198"
+from = "html-epub_html_exts"
+input = "<header epub:type=\"footnotes x\" id=\"i\" class=\"c\">N</header><p>z</p>"
+
+[[case]]
+id = "epubsect-199"
+from = "html-epub_html_exts"
+input = "<blockquote epub:type=\"footnotes\">N"
+
+[[case]]
+id = "epubsect-200"
+from = "html-epub_html_exts"
+input = "<footer epub:type=\"x chapter\" id=\"i\" class=\"c\">N</footer><p>z</p>"
+

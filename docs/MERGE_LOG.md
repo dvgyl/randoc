@@ -2179,3 +2179,41 @@ Open findings: I-LTXR-11, I-LTXR-34, I-LTXR-35, I-LTXR-37, I-LTXR-38
 (high); I-LTXR-07, I-LTXR-42 to I-LTXR-48 (medium); the low rows. Open
 checks: the verification of round 1, the Pandoc test suite, the
 differential run, coverage, the mutation sample.
+
+## Workstream html-reader (branch `ws/html-reader-3`, commit a6857a1, one squashed commit, session 5 of 2026-11-15, batch D)
+
+Merged as a small block under owner instruction 17. Content (`git log
+--format='%h %s' main..a6857a1`): 4269be3 closes the four medium rows
+of review round 3 (raw TeX after `\ref`, EPUB notes without native
+divisions, the base URI after RFC 3986, the note list; I-HTMLR-16, 19,
+21, 22, 23); a6857a1 reads the EPUB section types and the TeX
+annotation of MathML, corrects two low findings and closes I-HTMLR-11
+and I-HTMLR-12. Rows: I-HTMLR-24, 25, 26 (low) and 27 (closed) added;
+I-HTMLR-01, 07, 08, 13, 14 changed.
+
+The gate evidence comes from the inbox lines of 4269be3 and a6857a1
+(`env/store/inbox/html-reader.log`, the last one 2026-11-15T00:08Z),
+from the commit list above and from the top section of
+`env/store/reports/html-reader.md` (00:10 UTC).
+
+| Gate | Evidence |
+| --- | --- |
+| 1. No regressions | Inbox line: the gate script passed on a6857a1. The merged tree is checked by `merge-ws check` (see the batch record). |
+| 2. Measured progress | Report: oracle matrices of 5,880 (raw TeX numbers), 4,968 (EPUB notes), 462 (base URI), 4,000 (note lists), 2,700 (EPUB section types) and 960 (MathML) inputs; harness `--filter html-reader/` 9,210 units, 9,206 pass, 4 fail (known). |
+| 3. Tests | `cargo test -p randoc-html-reader` on the merged tree: 42 pass, 0 fail, 1 ignored. Coverage and the mutation sample: not run. |
+| 4. No panics | Not run in this unit. |
+| 5. Reviews | Round 3 requested changes; the verification follows. |
+| 6. No slowdowns | Not measured (the report says linear by construction). |
+| 7. Clean build | `cargo build --workspace --all-targets` passed on the merged tree. |
+
+Conflicts in the merge: one, in `docs/ISSUES.md`. `resolve-tables` kept
+`main` and added 4 rows; the 12 I-HTMLR rows that the branch changed had
+the older text of `main`, so the text of a6857a1 is taken for them, and
+the rows I-HTMLR-24 to I-HTMLR-27 are put after I-HTMLR-23 as on the
+branch. Each I-HTMLR row is in the file one time. Licence scan of
+a6857a1: only the known sorted tag-name lists in `src/parse.rs` (37
+hits, 0.5 %); accepted, as in earlier records.
+
+Open findings: none with the level medium or higher; the low rows and
+the scope gaps I-HTMLR-01, 02, 07. Open checks: the verification of
+round 3, fuzzing, coverage, the mutation sample, the CPU table.
