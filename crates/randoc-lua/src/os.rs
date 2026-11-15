@@ -90,6 +90,7 @@ impl Os {
 
     /// Starts the environment of a `with_environment` call.
     pub(crate) fn enter(&mut self, variables: Variables) {
+        crate::steps::add(variables.len() + self.saved.len() + 1);
         self.saved.push(self.replaced.replace(variables));
     }
 

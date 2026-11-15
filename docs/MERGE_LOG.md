@@ -2345,3 +2345,21 @@ data, no copied text).
 Open findings: I-LUA-11 and I-LUA-15 (medium); the low rows. Open
 checks: a review of the new code, fuzzing, coverage, the mutation
 sample.
+
+## Workstream lua (branch `ws/lua-3`, commit b05ab81, one squashed commit, session 5 of 2026-11-15, batch D)
+
+Added to the batch by the coordinator. This record holds the commit
+b05ab81 only: the two wall-time tests of `randoc-lua` that the gate
+runs become step-count tests (`with_environment_needs_linear_steps`,
+`path_and_table_functions_need_linear_steps`, with a test-only step
+counter in `src/steps.rs`); the wall-time forms are `#[ignore]`. The
+known flaky test `with_environment_needs_linear_time` can no longer
+fail the gate under load. Gate evidence: inbox line of b05ab81
+(`env/store/inbox/lua.log`, 00:35:00 UTC) and the top section of
+`env/store/reports/lua.md` (00:35 UTC; with `leave` changed to keep the
+old environment, the step test fails). `cargo test -p randoc-lua` on
+the merged tree: 47 pass, 0 fail, 6 ignored. `cargo build --workspace
+--all-targets` passed. Conflicts: `src/os.rs` and `src/tests.rs` (the
+versions of b05ab81 are taken, so the crate is equal to b05ab81);
+`docs/ISSUES.md` (no row changes). Licence scan of b05ab81: the same
+accepted hits as 0e11bed. Review state: no review yet.

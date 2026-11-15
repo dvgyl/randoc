@@ -115,6 +115,7 @@ fn place_row_section<I: Iterator<Item = Cell>>(
     let mut placed = Vec::new();
     let mut at = 0;
     while let Some(&over) = hang.get(at) {
+        crate::steps::add(1);
         if over > 1 {
             new_hang.push(over - 1);
             at += 1;
@@ -133,6 +134,7 @@ fn place_row_section<I: Iterator<Item = Cell>>(
         if free == 0 {
             break;
         }
+        crate::steps::add(free);
         let mut cell = stream.next().unwrap_or_else(empty_cell);
         cell.col_span = free as i64;
         new_hang.extend(std::iter::repeat_n(cell.row_span, free));

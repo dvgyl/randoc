@@ -175,6 +175,7 @@ fn join_path(parts: &[String]) -> String {
     let mut pieces: Vec<&str> = Vec::new();
     let mut rest_is_empty = true;
     for part in parts.iter().rev() {
+        crate::steps::add(1);
         let rest_starts_with_slash = pieces.last().is_some_and(|piece| piece.starts_with('/'));
         if rest_starts_with_slash || part.is_empty() {
             continue;
@@ -185,10 +186,12 @@ fn join_path(parts: &[String]) -> String {
         pieces.push(part);
         rest_is_empty = false;
     }
+    crate::steps::add(pieces.iter().map(|piece| piece.len()).sum());
     pieces.iter().rev().copied().collect()
 }
 
 fn normalise(path: &str) -> String {
+    crate::steps::add(path.len());
     let (drive, rest) = split_drive(path);
     let parts: Vec<String> = split_directories(rest)
         .into_iter()
@@ -239,6 +242,7 @@ fn make_relative(root: &str, path: &str) -> String {
         }
         let (x1, x2) = next(x);
         let (y1, y2) = next(y);
+        crate::steps::add(x1.len() + y1.len() + 1);
         if !equal_file_path(x1, y1) {
             return path.to_string();
         }

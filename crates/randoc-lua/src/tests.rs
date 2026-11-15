@@ -1192,11 +1192,62 @@ fn lua_seconds(setup: &str, operation: &str, size: usize) -> f64 {
         .unwrap()
 }
 
-/// Standing order 21a: 4 times the input needs less than 10 times the
-/// time. Reviews lua-R2-04 and lua-R2-05 found quadratic time. The path
-/// functions copy bytes, which is fast, so their test uses 8 times the
-/// input and a bound of 20.
+/// The steps of `operation` (module `steps`) for an input of `size` items.
+fn lua_steps(setup: &str, operation: &str, size: usize) -> u64 {
+    let code = format!("(function() local n = {size} {setup} {operation} return 0 end)()");
+    crate::steps::take();
+    system_probe(Mode::Full, &code, &mut Context::pure());
+    crate::steps::take()
+}
+
+/// Standing order 21a, with a count of steps in place of time, so that a
+/// loaded machine cannot fail it. Reviews lua-R2-04 and lua-R2-05 found
+/// quadratic time in these functions. A linear algorithm needs at most
+/// twice the size factor in steps; a quadratic one needs its square.
 #[test]
+fn path_and_table_functions_need_linear_steps() {
+    let cases = [
+        (
+            "join",
+            "local x = {} for i = 1, n do x[i] = 'a' end",
+            "pandoc.path.join(x)",
+            5_000,
+            8,
+        ),
+        (
+            "make_relative",
+            "local x = string.rep('a/', n)",
+            "pandoc.path.make_relative(x .. 'b', x)",
+            5_000,
+            8,
+        ),
+        (
+            "normalize of a wide table",
+            "local P = pandoc local specs, cells = {}, {} \
+             for i = 1, n do specs[i] = {P.AlignDefault, 0} cells[i] = P.Cell{} end \
+             local x = P.Pandoc{P.Table(P.Caption(), specs, P.TableHead{P.Row(cells)}, {}, P.TableFoot())}",
+            "x:normalize()",
+            500,
+            4,
+        ),
+    ];
+    for (name, setup, operation, size, factor) in cases {
+        let small = lua_steps(setup, operation, size);
+        let large = lua_steps(setup, operation, factor * size);
+        assert!(small > 0, "{name}: no steps counted");
+        assert!(
+            large <= 2 * factor as u64 * small,
+            "{name}: {small} steps for {size} items, {large} steps for {factor} times as many"
+        );
+    }
+}
+
+/// The wall-time form of `path_and_table_functions_need_linear_steps`:
+/// 4 times the input needs less than 10 times the time, 8 times the input
+/// less than 20 times. It fails on a loaded machine, so the gate does not
+/// run it.
+#[test]
+#[ignore = "a time measurement; the gate runs the step count"]
 fn path_and_table_functions_need_linear_time() {
     let cases = [
         (
@@ -1485,10 +1536,35 @@ fn each_invalid_byte_gives_one_replacement_character() {
 }
 
 /// Codex lua-R3-04: each call of `with_environment` with a new name made
-/// each later call slower. The time of N calls must grow linearly (order
-/// 21a: the minimum of 5 runs at two sizes, a factor 10 for a size factor
-/// of 4).
+/// each later call slower. The steps of N calls must grow linearly: 4
+/// times the calls need at most 8 times the steps. A state that keeps an
+/// old environment after each call gives the square.
 #[test]
+fn with_environment_needs_linear_steps() {
+    let steps = |count: usize| {
+        let code = format!(
+            "(function() local S = pandoc.system for i = 1, {count} do \
+             S.with_environment({{['X_GROW_' .. i] = 'x'}}, function() end) end \
+             return 0 end)()"
+        );
+        crate::steps::take();
+        system_probe(Mode::Full, &code, &mut Context::pure());
+        crate::steps::take()
+    };
+    let small = steps(500);
+    let large = steps(2000);
+    assert!(small > 0, "no steps counted");
+    assert!(
+        large <= 8 * small,
+        "500 calls {small} steps, 2000 calls {large} steps"
+    );
+}
+
+/// The wall-time form of `with_environment_needs_linear_steps` (order
+/// 21a: the minimum of 5 runs at two sizes, a factor 10 for a size factor
+/// of 4). It fails on a loaded machine, so the gate does not run it.
+#[test]
+#[ignore = "a time measurement; the gate runs the step count"]
 fn with_environment_needs_linear_time() {
     let seconds = |count: usize| {
         let code = format!(
