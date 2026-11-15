@@ -2363,3 +2363,29 @@ the merged tree: 47 pass, 0 fail, 6 ignored. `cargo build --workspace
 versions of b05ab81 are taken, so the crate is equal to b05ab81);
 `docs/ISSUES.md` (no row changes). Licence scan of b05ab81: the same
 accepted hits as 0e11bed. Review state: no review yet.
+
+## Session 5 of 2026-11-15, batch D (six blocks)
+
+Commits: latex-reader 4fad0ed (c46be2e), html-reader a6857a1 (becae30),
+citeproc 4327de5 (d3f5a8a), markdown-writer 34a4339 (ff5a64b), lua
+0e11bed (c75b776), lua b05ab81 (54ae392; added by the coordinator).
+Each worker continues on its branch; each block holds the named commit
+only. The memory proof of the latex-reader block is in its record.
+
+`merge-ws check`, first run: passed. The watchdog stopped no process.
+Gate times: format 00:39:56, lints 00:40:00, documentation 00:40:44,
+tests 00:41:18, conformance harness 00:50:39, end 00:53:52 UTC (about
+16 minutes). The oracle check: 2753 units checked, 0 stored results out
+of date.
+
+| Harness | Units | Pass | Fail | Skipped | Regressions | New passes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Before (`main` 7818dc8) | 53648 | 50817 | 2411 | 420 | 0 | 0 |
+| After | 57176 | 54488 | 2268 | 420 | 0 | 3671 |
+
+Capability summary: extensions 53 passing, 25 partial, 1 failing, 11
+not started; input formats 4 passing, 9 partial, 39 not started;
+options 90 passing, 18 partial, 1 not started; output formats 5
+passing, 12 partial, 1 failing, 59 not started; units 54488 of 56756
+passing. `spec/baseline.json` and `spec/capabilities.json` are updated
+in the next commit.
