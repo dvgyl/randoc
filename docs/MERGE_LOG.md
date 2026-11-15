@@ -3231,3 +3231,39 @@ Open: high and medium findings of round 2, among them R2-13, R2-02,
 R2-03, R2-04, R2-05 and Codex R2-03 (all high). I-MDW-02 (low).
 Checks that did not run: the report states no run of mutation tests,
 coverage, fuzzing or benchmarks for this range.
+
+**latex-reader**: branch `ws/latex-reader-7`, commits `2421b7c..b4490ba`
+(one commit: `b4490ba`). It corrects a regression of the block `9a3d42d`.
+The scan before an option stopped at a comment. The argument check of a
+command with a verbatim argument (`\includegraphics`) accepted only
+spaces after the option. One shared function, `skip_option_gap` in
+`parse.rs`, now skips spaces, comments and line ends. It allows one line
+end only where Pandoc gives the parse error. The commit adds a test, the
+matrix `errors/optcomment-*` and the row I-LTXR-54.
+
+Gate: no gate pass on the branch for `b4490ba`: the gate run of the
+worker (09:34 to 10:06 UTC) failed only in 6 units of another crate
+(`latex-writer/beamer/m-id-div-slide-*`), which got no result in the time
+limit of 20 seconds while the load average of the machine was between 120
+and 200; the worker ran these units again and each one passed. The merge
+check of batch H on the merged tree is the gate of this block.
+
+Measured by the worker: Pandoc test `command/6114`: 1 of 1 pass with the
+build of the branch, 0 of 1 with `main`. New matrix `errors/optcomment-*`:
+640 units, 552 pass, 88 fail (38 are forms that the reference reads without
+an error, 50 are forms where the reference gives a parse error); `main`:
+474 pass, 112 fail on forms without an error. Suite `latex-reader/`: 57,516
+units against the baseline, 0 regressions, 558 new passes. Whole test
+binary under `limit-run`: 32 pass, 1 ignored, no stop; the report states
+no peak memory.
+
+Review state: This block corrects a regression of this session, not a
+review finding. The measurement of `main` `83c1183` showed one lost test of
+the Pandoc test suite (`command/6114.md`: an image command with a comment
+between its option and its argument stopped with exit code 64). The cause
+was in the option rules of the block `9a3d42d`. The verification of the
+LaTeX reader by both reviewers (round 2) is due.
+Open: I-LTXR-54 (low): the 38 open forms without an error and the parse
+errors of Pandoc in a macro body.
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.

@@ -540,6 +540,12 @@
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
       "stderr": ""
+    },
+    "structure-091#read": {
+      "key": "5f23d93cccf1c8c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Figure:\"},{\"t\":\"SoftBreak\"},{\"t\":\"Image\",\"c\":[[\"\",[],[[\"height\",\"2cm\"]]],[{\"t\":\"Str\",\"c\":\"image\"}],[\"figures/plot.pdf\",\"\"]]}]}]}\n",
+      "stderr": ""
     }
   }
 }

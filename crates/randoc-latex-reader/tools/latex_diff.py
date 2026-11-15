@@ -325,6 +325,40 @@ def error_forms():
     return forms
 
 
+# The commands of the matrix `optcomment`: `@A` is the place between the
+# command and its option, `@B` between the option and the argument, `@C`
+# between two arguments.
+OPTCOMMENT_COMMANDS = [
+    "\\includegraphics@A[width=1cm]@B{a.png}",
+    "\\href@A{u}@C{t}",
+    "\\section@A[s]@B{t}",
+    "\\caption@A[s]@B{c}",
+    "\\begin{description}\\item@A[a]@B x\\end{description}",
+    "\\cite@A[p]@C[q]@B{k}",
+    "\\textbf@A{t}",
+    "\\begin{minipage}@A[t]@B{3cm}x\\end{minipage}",
+    "\\newcommand{\\x}[2][d]{(#1,#2)}\\x@A[o]@B{y}",
+    "\\footnote@A[1]@B{x}",
+]
+OPTCOMMENT_WRAPPERS = [
+    "@",
+    "\\begin{itemize}\\item @\\end{itemize}",
+    "\\begin{tabular}{l}@\\\\\\end{tabular}",
+    "\\newcommand{\\m}{@}\\m",
+]
+
+
+def optcomment_contexts():
+    contexts = []
+    for command in OPTCOMMENT_COMMANDS:
+        for slot in re.findall(r"@[ABC]", command):
+            for wrapper in OPTCOMMENT_WRAPPERS:
+                text = wrapper.replace("@", command).replace("{", "{{").replace("}", "}}")
+                text = text.replace(slot, "{}")
+                contexts.append(re.sub(r"@[ABC]", "", text))
+    return contexts
+
+
 # Matrices of parse errors and of table cells, in `errors.toml`. The fourth
 # element is the input format of the cases.
 ERROR_MATRICES = [
@@ -745,8 +779,13 @@ ERROR_MATRICES = [
         ["{}"],
         "latex+raw_tex",
     ),
+    (
+        "optcomment",
+        ["", " ", "\n", "%c\n", "%c\n  ", "%c\n%d\n", "%c\n\n", "\n\n"],
+        optcomment_contexts(),
+        "latex",
+    ),
 ]
-
 
 def write_matrix():
     out = (

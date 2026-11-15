@@ -361,3 +361,7 @@ input = "x \\unknown[o]{a} y\n"
 [[case]]
 id = "structure-090"
 input = "\\unknown*{a}\n"
+
+[[case]]
+id = "structure-091"
+input = "Figure:\n\\includegraphics[height=2cm]%\n  {figures/plot.pdf}\n"

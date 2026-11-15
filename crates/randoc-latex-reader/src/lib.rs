@@ -46,7 +46,7 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
 #[cfg(test)]
 mod tests {
 
-    use randoc_ast::{Attr, Block, Inline};
+    use randoc_ast::{Attr, Block, Inline, Target};
     use randoc_core::FormatSpec;
 
     use super::*;
@@ -390,6 +390,43 @@ mod tests {
                 Inline::Space,
                 Inline::Emph(vec![Inline::Str("b".into())])
             ])]
+        );
+    }
+
+    /// Oracle results (matrix `errors/optcomment-*`): a comment between an
+    /// option and its argument is skipped with its line end; a second line
+    /// end there is the parse error of Pandoc.
+    #[test]
+    fn a_comment_after_an_option_is_skipped() {
+        let image = |path: &str| {
+            vec![Block::Para(vec![Inline::Image(
+                Attr {
+                    attributes: vec![("width".into(), "1cm".into())],
+                    ..Attr::default()
+                },
+                vec![Inline::Str("image".into())],
+                Target::new(path, ""),
+            )])]
+        };
+        for input in [
+            "\\includegraphics[width=1cm]%c\n  {a.png}\n",
+            "\\includegraphics[width=1cm] %c\n{a.png}\n",
+            "\\includegraphics[width=1cm]\n{a.png}\n",
+        ] {
+            let tree = convert(input, "latex").expect(input);
+            assert_eq!(tree.blocks, image("a.png"), "{input:?}");
+        }
+        let error = convert("\\includegraphics[width=1cm]\n%c\n{a.png}\n", "latex")
+            .expect_err("second line end");
+        assert_eq!(
+            error,
+            Error::Parse("Error at (line 2, column 3):\nunexpected \n\n%c\n  ^".into())
+        );
+        let tree = convert("\\section%c\n[s]{t}\n", "latex").expect("section");
+        assert!(
+            matches!(&tree.blocks[..], [Block::Header(1, _, text)] if *text == [Inline::Str("t".into())]),
+            "{:?}",
+            tree.blocks
         );
     }
 

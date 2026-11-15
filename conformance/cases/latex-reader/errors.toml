@@ -9468,3 +9468,2563 @@ from = "latex+raw_tex"
 id = "newline-raw-02-01"
 input = "a\\newline [a] b\n"
 from = "latex+raw_tex"
+
+[[case]]
+id = "optcomment-01-01"
+input = "\\includegraphics[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-01-02"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-03"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-04"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-01-05"
+input = "\\includegraphics[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-01-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-01-09"
+input = "\\href{u}{t}\n"
+
+[[case]]
+id = "optcomment-01-10"
+input = "\\begin{itemize}\\item \\href{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-11"
+input = "\\begin{tabular}{l}\\href{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-12"
+input = "\\newcommand{\\m}{\\href{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-01-13"
+input = "\\href{u}{t}\n"
+
+[[case]]
+id = "optcomment-01-14"
+input = "\\begin{itemize}\\item \\href{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-15"
+input = "\\begin{tabular}{l}\\href{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-16"
+input = "\\newcommand{\\m}{\\href{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-01-17"
+input = "\\section[s]{t}\n"
+
+[[case]]
+id = "optcomment-01-18"
+input = "\\begin{itemize}\\item \\section[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-19"
+input = "\\begin{tabular}{l}\\section[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-20"
+input = "\\newcommand{\\m}{\\section[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-01-21"
+input = "\\section[s]{t}\n"
+
+[[case]]
+id = "optcomment-01-22"
+input = "\\begin{itemize}\\item \\section[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-23"
+input = "\\begin{tabular}{l}\\section[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-24"
+input = "\\newcommand{\\m}{\\section[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-01-25"
+input = "\\caption[s]{c}\n"
+
+[[case]]
+id = "optcomment-01-26"
+input = "\\begin{itemize}\\item \\caption[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-27"
+input = "\\begin{tabular}{l}\\caption[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-28"
+input = "\\newcommand{\\m}{\\caption[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-01-29"
+input = "\\caption[s]{c}\n"
+
+[[case]]
+id = "optcomment-01-30"
+input = "\\begin{itemize}\\item \\caption[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-31"
+input = "\\begin{tabular}{l}\\caption[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-32"
+input = "\\newcommand{\\m}{\\caption[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-01-33"
+input = "\\begin{description}\\item[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-01-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-01-37"
+input = "\\begin{description}\\item[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-01-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-01-41"
+input = "\\cite[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-01-42"
+input = "\\begin{itemize}\\item \\cite[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-43"
+input = "\\begin{tabular}{l}\\cite[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-44"
+input = "\\newcommand{\\m}{\\cite[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-01-45"
+input = "\\cite[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-01-46"
+input = "\\begin{itemize}\\item \\cite[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-47"
+input = "\\begin{tabular}{l}\\cite[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-48"
+input = "\\newcommand{\\m}{\\cite[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-01-49"
+input = "\\cite[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-01-50"
+input = "\\begin{itemize}\\item \\cite[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-51"
+input = "\\begin{tabular}{l}\\cite[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-52"
+input = "\\newcommand{\\m}{\\cite[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-01-53"
+input = "\\textbf{t}\n"
+
+[[case]]
+id = "optcomment-01-54"
+input = "\\begin{itemize}\\item \\textbf{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-55"
+input = "\\begin{tabular}{l}\\textbf{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-56"
+input = "\\newcommand{\\m}{\\textbf{t}}\\m\n"
+
+[[case]]
+id = "optcomment-01-57"
+input = "\\begin{minipage}[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-01-58"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-59"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-60"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-01-61"
+input = "\\begin{minipage}[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-01-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-01-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\n"
+
+[[case]]
+id = "optcomment-01-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-01-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\n"
+
+[[case]]
+id = "optcomment-01-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-01-73"
+input = "\\footnote[1]{x}\n"
+
+[[case]]
+id = "optcomment-01-74"
+input = "\\begin{itemize}\\item \\footnote[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-75"
+input = "\\begin{tabular}{l}\\footnote[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-76"
+input = "\\newcommand{\\m}{\\footnote[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-01-77"
+input = "\\footnote[1]{x}\n"
+
+[[case]]
+id = "optcomment-01-78"
+input = "\\begin{itemize}\\item \\footnote[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-01-79"
+input = "\\begin{tabular}{l}\\footnote[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-01-80"
+input = "\\newcommand{\\m}{\\footnote[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-02-01"
+input = "\\includegraphics [width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-02-02"
+input = "\\begin{itemize}\\item \\includegraphics [width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-03"
+input = "\\begin{tabular}{l}\\includegraphics [width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-04"
+input = "\\newcommand{\\m}{\\includegraphics [width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-02-05"
+input = "\\includegraphics[width=1cm] {a.png}\n"
+
+[[case]]
+id = "optcomment-02-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm] {a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm] {a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm] {a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-02-09"
+input = "\\href {u}{t}\n"
+
+[[case]]
+id = "optcomment-02-10"
+input = "\\begin{itemize}\\item \\href {u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-11"
+input = "\\begin{tabular}{l}\\href {u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-12"
+input = "\\newcommand{\\m}{\\href {u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-02-13"
+input = "\\href{u} {t}\n"
+
+[[case]]
+id = "optcomment-02-14"
+input = "\\begin{itemize}\\item \\href{u} {t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-15"
+input = "\\begin{tabular}{l}\\href{u} {t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-16"
+input = "\\newcommand{\\m}{\\href{u} {t}}\\m\n"
+
+[[case]]
+id = "optcomment-02-17"
+input = "\\section [s]{t}\n"
+
+[[case]]
+id = "optcomment-02-18"
+input = "\\begin{itemize}\\item \\section [s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-19"
+input = "\\begin{tabular}{l}\\section [s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-20"
+input = "\\newcommand{\\m}{\\section [s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-02-21"
+input = "\\section[s] {t}\n"
+
+[[case]]
+id = "optcomment-02-22"
+input = "\\begin{itemize}\\item \\section[s] {t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-23"
+input = "\\begin{tabular}{l}\\section[s] {t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-24"
+input = "\\newcommand{\\m}{\\section[s] {t}}\\m\n"
+
+[[case]]
+id = "optcomment-02-25"
+input = "\\caption [s]{c}\n"
+
+[[case]]
+id = "optcomment-02-26"
+input = "\\begin{itemize}\\item \\caption [s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-27"
+input = "\\begin{tabular}{l}\\caption [s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-28"
+input = "\\newcommand{\\m}{\\caption [s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-02-29"
+input = "\\caption[s] {c}\n"
+
+[[case]]
+id = "optcomment-02-30"
+input = "\\begin{itemize}\\item \\caption[s] {c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-31"
+input = "\\begin{tabular}{l}\\caption[s] {c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-32"
+input = "\\newcommand{\\m}{\\caption[s] {c}}\\m\n"
+
+[[case]]
+id = "optcomment-02-33"
+input = "\\begin{description}\\item [a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-02-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item [a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item [a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item [a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-02-37"
+input = "\\begin{description}\\item[a]  x\\end{description}\n"
+
+[[case]]
+id = "optcomment-02-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]  x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]  x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]  x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-02-41"
+input = "\\cite [p][q]{k}\n"
+
+[[case]]
+id = "optcomment-02-42"
+input = "\\begin{itemize}\\item \\cite [p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-43"
+input = "\\begin{tabular}{l}\\cite [p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-44"
+input = "\\newcommand{\\m}{\\cite [p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-02-45"
+input = "\\cite[p] [q]{k}\n"
+
+[[case]]
+id = "optcomment-02-46"
+input = "\\begin{itemize}\\item \\cite[p] [q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-47"
+input = "\\begin{tabular}{l}\\cite[p] [q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-48"
+input = "\\newcommand{\\m}{\\cite[p] [q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-02-49"
+input = "\\cite[p][q] {k}\n"
+
+[[case]]
+id = "optcomment-02-50"
+input = "\\begin{itemize}\\item \\cite[p][q] {k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-51"
+input = "\\begin{tabular}{l}\\cite[p][q] {k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-52"
+input = "\\newcommand{\\m}{\\cite[p][q] {k}}\\m\n"
+
+[[case]]
+id = "optcomment-02-53"
+input = "\\textbf {t}\n"
+
+[[case]]
+id = "optcomment-02-54"
+input = "\\begin{itemize}\\item \\textbf {t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-55"
+input = "\\begin{tabular}{l}\\textbf {t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-56"
+input = "\\newcommand{\\m}{\\textbf {t}}\\m\n"
+
+[[case]]
+id = "optcomment-02-57"
+input = "\\begin{minipage} [t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-02-58"
+input = "\\begin{itemize}\\item \\begin{minipage} [t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-59"
+input = "\\begin{tabular}{l}\\begin{minipage} [t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-60"
+input = "\\newcommand{\\m}{\\begin{minipage} [t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-02-61"
+input = "\\begin{minipage}[t] {3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-02-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t] {3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t] {3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t] {3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-02-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x [o]{y}\n"
+
+[[case]]
+id = "optcomment-02-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x [o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x [o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x [o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-02-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o] {y}\n"
+
+[[case]]
+id = "optcomment-02-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o] {y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o] {y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o] {y}}\\m\n"
+
+[[case]]
+id = "optcomment-02-73"
+input = "\\footnote [1]{x}\n"
+
+[[case]]
+id = "optcomment-02-74"
+input = "\\begin{itemize}\\item \\footnote [1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-75"
+input = "\\begin{tabular}{l}\\footnote [1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-76"
+input = "\\newcommand{\\m}{\\footnote [1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-02-77"
+input = "\\footnote[1] {x}\n"
+
+[[case]]
+id = "optcomment-02-78"
+input = "\\begin{itemize}\\item \\footnote[1] {x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-02-79"
+input = "\\begin{tabular}{l}\\footnote[1] {x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-02-80"
+input = "\\newcommand{\\m}{\\footnote[1] {x}}\\m\n"
+
+[[case]]
+id = "optcomment-03-01"
+input = "\\includegraphics\n[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-03-02"
+input = "\\begin{itemize}\\item \\includegraphics\n[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-03"
+input = "\\begin{tabular}{l}\\includegraphics\n[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-04"
+input = "\\newcommand{\\m}{\\includegraphics\n[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-03-05"
+input = "\\includegraphics[width=1cm]\n{a.png}\n"
+
+[[case]]
+id = "optcomment-03-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]\n{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]\n{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]\n{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-03-09"
+input = "\\href\n{u}{t}\n"
+
+[[case]]
+id = "optcomment-03-10"
+input = "\\begin{itemize}\\item \\href\n{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-11"
+input = "\\begin{tabular}{l}\\href\n{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-12"
+input = "\\newcommand{\\m}{\\href\n{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-03-13"
+input = "\\href{u}\n{t}\n"
+
+[[case]]
+id = "optcomment-03-14"
+input = "\\begin{itemize}\\item \\href{u}\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-15"
+input = "\\begin{tabular}{l}\\href{u}\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-16"
+input = "\\newcommand{\\m}{\\href{u}\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-03-17"
+input = "\\section\n[s]{t}\n"
+
+[[case]]
+id = "optcomment-03-18"
+input = "\\begin{itemize}\\item \\section\n[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-19"
+input = "\\begin{tabular}{l}\\section\n[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-20"
+input = "\\newcommand{\\m}{\\section\n[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-03-21"
+input = "\\section[s]\n{t}\n"
+
+[[case]]
+id = "optcomment-03-22"
+input = "\\begin{itemize}\\item \\section[s]\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-23"
+input = "\\begin{tabular}{l}\\section[s]\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-24"
+input = "\\newcommand{\\m}{\\section[s]\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-03-25"
+input = "\\caption\n[s]{c}\n"
+
+[[case]]
+id = "optcomment-03-26"
+input = "\\begin{itemize}\\item \\caption\n[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-27"
+input = "\\begin{tabular}{l}\\caption\n[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-28"
+input = "\\newcommand{\\m}{\\caption\n[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-03-29"
+input = "\\caption[s]\n{c}\n"
+
+[[case]]
+id = "optcomment-03-30"
+input = "\\begin{itemize}\\item \\caption[s]\n{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-31"
+input = "\\begin{tabular}{l}\\caption[s]\n{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-32"
+input = "\\newcommand{\\m}{\\caption[s]\n{c}}\\m\n"
+
+[[case]]
+id = "optcomment-03-33"
+input = "\\begin{description}\\item\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-03-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item\n[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item\n[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item\n[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-03-37"
+input = "\\begin{description}\\item[a]\n x\\end{description}\n"
+
+[[case]]
+id = "optcomment-03-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]\n x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]\n x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]\n x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-03-41"
+input = "\\cite\n[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-03-42"
+input = "\\begin{itemize}\\item \\cite\n[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-43"
+input = "\\begin{tabular}{l}\\cite\n[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-44"
+input = "\\newcommand{\\m}{\\cite\n[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-03-45"
+input = "\\cite[p]\n[q]{k}\n"
+
+[[case]]
+id = "optcomment-03-46"
+input = "\\begin{itemize}\\item \\cite[p]\n[q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-47"
+input = "\\begin{tabular}{l}\\cite[p]\n[q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-48"
+input = "\\newcommand{\\m}{\\cite[p]\n[q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-03-49"
+input = "\\cite[p][q]\n{k}\n"
+
+[[case]]
+id = "optcomment-03-50"
+input = "\\begin{itemize}\\item \\cite[p][q]\n{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-51"
+input = "\\begin{tabular}{l}\\cite[p][q]\n{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-52"
+input = "\\newcommand{\\m}{\\cite[p][q]\n{k}}\\m\n"
+
+[[case]]
+id = "optcomment-03-53"
+input = "\\textbf\n{t}\n"
+
+[[case]]
+id = "optcomment-03-54"
+input = "\\begin{itemize}\\item \\textbf\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-55"
+input = "\\begin{tabular}{l}\\textbf\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-56"
+input = "\\newcommand{\\m}{\\textbf\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-03-57"
+input = "\\begin{minipage}\n[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-03-58"
+input = "\\begin{itemize}\\item \\begin{minipage}\n[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-59"
+input = "\\begin{tabular}{l}\\begin{minipage}\n[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-60"
+input = "\\newcommand{\\m}{\\begin{minipage}\n[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-03-61"
+input = "\\begin{minipage}[t]\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-03-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]\n{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]\n{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]\n{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-03-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n[o]{y}\n"
+
+[[case]]
+id = "optcomment-03-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x\n[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-03-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n{y}\n"
+
+[[case]]
+id = "optcomment-03-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n{y}}\\m\n"
+
+[[case]]
+id = "optcomment-03-73"
+input = "\\footnote\n[1]{x}\n"
+
+[[case]]
+id = "optcomment-03-74"
+input = "\\begin{itemize}\\item \\footnote\n[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-75"
+input = "\\begin{tabular}{l}\\footnote\n[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-76"
+input = "\\newcommand{\\m}{\\footnote\n[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-03-77"
+input = "\\footnote[1]\n{x}\n"
+
+[[case]]
+id = "optcomment-03-78"
+input = "\\begin{itemize}\\item \\footnote[1]\n{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-03-79"
+input = "\\begin{tabular}{l}\\footnote[1]\n{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-03-80"
+input = "\\newcommand{\\m}{\\footnote[1]\n{x}}\\m\n"
+
+[[case]]
+id = "optcomment-04-01"
+input = "\\includegraphics%c\n[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-04-02"
+input = "\\begin{itemize}\\item \\includegraphics%c\n[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-03"
+input = "\\begin{tabular}{l}\\includegraphics%c\n[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-04"
+input = "\\newcommand{\\m}{\\includegraphics%c\n[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-04-05"
+input = "\\includegraphics[width=1cm]%c\n{a.png}\n"
+
+[[case]]
+id = "optcomment-04-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]%c\n{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]%c\n{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]%c\n{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-04-09"
+input = "\\href%c\n{u}{t}\n"
+
+[[case]]
+id = "optcomment-04-10"
+input = "\\begin{itemize}\\item \\href%c\n{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-11"
+input = "\\begin{tabular}{l}\\href%c\n{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-12"
+input = "\\newcommand{\\m}{\\href%c\n{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-04-13"
+input = "\\href{u}%c\n{t}\n"
+
+[[case]]
+id = "optcomment-04-14"
+input = "\\begin{itemize}\\item \\href{u}%c\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-15"
+input = "\\begin{tabular}{l}\\href{u}%c\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-16"
+input = "\\newcommand{\\m}{\\href{u}%c\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-04-17"
+input = "\\section%c\n[s]{t}\n"
+
+[[case]]
+id = "optcomment-04-18"
+input = "\\begin{itemize}\\item \\section%c\n[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-19"
+input = "\\begin{tabular}{l}\\section%c\n[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-20"
+input = "\\newcommand{\\m}{\\section%c\n[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-04-21"
+input = "\\section[s]%c\n{t}\n"
+
+[[case]]
+id = "optcomment-04-22"
+input = "\\begin{itemize}\\item \\section[s]%c\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-23"
+input = "\\begin{tabular}{l}\\section[s]%c\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-24"
+input = "\\newcommand{\\m}{\\section[s]%c\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-04-25"
+input = "\\caption%c\n[s]{c}\n"
+
+[[case]]
+id = "optcomment-04-26"
+input = "\\begin{itemize}\\item \\caption%c\n[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-27"
+input = "\\begin{tabular}{l}\\caption%c\n[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-28"
+input = "\\newcommand{\\m}{\\caption%c\n[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-04-29"
+input = "\\caption[s]%c\n{c}\n"
+
+[[case]]
+id = "optcomment-04-30"
+input = "\\begin{itemize}\\item \\caption[s]%c\n{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-31"
+input = "\\begin{tabular}{l}\\caption[s]%c\n{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-32"
+input = "\\newcommand{\\m}{\\caption[s]%c\n{c}}\\m\n"
+
+[[case]]
+id = "optcomment-04-33"
+input = "\\begin{description}\\item%c\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-04-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item%c\n[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item%c\n[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item%c\n[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-04-37"
+input = "\\begin{description}\\item[a]%c\n x\\end{description}\n"
+
+[[case]]
+id = "optcomment-04-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]%c\n x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]%c\n x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]%c\n x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-04-41"
+input = "\\cite%c\n[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-04-42"
+input = "\\begin{itemize}\\item \\cite%c\n[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-43"
+input = "\\begin{tabular}{l}\\cite%c\n[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-44"
+input = "\\newcommand{\\m}{\\cite%c\n[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-04-45"
+input = "\\cite[p]%c\n[q]{k}\n"
+
+[[case]]
+id = "optcomment-04-46"
+input = "\\begin{itemize}\\item \\cite[p]%c\n[q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-47"
+input = "\\begin{tabular}{l}\\cite[p]%c\n[q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-48"
+input = "\\newcommand{\\m}{\\cite[p]%c\n[q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-04-49"
+input = "\\cite[p][q]%c\n{k}\n"
+
+[[case]]
+id = "optcomment-04-50"
+input = "\\begin{itemize}\\item \\cite[p][q]%c\n{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-51"
+input = "\\begin{tabular}{l}\\cite[p][q]%c\n{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-52"
+input = "\\newcommand{\\m}{\\cite[p][q]%c\n{k}}\\m\n"
+
+[[case]]
+id = "optcomment-04-53"
+input = "\\textbf%c\n{t}\n"
+
+[[case]]
+id = "optcomment-04-54"
+input = "\\begin{itemize}\\item \\textbf%c\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-55"
+input = "\\begin{tabular}{l}\\textbf%c\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-56"
+input = "\\newcommand{\\m}{\\textbf%c\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-04-57"
+input = "\\begin{minipage}%c\n[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-04-58"
+input = "\\begin{itemize}\\item \\begin{minipage}%c\n[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-59"
+input = "\\begin{tabular}{l}\\begin{minipage}%c\n[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-60"
+input = "\\newcommand{\\m}{\\begin{minipage}%c\n[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-04-61"
+input = "\\begin{minipage}[t]%c\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-04-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]%c\n{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]%c\n{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]%c\n{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-04-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n[o]{y}\n"
+
+[[case]]
+id = "optcomment-04-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-04-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n{y}\n"
+
+[[case]]
+id = "optcomment-04-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n{y}}\\m\n"
+
+[[case]]
+id = "optcomment-04-73"
+input = "\\footnote%c\n[1]{x}\n"
+
+[[case]]
+id = "optcomment-04-74"
+input = "\\begin{itemize}\\item \\footnote%c\n[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-75"
+input = "\\begin{tabular}{l}\\footnote%c\n[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-76"
+input = "\\newcommand{\\m}{\\footnote%c\n[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-04-77"
+input = "\\footnote[1]%c\n{x}\n"
+
+[[case]]
+id = "optcomment-04-78"
+input = "\\begin{itemize}\\item \\footnote[1]%c\n{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-04-79"
+input = "\\begin{tabular}{l}\\footnote[1]%c\n{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-04-80"
+input = "\\newcommand{\\m}{\\footnote[1]%c\n{x}}\\m\n"
+
+[[case]]
+id = "optcomment-05-01"
+input = "\\includegraphics%c\n  [width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-05-02"
+input = "\\begin{itemize}\\item \\includegraphics%c\n  [width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-03"
+input = "\\begin{tabular}{l}\\includegraphics%c\n  [width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-04"
+input = "\\newcommand{\\m}{\\includegraphics%c\n  [width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-05-05"
+input = "\\includegraphics[width=1cm]%c\n  {a.png}\n"
+
+[[case]]
+id = "optcomment-05-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]%c\n  {a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]%c\n  {a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]%c\n  {a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-05-09"
+input = "\\href%c\n  {u}{t}\n"
+
+[[case]]
+id = "optcomment-05-10"
+input = "\\begin{itemize}\\item \\href%c\n  {u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-11"
+input = "\\begin{tabular}{l}\\href%c\n  {u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-12"
+input = "\\newcommand{\\m}{\\href%c\n  {u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-05-13"
+input = "\\href{u}%c\n  {t}\n"
+
+[[case]]
+id = "optcomment-05-14"
+input = "\\begin{itemize}\\item \\href{u}%c\n  {t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-15"
+input = "\\begin{tabular}{l}\\href{u}%c\n  {t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-16"
+input = "\\newcommand{\\m}{\\href{u}%c\n  {t}}\\m\n"
+
+[[case]]
+id = "optcomment-05-17"
+input = "\\section%c\n  [s]{t}\n"
+
+[[case]]
+id = "optcomment-05-18"
+input = "\\begin{itemize}\\item \\section%c\n  [s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-19"
+input = "\\begin{tabular}{l}\\section%c\n  [s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-20"
+input = "\\newcommand{\\m}{\\section%c\n  [s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-05-21"
+input = "\\section[s]%c\n  {t}\n"
+
+[[case]]
+id = "optcomment-05-22"
+input = "\\begin{itemize}\\item \\section[s]%c\n  {t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-23"
+input = "\\begin{tabular}{l}\\section[s]%c\n  {t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-24"
+input = "\\newcommand{\\m}{\\section[s]%c\n  {t}}\\m\n"
+
+[[case]]
+id = "optcomment-05-25"
+input = "\\caption%c\n  [s]{c}\n"
+
+[[case]]
+id = "optcomment-05-26"
+input = "\\begin{itemize}\\item \\caption%c\n  [s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-27"
+input = "\\begin{tabular}{l}\\caption%c\n  [s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-28"
+input = "\\newcommand{\\m}{\\caption%c\n  [s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-05-29"
+input = "\\caption[s]%c\n  {c}\n"
+
+[[case]]
+id = "optcomment-05-30"
+input = "\\begin{itemize}\\item \\caption[s]%c\n  {c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-31"
+input = "\\begin{tabular}{l}\\caption[s]%c\n  {c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-32"
+input = "\\newcommand{\\m}{\\caption[s]%c\n  {c}}\\m\n"
+
+[[case]]
+id = "optcomment-05-33"
+input = "\\begin{description}\\item%c\n  [a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-05-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item%c\n  [a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item%c\n  [a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item%c\n  [a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-05-37"
+input = "\\begin{description}\\item[a]%c\n   x\\end{description}\n"
+
+[[case]]
+id = "optcomment-05-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]%c\n   x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]%c\n   x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]%c\n   x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-05-41"
+input = "\\cite%c\n  [p][q]{k}\n"
+
+[[case]]
+id = "optcomment-05-42"
+input = "\\begin{itemize}\\item \\cite%c\n  [p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-43"
+input = "\\begin{tabular}{l}\\cite%c\n  [p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-44"
+input = "\\newcommand{\\m}{\\cite%c\n  [p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-05-45"
+input = "\\cite[p]%c\n  [q]{k}\n"
+
+[[case]]
+id = "optcomment-05-46"
+input = "\\begin{itemize}\\item \\cite[p]%c\n  [q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-47"
+input = "\\begin{tabular}{l}\\cite[p]%c\n  [q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-48"
+input = "\\newcommand{\\m}{\\cite[p]%c\n  [q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-05-49"
+input = "\\cite[p][q]%c\n  {k}\n"
+
+[[case]]
+id = "optcomment-05-50"
+input = "\\begin{itemize}\\item \\cite[p][q]%c\n  {k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-51"
+input = "\\begin{tabular}{l}\\cite[p][q]%c\n  {k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-52"
+input = "\\newcommand{\\m}{\\cite[p][q]%c\n  {k}}\\m\n"
+
+[[case]]
+id = "optcomment-05-53"
+input = "\\textbf%c\n  {t}\n"
+
+[[case]]
+id = "optcomment-05-54"
+input = "\\begin{itemize}\\item \\textbf%c\n  {t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-55"
+input = "\\begin{tabular}{l}\\textbf%c\n  {t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-56"
+input = "\\newcommand{\\m}{\\textbf%c\n  {t}}\\m\n"
+
+[[case]]
+id = "optcomment-05-57"
+input = "\\begin{minipage}%c\n  [t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-05-58"
+input = "\\begin{itemize}\\item \\begin{minipage}%c\n  [t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-59"
+input = "\\begin{tabular}{l}\\begin{minipage}%c\n  [t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-60"
+input = "\\newcommand{\\m}{\\begin{minipage}%c\n  [t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-05-61"
+input = "\\begin{minipage}[t]%c\n  {3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-05-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]%c\n  {3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]%c\n  {3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]%c\n  {3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-05-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n  [o]{y}\n"
+
+[[case]]
+id = "optcomment-05-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n  [o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n  [o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n  [o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-05-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n  {y}\n"
+
+[[case]]
+id = "optcomment-05-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n  {y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n  {y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n  {y}}\\m\n"
+
+[[case]]
+id = "optcomment-05-73"
+input = "\\footnote%c\n  [1]{x}\n"
+
+[[case]]
+id = "optcomment-05-74"
+input = "\\begin{itemize}\\item \\footnote%c\n  [1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-75"
+input = "\\begin{tabular}{l}\\footnote%c\n  [1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-76"
+input = "\\newcommand{\\m}{\\footnote%c\n  [1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-05-77"
+input = "\\footnote[1]%c\n  {x}\n"
+
+[[case]]
+id = "optcomment-05-78"
+input = "\\begin{itemize}\\item \\footnote[1]%c\n  {x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-05-79"
+input = "\\begin{tabular}{l}\\footnote[1]%c\n  {x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-05-80"
+input = "\\newcommand{\\m}{\\footnote[1]%c\n  {x}}\\m\n"
+
+[[case]]
+id = "optcomment-06-01"
+input = "\\includegraphics%c\n%d\n[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-06-02"
+input = "\\begin{itemize}\\item \\includegraphics%c\n%d\n[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-03"
+input = "\\begin{tabular}{l}\\includegraphics%c\n%d\n[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-04"
+input = "\\newcommand{\\m}{\\includegraphics%c\n%d\n[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-06-05"
+input = "\\includegraphics[width=1cm]%c\n%d\n{a.png}\n"
+
+[[case]]
+id = "optcomment-06-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]%c\n%d\n{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]%c\n%d\n{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]%c\n%d\n{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-06-09"
+input = "\\href%c\n%d\n{u}{t}\n"
+
+[[case]]
+id = "optcomment-06-10"
+input = "\\begin{itemize}\\item \\href%c\n%d\n{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-11"
+input = "\\begin{tabular}{l}\\href%c\n%d\n{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-12"
+input = "\\newcommand{\\m}{\\href%c\n%d\n{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-06-13"
+input = "\\href{u}%c\n%d\n{t}\n"
+
+[[case]]
+id = "optcomment-06-14"
+input = "\\begin{itemize}\\item \\href{u}%c\n%d\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-15"
+input = "\\begin{tabular}{l}\\href{u}%c\n%d\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-16"
+input = "\\newcommand{\\m}{\\href{u}%c\n%d\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-06-17"
+input = "\\section%c\n%d\n[s]{t}\n"
+
+[[case]]
+id = "optcomment-06-18"
+input = "\\begin{itemize}\\item \\section%c\n%d\n[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-19"
+input = "\\begin{tabular}{l}\\section%c\n%d\n[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-20"
+input = "\\newcommand{\\m}{\\section%c\n%d\n[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-06-21"
+input = "\\section[s]%c\n%d\n{t}\n"
+
+[[case]]
+id = "optcomment-06-22"
+input = "\\begin{itemize}\\item \\section[s]%c\n%d\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-23"
+input = "\\begin{tabular}{l}\\section[s]%c\n%d\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-24"
+input = "\\newcommand{\\m}{\\section[s]%c\n%d\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-06-25"
+input = "\\caption%c\n%d\n[s]{c}\n"
+
+[[case]]
+id = "optcomment-06-26"
+input = "\\begin{itemize}\\item \\caption%c\n%d\n[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-27"
+input = "\\begin{tabular}{l}\\caption%c\n%d\n[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-28"
+input = "\\newcommand{\\m}{\\caption%c\n%d\n[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-06-29"
+input = "\\caption[s]%c\n%d\n{c}\n"
+
+[[case]]
+id = "optcomment-06-30"
+input = "\\begin{itemize}\\item \\caption[s]%c\n%d\n{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-31"
+input = "\\begin{tabular}{l}\\caption[s]%c\n%d\n{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-32"
+input = "\\newcommand{\\m}{\\caption[s]%c\n%d\n{c}}\\m\n"
+
+[[case]]
+id = "optcomment-06-33"
+input = "\\begin{description}\\item%c\n%d\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-06-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item%c\n%d\n[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item%c\n%d\n[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item%c\n%d\n[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-06-37"
+input = "\\begin{description}\\item[a]%c\n%d\n x\\end{description}\n"
+
+[[case]]
+id = "optcomment-06-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]%c\n%d\n x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]%c\n%d\n x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]%c\n%d\n x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-06-41"
+input = "\\cite%c\n%d\n[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-06-42"
+input = "\\begin{itemize}\\item \\cite%c\n%d\n[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-43"
+input = "\\begin{tabular}{l}\\cite%c\n%d\n[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-44"
+input = "\\newcommand{\\m}{\\cite%c\n%d\n[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-06-45"
+input = "\\cite[p]%c\n%d\n[q]{k}\n"
+
+[[case]]
+id = "optcomment-06-46"
+input = "\\begin{itemize}\\item \\cite[p]%c\n%d\n[q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-47"
+input = "\\begin{tabular}{l}\\cite[p]%c\n%d\n[q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-48"
+input = "\\newcommand{\\m}{\\cite[p]%c\n%d\n[q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-06-49"
+input = "\\cite[p][q]%c\n%d\n{k}\n"
+
+[[case]]
+id = "optcomment-06-50"
+input = "\\begin{itemize}\\item \\cite[p][q]%c\n%d\n{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-51"
+input = "\\begin{tabular}{l}\\cite[p][q]%c\n%d\n{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-52"
+input = "\\newcommand{\\m}{\\cite[p][q]%c\n%d\n{k}}\\m\n"
+
+[[case]]
+id = "optcomment-06-53"
+input = "\\textbf%c\n%d\n{t}\n"
+
+[[case]]
+id = "optcomment-06-54"
+input = "\\begin{itemize}\\item \\textbf%c\n%d\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-55"
+input = "\\begin{tabular}{l}\\textbf%c\n%d\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-56"
+input = "\\newcommand{\\m}{\\textbf%c\n%d\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-06-57"
+input = "\\begin{minipage}%c\n%d\n[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-06-58"
+input = "\\begin{itemize}\\item \\begin{minipage}%c\n%d\n[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-59"
+input = "\\begin{tabular}{l}\\begin{minipage}%c\n%d\n[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-60"
+input = "\\newcommand{\\m}{\\begin{minipage}%c\n%d\n[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-06-61"
+input = "\\begin{minipage}[t]%c\n%d\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-06-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]%c\n%d\n{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]%c\n%d\n{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]%c\n%d\n{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-06-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n%d\n[o]{y}\n"
+
+[[case]]
+id = "optcomment-06-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n%d\n[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n%d\n[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n%d\n[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-06-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n%d\n{y}\n"
+
+[[case]]
+id = "optcomment-06-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n%d\n{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n%d\n{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n%d\n{y}}\\m\n"
+
+[[case]]
+id = "optcomment-06-73"
+input = "\\footnote%c\n%d\n[1]{x}\n"
+
+[[case]]
+id = "optcomment-06-74"
+input = "\\begin{itemize}\\item \\footnote%c\n%d\n[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-75"
+input = "\\begin{tabular}{l}\\footnote%c\n%d\n[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-76"
+input = "\\newcommand{\\m}{\\footnote%c\n%d\n[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-06-77"
+input = "\\footnote[1]%c\n%d\n{x}\n"
+
+[[case]]
+id = "optcomment-06-78"
+input = "\\begin{itemize}\\item \\footnote[1]%c\n%d\n{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-06-79"
+input = "\\begin{tabular}{l}\\footnote[1]%c\n%d\n{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-06-80"
+input = "\\newcommand{\\m}{\\footnote[1]%c\n%d\n{x}}\\m\n"
+
+[[case]]
+id = "optcomment-07-01"
+input = "\\includegraphics%c\n\n[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-07-02"
+input = "\\begin{itemize}\\item \\includegraphics%c\n\n[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-03"
+input = "\\begin{tabular}{l}\\includegraphics%c\n\n[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-04"
+input = "\\newcommand{\\m}{\\includegraphics%c\n\n[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-07-05"
+input = "\\includegraphics[width=1cm]%c\n\n{a.png}\n"
+
+[[case]]
+id = "optcomment-07-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]%c\n\n{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]%c\n\n{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]%c\n\n{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-07-09"
+input = "\\href%c\n\n{u}{t}\n"
+
+[[case]]
+id = "optcomment-07-10"
+input = "\\begin{itemize}\\item \\href%c\n\n{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-11"
+input = "\\begin{tabular}{l}\\href%c\n\n{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-12"
+input = "\\newcommand{\\m}{\\href%c\n\n{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-07-13"
+input = "\\href{u}%c\n\n{t}\n"
+
+[[case]]
+id = "optcomment-07-14"
+input = "\\begin{itemize}\\item \\href{u}%c\n\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-15"
+input = "\\begin{tabular}{l}\\href{u}%c\n\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-16"
+input = "\\newcommand{\\m}{\\href{u}%c\n\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-07-17"
+input = "\\section%c\n\n[s]{t}\n"
+
+[[case]]
+id = "optcomment-07-18"
+input = "\\begin{itemize}\\item \\section%c\n\n[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-19"
+input = "\\begin{tabular}{l}\\section%c\n\n[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-20"
+input = "\\newcommand{\\m}{\\section%c\n\n[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-07-21"
+input = "\\section[s]%c\n\n{t}\n"
+
+[[case]]
+id = "optcomment-07-22"
+input = "\\begin{itemize}\\item \\section[s]%c\n\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-23"
+input = "\\begin{tabular}{l}\\section[s]%c\n\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-24"
+input = "\\newcommand{\\m}{\\section[s]%c\n\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-07-25"
+input = "\\caption%c\n\n[s]{c}\n"
+
+[[case]]
+id = "optcomment-07-26"
+input = "\\begin{itemize}\\item \\caption%c\n\n[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-27"
+input = "\\begin{tabular}{l}\\caption%c\n\n[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-28"
+input = "\\newcommand{\\m}{\\caption%c\n\n[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-07-29"
+input = "\\caption[s]%c\n\n{c}\n"
+
+[[case]]
+id = "optcomment-07-30"
+input = "\\begin{itemize}\\item \\caption[s]%c\n\n{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-31"
+input = "\\begin{tabular}{l}\\caption[s]%c\n\n{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-32"
+input = "\\newcommand{\\m}{\\caption[s]%c\n\n{c}}\\m\n"
+
+[[case]]
+id = "optcomment-07-33"
+input = "\\begin{description}\\item%c\n\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-07-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item%c\n\n[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item%c\n\n[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item%c\n\n[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-07-37"
+input = "\\begin{description}\\item[a]%c\n\n x\\end{description}\n"
+
+[[case]]
+id = "optcomment-07-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]%c\n\n x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]%c\n\n x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]%c\n\n x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-07-41"
+input = "\\cite%c\n\n[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-07-42"
+input = "\\begin{itemize}\\item \\cite%c\n\n[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-43"
+input = "\\begin{tabular}{l}\\cite%c\n\n[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-44"
+input = "\\newcommand{\\m}{\\cite%c\n\n[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-07-45"
+input = "\\cite[p]%c\n\n[q]{k}\n"
+
+[[case]]
+id = "optcomment-07-46"
+input = "\\begin{itemize}\\item \\cite[p]%c\n\n[q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-47"
+input = "\\begin{tabular}{l}\\cite[p]%c\n\n[q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-48"
+input = "\\newcommand{\\m}{\\cite[p]%c\n\n[q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-07-49"
+input = "\\cite[p][q]%c\n\n{k}\n"
+
+[[case]]
+id = "optcomment-07-50"
+input = "\\begin{itemize}\\item \\cite[p][q]%c\n\n{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-51"
+input = "\\begin{tabular}{l}\\cite[p][q]%c\n\n{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-52"
+input = "\\newcommand{\\m}{\\cite[p][q]%c\n\n{k}}\\m\n"
+
+[[case]]
+id = "optcomment-07-53"
+input = "\\textbf%c\n\n{t}\n"
+
+[[case]]
+id = "optcomment-07-54"
+input = "\\begin{itemize}\\item \\textbf%c\n\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-55"
+input = "\\begin{tabular}{l}\\textbf%c\n\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-56"
+input = "\\newcommand{\\m}{\\textbf%c\n\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-07-57"
+input = "\\begin{minipage}%c\n\n[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-07-58"
+input = "\\begin{itemize}\\item \\begin{minipage}%c\n\n[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-59"
+input = "\\begin{tabular}{l}\\begin{minipage}%c\n\n[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-60"
+input = "\\newcommand{\\m}{\\begin{minipage}%c\n\n[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-07-61"
+input = "\\begin{minipage}[t]%c\n\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-07-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]%c\n\n{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]%c\n\n{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]%c\n\n{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-07-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n\n[o]{y}\n"
+
+[[case]]
+id = "optcomment-07-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n\n[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n\n[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x%c\n\n[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-07-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n\n{y}\n"
+
+[[case]]
+id = "optcomment-07-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n\n{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n\n{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]%c\n\n{y}}\\m\n"
+
+[[case]]
+id = "optcomment-07-73"
+input = "\\footnote%c\n\n[1]{x}\n"
+
+[[case]]
+id = "optcomment-07-74"
+input = "\\begin{itemize}\\item \\footnote%c\n\n[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-75"
+input = "\\begin{tabular}{l}\\footnote%c\n\n[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-76"
+input = "\\newcommand{\\m}{\\footnote%c\n\n[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-07-77"
+input = "\\footnote[1]%c\n\n{x}\n"
+
+[[case]]
+id = "optcomment-07-78"
+input = "\\begin{itemize}\\item \\footnote[1]%c\n\n{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-07-79"
+input = "\\begin{tabular}{l}\\footnote[1]%c\n\n{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-07-80"
+input = "\\newcommand{\\m}{\\footnote[1]%c\n\n{x}}\\m\n"
+
+[[case]]
+id = "optcomment-08-01"
+input = "\\includegraphics\n\n[width=1cm]{a.png}\n"
+
+[[case]]
+id = "optcomment-08-02"
+input = "\\begin{itemize}\\item \\includegraphics\n\n[width=1cm]{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-03"
+input = "\\begin{tabular}{l}\\includegraphics\n\n[width=1cm]{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-04"
+input = "\\newcommand{\\m}{\\includegraphics\n\n[width=1cm]{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-08-05"
+input = "\\includegraphics[width=1cm]\n\n{a.png}\n"
+
+[[case]]
+id = "optcomment-08-06"
+input = "\\begin{itemize}\\item \\includegraphics[width=1cm]\n\n{a.png}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-07"
+input = "\\begin{tabular}{l}\\includegraphics[width=1cm]\n\n{a.png}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-08"
+input = "\\newcommand{\\m}{\\includegraphics[width=1cm]\n\n{a.png}}\\m\n"
+
+[[case]]
+id = "optcomment-08-09"
+input = "\\href\n\n{u}{t}\n"
+
+[[case]]
+id = "optcomment-08-10"
+input = "\\begin{itemize}\\item \\href\n\n{u}{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-11"
+input = "\\begin{tabular}{l}\\href\n\n{u}{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-12"
+input = "\\newcommand{\\m}{\\href\n\n{u}{t}}\\m\n"
+
+[[case]]
+id = "optcomment-08-13"
+input = "\\href{u}\n\n{t}\n"
+
+[[case]]
+id = "optcomment-08-14"
+input = "\\begin{itemize}\\item \\href{u}\n\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-15"
+input = "\\begin{tabular}{l}\\href{u}\n\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-16"
+input = "\\newcommand{\\m}{\\href{u}\n\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-08-17"
+input = "\\section\n\n[s]{t}\n"
+
+[[case]]
+id = "optcomment-08-18"
+input = "\\begin{itemize}\\item \\section\n\n[s]{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-19"
+input = "\\begin{tabular}{l}\\section\n\n[s]{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-20"
+input = "\\newcommand{\\m}{\\section\n\n[s]{t}}\\m\n"
+
+[[case]]
+id = "optcomment-08-21"
+input = "\\section[s]\n\n{t}\n"
+
+[[case]]
+id = "optcomment-08-22"
+input = "\\begin{itemize}\\item \\section[s]\n\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-23"
+input = "\\begin{tabular}{l}\\section[s]\n\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-24"
+input = "\\newcommand{\\m}{\\section[s]\n\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-08-25"
+input = "\\caption\n\n[s]{c}\n"
+
+[[case]]
+id = "optcomment-08-26"
+input = "\\begin{itemize}\\item \\caption\n\n[s]{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-27"
+input = "\\begin{tabular}{l}\\caption\n\n[s]{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-28"
+input = "\\newcommand{\\m}{\\caption\n\n[s]{c}}\\m\n"
+
+[[case]]
+id = "optcomment-08-29"
+input = "\\caption[s]\n\n{c}\n"
+
+[[case]]
+id = "optcomment-08-30"
+input = "\\begin{itemize}\\item \\caption[s]\n\n{c}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-31"
+input = "\\begin{tabular}{l}\\caption[s]\n\n{c}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-32"
+input = "\\newcommand{\\m}{\\caption[s]\n\n{c}}\\m\n"
+
+[[case]]
+id = "optcomment-08-33"
+input = "\\begin{description}\\item\n\n[a] x\\end{description}\n"
+
+[[case]]
+id = "optcomment-08-34"
+input = "\\begin{itemize}\\item \\begin{description}\\item\n\n[a] x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-35"
+input = "\\begin{tabular}{l}\\begin{description}\\item\n\n[a] x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-36"
+input = "\\newcommand{\\m}{\\begin{description}\\item\n\n[a] x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-08-37"
+input = "\\begin{description}\\item[a]\n\n x\\end{description}\n"
+
+[[case]]
+id = "optcomment-08-38"
+input = "\\begin{itemize}\\item \\begin{description}\\item[a]\n\n x\\end{description}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-39"
+input = "\\begin{tabular}{l}\\begin{description}\\item[a]\n\n x\\end{description}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-40"
+input = "\\newcommand{\\m}{\\begin{description}\\item[a]\n\n x\\end{description}}\\m\n"
+
+[[case]]
+id = "optcomment-08-41"
+input = "\\cite\n\n[p][q]{k}\n"
+
+[[case]]
+id = "optcomment-08-42"
+input = "\\begin{itemize}\\item \\cite\n\n[p][q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-43"
+input = "\\begin{tabular}{l}\\cite\n\n[p][q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-44"
+input = "\\newcommand{\\m}{\\cite\n\n[p][q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-08-45"
+input = "\\cite[p]\n\n[q]{k}\n"
+
+[[case]]
+id = "optcomment-08-46"
+input = "\\begin{itemize}\\item \\cite[p]\n\n[q]{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-47"
+input = "\\begin{tabular}{l}\\cite[p]\n\n[q]{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-48"
+input = "\\newcommand{\\m}{\\cite[p]\n\n[q]{k}}\\m\n"
+
+[[case]]
+id = "optcomment-08-49"
+input = "\\cite[p][q]\n\n{k}\n"
+
+[[case]]
+id = "optcomment-08-50"
+input = "\\begin{itemize}\\item \\cite[p][q]\n\n{k}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-51"
+input = "\\begin{tabular}{l}\\cite[p][q]\n\n{k}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-52"
+input = "\\newcommand{\\m}{\\cite[p][q]\n\n{k}}\\m\n"
+
+[[case]]
+id = "optcomment-08-53"
+input = "\\textbf\n\n{t}\n"
+
+[[case]]
+id = "optcomment-08-54"
+input = "\\begin{itemize}\\item \\textbf\n\n{t}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-55"
+input = "\\begin{tabular}{l}\\textbf\n\n{t}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-56"
+input = "\\newcommand{\\m}{\\textbf\n\n{t}}\\m\n"
+
+[[case]]
+id = "optcomment-08-57"
+input = "\\begin{minipage}\n\n[t]{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-08-58"
+input = "\\begin{itemize}\\item \\begin{minipage}\n\n[t]{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-59"
+input = "\\begin{tabular}{l}\\begin{minipage}\n\n[t]{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-60"
+input = "\\newcommand{\\m}{\\begin{minipage}\n\n[t]{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-08-61"
+input = "\\begin{minipage}[t]\n\n{3cm}x\\end{minipage}\n"
+
+[[case]]
+id = "optcomment-08-62"
+input = "\\begin{itemize}\\item \\begin{minipage}[t]\n\n{3cm}x\\end{minipage}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-63"
+input = "\\begin{tabular}{l}\\begin{minipage}[t]\n\n{3cm}x\\end{minipage}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-64"
+input = "\\newcommand{\\m}{\\begin{minipage}[t]\n\n{3cm}x\\end{minipage}}\\m\n"
+
+[[case]]
+id = "optcomment-08-65"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n\n[o]{y}\n"
+
+[[case]]
+id = "optcomment-08-66"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x\n\n[o]{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-67"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n\n[o]{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-68"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x\n\n[o]{y}}\\m\n"
+
+[[case]]
+id = "optcomment-08-69"
+input = "\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n\n{y}\n"
+
+[[case]]
+id = "optcomment-08-70"
+input = "\\begin{itemize}\\item \\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n\n{y}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-71"
+input = "\\begin{tabular}{l}\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n\n{y}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-72"
+input = "\\newcommand{\\m}{\\newcommand{\\x}[2][d]{(#1,#2)}\\x[o]\n\n{y}}\\m\n"
+
+[[case]]
+id = "optcomment-08-73"
+input = "\\footnote\n\n[1]{x}\n"
+
+[[case]]
+id = "optcomment-08-74"
+input = "\\begin{itemize}\\item \\footnote\n\n[1]{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-75"
+input = "\\begin{tabular}{l}\\footnote\n\n[1]{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-76"
+input = "\\newcommand{\\m}{\\footnote\n\n[1]{x}}\\m\n"
+
+[[case]]
+id = "optcomment-08-77"
+input = "\\footnote[1]\n\n{x}\n"
+
+[[case]]
+id = "optcomment-08-78"
+input = "\\begin{itemize}\\item \\footnote[1]\n\n{x}\\end{itemize}\n"
+
+[[case]]
+id = "optcomment-08-79"
+input = "\\begin{tabular}{l}\\footnote[1]\n\n{x}\\\\\\end{tabular}\n"
+
+[[case]]
+id = "optcomment-08-80"
+input = "\\newcommand{\\m}{\\footnote[1]\n\n{x}}\\m\n"

@@ -1253,7 +1253,7 @@ impl<'c> Parser<'c> {
         (out, false)
     }
 
-    /// Skips the spaces and one line end before a `[`: Pandoc
+    /// Skips the spaces, comments and line ends before a `[`: Pandoc
     /// reads an optional argument after them. Consumes nothing when no `[`
     /// follows.
     fn skip_to_bracket(&mut self) {
@@ -1267,20 +1267,12 @@ impl<'c> Parser<'c> {
     /// The number of tokens before the `[` of an optional argument, and
     /// true when a line end is among them.
     fn bracket_gap(&self) -> Option<(usize, bool)> {
-        let mut line_end = false;
-        let mut skip = 0;
-        for tok in self.scan() {
-            match tok.kind {
-                Kind::Space => skip += 1,
-                Kind::Newline if !line_end => {
-                    line_end = true;
-                    skip += 1;
-                }
-                Kind::Other('[') => return Some((skip, line_end)),
-                _ => return None,
-            }
-        }
-        None
+        let mut tokens = self.scan().peekable();
+        let gap = skip_option_gap(&mut tokens, usize::MAX);
+        tokens
+            .next()
+            .filter(|tok| tok.kind == Kind::Other('['))
+            .map(|_| gap)
     }
 
     /// The `[...]` argument of `\caption` and of a macro: Pandoc reads it
@@ -3449,7 +3441,13 @@ impl<'c> Parser<'c> {
         {
             tokens.next();
         }
-        while tokens.next_if(blank).is_some() {}
+        // Pandoc reads an option after one line end only, also when a
+        // comment line follows it (matrix `errors/optcomment-*`).
+        if !verbatim && rule == ArgumentRule::Group && takes_options(name) {
+            skip_option_gap(&mut tokens, 1);
+        } else {
+            while tokens.next_if(blank).is_some() {}
+        }
         if multi_citation_mode(name).is_some() {
             for _ in 0..2 {
                 if tokens.next_if(|tok| tok.kind == Kind::Other('(')).is_none() {
@@ -3493,7 +3491,11 @@ impl<'c> Parser<'c> {
                 if !closed {
                     return Ok(());
                 }
-                while tokens.next_if(blank).is_some() {}
+                if verbatim {
+                    skip_option_gap(&mut tokens, 1);
+                } else {
+                    while tokens.next_if(blank).is_some() {}
+                }
             }
         }
         let Some(mut tok) = tokens.next() else {
@@ -4438,6 +4440,26 @@ fn argument_rule(name: &str) -> Option<ArgumentRule> {
         | "parbox" | "graphicspath" => Some(ArgumentRule::Group),
         _ => None,
     }
+}
+
+/// Skips the tokens that Pandoc skips around an optional argument:
+/// spaces, comments and at most `line_ends` line ends. Gives the number
+/// of tokens skipped, and true when a line end is among them.
+fn skip_option_gap<'t>(
+    tokens: &mut std::iter::Peekable<impl Iterator<Item = &'t Tok>>,
+    line_ends: usize,
+) -> (usize, bool) {
+    let mut seen = 0;
+    let mut skip = 0;
+    while let Some(tok) = tokens.next_if(|tok| match tok.kind {
+        Kind::Space | Kind::Comment => true,
+        Kind::Newline => seen < line_ends,
+        _ => false,
+    }) {
+        seen += usize::from(tok.kind == Kind::Newline);
+        skip += 1;
+    }
+    (skip, seen > 0)
 }
 
 /// The commands whose argument group must follow after spaces only: a
