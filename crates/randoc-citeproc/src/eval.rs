@@ -41,7 +41,7 @@ thread_local! {
 }
 
 /// Counts work units of an evaluation (test builds only).
-fn step() {
+pub(crate) fn step() {
     #[cfg(test)]
     STEPS.with(|steps| steps.set(steps.get() + 1));
 }
@@ -492,27 +492,37 @@ fn handle_author_only(cite: Output, is_note: bool) -> Output {
     let formatted: fn(Vec<Output>) -> Output =
         |parts| output::formatted(Formatting::default(), parts);
     let plain: fn(Vec<Output>) -> Output = |parts| Output::Formatted(Box::default(), parts);
-    match cite {
-        Output::Formatted(f, mut xs) if xs.first().is_some_and(is_author_only) => {
-            let x = xs.remove(0);
-            let others = (!xs.is_empty()).then(|| output::formatted(*f, xs));
-            apart(x, others, formatted)
-        }
-        Output::Formatted(f, mut ys) if matches!(ys.first(), Some(Output::Formatted(_, xs)) if xs.first().is_some_and(is_author_only)) =>
-        {
-            let Output::Formatted(f2, mut xs) = ys.remove(0) else {
-                return Output::Formatted(f, ys);
-            };
-            let x = xs.remove(0);
-            let others = (!xs.is_empty() || !ys.is_empty()).then(|| {
-                let mut parts = vec![output::formatted(*f2, xs)];
-                parts.extend(ys);
-                output::formatted(*f, parts)
-            });
-            apart(x, others, if is_note { formatted } else { plain })
-        }
-        cite if is_note => Output::InNote(Box::new(cite)),
-        cite => cite,
+    let mut cite = cite;
+    if let Output::Formatted(f, xs) = &mut cite
+        && xs.first().is_some_and(is_author_only)
+    {
+        let f = std::mem::take(&mut **f);
+        let mut xs = std::mem::take(xs);
+        let x = xs.remove(0);
+        let others = (!xs.is_empty()).then(|| output::formatted(f, xs));
+        return apart(x, others, formatted);
+    }
+    if let Output::Formatted(f, ys) = &mut cite
+        && let Some(Output::Formatted(f2, xs)) = ys.first_mut()
+        && xs.first().is_some_and(is_author_only)
+    {
+        let f2 = std::mem::take(&mut **f2);
+        let mut xs = std::mem::take(xs);
+        let f = std::mem::take(&mut **f);
+        let mut ys = std::mem::take(ys);
+        ys.remove(0);
+        let x = xs.remove(0);
+        let others = (!xs.is_empty() || !ys.is_empty()).then(|| {
+            let mut parts = vec![output::formatted(f2, xs)];
+            parts.extend(ys);
+            output::formatted(f, parts)
+        });
+        return apart(x, others, if is_note { formatted } else { plain });
+    }
+    if is_note {
+        Output::InNote(Box::new(cite))
+    } else {
+        cite
     }
 }
 
@@ -672,7 +682,7 @@ struct Eval<'a, 'w> {
     warnings: &'w mut BTreeSet<String>,
 }
 
-impl Eval<'_, '_> {
+impl<'a> Eval<'a, '_> {
     fn update_var_count(&mut self, accessed: i64, nonempty: i64) {
         self.var_count.accessed += accessed;
         self.var_count.nonempty += nonempty;
@@ -784,7 +794,7 @@ impl Eval<'_, '_> {
 
     /// `askVariable`: the value of a variable, counted for the group rule.
     fn ask_variable(&mut self, name: &str) -> Option<Val<Vec<Inline>>> {
-        if name == "page-first" {
+        if same(name, "page-first") {
             let first = |text: &str| text.chars().take_while(|c| !is_sep_punct(*c)).collect();
             return match self.ask_variable("page")? {
                 Val::Text(t) => Some(Val::Text(first(&t))),
@@ -808,8 +818,8 @@ impl Eval<'_, '_> {
     /// `lookupVariable` on the reference of the state.
     fn find(&self, name: &str) -> Option<Found> {
         if !self.substituted.is_empty()
-            && name != "id"
-            && name != "type"
+            && !same(name, "id")
+            && !same(name, "type")
             && self.substituted.contains(&reference::Variable::new(name))
         {
             return Some(Found::Substituted);
@@ -847,7 +857,23 @@ impl Eval<'_, '_> {
         depth: usize,
     ) -> Result<Output, EvalError> {
         let name = variable.as_str();
-        Ok(match name {
+        // The special variables compare without case (Codex citeproc-R3b-02).
+        let special = [
+            "id",
+            "type",
+            "locator",
+            "year-suffix",
+            "citation-number",
+            "citation-label",
+            "doi",
+            "pmcid",
+            "pmid",
+            "url",
+        ]
+        .into_iter()
+        .find(|key| same(name, key))
+        .unwrap_or("");
+        Ok(match special {
             "id" => {
                 self.update_var_count(1, 1);
                 Output::Literal(output::from_text(&self.reference.id))
@@ -864,12 +890,10 @@ impl Eval<'_, '_> {
                 Some(locator) => {
                     let mut locator = locator.to_owned();
                     if locator.contains('&')
-                        && let Some(and) = self
-                            .lookup_term(&Term {
-                                form: TermForm::Symbol,
-                                ..term_named("and")
-                            })
-                            .first()
+                        && let Some(and) = self.lookup_term(&Term {
+                            form: TermForm::Symbol,
+                            ..term_named("and")
+                        })
                     {
                         locator = locator.replace('&', and);
                     }
@@ -889,7 +913,7 @@ impl Eval<'_, '_> {
             "year-suffix" => Output::Null,
             "citation-number" | "citation-label" => {
                 let value = self.ask_variable(name);
-                match (name, value) {
+                match (special, value) {
                     ("citation-number", Some(Val::Num(n))) => Output::Tagged(
                         Tag::Other,
                         Box::new(Output::Literal(output::from_text(&n.to_string()))),
@@ -901,7 +925,7 @@ impl Eval<'_, '_> {
                         Output::Tagged(Tag::Other, Box::new(Output::Literal(x)))
                     }
                     _ => {
-                        let what = if name == "citation-number" {
+                        let what = if special == "citation-number" {
                             "citation-number not defined for "
                         } else {
                             "citation-label of unknown type for "
@@ -911,13 +935,13 @@ impl Eval<'_, '_> {
                     }
                 }
             }
-            "DOI" | "PMCID" | "PMID" | "URL" => {
+            "doi" | "pmcid" | "pmid" | "url" => {
                 let value = self.ask_variable(name);
                 self.delete_substituted(name);
                 match value.as_ref().and_then(val_to_text) {
                     None => Output::Null,
                     Some(text) => Output::Linked(
-                        identifier_url(name, &text),
+                        identifier_url(special, &text),
                         vec![Output::Literal(output::from_text(&text))],
                     ),
                 }
@@ -937,16 +961,16 @@ impl Eval<'_, '_> {
                     }
                 }
                 let result = match value {
-                    Some(Val::Text(x)) if name == "page" => self.page_range(&x, depth)?,
+                    Some(Val::Text(x)) if same(name, "page") => self.page_range(&x, depth)?,
                     Some(Val::Text(x)) => Output::Literal(output::from_text(&x)),
-                    Some(Val::Fancy(x)) if name == "page" => {
+                    Some(Val::Fancy(x)) if same(name, "page") => {
                         self.page_range(&output::stringify(&x), depth)?
                     }
                     Some(Val::Fancy(x)) => Output::Literal(x),
                     Some(Val::Num(n)) => Output::Literal(output::from_text(&n.to_string())),
                     _ => Output::Null,
                 };
-                if name == "title" && result != Output::Null {
+                if same(name, "title") && result != Output::Null {
                     Output::Tagged(Tag::Other, Box::new(result))
                 } else {
                     result
@@ -959,9 +983,7 @@ impl Eval<'_, '_> {
     fn number(&mut self, name: &str, form: NumberForm, depth: usize) -> Result<Output, EvalError> {
         let value = self.ask_variable(name);
         let value_given = value.is_some();
-        let gender = self
-            .lookup_term_entries(&term_named(name))
-            .into_iter()
+        let gender = lookup_term_entries(self.locale, &term_named(name))
             .next()
             .and_then(|(term, _)| term.gender);
         let parts = match value {
@@ -1015,22 +1037,20 @@ impl Eval<'_, '_> {
                     .into_iter()
                     .next()
                 {
-                    Some(text) => Ok(Output::Literal(output::from_text(&text))),
+                    Some(text) => Ok(Output::Literal(output::from_text(text))),
                     None => self.eval_number(NumberForm::Ordinal, gender, value, depth),
                 }
             }
             NumberForm::LongOrdinal | NumberForm::Ordinal => {
                 let two = numbered(format!("ordinal-{:02}", i.rem_euclid(100)));
-                let found = self
-                    .lookup_term_entries(&two)
+                let found = lookup_term_entries(self.locale, &two)
                     .into_iter()
                     .find(|(term, _)| i <= 99 || term.matching != Some(TermMatch::WholeNumber));
                 if let Some((_, suffix)) = found {
-                    return with_suffix(self, &suffix);
+                    return with_suffix(self, suffix);
                 }
                 let one = numbered(format!("ordinal-{:02}", i.rem_euclid(10)));
-                let found = self
-                    .lookup_term_entries(&one)
+                let found = lookup_term_entries(self.locale, &one)
                     .into_iter()
                     .find(|(term, _)| {
                         i <= 10
@@ -1038,10 +1058,10 @@ impl Eval<'_, '_> {
                             || term.matching == Some(TermMatch::LastDigit)
                     });
                 if let Some((_, suffix)) = found {
-                    return with_suffix(self, &suffix);
+                    return with_suffix(self, suffix);
                 }
                 if let Some(suffix) = self.lookup_term(&term_named("ordinal")).into_iter().next() {
-                    return with_suffix(self, &suffix);
+                    return with_suffix(self, suffix);
                 }
                 self.warnings
                     .insert(format!("no ordinal suffix found for {decimal}"));
@@ -1060,7 +1080,7 @@ impl Eval<'_, '_> {
         formatting: &Formatting,
         depth: usize,
     ) -> Result<Output, EvalError> {
-        let lookup_name = if name == "editortranslator" {
+        let lookup_name = if same(name, "editortranslator") {
             "editor"
         } else {
             name
@@ -1432,7 +1452,7 @@ impl Eval<'_, '_> {
         });
         let mut contributions = Vec::with_capacity(names.len());
         for name in names {
-            let asked = if name == "editortranslator" {
+            let asked = if same(name, "editortranslator") {
                 "editor"
             } else {
                 name
@@ -1565,11 +1585,10 @@ impl Eval<'_, '_> {
                     form: TermForm::Symbol,
                     ..term_named("and")
                 })
-                .into_iter()
-                .next()
-                .unwrap_or_else(|| "&".to_owned()),
+                .unwrap_or("&")
+                .to_owned(),
             ),
-            Some(_) => self.lookup_term(&term_named("and")).into_iter().next(),
+            Some(_) => self.lookup_term(&term_named("and")).map(str::to_owned),
             None => None,
         };
         let final_is_others = names
@@ -1885,7 +1904,7 @@ impl Eval<'_, '_> {
         let format = self.style.options.page_range_format;
         let mut parts = Vec::new();
         for range in group_ranges(text) {
-            let formatted = format_page_range(format, &delimiter, crate::haskell::strip(range));
+            let formatted = format_page_range(format, delimiter, crate::haskell::strip(range));
             parts.push(Output::Literal(output::parse_csl_json(
                 self.locale,
                 &formatted,
@@ -1901,36 +1920,11 @@ impl Eval<'_, '_> {
         ))
     }
 
-    /// `lookupTerm`: the texts of the matching terms of the locale.
-    fn lookup_term(&self, term: &Term) -> Vec<String> {
-        self.lookup_term_entries(term)
-            .into_iter()
-            .map(|(_, text)| text)
-            .collect()
-    }
-
-    /// `lookupTerm` with the terms of the locale that match.
-    fn lookup_term_entries(&self, term: &Term) -> Vec<(Term, String)> {
-        let name = if term.name == "sub verbo" {
-            "sub-verbo"
-        } else {
-            term.name.as_str()
-        };
-        let wanted = Term {
-            name: name.to_owned(),
-            ..term.clone()
-        };
-        self.locale
-            .terms
-            .get(name)
-            .map(|terms| {
-                terms
-                    .iter()
-                    .filter(|(found, _)| term_matches(&wanted, found))
-                    .cloned()
-                    .collect()
-            })
-            .unwrap_or_default()
+    /// `lookupTerm`: the text of the first matching term of the locale.
+    fn lookup_term(&self, term: &Term) -> Option<&'a str> {
+        lookup_term_entries(self.locale, term)
+            .next()
+            .map(|(_, text)| text.as_str())
     }
 
     /// `lookupTerm'`: a missing form falls back to another form.
@@ -1938,11 +1932,11 @@ impl Eval<'_, '_> {
         let mut term = term.clone();
         loop {
             match self.lookup_term(&term).into_iter().next() {
-                Some(text) if text.is_empty() => return Ok(Output::Null),
+                Some("") => return Ok(Output::Null),
                 Some(text) => {
                     return Ok(Output::Literal(output::parse_csl_json(
                         self.locale,
-                        &text,
+                        text,
                         depth,
                     )?));
                 }
@@ -1961,7 +1955,7 @@ impl Eval<'_, '_> {
     /// The test of a `choose` branch. No disambiguation exists in this port.
     fn matches(&self, matching: Match, conditions: &[Condition]) -> bool {
         let test = |condition: &Condition| match condition {
-            Condition::HasVariable(v) if v.as_str() == "locator" => self.locator.is_some(),
+            Condition::HasVariable(v) if same(v.as_str(), "locator") => self.locator.is_some(),
             Condition::HasVariable(v) => match self.find(v.as_str()) {
                 Some(Found::Value(x)) => is_nonempty(&x),
                 Some(Found::Substituted) => true,
@@ -1974,7 +1968,7 @@ impl Eval<'_, '_> {
                 self.find(v.as_str()),
                 Some(Found::Value(Val::Date(date))) if date.circa
             ),
-            Condition::IsNumeric(v) if v.as_str() == "locator" => {
+            Condition::IsNumeric(v) if same(v.as_str(), "locator") => {
                 self.locator.is_some_and(is_numeric)
             }
             Condition::IsNumeric(v) => match self.find(v.as_str()) {
@@ -1984,9 +1978,9 @@ impl Eval<'_, '_> {
                 _ => false,
             },
             Condition::HasLocatorType(t) => match self.label {
-                Some("sub verbo") => t.as_str() == "sub-verbo",
+                Some("sub verbo") => same(t.as_str(), "sub-verbo"),
                 Some(label) => crate::types::Variable::new(label) == *t,
-                None => t.as_str() == "page" && self.locator.is_some(),
+                None => same(t.as_str(), "page") && self.locator.is_some(),
             },
             Condition::HasPosition(position) => self.positions.contains(position),
             Condition::WouldDisambiguate => false,
@@ -2001,11 +1995,23 @@ impl Eval<'_, '_> {
 
 /// `<+>` of `getDisplayName`: two name parts with a space between them,
 /// except after an apostrophe, a hyphen, an en dash or a no-break space.
-fn join_space(byzantine: bool, x: Output, y: Output) -> Output {
-    match (x, y) {
-        (x, Output::Null) => x,
-        (Output::Null, y) => y,
-        (Output::Literal(x), y) => {
+fn join_space(byzantine: bool, mut x: Output, y: Output) -> Output {
+    if y == Output::Null {
+        return x;
+    }
+    if matches!(x, Output::Linked(..)) {
+        return output::formatted(
+            Formatting {
+                delimiter: Some(" ".into()),
+                ..Formatting::default()
+            },
+            vec![x, y],
+        );
+    }
+    match &mut x {
+        Output::Null => y,
+        Output::Literal(x) => {
+            let x = std::mem::take(x);
             let joined = output::stringify(&x)
                 .chars()
                 .last()
@@ -2019,7 +2025,9 @@ fn join_space(byzantine: bool, x: Output, y: Output) -> Output {
                 vec![Output::Literal(x), y],
             )
         }
-        (Output::Formatted(f, x), y) => {
+        Output::Formatted(f, x) => {
+            let f = std::mem::take(&mut **f);
+            let x = std::mem::take(x);
             let delimiter =
                 (!f.suffix.as_deref().is_some_and(ends_with_space)).then(|| " ".to_owned());
             output::formatted(
@@ -2027,27 +2035,25 @@ fn join_space(byzantine: bool, x: Output, y: Output) -> Output {
                     delimiter,
                     ..Formatting::default()
                 },
-                vec![output::formatted(*f, x), y],
+                vec![output::formatted(f, x), y],
             )
         }
-        (x @ Output::Linked(..), y) => output::formatted(
-            Formatting {
-                delimiter: Some(" ".into()),
-                ..Formatting::default()
-            },
-            vec![x, y],
-        ),
-        (Output::Tagged(_, x) | Output::InNote(x), y) => join_space(byzantine, *x, y),
+        Output::Linked(..) => Output::Null,
+        Output::Tagged(_, x) | Output::InNote(x) => {
+            join_space(byzantine, std::mem::replace(&mut **x, Output::Null), y)
+        }
     }
 }
 
 /// `<:>` of `getDisplayName`: two name parts with the sort separator.
-fn join_separator(separator: &str, x: Output, y: Output) -> Output {
-    match (x, y) {
-        (x, Output::Null) => x,
+fn join_separator(separator: &str, mut x: Output, y: Output) -> Output {
+    match (&mut x, y) {
+        (_, Output::Null) => x,
         (Output::Null, y) => y,
-        (Output::Tagged(_, x) | Output::InNote(x), y) => join_separator(separator, *x, y),
-        (x, y) => output::formatted(
+        (Output::Tagged(_, inner) | Output::InNote(inner), y) => {
+            join_separator(separator, std::mem::replace(&mut **inner, Output::Null), y)
+        }
+        (_, y) => output::formatted(
             Formatting {
                 delimiter: Some(separator.to_owned()),
                 ..Formatting::default()
@@ -2204,6 +2210,32 @@ fn remove_last_suffix(parts: &mut [Output]) {
     }
 }
 
+/// `lookupTerm`: the terms of the locale that match, in order. The callers
+/// take the first match (Codex citeproc-R3b-07: no copy of the others).
+fn lookup_term_entries<'l>(
+    locale: &'l Locale,
+    term: &Term,
+) -> impl Iterator<Item = &'l (Term, String)> + use<'l> {
+    let name = if term.name == "sub verbo" {
+        "sub-verbo"
+    } else {
+        term.name.as_str()
+    };
+    let wanted = Term {
+        name: name.to_owned(),
+        ..term.clone()
+    };
+    locale
+        .terms
+        .get(name)
+        .into_iter()
+        .flatten()
+        .filter(move |(found, _)| {
+            step();
+            term_matches(&wanted, found)
+        })
+}
+
 fn term_named(name: &str) -> Term {
     Term {
         name: name.to_owned(),
@@ -2233,14 +2265,18 @@ fn term_matches(a: &Term, b: &Term) -> bool {
 /// `page-first` from the digits at the start of `page`.
 fn lookup_variable(reference: &Reference<Vec<Inline>>, name: &str) -> Option<Val<Vec<Inline>>> {
     match name {
-        "id" => (!reference.id.is_empty()).then(|| Val::Text(reference.id.clone())),
-        "type" => (!reference.kind.is_empty()).then(|| Val::Text(reference.kind.clone())),
+        _ if same(name, "id") => {
+            (!reference.id.is_empty()).then(|| Val::Text(reference.id.clone()))
+        }
+        _ if same(name, "type") => {
+            (!reference.kind.is_empty()).then(|| Val::Text(reference.kind.clone()))
+        }
         _ => {
             let found = reference
                 .variables
                 .get(&reference::Variable::new(name))
                 .cloned();
-            if name != "page-first" || found.is_some() {
+            if !same(name, "page-first") || found.is_some() {
                 return found;
             }
             let digits = |text: &str| -> Option<Val<Vec<Inline>>> {
@@ -2262,13 +2298,13 @@ fn lookup_variable(reference: &Reference<Vec<Inline>>, name: &str) -> Option<Val
 
 /// The number of a label term for a value (`determinePlural`).
 fn determine_plural(variable: &str, text: &str) -> TermNumber {
-    if variable == "number-of-volumes" && text != "1" && text != "0" {
+    if same(variable, "number-of-volumes") && text != "1" && text != "0" {
         return TermNumber::Plural;
     }
     if text.contains("\\-") {
         return TermNumber::Singular;
     }
-    let ungrouped = if variable == "page" || variable == "locator" {
+    let ungrouped = if same(variable, "page") || same(variable, "locator") {
         text.to_owned()
     } else {
         drop_digit_grouping(text)
@@ -2390,11 +2426,9 @@ fn is_nonempty(value: &Val<Vec<Inline>>) -> bool {
         Val::Text(t) => !t.is_empty(),
         Val::Fancy(x) => !x.is_empty(),
         Val::Names(names) => !names.is_empty(),
+        // `isNonEmpty`: `circa` alone does not count (Codex citeproc-R3b-03).
         Val::Date(date) => {
-            !(date.parts.is_empty()
-                && !date.circa
-                && date.season.is_none()
-                && date.literal.is_none())
+            !(date.parts.is_empty() && date.season.is_none() && date.literal.is_none())
         }
         Val::Num(_) => true,
     }
@@ -2410,12 +2444,22 @@ fn val_to_text(value: &Val<Vec<Inline>>) -> Option<String> {
     }
 }
 
+/// A variable name equals a folded name, with the full case folding of
+/// `CI Text`.
+fn same(name: &str, key: &str) -> bool {
+    if name.is_ascii() {
+        name.eq_ignore_ascii_case(key)
+    } else {
+        crate::case_fold::fold(name) == key
+    }
+}
+
 /// `identifierToURL`.
 fn identifier_url(variable: &str, text: &str) -> String {
     let prefix = match variable {
-        "DOI" => "https://doi.org/",
-        "PMCID" => "https://www.ncbi.nlm.nih.gov/pmc/articles/",
-        "PMID" => "https://www.ncbi.nlm.nih.gov/pubmed/",
+        "doi" => "https://doi.org/",
+        "pmcid" => "https://www.ncbi.nlm.nih.gov/pmc/articles/",
+        "pmid" => "https://www.ncbi.nlm.nih.gov/pubmed/",
         _ => "https://",
     };
     if text.is_empty() || text.contains("://") {
@@ -2561,6 +2605,7 @@ mod tests {
     use std::collections::BTreeMap;
 
     use super::{Citation, CitationItem, STEPS, eval_citation};
+    use crate::output::{fix_punct, from_text};
     use crate::reference::{Name, Reference, Val, Variable};
 
     fn person(given: &str) -> Name {
@@ -2631,9 +2676,67 @@ mod tests {
             }),
         ];
         for (name, steps) in classes {
+            assert_linear(name, steps);
+        }
+    }
+
+    fn assert_linear(name: &str, steps: fn(usize) -> usize) {
+        {
             let (small, large) = (steps(1_000), steps(4_000));
             assert!(small >= 1_000, "{name}: {small} steps");
             assert!(large <= 5 * small, "{name}: {small} then {large} steps");
+        }
+    }
+
+    /// The steps of `fixPunct` on `x` then `y` (Codex citeproc-R3b-06).
+    fn punct_steps(x: &str, y: &str) -> usize {
+        STEPS.with(|steps| steps.set(0));
+        let fixed = fix_punct(vec![from_text(x), from_text(y)]);
+        assert!(!fixed.is_empty());
+        STEPS.with(std::cell::Cell::get)
+    }
+
+    #[test]
+    fn punctuation_and_terms_take_linear_steps() {
+        let fixed = fix_punct(vec![from_text(&";:".repeat(3)), from_text("!")]);
+        assert_eq!(fixed, vec![Vec::new(), from_text("!")]);
+        let fixed = fix_punct(vec![from_text("a!"), from_text(&".:".repeat(3))]);
+        assert_eq!(fixed, vec![from_text("a!"), Vec::new()]);
+        type Class = (&'static str, fn(usize) -> usize);
+        let classes: [Class; 3] = [
+            ("end punctuation before a mark", |n| {
+                punct_steps(&";:".repeat(n), "!")
+            }),
+            ("start punctuation after a mark", |n| {
+                punct_steps("a!", &".:".repeat(n))
+            }),
+            ("terms with one name, used n times", |n| {
+                // Codex citeproc-R3b-07: n equal terms and n uses.
+                let terms = "<term name=\"x\">x</term>".repeat(n);
+                let style = crate::parse_style(
+                    &mut randoc_core::Context::pure(),
+                    &format!(
+                        "<style xmlns=\"http://purl.org/net/xbiblio/csl\"><locale><terms>{terms}</terms></locale><citation><layout>{}</layout></citation></style>",
+                        "<text term=\"x\"/>".repeat(n)
+                    ),
+                )
+                .unwrap();
+                let reference = Reference {
+                    id: "a".into(),
+                    kind: "book".into(),
+                    variables: BTreeMap::new(),
+                };
+                STEPS.with(|steps| steps.set(0));
+                let citation = Citation {
+                    items: vec![CitationItem::new("a", Some(&reference))],
+                    ..Citation::default()
+                };
+                eval_citation(&style, &style.locales[0], &citation, 128).unwrap();
+                STEPS.with(std::cell::Cell::get)
+            }),
+        ];
+        for (name, steps) in classes {
+            assert_linear(name, steps);
         }
     }
 }

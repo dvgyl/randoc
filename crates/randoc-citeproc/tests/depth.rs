@@ -476,3 +476,138 @@ fn the_steps_after_the_layout_take_deep_output() {
     });
     assert_eq!(result, vec![Ok(()), Ok(())]);
 }
+
+/// The `csljson` text of one reference whose `id` is `levels` nested lists
+/// around `a`, each list with `x` before its child. The test forgets the
+/// document: the drop of the AST is not a part of this crate.
+fn write_nested_id(levels: usize) -> String {
+    use randoc_ast::{Meta, MetaValue, Pandoc};
+    on_small_stack(move || {
+        let mut id = MetaValue::MetaString("a".into());
+        for _ in 0..levels {
+            id = MetaValue::MetaList(vec![MetaValue::MetaString("x".into()), id]);
+        }
+        let reference = MetaValue::MetaMap([("id".to_owned(), id)].into_iter().collect());
+        let doc = Pandoc {
+            meta: Meta(
+                [(
+                    "references".to_owned(),
+                    MetaValue::MetaList(vec![reference]),
+                )]
+                .into_iter()
+                .collect(),
+            ),
+            blocks: Vec::new(),
+        };
+        let randoc_core::Writer::Text(writer) =
+            randoc_citeproc::csljson::writer("csljson").unwrap()
+        else {
+            panic!("text writer")
+        };
+        let mut context = Context::pure();
+        let text = writer
+            .write(&doc, &randoc_core::WriterOptions::default(), &mut context)
+            .unwrap();
+        std::mem::forget(doc);
+        text
+    })
+}
+
+#[test]
+fn deep_typed_metadata_writes_on_a_small_stack() {
+    assert!(write_nested_id(2).contains("\"id\": \"x x a\""));
+    for levels in [128, 10_000, 100_000] {
+        let text = write_nested_id(levels);
+        let expected = format!("\"id\": \"{}a\"", "x ".repeat(levels));
+        assert!(text.contains(&expected), "{levels} levels");
+    }
+}
+
+fn nested_notes(levels: usize) -> Vec<randoc_ast::Inline> {
+    use randoc_ast::{Block, Inline};
+    let mut inlines = vec![Inline::Str("x".into())];
+    for _ in 0..levels {
+        inlines = vec![Inline::Note(vec![Block::Para(inlines)])];
+    }
+    inlines
+}
+
+fn nested_emph(levels: usize) -> Vec<randoc_ast::Inline> {
+    let mut inlines = vec![randoc_ast::Inline::Str("x".into())];
+    for _ in 0..levels {
+        inlines = vec![randoc_ast::Inline::Emph(inlines)];
+    }
+    inlines
+}
+
+/// Renders `levels` nested notes (two levels each) in literal output, then
+/// drops the output.
+fn render_notes(levels: usize) -> bool {
+    use randoc_citeproc::output::{self, Output, RenderOptions};
+    on_small_stack(move || {
+        let literal = Output::Literal(nested_notes(levels));
+        let locale = randoc_citeproc::Locale::default();
+        output::render_output(RenderOptions::default(), &locale, &literal, 128).is_ok()
+    })
+}
+
+#[test]
+fn notes_in_literal_output_have_the_depth_check() {
+    assert!(render_notes(60));
+    for levels in [10_000, 100_000] {
+        assert!(!render_notes(levels), "{levels} levels");
+    }
+}
+
+#[test]
+fn deep_inlines_given_to_a_text_case_drop_on_a_small_stack() {
+    use randoc_citeproc::case_transform::add_text_case;
+    use randoc_citeproc::types::TextCase;
+    for levels in [10_000, 100_000] {
+        for inlines in [nested_emph, nested_notes] {
+            let ok = on_small_stack(move || {
+                add_text_case(None, TextCase::Lowercase, inlines(levels), 128).is_ok()
+            });
+            assert!(!ok, "{levels} levels");
+        }
+    }
+}
+
+/// The text, the render result and the drop of `levels` nested tags.
+fn tagged_output(levels: usize) -> (String, bool) {
+    use randoc_citeproc::output::{self, Output, RenderOptions, Tag};
+    on_small_stack(move || {
+        let mut tree = Output::Literal(vec![randoc_ast::Inline::Str("x".into())]);
+        for _ in 0..levels {
+            tree = Output::Formatted(
+                Box::default(),
+                vec![
+                    Output::Tagged(Tag::Other, Box::new(tree)),
+                    Output::Literal(vec![randoc_ast::Inline::Str("y".into())]),
+                ],
+            );
+        }
+        let locale = randoc_citeproc::Locale::default();
+        let rendered = output::render_output(RenderOptions::default(), &locale, &tree, 128);
+        (output::output_to_text(&tree), rendered.is_ok())
+    })
+}
+
+#[test]
+fn deep_output_converts_to_text_and_drops_on_a_small_stack() {
+    assert_eq!(tagged_output(2), ("x y y".to_owned(), true));
+    for levels in [10_000, 100_000] {
+        let (text, rendered) = tagged_output(levels);
+        assert_eq!(text.len(), 1 + 2 * levels, "{levels} levels");
+        assert!(!rendered, "{levels} levels");
+    }
+}
+
+#[test]
+fn deep_inline_output_drops_on_a_small_stack() {
+    use randoc_citeproc::output::Output;
+    for levels in [10_000, 100_000] {
+        on_small_stack(move || drop(Output::Literal(nested_emph(levels))));
+        on_small_stack(move || drop(Output::Literal(nested_notes(levels))));
+    }
+}

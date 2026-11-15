@@ -13,7 +13,7 @@ use randoc_ast::{Attr, Inline, QuoteType, Target};
 use crate::case_transform::add_text_case;
 use crate::csljson::Inlines;
 use crate::haskell;
-use crate::markup::{self, Markup, Style as MarkupStyle, TooDeep};
+use crate::markup::{self, Markup, Quotes, Style as MarkupStyle, TooDeep};
 use crate::reference::Name;
 use crate::types::{
     DisplayStyle, FontStyle, FontVariant, FontWeight, Formatting, ItemType, Locale, TextCase,
@@ -167,25 +167,71 @@ pub fn render_output(
     })
 }
 
-fn is_text_leaf(output: &Output) -> bool {
-    match output {
-        Output::Literal(_) => true,
-        Output::Tagged(_, inner) => is_text_leaf(inner),
-        _ => false,
+fn is_text_leaf(mut output: &Output) -> bool {
+    loop {
+        match output {
+            Output::Literal(_) => return true,
+            Output::Tagged(_, inner) => output = inner,
+            _ => return false,
+        }
     }
 }
 
-/// `outputToText`.
+/// `outputToText`: the parts of a formatted or linked output are joined by
+/// a space. The walk uses a heap stack and one buffer.
 pub fn output_to_text(output: &Output) -> String {
+    let mut out = String::new();
+    let mut pending = vec![Some(output)];
+    while let Some(node) = pending.pop() {
+        match node {
+            None => out.push(' '),
+            Some(Output::Null) => {}
+            Some(Output::Literal(inlines)) => out.push_str(&stringify(inlines)),
+            Some(Output::Tagged(_, inner) | Output::InNote(inner)) => pending.push(Some(inner)),
+            Some(Output::Formatted(_, parts) | Output::Linked(_, parts)) => {
+                for (index, part) in parts.iter().enumerate().rev() {
+                    pending.push(Some(part));
+                    if index > 0 {
+                        pending.push(None);
+                    }
+                }
+            }
+        }
+    }
+    out
+}
+
+/// The derived drop recurses; a deep output tree gives its parts to a heap
+/// stack first.
+impl Drop for Output {
+    fn drop(&mut self) {
+        let mut pending = Vec::new();
+        take_parts(self, &mut pending);
+        while let Some(mut output) = pending.pop() {
+            take_parts(&mut output, &mut pending);
+        }
+    }
+}
+
+fn take_parts(output: &mut Output, pending: &mut Vec<Output>) {
     match output {
-        Output::Null => String::new(),
-        Output::Literal(inlines) => stringify(inlines),
-        Output::Tagged(_, inner) | Output::InNote(inner) => output_to_text(inner),
-        Output::Formatted(_, parts) | Output::Linked(_, parts) => parts
-            .iter()
-            .map(output_to_text)
-            .collect::<Vec<_>>()
-            .join(" "),
+        Output::Formatted(_, parts) | Output::Linked(_, parts) => {
+            pending.append(parts);
+        }
+        Output::Tagged(_, inner) | Output::InNote(inner) => {
+            if !matches!(**inner, Output::Null) {
+                pending.push(std::mem::replace(&mut **inner, Output::Null));
+            }
+        }
+        Output::Literal(inlines) => {
+            if inlines
+                .iter()
+                .any(|inline| children(inline).is_some() || matches!(inline, Inline::Note(_)))
+            {
+                crate::deep::drop_inlines(std::mem::take(inlines));
+            }
+        }
+        Output::Null => {}
     }
 }
 
@@ -301,45 +347,149 @@ pub fn add_delimiters(delimiter: &[Inline], parts: Vec<Vec<Inline>>) -> Vec<Vec<
 
 /// `fixPunct`: the punctuation where two parts meet, by the table of
 /// `citeproc-js`.
+///
+/// The loop reads only the characters at the edges and changes the parts in
+/// place (Codex citeproc-R3b-06). A part loses its empty `Str` elements
+/// before its first change, as `removeEmptyStrs` does after each change.
 pub fn fix_punct(parts: Vec<Vec<Inline>>) -> Vec<Vec<Inline>> {
     let mut out: Vec<Vec<Inline>> = Vec::with_capacity(parts.len());
     let mut rest = parts.into_iter();
     let Some(mut x) = rest.next() else {
         return out;
     };
+    let mut x_clean = false;
     for mut y in rest {
+        let mut y_clean = false;
         loop {
-            let x_text = stringify(&x);
-            let y_text = stringify(&y);
-            let y_start = y_text.chars().next().unwrap_or('\u{FFFD}');
-            let x_last = x_text.chars().next_back().unwrap_or('\u{FFFD}');
+            let y_start = EdgeChars::forward(&y).next().unwrap_or('\u{FFFD}');
+            let x_last = EdgeChars::backward(&x).next().unwrap_or('\u{FFFD}');
             let x_end = if y_start == '.' {
-                terminal_before_quote(&x_text).unwrap_or(x_last)
+                terminal_before_quote(&x).unwrap_or(x_last)
             } else {
                 x_last
             };
-            match punct_rule(x_end, y_start) {
-                Keep::Both => break,
+            let changed = match punct_rule(x_end, y_start) {
+                Keep::Both => false,
                 Keep::First => {
-                    let trimmed = drop_text_while(&|c| c == y_start, y.clone());
-                    if trimmed == y {
-                        break;
-                    }
-                    y = trimmed;
+                    clean_once(&mut y, &mut y_clean);
+                    let mut changed = false;
+                    drop_start(&|c| c == y_start, &mut y, &mut true, &mut changed);
+                    changed
                 }
                 Keep::Second => {
-                    let trimmed = drop_text_while_end(&|c| c == x_end, x.clone());
-                    if trimmed == x {
-                        break;
-                    }
-                    x = trimmed;
+                    clean_once(&mut x, &mut x_clean);
+                    let mut changed = false;
+                    drop_end(&|c| c == x_end, &mut x, &mut true, &mut changed);
+                    changed
                 }
+            };
+            if !changed {
+                break;
             }
         }
         out.push(std::mem::replace(&mut x, y));
+        x_clean = y_clean;
     }
     out.push(x);
     out
+}
+
+fn clean_once(inlines: &mut Vec<Inline>, clean: &mut bool) {
+    if !*clean {
+        remove_empty_strs(inlines);
+        *clean = true;
+    }
+}
+
+/// The characters of `stringify`, from the start or from the end.
+struct EdgeChars<'a> {
+    pending: Vec<Piece<'a>>,
+    current: std::str::Chars<'a>,
+    forward: bool,
+}
+
+impl<'a> EdgeChars<'a> {
+    fn forward(inlines: &'a [Inline]) -> EdgeChars<'a> {
+        EdgeChars {
+            pending: inlines.iter().rev().map(Piece::Inline).collect(),
+            current: "".chars(),
+            forward: true,
+        }
+    }
+
+    fn backward(inlines: &'a [Inline]) -> EdgeChars<'a> {
+        EdgeChars {
+            pending: inlines.iter().map(Piece::Inline).collect(),
+            current: "".chars(),
+            forward: false,
+        }
+    }
+}
+
+impl<'a> Iterator for EdgeChars<'a> {
+    type Item = char;
+
+    fn next(&mut self) -> Option<char> {
+        loop {
+            let next = if self.forward {
+                self.current.next()
+            } else {
+                self.current.next_back()
+            };
+            if next.is_some() {
+                crate::eval::step();
+                return next;
+            }
+            crate::eval::step();
+            let inline = match self.pending.pop()? {
+                Piece::Text(text) => {
+                    self.current = text.chars();
+                    continue;
+                }
+                Piece::Inline(inline) => inline,
+            };
+            match inline {
+                Inline::Space | Inline::SoftBreak | Inline::LineBreak => self.current = " ".chars(),
+                Inline::Str(text) | Inline::Code(_, text) | Inline::Math(_, text) => {
+                    self.current = text.chars();
+                }
+                Inline::RawInline(format, text)
+                    if format.0 == "html" && text.starts_with("<br") =>
+                {
+                    self.current = " ".chars();
+                }
+                Inline::Quoted(kind, parts) => {
+                    let (open, close) = match kind {
+                        QuoteType::SingleQuote => ("\u{2018}", "\u{2019}"),
+                        QuoteType::DoubleQuote => ("\u{201C}", "\u{201D}"),
+                    };
+                    let (first, last) = if self.forward {
+                        (open, close)
+                    } else {
+                        (close, open)
+                    };
+                    self.pending.push(Piece::Text(last));
+                    self.push_parts(parts);
+                    self.pending.push(Piece::Text(first));
+                }
+                other => {
+                    if let Some(parts) = children(other) {
+                        self.push_parts(parts);
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl<'a> EdgeChars<'a> {
+    fn push_parts(&mut self, parts: &'a [Inline]) {
+        if self.forward {
+            self.pending.extend(parts.iter().rev().map(Piece::Inline));
+        } else {
+            self.pending.extend(parts.iter().map(Piece::Inline));
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -366,17 +516,13 @@ fn punct_rule(x: char, y: char) -> Keep {
     }
 }
 
-/// The last character before closing quotes and spaces at the end.
-fn terminal_before_quote(text: &str) -> Option<char> {
-    let trimmed = text.trim_end_matches(haskell::is_space);
-    let last = trimmed.chars().next_back()?;
-    if !is_quote_like(last) {
+/// The last character of the text before closing quotes and spaces at the end.
+fn terminal_before_quote(inlines: &[Inline]) -> Option<char> {
+    let mut chars = EdgeChars::backward(inlines).skip_while(|c| haskell::is_space(*c));
+    if !is_quote_like(chars.next()?) {
         return None;
     }
-    trimmed
-        .trim_end_matches(|c| haskell::is_space(c) || is_quote_like(c))
-        .chars()
-        .next_back()
+    chars.find(|c| !(haskell::is_space(*c) || is_quote_like(*c)))
 }
 
 /// `"`, `'` or the general category Pf.
@@ -403,7 +549,7 @@ pub fn parse_csl_json(
     text: &str,
     max_depth: usize,
 ) -> Result<Vec<Inline>, TooDeep> {
-    let parsed = markup::parse(text, max_depth)?;
+    let parsed = markup::parse_with_quotes(text, &locale_quotes(locale), max_depth)?;
     markup_to_inlines(locale, &parsed, max_depth)
 }
 
@@ -592,18 +738,10 @@ fn children_mut(inline: &mut Inline) -> Option<&mut Vec<Inline>> {
     }
 }
 
-/// Checks that no inline is nested deeper than `max_depth`, with a heap stack.
+/// Checks that no inline and no block of a note is nested deeper than
+/// `max_depth`, with a heap stack.
 pub fn check_depth(inlines: &[Inline], max_depth: usize) -> Result<(), TooDeep> {
-    let mut pending: Vec<(&Inline, usize)> = inlines.iter().map(|i| (i, 1)).collect();
-    while let Some((inline, depth)) = pending.pop() {
-        if depth > max_depth {
-            return Err(TooDeep);
-        }
-        if let Some(parts) = children(inline) {
-            pending.extend(parts.iter().map(|i| (i, depth + 1)));
-        }
-    }
-    Ok(())
+    crate::deep::check_inlines(inlines, max_depth)
 }
 
 /// `mapText`: changes the text of each `Str`.
@@ -621,77 +759,116 @@ fn map_text(inlines: &mut [Inline], f: &dyn Fn(&str) -> String) {
 /// `dropTextWhile`: drops the leading characters that match, in the text
 /// order of the leaves, then each empty `Str`.
 fn drop_text_while(f: &dyn Fn(char) -> bool, mut inlines: Vec<Inline>) -> Vec<Inline> {
-    let mut at_start = true;
-    drop_start(f, &mut inlines, &mut at_start);
     remove_empty_strs(&mut inlines);
+    drop_start(f, &mut inlines, &mut true, &mut false);
     inlines
 }
 
-fn drop_start(f: &dyn Fn(char) -> bool, inlines: &mut [Inline], at_start: &mut bool) {
-    for inline in inlines {
+/// The leaves at the start lose the characters that match, in place. A
+/// `Str` that becomes empty goes. `changed` tells whether an inline changed.
+fn drop_start(
+    f: &dyn Fn(char) -> bool,
+    inlines: &mut Vec<Inline>,
+    at_start: &mut bool,
+    changed: &mut bool,
+) {
+    let mut emptied = false;
+    for inline in inlines.iter_mut() {
+        crate::eval::step();
         if !*at_start {
-            return;
+            break;
         }
         if let Some(parts) = children_mut(inline) {
-            drop_start(f, parts, at_start);
+            drop_start(f, parts, at_start, changed);
             continue;
         }
         match inline {
             Inline::Str(text) => {
-                let kept = text.trim_start_matches(f).to_owned();
-                if !kept.is_empty() {
+                let cut = text.len() - text.trim_start_matches(f).len();
+                if cut > 0 {
+                    text.drain(..cut);
+                    *changed = true;
+                }
+                if text.is_empty() {
+                    emptied = true;
+                } else {
                     *at_start = false;
                 }
-                *text = kept;
             }
             Inline::Space | Inline::SoftBreak => {
                 if f(' ') {
                     *inline = Inline::Str(String::new());
+                    emptied = true;
+                    *changed = true;
                 } else {
                     *at_start = false;
-                    *inline = Inline::Space;
+                    if *inline == Inline::SoftBreak {
+                        *inline = Inline::Space;
+                        *changed = true;
+                    }
                 }
             }
             _ => {}
         }
+    }
+    if emptied {
+        inlines.retain(|inline| !matches!(inline, Inline::Str(text) if text.is_empty()));
     }
 }
 
 /// `dropTextWhileEnd`: drops the trailing characters that match, from the
 /// last leaf back, then each empty `Str`.
 fn drop_text_while_end(f: &dyn Fn(char) -> bool, mut inlines: Vec<Inline>) -> Vec<Inline> {
-    let mut at_end = true;
-    drop_end(f, &mut inlines, &mut at_end);
     remove_empty_strs(&mut inlines);
+    drop_end(f, &mut inlines, &mut true, &mut false);
     inlines
 }
 
-fn drop_end(f: &dyn Fn(char) -> bool, inlines: &mut [Inline], at_end: &mut bool) {
+/// The leaves at the end lose the characters that match, in place. A `Str`
+/// that becomes empty goes. `changed` tells whether an inline changed.
+fn drop_end(
+    f: &dyn Fn(char) -> bool,
+    inlines: &mut Vec<Inline>,
+    at_end: &mut bool,
+    changed: &mut bool,
+) {
+    let mut emptied = false;
     for inline in inlines.iter_mut().rev() {
+        crate::eval::step();
         if !*at_end {
-            return;
+            break;
         }
         match inline {
             Inline::Str(text) => {
-                let kept = text.trim_end_matches(f).to_owned();
-                if !kept.is_empty() {
+                let keep = text.trim_end_matches(f).len();
+                if keep < text.len() {
+                    text.truncate(keep);
+                    *changed = true;
+                }
+                if text.is_empty() {
+                    emptied = true;
+                } else {
                     *at_end = false;
                 }
-                *text = kept;
             }
             Inline::Space | Inline::SoftBreak => {
                 if f(' ') {
                     *inline = Inline::Str(String::new());
+                    emptied = true;
+                    *changed = true;
                 } else {
                     *at_end = false;
                 }
             }
             other => {
                 if let Some(parts) = children_mut(other) {
-                    drop_end(f, parts, at_end);
+                    drop_end(f, parts, at_end, changed);
                 }
             }
         }
+    }
+    if emptied {
+        inlines.retain(|inline| !matches!(inline, Inline::Str(text) if text.is_empty()));
     }
 }
 
@@ -708,22 +885,27 @@ fn remove_empty_strs(inlines: &mut Vec<Inline>) {
 /// `localizeQuotes` (`convertQuotes`): each `csl-quoted` span gets the
 /// quotation marks of the locale, outer and inner in turn.
 fn localize_quotes(locale: &Locale, inlines: &mut [Inline]) {
-    let term = |name: &str, default: &str| {
+    let quotes = locale_quotes(locale);
+    convert_quotes(inlines, true, &quotes.outer, &quotes.inner);
+}
+
+/// `lookupQuotes`: the first term of each quote name, else the default mark.
+fn locale_quotes(locale: &Locale) -> Quotes {
+    let term = |name: &str, default: String| {
         locale
             .terms
             .get(name)
             .and_then(|terms| terms.first())
-            .map_or_else(|| default.to_owned(), |(_, text)| text.clone())
+            .map_or(default, |(_, text)| text.clone())
     };
-    let outer = (
-        term("open-quote", "\u{201C}"),
-        term("close-quote", "\u{201D}"),
-    );
-    let inner = (
-        term("open-inner-quote", "\u{2018}"),
-        term("close-inner-quote", "\u{2019}"),
-    );
-    convert_quotes(inlines, true, &outer, &inner);
+    let Quotes { outer, inner } = Quotes::default();
+    Quotes {
+        outer: (term("open-quote", outer.0), term("close-quote", outer.1)),
+        inner: (
+            term("open-inner-quote", inner.0),
+            term("close-inner-quote", inner.1),
+        ),
+    }
 }
 
 fn convert_quotes(
@@ -874,5 +1056,5 @@ pub fn stringify(inlines: &[Inline]) -> String {
 
 enum Piece<'a> {
     Inline(&'a Inline),
-    Text(&'static str),
+    Text(&'a str),
 }

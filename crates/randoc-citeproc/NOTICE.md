@@ -12,9 +12,15 @@ licence. The rest of the crate has the licence `MIT OR Apache-2.0`.
   `superscriptChars`) and the CSL JSON markup (`pCslJson`, `renderCslJson`):
   a port of `citeproc` 0.14.1.1 (`src/Citeproc/Types.hs`,
   `src/Citeproc/CslJson.hs`), BSD-2-Clause.
+- The evaluation of a citation, the output and the case transformation
+  (`src/eval.rs`, `src/output.rs`, `src/case_transform.rs`): a port of
+  `citeproc` 0.14.1.1 (`src/Citeproc/Eval.hs`, `src/Citeproc/Types.hs`,
+  `src/Citeproc/Pandoc.hs`, `src/Citeproc/CaseTransform.hs`), BSD-2-Clause.
 - `src/unicode_class.rs`: ranges of general categories, derived from the
   Unicode Character Database 16.0.0 (Unicode License v3) by
   `tools/unicode_classes.py`.
+- `src/case_fold.rs`: the full case folding table, derived from the Unicode
+  Character Database 16.0.0 (Unicode License v3) by `tools/case_fold.py`.
 - The BCP 47 language tag (`Lang`, `parseLang`, `renderLang`): a port of
   `unicode-collation` 0.1.3.7 (`src/Text/Collate/Lang.hs`), BSD-2-Clause.
   No data file of `unicode-collation` is copied.

@@ -55,12 +55,30 @@ pub enum Markup {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TooDeep;
 
-/// The closing strings of the parser. The index is the closer of a [`Group`].
-const CLOSERS: [&str; 11] = [
-    "</i>", "</b>", "</u>", "</span>", "</sup>", "</sub>", "</sc>", "\"", "'", "\u{201D}",
-    "\u{2019}",
+/// The closing strings of the tags. The parser adds the four quote closers:
+/// the index of a string in [`Parser::closers`] is the closer of a [`Group`].
+const TAG_CLOSERS: [&str; 7] = [
+    "</i>", "</b>", "</u>", "</span>", "</sup>", "</sub>", "</sc>",
 ];
-const QUOTE_CLOSERS: [(char, usize); 4] = [('"', 7), ('\'', 8), ('\u{201C}', 9), ('\u{2018}', 10)];
+
+/// The quotation marks that open and close a quoted part (`lookupQuotes`):
+/// the outer pair and the inner pair.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Quotes {
+    /// The outer opening and closing marks.
+    pub outer: (String, String),
+    /// The inner opening and closing marks.
+    pub inner: (String, String),
+}
+
+impl Default for Quotes {
+    fn default() -> Quotes {
+        Quotes {
+            outer: ("\u{201C}".into(), "\u{201D}".into()),
+            inner: ("\u{2018}".into(), "\u{2019}".into()),
+        }
+    }
+}
 
 const NONE: u32 = u32::MAX;
 
@@ -96,6 +114,12 @@ impl Item {
 
 struct Parser {
     chars: Vec<char>,
+    /// The tag closers, then the closers of `"`, `'`, the outer and the inner quotes.
+    closers: Vec<Vec<char>>,
+    /// The quote openers and the index of their closers, in the order of `pOpenQuote`.
+    openers: Vec<(Vec<char>, usize)>,
+    /// The characters of the four quote strings (`P.inClass`, with its ranges).
+    quote_class: Vec<(char, char)>,
     /// For each position: the end of the run of letters and digits that are not special.
     word_end: Vec<u32>,
     /// For each position: the end of the run of other characters that are not special.
@@ -108,21 +132,42 @@ struct Parser {
     till: Vec<Vec<u32>>,
 }
 
-/// Parses the markup of a CSL JSON string with the default quotation marks.
+/// Parses the markup of a CSL JSON string with the default quotation marks
+/// (`parseCslJson mempty`, the form of reference values).
 ///
 /// Groups deeper than `max_depth` give [`TooDeep`].
 pub fn parse(text: &str, max_depth: usize) -> Result<Vec<Markup>, TooDeep> {
-    let parser = Parser::new(text);
+    parse_with_quotes(text, &Quotes::default(), max_depth)
+}
+
+/// Parses the markup of a text with the quotation marks of a locale
+/// (`parseCslJson locale`, the form of style text).
+///
+/// Groups deeper than `max_depth` give [`TooDeep`].
+pub fn parse_with_quotes(
+    text: &str,
+    quotes: &Quotes,
+    max_depth: usize,
+) -> Result<Vec<Markup>, TooDeep> {
+    let parser = Parser::new(text, quotes);
     parser.build(0, parser.chars.len(), max_depth)
 }
 
-fn is_special(c: char) -> bool {
-    matches!(c, '<' | '>' | '\'' | '"' | '\u{2019}')
-        || (!c.is_ascii() && (is_quote_char(c) || superscript(c).is_some()))
-}
-
-fn is_quote_char(c: char) -> bool {
-    matches!(c, '\u{201C}' | '\u{201D}' | '\u{2018}' | '\u{2019}')
+/// The characters of `P.inClass`: `a-b` is a range.
+fn char_class(text: &str) -> Vec<(char, char)> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < chars.len() {
+        if i + 2 < chars.len() && chars[i + 1] == '-' {
+            out.push((chars[i], chars[i + 2]));
+            i += 3;
+        } else {
+            out.push((chars[i], chars[i]));
+            i += 1;
+        }
+    }
+    out
 }
 
 fn is_apostrophe(c: char) -> bool {
@@ -142,21 +187,44 @@ fn from_u32(value: u32) -> Option<usize> {
 }
 
 impl Parser {
-    fn new(text: &str) -> Parser {
+    fn new(text: &str, quotes: &Quotes) -> Parser {
         let chars: Vec<char> = text.chars().collect();
         let n = chars.len();
+        let mut closers: Vec<Vec<char>> = TAG_CLOSERS.iter().map(|t| t.chars().collect()).collect();
+        let quote_pairs = [
+            ("\"", "\""),
+            ("'", "'"),
+            (quotes.outer.0.as_str(), quotes.outer.1.as_str()),
+            (quotes.inner.0.as_str(), quotes.inner.1.as_str()),
+        ];
+        let mut openers = Vec::new();
+        for (open, close) in quote_pairs {
+            // An empty opener would give an item of no length: the oracle
+            // does not end for it.
+            if !open.is_empty() {
+                openers.push((open.chars().collect(), closers.len()));
+            }
+            closers.push(close.chars().collect());
+        }
+        let quote_class = char_class(&format!(
+            "{}{}{}{}",
+            quotes.outer.0, quotes.outer.1, quotes.inner.0, quotes.inner.1
+        ));
         let mut parser = Parser {
             word_end: vec![to_u32(n); n + 1],
             other_end: vec![to_u32(n); n + 1],
             alnum_end: vec![to_u32(n); n + 1],
             item_end: vec![NONE; n + 1],
-            till: vec![vec![NONE; n + 1]; CLOSERS.len()],
+            till: vec![vec![NONE; n + 1]; closers.len()],
             chars,
+            closers,
+            openers,
+            quote_class,
         };
         for p in (0..n).rev() {
             let c = parser.chars[p];
             let alnum = is_alpha_num(c);
-            let special = is_special(c);
+            let special = parser.is_special(c);
             parser.word_end[p] = if alnum && !special {
                 parser.word_end[p + 1]
             } else {
@@ -174,9 +242,9 @@ impl Parser {
             };
             let item_end = parser.item(p).end();
             parser.item_end[p] = to_u32(item_end);
-            for (closer, text) in CLOSERS.iter().enumerate() {
-                parser.till[closer][p] = if parser.starts_with(p, text) {
-                    to_u32(p + text.chars().count())
+            for closer in 0..parser.closers.len() {
+                parser.till[closer][p] = if parser.starts_with_chars(p, &parser.closers[closer]) {
+                    to_u32(p + parser.closers[closer].len())
                 } else {
                     parser.till[closer][item_end]
                 };
@@ -185,10 +253,23 @@ impl Parser {
         parser
     }
 
+    fn is_special(&self, c: char) -> bool {
+        matches!(c, '<' | '>' | '\'' | '"' | '\u{2019}')
+            || (!c.is_ascii()
+                && (self.quote_class.iter().any(|(a, b)| (*a..=*b).contains(&c))
+                    || superscript(c).is_some()))
+    }
+
     fn starts_with(&self, p: usize, text: &str) -> bool {
         (p..)
             .zip(text.chars())
             .all(|(q, c)| self.chars.get(q) == Some(&c))
+    }
+
+    fn starts_with_chars(&self, p: usize, text: &[char]) -> bool {
+        self.chars
+            .get(p..p + text.len())
+            .is_some_and(|slice| slice == text)
     }
 
     /// Matches a literal and returns the position after it.
@@ -209,7 +290,7 @@ impl Parser {
         Some(Item::Group {
             style,
             start,
-            content_end: end - CLOSERS[closer].chars().count(),
+            content_end: end - self.closers[closer].len(),
             end,
         })
     }
@@ -256,14 +337,18 @@ impl Parser {
         })
     }
 
+    /// `pCslQuoted`: the first opener that matches decides.
     fn quoted(&self, p: usize) -> Option<Item> {
-        let c = self.chars[p];
-        let (_, closer) = QUOTE_CLOSERS.iter().find(|(open, _)| *open == c)?;
-        let next = *self.chars.get(p + 1)?;
-        if is_space_char(next) || CLOSERS[*closer].starts_with(next) {
+        let (open, closer) = self
+            .openers
+            .iter()
+            .find(|(open, _)| self.starts_with_chars(p, open))?;
+        let start = p + open.len();
+        let next = *self.chars.get(start)?;
+        if is_space_char(next) || self.closers[*closer] == [next] {
             return None;
         }
-        self.group(Style::Quoted, p + 1, *closer)
+        self.group(Style::Quoted, start, *closer)
     }
 
     fn tag(&self, p: usize) -> Option<Item> {

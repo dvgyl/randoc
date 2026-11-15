@@ -116,6 +116,32 @@ fn each_name_gives_the_oracle_inlines() {
     );
 }
 
+/// 6 quote sets of a style locale (none, German, French, Japanese, Danish,
+/// two-character marks) x punctuation in quotes or not x 16 quoted texts in
+/// values, affixes, terms and delimited groups, and reference titles
+/// (`tools/quote_cases.py`, `tools/quotes.lua`; review citeproc-R3b-05).
+#[test]
+fn style_text_uses_the_quotes_of_the_locale() {
+    replay(
+        include_str!("replay/quotes.txt"),
+        include_str!("replay/quotes-refs.json"),
+        990,
+    );
+}
+
+/// 4 references x 42 layouts: variable names in other letter cases in
+/// `text`, `number`, `label` and conditions (Codex citeproc-R3b-02), dates
+/// with `circa` and no parts (R3b-03), and letters that are new in Unicode
+/// 16.0 in each text case (R3b-08) (`tools/variable_case_cases.py`).
+#[test]
+fn variable_names_compare_without_case() {
+    replay(
+        include_str!("replay/case.txt"),
+        include_str!("replay/case-refs.json"),
+        160,
+    );
+}
+
 /// The locale that the merged locale of each style falls back to.
 fn base_locale() -> Locale {
     Locale {

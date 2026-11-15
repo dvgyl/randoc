@@ -86,7 +86,11 @@ fn haskell_io_text(error: &std::io::Error) -> String {
 /// percent escapes stay as they are. `None` for a text that is not a
 /// `file:` URL or not a valid URI (a `%` without two hex digits).
 fn file_url_path(url: &str) -> Option<String> {
-    let rest = url.strip_prefix("file:")?;
+    // A URI scheme compares without case (Codex citeproc-R1-13).
+    let rest = url
+        .get(..5)
+        .filter(|scheme| scheme.eq_ignore_ascii_case("file:"))
+        .and_then(|_| url.get(5..))?;
     let mut escaped = String::with_capacity(rest.len());
     for c in rest.chars() {
         if c.is_ascii_alphanumeric() || ":/?#[]@!$&'()*+,;=-._~%".contains(c) {
@@ -106,12 +110,15 @@ fn file_url_path(url: &str) -> Option<String> {
     if !valid_escapes {
         return None;
     }
-    let path = match escaped.strip_prefix("//") {
+    // The query and the fragment go before the search for the path
+    // (Codex citeproc-R3b-09).
+    let end = escaped.find(['?', '#']).unwrap_or(escaped.len());
+    let reference = &escaped[..end];
+    let path = match reference.strip_prefix("//") {
         Some(after) => &after[after.find('/').unwrap_or(after.len())..],
-        None => escaped.as_str(),
+        None => reference,
     };
-    let end = path.find(['?', '#']).unwrap_or(path.len());
-    Some(path[..end].to_owned())
+    Some(path.to_owned())
 }
 
 /// Haskell `unEscapeString`: each `%` with two hex digits gives its byte.
@@ -161,14 +168,9 @@ fn read_parent(context: &mut Context, href: &str) -> Result<String, Error> {
     }
     match file_url_path(href) {
         Some(path) => read_style_file(context, &path),
-        // A plain path loses its percent escapes; an error names the link.
-        None => {
-            let path = unescape(href);
-            match read_style_file(context, &path) {
-                Err(Error::ResourceNotFound(_)) => Err(Error::ResourceNotFound(href.to_owned())),
-                other => other,
-            }
-        }
+        // A plain path loses its percent escapes, also in the error text
+        // (Codex citeproc-R3b-10).
+        None => read_style_file(context, &unescape(href)),
     }
 }
 

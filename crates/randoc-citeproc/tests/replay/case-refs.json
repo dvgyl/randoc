@@ -1,0 +1,6 @@
+[
+{"id": "v1", "type": "book", "title": "TiꟋtle ɤx", "page": "12-19", "DOI": "10.1/x", "URL": "example.org/u", "PMID": "77", "volume": "3", "number-of-volumes": "2", "issued": {"date-parts": [[2001]]}},
+{"id": "v2", "type": "article", "title": "𐵐𐵰 aᲉ", "page": "7", "issued": {"circa": true}},
+{"id": "v3", "type": "chapter", "issued": {"circa": true, "season": 2}},
+{"id": "v4", "type": "report", "issued": {"date-parts": [[1999]], "circa": true}}
+]

@@ -429,17 +429,32 @@ fn meta_to_reference(
 /// The text of a metadata value as the oracle reads a typed field: the
 /// plain text of a string, inlines or blocks; the texts of a list joined by
 /// a space; nothing for a Boolean, a map, or a list that holds one.
+///
+/// The walk uses a heap stack and one buffer: a list can nest deeper than the
+/// thread stack permits (review citeproc-R3b-01).
 fn meta_text(value: &MetaValue) -> Option<String> {
-    match value {
-        MetaValue::MetaString(_) | MetaValue::MetaInlines(_) | MetaValue::MetaBlocks(_) => {
-            Some(stringify_meta(value))
-        }
-        MetaValue::MetaBool(_) | MetaValue::MetaMap(_) => None,
-        MetaValue::MetaList(items) => {
-            let texts = items.iter().map(meta_text).collect::<Option<Vec<_>>>()?;
-            Some(texts.join(" "))
+    let mut out = String::new();
+    let mut stack = vec![Some(value)];
+    while let Some(node) = stack.pop() {
+        match node {
+            None => out.push(' '),
+            Some(
+                value @ (MetaValue::MetaString(_)
+                | MetaValue::MetaInlines(_)
+                | MetaValue::MetaBlocks(_)),
+            ) => out.push_str(&stringify_meta(value)),
+            Some(MetaValue::MetaBool(_) | MetaValue::MetaMap(_)) => return None,
+            Some(MetaValue::MetaList(items)) => {
+                for (index, item) in items.iter().enumerate().rev() {
+                    stack.push(Some(item));
+                    if index > 0 {
+                        stack.push(None);
+                    }
+                }
+            }
         }
     }
+    Some(out)
 }
 
 /// How the writer reads a metadata value.
@@ -521,12 +536,33 @@ fn meta_date_parts(dates: &[MetaValue]) -> Vec<DateParts> {
     dates
         .iter()
         .filter_map(|date| match date {
-            MetaValue::MetaList(parts) => Some(DateParts(
-                parts.iter().map(|p| read_int(p).unwrap_or(0)).collect(),
-            )),
+            MetaValue::MetaList(parts) => Some(list_date_parts(parts)),
             _ => None,
         })
         .collect()
+}
+
+fn list_date_parts(parts: &[MetaValue]) -> DateParts {
+    DateParts(parts.iter().map(|p| read_int(p).unwrap_or(0)).collect())
+}
+
+/// The date of the `year`, `month` and `day` keys of a map, up to the first
+/// missing part. With no month, the season gives the month: 20 plus the season.
+fn map_date_parts(map: &BTreeMap<Text, MetaValue>) -> Option<DateParts> {
+    let season = map.get("season").and_then(read_int);
+    let month = map
+        .get("month")
+        .and_then(read_int)
+        .or_else(|| season.map(|s| s.wrapping_add(20)));
+    let parts: Vec<i64> = [
+        map.get("year").and_then(read_int),
+        month,
+        map.get("day").and_then(read_int),
+    ]
+    .into_iter()
+    .map_while(|part| part)
+    .collect();
+    (!parts.is_empty()).then_some(DateParts(parts))
 }
 
 fn meta_to_date(value: &MetaValue) -> Date {
@@ -542,26 +578,7 @@ fn meta_to_date(value: &MetaValue) -> Date {
             let parts = match map.get("date-parts") {
                 Some(MetaValue::MetaList(dates)) => meta_date_parts(dates),
                 Some(_) => Vec::new(),
-                None => {
-                    // With no month, the season gives the month: 20 plus the season.
-                    let month = map
-                        .get("month")
-                        .and_then(read_int)
-                        .or_else(|| season.map(|s| s.wrapping_add(20)));
-                    let parts: Vec<i64> = [
-                        map.get("year").and_then(read_int),
-                        month,
-                        map.get("day").and_then(read_int),
-                    ]
-                    .into_iter()
-                    .map_while(|part| part)
-                    .collect();
-                    if parts.is_empty() {
-                        Vec::new()
-                    } else {
-                        vec![DateParts(parts)]
-                    }
-                }
+                None => map_date_parts(map).into_iter().collect(),
             };
             Date {
                 parts,
@@ -570,8 +587,17 @@ fn meta_to_date(value: &MetaValue) -> Date {
                 literal: map.get("literal").and_then(meta_text),
             }
         }
+        // The YAML form of `pandoc-citeproc`: a list of date maps, one date
+        // for each map (review Opus citeproc-R3b-01).
         MetaValue::MetaList(dates) => Date {
-            parts: meta_date_parts(dates),
+            parts: dates
+                .iter()
+                .filter_map(|date| match date {
+                    MetaValue::MetaMap(map) => map_date_parts(map),
+                    MetaValue::MetaList(parts) => Some(list_date_parts(parts)),
+                    _ => None,
+                })
+                .collect(),
             ..Date::default()
         },
         MetaValue::MetaBool(_) => Date::default(),
@@ -862,6 +888,79 @@ mod tests {
         assert_eq!(span("", &["csl-a", "x"]), "x");
         assert_eq!(span("", &["x", "csl-a"]), "x");
         assert_eq!(span("i", &["csl-a"]), "<div class=\"csl-csl-a\">x</div>");
+    }
+
+    /// The YAML date list of `pandoc-citeproc` (review Opus citeproc-R3b-01).
+    /// Expected: the `date-parts` of the oracle for the same YAML.
+    #[test]
+    fn a_list_of_date_maps_gives_one_date_for_each_map() {
+        use MetaValue::{MetaBool, MetaList, MetaMap, MetaString};
+        let text = |t: &str| MetaString(t.into());
+        let map = |pairs: &[(&str, MetaValue)]| {
+            MetaMap(
+                pairs
+                    .iter()
+                    .map(|(k, v)| ((*k).to_owned(), v.clone()))
+                    .collect(),
+            )
+        };
+        let parts = |value: MetaValue| -> Vec<Vec<i64>> {
+            meta_to_date(&value)
+                .parts
+                .into_iter()
+                .map(|p| p.0)
+                .collect()
+        };
+        let year = |y: &str| map(&[("year", text(y))]);
+        assert_eq!(
+            parts(MetaList(vec![map(&[
+                ("year", text("2012")),
+                ("month", text("3"))
+            ])])),
+            [[2012, 3]]
+        );
+        assert_eq!(
+            parts(MetaList(vec![map(&[
+                ("year", text("2012")),
+                ("month", text("3")),
+                ("day", text("4"))
+            ])])),
+            [[2012, 3, 4]]
+        );
+        assert_eq!(
+            parts(MetaList(vec![year("2001"), year("2003")])),
+            [[2001], [2003]]
+        );
+        assert_eq!(
+            parts(MetaList(vec![map(&[
+                ("year", text("2012")),
+                ("season", text("2"))
+            ])])),
+            [[2012, 22]]
+        );
+        assert_eq!(
+            parts(MetaList(vec![map(&[
+                ("year", text("2012")),
+                ("circa", MetaBool(true))
+            ])])),
+            [[2012]]
+        );
+        assert_eq!(
+            parts(MetaList(vec![map(&[
+                ("year", text("2012")),
+                ("month", text("03"))
+            ])])),
+            [[2012, 3]]
+        );
+        assert_eq!(parts(MetaList(vec![year("2012"), text("2013")])), [[2012]]);
+        assert!(parts(MetaList(vec![map(&[("literal", text("spring"))])])).is_empty());
+        assert_eq!(
+            parts(MetaList(vec![
+                MetaList(vec![text("2001"), text("2")]),
+                year("2003")
+            ])),
+            [vec![2001, 2], vec![2003]]
+        );
     }
 
     #[test]

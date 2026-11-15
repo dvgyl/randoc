@@ -2857,3 +2857,45 @@ cases, 0 differ) and `title-author` (132 cases, 0 differ). Open: R4-01
 medium (`markdown_phpextra` with a `markdown="1"` div and a fence line),
 the counterexamples of R3-12 and R3-15. Not run: fuzzing, coverage, the
 mutation sample, the differential run.
+
+**citeproc**: branch `ws/citeproc-3`, commits `6e7c837..0d9ec68` (one
+commit). The state of `6e7c837` goes to `main` in batch E. The commit
+`0d9ec68` walks deep typed metadata on a heap stack (Codex R3b-01). It
+adds `src/deep.rs`, an iterative `Drop` of `Output` and depth checks for
+the output and case APIs (Codex R3b-04). Style text now uses the quotes
+of the locale (Codex R3b-05, Opus R3b-02). The `csljson` writer gives
+one date for each map of a YAML date list (Opus R3b-01). The notice
+files get rows for `src/case_fold.rs` and the ported modules (Opus
+R3b-05).
+
+Gate: `06:28:25 UTC 0d9ec68 gate passed: citeproc heap walks for deep
+metadata and output (Codex R3b-01, R3b-04), locale quotes in style text
+(Codex R3b-05, Opus R3b-02), YAML date lists in the csljson writer (Opus
+R3b-01), notice rows (Opus R3b-05)`. The worker ran the gate.
+
+Measured by the worker: oracle matrix of locale quotes: 996 of 996 equal
+(the old code gave 270 differences). Date list test: 9 oracle forms.
+Depth tests on a 2 MB stack at 128, 10,000 and 100,000 levels.
+
+Review state: Round 3b on `main` `856692d`: the Codex reviewer requested
+changes with 3 high and 5 medium findings (and one medium finding of
+round 1 that is open in part), the Opus reviewer with 1 high, 5 medium
+and 3 low findings; each finding of round 2 with the level medium or
+higher is closed. This block corrects the findings that its commit
+messages and the gate line name; the worker continues with the others.
+The verification by both reviewers is due when the findings of round 3b
+are corrected.
+
+Open: the other Opus findings of round 3b (not started; no level
+stated); the other Codex findings (the report holds them in a later
+commit, outside this range); Codex R3b-11 (low; `docs/PRIOR_ART.md`
+line 106); I-CITE-16 (scope gap; no level); unit 4 (not started).
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range.
+
+Addition of the coordinator: the block holds the commits to `4812a9f`
+(gate pass of the worker at 07:36 UTC). Its gate line says: variable
+names without case (R3b-02), dates with only `circa` (R3b-03), linear
+punctuation clean-up and term lookup (R3b-06, R3b-07), the letter
+classes of the reference in the case change (R3b-08), the file scheme
+without case (the rest of the round 1 finding).

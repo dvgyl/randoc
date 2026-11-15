@@ -26,6 +26,7 @@
 mod case_fold;
 pub mod case_transform;
 pub mod csljson;
+mod deep;
 mod element;
 mod error;
 pub mod eval;

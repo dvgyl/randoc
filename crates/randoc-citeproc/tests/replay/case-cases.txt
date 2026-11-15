@@ -1,0 +1,168 @@
+v1		<text variable="ID"/>
+v1		<choose><if variable="ID"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="Id"/>
+v1		<choose><if variable="Id"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="TYPE"/>
+v1		<choose><if variable="TYPE"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="Page"/>
+v1		<choose><if variable="Page"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="PAGE-FIRST"/>
+v1		<choose><if variable="PAGE-FIRST"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="doi"/>
+v1		<choose><if variable="doi"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="url"/>
+v1		<choose><if variable="url"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="Url"/>
+v1		<choose><if variable="Url"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="pmid"/>
+v1		<choose><if variable="pmid"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="TITLE"/>
+v1		<choose><if variable="TITLE"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="Volume"/>
+v1		<choose><if variable="Volume"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="LOCATOR"/>
+v1		<choose><if variable="LOCATOR"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="Year-Suffix"/>
+v1		<choose><if variable="Year-Suffix"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="Citation-Label"/>
+v1		<choose><if variable="Citation-Label"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<text variable="TITLE" form="short"/>
+v1		<number variable="VOLUME"/>
+v1		<label variable="Number-Of-Volumes"/>
+v1		<choose><if is-numeric="PAGE"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<choose><if is-uncertain-date="ISSUED"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<choose><if variable="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<choose><if is-uncertain-date="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v1		<group delimiter=" "><text value="g"/><text variable="issued"/></group>
+v1		<group><text value="g"/><date variable="issued"><date-part name="year"/></date></group>
+v1		<text variable="title" text-case="lowercase"/>
+v1		<text variable="title" text-case="uppercase"/>
+v1		<text variable="title" text-case="capitalize-all"/>
+v1		<text variable="title" text-case="title"/>
+v1		<text variable="title" text-case="sentence"/>
+v2		<text variable="ID"/>
+v2		<choose><if variable="ID"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="Id"/>
+v2		<choose><if variable="Id"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="TYPE"/>
+v2		<choose><if variable="TYPE"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="Page"/>
+v2		<choose><if variable="Page"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="PAGE-FIRST"/>
+v2		<choose><if variable="PAGE-FIRST"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="doi"/>
+v2		<choose><if variable="doi"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="url"/>
+v2		<choose><if variable="url"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="Url"/>
+v2		<choose><if variable="Url"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="pmid"/>
+v2		<choose><if variable="pmid"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="TITLE"/>
+v2		<choose><if variable="TITLE"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="Volume"/>
+v2		<choose><if variable="Volume"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="LOCATOR"/>
+v2		<choose><if variable="LOCATOR"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="Year-Suffix"/>
+v2		<choose><if variable="Year-Suffix"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="Citation-Label"/>
+v2		<choose><if variable="Citation-Label"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<text variable="TITLE" form="short"/>
+v2		<number variable="VOLUME"/>
+v2		<label variable="Number-Of-Volumes"/>
+v2		<choose><if is-numeric="PAGE"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<choose><if is-uncertain-date="ISSUED"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<choose><if variable="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<choose><if is-uncertain-date="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v2		<group delimiter=" "><text value="g"/><text variable="issued"/></group>
+v2		<group><text value="g"/><date variable="issued"><date-part name="year"/></date></group>
+v2		<text variable="title" text-case="lowercase"/>
+v2		<text variable="title" text-case="uppercase"/>
+v2		<text variable="title" text-case="capitalize-all"/>
+v2		<text variable="title" text-case="title"/>
+v2		<text variable="title" text-case="sentence"/>
+v3		<text variable="ID"/>
+v3		<choose><if variable="ID"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="Id"/>
+v3		<choose><if variable="Id"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="TYPE"/>
+v3		<choose><if variable="TYPE"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="Page"/>
+v3		<choose><if variable="Page"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="PAGE-FIRST"/>
+v3		<choose><if variable="PAGE-FIRST"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="doi"/>
+v3		<choose><if variable="doi"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="url"/>
+v3		<choose><if variable="url"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="Url"/>
+v3		<choose><if variable="Url"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="pmid"/>
+v3		<choose><if variable="pmid"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="TITLE"/>
+v3		<choose><if variable="TITLE"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="Volume"/>
+v3		<choose><if variable="Volume"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="LOCATOR"/>
+v3		<choose><if variable="LOCATOR"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="Year-Suffix"/>
+v3		<choose><if variable="Year-Suffix"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="Citation-Label"/>
+v3		<choose><if variable="Citation-Label"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<text variable="TITLE" form="short"/>
+v3		<number variable="VOLUME"/>
+v3		<label variable="Number-Of-Volumes"/>
+v3		<choose><if is-numeric="PAGE"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<choose><if is-uncertain-date="ISSUED"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<choose><if variable="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<choose><if is-uncertain-date="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v3		<group delimiter=" "><text value="g"/><text variable="issued"/></group>
+v3		<group><text value="g"/><date variable="issued"><date-part name="year"/></date></group>
+v3		<text variable="title" text-case="lowercase"/>
+v3		<text variable="title" text-case="uppercase"/>
+v3		<text variable="title" text-case="capitalize-all"/>
+v3		<text variable="title" text-case="title"/>
+v3		<text variable="title" text-case="sentence"/>
+v4		<text variable="ID"/>
+v4		<choose><if variable="ID"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="Id"/>
+v4		<choose><if variable="Id"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="TYPE"/>
+v4		<choose><if variable="TYPE"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="Page"/>
+v4		<choose><if variable="Page"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="PAGE-FIRST"/>
+v4		<choose><if variable="PAGE-FIRST"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="doi"/>
+v4		<choose><if variable="doi"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="url"/>
+v4		<choose><if variable="url"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="Url"/>
+v4		<choose><if variable="Url"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="pmid"/>
+v4		<choose><if variable="pmid"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="TITLE"/>
+v4		<choose><if variable="TITLE"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="Volume"/>
+v4		<choose><if variable="Volume"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="LOCATOR"/>
+v4		<choose><if variable="LOCATOR"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="Year-Suffix"/>
+v4		<choose><if variable="Year-Suffix"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="Citation-Label"/>
+v4		<choose><if variable="Citation-Label"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<text variable="TITLE" form="short"/>
+v4		<number variable="VOLUME"/>
+v4		<label variable="Number-Of-Volumes"/>
+v4		<choose><if is-numeric="PAGE"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<choose><if is-uncertain-date="ISSUED"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<choose><if variable="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<choose><if is-uncertain-date="issued"><text value="y"/></if><else><text value="n"/></else></choose>
+v4		<group delimiter=" "><text value="g"/><text variable="issued"/></group>
+v4		<group><text value="g"/><date variable="issued"><date-part name="year"/></date></group>
+v4		<text variable="title" text-case="lowercase"/>
+v4		<text variable="title" text-case="uppercase"/>
+v4		<text variable="title" text-case="capitalize-all"/>
+v4		<text variable="title" text-case="title"/>
+v4		<text variable="title" text-case="sentence"/>

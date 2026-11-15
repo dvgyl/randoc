@@ -11,7 +11,7 @@ use crate::haskell;
 use crate::lang::Lang;
 use crate::markup::TooDeep;
 use crate::types::TextCase;
-use crate::unicode_class::{is_alpha_num, is_letter, is_lower, is_punctuation, is_upper};
+use crate::unicode_class::{self, is_punctuation};
 
 /// The place of a run in the text (`CaseTransformState`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -50,6 +50,10 @@ pub fn add_text_case(
         TextCase::SentenceCase => sentence_case,
         TextCase::TitleCase => title_case,
     };
+    if let Err(error) = crate::deep::check_inlines(&inlines, max_depth) {
+        crate::deep::drop_inlines(inlines);
+        return Err(error);
+    }
     let mut walk = Walk {
         state: State::Start,
         turkish,
@@ -226,6 +230,44 @@ fn split_up(text: &str) -> Vec<&str> {
         runs.push(&text[start..]);
     }
     runs
+}
+
+/// The cased letters of Unicode 16.0, which the character classes of the
+/// oracle do not know (review Codex citeproc-R3b-08). The oracle changes
+/// their case with the newer tables of `Data.Text`, but they end a run of
+/// letters: `Ɤ` stays `Ɤ` in lower case, and `aᲉ` capitalizes to `AᲉ`. The
+/// list comes from an oracle probe of each character that has a case
+/// mapping in the Unicode Character Database 16.0.0 (2,929 characters, one
+/// word each, in a title with `text-case="lowercase"` and `"uppercase"`):
+/// these 52 letters keep their case there.
+const NEW_CASED_LETTERS: [(char, char); 5] = [
+    ('\u{1C89}', '\u{1C8A}'),
+    ('\u{A7CB}', '\u{A7CD}'),
+    ('\u{A7DA}', '\u{A7DC}'),
+    ('\u{10D50}', '\u{10D65}'),
+    ('\u{10D70}', '\u{10D85}'),
+];
+
+fn known(c: char) -> bool {
+    !NEW_CASED_LETTERS
+        .iter()
+        .any(|(low, high)| (*low..=*high).contains(&c))
+}
+
+fn is_alpha_num(c: char) -> bool {
+    known(c) && unicode_class::is_alpha_num(c)
+}
+
+fn is_letter(c: char) -> bool {
+    known(c) && unicode_class::is_letter(c)
+}
+
+fn is_lower(c: char) -> bool {
+    known(c) && unicode_class::is_lower(c)
+}
+
+fn is_upper(c: char) -> bool {
+    known(c) && unicode_class::is_upper(c)
 }
 
 pub(crate) fn to_upper(turkish: bool, text: &str) -> String {
@@ -432,3 +474,29 @@ const STOP_WORDS: [&str; 98] = [
     "without",
     "yet",
 ];
+
+#[cfg(test)]
+mod tests {
+    use randoc_ast::Inline;
+
+    use super::add_text_case;
+    use crate::types::TextCase;
+
+    fn cased(case: TextCase, text: &str) -> Vec<Inline> {
+        add_text_case(None, case, vec![Inline::Str(text.into())], 128).unwrap_or_default()
+    }
+
+    /// Oracle results of the probe that `NEW_CASED_LETTERS` names.
+    #[test]
+    fn new_letters_end_a_run_as_in_the_oracle() {
+        let text = |t: &str| vec![Inline::Str(t.into())];
+        assert_eq!(cased(TextCase::Lowercase, "\u{A7CB}"), text("\u{A7CB}"));
+        assert_eq!(cased(TextCase::Uppercase, "\u{10D70}"), text("\u{10D70}"));
+        assert_eq!(cased(TextCase::Uppercase, "\u{264}"), text("\u{A7CB}"));
+        assert_eq!(cased(TextCase::Lowercase, "\u{A7C9}Ab"), text("\u{A7CA}ab"));
+        assert_eq!(
+            cased(TextCase::CapitalizeAll, "a\u{1C89}"),
+            text("A\u{1C89}")
+        );
+    }
+}

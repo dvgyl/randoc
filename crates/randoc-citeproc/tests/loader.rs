@@ -51,7 +51,33 @@ fn the_loader_gives_the_oracle_result_for_each_form() {
     } else {
         (0, "ok")
     };
-    let parents: [(&str, String, i32, &str); 22] = [
+    let parents: [(&str, String, i32, &str); 28] = [
+        (
+            "missing-escape",
+            "missing%65.csl".into(),
+            99,
+            "File 'missinge.csl' not found in resource path",
+        ),
+        ("file-upper", "FILE:parent.csl".into(), 0, "ok"),
+        ("file-mixed", "File:parent.csl".into(), 0, "ok"),
+        (
+            "file-upper-escape",
+            "FILE:par%65nt.csl".into(),
+            99,
+            "File 'par%65nt.csl' not found in resource path",
+        ),
+        (
+            "file-query-slash",
+            "file://h?x=/dev/null".into(),
+            99,
+            "File '' not found in resource path",
+        ),
+        (
+            "file-fragment-slash",
+            "file://h#/dev/null".into(),
+            99,
+            "File '' not found in resource path",
+        ),
         ("rel", "parent.csl".into(), 0, "ok"),
         (
             "rel-missing",
