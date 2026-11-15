@@ -95,6 +95,15 @@ fn each_number_and_label_gives_the_oracle_inlines() {
     );
 }
 
+#[test]
+fn each_date_gives_the_oracle_inlines() {
+    replay(
+        include_str!("replay/date.txt"),
+        include_str!("replay/date-refs.json"),
+        300,
+    );
+}
+
 fn replay(replay: &str, refs: &str, minimum: usize) {
     let base = Locale {
         language: Some(randoc_citeproc::parse_lang("en-US").unwrap()),

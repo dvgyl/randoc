@@ -1,0 +1,21 @@
+[
+{"id":"d1","type":"book","title":"T d1","issued":{"date-parts":[[2001,2,3]]}},
+{"id":"d2","type":"book","title":"T d2","issued":{"date-parts":[[2001,2,3],[2001,2,10]]}},
+{"id":"d3","type":"book","title":"T d3","issued":{"date-parts":[[2001,2,3],[2001,4,10]]}},
+{"id":"d4","type":"book","title":"T d4","issued":{"date-parts":[[2001,11,3],[2003,1,10]]}},
+{"id":"d5","type":"book","title":"T d5","issued":{"date-parts":[[2001],[0]]}},
+{"id":"d6","type":"book","title":"T d6","issued":{"literal":"some time ago"}},
+{"id":"d7","type":"book","title":"T d7","issued":{"date-parts":[[1999]],"season":2}},
+{"id":"d8","type":"book","title":"T d8","issued":{"date-parts":[[1999]]}},
+{"id":"d9","type":"book","title":"T d9","issued":{"date-parts":[[-44,3,15]]}},
+{"id":"d10","type":"book","title":"T d10","issued":{"date-parts":[[476,9]]}},
+{"id":"d11","type":"book","title":"T d11","issued":{"raw":"2010-07"}},
+{"id":"d12","type":"book","title":"T d12","issued":{"date-parts":[[1850]],"circa":true}},
+{"id":"d13","type":"book","title":"T d13","issued":{"date-parts":[[2001,2]],"season":3}},
+{"id":"d14","type":"book","title":"T d14","issued":{"date-parts":[[2001,14]]}},
+{"id":"d15","type":"book","title":"T d15","issued":{"date-parts":[[2001,2,1],[2001,2,2]]}},
+{"id":"d16","type":"book","title":"T d16","issued":{"date-parts":[[2001,2],[2002,2]]}},
+{"id":"d17","type":"book","title":"T d17","issued":{"date-parts":[[2001,22,1]]}},
+{"id":"d18","type":"book","title":"T d18","issued":{"date-parts":[[2001,1,1],[2001,1,1]]}},
+{"id":"d19","type":"book","title":"T d19","title":"Not a date","accessed":{"date-parts":[[2020,5,6]]}}
+]

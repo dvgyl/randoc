@@ -1,0 +1,323 @@
+d1		<date variable="issued" form="text"/>
+d1		<date variable="issued" form="numeric"/>
+d1		<date variable="issued" form="text" date-parts="year"/>
+d1		<date variable="issued" form="text" date-parts="year-month"/>
+d1		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d1		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d1		<date variable="issued"><date-part name="year"/></date>
+d1		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d1		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d1		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d1		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d1		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d1		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d1		<date variable="title" form="text"/>
+d1		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d1		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d1		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d2		<date variable="issued" form="text"/>
+d2		<date variable="issued" form="numeric"/>
+d2		<date variable="issued" form="text" date-parts="year"/>
+d2		<date variable="issued" form="text" date-parts="year-month"/>
+d2		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d2		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d2		<date variable="issued"><date-part name="year"/></date>
+d2		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d2		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d2		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d2		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d2		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d2		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d2		<date variable="title" form="text"/>
+d2		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d2		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d2		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d3		<date variable="issued" form="text"/>
+d3		<date variable="issued" form="numeric"/>
+d3		<date variable="issued" form="text" date-parts="year"/>
+d3		<date variable="issued" form="text" date-parts="year-month"/>
+d3		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d3		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d3		<date variable="issued"><date-part name="year"/></date>
+d3		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d3		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d3		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d3		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d3		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d3		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d3		<date variable="title" form="text"/>
+d3		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d3		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d3		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d4		<date variable="issued" form="text"/>
+d4		<date variable="issued" form="numeric"/>
+d4		<date variable="issued" form="text" date-parts="year"/>
+d4		<date variable="issued" form="text" date-parts="year-month"/>
+d4		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d4		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d4		<date variable="issued"><date-part name="year"/></date>
+d4		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d4		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d4		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d4		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d4		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d4		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d4		<date variable="title" form="text"/>
+d4		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d4		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d4		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d5		<date variable="issued" form="text"/>
+d5		<date variable="issued" form="numeric"/>
+d5		<date variable="issued" form="text" date-parts="year"/>
+d5		<date variable="issued" form="text" date-parts="year-month"/>
+d5		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d5		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d5		<date variable="issued"><date-part name="year"/></date>
+d5		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d5		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d5		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d5		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d5		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d5		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d5		<date variable="title" form="text"/>
+d5		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d5		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d5		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d6		<date variable="issued" form="text"/>
+d6		<date variable="issued" form="numeric"/>
+d6		<date variable="issued" form="text" date-parts="year"/>
+d6		<date variable="issued" form="text" date-parts="year-month"/>
+d6		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d6		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d6		<date variable="issued"><date-part name="year"/></date>
+d6		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d6		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d6		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d6		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d6		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d6		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d6		<date variable="title" form="text"/>
+d6		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d6		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d6		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d7		<date variable="issued" form="text"/>
+d7		<date variable="issued" form="numeric"/>
+d7		<date variable="issued" form="text" date-parts="year"/>
+d7		<date variable="issued" form="text" date-parts="year-month"/>
+d7		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d7		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d7		<date variable="issued"><date-part name="year"/></date>
+d7		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d7		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d7		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d7		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d7		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d7		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d7		<date variable="title" form="text"/>
+d7		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d7		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d7		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d8		<date variable="issued" form="text"/>
+d8		<date variable="issued" form="numeric"/>
+d8		<date variable="issued" form="text" date-parts="year"/>
+d8		<date variable="issued" form="text" date-parts="year-month"/>
+d8		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d8		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d8		<date variable="issued"><date-part name="year"/></date>
+d8		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d8		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d8		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d8		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d8		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d8		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d8		<date variable="title" form="text"/>
+d8		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d8		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d8		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d9		<date variable="issued" form="text"/>
+d9		<date variable="issued" form="numeric"/>
+d9		<date variable="issued" form="text" date-parts="year"/>
+d9		<date variable="issued" form="text" date-parts="year-month"/>
+d9		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d9		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d9		<date variable="issued"><date-part name="year"/></date>
+d9		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d9		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d9		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d9		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d9		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d9		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d9		<date variable="title" form="text"/>
+d9		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d9		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d9		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d10		<date variable="issued" form="text"/>
+d10		<date variable="issued" form="numeric"/>
+d10		<date variable="issued" form="text" date-parts="year"/>
+d10		<date variable="issued" form="text" date-parts="year-month"/>
+d10		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d10		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d10		<date variable="issued"><date-part name="year"/></date>
+d10		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d10		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d10		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d10		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d10		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d10		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d10		<date variable="title" form="text"/>
+d10		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d10		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d10		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d11		<date variable="issued" form="text"/>
+d11		<date variable="issued" form="numeric"/>
+d11		<date variable="issued" form="text" date-parts="year"/>
+d11		<date variable="issued" form="text" date-parts="year-month"/>
+d11		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d11		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d11		<date variable="issued"><date-part name="year"/></date>
+d11		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d11		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d11		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d11		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d11		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d11		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d11		<date variable="title" form="text"/>
+d11		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d11		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d11		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d12		<date variable="issued" form="text"/>
+d12		<date variable="issued" form="numeric"/>
+d12		<date variable="issued" form="text" date-parts="year"/>
+d12		<date variable="issued" form="text" date-parts="year-month"/>
+d12		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d12		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d12		<date variable="issued"><date-part name="year"/></date>
+d12		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d12		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d12		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d12		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d12		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d12		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d12		<date variable="title" form="text"/>
+d12		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d12		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d12		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d13		<date variable="issued" form="text"/>
+d13		<date variable="issued" form="numeric"/>
+d13		<date variable="issued" form="text" date-parts="year"/>
+d13		<date variable="issued" form="text" date-parts="year-month"/>
+d13		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d13		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d13		<date variable="issued"><date-part name="year"/></date>
+d13		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d13		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d13		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d13		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d13		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d13		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d13		<date variable="title" form="text"/>
+d13		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d13		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d13		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d14		<date variable="issued" form="text"/>
+d14		<date variable="issued" form="numeric"/>
+d14		<date variable="issued" form="text" date-parts="year"/>
+d14		<date variable="issued" form="text" date-parts="year-month"/>
+d14		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d14		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d14		<date variable="issued"><date-part name="year"/></date>
+d14		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d14		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d14		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d14		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d14		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d14		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d14		<date variable="title" form="text"/>
+d14		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d14		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d14		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d15		<date variable="issued" form="text"/>
+d15		<date variable="issued" form="numeric"/>
+d15		<date variable="issued" form="text" date-parts="year"/>
+d15		<date variable="issued" form="text" date-parts="year-month"/>
+d15		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d15		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d15		<date variable="issued"><date-part name="year"/></date>
+d15		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d15		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d15		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d15		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d15		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d15		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d15		<date variable="title" form="text"/>
+d15		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d15		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d15		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d16		<date variable="issued" form="text"/>
+d16		<date variable="issued" form="numeric"/>
+d16		<date variable="issued" form="text" date-parts="year"/>
+d16		<date variable="issued" form="text" date-parts="year-month"/>
+d16		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d16		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d16		<date variable="issued"><date-part name="year"/></date>
+d16		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d16		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d16		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d16		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d16		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d16		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d16		<date variable="title" form="text"/>
+d16		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d16		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d16		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d17		<date variable="issued" form="text"/>
+d17		<date variable="issued" form="numeric"/>
+d17		<date variable="issued" form="text" date-parts="year"/>
+d17		<date variable="issued" form="text" date-parts="year-month"/>
+d17		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d17		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d17		<date variable="issued"><date-part name="year"/></date>
+d17		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d17		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d17		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d17		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d17		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d17		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d17		<date variable="title" form="text"/>
+d17		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d17		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d17		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d18		<date variable="issued" form="text"/>
+d18		<date variable="issued" form="numeric"/>
+d18		<date variable="issued" form="text" date-parts="year"/>
+d18		<date variable="issued" form="text" date-parts="year-month"/>
+d18		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d18		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d18		<date variable="issued"><date-part name="year"/></date>
+d18		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d18		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d18		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d18		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d18		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d18		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d18		<date variable="title" form="text"/>
+d18		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d18		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d18		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>
+d19		<date variable="issued" form="text"/>
+d19		<date variable="issued" form="numeric"/>
+d19		<date variable="issued" form="text" date-parts="year"/>
+d19		<date variable="issued" form="text" date-parts="year-month"/>
+d19		<date variable="issued" form="text" prefix="[" suffix="]"><date-part name="month" form="short"/></date>
+d19		<date variable="issued" form="numeric" font-style="italic"><date-part name="year" prefix="y"/></date>
+d19		<date variable="issued"><date-part name="year"/></date>
+d19		<date variable="issued" delimiter=" "><date-part name="day" form="ordinal"/><date-part name="month"/><date-part name="year"/></date>
+d19		<date variable="issued" delimiter="-"><date-part name="year"/><date-part name="month" form="numeric-leading-zeros"/><date-part name="day" form="numeric-leading-zeros"/></date>
+d19		<date variable="issued"><date-part name="month" form="numeric" suffix="/"/><date-part name="day" suffix="/" range-delimiter="~"/><date-part name="year" range-delimiter=" to "/></date>
+d19		<date variable="issued" delimiter=" "><date-part name="month" form="short" prefix="(" suffix=")" range-delimiter="/"/><date-part name="year" font-weight="bold"/></date>
+d19		<group delimiter=": "><text value="On"/><date variable="issued"><date-part name="day"/></date></group>
+d19		<group delimiter=": "><text value="Seen"/><date variable="accessed" form="text"/></group>
+d19		<date variable="title" form="text"/>
+d19		<choose><if is-uncertain-date="issued"><text value="ca. "/></if></choose><date variable="issued"><date-part name="year"/></date>
+d19		<date variable="issued" text-case="uppercase"><date-part name="month"/><date-part name="year" prefix=" "/></date>
+d19		<date variable="issued" form="text"><date-part name="day" form="ordinal"/></date>

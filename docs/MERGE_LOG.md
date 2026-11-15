@@ -2432,3 +2432,39 @@ tests, coverage, fuzzing or benchmarks for this range. Licence scan: no.
 Harness: 57176 units: 55396 pass, 1360 fail, 0 no result, 0 not recorded, 420 skipped. Baseline: 54488 units: 0 regressions, 908 new passes.
 Capability summary before: `{'extensions': {'failing': 1, 'not_started': 11, 'partial': 25, 'passing': 53}, 'input_formats': {'not_started': 39, 'partial': 9, 'passing': 4}, 'options': {'not_started': 1, 'partial': 18, 'passing': 90}, 'output_formats': {'failing': 1, 'not_started': 59, 'partial': 12, 'passing': 5}, 'units': {'passing': 54488, 'total': 56756}}`.
 Capability summary after: `{"extensions": {"failing": 1, "not_started": 11, "partial": 20, "passing": 58}, "input_formats": {"not_started": 39, "partial": 9, "passing": 4}, "options": {"not_started": 1, "partial": 15, "passing": 93}, "output_formats": {"failing": 1, "not_started": 59, "partial": 11, "passing": 6}, "units": {"passing": 55396, "total": 56756}}`.
+
+## Session 6 of 2026-11-15, batch B
+
+**citeproc**: branch `ws/citeproc-3`, commits `4327de5..937bfcd` (`main`
+holds `4327de5` as `d3f5a8a`). The block holds 1fbd17f of the stopped
+worker and 937bfcd (merge of `origin/main` by the coordinator; two
+conflicts in `src/eval.rs` and `tests/eval.rs` of the crate, resolved
+with the branch version, because the crate on `main` equals `4327de5`).
+1fbd17f evaluates `date` elements (`eDate`, ranges, seasons, localized
+forms) and the `substitute` bookkeeping; `VarCount` is now signed.
+
+Gate: `scripts/gate.sh` passed on `937bfcd` at 02:12 UTC (a plain gate
+run of the coordinator, tool `env/bin/gate-branch`, state file
+`env/tmp/gate-s6-citeproc/state.txt`; start 01:39:36 UTC). The stopped
+worker had no gate pass on `1fbd17f`: it stopped its run in the test
+step on the order of the coordinator.
+
+Measured by the worker: `cargo test -p randoc-citeproc --test eval`
+passes 3 of 3 on `1fbd17f`. Replay: 323 of 323 date cases. Clippy and
+rustfmt are clean on the crate.
+
+Review state: Round 2 (session 4) requested changes; its high and
+medium findings are corrected on `main` since `b95fb95`. The modules of
+the citation evaluation (`11e9493`, `d3f5a8a` and this block) have no
+review round yet. A Codex verification review (round 3b, on `main`
+`856692d`) is in the queue of this session and does not cover this
+block. No program path calls the evaluation yet.
+
+Open (the report names no level): I-CITE-05 (document type end of
+`quick-xml`), I-CITE-15 (shared functions in `randoc_core::shared`),
+I-CITE-01 (locale terms). `names` is half-done and not applied. The
+`Citeproc` entry is not started. The time patch is not run.
+
+Checks that did not run: the report states no run of mutation tests,
+coverage, fuzzing or benchmarks for this range. Time table: not run.
+Licence scan: the report states none for this range.

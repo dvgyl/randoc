@@ -4,9 +4,9 @@
 //! (variables, values, terms and macros), `group` with its suppression
 //! rule, `choose`, page ranges and term lookup.
 //!
-//! `number` and `label` are ported too. The elements `names` and `date`
-//! are not ported yet: they give [`EvalError::NotPorted`], so no output is
-//! silently wrong.
+//! `number`, `label` and `date` are ported too. The element `names` is not
+//! ported yet: it gives [`EvalError::NotPorted`], so no output is silently
+//! wrong.
 
 use std::collections::BTreeSet;
 
@@ -15,11 +15,11 @@ use randoc_ast::Inline;
 use crate::lang::{Lang, parse_lang};
 use crate::markup::TooDeep;
 use crate::output::{self, Output, Tag};
-use crate::reference::{self, Reference, Val};
+use crate::reference::{self, DateParts, Reference, Val};
 use crate::types::{
-    Condition, Element, ElementType, Formatting, Locale, Match, NumberForm, PageRangeFormat,
-    Pluralize, Style, Term, TermForm, TermGender, TermMatch, TermNumber, TextCase, TextType,
-    Variable, VariableForm,
+    Condition, DatePart, DatePartForm, DatePartName, DateType, Element, ElementType, Formatting,
+    Locale, Match, NumberForm, PageRangeFormat, Pluralize, ShowDateParts, Style, Term, TermForm,
+    TermGender, TermMatch, TermNumber, TextCase, TextType, Variable, VariableForm,
 };
 use crate::unicode_class::is_letter;
 
@@ -68,6 +68,8 @@ pub fn eval_citation(
                     reference,
                     reference_lang: reference_lang(reference),
                     var_count: VarCount::default(),
+                    in_substitute: false,
+                    substituted: BTreeSet::new(),
                     warnings: &mut warnings,
                 };
                 let mut xs = eval.elements(&style.citation.elements, max_depth)?;
@@ -133,9 +135,19 @@ fn add_lang(output: &mut Output, lang: &Lang) {
 /// `VarCount`: the variables that a group calls, and how many are not empty.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 struct VarCount {
-    accessed: usize,
-    nonempty: usize,
+    accessed: i64,
+    nonempty: i64,
 }
+
+/// A variable of the reference as the evaluation sees it. A variable that a
+/// `substitute` element has used is `SubstitutedVal` upstream.
+enum Found {
+    Substituted,
+    Value(Val<Vec<Inline>>),
+}
+
+/// The year, the month and the day of one date (`bindDateParts`).
+type Ymd = [Option<i64>; 3];
 
 struct Eval<'a, 'w> {
     style: &'a Style,
@@ -143,11 +155,15 @@ struct Eval<'a, 'w> {
     reference: &'a Reference<Vec<Inline>>,
     reference_lang: Option<Lang>,
     var_count: VarCount,
+    /// `contextInSubstitute`.
+    in_substitute: bool,
+    /// The variables that a `substitute` element has used.
+    substituted: BTreeSet<reference::Variable>,
     warnings: &'w mut BTreeSet<String>,
 }
 
 impl Eval<'_, '_> {
-    fn update_var_count(&mut self, accessed: usize, nonempty: usize) {
+    fn update_var_count(&mut self, accessed: i64, nonempty: i64) {
         self.var_count.accessed += accessed;
         self.var_count.nonempty += nonempty;
     }
@@ -194,7 +210,19 @@ impl Eval<'_, '_> {
             ElementType::Label(variable, form, pluralize) => {
                 vec![self.label(variable.as_str(), *form, *pluralize, formatting, depth)?]
             }
-            ElementType::Date { .. } => return Err(EvalError::NotPorted("date")),
+            ElementType::Date {
+                variable,
+                date_type,
+                show_date_parts,
+                parts,
+            } => vec![self.date(
+                variable.as_str(),
+                *date_type,
+                *show_date_parts,
+                parts,
+                formatting,
+                depth,
+            )?],
             ElementType::Names(..) => return Err(EvalError::NotPorted("names")),
         })
     }
@@ -252,9 +280,8 @@ impl Eval<'_, '_> {
                 Val::Names(_) | Val::Date(_) => None,
             };
         }
-        let value = lookup_variable(self.reference, name);
-        match value {
-            Some(value) if is_nonempty(&value) => {
+        match self.find(name) {
+            Some(Found::Value(value)) if is_nonempty(&value) => {
                 self.update_var_count(1, 1);
                 Some(value)
             }
@@ -262,6 +289,26 @@ impl Eval<'_, '_> {
                 self.update_var_count(1, 0);
                 None
             }
+        }
+    }
+
+    /// `lookupVariable` on the reference of the state.
+    fn find(&self, name: &str) -> Option<Found> {
+        if !self.substituted.is_empty()
+            && name != "id"
+            && name != "type"
+            && self.substituted.contains(&reference::Variable::new(name))
+        {
+            return Some(Found::Substituted);
+        }
+        lookup_variable(self.reference, name).map(Found::Value)
+    }
+
+    /// `deleteSubstitutedVariables`: inside `substitute`, a variable that
+    /// gave output is not used again.
+    fn delete_substituted(&mut self, name: &str) {
+        if self.in_substitute {
+            self.substituted.insert(reference::Variable::new(name));
         }
     }
 
@@ -327,6 +374,7 @@ impl Eval<'_, '_> {
             }
             "DOI" | "PMCID" | "PMID" | "URL" => {
                 let value = self.ask_variable(name);
+                self.delete_substituted(name);
                 match value.as_ref().and_then(val_to_text) {
                     None => Output::Null,
                     Some(text) => Output::Linked(
@@ -343,6 +391,12 @@ impl Eval<'_, '_> {
                 } else {
                     self.ask_variable(name)
                 };
+                if value.is_some() {
+                    self.delete_substituted(name);
+                    if form == VariableForm::Short {
+                        self.delete_substituted(&format!("{name}-short"));
+                    }
+                }
                 let result = match value {
                     Some(Val::Text(x)) if name == "page" => self.page_range(&x, depth)?,
                     Some(Val::Text(x)) => Output::Literal(output::from_text(&x)),
@@ -365,6 +419,7 @@ impl Eval<'_, '_> {
     /// `eNumber`: each number part of the value in the form.
     fn number(&mut self, name: &str, form: NumberForm, depth: usize) -> Result<Output, EvalError> {
         let value = self.ask_variable(name);
+        let value_given = value.is_some();
         let gender = self
             .lookup_term_entries(&term_named(name))
             .into_iter()
@@ -376,6 +431,9 @@ impl Eval<'_, '_> {
             Some(Val::Text(t)) => split_nums(&t),
             _ => Vec::new(),
         };
+        if value_given {
+            self.delete_substituted(name);
+        }
         let mut outputs = Vec::with_capacity(parts.len());
         for part in parts {
             outputs.push(self.eval_number(form, gender, &part, depth)?);
@@ -468,19 +526,20 @@ impl Eval<'_, '_> {
         } else {
             name
         };
-        let term = match lookup_variable(self.reference, lookup_name) {
+        let term = match self.find(lookup_name) {
             None => Output::Null,
-            Some(value) => {
-                let number = match pluralize {
-                    Pluralize::Always => TermNumber::Plural,
-                    Pluralize::Never => TermNumber::Singular,
-                    Pluralize::Contextual => match &value {
+            Some(found) => {
+                let number = match (pluralize, found) {
+                    (Pluralize::Always, _) => TermNumber::Plural,
+                    (Pluralize::Never, _) => TermNumber::Singular,
+                    (Pluralize::Contextual, Found::Value(value)) => match &value {
                         Val::Text(t) => determine_plural(name, t),
                         Val::Num(n) => determine_plural(name, &n.to_string()),
                         Val::Fancy(x) => determine_plural(name, &output::stringify(x)),
                         Val::Names(names) if names.len() > 1 => TermNumber::Plural,
                         _ => TermNumber::Singular,
                     },
+                    (Pluralize::Contextual, Found::Substituted) => TermNumber::Singular,
                 };
                 let term = Term {
                     form,
@@ -501,6 +560,263 @@ impl Eval<'_, '_> {
             return Ok(output::formatted(formatting, vec![term]));
         }
         Ok(output::formatted(formatting.clone(), vec![term]))
+    }
+
+    /// `eDate`. A date form of the locale gives the parts; the parts of the
+    /// element change their forms.
+    fn date(
+        &mut self,
+        name: &str,
+        date_type: DateType,
+        show: Option<ShowDateParts>,
+        parts: &[DatePart],
+        formatting: &Formatting,
+        depth: usize,
+    ) -> Result<Output, EvalError> {
+        if name.is_empty() {
+            self.warnings
+                .insert("skipping date element with no variable attribute set".into());
+            return Ok(Output::Null);
+        }
+        let value = self.ask_variable(name);
+        if value.is_some() {
+            self.delete_substituted(name);
+        }
+        let shown = |part: &DatePart| match show {
+            Some(ShowDateParts::Year) => part.name == DatePartName::Year,
+            Some(ShowDateParts::YearMonth) => part.name != DatePartName::Day,
+            Some(ShowDateParts::YearMonthDay) | None => true,
+        };
+        let mut first_part: [Option<&DatePart>; 3] = [None; 3];
+        for part in parts {
+            first_part[date_part_index(part.name)].get_or_insert(part);
+        }
+        let (parts, formatting): (Vec<DatePart>, Formatting) =
+            match self.locale.dates.get(&date_type) {
+                Some(Element {
+                    kind:
+                        ElementType::Date {
+                            parts: locale_parts,
+                            ..
+                        },
+                    formatting: locale_formatting,
+                }) => (
+                    locale_parts
+                        .iter()
+                        .map(|old| match first_part[date_part_index(old.name)] {
+                            Some(new) => DatePart {
+                                formatting: old.formatting.combine(&new.formatting),
+                                ..new.clone()
+                            },
+                            None => old.clone(),
+                        })
+                        .filter(shown)
+                        .collect(),
+                    formatting.combine(locale_formatting),
+                ),
+                _ => (
+                    parts.iter().filter(|p| shown(p)).cloned().collect(),
+                    formatting.clone(),
+                ),
+            };
+        let date = match value {
+            None => return Ok(Output::Null),
+            Some(Val::Date(date)) => date,
+            Some(_) => {
+                self.warnings.insert(format!(
+                    "date element for variable with non-date value {name}"
+                ));
+                return Ok(Output::Null);
+            }
+        };
+        if let Some(text) = &date.literal {
+            // A literal stands for the year: parts with no year leave it out.
+            if parts.is_empty() || parts.iter().any(|p| p.name == DatePartName::Year) {
+                return Ok(output::formatted(
+                    formatting,
+                    vec![Output::Literal(output::from_text(text))],
+                ));
+            }
+            self.update_var_count(0, -1);
+            return Ok(Output::Null);
+        }
+        let mut dates = date.parts.clone();
+        if let (Some(season), [DateParts(year)]) = (date.season, dates.as_slice())
+            && let [year] = year.as_slice()
+        {
+            dates = vec![DateParts(vec![*year, season.wrapping_add(12)])];
+        }
+        let xs = self.date_parts(&parts, dates.first(), dates.get(1), depth)?;
+        if xs.iter().all(|x| *x == Output::Null) {
+            self.update_var_count(0, -1);
+        }
+        Ok(Output::Tagged(
+            Tag::Other,
+            Box::new(output::formatted(formatting, xs)),
+        ))
+    }
+
+    /// `formatDateParts`: one date, or a range that shows the parts that
+    /// are equal once.
+    fn date_parts(
+        &mut self,
+        specs: &[DatePart],
+        date: Option<&DateParts>,
+        next: Option<&DateParts>,
+        depth: usize,
+    ) -> Result<Vec<Output>, EvalError> {
+        let ymd = bind_date_parts(date);
+        let Some(next) = next.map(|next| bind_date_parts(Some(next))) else {
+            let mut out = Vec::with_capacity(specs.len());
+            for spec in specs {
+                out.push(self.date_part(ymd, spec, depth)?);
+            }
+            return Ok(out);
+        };
+        let index = date_part_index;
+        let mut names: Vec<DatePartName> = specs.iter().map(|p| p.name).collect();
+        names.sort();
+        let mut same = [false; 3];
+        for name in names {
+            if ymd[index(name)] != next[index(name)] {
+                break;
+            }
+            same[index(name)] = true;
+        }
+        let is_same = |p: &DatePart| same[index(p.name)];
+        let split = specs
+            .iter()
+            .position(|p| !is_same(p))
+            .unwrap_or(specs.len());
+        let (sames1, rest) = specs.split_at(split);
+        let split = rest.iter().position(is_same).unwrap_or(rest.len());
+        let (diffs, sames2) = rest.split_at(split);
+        let sames1 = self.date_parts_present(ymd, sames1, depth)?;
+        let mut left = self.date_parts_present(ymd, diffs, depth)?;
+        let mut right = self.date_parts_present(next, diffs, depth)?;
+        let sames2 = self.date_parts_present(ymd, sames2, depth)?;
+        let range_delimiter = diffs
+            .iter()
+            .min_by_key(|p| p.name)
+            .map(|p| p.range_delimiter.clone());
+        let open_range = next == [Some(0), None, None];
+        if open_range {
+            let mut parts = sames1;
+            parts.extend(left);
+            remove_last_suffix(&mut parts);
+            return Ok(vec![Output::Formatted(
+                Box::new(Formatting {
+                    suffix: range_delimiter,
+                    ..Formatting::default()
+                }),
+                parts,
+            )]);
+        }
+        remove_last_suffix(&mut left);
+        if let Some(Output::Formatted(f, _)) = right.first_mut() {
+            f.prefix = None;
+        }
+        let mut out = sames1;
+        match left.pop() {
+            Some(last) => {
+                out.extend(left);
+                let mut right = right.into_iter();
+                let first = right.next().unwrap_or(Output::Literal(Vec::new()));
+                out.push(Output::Formatted(
+                    Box::new(Formatting {
+                        delimiter: range_delimiter,
+                        ..Formatting::default()
+                    }),
+                    vec![last, first],
+                ));
+                out.extend(right);
+            }
+            None => out.append(&mut right),
+        }
+        out.extend(sames2);
+        remove_last_suffix(&mut out);
+        Ok(out)
+    }
+
+    /// The parts of a date that give output.
+    fn date_parts_present(
+        &mut self,
+        ymd: Ymd,
+        specs: &[DatePart],
+        depth: usize,
+    ) -> Result<Vec<Output>, EvalError> {
+        let mut out = Vec::with_capacity(specs.len());
+        for spec in specs {
+            let part = self.date_part(ymd, spec, depth)?;
+            if part != Output::Null {
+                out.push(part);
+            }
+        }
+        Ok(out)
+    }
+
+    /// `eDP`: one part of a date.
+    fn date_part(&mut self, ymd: Ymd, spec: &DatePart, depth: usize) -> Result<Output, EvalError> {
+        let is_year = spec.name == DatePartName::Year;
+        let Some(n) = ymd[date_part_index(spec.name)] else {
+            return Ok(Output::Null);
+        };
+        if n == 0 && is_year {
+            // The end of an open range.
+            return Ok(Output::Literal(Vec::new()));
+        }
+        let era = match n {
+            _ if !is_year => None,
+            n if n < 0 => Some("bc"),
+            1..=999 => Some("ad"),
+            _ => None,
+        };
+        let suffix = match era {
+            Some(era) => self.term(&term_named(era), depth)?,
+            None => Output::Null,
+        };
+        let n = if is_year { n.wrapping_abs() } else { n };
+        let text = |text: String| Ok(Output::Literal(output::from_text(&text)));
+        let main = match spec.form {
+            DatePartForm::Numeric => text(n.to_string()),
+            DatePartForm::NumericLeadingZeros => text(format!("{n:02}")),
+            DatePartForm::Ordinal => {
+                if self.locale.limit_day_ordinals_to_day_1 == Some(true) && n != 1 {
+                    text(n.to_string())
+                } else {
+                    self.eval_number(NumberForm::Ordinal, None, &Val::Num(n), depth)
+                }
+            }
+            form @ (DatePartForm::Long | DatePartForm::Short) => {
+                let term = |name: String| Term {
+                    form: if form == DatePartForm::Short {
+                        TermForm::Short
+                    } else {
+                        TermForm::Long
+                    },
+                    ..term_named(&name)
+                };
+                match spec.name {
+                    DatePartName::Month if n <= 0 => Ok(Output::Null),
+                    DatePartName::Month if n <= 12 => {
+                        self.term(&term(format!("month-{n:02}")), depth)
+                    }
+                    DatePartName::Month => {
+                        let season = match n {
+                            13..=16 => n - 12,
+                            17..=20 => n - 16,
+                            _ => n - 20,
+                        };
+                        self.term(&term(format!("season-{season:02}")), depth)
+                    }
+                    _ => text(n.to_string()),
+                }
+            }
+        }?;
+        Ok(output::formatted(
+            spec.formatting.clone(),
+            vec![main, suffix],
+        ))
     }
 
     /// `pageRange`.
@@ -591,21 +907,23 @@ impl Eval<'_, '_> {
     fn matches(&self, matching: Match, conditions: &[Condition]) -> bool {
         let test = |condition: &Condition| match condition {
             Condition::HasVariable(v) if v.as_str() == "locator" => false,
-            Condition::HasVariable(v) => {
-                lookup_variable(self.reference, v.as_str()).is_some_and(|x| is_nonempty(&x))
-            }
+            Condition::HasVariable(v) => match self.find(v.as_str()) {
+                Some(Found::Value(x)) => is_nonempty(&x),
+                Some(Found::Substituted) => true,
+                None => false,
+            },
             Condition::HasType(types) => {
                 !self.reference.kind.is_empty() && types.contains(&self.reference.kind)
             }
             Condition::IsUncertainDate(v) => matches!(
-                lookup_variable(self.reference, v.as_str()),
-                Some(Val::Date(date)) if date.circa
+                self.find(v.as_str()),
+                Some(Found::Value(Val::Date(date))) if date.circa
             ),
             Condition::IsNumeric(v) if v.as_str() == "locator" => false,
-            Condition::IsNumeric(v) => match lookup_variable(self.reference, v.as_str()) {
-                Some(Val::Num(_)) => true,
-                Some(Val::Text(x)) => is_numeric(&x),
-                Some(Val::Fancy(x)) => is_numeric(&output::stringify(&x)),
+            Condition::IsNumeric(v) => match self.find(v.as_str()) {
+                Some(Found::Value(Val::Num(_))) => true,
+                Some(Found::Value(Val::Text(x))) => is_numeric(&x),
+                Some(Found::Value(Val::Fancy(x))) => is_numeric(&output::stringify(&x)),
                 _ => false,
             },
             Condition::HasLocatorType(_)
@@ -617,6 +935,32 @@ impl Eval<'_, '_> {
             Match::Any => conditions.iter().any(test),
             Match::None => !conditions.iter().any(test),
         }
+    }
+}
+
+/// The place of a date part in [`Ymd`].
+fn date_part_index(name: DatePartName) -> usize {
+    match name {
+        DatePartName::Year => 0,
+        DatePartName::Month => 1,
+        DatePartName::Day => 2,
+    }
+}
+
+/// `bindDateParts`.
+fn bind_date_parts(date: Option<&DateParts>) -> Ymd {
+    match date.map(|d| d.0.as_slice()) {
+        Some([y, m, d, ..]) => [Some(*y), Some(*m), Some(*d)],
+        Some([y, m]) => [Some(*y), Some(*m), None],
+        Some([y]) => [Some(*y), None, None],
+        _ => [None; 3],
+    }
+}
+
+/// `removeLastSuffix`: the last part loses its suffix when it is formatted.
+fn remove_last_suffix(parts: &mut [Output]) {
+    if let Some(Output::Formatted(f, _)) = parts.last_mut() {
+        f.suffix = None;
     }
 }
 
