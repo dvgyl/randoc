@@ -1,0 +1,16 @@
+#!/bin/sh
+# Installs the Git guard of the gpt/* branches. Run it OUTSIDE the build
+# sandbox (the owner or the reviewer runs it): the build cannot write the
+# target folder, so it cannot weaken the active hooks.
+# Usage: tools/autobuild/install-guard [CLONE]
+set -eu
+src="$(cd "$(dirname "$0")" && pwd)/hooks"
+dest="/Volumes/Extreme Pro/Randoc/env/gpt-hooks"
+clone="${1:-/Volumes/Extreme Pro/Randoc/gpt/randoc}"
+mkdir -p "$dest"
+for f in guard.py pre-commit commit-msg pre-push reference-transaction; do
+  cp "$src/$f" "$dest/$f.new" && mv "$dest/$f.new" "$dest/$f"
+done
+chmod +x "$dest/pre-commit" "$dest/commit-msg" "$dest/pre-push" "$dest/reference-transaction"
+git -C "$clone" config core.hooksPath "$dest"
+echo "install-guard: hooks in $dest; core.hooksPath set in $clone"
