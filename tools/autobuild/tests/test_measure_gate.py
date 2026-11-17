@@ -18,8 +18,9 @@ import gate  # noqa: E402
 import measure  # noqa: E402
 
 
-def row(passed: int, commit: str, dirty: str = "no", total: int = 10) -> measure.Row:
-    return measure.Row("2026-11-17T00:00:00Z", commit, dirty, "-", "corpus.units", passed, total, "t", "/e")
+def row(passed: int, commit: str, dirty: str = "no", total: int = 10, item: str = "-",
+        utc: str = "2026-11-17T00:00:00Z") -> measure.Row:
+    return measure.Row(utc, commit, dirty, item, "corpus.units", passed, total, "t", "/e")
 
 
 class Decisions(unittest.TestCase):
@@ -27,21 +28,30 @@ class Decisions(unittest.TestCase):
         units = [{"id": "a", "status": "pass"}, {"id": "b", "status": "fail"}, {"id": "d", "status": "pass"}]
         self.assertEqual(gate.lost_units(["a", "b", "c"], units), ["b", "c"])
 
-    def test_only_clean_rows_of_contained_commits_with_the_same_total_count(self):
-        history = [row(7, "x"), row(9, "y"), row(8, "x", dirty="yes"), row(30, "x", total=40)]
+    def test_only_clean_full_rows_of_contained_commits_with_the_same_total_count(self):
+        history = [row(7, "x"), row(9, "y"), row(8, "x", dirty="yes"), row(9, "x", item="M1-01"),
+                   row(30, "x", total=40)]
         contains = {"x": True, "y": False}.__getitem__
-        self.assertEqual(gate.fallen_metrics([row(7, "")], history, contains), [])
-        self.assertEqual(gate.fallen_metrics([row(6, "")], history, contains),
-                         ["corpus.units 6/10 is below 7/10 of x"])
+        clean = gate.clean_history(history, contains, [])
+        self.assertEqual(gate.fallen_metrics([row(7, "")], clean), [])
+        self.assertEqual(gate.fallen_metrics([row(6, "")], clean), ["corpus.units 6/10 is below 7/10 of x"])
+
+    def test_a_correction_makes_the_older_rows_of_its_metric_obsolete(self):
+        history = [row(9, "x", utc="2026-11-17T01:00:00Z"), row(5, "x", utc="2026-11-17T03:00:00Z")]
+        correction = [{"utc": "2026-11-17T02:00:00Z", "metric": "corpus.units"}]
+        clean = gate.clean_history(history, lambda commit: True, correction)
+        self.assertEqual(gate.fallen_metrics([row(5, "")], clean), [])
+        self.assertEqual(gate.fallen_metrics([row(4, "")], clean), ["corpus.units 4/10 is below 5/10 of x"])
 
 
 class Steps(unittest.TestCase):
     def setUp(self):
         self.runs = Path(tempfile.mkdtemp(prefix="randoc-gate-test-"))
         self.addCleanup(shutil.rmtree, self.runs, True)
-        patch = mock.patch.dict(os.environ, {"RANDOC_RUNS": str(self.runs)})
-        patch.start()
-        self.addCleanup(patch.stop)
+        for patch in (mock.patch.dict(os.environ, {"RANDOC_RUNS": str(self.runs)}),
+                      mock.patch.object(measure, "MIN_FREE_BYTES", 0)):
+            patch.start()
+            self.addCleanup(patch.stop)
         self.ran: list[str] = []
 
     def step(self, name: str, reason: str | None) -> gate.Step:

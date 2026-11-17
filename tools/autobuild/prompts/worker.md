@@ -10,9 +10,11 @@ Rules:
 2. Work only in $worktree. Commit only on $branch.
 3. Put `[$item]` at the end of each commit subject.
 4. Do not change `plan/ITEMS.tsv`, `plan/scoreboard/build.tsv` or a shared contract.
-5. Do not merge, rebase or push. Do not ask for confirmation.
-6. After each change that can move the metric, run `tools/autobuild/ops measure --item $item --quick`.
-   Commit the new rows of `plan/scoreboard/$item.tsv`.
+5. Do not merge or rebase. Do not ask for confirmation.
+6. After each change that can move the metric, measure it. An item that builds a new
+   measurement runs `tools/autobuild/ops measure --item $item --suite NAME` (NAME: the new
+   suite), and only when the suite files exist. Each other item runs
+   `tools/autobuild/ops measure --item $item --quick`. Commit the new rows of `plan/scoreboard/$item.tsv`.
 7. You have 3 experiments. A measurement run is one experiment.
 8. If the metric does not rise after 3 experiments, run `tools/autobuild/ops item cut $item --reason "TEXT"`. Then stop.
 9. If you need a change to a shared contract, stop. Write the request in your final message.

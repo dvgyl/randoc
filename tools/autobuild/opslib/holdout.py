@@ -1,94 +1,83 @@
-"""The held-out queue: requests for one evaluation, results with totals only, the heartbeat."""
+"""The held-out evaluation: a request names a commit of gpt/build; the broker builds and evaluates it.
+
+The broker writes each result to broker.RESULTS, which the build can read but
+not write. A result counts only when it is complete: status done, the full
+commit id, the full SHA-256 of the binary that the broker evaluated, and both
+sets with 0 <= PASS <= TOTAL and TOTAL > 0. The totals are those of the
+development part; the broker keeps the reserved FINAL part for the later review.
+"""
 
 from __future__ import annotations
 
 import argparse
-import datetime as dt
-import hashlib
 import json
-import os
-import shutil
-import time
+import re
 from pathlib import Path
 
-from .core import BUILD_BRANCH, Context, Refusal, append_text, stage, utc_now, utc_stamp
+from . import broker
+from .core import BUILD_BRANCH, Context, Refusal, append_text, stage, utc_now
 from .plan import ROW_FIELDS
 
-HEARTBEAT_LIMIT_S = 600
 SETS = ("corpus", "generated")
-
-
-def default_binary(ctx: Context) -> Path | None:
-    target = Path(os.environ.get("CARGO_TARGET_DIR") or ctx.root / "target")
-    found = [p for p in (target / "release" / "randoc", target / "debug" / "randoc") if p.is_file()]
-    return max(found, key=lambda p: p.stat().st_mtime) if found else None
-
-
-def heartbeat_age(ctx: Context) -> float | None:
-    beat = ctx.queue / "heartbeat.json"
-    return time.time() - beat.stat().st_mtime if beat.exists() else None
+SHA1 = re.compile(r"^[0-9a-f]{40}$")
+SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
 def heartbeat_line(ctx: Context) -> str:
-    age = heartbeat_age(ctx)
-    if age is None:
-        return "evaluator: no heartbeat file; the evaluator does not run"
-    state = "runs" if age <= HEARTBEAT_LIMIT_S else "does not run (write it with `ops blocked`)"
-    return f"evaluator: heartbeat {age / 60:.0f} min old; the evaluator {state}"
+    return broker.heartbeat_line()
 
 
 def request(ctx: Context, args: argparse.Namespace) -> int:
+    if getattr(args, "binary", None):
+        raise Refusal("the broker builds the commit itself; a request names no binary",
+                      "run `tools/autobuild/ops holdout request` with no --binary")
     head = ctx.git.rev("HEAD")
     dirty = ctx.git.dirty_tracked()
     if head is None or dirty:
         raise Refusal(
-            f"the binary must belong to one commit; tracked files have changes ({', '.join(dirty[:3])})",
-            "commit or restore them, build again, then request",
+            f"a request names one commit; tracked files have changes ({', '.join(dirty[:3])})",
+            "commit or restore them, then request",
         )
-    binary = Path(args.binary).resolve() if args.binary else default_binary(ctx)
-    if binary is None or not binary.is_file():
-        raise Refusal("no Randoc binary was found", "build it (`cargo build -p randoc-cli`) or give `--binary PATH`")
-    requests = ctx.queue / "requests"
-    requests.mkdir(parents=True, exist_ok=True)
-    for old in sorted(requests.glob("*.json")):
+    if not ctx.git.is_ancestor(head, f"refs/heads/{BUILD_BRANCH}"):
+        raise Refusal(f"HEAD {head[:12]} is not on {BUILD_BRANCH}; the broker builds only commits of {BUILD_BRANCH}",
+                      f"run it on {BUILD_BRANCH}")
+    broker.require_running()
+    folder = broker.inbox(ctx)
+    for old in sorted(folder.glob("*.json")) if folder.is_dir() else []:
         try:
-            if json.loads(old.read_text()).get("commit") == head:
+            if json.loads(old.read_text(encoding="utf-8")).get("commit") == head:
                 print(f"a request for {head[:12]} waits already: {old}")
                 return 0
         except ValueError:
             continue
-    built = dt.datetime.fromtimestamp(binary.stat().st_mtime, dt.timezone.utc)
-    committed = dt.datetime.fromtimestamp(int(ctx.git.run("log", "-1", "--format=%ct").strip()), dt.timezone.utc)
-    stamp = f"{utc_stamp()}-{head[:12]}"
-    copy = ctx.runs / "holdout" / stamp / "randoc"
-    copy.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(binary, copy)
-    temporary = requests / f".{stamp}.json.part"
-    temporary.write_text(json.dumps({"commit": head, "binary": str(copy)}) + "\n", encoding="utf-8")
-    temporary.rename(requests / f"{stamp}.json")
-    print(f"requested one held-out evaluation of {head[:12]} with {copy}")
-    if built < committed:
-        print(f"warning: the binary ({built:%Y-%m-%d %H:%M}Z) is older than HEAD ({committed:%Y-%m-%d %H:%M}Z); "
-              "check that it holds the code of HEAD")
-    print(heartbeat_line(ctx))
-    print("next: continue; `ops holdout results` shows the totals when the evaluator is done")
+    request_id = broker.send(ctx, "evaluate", {"commit": head})
+    print(f"requested one held-out evaluation of {head[:12]} (request {request_id}); the broker builds it first")
+    print(broker.heartbeat_line())
+    print("next: continue; `ops holdout results` shows the answer (done, deferred or rejected)")
     return 0
 
 
-def totals(node: object) -> tuple[int, int] | None:
-    """PASS and TOTAL of a set: its own numbers, or the sum of its targets or families."""
-    if not isinstance(node, dict):
-        return None
-    if isinstance(node.get("pass"), int) and isinstance(node.get("total"), int):
-        return node["pass"], node["total"]
-    parts = [t for t in (totals(v) for v in node.values()) if t]
-    return (sum(p for p, _ in parts), sum(t for _, t in parts)) if parts else None
-
-
-def load_results(ctx: Context) -> list[tuple[Path, dict]]:
-    folder = ctx.queue / "results"
+def problems(data: dict) -> list[str]:
+    """Why a result does not count. An empty list: it counts."""
     found = []
-    for path in sorted(folder.glob("*.json")) if folder.is_dir() else []:
+    if data.get("status") != "done":
+        found.append(f"status {data.get('status')!r}")
+    if not SHA1.match(str(data.get("commit", ""))):
+        found.append("no full commit id")
+    if not SHA256.match(str(data.get("binary_sha256", ""))):
+        found.append("no full binary SHA-256")
+    sets = data.get("sets") if isinstance(data.get("sets"), dict) else {}
+    for name in SETS:
+        node = sets.get(name) if isinstance(sets.get(name), dict) else {}
+        passed, total = node.get("pass"), node.get("total")
+        if not (type(passed) is int and type(total) is int and 0 <= passed <= total and total > 0):
+            found.append(f"no valid counts for the set {name}")
+    return found
+
+
+def load_results() -> list[tuple[Path, dict]]:
+    found = []
+    for path in sorted(broker.RESULTS.glob("*.json")) if broker.RESULTS.is_dir() else []:
         if path.name.startswith("._"):
             continue
         try:
@@ -101,35 +90,34 @@ def load_results(ctx: Context) -> list[tuple[Path, dict]]:
     return found
 
 
-def is_deferred(data: dict) -> bool:
-    return "deferred" in (str(data.get("status", "")), str(data.get("state", ""))) or data.get("deferred") is True
-
-
 def set_totals(data: dict) -> dict[str, tuple[int, int]]:
-    sets = data.get("sets") if isinstance(data.get("sets"), dict) else data
-    return {name: t for name in SETS if (t := totals(sets.get(name)))}
+    return {name: (data["sets"][name]["pass"], data["sets"][name]["total"]) for name in SETS}
 
 
 def newest(ctx: Context) -> tuple[Path, dict] | None:
-    done = [pair for pair in load_results(ctx) if not is_deferred(pair[1])]
+    done = [pair for pair in load_results() if not problems(pair[1])]
     return done[-1] if done else None
 
 
 def summary(ctx: Context) -> str:
     found = newest(ctx)
     if found is None:
-        return "held-out: no result yet"
+        return "held-out: no complete result yet"
     path, data = found
-    parts = ", ".join(f"{name} {p}/{t}" for name, (p, t) in set_totals(data).items()) or "no totals"
-    return f"held-out: {parts} at {str(data.get('commit', '?'))[:12]} ({data.get('utc', path.name)})"
+    parts = ", ".join(f"{name} {p}/{t}" for name, (p, t) in set_totals(data).items())
+    provenance = "" if data.get("binary_provenance") == "built" else f", binary {data.get('binary_provenance', 'of unknown origin')}"
+    return f"held-out: {parts} at {data['commit'][:12]} ({data.get('utc', path.name)}{provenance})"
 
 
 def results(ctx: Context, args: argparse.Namespace) -> int:
-    print(heartbeat_line(ctx))
-    every = load_results(ctx)
-    if every and is_deferred(every[-1][1]):
+    print(broker.heartbeat_line())
+    every = load_results()
+    if every and every[-1][1].get("status") != "done":
         data = every[-1][1]
-        print(f"newest request: deferred (next run allowed: {data.get('next_run') or data.get('next_allowed') or '?'})")
+        print(f"newest answer: {data.get('status')} ({data.get('reason') or data.get('next_run') or '-'})")
+    for path, data in every:
+        if data.get("status") == "done" and problems(data):
+            print(f"not counted: {path.name} ({'; '.join(problems(data))})")
     print(summary(ctx))
     found = newest(ctx)
     if found is None or not args.record:
@@ -143,9 +131,9 @@ def results(ctx: Context, args: argparse.Namespace) -> int:
         return 0
     if not board.exists() or not board.read_text(encoding="utf-8").strip():
         append_text(board, "\t".join(ROW_FIELDS) + "\n")
-    tool = "holdout@" + str(data.get("binary_sha256") or data.get("binary_hash") or hashlib.sha256(path.read_bytes()).hexdigest())[:12]
+    tool = f"holdout@{data['binary_sha256'][:12]}"
     for name, (p, t) in set_totals(data).items():
-        row = [str(data.get("utc") or utc_now()), str(data.get("commit", "-")), "no", "-", f"holdout.{name}", str(p), str(t), tool, str(path)]
+        row = [str(data.get("utc") or utc_now()), data["commit"], "no", "-", f"holdout.{name}", str(p), str(t), tool, str(path)]
         append_text(board, "\t".join(row) + "\n")
     stage(ctx, board)
     print("rows written to plan/scoreboard/build.tsv (staged)")

@@ -1,26 +1,48 @@
 """Git guard for the autonomous build on the gpt/* branches.
 
 The active copy lives outside the build folder, where the build cannot change
-it. tools/autobuild/install-guard copies this file and the hook shims there and
-points core.hooksPath at that copy. A change to this source file has no effect
-until the owner runs install-guard again.
+it. tools/autobuild/install-guard copies this file, experiments.py,
+licence_scan.py and the hook shims there and points core.hooksPath at that
+copy. A change to this source file has no effect until the owner runs
+install-guard again.
 
 Usage (from the hook shims): guard.py HOOK [ARGS...]
+
+The broker (the owner's support daemon) also runs the installed copy, with
+GIT_DIR set to its own repository:
+
+    guard.py outgoing LOCAL_OID REMOTE_OID   the checks of a push of gpt/build
+    guard.py roles < AGENTS.md               the role table of AGENTS.md as JSON
 """
 
 from __future__ import annotations
 
+import datetime as dt
+import importlib.util
+import json
 import re
 import subprocess
 import sys
 from pathlib import Path
 
+HERE = Path(__file__).resolve().parent
+# No __pycache__ in the protected folder (the broker and the owner's Git run this copy).
+sys.dont_write_bytecode = True
 MEASURE_LIMIT = 10
-MAX_TRIES = 3
 BUILD_BRANCH = "refs/heads/gpt/build"
+WORKER_BRANCH = re.compile(r"^refs/heads/gpt/w/(M\d+-\d{2,})$")
 # Commits on the gpt/* branches are newer than this. An older commit that is
 # not on main comes from an old local branch whose history must stay private.
 BRANCH_EPOCH = "2026-11-17T00:00:00Z"
+# A test points the push rules at a local remote with guard.json next to this
+# file; the installed copy has no guard.json.
+SETTINGS = {
+    "PUSH_URL": "https://github.com/dvgyl/randoc.git",
+    "BRANCH_BASE": "d40a641d3b76d2270e420b9d8a48c2b9962f189f",
+    "LICENCE_INDEX": "/Volumes/Extreme Pro/Randoc/env/licence-index",
+}
+if (HERE / "guard.json").is_file():
+    SETTINGS.update(json.loads((HERE / "guard.json").read_text(encoding="utf-8")))
 BANNED = (re.compile(r"\bHOLD\b"), re.compile(r"fresh\s+complete\s+review", re.IGNORECASE))
 ATTRIBUTION = re.compile(
     r"^\s*(co-authored-by:|claude-session:)|generated with", re.IGNORECASE
@@ -28,6 +50,7 @@ ATTRIBUTION = re.compile(
 TAG = re.compile(r"\[([A-Za-z0-9][A-Za-z0-9._-]*)\]")
 SCOREBOARD_DIR = "plan/scoreboard/"
 ITEMS_FILE = "plan/ITEMS.tsv"
+ALLOW_FILE = "tools/autobuild/licence-allow.tsv"
 # Files that a commit tagged [ops] may change. Product code needs an item.
 OPS_PATHS = (
     "plan/", "tools/", "spec/", "docs/", "conformance/", "benchmarks/", "scripts/",
@@ -36,8 +59,25 @@ OPS_PATHS = (
 )
 
 
+def sibling(name: str):
+    """A module next to this file. The hooks run with python3 -I, so the folder is not on sys.path."""
+    path = HERE / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(f"guard_{name}", path)
+    if not path.is_file() or spec is None or spec.loader is None:
+        raise Refused(f"{path} is missing; the owner must run tools/autobuild/install-guard")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class Refused(Exception):
     pass
+
+
+experiments = sibling("experiments")
+MAX_TRIES = experiments.MAX_TRIES
+tsv_rows = experiments.tsv_rows
+baseline = experiments.baseline
 
 
 def git(*args: str, check: bool = True, stdin: str | None = None) -> str:
@@ -71,14 +111,6 @@ def banned_hits(text: str) -> list[str]:
     return [p.pattern for p in BANNED if p.search(text)]
 
 
-def tsv_rows(text: str) -> list[dict[str, str]]:
-    lines = [l for l in text.splitlines() if l.strip() and not l.startswith("#")]
-    if not lines:
-        return []
-    header = lines[0].split("\t")
-    return [dict(zip(header, l.split("\t"))) for l in lines[1:]]
-
-
 def staged_file(path: str) -> str:
     return git("show", f":{path}", check=False)
 
@@ -99,37 +131,27 @@ def scoreboard_rows(read) -> list[dict[str, str]]:
     return rows
 
 
-def item_tries(rows: list[dict[str, str]], item: str, metric: str) -> tuple[int, int | None, int]:
-    """Experiments of the item, best PASS on its metric, largest TOTAL seen."""
-    runs = {(r.get("utc"), r.get("commit")) for r in rows if r.get("item") == item}
-    best = None
-    widest = 0
-    for r in rows:
-        if r.get("item") == item and r.get("metric") == metric:
-            try:
-                value, total = int(r.get("pass", "")), int(r.get("total", ""))
-            except ValueError:
-                continue
-            best = value if best is None else max(best, value)
-            widest = max(widest, total)
-    return len(runs), best, widest
-
-
-def baseline(value: str) -> tuple[int, int] | None:
-    match = re.match(r"\s*(\d+)\s*/\s*(\d+)\s*$", value or "")
-    return (int(match.group(1)), int(match.group(2))) if match else None
+def is_full_run_row(row: dict[str, str]) -> bool:
+    """A row of a clean measurement of the whole branch: no item, no dirty tree, not an imported held-out total."""
+    return (row.get("dirty") == "no" and row.get("item") == "-"
+            and not row.get("metric", "").startswith("holdout."))
 
 
 def current_branch() -> str:
     return git("symbolic-ref", "-q", "HEAD", check=False).strip()
 
 
+def active_ids(items_text: str) -> set[str]:
+    return {r.get("id", "") for r in tsv_rows(items_text) if r.get("status") == "active"}
+
+
 def commits_since_measurement(rows: list[dict[str, str]]) -> int:
+    """Commits after the newest commit that has a full measurement run among `rows`."""
     head = rev_ok("HEAD")
     if head is None:
         return 0
     counts = []
-    for commit in {r.get("commit", "") for r in rows}:
+    for commit in {r.get("commit", "") for r in rows if is_full_run_row(r)}:
         if commit and rev_ok(commit) and is_ancestor(commit, head):
             counts.append(int(git("rev-list", "--count", f"{commit}..{head}").strip()))
     if counts:
@@ -143,10 +165,45 @@ def commits_since_measurement(rows: list[dict[str, str]]) -> int:
     return int(git("rev-list", "--count", f"{merge_base}..{head}").strip())
 
 
+def new_full_run(staged: list[dict[str, str]], committed: list[dict[str, str]]) -> bool:
+    """The staged rows add a full run of HEAD or of HEAD's parent whose evidence folders exist."""
+    measured = {rev_ok(rev) for rev in ("HEAD", "HEAD^")} - {None}
+    old = {tuple(sorted(r.items())) for r in committed}
+    runs: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for row in staged:
+        if tuple(sorted(row.items())) not in old:
+            runs.setdefault((row.get("utc", ""), row.get("commit", "")), []).append(row)
+    return any(commit in measured and all(is_full_run_row(r) and evidence_kept(r) for r in rows)
+               for (_utc, commit), rows in runs.items())
+
+
+def evidence_kept(row: dict[str, str]) -> bool:
+    evidence = Path(row.get("evidence", ""))
+    return evidence.is_absolute() and evidence.parent.is_dir()
+
+
+def cuts_an_item() -> bool:
+    if not rev_ok("HEAD"):
+        return False
+    cut = {r.get("id", "") for r in tsv_rows(staged_file(ITEMS_FILE)) if r.get("status") == "cut"}
+    return bool(cut & active_ids(committed_file("HEAD", ITEMS_FILE)))
+
+
+def check_branch(branch: str) -> None:
+    if branch == BUILD_BRANCH:
+        return
+    worker = WORKER_BRANCH.match(branch)
+    if worker is None:
+        raise Refused(
+            f"commits are allowed only on gpt/build and on gpt/w/ID, not on {branch or 'a detached HEAD'}"
+        )
+    # The lead's table decides: a worker branch stays open only while the lead keeps its item active.
+    if worker.group(1) not in active_ids(committed_file(BUILD_BRANCH, ITEMS_FILE)):
+        raise Refused(f"item {worker.group(1)} is not active in gpt/build:{ITEMS_FILE}; its worker branch is closed")
+
+
 def pre_commit() -> None:
-    branch = current_branch()
-    if not branch.startswith("refs/heads/gpt/"):
-        raise Refused(f"commits are allowed only on gpt/* branches, not on {branch or 'a detached HEAD'}")
+    check_branch(current_branch())
     staged = [n for n in git("diff", "--cached", "--name-only", "-z").split("\0") if n]
     for name in staged:
         if Path(name).name.startswith("._"):
@@ -165,28 +222,26 @@ def pre_commit() -> None:
             raise Refused(f"a staged line uses a banned phrase ({', '.join(hits)}): {line.strip()[:120]}")
 
     head_rows = scoreboard_rows(lambda n: committed_file("HEAD", n)) if rev_ok("HEAD") else []
+    rows = scoreboard_rows(staged_file)
     since = commits_since_measurement(head_rows)
-    touches_scoreboard = any(n.startswith(SCOREBOARD_DIR) for n in staged)
-    if since >= MEASURE_LIMIT and not touches_scoreboard:
+    # The commit that cuts an item (ops item cut: the reverts and the item's rows) passes the limit:
+    # an exhausted item refuses every other commit, so the limit would otherwise lock the branch.
+    if since >= MEASURE_LIMIT and not new_full_run(rows, head_rows) and not cuts_an_item():
         raise Refused(
             f"{since} commits since the last measured commit (limit {MEASURE_LIMIT}). "
-            "Run `tools/autobuild/ops measure` and commit the new scoreboard rows first."
+            "Run `tools/autobuild/ops measure` (a full run, no --item) and commit its new scoreboard rows first."
         )
 
-    rows = scoreboard_rows(staged_file)
+    attempts = experiments.read_tsv(experiments.attempts_file())
+    corrections = tsv_rows(staged_file(experiments.CORRECTIONS_FILE))
     for item in tsv_rows(staged_file(ITEMS_FILE)):
         if item.get("status") != "active":
             continue
-        tries, best, widest = item_tries(rows, item.get("id", ""), item.get("metric", ""))
-        base = baseline(item.get("baseline", ""))
-        # Baseline 0/0: the item builds a new metric; its first row with a
-        # TOTAL above 0 is the gain.
-        gained = base is not None and (
-            (base[1] == 0 and widest > 0) or (best is not None and best > base[0])
-        )
-        if tries >= MAX_TRIES and not gained:
+        item_id, metric = item.get("id", ""), item.get("metric", "")
+        if experiments.exhausted(rows, attempts, item_id, metric, baseline(item.get("baseline", "")), corrections):
             raise Refused(
-                f"item {item.get('id')} used {tries} experiments with no gain on {item.get('metric')}. "
+                f"item {item_id} used {experiments.experiments(rows, attempts, item_id)} experiments "
+                f"with no gain on {metric}. "
                 "Cut it: `tools/autobuild/ops item cut ID --reason TEXT`, then revert its code."
             )
 
@@ -210,7 +265,7 @@ def commit_msg(path: str) -> None:
     # The commit that cuts an item also reverts its code (ops item cut), so it
     # may carry the tag of the item that it moves from active to cut.
     if rev_ok("HEAD"):
-        was_active = {r.get("id") for r in tsv_rows(committed_file("HEAD", ITEMS_FILE)) if r.get("status") == "active"}
+        was_active = active_ids(committed_file("HEAD", ITEMS_FILE))
         ids |= {r.get("id") for r in staged_items if r.get("status") == "cut"} & was_active
     tags = TAG.findall(subject)
     if not any(t == "ops" or t in ids for t in tags):
@@ -228,37 +283,61 @@ def commit_msg(path: str) -> None:
             )
 
 
-def pre_push(lines: list[str]) -> None:
+def outgoing_problems(local: str, remote: str) -> list[str]:
+    """Why a push of `local` onto the remote gpt/build at `remote` (zeros: absent) is refused."""
+    if not is_zero(remote):
+        if rev_ok(remote) is None:
+            return ["the remote gpt/build has commits that are not here: fetch and merge first"]
+        if not is_ancestor(remote, local):
+            return ["the push is not a fast-forward: force pushes are refused"]
+    main = rev_ok("refs/remotes/origin/main")
+    base = rev_ok(SETTINGS["BRANCH_BASE"])
+    if main is None or base is None:
+        return ["refs/remotes/origin/main or the branch base is missing: fetch main first"]
+    exclude = ["--not", main] + ([] if is_zero(remote) else [remote])
+    new = git("rev-list", local, *exclude).split()
+    if not new:
+        return []
+    from_base = set(git("rev-list", "--ancestry-path", f"{base}..{local}").split()) | {base}
+    epoch = int(dt.datetime.strptime(BRANCH_EPOCH, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp())
+    problems: list[str] = []
+    foreign: list[str] = []
+    for record in git("log", "--format=%H%x1f%ct%x1f%B%x00", local, *exclude).split("\0"):
+        if not record.strip():
+            continue
+        sha, stamp, message = record.strip("\n").split("\x1f", 2)
+        if sha not in from_base:
+            foreign.append(f"commit {sha[:12]} is not a descendant of the branch base {base[:12]}")
+        if int(stamp) <= epoch:
+            foreign.append(f"commit {sha[:12]} has a committer date before the start of this branch ({BRANCH_EPOCH})")
+        if any(ATTRIBUTION.search(line) for line in message.splitlines()):
+            problems.append(f"commit {sha[:12]} holds an attribution line")
+        if banned_hits(message):
+            problems.append(f"commit {sha[:12]} uses a banned phrase")
+    if foreign:
+        problems += foreign + ["history of an old local branch must never be published; import its files as a new commit"]
+    licence = sibling("licence_scan")
+    hits = licence.commit_hits(new, licence.load_index(Path(SETTINGS["LICENCE_INDEX"])),
+                               licence.allowed(committed_file(local, ALLOW_FILE)))
+    problems += [f"licence scan: {hit}" for hit in hits]
+    return problems
+
+
+def pre_push(url: str, lines: list[str]) -> None:
+    if url != SETTINGS["PUSH_URL"]:
+        raise Refused(f"push to {url} refused: the only remote is {SETTINGS['PUSH_URL']}")
     for line in lines:
         parts = line.split()
         if len(parts) != 4:
             continue
         local_ref, local_oid, remote_ref, remote_oid = parts
-        if not remote_ref.startswith("refs/heads/gpt/"):
-            raise Refused(f"push to {remote_ref} refused: only refs/heads/gpt/* may be pushed")
+        if local_ref != BUILD_BRANCH or remote_ref != BUILD_BRANCH:
+            raise Refused(f"push of {local_ref} to {remote_ref} refused: only {BUILD_BRANCH} to {BUILD_BRANCH}")
         if is_zero(local_oid):
             raise Refused(f"deletion of {remote_ref} refused")
-        if not is_zero(remote_oid):
-            if rev_ok(remote_oid) is None:
-                raise Refused(f"the remote {remote_ref} has commits that are not here: run git fetch and merge first")
-            if not is_ancestor(remote_oid, local_oid):
-                raise Refused(f"push to {remote_ref} is not a fast-forward: force pushes are refused")
-            span = f"{remote_oid}..{local_oid}"
-        else:
-            span = local_oid
-        old = git(
-            "rev-list", f"--before={BRANCH_EPOCH}", span, "--not", "refs/remotes/origin/main", check=False
-        ).split()
-        if old:
-            raise Refused(
-                f"commit {old[0][:12]} is older than this branch and not on main: history of an "
-                "old local branch must never be published; import its files as a new commit"
-            )
-        for message in git("log", "--format=%B%x00", span).split("\0"):
-            if any(ATTRIBUTION.search(l) for l in message.splitlines()):
-                raise Refused("a commit to push holds an attribution line")
-            if banned_hits(message):
-                raise Refused("a commit to push uses a banned phrase")
+        problems = outgoing_problems(local_oid, remote_oid)
+        if problems:
+            raise Refused("; ".join(problems))
 
 
 def reference_transaction(state: str, lines: list[str]) -> None:
@@ -279,18 +358,38 @@ def reference_transaction(state: str, lines: list[str]) -> None:
         _old, new, ref = parts
         if ref.startswith("refs/tags/"):
             raise Refused(f"tags are not used on this build: {ref}")
-        if ref.startswith("refs/heads/") and not ref.startswith("refs/heads/gpt/"):
-            raise Refused(f"refusing to change {ref}: only refs/heads/gpt/* may change")
+        if not ref.startswith("refs/heads/"):
+            continue
+        if ref != BUILD_BRANCH and not WORKER_BRANCH.match(ref):
+            raise Refused(f"refusing to change {ref}: only gpt/build and gpt/w/ID branches may change")
+        if is_zero(new):
+            raise Refused(f"refusing to delete {ref}: each branch stays for the review")
         if ref != BUILD_BRANCH:
             continue
-        if is_zero(new):
-            raise Refused("refusing to delete gpt/build")
         current = rev_ok(ref)
         pushed = rev_ok("refs/remotes/origin/gpt/build")
         if current and not is_ancestor(current, new) and pushed and is_ancestor(current, pushed):
             raise Refused(
                 "refusing to rewrite pushed history of gpt/build; undo a change with `git revert`"
             )
+
+
+def role_table(text: str) -> dict[str, dict[str, object]]:
+    """The table of AGENTS.md section 3: the first word of each role, its model id and its efforts (default first)."""
+    roles: dict[str, dict[str, object]] = {}
+    inside = False
+    for line in text.splitlines():
+        if line.startswith("## "):
+            inside = line.startswith("## 3.")
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")] if inside and line.startswith("|") else []
+        if len(cells) < 3 or not cells[0] or cells[0] == "Role" or set(cells[0]) <= set("-: "):
+            continue
+        model = re.findall(r"`([^`]+)`", cells[1])
+        efforts = re.findall(r"`([^`]+)`", cells[2])
+        if model and efforts:
+            roles[cells[0].split()[0].lower()] = {"model": model[0], "efforts": efforts}
+    return roles
 
 
 def main(argv: list[str]) -> int:
@@ -301,9 +400,19 @@ def main(argv: list[str]) -> int:
         elif hook == "commit-msg":
             commit_msg(argv[2])
         elif hook == "pre-push":
-            pre_push(sys.stdin.read().splitlines())
+            pre_push(argv[3] if len(argv) > 3 else "", sys.stdin.read().splitlines())
         elif hook == "reference-transaction":
             reference_transaction(argv[2], sys.stdin.read().splitlines())
+        elif hook == "outgoing":
+            problems = outgoing_problems(argv[2], argv[3])
+            if problems:
+                raise Refused("; ".join(problems))
+            print(f"guard: {argv[2][:12]} may be pushed onto {argv[3][:12]}")
+        elif hook == "roles":
+            roles = role_table(sys.stdin.read())
+            if not roles:
+                raise Refused("AGENTS.md has no role table in section 3")
+            print(json.dumps(roles, indent=1, sort_keys=True))
         else:
             print(f"guard: unknown hook {hook!r}", file=sys.stderr)
             return 2

@@ -1,2 +1,2 @@
-# path	part	reason (a reviewer checks each row)
-path	part	reason
+# path	part	sha256	reason (a reviewer checks each row; a changed file needs a new row)
+path	part	sha256	reason

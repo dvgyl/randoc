@@ -150,66 +150,34 @@ class Progress:
     stuck: bool
 
 
-def guard_gained(base: tuple[int, int] | None, best: int | None, widest: int) -> bool:
-    """The gain test of the guard's pre-commit hook (baseline 0/0: a row with a TOTAL above 0)."""
-    return base is not None and ((base[1] == 0 and widest > 0) or (best is not None and best > base[0]))
+def rule_inputs(ctx: Context) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    """The attempt records and the tool corrections that the guard's rule (hooks/experiments.py) reads."""
+    rules = ctx.guard.experiments
+    return (rules.read_tsv(rules.attempts_file(str(ctx.runs))),
+            rules.read_tsv(ctx.root / rules.CORRECTIONS_FILE))
 
 
 def progress(ctx: Context, item: Item, rows: list[dict[str, str]]) -> Progress:
-    """Experiments (counted as the guard counts them), gain with the baseline TOTAL, and stuck state."""
-    experiments, _best, _widest = ctx.guard.item_tries(rows, item.id, item.metric)
+    """Experiments, gain and stuck state by the rule of the guard (hooks/experiments.py).
+
+    The gain is that of the LATEST row of the item's metric: PASS above the baseline PASS,
+    and a failing count (TOTAL - PASS) that is not above the baseline failing count.
+    Stuck: the two newest rows of the metric both show no gain."""
+    rules = ctx.guard.experiments
+    attempts, corrections = rule_inputs(ctx)
+    experiments = rules.experiments(rows, attempts, item.id)
     base = item.base()
-    mine = [
-        r for r in rows
-        if r.get("item") == item.id and r.get("metric") == item.metric
-        and number(r, "pass") is not None and number(r, "total") is not None
-    ]
     if base is None:
         return Progress(experiments, False, None, None, False, False)
-    reference, total = base
-    newest_total = number(mine[-1], "total") if mine else None
-    if total == 0:
-        # The item makes a new metric (ROADMAP rule 7): its first row with a TOTAL above 0 is the gain.
-        made = [number(r, "pass") or 0 for r in mine if (number(r, "total") or 0) > 0]
-        trailing = 0
-        for r in reversed(mine):
-            if (number(r, "total") or 0) > 0:
-                break
-            trailing += 1
-        return Progress(experiments, bool(made), max(made) if made else None, newest_total, False,
-                        not made and trailing >= 2)
-    total_changed = newest_total is not None and newest_total != total
-    if total_changed:
-        # The TOTAL changed: the baseline commit must be measured again with the new TOTAL.
-        base_commit = baseline_commit(ctx, item.id)
-        again = [
-            r for r in rows
-            if base_commit and r.get("commit") == base_commit
-            and r.get("metric") == item.metric and number(r, "total") == newest_total
-        ]
-        if not again:
-            return Progress(experiments, False, None, newest_total, True, False)
-        reference, total = number(again[-1], "pass") or 0, newest_total
-        mine = [r for r in mine if r.get("commit") != base_commit]
-    same = [number(r, "pass") or 0 for r in mine if number(r, "total") == total]
-    gain = max(same) - reference if same else None
-    best, no_gain_rows = reference, 0
-    for value in same:
-        if value > best:
-            best, no_gain_rows = value, 0
-        else:
-            no_gain_rows += 1
-    return Progress(experiments, gain is not None and gain > 0, gain, newest_total, total_changed,
-                    no_gain_rows >= 2)
-
-
-def baseline_commit(ctx: Context, item_id: str) -> str | None:
-    """The commit of the baseline row, from the body of the commit that started the item."""
-    out = ctx.git.run(
-        "log", "-1", "--format=%B", "-F", f"--grep=start item {item_id} ", "HEAD", check=False
-    )
-    match = re.search(r"measured at ([0-9a-f]{7,40})", out)
-    return match.group(1) if match else None
+    cut = rules.cutoffs(corrections)
+    mine = sorted((r for r in rows if r.get("item") == item.id and r.get("metric") == item.metric
+                   and rules.numbers(r) is not None and rules.counts(r, cut)), key=lambda r: r.get("utc", ""))
+    if not mine:
+        return Progress(experiments, False, None, None, False, False)
+    passed, total = rules.numbers(mine[-1])
+    stuck = len(mine) >= 2 and not any(rules.gained([r], item.id, item.metric, base) for r in mine[-2:])
+    return Progress(experiments, rules.gained(rows, item.id, item.metric, base, corrections), passed - base[0],
+                    total, base[1] != 0 and total != base[1], stuck)
 
 
 @dataclass(frozen=True)
@@ -287,13 +255,14 @@ def predict_commit(ctx: Context, new_items: list[Item], touches_scoreboard: bool
             "run `tools/autobuild/ops measure` and commit the new scoreboard rows first",
         )
     rows = read_rows(ctx)  # the commit stages the new rows of the working tree
+    attempts, corrections = rule_inputs(ctx)
     for item in new_items:
         if item.status != "active":
             continue
-        tries, best, widest = guard.item_tries(rows, item.id, item.metric)
-        if tries >= guard.MAX_TRIES and not guard_gained(guard.baseline(item.baseline), best, widest):
+        if guard.experiments.exhausted(rows, attempts, item.id, item.metric, item.base(), corrections):
             raise Refusal(
-                f"item {item.id} used {tries} experiments with no gain; the guard refuses each commit",
+                f"item {item.id} used {guard.experiments.experiments(rows, attempts, item.id)} experiments "
+                "with no gain; the guard refuses each commit",
                 f"cut it first: `tools/autobuild/ops item cut {item.id} --reason TEXT`",
             )
 

@@ -1,16 +1,21 @@
 #!/bin/sh
 # Installs the Git guard of the gpt/* branches. Run it OUTSIDE the build
 # sandbox (the owner or the reviewer runs it): the build cannot write the
-# target folder, so it cannot weaken the active hooks.
+# target folder, so it cannot weaken the active hooks. The broker (the support
+# daemon) runs the same installed guard.py and licence_scan.py before a push.
 # Usage: tools/autobuild/install-guard [CLONE]
 set -eu
-src="$(cd "$(dirname "$0")" && pwd)/hooks"
+autobuild="$(cd "$(dirname "$0")" && pwd)"
 dest="/Volumes/Extreme Pro/Randoc/env/gpt-hooks"
 clone="${1:-/Volumes/Extreme Pro/Randoc/gpt/randoc}"
 mkdir -p "$dest"
-for f in guard.py pre-commit commit-msg pre-push reference-transaction; do
-  cp "$src/$f" "$dest/$f.new" && mv "$dest/$f.new" "$dest/$f"
+for f in guard.py experiments.py pre-commit commit-msg pre-push reference-transaction; do
+  cp "$autobuild/hooks/$f" "$dest/$f.new" && mv "$dest/$f.new" "$dest/$f"
 done
+cp "$autobuild/licence_scan.py" "$dest/licence_scan.py.new" && mv "$dest/licence_scan.py.new" "$dest/licence_scan.py"
+# guard.json is a test setting (a local remote); the installed guard never uses one.
+rm -f "$dest/guard.json"
+rm -rf "$dest/__pycache__"
 chmod +x "$dest/pre-commit" "$dest/commit-msg" "$dest/pre-push" "$dest/reference-transaction"
 git -C "$clone" config core.hooksPath "$dest"
 echo "install-guard: hooks in $dest; core.hooksPath set in $clone"

@@ -8,8 +8,9 @@
 #          Each active metric of a suite has the same command.
 # command  measure.py splits it like a shell line and then fills the placeholders:
 #          {python} this Python, {randoc} and {harness} copies of the debug programs
-#          of the target folder (made for each suite run, so that a build during
-#          the run changes nothing), {oracle} $RANDOC_ORACLE_PANDOC, {pandoc_src}
+#          of the target folder (made once for each measurement run, with their
+#          SHA-256 in the evidence, so that a build during the run changes
+#          nothing), {oracle} $RANDOC_ORACLE_PANDOC, {pandoc_src}
 #          $RANDOC_PANDOC_SRC, {corpus} $RANDOC_CORPUS, {evidence} the evidence
 #          folder of the run. Write a literal brace as {{ or }}. The working
 #          folder is the repository root.

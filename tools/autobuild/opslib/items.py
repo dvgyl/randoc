@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 from . import fleet
@@ -202,6 +204,47 @@ def revert_and_cut(ctx: Context, item_id: str, commits: list[tuple[str, bool, st
             "revert the item's commits by hand (`git revert --no-commit SHA`, newest first), then run "
             "`ops item cut` again",
         ) from error
+
+
+def remeasure_item(ctx: Context, item_id: str) -> bool:
+    """Measure the item's metric on the checked-out tree and judge the gain with the guard's rule.
+
+    `ops worker merge` calls it on the detached merge commit after the gate
+    passed, so that the gain shows on the exact tree that gpt/build gets. The
+    run measures only the suite of the metric, with `--item ID --stream build`:
+    it is one experiment of the item, and its rows stay in
+    plan/scoreboard/build.tsv for the next commit of the lead.
+    """
+    import measure
+
+    from . import corrections
+
+    item = ItemsTable.load(ctx.items_file).need(item_id)
+    try:
+        metric = measure.tree_registry(ctx.autobuild).get(item.metric)
+    except measure.ToolError as error:
+        raise OpsError(f"the metric registry cannot be read: {error}") from error
+    if metric is None or metric.status != "active":
+        print(f"re-measure of {item_id}: {item.metric} is not an active metric of this tree; no gain can be shown")
+        return False
+    head = ctx.git.rev("HEAD") or ""
+    argv = [sys.executable, str(ctx.autobuild / "measure.py"), "--suite", metric.suite, "--item", item_id,
+            "--stream", "build"]
+    print(f"re-measure of {item_id} on {head[:12]}: {' '.join(argv[2:])}", flush=True)
+    code = subprocess.run(argv, cwd=ctx.root).returncode
+    if code == 2:
+        print(f"re-measure of {item_id}: measure.py was refused or failed (exit 2); no gain can be shown")
+        return False
+    rows = [r for r in read_rows(ctx) if r["stream"] == "build" and r.get("commit") == head
+            and r.get("item") == item_id and r.get("metric") == item.metric]
+    if not rows:
+        print(f"re-measure of {item_id}: the run wrote no row of {item.metric}; no gain can be shown")
+        return False
+    newest = rows[-1]
+    gained = measure.experiments.gained([newest], item_id, item.metric, item.base(), corrections.load(ctx))
+    print(f"re-measure of {item_id}: {item.metric} {newest['pass']}/{newest['total']} against the baseline "
+          f"{item.baseline}: {'gain' if gained else 'no gain'}")
+    return gained
 
 
 def list_items(ctx: Context, args: argparse.Namespace) -> int:

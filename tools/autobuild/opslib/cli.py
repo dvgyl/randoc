@@ -7,7 +7,7 @@ import os
 import subprocess
 import sys
 
-from . import holdout, items, report, talk, workers
+from . import corrections, holdout, items, report, talk, workers
 from .core import Context, OpsError, Refusal, load_context
 from .notes import ASK_REASONS, LOG_KINDS
 
@@ -57,6 +57,9 @@ def parser() -> argparse.ArgumentParser:
     ):
         p = worker.add_parser(name, help=text)
         p.add_argument("id")
+        if name == "run":
+            p.add_argument("--effort", choices=("low", "high"),
+                           help="reasoning effort of the worker: low for a routine item (default: the table of AGENTS.md)")
         if name == "drop":
             p.add_argument("--stop", action="store_true", help="stop a running worker first")
         p.set_defaults(func=func)
@@ -66,6 +69,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("question", nargs="?")
     p.add_argument("--reason", choices=ASK_REASONS)
     p.add_argument("--item")
+    p.add_argument("--evidence", help="the record of the stuck state (needed for two-fixes-failed, acceptance-failed and no-next-step)")
     p.add_argument("--decision", help="record the decision for the newest answer")
     p.set_defaults(func=talk.ask)
 
@@ -76,7 +80,6 @@ def parser() -> argparse.ArgumentParser:
 
     held = sub.add_parser("holdout", help="the held-out evaluation").add_subparsers(dest="action", required=True)
     p = held.add_parser("request", help="ask for one evaluation of HEAD")
-    p.add_argument("--binary")
     p.set_defaults(func=holdout.request)
     p = held.add_parser("results", help="the newest totals and the heartbeat")
     p.add_argument("--record", action="store_true", help="write the totals as rows of plan/scoreboard/build.tsv")
@@ -96,10 +99,29 @@ def parser() -> argparse.ArgumentParser:
     p.set_defaults(func=talk.blocked)
 
     mile = sub.add_parser("milestone", help="milestone gates").add_subparsers(dest="action", required=True)
-    p = mile.add_parser("check", help="compare the newest build rows with plan/milestones.toml")
+    p = mile.add_parser("check", help="compare the newest clean full build run with plan/milestones.toml")
     p.add_argument("id")
     p.set_defaults(func=report.milestone_check)
+
+    fix = sub.add_parser("correction", help="tool corrections in plan/corrections.tsv").add_subparsers(dest="action", required=True)
+    p = fix.add_parser("add", help="record that a tool now forms or counts the units of a metric in another way")
+    p.add_argument("metric")
+    p.add_argument("--item", required=True, help="the active item that changes the tool")
+    p.add_argument("--reason", required=True)
+    p.set_defaults(func=corrections.add)
+
+    sub.add_parser("push", help="ask the broker to push gpt/build").set_defaults(func=push)
     return top
+
+
+def push(ctx: Context, args: argparse.Namespace) -> int:
+    try:
+        from . import broker
+    except ModuleNotFoundError as error:
+        if error.name != f"{__package__}.broker":
+            raise
+        raise OpsError("opslib/broker.py is not installed in this tree, so `ops push` cannot run") from error
+    return broker.push(ctx)
 
 
 def pass_through(ctx: Context, name: str, rest: list[str]) -> int:

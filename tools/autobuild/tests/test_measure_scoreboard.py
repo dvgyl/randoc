@@ -4,6 +4,7 @@ Run: python3 -m unittest discover -s tools/autobuild/tests"""
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -66,21 +67,26 @@ class Rows(unittest.TestCase):
         self.assertIsNone(measure.default_stream("main"))
 
 
-class ProgramCopies(unittest.TestCase):
-    def test_a_suite_runs_a_copy_that_a_later_build_does_not_change(self):
+class ProgramSnapshot(unittest.TestCase):
+    def test_each_suite_of_a_run_uses_one_read_only_copy_that_a_later_build_does_not_change(self):
         with tempfile.TemporaryDirectory() as folder:
             debug = Path(folder) / "debug"
             debug.mkdir()
             (debug / "randoc").write_bytes(b"old program")
             with mock.patch.object(measure, "target_dir", lambda: Path(folder)):
-                with measure.program_copies("{randoc} -t json") as copies:
+                with measure.program_snapshot(measure.programs_named(["{randoc} -t json"])) as programs:
                     (debug / "randoc").write_bytes(b"new program")
-                    copy = Path(copies["randoc"])
+                    copy = Path(programs.paths["randoc"])
                     self.assertEqual(copy.read_bytes(), b"old program")
-                    self.assertNotIn("harness", copies)
+                    self.assertEqual(programs.sha256["randoc"], hashlib.sha256(b"old program").hexdigest())
+                    self.assertNotIn("harness", programs.paths)
                 self.assertFalse(copy.exists())
+                with self.assertRaisesRegex(measure.ToolError, "randoc changed during the run"):
+                    with measure.program_snapshot(["randoc"]) as programs:
+                        Path(programs.paths["randoc"]).chmod(0o755)
+                        Path(programs.paths["randoc"]).write_bytes(b"changed")
                 with self.assertRaisesRegex(measure.ToolError, "cannot copy"):
-                    with measure.program_copies("{harness} run"):
+                    with measure.program_snapshot(["harness"]):
                         pass
 
 
@@ -92,8 +98,10 @@ class MainFlow(unittest.TestCase):
         patches = [
             mock.patch.object(measure, "METRICS_FILE", self.folder / "metrics.toml"),
             mock.patch.object(measure, "SCOREBOARD", self.scoreboard),
+            mock.patch.object(measure, "PLAN", self.folder / "plan"),
+            mock.patch.object(measure, "MIN_FREE_BYTES", 0),
             mock.patch.dict(measure.RUNNERS, {"fake": measure.Runner(fake_counts, "--only", "tools/autobuild")}),
-            mock.patch.dict(os.environ, {"RANDOC_RUNS": str(self.folder / "runs")}),
+            mock.patch.dict(os.environ, {"RANDOC_RUNS": str(self.folder / "runs"), "RANDOC_ENV": str(self.folder / "env")}),
         ]
         for patch in patches:
             patch.start()

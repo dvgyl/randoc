@@ -4,29 +4,38 @@
 Usage: measure.py [--suite NAME ...] [--quick] [--item ID] [--stream NAME]
                   [--filter TEXT] [--no-build]
 
-Steps: build randoc-cli and randoc-harness (unless --no-build); run the
-command of each selected suite; write the evidence of each suite to
-$RANDOC_RUNS/measure/<utc>-<sha12>/<suite>.json (fields rows, failing,
-no_result, unstable, oracle_limit, no_input, duration_s; the classes of
-plan/SPEC.md 3.11); append one row for each metric to
-plan/scoreboard/<stream>.tsv; print each row with its change against the
-previous row of the same metric.
+Steps: refuse to start with less than 15 GB free on the drive; wait for
+one of the 2 measurement slots of the machine; for a run of an item, refuse
+when the item used 3 experiments with no gain (hooks/experiments.py), else
+write an attempt record to $RANDOC_RUNS/attempts.tsv; build randoc-cli and
+randoc-harness (unless --no-build); copy the programs once for the whole
+run (read-only, with their SHA-256); run the command of each selected
+suite; write the evidence of each suite to
+$RANDOC_RUNS/measure/<utc>-<sha12>/<suite>.json (fields rows, passing,
+failing, failing_by_metric, no_result, unstable, oracle_limit, no_input,
+programs, duration_s; the classes of plan/SPEC.md 3.11); append one row for
+each metric to plan/scoreboard/<stream>.tsv; print each row with its change
+against the previous row of the same metric.
 
 Default suites: each suite with an active metric. --quick: the harness suite
 (harness.* and caps.*) and the suite of the metric of the --item in
 plan/ITEMS.tsv, so that each experiment measures its own metric. Default stream: `build` on gpt/build, ID on
-gpt/w/ID. A run with --filter writes evidence but no row, because its TOTAL
-is not the TOTAL of the metric.
+gpt/w/ID. A run with --filter is a diagnostic, not an experiment: it writes
+evidence but no row and no attempt, because its TOTAL is not the TOTAL of
+the metric. Rows that are older than the newest correction of their metric
+(plan/corrections.tsv) do not count as the best earlier row.
 
 Exit code: 0; 1 when a metric fell below the best earlier clean row of the
-same stream with the same TOTAL; 2 when a tool failed (the rows of the other
-suites are still written).
+same stream with the same TOTAL; 2 when the run was refused or a tool failed
+(the rows of the other suites are still written).
 """
 
 from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -44,7 +53,8 @@ from typing import Callable, Iterator
 
 ROOT = Path(__file__).resolve().parents[2]
 METRICS_FILE = Path(__file__).resolve().with_name("metrics.toml")
-SCOREBOARD = ROOT / "plan" / "scoreboard"
+PLAN = ROOT / "plan"
+SCOREBOARD = PLAN / "scoreboard"
 HEADER = ("utc", "commit", "dirty", "item", "metric", "pass", "total", "tool", "evidence")
 STATUSES = ("active", "to-build", "external")
 ENV_PLACEHOLDERS = {
@@ -52,6 +62,26 @@ ENV_PLACEHOLDERS = {
     "pandoc_src": "RANDOC_PANDOC_SRC",
     "corpus": "RANDOC_CORPUS",
 }
+MIN_FREE_BYTES = 15 * 10**9
+MEASURE_SLOTS = 2
+SLOT_ENV = "RANDOC_MEASURE_SLOT"
+SLOT_WAIT_S = 5.0
+DEFAULT_ENV = "/Volumes/Extreme Pro/Randoc/env"
+
+
+def load_experiments():
+    """hooks/experiments.py: the experiment and gain rule that the guard uses too."""
+    path = Path(__file__).resolve().with_name("hooks") / "experiments.py"
+    spec = importlib.util.spec_from_file_location("autobuild_experiments", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+experiments = load_experiments()
 
 
 class ToolError(Exception):
@@ -80,10 +110,16 @@ class Row:
     tool: str
     evidence: str
 
+    def fields(self) -> tuple[str, ...]:
+        return (self.utc, self.commit, self.dirty, self.item, self.metric,
+                str(self.passed), str(self.total), self.tool, self.evidence)
+
     def line(self) -> str:
-        fields = (self.utc, self.commit, self.dirty, self.item, self.metric,
-                  str(self.passed), str(self.total), self.tool, self.evidence)
-        return "\t".join(fields) + "\n"
+        return "\t".join(self.fields()) + "\n"
+
+    def as_dict(self) -> dict[str, str]:
+        """The row in the form of hooks/experiments.py (the TSV field names)."""
+        return dict(zip(HEADER, self.fields()))
 
 
 # The classes of a unit (plan/SPEC.md, 3.11). PASS counts the class pass;
@@ -106,6 +142,9 @@ class Counts:
     """The result of one suite run: PASS and TOTAL of each metric, and the unit lists of each class.
 
     `no_result` lists the units of class fail where Randoc gave no result.
+    `passing` (the units of class pass) and `failing_by_metric` (the failing
+    units of each metric) are None when the parser did not use `Counts.of`:
+    the gate then has no unit list to compare, and `ops next` no metric.
     """
 
     rows: dict[str, tuple[int, int]] = field(default_factory=dict)
@@ -114,19 +153,23 @@ class Counts:
     unstable: list[str] = field(default_factory=list)
     oracle_limit: list[str] = field(default_factory=list)
     no_input: list[str] = field(default_factory=list)
+    passing: list[str] | None = None
+    failing_by_metric: dict[str, list[str]] | None = None
 
     @classmethod
     def of(cls, units: list[Unit], metrics: tuple[str, ...]) -> Counts:
-        counts = cls(rows={key: (0, 0) for key in metrics})
-        lists = {FAIL: counts.failing, UNSTABLE: counts.unstable,
+        counts = cls(rows={key: (0, 0) for key in metrics}, passing=[],
+                     failing_by_metric={key: [] for key in metrics})
+        lists = {PASS: counts.passing, FAIL: counts.failing, UNSTABLE: counts.unstable,
                  ORACLE_LIMIT: counts.oracle_limit, NO_INPUT: counts.no_input}
         for unit in units:
             if unit.cls in (PASS, FAIL):
                 for key in unit.metrics:
                     passed, total = counts.rows[key]
                     counts.rows[key] = (passed + (unit.cls == PASS), total + 1)
-            if unit.cls != PASS:
-                lists[unit.cls].append(unit.id)
+                    if unit.cls == FAIL:
+                        counts.failing_by_metric[key].append(unit.id)
+            lists[unit.cls].append(unit.id)
             if unit.no_result:
                 counts.no_result.append(unit.id)
         return counts
@@ -267,36 +310,51 @@ def load_suites() -> None:
         RUNNERS[path.stem] = module.make_runner(sys.modules[__name__])
 
 
-def load_metrics(path: Path | None = None) -> dict[str, Metric]:
-    """Reads and checks the registry: unique keys, known status, a runner and one command per suite."""
-    path = path or METRICS_FILE
-    if path == METRICS_FILE and not any(name not in ("harness", "pandoc", "corpus") for name in RUNNERS):
-        load_suites()
-    sources = [path] + (plugin_files(METRICS_DIR, "*.toml") if path == METRICS_FILE else [])
+def read_registry(path: Path, overlays: list[Path]) -> dict[str, Metric]:
+    """Reads the entries of `path` and of the overlay files: unique keys and a known status.
+
+    An overlay entry (metrics.d) may replace a "to-build" entry of `path`."""
     entries = []
-    for source in sources:
+    for source in [path, *overlays]:
         try:
             entries += [(source, e) for e in tomllib.loads(source.read_text(encoding="utf-8"))["metric"]]
         except (OSError, ValueError, KeyError) as error:
             raise ToolError(f"{source}: {error}") from error
     metrics: dict[str, Metric] = {}
-    commands: dict[str, str] = {}
     for source, entry in entries:
-        metric = Metric(entry["key"], entry["suite"], entry["status"], entry["command"],
-                        entry["pass"], entry["total"])
-        if metric.key in metrics:
-            # A metrics.d entry may replace a "to-build" entry of metrics.toml.
-            if not (source != path and metrics[metric.key].status == "to-build"):
-                raise ToolError(f"{source}: the key {metric.key} is listed two times")
+        try:
+            metric = Metric(entry["key"], entry["suite"], entry["status"], entry["command"],
+                            entry["pass"], entry["total"])
+        except KeyError as error:
+            raise ToolError(f"{source}: an entry has no field {error}") from error
+        if metric.key in metrics and not (source != path and metrics[metric.key].status == "to-build"):
+            raise ToolError(f"{source}: the key {metric.key} is listed two times")
         if metric.status not in STATUSES:
-            raise ToolError(f"{path}: {metric.key} has the status {metric.status!r}, not one of {STATUSES}")
-        if metric.status == "active":
-            if metric.suite not in RUNNERS:
-                raise ToolError(f"{path}: {metric.key} is active, but measure.py has no runner for suite {metric.suite}")
-            if commands.setdefault(metric.suite, metric.command) != metric.command:
-                raise ToolError(f"{path}: the active metrics of suite {metric.suite} have different commands")
+            raise ToolError(f"{source}: {metric.key} has the status {metric.status!r}, not one of {STATUSES}")
         metrics[metric.key] = metric
     return metrics
+
+
+def load_metrics(path: Path | None = None) -> dict[str, Metric]:
+    """Reads and checks the registry: unique keys, known status, a runner and one command per suite."""
+    path = path or METRICS_FILE
+    if path == METRICS_FILE and not any(name not in ("harness", "pandoc", "corpus") for name in RUNNERS):
+        load_suites()
+    metrics = read_registry(path, plugin_files(METRICS_DIR, "*.toml") if path == METRICS_FILE else [])
+    commands: dict[str, str] = {}
+    for metric in metrics.values():
+        if metric.status != "active":
+            continue
+        if metric.suite not in RUNNERS:
+            raise ToolError(f"{path}: {metric.key} is active, but measure.py has no runner for suite {metric.suite}")
+        if commands.setdefault(metric.suite, metric.command) != metric.command:
+            raise ToolError(f"{path}: the active metrics of suite {metric.suite} have different commands")
+    return metrics
+
+
+def tree_registry(autobuild: Path) -> dict[str, Metric]:
+    """The registry of the tree whose tool folder is `autobuild`, with no runner check (for ops)."""
+    return read_registry(autobuild / "metrics.toml", plugin_files(autobuild / "metrics.d", "*.toml"))
 
 
 def active_suites(metrics: dict[str, Metric]) -> list[str]:
@@ -326,27 +384,52 @@ def target_dir() -> Path:
 PROGRAMS = {"randoc": "randoc", "harness": "randoc-harness"}
 
 
+@dataclass(frozen=True)
+class Programs:
+    """The read-only copies of one run: the path and the SHA-256 of each program."""
+
+    paths: dict[str, str]
+    sha256: dict[str, str]
+
+
+def programs_named(commands: list[str]) -> list[str]:
+    return [name for name in PROGRAMS if any(f"{{{name}}}" in command for command in commands)]
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as stream:
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
 @contextlib.contextmanager
-def program_copies(command: str) -> Iterator[dict[str, str]]:
-    """Copies the debug programs that `command` names into a new folder of $TMPDIR for one suite run.
+def program_snapshot(names: list[str]) -> Iterator[Programs]:
+    """Copies the named debug programs once into a new folder of $TMPDIR, for all suites of one run.
 
     A cargo command in the same target folder rewrites the programs in place
     (exFAT has no hard links), and a run of a half-written program gives a
-    false result. The copies make the run independent of other builds.
+    false result. The copies make each suite of the run use the same programs,
+    and the SHA-256 in the evidence names them. exFAT ignores the read-only
+    mode, so the end of the run hashes the copies again and refuses a change.
     """
     folder = Path(tempfile.mkdtemp(prefix="randoc-measure-"))
     try:
-        copies = {}
-        for name, program in PROGRAMS.items():
-            if f"{{{name}}}" not in command:
-                continue
-            source = target_dir() / "debug" / program
+        paths, hashes = {}, {}
+        for name in names:
+            source = target_dir() / "debug" / PROGRAMS[name]
+            copy = folder / PROGRAMS[name]
             try:
-                shutil.copy2(source, folder / program)
+                shutil.copy2(source, copy)
             except OSError as error:
                 raise ToolError(f"cannot copy {source}: {error}. Build it: cargo build -p randoc-cli -p randoc-harness")
-            copies[name] = str(folder / program)
-        yield copies
+            copy.chmod(0o555)
+            paths[name], hashes[name] = str(copy), file_sha256(copy)
+        yield Programs(paths, hashes)
+        changed = [name for name in names if file_sha256(Path(paths[name])) != hashes[name]]
+        if changed:
+            raise ToolError(f"the copy of {', '.join(changed)} changed during the run, so its results are not used")
     finally:
         shutil.rmtree(folder, ignore_errors=True)
 
@@ -377,17 +460,24 @@ def suite_argv(command: str, evidence: Path, programs: dict[str, str], runner: R
     return argv
 
 
-def run_suite(suite: str, metrics: dict[str, Metric], evidence: Path, text: str | None = None) -> SuiteResult:
-    """Runs the command of `suite`, parses its output, and writes `<suite>.json` into `evidence`."""
-    runner = RUNNERS[suite]
+def suite_command(suite: str, metrics: dict[str, Metric]) -> str:
     active = sorted(k for k, m in metrics.items() if m.suite == suite and m.status == "active")
     if not active:
         raise ToolError(f"suite {suite} has no active metric in {METRICS_FILE.name}")
+    return metrics[active[0]].command
+
+
+def run_suite(suite: str, metrics: dict[str, Metric], evidence: Path, programs: Programs,
+              text: str | None = None) -> SuiteResult:
+    """Runs the command of `suite` with the programs of the run, parses its output, and writes
+    `<suite>.json` into `evidence`."""
+    runner = RUNNERS[suite]
+    command = suite_command(suite, metrics)
+    active = sorted(k for k, m in metrics.items() if m.suite == suite and m.status == "active")
     log_path = evidence / f"{suite}.log"
     started = time.monotonic()
-    command = metrics[active[0]].command
-    with program_copies(command) as programs, open(log_path, "w", encoding="utf-8") as log:
-        argv = suite_argv(command, evidence, programs, runner, text)
+    with open(log_path, "w", encoding="utf-8") as log:
+        argv = suite_argv(command, evidence, programs.paths, runner, text)
         try:
             code = subprocess.run(argv, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT).returncode
         except OSError as error:
@@ -409,9 +499,12 @@ def run_suite(suite: str, metrics: dict[str, Metric], evidence: Path, text: str 
     tool = tool_version(suite, runner.tool_dir)
     record = {
         "suite": suite, "command": argv, "filter": text, "tool": tool,
+        "programs": {name: programs.sha256[name] for name in programs_named([command])},
         "rows": [{"metric": k, "pass": p, "total": t} for k, (p, t) in sorted(counts.rows.items())],
-        "failing": counts.failing, "no_result": counts.no_result, "unstable": counts.unstable,
-        "oracle_limit": counts.oracle_limit, "no_input": counts.no_input, "duration_s": round(duration, 1),
+        "failing": counts.failing, "failing_by_metric": counts.failing_by_metric,
+        "no_result": counts.no_result, "unstable": counts.unstable,
+        "oracle_limit": counts.oracle_limit, "no_input": counts.no_input, "passing": counts.passing,
+        "duration_s": round(duration, 1),
     }
     path = evidence / f"{suite}.json"
     path.write_text(json.dumps(record, indent=1) + "\n", encoding="utf-8")
@@ -488,12 +581,10 @@ def default_stream(branch: str) -> str | None:
 
 
 def new_evidence_dir(kind: str, sha: str) -> tuple[str, Path]:
-    runs = os.environ.get("RANDOC_RUNS")
-    if not runs:
-        raise ToolError("set RANDOC_RUNS (source tools/autobuild/env.sh)")
+    runs = runs_folder()
     while True:
         now = datetime.now(timezone.utc)
-        path = Path(runs) / kind / f"{now:%Y%m%dT%H%M%SZ}-{sha[:12]}"
+        path = runs / kind / f"{now:%Y%m%dT%H%M%SZ}-{sha[:12]}"
         try:
             path.mkdir(parents=True)
             return now.strftime("%Y-%m-%dT%H:%M:%SZ"), path
@@ -501,17 +592,120 @@ def new_evidence_dir(kind: str, sha: str) -> tuple[str, Path]:
             time.sleep(1)
 
 
+def item_entry(item: str) -> dict[str, str] | None:
+    """The row of `item` in plan/ITEMS.tsv, or None."""
+    return next((r for r in experiments.read_tsv(PLAN / "ITEMS.tsv") if r.get("id") == item), None)
+
+
 def item_metric(item: str) -> str | None:
     """The metric of `item` in plan/ITEMS.tsv, or None."""
-    path = ROOT / "plan" / "ITEMS.tsv"
-    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
-    lines = [line for line in lines if line.strip() and not line.startswith("#")]
-    header = lines[0].split("\t") if lines else []
-    for line in lines[1:]:
-        value = dict(zip(header, line.split("\t")))
-        if value.get("id") == item:
-            return value.get("metric")
+    entry = item_entry(item)
+    return entry.get("metric") if entry else None
+
+
+def corrections() -> list[dict[str, str]]:
+    return experiments.read_tsv(PLAN / Path(experiments.CORRECTIONS_FILE).name)
+
+
+def counted(history: list[Row]) -> list[Row]:
+    """The rows that the newest correction of their metric did not make obsolete."""
+    cut = experiments.cutoffs(corrections())
+    return [row for row in history if experiments.counts(row.as_dict(), cut)]
+
+
+def all_rows() -> list[dict[str, str]]:
+    """The rows of each scoreboard stream, as the guard reads them."""
+    return [row.as_dict() for path in plugin_files(SCOREBOARD, "*.tsv") for row in read_rows(path)]
+
+
+def refuse_exhausted(item: str) -> None:
+    """Refuse a fourth experiment of an item that shows no gain (no rescue run)."""
+    entry = item_entry(item)
+    if entry is None:
+        return
+    rows = all_rows()
+    attempts = experiments.read_tsv(experiments.attempts_file())
+    used = experiments.experiments(rows, attempts, item)
+    if experiments.exhausted(rows, attempts, item, entry.get("metric", ""),
+                             experiments.baseline(entry.get("baseline", "")), corrections()):
+        raise ToolError(f"refused: item {item} used {used} experiments with no gain on {entry.get('metric')} "
+                        f"(limit {experiments.MAX_TRIES}); cut it: `tools/autobuild/ops item cut {item} --reason TEXT`")
+
+
+def runs_folder() -> Path:
+    runs = os.environ.get("RANDOC_RUNS")
+    if not runs:
+        raise ToolError("set RANDOC_RUNS (source tools/autobuild/env.sh)")
+    return Path(runs)
+
+
+def check_free_disk(path: Path) -> None:
+    """Refuse to start when the drive has less than MIN_FREE_BYTES free."""
+    free = shutil.disk_usage(path if path.exists() else ROOT).free
+    if free < MIN_FREE_BYTES:
+        raise ToolError(f"{free / 1e9:.0f} GB free on the drive (a measurement needs {MIN_FREE_BYTES / 1e9:.0f} GB): "
+                        "drop finished workers (`ops worker drop ID`), or write it with `ops blocked`")
+
+
+def slots_folder() -> Path:
+    return Path(os.environ.get("RANDOC_ENV") or DEFAULT_ENV) / "tmp" / "slots"
+
+
+def slot_is_stale(slot: Path) -> bool:
+    """A slot whose process ended. A slot with no PID file yet is stale only after 60 seconds."""
+    try:
+        pid = int((slot / "pid").read_text().strip())
+    except (OSError, ValueError):
+        try:
+            return time.time() - slot.stat().st_mtime > 60
+        except OSError:
+            return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return True
+    except OSError:
+        return False
+    return False
+
+
+def take_slot() -> Path | None:
+    folder = slots_folder()
+    folder.mkdir(parents=True, exist_ok=True)
+    for number in range(1, MEASURE_SLOTS + 1):
+        slot = folder / f"measure-{number}"
+        try:
+            slot.mkdir()
+        except FileExistsError:
+            if slot_is_stale(slot):
+                shutil.rmtree(slot, ignore_errors=True)
+            continue
+        (slot / "pid").write_text(f"{os.getpid()}\n", encoding="utf-8")
+        return slot
     return None
+
+
+@contextlib.contextmanager
+def measurement_slot() -> Iterator[str]:
+    """One of the MEASURE_SLOTS measurement slots of the machine (a folder slots/measure-N with
+    the PID of its holder). A child process of a holder ($RANDOC_MEASURE_SLOT is set) uses the
+    slot of its parent, so a gate that measures inside a measurement does not wait for itself."""
+    if os.environ.get(SLOT_ENV):
+        yield os.environ[SLOT_ENV]
+        return
+    waited = False
+    while (slot := take_slot()) is None:
+        if not waited:
+            print(f"measure: waits for a measurement slot ({MEASURE_SLOTS} for the machine, in {slots_folder()})",
+                  file=sys.stderr, flush=True)
+            waited = True
+        time.sleep(SLOT_WAIT_S)
+    os.environ[SLOT_ENV] = slot.name
+    try:
+        yield slot.name
+    finally:
+        os.environ.pop(SLOT_ENV, None)
+        shutil.rmtree(slot, ignore_errors=True)
 
 
 def quick_suites(item: str, metrics: dict[str, Metric]) -> list[str]:
@@ -541,6 +735,10 @@ def parse_args(argv: list[str] | None, metrics: dict[str, Metric]) -> argparse.N
     return args
 
 
+def utc_now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         metrics = load_metrics()
@@ -557,37 +755,58 @@ def main(argv: list[str] | None = None) -> int:
         commit = git("rev-parse", "HEAD")
         dirty = "yes" if git("status", "--porcelain", "--untracked-files=no") else "no"
         suites = quick_suites(item, metrics) if args.quick else (args.suite or active_suites(metrics))
+        check_free_disk(runs_folder())
+    except ToolError as error:
+        print(f"measure: {error}", file=sys.stderr)
+        return 2
+    with measurement_slot():
+        return measure_run(args, metrics, stream, item, commit, dirty, suites)
+
+
+def measure_run(args: argparse.Namespace, metrics: dict[str, Metric], stream: str, item: str, commit: str,
+                dirty: str, suites: list[str]) -> int:
+    """The run inside a measurement slot: the experiment check, the build, the suites and the rows."""
+    try:
+        if item != "-" and args.filter is None:
+            refuse_exhausted(item)
+            experiments.record_attempt(experiments.attempts_file(), utc_now(), commit, item, suites, os.getpid())
         if not args.no_build:
             build()
+        commands = [suite_command(suite, metrics) for suite in suites]
         utc, evidence = new_evidence_dir("measure", commit)
     except ToolError as error:
         print(f"measure: {error}", file=sys.stderr)
         return 2
 
     scoreboard = SCOREBOARD / f"{stream}.tsv"
-    history = read_rows(scoreboard)
+    history = counted(read_rows(scoreboard))
     print(f"measure: {commit[:12]}{' (dirty)' if dirty == 'yes' else ''}, stream {stream}, item {item}, "
           f"evidence {evidence}")
     failed = False
     fell = False
     new_rows: list[Row] = []
-    for suite in suites:
-        try:
-            result = run_suite(suite, metrics, evidence, args.filter)
-        except ToolError as error:
-            print(f"measure: {error}", file=sys.stderr)
-            failed = True
-            continue
-        c = result.counts
-        print(f"{suite}: {result.duration_s:.0f} s, {result.tool}; {len(c.failing)} fail "
-              f"({len(c.no_result)} with no result); not in TOTAL: {len(c.unstable)} unstable, "
-              f"{len(c.oracle_limit)} oracle-limit, {len(c.no_input)} no input")
-        for key, (passed, total) in sorted(result.counts.rows.items()):
-            row = Row(utc, commit, dirty, item, key, passed, total, result.tool, str(result.evidence))
-            text, below = describe(row, history)
-            print(f"  {text}")
-            fell = fell or below
-            new_rows.append(row)
+    try:
+        with program_snapshot(programs_named(commands)) as programs:
+            for suite in suites:
+                try:
+                    result = run_suite(suite, metrics, evidence, programs, args.filter)
+                except ToolError as error:
+                    print(f"measure: {error}", file=sys.stderr)
+                    failed = True
+                    continue
+                c = result.counts
+                print(f"{suite}: {result.duration_s:.0f} s, {result.tool}; {len(c.failing)} fail "
+                      f"({len(c.no_result)} with no result); not in TOTAL: {len(c.unstable)} unstable, "
+                      f"{len(c.oracle_limit)} oracle-limit, {len(c.no_input)} no input")
+                for key, (passed, total) in sorted(result.counts.rows.items()):
+                    row = Row(utc, commit, dirty, item, key, passed, total, result.tool, str(result.evidence))
+                    text, below = describe(row, history)
+                    print(f"  {text}")
+                    fell = fell or below
+                    new_rows.append(row)
+    except ToolError as error:
+        print(f"measure: {error}", file=sys.stderr)
+        return 2
     if args.filter is not None:
         print(f"measure: filtered run, so no row went to {scoreboard}")
     elif new_rows:

@@ -12,12 +12,24 @@ Steps:
                conformance test (the harness step runs the same units with a
                wider time limit); each failing test binary is in the log
   tool-tests   python3 -m unittest discover in each tools/ folder with tests
-  harness      build randoc-cli and randoc-harness, run the harness suite of
-               measure.py; each unit of spec/baseline.json must pass
-  measurement  run the pandoc and corpus suites of measure.py (not with
-               --quick); no metric of this run may be below the best clean
-               `build` row with the same TOTAL of a commit that HEAD contains
+  harness      build randoc-cli and randoc-harness, take a measurement slot
+               and one read-only copy of the programs for the harness and
+               measurement steps, run the harness suite of measure.py; each
+               unit of spec/baseline.json must pass
+  measurement  run each other active suite of measure.py (not with --quick),
+               so that a new suite is checked too; then two checks against
+               the clean `build` rows (item -) of commits that HEAD contains,
+               without the rows that a newer correction of their metric
+               (plan/corrections.tsv) made obsolete:
+               - no metric of this run is below the best such row with the
+                 same TOTAL;
+               - no unit of a suite fails that passed in the newest such run
+                 of the suite (its evidence file <suite>.json, field passing),
+                 unless a correction of one of the unit's metrics is newer
+                 than that run. A suite with no such evidence passes this
+                 check with a note in the log.
 
+The gate refuses to start when the drive has less than 15 GB free.
 Output: one summary line; for a failed step also the end of its log on
 standard error. Evidence: $RANDOC_RUNS/gate/<utc>-<sha12>/ (a log for each
 step, gate.json). Exit code: 0 when each step passes, else 1.
@@ -26,6 +38,7 @@ step, gate.json). Exit code: 0 when each step passes, else 1.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import subprocess
@@ -41,7 +54,7 @@ import measure  # noqa: E402
 ROOT = measure.ROOT
 BUILD_SCOREBOARD = measure.SCOREBOARD / "build.tsv"
 CONFORMANCE_TEST = "each_unit_of_the_baseline_passes"
-EXTERNAL_SUITES = ("pandoc", "corpus")
+HARNESS_SUITE = "harness"
 LOG_TAIL_LINES = 40
 
 
@@ -51,7 +64,17 @@ class Gate:
     base: str | None
     quick: bool
     metrics: dict[str, measure.Metric]
+    stack: contextlib.ExitStack = field(default_factory=contextlib.ExitStack)
+    programs: measure.Programs | None = None
     results: list[measure.SuiteResult] = field(default_factory=list)
+
+    def snapshot(self) -> measure.Programs:
+        """The measurement slot and the program copies of the gate, taken once for its suites."""
+        if self.programs is None:
+            self.stack.enter_context(measure.measurement_slot())
+            commands = [measure.suite_command(s, self.metrics) for s in measure.active_suites(self.metrics)]
+            self.programs = self.stack.enter_context(measure.program_snapshot(measure.programs_named(commands)))
+        return self.programs
 
 
 @dataclass(frozen=True)
@@ -93,7 +116,7 @@ def lost_units(baseline: list[str], report_units: list[dict]) -> list[str]:
 def harness(gate: Gate, log: Path) -> str | None:
     try:
         measure.build()
-        result = measure.run_suite("harness", gate.metrics, gate.evidence)
+        result = measure.run_suite(HARNESS_SUITE, gate.metrics, gate.evidence, gate.snapshot())
     except measure.ToolError as error:
         log.write_text(f"{error}\n", encoding="utf-8")
         return str(error).splitlines()[0]
@@ -107,18 +130,62 @@ def harness(gate: Gate, log: Path) -> str | None:
     return None
 
 
-def fallen_metrics(rows: list[measure.Row], history: list[measure.Row],
-                   contains: Callable[[str], bool]) -> list[str]:
-    """The metrics of `rows` below the best clean history row with the same TOTAL of a commit that HEAD contains."""
+def clean_history(history: list[measure.Row], contains: Callable[[str], bool],
+                  corrections: list[dict[str, str]]) -> list[measure.Row]:
+    """The clean `build` rows of full measurements (item -) of commits that HEAD contains,
+    without held-out rows and without the rows that a newer correction made obsolete."""
+    cut = measure.experiments.cutoffs(corrections)
+    return [r for r in history if r.dirty == "no" and r.item == "-" and not r.metric.startswith("holdout.")
+            and measure.experiments.counts(r.as_dict(), cut) and contains(r.commit)]
+
+
+def fallen_metrics(rows: list[measure.Row], history: list[measure.Row]) -> list[str]:
+    """The metrics of `rows` below the best row of `history` with the same TOTAL."""
     fallen = []
     for row in rows:
-        earlier = [r for r in history if r.metric == row.metric and r.total == row.total
-                   and r.dirty == "no" and contains(r.commit)]
+        earlier = [r for r in history if r.metric == row.metric and r.total == row.total]
         best = max(earlier, key=lambda r: r.passed, default=None)
         if best is not None and row.passed < best.passed:
             fallen.append(f"{row.metric} {row.passed}/{row.total} is below {best.passed}/{best.total} "
                           f"of {best.commit[:12]}")
     return fallen
+
+
+def earlier_evidence(history: list[measure.Row], suite: str) -> measure.Row | None:
+    """The newest row of `history` whose evidence file is <suite>.json and exists."""
+    for row in sorted(history, key=lambda r: r.utc, reverse=True):
+        path = Path(row.evidence)
+        if path.name == f"{suite}.json" and path.is_file():
+            return row
+    return None
+
+
+def lost_by_suite(now: dict, before: dict, corrected: set[str]) -> list[str]:
+    """The units that passed in `before` and fail in `now`, except the units of a corrected metric."""
+    metrics: dict[str, set[str]] = {}
+    for metric, units in (now.get("failing_by_metric") or {}).items():
+        for unit in units:
+            metrics.setdefault(unit, set()).add(metric)
+    lost = set(now.get("failing") or []) & set(before.get("passing") or [])
+    return sorted(unit for unit in lost if not metrics.get(unit, set()) & corrected)
+
+
+def unit_regressions(results: list[measure.SuiteResult], history: list[measure.Row],
+                     corrections: list[dict[str, str]]) -> tuple[list[str], list[str]]:
+    """The lost units of each suite of this gate (as SUITE UNIT), and the notes of the suites
+    that have no earlier evidence with a unit list."""
+    cut = measure.experiments.cutoffs(corrections)
+    lost, notes = [], []
+    for result in results:
+        earlier = earlier_evidence(history, result.suite)
+        before = json.loads(Path(earlier.evidence).read_text(encoding="utf-8")) if earlier else {}
+        if not isinstance(before.get("passing"), list):
+            notes.append(f"{result.suite}: no earlier clean evidence with a unit list; the unit check passes")
+            continue
+        now = json.loads(result.evidence.read_text(encoding="utf-8"))
+        corrected = {metric for metric, utc in cut.items() if utc > earlier.utc}
+        lost += [f"{result.suite} {unit}" for unit in lost_by_suite(now, before, corrected)]
+    return lost, notes
 
 
 def head_contains(commit: str) -> bool:
@@ -127,20 +194,29 @@ def head_contains(commit: str) -> bool:
 
 
 def measurement(gate: Gate, log: Path) -> str | None:
-    for suite in () if gate.quick else EXTERNAL_SUITES:
+    suites = [] if gate.quick else [s for s in measure.active_suites(gate.metrics) if s != HARNESS_SUITE]
+    for suite in suites:
         try:
-            gate.results.append(measure.run_suite(suite, gate.metrics, gate.evidence))
+            gate.results.append(measure.run_suite(suite, gate.metrics, gate.evidence, gate.snapshot()))
         except measure.ToolError as error:
             log.write_text(f"{error}\n", encoding="utf-8")
             return str(error).splitlines()[0]
     rows = [measure.Row("", "", "", "-", key, passed, total, result.tool, str(result.evidence))
             for result in gate.results for key, (passed, total) in sorted(result.counts.rows.items())]
     known: dict[str, bool] = {}
-    fallen = fallen_metrics(rows, measure.read_rows(BUILD_SCOREBOARD),
-                            lambda commit: known.setdefault(commit, head_contains(commit)))
-    lines = [f"{row.metric} {row.passed}/{row.total}" for row in rows] + [f"FELL {text}" for text in fallen]
+    corrections = measure.corrections()
+    history = clean_history(measure.read_rows(BUILD_SCOREBOARD),
+                            lambda commit: known.setdefault(commit, head_contains(commit)), corrections)
+    fallen = fallen_metrics(rows, history)
+    lost, notes = unit_regressions(gate.results, history, corrections)
+    lines = ([f"{row.metric} {row.passed}/{row.total}" for row in rows] + [f"NOTE {text}" for text in notes]
+             + [f"FELL {text}" for text in fallen] + [f"LOST {unit}" for unit in lost])
     log.write_text("".join(f"{line}\n" for line in lines), encoding="utf-8")
-    return f"{len(fallen)} metrics fell: {fallen[0]}" if fallen else None
+    if fallen:
+        return f"{len(fallen)} metrics fell: {fallen[0]}"
+    if lost:
+        return f"{len(lost)} units passed in the earlier clean run and fail now, the first is {lost[0]}"
+    return None
 
 
 def cargo(*args: str, env: dict[str, str] | None = None) -> Callable[[Gate, Path], str | None]:
@@ -170,6 +246,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--base", help="the base of the licence scan (default: the default of licence_scan.py)")
     args = parser.parse_args(argv)
     try:
+        measure.check_free_disk(measure.runs_folder())
         metrics = measure.load_metrics()
         commit = measure.git("rev-parse", "HEAD")
         _, evidence = measure.new_evidence_dir("gate", commit)
@@ -180,16 +257,24 @@ def main(argv: list[str] | None = None) -> int:
     done = []
     failure = None
     started = time.monotonic()
-    for step in STEPS:
-        log = evidence / f"{step.name}.log"
-        log.touch()
-        begun = time.monotonic()
-        reason = step.run(gate, log)
-        done.append({"name": step.name, "seconds": round(time.monotonic() - begun, 1),
-                     "status": "pass" if reason is None else "fail", "reason": reason, "log": str(log)})
-        if reason is not None:
-            failure = (step.name, reason, log)
-            break
+    try:
+        with gate.stack:
+            for step in STEPS:
+                log = evidence / f"{step.name}.log"
+                log.touch()
+                begun = time.monotonic()
+                reason = step.run(gate, log)
+                done.append({"name": step.name, "seconds": round(time.monotonic() - begun, 1),
+                             "status": "pass" if reason is None else "fail", "reason": reason, "log": str(log)})
+                if reason is not None:
+                    failure = (step.name, reason, log)
+                    break
+    except measure.ToolError as error:
+        # The end of the program copies: a copy changed during the gate.
+        log = evidence / "programs.log"
+        log.write_text(f"{error}\n", encoding="utf-8")
+        done.append({"name": "programs", "seconds": 0, "status": "fail", "reason": str(error), "log": str(log)})
+        failure = failure or ("programs", str(error), log)
     total = duration(time.monotonic() - started)
     (evidence / "gate.json").write_text(json.dumps(
         {"commit": commit, "base": args.base, "quick": args.quick, "steps": done,

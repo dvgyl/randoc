@@ -10,9 +10,9 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from fixture import AUTOBUILD, ITEMS_HEADER, ROWS_HEADER, TempRepo, item_line, row
+from fixture import AUTOBUILD, ITEMS_HEADER, ROWS_HEADER, TempRepo, fake_broker, item_line, row
 
-from opslib import core, fleet
+from opslib import core, fleet, holdout, workers
 
 FAKE_GATE = """import json, os, sys
 with open(os.environ["FAKE_GATE_LOG"], "a") as log:
@@ -204,62 +204,30 @@ class OpsTest(unittest.TestCase):
 
     # -- adviser and reviews -----------------------------------------------------
 
-    def test_ask_once_per_stuck_event_with_the_adviser_role(self) -> None:
+    def test_ask_once_per_stuck_event_through_the_broker(self) -> None:
         self.started()
+        final = "Look at the escape table.\nSUMMARY: fix the escape table first.\n"
+        fake = fake_broker(self, self.repo, lambda kind, data: {"status": "done", "session": "thread-123", "final": final})
         self.refused("needs the stuck state", "ask", "--reason", "two-rows-no-gain", "why?")
         for n in range(2):
             self.rows(row(f"2026-11-17T1{n}:00:00Z", self.repo.head(), "M1-01", "harness.units", 4, 9))
         self.assertIn("next: commit the new scoreboard rows", self.ok("status"))
         self.repo.must_commit("chore(plan): rows [M1-01]", ["plan/scoreboard"])
         self.assertIn("next: stuck (two rows, no gain)", self.ok("status"))
-        final = "Look at the escape table.\nSUMMARY: fix the escape table first.\n"
-        out = self.ok("ask", "--reason", "two-rows-no-gain", "Why do the units fail?", FAKE_CODEX_FINAL=final)
+        out = self.ok("ask", "--reason", "two-rows-no-gain", "Why do the units fail?")
         self.assertIn("Look at the escape table.", out)
-        call = self.repo.codex_calls()[-1]
-        argv = call["argv"]
-        self.assertEqual(argv[:2], ["exec", "--dangerously-bypass-approvals-and-sandbox"])
-        self.assertEqual(argv[argv.index("-m") + 1], "gpt-6.2-astra")
-        self.assertIn("model_reasoning_effort=xhigh", argv)
-        self.assertIn("service_tier=default", argv)
-        self.assertIn("--ephemeral", argv)
-        self.assertEqual(argv[-1], "-")
-        self.assertIn("Why do the units fail?", call["prompt"])
-        self.assertIn("read only", call["prompt"])
+        request = fake.requests[-1]
+        self.assertEqual((request["kind"], request["item"], request["commit"]), ("advice", "M1-01", self.repo.head()))
+        self.assertIn("Why do the units fail?", request["prompt"])
+        self.assertIn("read only", request["prompt"])
         advice = self.repo.read("plan/ADVICE.md")
-        self.assertIn("event=M1-01/2 reason=two-rows-no-gain session=thread-123", advice)
+        self.assertIn("event=M1-01/two-rows-no-gain reason=two-rows-no-gain session=thread-123", advice)
         self.assertIn("Answer (summary): fix the escape table first.", advice)
-        self.refused("has no decision yet", "ask", "--reason", "two-fixes-failed", "again?")
+        self.refused("has no decision yet", "ask", "--reason", "two-fixes-failed", "--evidence", "log", "again?")
         self.ok("ask", "--decision", "Fix the escape table, then measure.")
-        self.refused("already has its one question", "ask", "--reason", "two-fixes-failed", "again?")
-        self.rows(row("2026-11-17T13:00:00Z", self.repo.head(), "M1-01", "harness.units", 4, 9))
-        self.ok("ask", "--reason", "two-fixes-failed", "New event?", FAKE_CODEX_FINAL=final)
-
-    def test_review_rounds_and_blocks(self) -> None:
-        self.started()
-        self.code_commit("M1-01", "a", "fn a() {}\n")
-        block = "- reads past the end\nVERDICT: block\nEVIDENCE: cargo test -p x reads_past_end\n"
-        self.ok("review", "M1-01", FAKE_CODEX_FINAL=block)
-        argv = self.repo.codex_calls()[-1]["argv"]
-        self.assertEqual(argv[argv.index("-m") + 1], "gpt-6.2-sol")
-        self.assertIn("model_reasoning_effort=high", argv)
-        self.assertIn("--ephemeral", argv)
-        self.assertIn("feat(x): a [M1-01]", self.repo.codex_calls()[-1]["prompt"])
-        out = self.ok("review", "M1-01", FAKE_CODEX_FINAL="VERDICT: block\n")
-        self.assertIn("not a valid block", out)
-        reviews = [l.split("\t") for l in self.repo.read("plan/REVIEWS.tsv").splitlines()[1:]]
-        self.assertEqual([(r[2], r[5]) for r in reviews], [("1", "block"), ("2", "approve")])
-        self.assertEqual(reviews[0][6], "cargo test -p x reads_past_end")
-        self.assertEqual(reviews[0][4], "thread-123")
-        self.refused("a third round is not allowed", "review", "M1-01")
-        self.assertEqual(len(self.repo.codex_calls()), 2)
-
-    def test_a_failed_model_run_records_nothing(self) -> None:
-        self.started()
-        self.code_commit("M1-01", "a", "fn a() {}\n")
-        code, _, err = self.repo.ops("review", "M1-01", FAKE_CODEX_EXIT="1", FAKE_CODEX_FINAL="")
-        self.assertEqual(code, 1)
-        self.assertIn("no round was used", err)
-        self.assertFalse((self.repo.root / "plan/REVIEWS.tsv").exists())
+        self.assertNotIn("next: stuck", self.ok("status"))
+        self.refused("already has its one question", "ask", "--reason", "two-rows-no-gain", "again?")
+        self.ok("ask", "--reason", "two-fixes-failed", "--evidence", "fixes a1 and b2; cargo test x still fails", "New event?")
 
     # -- workers ---------------------------------------------------------------
 
@@ -281,7 +249,7 @@ class OpsTest(unittest.TestCase):
         self.wait_finished("M1-01")
         argv = self.repo.codex_calls()[-1]["argv"]
         self.assertEqual(argv[argv.index("-C") + 1], str(wt))
-        self.assertEqual(argv[argv.index("-m") + 1], "gpt-6.2-sol")
+        self.assertEqual(argv[argv.index("-m") + 1], "test-worker")
         self.assertIn("model_reasoning_effort=high", argv)
         self.assertIn("service_tier=default", argv)
         self.assertNotIn("--ephemeral", argv)
@@ -294,7 +262,8 @@ class OpsTest(unittest.TestCase):
         self.ok("log", "decision", "the lead keeps working")
         self.repo.must_commit("docs(plan): log [ops]", ["plan"])
         build_before = self.repo.head()
-        out = self.ok("worker", "merge", "M1-01", FAKE_GATE_LOG=str(self.repo.tmp / "gate.log"))
+        with mock.patch.object(workers, "remeasure_item", lambda ctx, item_id: True):
+            out = self.ok("worker", "merge", "M1-01", FAKE_GATE_LOG=str(self.repo.tmp / "gate.log"))
         self.assertIn("merged gpt/w/M1-01", out)
         parents = self.repo.out("log", "-1", "--format=%P").split()
         self.assertEqual(parents, [build_before, self.repo.out("rev-parse", "gpt/w/M1-01")])
@@ -382,23 +351,19 @@ class OpsTest(unittest.TestCase):
     # -- held-out, next, milestones, notes, pass-through ---------------------------
 
     def test_holdout_request_and_results(self) -> None:
-        binary = self.repo.tmp / "randoc"
-        binary.write_text("binary")
-        self.ok("holdout", "request", "--binary", str(binary))
-        requests = list((self.repo.gpt / "holdout-queue" / "requests").glob("*.json"))
-        self.assertEqual(len(requests), 1)
-        request = json.loads(requests[0].read_text())
-        self.assertEqual(request["commit"], self.repo.head())
-        self.assertTrue(Path(request["binary"]).is_relative_to(self.repo.gpt / "runs"))
-        self.assertIn("waits already", self.ok("holdout", "request", "--binary", str(binary)))
-        results = self.repo.gpt / "holdout-queue" / "results"
-        results.mkdir()
-        (results / "1.json").write_text(json.dumps({
-            "utc": "2026-11-17T12:00:00Z", "commit": self.repo.head(), "binary_sha256": "ab" * 32,
-            "sets": {"corpus": {"json": {"pass": 3, "total": 5}, "html": {"pass": 1, "total": 5}},
-                     "generated": {"ext-matrix": {"pass": 7, "total": 9}}},
+        fake = fake_broker(self, self.repo, lambda kind, data: None)
+        self.ok("holdout", "request")
+        for _ in range(250):
+            if fake.requests:
+                break
+            time.sleep(0.02)
+        self.assertEqual(fake.requests, [{"kind": "evaluate", "commit": self.repo.head()}])
+        (fake.results / "1.json").write_text(json.dumps({
+            "status": "done", "utc": "2026-11-17T12:00:00Z", "commit": self.repo.head(), "binary_sha256": "ab" * 32,
+            "sets": {"corpus": {"pass": 4, "total": 10, "by_target": {"json": {"pass": 3, "total": 5}}},
+                     "generated": {"pass": 7, "total": 9}},
         }))
-        (results / "2.json").write_text(json.dumps({"utc": "2026-11-17T13:00:00Z", "status": "deferred"}))
+        (fake.results / "2.json").write_text(json.dumps({"utc": "2026-11-17T13:00:00Z", "status": "deferred"}))
         out = self.ok("holdout", "results", "--record")
         self.assertIn("held-out: corpus 4/10, generated 7/9", out)
         self.assertIn("deferred", out)
@@ -424,7 +389,16 @@ class OpsTest(unittest.TestCase):
         listing = Path(out.split("units: ")[1].splitlines()[0])
         self.assertEqual(len(listing.read_text().split()), sizes[0])
 
-    def test_milestone_check(self) -> None:
+    def test_milestone_check_uses_one_clean_full_run(self) -> None:
+        self.repo.write("tools/autobuild/metrics.toml", "".join(f"""
+[[metric]]
+key = "{key}"
+suite = "s"
+status = "active"
+command = "c"
+pass = "p"
+total = "t"
+""" for key in ("harness.units", "lua.api", "fmt.read.markdown")))
         self.repo.write("plan/milestones.toml", """
 [[milestone]]
 id = "M1"
@@ -443,17 +417,27 @@ min_fraction = 0.5
         self.rows(row("2026-11-17T10:00:00Z", head, "-", "harness.units", 6, 9),
                   row("2026-11-17T10:00:00Z", head, "-", "lua.api", 0, 0),
                   row("2026-11-17T10:00:00Z", head, "-", "fmt.read.markdown", 4, 10))
-        code, out, _ = self.repo.ops("milestone", "check", "M1")
-        self.assertEqual(code, 1)
-        self.assertIn("FAIL  fmt.read.markdown PASS/TOTAL >= 0.5 (4/10)", out)
-        self.assertIn("pass  harness.units PASS >= 5 (6/9)", out)
-        self.assertIn("FAIL  the newest held-out result", out)
-        self.rows(row("2026-11-17T11:00:00Z", head, "-", "fmt.read.markdown", 6, 10))
-        results = self.repo.gpt / "holdout-queue" / "results"
-        results.mkdir(parents=True)
-        (results / "1.json").write_text(json.dumps({"utc": "2026-11-17T12:00:00Z", "commit": head, "sets": {}}))
-        code, out, _ = self.repo.ops("milestone", "check", "M1")
-        self.assertEqual(code, 0, out)
+        held = (Path("1.json"), {"utc": "2026-11-17T12:00:00Z", "commit": head})
+        with mock.patch.object(holdout, "newest", lambda ctx: held):
+            code, out, _ = self.repo.ops("milestone", "check", "M1")
+            self.assertEqual(code, 1)
+            self.assertIn("FAIL  fmt.read.markdown PASS/TOTAL >= 0.5 (4/10)", out)
+            self.assertIn("FAIL  lua.api has a row with TOTAL above 0 (0/0)", out)
+            self.assertIn("pass  harness.units PASS >= 5 (6/9)", out)
+            # A newer row of one metric is not a run: the candidate stays the full run.
+            self.rows(row("2026-11-17T11:00:00Z", head, "-", "fmt.read.markdown", 6, 10))
+            code, out, _ = self.repo.ops("milestone", "check", "M1")
+            self.assertEqual(code, 1)
+            self.assertIn("FAIL  fmt.read.markdown PASS/TOTAL >= 0.5 (4/10)", out)
+            self.rows(row("2026-11-17T12:00:00Z", head, "-", "harness.units", 6, 9),
+                      row("2026-11-17T12:00:00Z", head, "-", "lua.api", 3, 80),
+                      row("2026-11-17T12:00:00Z", head, "-", "fmt.read.markdown", 6, 10))
+            code, out, _ = self.repo.ops("milestone", "check", "M1")
+            self.assertEqual(code, 0, out)
+        with mock.patch.object(holdout, "newest", lambda ctx: None):
+            code, out, _ = self.repo.ops("milestone", "check", "M1")
+            self.assertEqual(code, 1)
+            self.assertIn("FAIL  the newest held-out result", out)
         self.refused("is not in plan/milestones.toml", "milestone", "check", "M9")
 
     def test_log_and_blocked(self) -> None:

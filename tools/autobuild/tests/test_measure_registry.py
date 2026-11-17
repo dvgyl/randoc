@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import string
 import sys
 import tempfile
 import unittest
@@ -33,27 +34,42 @@ def entry(key="harness.units", suite="harness", status="active", command="{harne
 
 
 class CommittedRegistry(unittest.TestCase):
+    """The registry agrees with the parsers and the placeholders, whatever the number of active keys."""
+
     def setUp(self):
         self.metrics = measure.load_metrics()
 
-    def test_each_key_of_the_existing_tools_is_active(self):
-        active = {k for k, m in self.metrics.items() if m.status == "active"}
-        self.assertEqual(active, {
-            "harness.units", "harness.read", "harness.write", "harness.e2e", "harness.cmd",
-            "suite.pandoc", "suite.pandoc.command", "suite.pandoc.old", "suite.pandoc.readers",
-            "corpus.units", "corpus.json", "corpus.html", "corpus.markdown",
-            "caps.readers", "caps.writers", "caps.options",
-        })
+    def active(self, suite: str) -> set[str]:
+        return {k for k, m in self.metrics.items() if m.suite == suite and m.status == "active"}
 
-    def test_the_areas_with_no_measurement_are_to_build_and_the_held_out_keys_are_external(self):
-        to_build = {
+    def test_each_row_key_of_a_built_in_parser_is_an_active_key_of_its_suite(self):
+        emitted = {
+            "harness": {"harness.units", *measure.HARNESS_KINDS.values(), *measure.CAPS},
+            "pandoc": {"suite.pandoc", *measure.PANDOC_GROUPS.values()},
+            "corpus": {"corpus.units", *(f"corpus.{t}" for t in measure.CORPUS_TARGETS)},
+        }
+        for suite, keys in emitted.items():
+            with self.subTest(suite=suite):
+                self.assertEqual(self.active(suite), keys)
+
+    def test_each_active_command_uses_only_known_placeholders(self):
+        known = {"python", "evidence", *measure.PROGRAMS, *measure.ENV_PLACEHOLDERS}
+        for key, metric in self.metrics.items():
+            if metric.status != "active":
+                continue
+            names = {name for _, name, _, _ in string.Formatter().parse(metric.command) if name}
+            with self.subTest(key=key):
+                self.assertTrue(metric.command.strip())
+                self.assertLessEqual(names, known)
+
+    def test_the_areas_of_the_spec_have_keys_and_the_held_out_keys_are_external(self):
+        areas = {
             "caps.extensions", "casegen.visible", "ast.roundtrip", "lua.api", "lua.filters",
             "custom.readers", "custom.writers", "templates.units", "citeproc.units", "defaults.units",
             "errors.units", "files.units", "zip.units", "pdf.units", "perf.startup", "perf.throughput",
             "perf.memory", "downstream.quarto", "downstream.rmarkdown",
         }
-        for key in to_build:
-            self.assertEqual(self.metrics[key].status, "to-build", key)
+        self.assertLessEqual(areas, set(self.metrics))
         for key in ("holdout.corpus", "holdout.generated"):
             self.assertEqual(self.metrics[key].status, "external", key)
 
@@ -89,7 +105,7 @@ class QuickRuns(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             (Path(folder) / "plan").mkdir()
             (Path(folder) / "plan" / "ITEMS.tsv").write_text(items, encoding="utf-8")
-            with mock.patch.object(measure, "ROOT", Path(folder)):
+            with mock.patch.object(measure, "PLAN", Path(folder) / "plan"):
                 chosen = {item: measure.quick_suites(item, metrics) for item in ("M1-02", "M1-04", "M1-12", "-")}
         self.assertEqual(chosen, {"M1-02": ["harness", "pandoc"], "M1-04": ["harness"],
                                   "M1-12": ["harness"], "-": ["harness"]})

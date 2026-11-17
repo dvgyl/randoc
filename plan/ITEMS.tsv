@@ -25,3 +25,6 @@ M1-23	M1	queued	server.units	-	+1	Requests to the oracle server on a local port;
 M1-24	M1	queued	lib.units	-	+1	A small command on the library API with a pure Host (`wasm.units` in the same item: 0 until the build exists) (gain: first row)
 M1-25	M1	queued	downstream.quarto	-	+1	Sample projects with open licences; record each real call of the oracle; replay it with both programs (`downstream.rmarkdown` in the same form). If a tool cannot be installed, write the row 0/TOTAL and a BLOCKED ON OWNER entry (gain: first row)
 M1-26	M1	queued	casegen.visible	-	+1	Run the visible generated cases and each family key; request the first held-out result (gain: row for seeds 1 to 1000)
+M1-27	M1	queued	gate.steps	-	+2	Corpus tool: check the oracle SHA-256 before the oracle cache is used (stand-in with a wrong hash: exit 2, no row); reject a duplicate JSON key (plan/SPEC.md 3.4); two self-checks of gate.steps; if PASS of corpus.json falls, record a tool correction
+M1-28	M1	queued	gate.steps	-	+1	Suite tool: compare the exit code and the stable standard error of each reader test with the oracle's result of the same command; one self-check of gate.steps
+M1-29	M1	queued	tags.read.markdown	-	+1	Capability tags (formats read and written, options) on each unit of the suite tool and the corpus tool; one row for each tags.* key with units (gain: first row)

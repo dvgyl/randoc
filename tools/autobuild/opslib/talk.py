@@ -1,11 +1,17 @@
-"""The note and model commands: log, blocked, ask and review."""
+"""The note and model commands: log, blocked, ask and review.
+
+ask and review send the prompt to the broker, which runs a new top-level
+session with read-only access and returns the final message."""
 
 from __future__ import annotations
 
 import argparse
 
-from . import codex, notes
+from . import broker, codex, notes
 from .core import WORKER_PREFIX, Context, OpsError, Refusal, append_text, check_words, stage, utc_now
+
+# The stuck reasons that only the lead can see; each question with one of them carries its record.
+EVIDENCE_REASONS = ("two-fixes-failed", "acceptance-failed", "no-next-step")
 from .items import item_commits, require_lead, worker_ids
 from .plan import ItemsTable, commit_transition, lead_active, moved, progress, read_rows
 
@@ -74,6 +80,14 @@ def ask(ctx: Context, args: argparse.Namespace) -> int:
             'write the decision first: `ops ask --decision "TEXT"`',
         )
     check_words(ctx, args.question, "the question")
+    evidence = (getattr(args, "evidence", None) or "").strip()
+    if args.reason in EVIDENCE_REASONS and not evidence:
+        raise Refusal(
+            f"the reason {args.reason} needs --evidence: the record of the stuck state",
+            "give the failing case, the commands and their output, and the fixes that failed: "
+            f'`ops ask --reason {args.reason} --evidence "TEXT" "QUESTION"`',
+        )
+    check_words(ctx, evidence, "the evidence")
     item_id = args.item or default_item(ctx)
     item = ItemsTable.load(ctx.items_file).get(item_id) if item_id != "-" else None
     state = progress(ctx, item, read_rows(ctx)) if item else None
@@ -82,36 +96,34 @@ def ask(ctx: Context, args: argparse.Namespace) -> int:
             f"'two-rows-no-gain' needs the stuck state of an active item; {item_id} does not show it in `ops status`",
             "continue the work; ask only for a stuck state that is true now",
         )
-    head = (ctx.git.rev("HEAD") or "-")[:12]
-    event = notes.stuck_event(item_id, state.experiments if state else 0, head)
+    head = (ctx.git.rev("HEAD") or "-")
+    event = notes.stuck_event(item_id, args.reason, head[:12])
     if any(e.event == event for e in entries):
         raise Refusal(
             f"stuck event {event} already has its one question (plan/ADVICE.md)",
-            "decide with that answer and continue; the next experiment makes a new stuck event",
+            "decide with that answer and continue; there is one question for each item and reason",
         )
+    question = args.question.strip() + (f"\n\nThe evidence of the lead:\n\n{evidence}" if evidence else "")
     values = {
         "reason": args.reason, "item": item_id, "title": item.title if item else "-",
         "metric": item.metric if item else "-", "baseline": item.baseline if item else "-",
-        "experiments": state.experiments if state else 0, "question": args.question.strip(),
+        "experiments": state.experiments if state else 0, "question": question,
     }
     prompt = codex.render(ctx, "adviser", values)
-    record = codex.RunDir.new(ctx.runs / "advice", item_id)
-    argv = codex.command("adviser", ctx.root, record.final)
-    record.prepare(argv, prompt)
-    print(f"asking the adviser model (record: {record.path}) ...", flush=True)
-    code = codex.run_sync(argv, record, ctx.root)
-    answer = record.final_text()
-    if code != 0 or not answer.strip():
+    answer = broker.ask(ctx, "advice", {"commit": head, "item": item_id, "prompt": prompt})
+    text = str(answer.get("final") or "")
+    if answer.get("status") != "done" or not text.strip():
         raise OpsError(
-            f"the adviser run failed (exit {code}; see {record.stderr}); nothing was recorded, so you may ask again"
+            f"the adviser session gave no answer ({answer.get('reason') or answer.get('status')}); "
+            "nothing was recorded, so you may ask again"
         )
     section = notes.advice_section(
-        event, args.reason, record.session(), scrub(ctx, args.question), scrub(ctx, notes.parse_summary(answer)),
-        str(record.final),
+        event, args.reason, str(answer.get("session") or "-"), scrub(ctx, args.question), scrub(ctx, evidence),
+        scrub(ctx, notes.parse_summary(text)), str(broker.OUT / f"{answer.get('request')}.json"),
     )
     append_text(ctx.advice_file, section)
     stage(ctx, ctx.advice_file)
-    print(answer.rstrip())
+    print(text.rstrip())
     print(f'\nnext: decide, then `tools/autobuild/ops ask --decision "TEXT"`, and continue')
     return 0
 
@@ -145,29 +157,30 @@ def review(ctx: Context, args: argparse.Namespace) -> int:
         "commits": "\n".join(f"- {sha} {subject}" for sha, subject in commits),
     }
     prompt = codex.render(ctx, "review", values)
-    record = codex.RunDir.new(ctx.runs / "review", f"{item.id}-r{round_no}")
-    argv = codex.command("review", ctx.root, record.final)
-    record.prepare(argv, prompt)
-    print(f"review round {round_no} of {item.id} in a new session (record: {record.path}) ...", flush=True)
-    code = codex.run_sync(argv, record, ctx.root)
-    text = record.final_text()
-    verdict, evidence = notes.parse_verdict(text)
-    if code != 0 or verdict is None:
-        raise OpsError(
-            f"the review run gave no verdict (exit {code}; see {record.path}); no round was used, so you may run it again"
-        )
+    broker.require_running()
+    row = {"utc": utc_now(), "item": item.id, "round": round_no, "commit": commit, "session": "-",
+           "verdict": "started", "evidence": "-"}
+    notes.append_review(ctx, row)  # the round is used now, also when the session fails
+    print(f"review round {round_no} of {item.id} in a new session of the broker ...", flush=True)
+    answer = broker.ask(ctx, "review", {"commit": commit, "item": item.id, "round": round_no, "prompt": prompt})
+    text = str(answer.get("final") or "")
+    verdict, evidence, output = notes.parse_verdict(text) if answer.get("status") == "done" else (None, "", "")
     note = ""
-    if verdict == "block" and not evidence:
-        verdict, note = "approve", "the reviewer blocked with no failing test or command; that is not a valid block, so it counts as approve"
-    row = {
-        "utc": utc_now(), "item": item.id, "round": round_no, "commit": commit, "session": record.session(),
-        "verdict": verdict, "evidence": scrub(ctx, evidence) if verdict == "block" else str(record.final),
-    }
-    notes.append_review(ctx, row)
+    if verdict is None:
+        verdict, evidence = "failed", f"no valid verdict ({answer.get('reason') or answer.get('status')})"
+    elif verdict == "block" and not (evidence and output):
+        verdict, note = "approve", ("the reviewer blocked with no test or command and its output; "
+                                    "that is not a valid block, so it counts as approve")
+    shown = f"{evidence} => {output}"[:400] if verdict == "block" else evidence or str(broker.OUT / f"{answer.get('request')}.json")
+    notes.append_review(ctx, {**row, "utc": utc_now(), "session": answer.get("session") or "-", "verdict": verdict,
+                              "evidence": scrub(ctx, shown)})
     print(text.rstrip())
-    print(f"\nround {round_no}: {verdict}" + (f" (evidence: {evidence})" if verdict == "block" else ""))
+    print(f"\nround {round_no}: {verdict}" + (f" (evidence: {evidence})" if verdict in ("block", "failed") else ""))
     if note:
         print(f"note: {note}")
+    if verdict == "failed":
+        print(f"next: round {round_no} is used; decide with the evidence, or run the last round")
+        return 1
     print("next: " + (
         "fix the defect that the evidence shows, then run the second round" if verdict == "block" and round_no == 1
         else 'write each finding that is not a block as `ops log weak-spot "TEXT"`, and continue'

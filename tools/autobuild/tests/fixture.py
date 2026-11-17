@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import os
 import shutil
 import stat
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 from pathlib import Path
 from unittest import mock
 
@@ -18,7 +21,21 @@ sys.path.insert(0, str(AUTOBUILD))
 
 ITEMS_HEADER = "id\tmilestone\tstatus\tmetric\tbaseline\ttarget\ttitle\n"
 ROWS_HEADER = "utc\tcommit\tdirty\titem\tmetric\tpass\ttotal\ttool\tevidence\n"
-HOOKS = ("guard.py", "pre-commit", "commit-msg", "pre-push", "reference-transaction")
+HOOKS = ("guard.py", "experiments.py", "pre-commit", "commit-msg", "pre-push", "reference-transaction")
+# The role table of AGENTS.md section 3, with model ids that are not real.
+ROLE_TABLE = """# Test manual
+
+## 3. Models and effort
+
+| Role | Model id | Reasoning effort | Use |
+| --- | --- | --- | --- |
+| Lead model | `test-lead` | `high` | The lead. |
+| Worker | `test-worker` | `high` (`low` for routine edits) | One item. |
+| Reviewer | `test-reviewer` | `high` | One review round. |
+| Adviser model | `test-adviser` | `xhigh` | One question. |
+
+## 4. Hard limits
+"""
 
 FAKE_CODEX = """#!/usr/bin/env python3
 import json, os, sys, time
@@ -72,6 +89,8 @@ class TempRepo:
         for name in HOOKS:
             shutil.copy(AUTOBUILD / "hooks" / name, hooks / name)
             (hooks / name).chmod(0o755)
+        shutil.copy(AUTOBUILD / "licence_scan.py", hooks / "licence_scan.py")
+        self.hooks = hooks
         self.root.mkdir()
         self.git("init", "-q", "-b", "gpt/build")
         self.git("config", "user.name", "Test")
@@ -81,10 +100,11 @@ class TempRepo:
         self.write(".gitignore", "._*\n__pycache__/\n")
         self.write("plan/ITEMS.tsv", ITEMS_HEADER)
         self.write("plan/scoreboard/build.tsv", ROWS_HEADER)
+        self.write("AGENTS.md", ROLE_TABLE)
         shutil.copy(AUTOBUILD.parents[1] / "plan" / ".gitattributes", self.root / "plan" / ".gitattributes")
         for name in ("worker.md", "review.md", "adviser.md"):
             self.write(f"tools/autobuild/prompts/{name}", (AUTOBUILD / "prompts" / name).read_text())
-        self.commit("chore: start the test repository [ops]", [".gitignore", "plan", "tools"])
+        self.commit("chore: start the test repository [ops]", [".gitignore", "AGENTS.md", "plan", "tools"])
         self.bin = self.tmp / "bin"
         self.bin.mkdir()
         codex = self.bin / "codex"
@@ -96,7 +116,8 @@ class TempRepo:
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def git(self, *args: str, env: dict | None = None, cwd: Path | None = None) -> subprocess.CompletedProcess:
-        return git(cwd or self.root, *args, env=env)
+        # The guard reads the attempt records of $RANDOC_RUNS: the test folder, never the build's.
+        return git(cwd or self.root, *args, env={"RANDOC_RUNS": str(self.gpt / "runs"), **(env or {})})
 
     def out(self, *args: str) -> str:
         result = self.git(*args)
@@ -151,8 +172,51 @@ class TempRepo:
         return code, out.getvalue(), err.getvalue()
 
     def codex_calls(self) -> list[dict]:
-        import json
-
         if not self.codex_log.exists():
             return []
         return [json.loads(line) for line in self.codex_log.read_text().splitlines()]
+
+
+class FakeBroker:
+    """Answers each request of the inbox with `answer(kind, request)`, as the support daemon does."""
+
+    def __init__(self, repo: TempRepo, out: Path, results: Path, answer) -> None:
+        self.inbox = repo.gpt / "broker" / "requests"
+        self.out, self.results, self.answer = out, results, answer
+        self.requests: list[dict] = []
+        self.stop = threading.Event()
+        self.thread = threading.Thread(target=self.serve, daemon=True)
+        self.thread.start()
+
+    def serve(self) -> None:
+        while not self.stop.is_set():
+            for path in sorted(self.inbox.glob("*.json")) if self.inbox.is_dir() else []:
+                data = json.loads(path.read_text())
+                path.unlink()
+                self.requests.append(data)
+                reply = self.answer(data["kind"], data)
+                if reply is not None:
+                    folder = self.results if data["kind"] == "evaluate" else self.out
+                    (folder / path.name).write_text(json.dumps({"request": path.stem, "kind": data["kind"], **reply}))
+            time.sleep(0.02)
+
+    def close(self) -> None:
+        self.stop.set()
+        self.thread.join()
+
+
+def fake_broker(case, repo: TempRepo, answer) -> FakeBroker:
+    """A FakeBroker for one test, with ops pointed at its answer folders and a fresh heartbeat."""
+    from opslib import broker
+
+    out, results = repo.tmp / "broker-out", repo.tmp / "holdout-results"
+    out.mkdir()
+    results.mkdir()
+    (out / "heartbeat.json").write_text(json.dumps({"evaluation": {"state": "idle"}}))
+    for name, value in (("OUT", out), ("RESULTS", results), ("POLL_SECONDS", 0.02)):
+        patch = mock.patch.object(broker, name, value)
+        patch.start()
+        case.addCleanup(patch.stop)
+    fake = FakeBroker(repo, out, results, answer)
+    case.addCleanup(fake.close)
+    return fake

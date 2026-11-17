@@ -88,16 +88,19 @@ def advice_entries(ctx: Context) -> list[Advice]:
     return entries
 
 
-def stuck_event(item: str, experiments: int, head: str) -> str:
-    """One stuck event: (item, experiments at that time). With no item: the commit."""
-    return f"{item}/{experiments}" if item != "-" else f"-/{head}"
+def stuck_event(item: str, reason: str, head: str = "") -> str:
+    """One stuck event: (item, reason), with one question each. With no item: the reason at the commit."""
+    return f"{item}/{reason}" if item != "-" else f"-/{reason}/{head}"
 
 
-def advice_section(event: str, reason: str, session: str, question: str, summary: str, answer_path: str) -> str:
+def advice_section(event: str, reason: str, session: str, question: str, evidence: str, summary: str,
+                   answer_path: str) -> str:
     quoted = "\n".join("> " + line for line in question.strip().splitlines())
+    shown = "\n".join("> " + line for line in evidence.strip().splitlines()) or "> -"
     return (
         f"\n## {utc_now()} event={event} reason={reason} session={session}\n\n"
         f"Question:\n\n{quoted}\n\n"
+        f"Evidence:\n\n{shown}\n\n"
         f"Answer (summary): {summary.strip() or 'see the answer file'}\n\n"
         f"Answer (full): {answer_path}\n\n"
         "Decision:\n"
@@ -105,10 +108,18 @@ def advice_section(event: str, reason: str, session: str, question: str, summary
 
 
 def review_rows(ctx: Context, item: str) -> list[dict[str, str]]:
+    """One row for each review round of the item: the newest row of the round.
+
+    A round writes its row `started` before the launch, so a run that fails or gives no
+    valid verdict still uses its round; the verdict row follows when the answer comes."""
     if not ctx.reviews_file.exists():
         return []
     rows = ctx.guard.tsv_rows(ctx.reviews_file.read_text(encoding="utf-8"))
-    return [r for r in rows if r.get("item") == item]
+    rounds: dict[str, dict[str, str]] = {}
+    for row in rows:
+        if row.get("item") == item:
+            rounds[row.get("round", "")] = row
+    return list(rounds.values())
 
 
 def append_review(ctx: Context, row: dict[str, str]) -> None:
@@ -121,16 +132,22 @@ def append_review(ctx: Context, row: dict[str, str]) -> None:
 
 VERDICT = re.compile(r"^\s*VERDICT:\s*(approve|block)\b", re.IGNORECASE | re.MULTILINE)
 EVIDENCE = re.compile(r"^\s*EVIDENCE:\s*(.+?)\s*$", re.MULTILINE)
+OUTPUT = re.compile(r"^\s*OUTPUT:[ \t]*\n?(.*)\Z", re.MULTILINE | re.DOTALL)
 SUMMARY = re.compile(r"^\s*SUMMARY:\s*(.+?)\s*$", re.MULTILINE)
 
 
-def parse_verdict(text: str) -> tuple[str | None, str]:
-    """The last verdict line and its evidence. A block with no evidence is not a valid block."""
-    verdicts = VERDICT.findall(text)
+def parse_verdict(text: str) -> tuple[str | None, str, str]:
+    """The last verdict, its evidence (a test name or a command) and the output that shows the defect.
+
+    A block is valid only with both the evidence and the output."""
+    verdicts = list(VERDICT.finditer(text))
     if not verdicts:
-        return None, ""
-    evidence = EVIDENCE.findall(text)
-    return verdicts[-1].lower(), (evidence[-1] if evidence else "")
+        return None, "", ""
+    tail = text[verdicts[-1].start():]
+    evidence = EVIDENCE.findall(tail)
+    output = OUTPUT.search(tail)
+    shown = output.group(1).strip() if output else ""
+    return verdicts[-1].group(1).lower(), (evidence[-1] if evidence else ""), shown
 
 
 def parse_summary(text: str) -> str:

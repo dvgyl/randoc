@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import unittest
 
-from fixture import ITEMS_HEADER, ROWS_HEADER, TempRepo, item_line, row
+import json
+
+from fixture import ITEMS_HEADER, TempRepo, item_line, row
 
 
 class GuardTest(unittest.TestCase):
@@ -21,21 +23,36 @@ class GuardTest(unittest.TestCase):
     def items(self, *lines: str) -> None:
         self.repo.write("plan/ITEMS.tsv", ITEMS_HEADER + "".join(lines))
 
-    def test_commits_only_on_gpt_branches(self) -> None:
+    def test_commits_only_on_gpt_build_and_on_the_branch_of_an_active_item(self) -> None:
         r = self.repo
         r.write("plan/a.md", "a\n")
         self.assertEqual(r.commit("docs: add a [ops]").returncode, 0)
         r.git("checkout", "-q", "--detach")
         r.write("plan/b.md", "b\n")
-        self.refused(r.commit("docs: add b [ops]"), "only on gpt/* branches")
+        self.refused(r.commit("docs: add b [ops]"), "only on gpt/build and on gpt/w/ID")
+        r.git("rm", "-q", "--cached", "plan/b.md")
+        (r.root / "plan/b.md").unlink()
+        r.git("checkout", "-q", "gpt/build")
+        self.assertEqual(r.git("branch", "gpt/w/M1-01").returncode, 0)
+        r.git("checkout", "-q", "gpt/w/M1-01")
+        r.write("plan/w.md", "w\n")
+        self.refused(r.commit("docs: w [ops]"), "item M1-01 is not active in gpt/build")
+        r.git("rm", "-q", "--cached", "plan/w.md")
+        r.git("checkout", "-q", "gpt/build")
+        self.items(item_line("M1-01", "active", baseline="1/9"))
+        r.must_commit("chore(plan): start M1-01 [ops]", ["plan/ITEMS.tsv"])
+        r.git("checkout", "-q", "gpt/w/M1-01")
+        self.assertEqual(r.commit("docs: w [ops]", ["plan/w.md"]).returncode, 0)
 
-    def test_refs_outside_gpt_and_tags_are_refused(self) -> None:
+    def test_refs_outside_gpt_build_and_worker_branches_and_tags_are_refused(self) -> None:
         r = self.repo
-        self.refused(r.git("branch", "feature"), "only refs/heads/gpt/* may change")
+        self.refused(r.git("branch", "feature"), "only gpt/build and gpt/w/ID branches may change")
+        self.refused(r.git("branch", "gpt/x"), "only gpt/build and gpt/w/ID branches may change")
         self.refused(r.git("tag", "v1"), "tags are not used")
-        self.assertEqual(r.git("branch", "gpt/x").returncode, 0)
-        r.git("checkout", "-q", "gpt/x")
-        self.refused(r.git("branch", "-D", "gpt/build"), "refusing to delete gpt/build")
+        self.assertEqual(r.git("branch", "gpt/w/M1-01").returncode, 0)
+        self.refused(r.git("branch", "-D", "gpt/w/M1-01"), "each branch stays for the review")
+        r.git("checkout", "-q", "gpt/w/M1-01")
+        self.refused(r.git("branch", "-D", "gpt/build"), "refusing to delete refs/heads/gpt/build")
 
     def test_subject_needs_an_active_item_or_ops(self) -> None:
         r = self.repo
@@ -57,17 +74,36 @@ class GuardTest(unittest.TestCase):
         r.write("plan/p.md", "p\n")
         self.assertEqual(r.commit("chore: tools and plan [ops]").returncode, 0)
 
+    def evidence(self, name: str) -> str:
+        folder = self.repo.gpt / "runs" / "measure" / name
+        folder.mkdir(parents=True, exist_ok=True)
+        return str(folder / "harness.json")
+
+    def full_row(self, utc: str, commit: str, evidence: str, item: str = "-", dirty: str = "no") -> str:
+        return row(utc, commit, item, "harness.units", 5, 9, dirty=dirty).replace("/runs/x", evidence)
+
     def test_ten_commits_after_the_measured_commit(self) -> None:
         r = self.repo
         measured = r.head()
-        r.append("plan/scoreboard/build.tsv", row("2026-11-17T10:00:00Z", measured, "-", "harness.units", 5, 9))
+        r.append("plan/scoreboard/build.tsv", self.full_row("2026-11-17T10:00:00Z", measured, self.evidence("a")))
         r.must_commit("chore(plan): rows [ops]")
         for n in range(9):
             r.write(f"plan/n{n}.md", f"{n}\n")
             r.must_commit(f"docs: note {n} [ops]")
         r.write("plan/late.md", "late\n")
         self.refused(r.commit("docs: one too many [ops]"), "10 commits since the last measured commit")
-        r.append("plan/scoreboard/build.tsv", row("2026-11-17T11:00:00Z", r.head(), "-", "harness.units", 5, 9))
+        head, old = r.head(), r.out("rev-parse", "HEAD~3")
+        for wrong in (
+            self.full_row("2026-11-17T11:00:00Z", head, self.evidence("b"), item="M1-01"),  # an item run
+            self.full_row("2026-11-17T11:00:00Z", head, self.evidence("b"), dirty="yes"),  # a dirty tree
+            self.full_row("2026-11-17T11:00:00Z", old, self.evidence("b")),  # not HEAD or its parent
+            self.full_row("2026-11-17T11:00:00Z", head, "/nowhere/measure/x/harness.json"),  # no evidence
+        ):
+            text = r.read("plan/scoreboard/build.tsv")
+            r.append("plan/scoreboard/build.tsv", wrong)
+            self.refused(r.commit("chore(plan): rows [ops]"), "10 commits since the last measured commit")
+            r.write("plan/scoreboard/build.tsv", text)
+        r.append("plan/scoreboard/build.tsv", self.full_row("2026-11-17T12:00:00Z", head, self.evidence("c")))
         self.assertEqual(r.commit("chore(plan): new rows [ops]").returncode, 0)
 
     def test_three_experiments_with_no_gain_block_each_commit(self) -> None:
@@ -80,15 +116,38 @@ class GuardTest(unittest.TestCase):
         r.append("plan/scoreboard/build.tsv", row("2026-11-17T14:00:00Z", r.head(), "M1-01", "harness.units", 6, 9))
         self.assertEqual(r.commit("docs: x [M1-01]").returncode, 0)
 
-    def test_baseline_zero_counts_the_first_row_with_a_total_as_the_gain(self) -> None:
+    def test_the_gain_is_that_of_the_latest_row_and_the_failing_count_must_not_rise(self) -> None:
         r = self.repo
-        self.items(item_line("M1-01", "active", metric="lua.api", baseline="0/0"))
-        for n in range(3):
-            r.append("plan/scoreboard/build.tsv", row(f"2026-11-17T1{n}:00:00Z", r.head(), "M1-01", "lua.api", 0, 0))
+        self.items(item_line("M1-01", "active", baseline="5/9"))
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T10:00:00Z", r.head(), "M1-01", "harness.units", 7, 9))
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T11:00:00Z", r.head(), "M1-01", "harness.units", 5, 9))
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T12:00:00Z", r.head(), "M1-01", "harness.units", 6, 11))
         r.write("plan/x.md", "x\n")
         self.refused(r.commit("docs: x [M1-01]"), "used 3 experiments with no gain")
-        r.append("plan/scoreboard/build.tsv", row("2026-11-17T14:00:00Z", r.head(), "M1-01", "lua.api", 0, 40))
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T13:00:00Z", r.head(), "M1-01", "harness.units", 8, 11))
         self.assertEqual(r.commit("docs: x [M1-01]").returncode, 0)
+
+    def test_attempt_records_count_as_experiments(self) -> None:
+        r = self.repo
+        self.items(item_line("M1-01", "active", baseline="5/9"))
+        attempts = r.gpt / "runs" / "attempts.tsv"
+        attempts.write_text("utc\tcommit\titem\tsuites\tpid\n" + "".join(
+            f"2026-11-17T1{n}:00:00Z\t{r.head()}\tM1-01\tharness\t1\n" for n in range(3)))
+        r.write("plan/x.md", "x\n")
+        self.refused(r.commit("docs: x [M1-01]"), "used 3 experiments with no gain")
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T14:00:00Z", r.head(), "M1-01", "harness.units", 6, 9))
+        self.assertEqual(r.commit("docs: x [M1-01]").returncode, 0)
+
+    def test_a_row_older_than_a_correction_of_its_metric_is_no_gain(self) -> None:
+        r = self.repo
+        self.items(item_line("M1-01", "active", baseline="5/9"))
+        for n in range(3):
+            r.append("plan/scoreboard/build.tsv", row(f"2026-11-17T1{n}:00:00Z", r.head(), "M1-01", "harness.units", 7, 9))
+        r.write("plan/x.md", "x\n")
+        self.assertEqual(r.commit("docs: x [M1-01]").returncode, 0)
+        r.write("plan/corrections.tsv", "utc\tmetric\tcommit\titem\treason\n"
+                f"2026-11-17T15:00:00Z\tharness.units\t{r.head()}\tM1-01\tthe units are formed in another way\n")
+        self.refused(r.commit("chore(plan): correction [M1-01]"), "used 3 experiments with no gain")
 
     def test_the_cut_commit_may_carry_the_tag_of_the_item_that_it_cuts(self) -> None:
         r = self.repo
@@ -131,6 +190,8 @@ class GuardTest(unittest.TestCase):
 
     def test_merge_commits_need_no_tag(self) -> None:
         r = self.repo
+        self.items(item_line("M1-01", "active", baseline="1/9"))
+        r.must_commit("chore(plan): start M1-01 [ops]")
         r.git("branch", "gpt/w/M1-01")
         r.git("checkout", "-q", "gpt/w/M1-01")
         r.write("plan/w.md", "w\n")
@@ -141,32 +202,15 @@ class GuardTest(unittest.TestCase):
         result = r.git("merge", "--no-ff", "-q", "-m", "Merge the worker", "gpt/w/M1-01")
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_push_rules(self) -> None:
+    def test_pushed_history_of_gpt_build_is_not_rewritten(self) -> None:
         r = self.repo
-        remote = r.tmp / "remote.git"
-        r.git("init", "-q", "--bare", str(remote), cwd=r.tmp)
-        r.git("remote", "add", "origin", str(remote))
-        r.git("update-ref", "refs/remotes/origin/main", r.head())
         r.write("plan/a.md", "a\n")
         r.must_commit("docs: a [ops]")
-        self.assertEqual(r.git("push", "-q", "origin", "gpt/build").returncode, 0)
-        self.refused(r.git("push", "-q", "origin", "gpt/build:refs/heads/main"), "only refs/heads/gpt/* may be pushed")
+        r.git("update-ref", "refs/remotes/origin/gpt/build", r.head())
         self.refused(r.git("reset", "-q", "--hard", "HEAD~1"), "refusing to rewrite pushed history")
-        r.git("branch", "gpt/x")
-        r.git("checkout", "-q", "gpt/x")
-        r.write("plan/x.md", "x\n")
-        r.must_commit("docs: x [ops]")
-        self.assertEqual(r.git("push", "-q", "origin", "gpt/x").returncode, 0)
+        r.write("plan/b.md", "b\n")
+        r.must_commit("docs: b [ops]")
         self.assertEqual(r.git("reset", "-q", "--hard", "HEAD~1").returncode, 0)
-        r.write("plan/y.md", "y\n")
-        r.must_commit("docs: y [ops]")
-        self.refused(r.git("push", "-q", "--force", "origin", "gpt/x"), "not a fast-forward")
-        self.refused(r.git("push", "-q", "origin", ":gpt/x"), "deletion of refs/heads/gpt/x refused")
-        r.write("plan/old.md", "old\n")
-        old = r.commit("docs: old [ops]", env={"GIT_COMMITTER_DATE": "2026-01-01T00:00:00Z"})
-        self.assertEqual(old.returncode, 0, old.stderr)
-        r.git("branch", "gpt/old")
-        self.refused(r.git("push", "-q", "origin", "gpt/old"), "older than this branch")
 
 
 if __name__ == "__main__":

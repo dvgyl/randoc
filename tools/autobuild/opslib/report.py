@@ -10,10 +10,13 @@ import tomllib
 from collections import defaultdict
 from dataclasses import dataclass
 
-from . import fleet, holdout, notes
+import measure
+
+from . import corrections, fleet, holdout, notes
+from .corrections import experiments
 from .core import BUILD_BRANCH, Context, OpsError, Refusal, guard_paths, utc_stamp
 from .plan import (
-    Item, ItemsTable, Progress, build_runs, commits_since_measured, cut_streak, lead_active, number,
+    Item, ItemsTable, Progress, build_runs, commits_since_measured, cut_streak, lead_active,
     plan_dirty, progress, read_rows,
 )
 
@@ -68,15 +71,11 @@ def next_action(ctx: Context, f: Facts) -> str:
     if f.since >= guard.MEASURE_LIMIT:
         return "`tools/autobuild/ops measure`, then commit the new scoreboard rows (the guard refuses other commits)"
     mine = {k: v for k, v in f.progress.items() if own is None or own == k}
-    for item_id, p in mine.items():
-        if p.total_changed and not p.gained:
-            return (f"the TOTAL of the metric of {item_id} changed: measure its baseline commit again with the "
-                    f"new TOTAL (the body of `git log -1 -F --grep 'start item {item_id} '` names it); ops then uses that row")
     if f.advice and not f.advice[-1].decided:
         return 'write the decision for the newest advice: `tools/autobuild/ops ask --decision "TEXT"`'
     asked = {a.event for a in f.advice}
     for item_id, p in mine.items():
-        if p.stuck and notes.stuck_event(item_id, p.experiments, "") not in asked:
+        if p.stuck and notes.stuck_event(item_id, "two-rows-no-gain") not in asked:
             return f'stuck (two rows, no gain): `tools/autobuild/ops ask --reason two-rows-no-gain --item {item_id} "QUESTION"`'
     if own is not None:
         p = f.progress.get(own)
@@ -167,7 +166,7 @@ SPLIT = re.compile(r"/|::|:|#|->|\s+")
 
 
 def newest_evidence(ctx: Context) -> dict[str, tuple[str, dict]]:
-    """The newest evidence file of each suite: {suite: (run folder name, data)}."""
+    """The newest evidence file of each suite that is not a filtered run: {suite: (run folder name, data)}."""
     base = ctx.runs / "measure"
     found: dict[str, tuple[str, dict]] = {}
     for run in sorted((p for p in base.iterdir() if p.is_dir()), reverse=True) if base.is_dir() else []:
@@ -178,7 +177,7 @@ def newest_evidence(ctx: Context) -> dict[str, tuple[str, dict]]:
                 data = json.loads(path.read_text(encoding="utf-8"))
             except ValueError:
                 continue
-            if isinstance(data, dict) and isinstance(data.get("failing"), list):
+            if isinstance(data, dict) and isinstance(data.get("failing"), list) and not data.get("filter"):
                 found[path.stem] = (run.name, data)
     return found
 
@@ -206,6 +205,29 @@ def clusters(units: list[str], depth: int = 0, prefix: tuple[str, ...] = ()) -> 
     return result
 
 
+UNKNOWN_METRIC = "unknown"
+
+
+def unit_metrics(data: dict) -> dict[str, str]:
+    """The metric of each failing unit: of the unit's metrics in `failing_by_metric`, the one with
+    the smallest TOTAL of the run (the most specific one; on a tie, the first name)."""
+    by_metric = data.get("failing_by_metric")
+    if not isinstance(by_metric, dict):
+        return {}
+    totals = {str(r.get("metric")): r.get("total") for r in data.get("rows") or [] if isinstance(r, dict)}
+
+    def rank(metric: str) -> tuple[int, str]:
+        total = totals.get(metric)
+        return (total if isinstance(total, int) else 1 << 62, metric)
+
+    chosen: dict[str, str] = {}
+    for metric, units in by_metric.items():
+        for unit in map(str, units if isinstance(units, list) else []):
+            if unit not in chosen or rank(metric) < rank(chosen[unit]):
+                chosen[unit] = metric
+    return chosen
+
+
 def next_items(ctx: Context, args: argparse.Namespace) -> int:
     evidence = newest_evidence(ctx)
     if not evidence:
@@ -217,13 +239,19 @@ def next_items(ctx: Context, args: argparse.Namespace) -> int:
     for suite, (run, data) in evidence.items():
         unstable = set(map(str, data.get("unstable") or []))
         failing = sorted({str(u) for u in data["failing"]} - unstable)
-        rows = [r for r in data.get("rows") or [] if isinstance(r, dict)]
-        metric = str(rows[0].get("metric")) if rows and rows[0].get("metric") else suite
-        for prefix, members in clusters(failing):
-            found.append((len(members), suite, metric, run, prefix, members))
+        chosen = unit_metrics(data)
+        groups: dict[str, list[str]] = defaultdict(list)
+        for unit in failing:
+            groups[chosen.get(unit, UNKNOWN_METRIC)].append(unit)
+        for metric, units in groups.items():
+            for prefix, members in clusters(units):
+                found.append((len(members), suite, metric, run, prefix, members))
     found.sort(key=lambda c: (-c[0], c[1], c[4]))
     out = ctx.runs / "next" / utc_stamp()
     out.mkdir(parents=True, exist_ok=True)
+    for suite in sorted(s for s, (_, data) in evidence.items() if not isinstance(data.get("failing_by_metric"), dict)):
+        print(f"note: the evidence of {suite} has no failing_by_metric (an older measure.py), so its metric is "
+              "unknown; `tools/autobuild/ops measure` writes it")
     print(f"failing units by cluster, largest first (lists in {out}):")
     for index, (size, suite, metric, run, prefix, members) in enumerate(found[: args.limit], 1):
         name = "/".join(prefix) or "(all)"
@@ -239,6 +267,67 @@ def next_items(ctx: Context, args: argparse.Namespace) -> int:
 
 # ---- ops milestone check --------------------------------------------------
 
+KINDS = ("exists", "min_pass", "min_fraction", "min_total", "exact_total")
+HELD_OUT = "holdout."
+
+
+@dataclass(frozen=True)
+class Candidate:
+    """The run that a milestone check judges: one utc, one commit, one row for each metric."""
+
+    utc: str
+    commit: str
+    rows: dict[str, dict[str, str]]
+
+
+def candidate_run(rows: list[dict[str, str]], active: set[str]) -> Candidate | None:
+    """The newest full, clean `build` run: its rows share utc and commit, have dirty `no` and
+    item `-`, and hold a row for each active metric. Imported held-out rows are not part of a run."""
+    runs: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        if row.get("stream") == "build" and not row.get("metric", "").startswith(HELD_OUT):
+            runs[(row.get("utc", ""), row.get("commit", ""))].append(row)
+    for (utc, commit), group in sorted(runs.items(), reverse=True):
+        if all(r.get("dirty") == "no" and r.get("item") == "-" for r in group):
+            by_metric = {r.get("metric", ""): r for r in group}
+            if active <= by_metric.keys():
+                return Candidate(utc, commit, by_metric)
+    return None
+
+
+def requirement_checks(req: dict, row: dict[str, str] | None, cut: dict[str, str]) -> list[tuple[bool, str]]:
+    """The checks of one [[milestone.require]] entry against the candidate row of its metric."""
+    metric = str(req.get("metric", ""))
+    pair = experiments.numbers(row) if row else None
+    if row is None:
+        value = "no row"
+    elif pair is None:
+        value = f"{row.get('pass')}/{row.get('total')}, not 0 <= PASS <= TOTAL"
+    elif not experiments.counts(row, cut):
+        value = f"{row['pass']}/{row['total']}, older than the correction of {cut[metric]}"
+        pair = None
+    else:
+        value = f"{row['pass']}/{row['total']}"
+    passed, total = pair if pair else (-1, -1)
+    checks = []
+    if req.get("exists"):
+        checks.append((total > 0, f"{metric} has a row with TOTAL above 0 ({value})"))
+    if "min_pass" in req:
+        checks.append((pair is not None and passed >= int(req["min_pass"]), f"{metric} PASS >= {req['min_pass']} ({value})"))
+    if "min_fraction" in req:
+        ok = total > 0 and passed / total >= float(req["min_fraction"])
+        checks.append((ok, f"{metric} PASS/TOTAL >= {req['min_fraction']} ({value})"))
+    if "min_total" in req:
+        checks.append((total >= int(req["min_total"]), f"{metric} TOTAL >= {req['min_total']} ({value})"))
+    if "exact_total" in req:
+        checks.append((total == int(req["exact_total"]), f"{metric} TOTAL = {req['exact_total']} ({value})"))
+    unknown = sorted(set(req) - {"metric", *KINDS})
+    if unknown or not checks:
+        checks.append((False, f"{metric}: the entry needs one of {', '.join(KINDS)}"
+                       + (f"; unknown fields {', '.join(unknown)}" if unknown else "")))
+    return checks
+
+
 def milestone_check(ctx: Context, args: argparse.Namespace) -> int:
     if not ctx.milestones_file.exists():
         raise OpsError(f"{ctx.rel(ctx.milestones_file)} does not exist")
@@ -250,26 +339,24 @@ def milestone_check(ctx: Context, args: argparse.Namespace) -> int:
     if milestone is None:
         known = ", ".join(str(m.get("id")) for m in data.get("milestone", []))
         raise Refusal(f"milestone {args.id} is not in plan/milestones.toml", f"use one of: {known}")
-    rows = [r for r in read_rows(ctx) if r["stream"] == "build"]
-    newest: dict[str, dict[str, str]] = {}
-    for row in rows:
-        if number(row, "pass") is not None and number(row, "total") is not None:
-            newest[row.get("metric", "")] = row
+    try:
+        active = {k for k, m in measure.tree_registry(ctx.autobuild).items() if m.status == "active"}
+    except measure.ToolError as error:
+        raise OpsError(f"the metric registry cannot be read: {error}") from error
+    rows = read_rows(ctx)
+    cut = experiments.cutoffs(corrections.load(ctx))
+    found = candidate_run(rows, active)
+    print(f"milestone {args.id}: {milestone.get('title', '')}")
+    if found is None:
+        print(f"  candidate run: none (no clean full {BUILD_BRANCH} run with item - and a row for each of the "
+              f"{len(active)} active metrics); run `tools/autobuild/ops measure` on a clean tree")
+    else:
+        print(f"  candidate run: {found.commit[:12]} at {found.utc} ({len(found.rows)} rows)")
     checks: list[tuple[bool, str]] = []
     for req in milestone.get("require", []):
-        metric = str(req.get("metric", ""))
-        row = newest.get(metric)
-        value = f"{row['pass']}/{row['total']}" if row else "no row"
-        if req.get("exists"):
-            checks.append((row is not None, f"{metric} has a row ({value})"))
-        if "min_pass" in req:
-            ok = row is not None and int(row["pass"]) >= int(req["min_pass"])
-            checks.append((ok, f"{metric} PASS >= {req['min_pass']} ({value})"))
-        if "min_fraction" in req:
-            ok = row is not None and int(row["total"]) > 0 and int(row["pass"]) / int(row["total"]) >= float(req["min_fraction"])
-            checks.append((ok, f"{metric} PASS/TOTAL >= {req['min_fraction']} ({value})"))
-    checks += implicit_checks(ctx, rows)
-    print(f"milestone {args.id}: {milestone.get('title', '')}")
+        row = found.rows.get(str(req.get("metric", ""))) if found else None
+        checks += requirement_checks(req, row, cut)
+    checks += implicit_checks(ctx, rows, found, cut)
     for ok, text in checks:
         print(f"  {'pass' if ok else 'FAIL'}  {text}")
     failed = sum(not ok for ok, _ in checks)
@@ -277,34 +364,43 @@ def milestone_check(ctx: Context, args: argparse.Namespace) -> int:
     return 0 if not failed else 1
 
 
-def implicit_checks(ctx: Context, rows: list[dict[str, str]]) -> list[tuple[bool, str]]:
-    """No regression in the newest full measurement, and a held-out result for that code."""
-    checks = []
-    runs = [r for r in build_runs(rows) if r.item == "-"]
-    if not runs:
-        return [(False, f"a full measurement of {BUILD_BRANCH} exists (none)")]
-    last = runs[-1]
+def implicit_checks(ctx: Context, rows: list[dict[str, str]], found: Candidate | None,
+                    cut: dict[str, str]) -> list[tuple[bool, str]]:
+    """Valid counts, no regression against earlier full measurements, and a held-out result for the candidate."""
+    if found is None:
+        return [(False, f"a clean full measurement of {BUILD_BRANCH} exists (none)")]
+    invalid = [f"{m} {r.get('pass')}/{r.get('total')}" for m, r in sorted(found.rows.items()) if experiments.numbers(r) is None]
+    checks = [(not invalid, "each row of the candidate run has 0 <= PASS <= TOTAL"
+               + (f": {'; '.join(invalid[:5])}" if invalid else ""))]
     best: dict[tuple[str, int], int] = {}
     for row in rows:
-        if (row.get("utc"), row.get("commit")) == (last.utc, last.commit):
-            continue
-        value, total = number(row, "pass"), number(row, "total")
-        if value is not None and total is not None:
-            key = (row.get("metric", ""), total)
-            best[key] = max(value, best.get(key, value))
-    fallen = [
-        f"{r['metric']} {r['pass']}/{r['total']} < {best[(r['metric'], int(r['total']))]}"
-        for r in rows
-        if (r.get("utc"), r.get("commit")) == (last.utc, last.commit)
-        and number(r, "pass") is not None and number(r, "total") is not None
-        and (r.get("metric", ""), int(r["total"])) in best and int(r["pass"]) < best[(r["metric"], int(r["total"]))]
-    ]
-    checks.append((not fallen, f"no metric of the newest full measurement ({last.commit[:12]}) is below its best "
-                   f"earlier value with the same TOTAL" + (f": {'; '.join(fallen[:5])}" if fallen else "")))
-    found = holdout.newest(ctx)
-    held = str(found[1].get("commit", "")) if found else ""
-    fresh = bool(held) and bool(ctx.git.rev(held)) and ctx.git.is_ancestor(held, "HEAD") \
-        and bool(ctx.git.rev(last.commit)) and ctx.git.is_ancestor(last.commit, held)
-    checks.append((fresh, f"the newest held-out result measures the code of the newest full measurement or newer "
-                   f"(held-out {held[:12] or 'none'}, measurement {last.commit[:12]})"))
+        pair = experiments.numbers(row)
+        if (row.get("stream") == "build" and row.get("dirty") == "no" and row.get("item") == "-"
+                and row.get("utc", "") < found.utc and pair and experiments.counts(row, cut)
+                and not row.get("metric", "").startswith(HELD_OUT)):
+            key = (row.get("metric", ""), pair[1])
+            best[key] = max(pair[0], best.get(key, pair[0]))
+    fallen = []
+    for metric, row in sorted(found.rows.items()):
+        pair = experiments.numbers(row)
+        if pair and experiments.counts(row, cut) and pair[0] < best.get((metric, pair[1]), pair[0]):
+            fallen.append(f"{metric} {pair[0]}/{pair[1]} < {best[(metric, pair[1])]}")
+    checks.append((not fallen, f"no metric of the candidate run is below its best earlier value with the same TOTAL"
+                   + (f": {'; '.join(fallen[:5])}" if fallen else "")))
+    newest = holdout.newest(ctx)
+    held = str(newest[1].get("commit", "")) if newest else ""
+    checks.append((held_out_matches(ctx, found.commit, held),
+                   f"the newest held-out result measures the candidate commit, or a later commit that changes "
+                   f"only plan/ (held-out {held[:12] or 'none'}, candidate {found.commit[:12]})"))
     return checks
+
+
+def held_out_matches(ctx: Context, candidate: str, held: str) -> bool:
+    if not held or not ctx.git.rev(held) or not ctx.git.rev(candidate) or not ctx.git.is_ancestor(held, "HEAD"):
+        return False
+    if ctx.git.rev(held) == ctx.git.rev(candidate):
+        return True
+    if not ctx.git.is_ancestor(candidate, held):
+        return False
+    changed = ctx.git.run("diff", "--name-only", candidate, held).split("\n")
+    return all(name.startswith("plan/") for name in changed if name)
