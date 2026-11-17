@@ -403,6 +403,77 @@ class RunnerErrors(unittest.TestCase):
             self.assertEqual(names, ["out.json"])
 
 
+class OracleHeapLimit(unittest.TestCase):
+    def test_only_the_oracle_gets_the_limit_and_its_exit_251_is_no_result(self):
+        script = "import os,sys; print(os.environ.get('GHCRTS', '')); sys.exit(251)"
+        with tempfile.TemporaryDirectory() as directory:
+            oracle = run.Runner(sys.executable, directory, 10.0, os.path.join(directory, "o"),
+                                ghcrts=run.ORACLE_GHCRTS)
+            oracle.pandoc = sys.executable
+            program = run.Runner(sys.executable, directory, 10.0, os.path.join(directory, "p"))
+            program.pandoc = sys.executable
+            outcome = program.execute(("-c", script), b"")
+            self.assertEqual((outcome.code, outcome.stdout), (251, b"\n"))
+            with self.assertRaises(run.NoResult):
+                oracle.execute(("-c", script), b"")
+            self.assertEqual(oracle.execute(("-c", script.replace("251", "0")), b"").stdout, b"-M3g\n")
+
+            class NeedsOracle:
+                id = "readers/x/1"
+
+                def evaluate(self, execute, suite_dir, reference=None):
+                    return reference(("-c", script), b"")
+
+            program.reference = oracle
+            ident, failure = program.check(NeedsOracle())
+        self.assertEqual(ident, "readers/x/1")
+        self.assertTrue(failure.startswith("no result: the oracle reached its heap limit"), failure)
+
+
+class OracleSelfCheck(unittest.TestCase):
+    def test_the_oracle_as_the_tested_program_gets_the_heap_limit(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        case = suite.CommandCase("command/1.md#1", "command", 'echo "[$GHCRTS]"', "", "[-M3g]\n")
+        found = suite.Discovery([case], [])
+        codes = {}
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": ["command/1.md#1"]}, handle)
+            for program in ("/usr/bin/true", "/usr/bin/false"):
+                with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    codes[program] = run.main(["--pandoc", program, "--suite", directory,
+                                               "--oracle", "/usr/bin/true", "--baseline", baseline, "--jobs", "1"])
+        self.assertEqual(codes, {"/usr/bin/true": 0, "/usr/bin/false": 1})
+
+
+class Baseline(unittest.TestCase):
+    def test_a_lost_test_fails_when_the_baseline_and_the_new_baseline_are_one_file(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        found = suite.Discovery([suite.CommandCase("command/1.md#1", "command", "pandoc", "", "")], [])
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": ["command/1.md#1"]}, handle)
+            out = io.StringIO()
+            with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                    contextlib.redirect_stdout(out):
+                code = run.main(["--pandoc", "/usr/bin/false", "--suite", directory, "--oracle", "",
+                                 "--baseline", baseline, "--write-baseline", baseline, "--jobs", "1"])
+            with open(baseline, encoding="utf-8") as handle:
+                written = json.load(handle)["passing"]
+        self.assertEqual(code, 1)
+        self.assertIn("REGRESSION command/1.md#1", out.getvalue())
+        self.assertEqual(written, [])
+
+
 class Timeouts(unittest.TestCase):
     def runner(self, directory):
         runner = run.Runner(sys.executable, directory, 1.0, directory)

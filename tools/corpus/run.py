@@ -35,6 +35,10 @@ CACHE_NAME = ".oracle-cache"
 HOME = Path("/var/empty")
 MAX_OUTPUT_BYTES = 64_000_000
 CLEANUP_SECONDS = 5
+# The heap limit of the oracle (a Haskell program). On 2026-11-10 one oracle
+# run used 22 GB and filled the swap space of the machine.
+ORACLE_GHCRTS = "-M3g"
+HEAP_EXHAUSTED = 251
 
 
 @dataclasses.dataclass(frozen=True)
@@ -47,9 +51,9 @@ class Outcome:
     timed_out: bool = False
 
 
-def environment(home):
+def environment(home, ghcrts=None):
     """Returns the fixed environment of each run, as the conformance harness uses it."""
-    return {
+    env = {
         "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
         "HOME": str(home),
         "LANG": "en_US.UTF-8",
@@ -57,6 +61,9 @@ def environment(home):
         "TZ": "UTC",
         "SOURCE_DATE_EPOCH": SOURCE_DATE_EPOCH,
     }
+    if ghcrts:
+        env["GHCRTS"] = ghcrts
+    return env
 
 
 def _stop_group(process):
@@ -66,8 +73,11 @@ def _stop_group(process):
         pass
 
 
-def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES, name="pandoc"):
+def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES, name="pandoc", ghcrts=None):
     """Runs `binary` under the program name `name` and returns the outcome.
+
+    With `ghcrts` the run is an oracle run: it gets that heap limit, and an
+    exit at the limit is an outcome with no result (a negative exit code).
 
     The program runs in its own session. At the time limit, the function
     stops the whole process group. It reads both pipes without blocking, and
@@ -80,7 +90,7 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES, name="pand
     """
     try:
         process = subprocess.Popen(
-            [name, *args], executable=str(binary), cwd=cwd, env=environment(home),
+            [name, *args], executable=str(binary), cwd=cwd, env=environment(home, ghcrts),
             stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True)
     except OSError as error:
@@ -144,6 +154,9 @@ def execute(binary, args, cwd, home, timeout, limit=MAX_OUTPUT_BYTES, name="pand
         return Outcome(-1, stdout, stderr)
     if overflow:
         stderr += f"[corpus] output larger than {limit} bytes\n".encode()
+        return Outcome(-1, stdout, stderr)
+    if ghcrts and process.returncode == HEAP_EXHAUSTED:
+        stderr += f"[corpus] no result: the oracle reached its heap limit (GHCRTS={ghcrts})\n".encode()
         return Outcome(-1, stdout, stderr)
     return Outcome(process.returncode if process.returncode is not None else -1, stdout, stderr)
 
@@ -254,9 +267,9 @@ class OracleCache:
         self.connection.close()
 
 
-def version_line(binary, home):
+def version_line(binary, home, ghcrts=None):
     """Returns the first line of `binary --version`."""
-    outcome = execute(binary, ["--version"], home, home, 60)
+    outcome = execute(binary, ["--version"], home, home, 60, ghcrts=ghcrts)
     lines = outcome.stdout.decode("utf-8", "replace").splitlines()
     return lines[0] if lines else f"unknown (exit {outcome.exit})"
 
@@ -327,12 +340,15 @@ def run_units(documents, targets, program, oracle, corpus, cache, jobs, timeout,
             args = arguments(document, target)
             tasks.append((document, target, args, cache.key(document.sha256, args)))
 
+    program_ghcrts = ORACLE_GHCRTS if program == oracle else None
+
     def work(task):
         document, target, args, key = task
         limit = document.timeout or timeout
         try:
-            actual = execute(program, args, corpus, home, limit)
-            expected = None if key in stored else execute(oracle, args, corpus, home, limit)
+            actual = execute(program, args, corpus, home, limit, ghcrts=program_ghcrts)
+            expected = None if key in stored else execute(oracle, args, corpus, home, limit,
+                                                          ghcrts=ORACLE_GHCRTS)
             unit_status = None if expected is None else status(expected, actual, target)
             return actual, expected, unit_status
         except Exception as error:  # one unit must not stop the run
@@ -353,6 +369,20 @@ def run_units(documents, targets, program, oracle, corpus, cache, jobs, timeout,
     return units
 
 
+def lost_units(baseline, units, targets, only):
+    """Returns the units that pass in `baseline` (the `results` of an earlier report)
+    and do not pass in `units`, of the documents and targets that this run selects.
+    A selected unit of the baseline that this run does not have is lost too."""
+    now = {f"{document.name}:{target}": status for document, target, status in units}
+
+    def selected(unit):
+        name, _, target = unit.rpartition(":")
+        return target in targets and (not only or any(part in name for part in only))
+
+    return sorted(unit for unit, status in baseline.items()
+                  if status == "pass" and selected(unit) and now.get(unit) != "pass")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--pandoc", type=Path, required=True, help="the program to test")
@@ -370,9 +400,14 @@ def main(argv=None):
                         help="use only the documents whose name contains this text")
     parser.add_argument("--expect-all-pass", action="store_true",
                         help="exit with status 1 when a unit does not pass")
+    parser.add_argument("--baseline", type=Path,
+                        help="an earlier report (--out file): exit with status 1 when a unit "
+                        "that passes there does not pass now")
     args = parser.parse_args(argv)
     if args.corpus is None:
         parser.error("set RANDOC_CORPUS or use --corpus")
+    # Read the baseline before the run: --out can name the same file.
+    baseline = json.loads(args.baseline.read_text(encoding="utf-8"))["results"] if args.baseline else None
 
     try:
         documents = corpuslib.load_manifest(args.manifest)
@@ -401,8 +436,9 @@ def main(argv=None):
         cache.close()
     identity = {"program_path": str(args.pandoc), "program_sha256": fingerprint(program),
                 "oracle_sha256": cache_identity}
-    report = summarize(units, version_line(program, HOME), version_line(oracle, HOME),
-                       targets, args.timeout, identity)
+    program_ghcrts = ORACLE_GHCRTS if program == oracle else None
+    report = summarize(units, version_line(program, HOME, program_ghcrts),
+                       version_line(oracle, HOME, ORACLE_GHCRTS), targets, args.timeout, identity)
 
     text = json.dumps(report, indent=1, ensure_ascii=False) + "\n"
     if args.out:
@@ -412,7 +448,12 @@ def main(argv=None):
           f"{totals['pass']} pass, {totals['fail']} fail")
     for target, counts in report["by_target"].items():
         print(f"  {target}: {counts['pass']}/{counts['units']}")
-    return 1 if args.expect_all_pass and totals["fail"] else 0
+    lost = [] if baseline is None else lost_units(baseline, units, targets, args.only)
+    for unit in lost:
+        print(f"REGRESSION {unit} ({report['results'].get(unit, 'not in this run')})")
+    if lost:
+        print(f"{len(lost)} units of the baseline do not pass")
+    return 1 if lost or (args.expect_all_pass and totals["fail"]) else 0
 
 
 if __name__ == "__main__":

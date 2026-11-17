@@ -283,6 +283,51 @@ class RunTests(unittest.TestCase):
         self.assertEqual(report["results"]["one:json"], "pass")
         self.assertEqual(report["by_target"]["html"], {"units": 2, "pass": 0, "fail": 2})
 
+    def test_a_unit_that_passes_in_the_baseline_and_fails_now_is_a_regression(self):
+        oracle = self.program("pandoc")
+        code, report = self.main(oracle, oracle)
+        self.assertEqual(code, 0)
+        baseline = self.dir / "baseline.json"
+        baseline.write_text(json.dumps(report))
+        code, _ = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(baseline))
+        self.assertEqual(code, 1)
+        code, _ = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(baseline),
+                            "--target", "json")
+        self.assertEqual(code, 0)
+        self.assertEqual(run.lost_units({"gone:json": "pass", "one:json": "pass"}, [], ("json",), []),
+                         ["gone:json", "one:json"])
+        self.assertEqual(run.lost_units({"one:json": "pass"}, [], ("json",), ["two"]), [])
+
+    def test_the_report_file_can_be_its_own_baseline(self):
+        oracle = self.program("pandoc")
+        self.main(oracle, oracle)
+        out = self.dir / "report.json"
+        code, report = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(out))
+        self.assertEqual(code, 1)
+        self.assertEqual(report["results"]["one:html"], "fail output")
+
+    def test_only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result(self):
+        script = 'echo "[$GHCRTS]"; exit 251'
+        with tempfile.TemporaryDirectory() as home:
+            oracle = run.execute("/bin/sh", ["-c", script], home, home, 10, ghcrts=run.ORACLE_GHCRTS)
+            program = run.execute("/bin/sh", ["-c", script], home, home, 10)
+        self.assertEqual((program.exit, program.stdout), (251, b"[]\n"))
+        self.assertEqual((oracle.exit, oracle.stdout), (-1, b"[-M3g]\n"))
+        self.assertIn(b"heap limit", oracle.stderr)
+        self.assertEqual(run.status(oracle, program, "json"), "error oracle")
+
+    def test_each_run_of_the_oracle_program_gets_the_heap_limit(self):
+        oracle = self.program("pandoc")
+        script = oracle.read_text().replace("#!/bin/sh\n", '#!/bin/sh\necho "[$GHCRTS]" >> "$0.rts"\n')
+        oracle.write_text(script)
+        other = self.dir / "randoc"
+        other.write_text(script)
+        other.chmod(0o755)
+        self.main(oracle, oracle)
+        self.main(other, oracle)
+        self.assertEqual(set(Path(f"{oracle}.rts").read_text().splitlines()), {"[-M3g]"})
+        self.assertEqual(set(Path(f"{other}.rts").read_text().splitlines()), {"[]"})
+
     def test_target_and_only_select_units_and_missing_documents_stop_the_run(self):
         oracle = self.program("pandoc")
         _, report = self.main(oracle, oracle, "--target", "json", "--only", "two")

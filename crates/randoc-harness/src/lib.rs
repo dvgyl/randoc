@@ -221,6 +221,7 @@ impl Session {
         Ok(Program {
             binary,
             timeout: self.config.timeout,
+            ghcrts: Some(exec::ORACLE_GHCRTS),
         })
     }
 
@@ -242,6 +243,7 @@ impl Session {
         Ok(Program {
             binary,
             timeout: self.config.timeout,
+            ghcrts: None,
         })
     }
 

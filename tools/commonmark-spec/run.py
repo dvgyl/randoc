@@ -117,9 +117,15 @@ def extract_examples(text):
     return examples
 
 
-def environment():
+# The heap limit of the oracle (a Haskell program). On 2026-11-10 one oracle
+# run used 22 GB and filled the swap space of the machine.
+ORACLE_GHCRTS = "-M3g"
+HEAP_EXHAUSTED = 251
+
+
+def environment(ghcrts=None):
     """Returns the fixed environment of each run, as the conformance harness uses it."""
-    return {
+    env = {
         "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
         "HOME": "/var/empty",
         "LANG": "en_US.UTF-8",
@@ -127,18 +133,28 @@ def environment():
         "TZ": "UTC",
         "SOURCE_DATE_EPOCH": "1700000000",
     }
+    if ghcrts:
+        env["GHCRTS"] = ghcrts
+    return env
 
 
-def execute(binary, source, timeout):
-    """Runs `binary` under the program name `pandoc` with the input `source`."""
+def execute(binary, source, timeout, ghcrts=None):
+    """Runs `binary` under the program name `pandoc` with the input `source`.
+
+    With `ghcrts` the run is an oracle run: it gets that heap limit, and an
+    exit at the limit is an outcome with no result (exit code -1).
+    """
     try:
         done = subprocess.run(
             ["pandoc", *ARGS], executable=str(binary), input=source.encode("utf-8"),
-            capture_output=True, env=environment(), timeout=timeout)
+            capture_output=True, env=environment(ghcrts), timeout=timeout)
     except subprocess.TimeoutExpired:
         return Outcome(-1, b"", b"", timed_out=True)
     except OSError as error:
         return Outcome(-1, b"", f"{binary}: {error}\n".encode())
+    if ghcrts and done.returncode == HEAP_EXHAUSTED:
+        note = f"no result: the oracle reached its heap limit (GHCRTS={ghcrts})\n"
+        return Outcome(-1, done.stdout, done.stderr + note.encode())
     return Outcome(done.returncode, done.stdout, done.stderr)
 
 
@@ -158,7 +174,7 @@ def compare(examples, oracle_bin, randoc_bin, timeout, jobs, run=execute):
     """Runs both programs on each example. Returns a summary without example text."""
     def one(example):
         number, source = example
-        oracle = run(oracle_bin, source, timeout)
+        oracle = run(oracle_bin, source, timeout, ORACLE_GHCRTS)
         program = run(randoc_bin, source, timeout)
         return number, oracle, program
 

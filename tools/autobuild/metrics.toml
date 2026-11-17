@@ -1,0 +1,416 @@
+# The metrics of the scoreboard (plan/scoreboard/*.tsv). One entry for each metric key.
+# tools/autobuild/measure.py reads this file; plan/SPEC.md explains the keys.
+#
+# status   "active": measure.py runs `command` and writes a row.
+#          "to-build": no measurement exists yet, so there is no row.
+#          "external": another tool writes the rows (the held-out evaluator).
+# suite    The group of metrics that one command measures (`measure.py --suite NAME`).
+#          Each active metric of a suite has the same command.
+# command  measure.py splits it like a shell line and then fills the placeholders:
+#          {python} this Python, {randoc} and {harness} copies of the debug programs
+#          of the target folder (made for each suite run, so that a build during
+#          the run changes nothing), {oracle} $RANDOC_ORACLE_PANDOC, {pandoc_src}
+#          $RANDOC_PANDOC_SRC, {corpus} $RANDOC_CORPUS, {evidence} the evidence
+#          folder of the run. Write a literal brace as {{ or }}. The working
+#          folder is the repository root.
+#          `measure.py --filter TEXT` adds the filter option of the suite; a
+#          filtered run writes evidence but no scoreboard row.
+# pass     The exact definition of PASS.
+# total    The exact definition of TOTAL.
+
+# The conformance harness. A unit is a check of one case:
+# CASE#read, CASE#write:TO, CASE#e2e:TO or CASE#cmd (conformance/README.md).
+# A unit passes when the exit code, standard error and output equal the stored oracle result.
+# Classes (plan/SPEC.md 3.11): pass; fail (fail, no_result, not_recorded); no input
+# (skipped: a write unit whose oracle read unit exits with a code that is not 0).
+
+[[metric]]
+key = "harness.units"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "harness units with status pass"
+total = "harness units of class pass or fail (no-input units are not in TOTAL)"
+
+[[metric]]
+key = "harness.read"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "#read units with status pass"
+total = "#read units of class pass or fail"
+
+[[metric]]
+key = "harness.write"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "#write:TO units with status pass"
+total = "#write:TO units of class pass or fail"
+
+[[metric]]
+key = "harness.e2e"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "#e2e:TO units with status pass"
+total = "#e2e:TO units of class pass or fail"
+
+[[metric]]
+key = "harness.cmd"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "#cmd units with status pass"
+total = "#cmd units of class pass or fail"
+
+# The capability matrix of the same harness run. The TOTALs come from spec/inventory/.
+
+[[metric]]
+key = "caps.readers"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "input formats of spec/inventory/input-formats.json whose matrix entry has status passing (it has a read unit, and each of its units passes)"
+total = "input formats in spec/inventory/input-formats.json (52)"
+
+[[metric]]
+key = "caps.writers"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "output formats of spec/inventory/output-formats.json whose matrix entry has status passing (it has a write unit, and each of its units passes)"
+total = "output formats in spec/inventory/output-formats.json (77)"
+
+[[metric]]
+key = "caps.options"
+suite = "harness"
+status = "active"
+command = "{harness} run --randoc {randoc} --jobs 4 --timeout 60 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
+pass = "options of spec/inventory/options.json (first long name) whose matrix entry has status passing (it has a unit with --NAME, and each such unit passes)"
+total = "options in spec/inventory/options.json (109)"
+
+[[metric]]
+key = "caps.extensions"
+suite = "harness"
+status = "to-build"
+command = ""
+pass = "(direction, format, extension) pairs with a sensitive probe whose units all pass"
+total = "(direction, format, extension) pairs of spec/inventory/extensions.json: 771 reader pairs and 948 writer pairs (1,719)"
+todo = "The matrix tallies each extension name over all formats together (cases.rs extension_tags, matrix.rs), so it has no pair entry. ROADMAP item M1-06."
+
+# Pandoc's own test suite, read at run time from $RANDOC_PANDOC_SRC/test (never committed).
+# docs/PANDOC_TESTSUITE.md gives the pass rule of each group. A test where the oracle
+# gave no result (heap limit, time limit) is of class oracle-limit and not in TOTAL.
+
+[[metric]]
+key = "suite.pandoc"
+suite = "pandoc"
+status = "active"
+command = "{python} tools/pandoc-testsuite/run.py --pandoc {randoc} --oracle {oracle} --suite {pandoc_src}/test --out {evidence}/pandoc-report.json --jobs 2 --show-failures"
+pass = "tests that pass"
+total = "supported tests that are not excluded (totals.run of the report), minus oracle-limit tests"
+
+[[metric]]
+key = "suite.pandoc.command"
+suite = "pandoc"
+status = "active"
+command = "{python} tools/pandoc-testsuite/run.py --pandoc {randoc} --oracle {oracle} --suite {pandoc_src}/test --out {evidence}/pandoc-report.json --jobs 2 --show-failures"
+pass = "tests of the group command (test/command/*.md code blocks) that pass"
+total = "tests of the group command that are not excluded, minus oracle-limit tests"
+
+[[metric]]
+key = "suite.pandoc.old"
+suite = "pandoc"
+status = "active"
+command = "{python} tools/pandoc-testsuite/run.py --pandoc {randoc} --oracle {oracle} --suite {pandoc_src}/test --out {evidence}/pandoc-report.json --jobs 2 --show-failures"
+pass = "tests of the group old (golden files of Tests/Old.hs) that pass"
+total = "tests of the group old that are not excluded, minus oracle-limit tests"
+
+[[metric]]
+key = "suite.pandoc.readers"
+suite = "pandoc"
+status = "active"
+command = "{python} tools/pandoc-testsuite/run.py --pandoc {randoc} --oracle {oracle} --suite {pandoc_src}/test --out {evidence}/pandoc-report.json --jobs 2 --show-failures"
+pass = "tests of the groups readers/* (the oracle reads the expected file to JSON) that pass"
+total = "tests of the groups readers/* that are not excluded, minus oracle-limit tests"
+
+# The visible corpus of real documents in $RANDOC_CORPUS (tools/corpus/manifest.toml).
+# A unit is (document, target); it passes when the exit code, standard error and
+# output are equal (json by JSON value equality, the others by bytes). A unit where the
+# oracle gave no result (status "oracle timeout" or "error oracle") is of class
+# oracle-limit and not in TOTAL.
+
+[[metric]]
+key = "corpus.units"
+suite = "corpus"
+status = "active"
+command = "{python} tools/corpus/run.py --pandoc {randoc} --oracle {oracle} --corpus {corpus} --out {evidence}/corpus-report.json --jobs 2"
+pass = "corpus units that pass"
+total = "corpus units (each document of the manifest times the targets json, html and markdown), minus oracle-limit units"
+
+[[metric]]
+key = "corpus.json"
+suite = "corpus"
+status = "active"
+command = "{python} tools/corpus/run.py --pandoc {randoc} --oracle {oracle} --corpus {corpus} --out {evidence}/corpus-report.json --jobs 2"
+pass = "corpus units with target json that pass"
+total = "corpus units with target json, minus oracle-limit units"
+
+[[metric]]
+key = "corpus.html"
+suite = "corpus"
+status = "active"
+command = "{python} tools/corpus/run.py --pandoc {randoc} --oracle {oracle} --corpus {corpus} --out {evidence}/corpus-report.json --jobs 2"
+pass = "corpus units with target html that pass"
+total = "corpus units with target html, minus oracle-limit units"
+
+[[metric]]
+key = "corpus.markdown"
+suite = "corpus"
+status = "active"
+command = "{python} tools/corpus/run.py --pandoc {randoc} --oracle {oracle} --corpus {corpus} --out {evidence}/corpus-report.json --jobs 2"
+pass = "corpus units with target markdown that pass"
+total = "corpus units with target markdown, minus oracle-limit units"
+
+# Generated cases, visible seeds 1 to 1000 (tools/casegen).
+
+[[metric]]
+key = "casegen.visible"
+suite = "casegen"
+status = "to-build"
+command = ""
+pass = "generated cases of the visible seeds where both programs give the same exit code, standard output and standard error (JSON output by value equality)"
+total = "generated cases of the visible seeds 1 to 1000"
+todo = "tools/casegen/casegen.py did not exist when measure.py was written. Add a runner in measure.py and one key casegen.<family> for each family."
+
+# The held-out measurement. Only the held-out evaluator writes these rows.
+
+[[metric]]
+key = "holdout.corpus"
+suite = "holdout"
+status = "external"
+command = ""
+pass = "held-out corpus units that pass (from the held-out evaluator)"
+total = "held-out corpus units"
+
+[[metric]]
+key = "holdout.generated"
+suite = "holdout"
+status = "external"
+command = ""
+pass = "held-out generated cases that pass (from the held-out evaluator)"
+total = "held-out generated cases"
+
+# Areas with no measurement yet. plan/SPEC.md and plan/ROADMAP.md (milestone M1)
+# define each one; the item that builds it adds the runner and sets status "active".
+
+[[metric]]
+key = "ast.roundtrip"
+suite = "ast"
+status = "to-build"
+command = ""
+pass = "trees whose JSON and native round trips give the same bytes as the oracle"
+total = "distinct oracle trees of the set"
+
+[[metric]]
+key = "lua.api"
+suite = "lua"
+status = "to-build"
+command = ""
+pass = "names of the pandoc Lua module whose call probes all give the oracle result"
+total = "names of the pandoc Lua module (468)"
+
+[[metric]]
+key = "lua.filters"
+suite = "lua"
+status = "to-build"
+command = ""
+pass = "cases of the filter matrix with the oracle result"
+total = "cases of the filter matrix"
+
+[[metric]]
+key = "custom.readers"
+suite = "custom"
+status = "to-build"
+command = ""
+pass = "custom reader units with the oracle result"
+total = "custom reader units"
+
+[[metric]]
+key = "custom.writers"
+suite = "custom"
+status = "to-build"
+command = ""
+pass = "custom writer units with the oracle result"
+total = "custom writer units"
+
+[[metric]]
+key = "templates.units"
+suite = "templates"
+status = "to-build"
+command = ""
+pass = "(format, variable set, document) units with the oracle result"
+total = "formats with a default template times variable sets times documents"
+
+[[metric]]
+key = "citeproc.units"
+suite = "citeproc"
+status = "to-build"
+command = ""
+pass = "(style, bibliography, citation document, output) units with the oracle result"
+total = "styles times bibliographies times citation documents times outputs"
+
+[[metric]]
+key = "defaults.units"
+suite = "defaults"
+status = "to-build"
+command = ""
+pass = "defaults keys whose units all pass"
+total = "defaults keys that the oracle accepts"
+
+[[metric]]
+key = "errors.units"
+suite = "errors"
+status = "to-build"
+command = ""
+pass = "error, warning and exit-code units with the oracle result"
+total = "error, warning and exit-code units"
+
+[[metric]]
+key = "files.units"
+suite = "files"
+status = "to-build"
+command = ""
+pass = "units whose written files (-o, --extract-media, --log) equal the oracle files"
+total = "units that write a file"
+
+[[metric]]
+key = "zip.units"
+suite = "zip"
+status = "to-build"
+command = ""
+pass = "DOCX, ODT, EPUB and PPTX units whose archive entries equal the oracle entries"
+total = "archive units"
+
+[[metric]]
+key = "pdf.units"
+suite = "pdf"
+status = "to-build"
+command = ""
+pass = "(engine, document, option set) units whose engine call record equals the oracle record"
+total = "engines times documents times option sets"
+
+[[metric]]
+key = "perf.startup"
+suite = "perf"
+status = "to-build"
+command = ""
+pass = "startup cases where Randoc CPU time <= 1.0 x oracle CPU time (upper bound of the sign test)"
+total = "startup cases"
+
+[[metric]]
+key = "perf.throughput"
+suite = "perf"
+status = "to-build"
+command = ""
+pass = "passing corpus documents where Randoc CPU time <= 1.0 x oracle CPU time (upper bound of the sign test)"
+total = "passing corpus documents"
+
+[[metric]]
+key = "perf.memory"
+suite = "perf"
+status = "to-build"
+command = ""
+pass = "passing corpus documents where Randoc peak memory <= oracle peak memory"
+total = "passing corpus documents"
+
+[[metric]]
+key = "downstream.quarto"
+suite = "downstream"
+status = "to-build"
+command = ""
+pass = "recorded Quarto calls of the oracle that Randoc replays with the same result"
+total = "recorded Quarto calls"
+
+[[metric]]
+key = "downstream.rmarkdown"
+suite = "downstream"
+status = "to-build"
+command = ""
+pass = "recorded R Markdown calls of the oracle that Randoc replays with the same result"
+total = "recorded R Markdown calls"
+
+# Keys that plan/ROADMAP.md adds ("Metric keys that this roadmap adds").
+
+[[metric]]
+key = "gate.steps"
+suite = "gate"
+status = "to-build"
+command = ""
+pass = "steps of the gate and self-checks of the measurement tools that pass inside the sandbox"
+total = "steps of the gate and self-checks"
+
+[[metric]]
+key = "safety.units"
+suite = "safety"
+status = "to-build"
+command = ""
+pass = "stress inputs that end inside the memory and time limit with no crash and with the oracle result or the documented limit error"
+total = "stress inputs"
+
+[[metric]]
+key = "fmt.write"
+suite = "fmt"
+status = "to-build"
+command = ""
+pass = "sum of fmt.write.F: pivot trees that writer F converts with the oracle result"
+total = "sum of fmt.write.F: pivot trees for each of the 76 writers other than pdf"
+
+[[metric]]
+key = "fmt.read"
+suite = "fmt"
+status = "to-build"
+command = ""
+pass = "sum of fmt.read.F: inputs of format F that reader F converts to the oracle tree"
+total = "sum of fmt.read.F: inputs for each of the 52 readers"
+
+[[metric]]
+key = "suite.pandoc.inline"
+suite = "pandoc-inline"
+status = "to-build"
+command = ""
+pass = "input strings of the Haskell-only test groups where Randoc gives the oracle result"
+total = "extracted input strings"
+
+[[metric]]
+key = "suite.pandoc.lua"
+suite = "pandoc-lua"
+status = "to-build"
+command = ""
+pass = "test cases of the Lua test files of Pandoc's Lua engine with the oracle result"
+total = "test cases of those files"
+
+[[metric]]
+key = "server.units"
+suite = "server"
+status = "to-build"
+command = ""
+pass = "server requests with the same answer as the oracle server"
+total = "server requests"
+
+[[metric]]
+key = "lib.units"
+suite = "lib"
+status = "to-build"
+command = ""
+pass = "pivot conversions through the library API that give the same bytes as the program"
+total = "pivot conversions"
+
+[[metric]]
+key = "wasm.units"
+suite = "wasm"
+status = "to-build"
+command = ""
+pass = "pivot conversions through the WebAssembly build that give the same bytes as the program"
+total = "pivot conversions"

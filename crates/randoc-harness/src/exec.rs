@@ -16,6 +16,13 @@ pub const SOURCE_DATE_EPOCH: &str = "1700000000";
 /// The time that the harness gives the output pipes to close after the program ends.
 const PIPE_GRACE: Duration = Duration::from_secs(2);
 
+/// The heap limit of the oracle, a Haskell program. On 2026-11-10 one oracle
+/// run used 22 GB and filled the swap space of the machine.
+pub const ORACLE_GHCRTS: &str = "-M3g";
+
+/// The exit code of a Haskell program whose heap reached the `-M` limit.
+const HEAP_EXHAUSTED: i32 = 251;
+
 /// A program to run and the limits for one run.
 #[derive(Debug, Clone)]
 pub struct Program {
@@ -23,6 +30,9 @@ pub struct Program {
     pub binary: std::path::PathBuf,
     /// The time after which the harness stops the program.
     pub timeout: Duration,
+    /// The GHC runtime options (`GHCRTS`) of the oracle, `None` for Randoc.
+    /// An oracle run that reaches the heap limit has no result.
+    pub ghcrts: Option<&'static str>,
 }
 
 /// Makes `dir` an empty directory.
@@ -147,6 +157,9 @@ impl Program {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+        if let Some(options) = self.ghcrts {
+            command.env("GHCRTS", options);
+        }
         let mut child = command
             .spawn()
             .map_err(|e| format!("{}: {e}", self.binary.display()))?;
@@ -192,6 +205,11 @@ impl Program {
         let exit = status
             .code()
             .ok_or("the program ended without an exit code")?;
+        if let Some(options) = self.ghcrts.filter(|_| exit == HEAP_EXHAUSTED) {
+            return Err(format!(
+                "the oracle reached its heap limit (GHCRTS={options})"
+            ));
+        }
         Ok(Outcome::new(exit, stdout, stderr))
     }
 }
@@ -208,6 +226,7 @@ mod tests {
         Program {
             binary: "/bin/sh".into(),
             timeout: Duration::from_millis(timeout_ms),
+            ghcrts: None,
         }
     }
 
@@ -255,8 +274,22 @@ mod tests {
     impl PrivateDir {
         fn new() -> std::io::Result<PrivateDir> {
             // Not `temp_dir()`: it can be on an exFAT volume, which has no named pipes.
+            // On macOS the folder of the user, not `/tmp`: the build sandbox can write only that one.
+            let base = Command::new("/usr/bin/getconf")
+                .arg("DARWIN_USER_TEMP_DIR")
+                .output()
+                .ok()
+                .filter(|output| output.status.success())
+                .map(|output| {
+                    String::from_utf8_lossy(&output.stdout)
+                        .trim_end()
+                        .to_owned()
+                })
+                .filter(|path| !path.is_empty())
+                .unwrap_or_else(|| "/tmp".to_owned());
+            let template = format!("{}/randoc-harness.XXXXXX", base.trim_end_matches('/'));
             let output = Command::new("/usr/bin/mktemp")
-                .args(["-d", "/tmp/randoc-harness.XXXXXX"])
+                .args(["-d", &template])
                 .output()?;
             assert!(output.status.success());
             let path = String::from_utf8_lossy(&output.stdout);
@@ -345,6 +378,7 @@ mod tests {
         let missing = Program {
             binary: "/nonexistent/program".into(),
             timeout: Duration::from_secs(1),
+            ghcrts: None,
         };
         let error = missing.run(&[], b"", &BTreeMap::new(), &dir).unwrap_err();
         assert!(error.contains("/nonexistent/program"));
@@ -359,6 +393,38 @@ mod tests {
             .run(&sh("exit 0"), &input, &BTreeMap::new(), &dir)
             .unwrap();
         assert_eq!(outcome.exit, 0);
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result() {
+        let dir = work_dir("heap");
+        let oracle = Program {
+            ghcrts: Some(ORACLE_GHCRTS),
+            ..shell(20_000)
+        };
+        let outcome = oracle
+            .run(&sh("echo \"[$GHCRTS]\""), b"", &BTreeMap::new(), &dir)
+            .unwrap();
+        assert_eq!(outcome.stdout_bytes(), b"[-M3g]\n");
+        let error = oracle
+            .run(&sh("exit 251"), b"", &BTreeMap::new(), &dir)
+            .unwrap_err();
+        assert!(error.contains("heap limit"), "{error}");
+
+        let randoc = shell(20_000);
+        let outcome = randoc
+            .run(
+                &sh("echo \"[$GHCRTS]\"; exit 251"),
+                b"",
+                &BTreeMap::new(),
+                &dir,
+            )
+            .unwrap();
+        assert_eq!(
+            (outcome.exit, outcome.stdout_bytes()),
+            (251, b"[]\n".to_vec())
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 

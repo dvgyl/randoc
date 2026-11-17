@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""Run one command with a memory limit and a time limit, also inside the build sandbox.
+
+Usage: limit-run MAX_MB SECONDS COMMAND [ARGS...]
+
+The command runs in a new session, so it and its children form one process
+group. Every 50 ms the tool adds the physical footprint (`ri_phys_footprint`
+of libproc `proc_pid_rusage`) of the command, of each descendant
+(`proc_listchildpids`) and of each other member of the group. When the sum
+passes MAX_MB, or when SECONDS have passed, it kills the group and each
+descendant. When the command ends, it kills each process that is left in the
+group, so that no process runs on without a limit.
+
+Exit code: the exit code of the command (128 + N after signal N); 137 with a
+line on standard error when the tool stopped the command; 125 when the tool
+cannot read process memory, and then the command does not start.
+
+Use it for each input that can make a program allocate without a bound: a
+fuzz artifact, a timeout input, a generated stress input. macOS does not
+enforce `ulimit -v`, so a poll is the only limit. The sandbox refuses `ps`,
+so the tool reads memory through libproc, which works for own processes.
+"""
+
+from __future__ import annotations
+
+import ctypes
+import errno
+import os
+import signal
+import subprocess
+import sys
+import time
+
+LIBPROC = "/usr/lib/libproc.dylib"
+RUSAGE_INFO_V2 = 2
+MAX_PIDS = 4096
+POLL_SECONDS = 0.05
+REFUSED = 125
+STOPPED = 137
+
+
+class RusageInfoV2(ctypes.Structure):
+    _fields_ = [("ri_uuid", ctypes.c_uint8 * 16)] + [
+        (name, ctypes.c_uint64)
+        for name in (
+            "ri_user_time", "ri_system_time", "ri_pkg_idle_wkups", "ri_interrupt_wkups",
+            "ri_pageins", "ri_wired_size", "ri_resident_size", "ri_phys_footprint",
+            "ri_proc_start_abstime", "ri_proc_exit_abstime", "ri_child_user_time",
+            "ri_child_system_time", "ri_child_pkg_idle_wkups", "ri_child_interrupt_wkups",
+            "ri_child_pageins", "ri_child_elapsed_abstime", "ri_diskio_bytesread",
+            "ri_diskio_byteswritten",
+        )
+    ]
+
+
+class Processes:
+    """libproc reads of own processes. Each read error except a gone process raises OSError."""
+
+    def __init__(self) -> None:
+        self.lib = ctypes.CDLL(LIBPROC, use_errno=True)
+
+    def footprint(self, pid: int) -> int:
+        """The physical footprint of `pid` in bytes; 0 when the process is gone."""
+        info = RusageInfoV2()
+        if self.lib.proc_pid_rusage(pid, RUSAGE_INFO_V2, ctypes.byref(info)) == 0:
+            return info.ri_phys_footprint
+        code = ctypes.get_errno()
+        if code == errno.ESRCH:
+            return 0
+        raise OSError(code, f"proc_pid_rusage({pid}): {os.strerror(code)}")
+
+    def _list(self, function, key: int) -> list[int]:
+        buffer = (ctypes.c_int * MAX_PIDS)()
+        count = function(key, buffer, ctypes.sizeof(buffer))
+        if count < 0:
+            code = ctypes.get_errno()
+            raise OSError(code, f"{function.__name__}({key}): {os.strerror(code)}")
+        return [pid for pid in buffer[: min(count, MAX_PIDS)] if pid > 0]
+
+    def members(self, root: int) -> set[int]:
+        """`root`, its descendants, and the other members of the process group `root`."""
+        found = {root}
+        todo = [root]
+        while todo:
+            for child in self._list(self.lib.proc_listchildpids, todo.pop()):
+                if child not in found:
+                    found.add(child)
+                    todo.append(child)
+        found.update(self._list(self.lib.proc_listpgrppids, root))
+        return found
+
+
+def kill_all(group: int, pids: set[int]) -> None:
+    for kill, target in [(os.killpg, group)] + [(os.kill, pid) for pid in pids]:
+        try:
+            kill(target, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) < 4:
+        print(__doc__, file=sys.stderr)
+        return 2
+    try:
+        max_bytes = float(argv[1]) * 1024 * 1024
+        seconds = float(argv[2])
+    except ValueError:
+        print("limit-run: MAX_MB and SECONDS must be numbers", file=sys.stderr)
+        return 2
+    command = argv[3:]
+    try:
+        processes = Processes()
+        processes.footprint(os.getpid())
+        processes.members(os.getpid())
+    except OSError as error:
+        print(f"limit-run: cannot read process memory ({error}); the command did not start", file=sys.stderr)
+        return REFUSED
+
+    try:
+        child = subprocess.Popen(command, start_new_session=True)
+    except OSError as error:
+        print(f"limit-run: {command[0]}: {error.strerror}", file=sys.stderr)
+        return 127 if isinstance(error, FileNotFoundError) else 126
+
+    def interrupted(number, _frame):
+        try:
+            members = processes.members(child.pid)
+        except OSError:
+            members = set()
+        kill_all(child.pid, members)
+        child.wait()
+        sys.exit(128 + number)
+
+    for number in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(number, interrupted)
+
+    deadline = time.monotonic() + seconds
+    why = None
+    while child.poll() is None:
+        try:
+            members = processes.members(child.pid)
+            used = sum(processes.footprint(pid) for pid in members)
+        except OSError as error:
+            members, why = set(), f"cannot read process memory ({error})"
+        else:
+            if used > max_bytes:
+                why = f"memory {used / 1048576:.0f} MB is above the limit of {max_bytes / 1048576:.0f} MB"
+            elif time.monotonic() > deadline:
+                why = f"time is above the limit of {seconds:g} s"
+        if why:
+            kill_all(child.pid, members)
+            child.wait()
+            print(f"limit-run: {why}; stopped: {' '.join(command)[:200]}", file=sys.stderr)
+            return STOPPED
+        try:
+            child.wait(timeout=POLL_SECONDS)
+        except subprocess.TimeoutExpired:
+            pass
+    kill_all(child.pid, set())
+    return child.returncode if child.returncode >= 0 else 128 - child.returncode
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
