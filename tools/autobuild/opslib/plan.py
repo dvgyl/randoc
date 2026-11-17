@@ -223,6 +223,7 @@ class Run:
 def build_runs(rows: list[dict[str, str]]) -> list[Run]:
     """The measurement runs of gpt/build, oldest first, each with the metrics that rose."""
     best: dict[tuple[str, int], int] = {}
+    seen: set[str] = set()
     runs: dict[tuple[str, str], Run] = {}
     for row in rows:
         if row["stream"] != "build":
@@ -233,7 +234,11 @@ def build_runs(rows: list[dict[str, str]]) -> list[Run]:
         if value is None or total is None:
             continue
         slot = (row.get("metric", ""), total)
-        if slot in best and value > best[slot]:
+        # The first row of a metric with a TOTAL above 0 is a gain (ROADMAP rule 7).
+        new_metric = slot[0] not in seen and total > 0
+        seen.add(slot[0])
+        if new_metric or (slot in best and value > best[slot]):
+            run = runs[key]
             runs[key] = replace(run, gained=run.gained + (slot[0],))
         best[slot] = max(value, best.get(slot, value))
     return list(runs.values())
