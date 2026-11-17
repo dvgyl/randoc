@@ -242,21 +242,52 @@ RUNNERS = {
     "corpus": Runner(corpus_counts, "--only", "tools/corpus"),
 }
 
+# A new suite is a new file, so that parallel workers do not edit one file:
+# tools/autobuild/suites/NAME.py defines make_runner(measure) -> Runner, and
+# tools/autobuild/metrics.d/NAME.toml holds its [[metric]] entries.
+SUITES_DIR = Path(__file__).resolve().with_name("suites")
+METRICS_DIR = Path(__file__).resolve().with_name("metrics.d")
+
+
+def plugin_files(folder: Path, pattern: str) -> list[Path]:
+    return sorted(p for p in folder.glob(pattern) if not p.name.startswith(("._", "_")))
+
+
+def load_suites() -> None:
+    import importlib.util
+
+    for path in plugin_files(SUITES_DIR, "*.py"):
+        if path.stem in RUNNERS:
+            raise ToolError(f"{path}: the suite {path.stem} exists already")
+        spec = importlib.util.spec_from_file_location(f"autobuild_suite_{path.stem}", path)
+        if spec is None or spec.loader is None:
+            raise ToolError(f"{path}: cannot load the suite module")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        RUNNERS[path.stem] = module.make_runner(sys.modules[__name__])
+
 
 def load_metrics(path: Path | None = None) -> dict[str, Metric]:
     """Reads and checks the registry: unique keys, known status, a runner and one command per suite."""
     path = path or METRICS_FILE
-    try:
-        entries = tomllib.loads(path.read_text(encoding="utf-8"))["metric"]
-    except (OSError, ValueError, KeyError) as error:
-        raise ToolError(f"{path}: {error}") from error
+    if path == METRICS_FILE and not any(name not in ("harness", "pandoc", "corpus") for name in RUNNERS):
+        load_suites()
+    sources = [path] + (plugin_files(METRICS_DIR, "*.toml") if path == METRICS_FILE else [])
+    entries = []
+    for source in sources:
+        try:
+            entries += [(source, e) for e in tomllib.loads(source.read_text(encoding="utf-8"))["metric"]]
+        except (OSError, ValueError, KeyError) as error:
+            raise ToolError(f"{source}: {error}") from error
     metrics: dict[str, Metric] = {}
     commands: dict[str, str] = {}
-    for entry in entries:
+    for source, entry in entries:
         metric = Metric(entry["key"], entry["suite"], entry["status"], entry["command"],
                         entry["pass"], entry["total"])
         if metric.key in metrics:
-            raise ToolError(f"{path}: the key {metric.key} is listed two times")
+            # A metrics.d entry may replace a "to-build" entry of metrics.toml.
+            if not (source != path and metrics[metric.key].status == "to-build"):
+                raise ToolError(f"{source}: the key {metric.key} is listed two times")
         if metric.status not in STATUSES:
             raise ToolError(f"{path}: {metric.key} has the status {metric.status!r}, not one of {STATUSES}")
         if metric.status == "active":
