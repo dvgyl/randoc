@@ -13,5 +13,10 @@ randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
 quick-xml = { workspace = true }
 
+# The CPU time of the process for tests/time.rs. `ps` is refused in the
+# build sandbox.
+[target.'cfg(unix)'.dev-dependencies]
+nix = { version = "0.31", default-features = false, features = ["time"] }
+
 [lints]
 workspace = true

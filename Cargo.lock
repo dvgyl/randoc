@@ -298,6 +298,7 @@ version = "0.1.0"
 name = "randoc-citeproc"
 version = "0.1.0"
 dependencies = [
+ "nix",
  "quick-xml",
  "randoc-ast",
  "randoc-core",
