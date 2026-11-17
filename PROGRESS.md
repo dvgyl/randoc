@@ -1,5 +1,10 @@
 # Randoc progress
 
+> **On branch `gpt/build`:** `AGENTS.md` governs the process, and the state of
+> the build is in `plan/` (`tools/autobuild/ops status`). The handoff below
+> describes `main` at commit `d40a641` and its earlier process. Use it only for
+> technical facts; do not follow its "Next three tasks" or its roles.
+
 This file and `spec/status.json` hold the project state. Read both at the start
 of a session, then run `./init.sh`.
 

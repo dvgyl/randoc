@@ -151,9 +151,12 @@ def pre_commit() -> None:
     for name in staged:
         if Path(name).name.startswith("._"):
             raise Refused(f"{name} is a macOS companion file; unstage it")
+    # AGENTS.md is the one file that names the banned phrases (to ban them).
     added = [
         line[1:]
-        for line in git("diff", "--cached", "-U0", "--", "*.md", "*.tsv", "*.txt").splitlines()
+        for line in git(
+            "diff", "--cached", "-U0", "--", "*.md", "*.tsv", "*.txt", ":(exclude)AGENTS.md"
+        ).splitlines()
         if line.startswith("+") and not line.startswith("+++")
     ]
     for line in added:

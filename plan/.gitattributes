@@ -1,0 +1,6 @@
+# Append-only files: a worker branch and gpt/build both append at the end.
+# The union merge keeps the lines of both sides, so a merge has no conflict.
+REVIEW_LOG.md merge=union
+ADVICE.md merge=union
+BLOCKED_ON_OWNER.md merge=union
+REVIEWS.tsv merge=union

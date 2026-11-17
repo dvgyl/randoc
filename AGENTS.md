@@ -1,0 +1,413 @@
+# Randoc build manual (branch `gpt/build`)
+
+This file is the operating manual for each model session that works on this
+branch. Codex loads it at the start of each session. Read it completely.
+Read it again after each context compaction and after each restart.
+
+## 1. The task
+
+Randoc is a Rust reimplementation of Pandoc 3.13. The goal is a complete
+drop-in replacement: a user puts Randoc on `PATH` under the name `pandoc`,
+and everything works unchanged. The exact, measurable definition of the goal
+is in `plan/SPEC.md`. The goal never becomes weaker.
+
+You build toward that goal on the branch `gpt/build` in the clone
+`/Volumes/Extreme Pro/Randoc/gpt/randoc`. The branch `main` belongs to
+earlier work. You never change it. A later review takes the good parts of
+this branch into `main`. That review reads `plan/REVIEW_LOG.md` first.
+
+Progress is measured, not claimed. A change is good only when a scoreboard
+number moves and no other number falls.
+
+## 2. Which instruction wins
+
+When two instructions disagree, the first one in this list wins:
+
+1. A direct instruction of the owner in the current session.
+2. This file (`AGENTS.md`).
+3. `plan/SPEC.md` (what "compatible" means and how it is measured).
+4. `plan/ROADMAP.md` and `plan/milestones.toml` (the order of the work and
+   the milestone gates).
+5. The ExecPlan of the current milestone (`plan/exec/M<n>.md`).
+6. `plan/ARCHITECTURE.md` (how the remaining work is built).
+7. All other files.
+
+The files `PROGRESS.md`, `docs/CONTRIBUTING.md`,
+`docs/WORKER_STANDING_ORDERS.md`, `docs/OWNER_INSTRUCTIONS.md` and
+`docs/MERGE_LOG.md` describe the process of the earlier phase on `main`
+(other roles, merges into `main`, two approvals per merge). On this branch,
+their PROCESS rules do not apply. Use them only for technical facts and
+history. Their hard rules that still apply are repeated in sections 4, 13,
+14 and 15 of this file.
+
+When you stop, change direction, or skip a rule, write the file and the rule
+that made you do it in `plan/REVIEW_LOG.md`.
+
+## 3. Models and effort (the only place with model names)
+
+| Role | Model id | Reasoning effort | Use |
+| --- | --- | --- | --- |
+| Lead model | `gpt-6.2-sol` | `high` | The lead session: plans, items, commits, merges. |
+| Worker | `gpt-6.2-sol` | `high` (`low` for routine edits) | One item in one worktree (`ops worker run`). |
+| Reviewer | `gpt-6.2-sol` | `high` | One review round in a new session (`ops review`). |
+| Adviser model | `gpt-6.2-astra` | `xhigh` | One question when the lead is stuck (`ops ask`). Advice only; it never edits. |
+
+The `ops` commands take these ids and efforts from
+`tools/autobuild/opslib/codex.py`. A change of a model changes this table and
+that file in the same commit.
+
+Rules for every model call:
+
+- Use `-c service_tier=default` in every `codex` command. Do not use Fast
+  mode (the `priority` or `ultrafast` service tier, or `/fast`) unless the
+  owner explicitly tells you to. Fast mode uses more credits.
+- Never use the effort `max` or `ultra` unless the owner explicitly tells
+  you to.
+- Use the `ops` commands for workers, reviews and the adviser. They set the
+  model, the effort and the service tier. Do not start subagents in another
+  way, because the other ways do not log the call and do not keep the limits
+  of this file.
+
+## 4. Hard limits
+
+The sandbox and the Git guard enforce these limits. Do not try to get around
+them: each attempt is a defect that the later review reverts.
+
+- **Branches.** Commit only on `gpt/build` (the lead) and `gpt/w/<ITEM>`
+  (a worker). Never change, merge into, rebase or push `main` or any other
+  branch. Push only `gpt/build`, never with force. Never rewrite pushed
+  history: undo a change with `git revert`. Never change `core.hooksPath`,
+  never use `--no-verify`, never delete or edit the hooks. The guard is in
+  `/Volumes/Extreme Pro/Randoc/env/gpt-hooks/` (its source:
+  `tools/autobuild/hooks/guard.py`).
+- **Old local branches.** The owner's checkout
+  `/Volumes/Extreme Pro/Randoc/randoc` has old `ws/*` and `wip/*` branches.
+  Their early history holds files that must never be published. Never
+  merge, cherry-pick, fetch into a branch, or push a commit of them. To reuse
+  their code, copy the files (`git -C "/Volumes/Extreme Pro/Randoc/randoc" show COMMIT:PATH`),
+  run the licence scan, and commit them as a new commit. The push guard
+  refuses commits that are older than this branch and not on `main`.
+- **Held-out data.** Never try to read `/Volumes/Extreme Pro/Randoc/holdout/`
+  or to find its contents in another way (for example by logging the inputs
+  that the evaluator gives to the program). The sandbox denies it. Only the
+  evaluator reads it. Why: it detects overfitting; if you see it, the final
+  number means nothing.
+- **Clean room.** Pandoc is GPL-2.0-or-later. Never read Pandoc source code:
+  not in `env/pandoc-src` (the sandbox denies its source folders) and not on
+  the web. You may read the Pandoc manual and documentation, and you run
+  Pandoc's tests from `env/pandoc-src/test` as an external check. Learn the
+  behaviour from the manual and from the oracle's output.
+- **Configuration.** Never edit `~/.codex/config.toml`,
+  `~/.codex/randoc-gpt.config.toml`, `~/.codex/AGENTS.md` or anything in
+  `/Volumes/Extreme Pro/Randoc/env` except the folders that the sandbox lets
+  you write. If one of them blocks you, write it under BLOCKED ON OWNER.
+- **Deletes.** Delete only files that you created, with a full absolute path,
+  and only under `/Volumes/Extreme Pro/Randoc/gpt/`. Never join a delete to a
+  `cd` with `;` or `&&`. Stop only processes that you started, by their
+  process id.
+
+## 5. Start of each session
+
+Run these commands from the repository root:
+
+    . tools/autobuild/env.sh
+    tools/autobuild/ops status
+
+`ops status` shows the counters of section 7 and the next required action.
+Do that action first. Then read the active ExecPlan (`plan/exec/M<n>.md`)
+and its `Progress` section, and continue from the first open step.
+
+If `ops status` shows no measurement row for `HEAD` or for a recent commit,
+run `tools/autobuild/ops measure` first.
+
+## 6. The work loop
+
+All work is organized in work items. A work item is a short task with one
+scoreboard metric and an expected gain.
+
+1. **Choose.** Take the next item of the current milestone from
+   `plan/ROADMAP.md`, or run `tools/autobuild/ops next` to get items from the
+   newest failure lists. An item is short: it targets one cluster of failing
+   units with one cause (at most about 40 units), and it names those units.
+   If you cannot name the failing units, the item is too large: split it.
+2. **Register.** `ops item add M<n>-<nn> --milestone M<n> --metric KEY --target +N --title "..."`,
+   then `ops item start M<n>-<nn>`. The start records the baseline.
+3. **Change.** Make the smallest change that can move the metric. Add or
+   update tests built from oracle output. Commit small steps with the item id
+   at the end of the subject (section 12).
+4. **Experiment.** `ops measure --item M<n>-<nn> --quick`. One run is one
+   experiment. Look at the change of the item's metric and at the other
+   metrics of the run.
+5. **Decide.**
+   - Gain and no regression: `ops item done M<n>-<nn> --weak-spots "..."`,
+     then run the gate (`ops gate`), commit, and push `gpt/build`.
+   - No gain: find the cause, change, and run the next experiment.
+   - Third experiment with no gain: `ops item cut M<n>-<nn> --reason "..."`.
+     The command reverts the item's commits. Write what you learned in the
+     log. Do not start the same item again under a new id; choose a
+     different cause or a different item.
+6. **Measure the branch.** After each finished item, and at least each 10
+   commits, run the full measurement on `gpt/build` (`ops measure`) and
+   commit its rows.
+
+Work that does not move a metric is not allowed, with two exceptions: work
+on the measurement itself (the first milestone builds it), and a fix of a
+crash, a hang, unbounded memory or a licence defect. A fix of that kind
+still needs an item; its metric is the test that shows the defect (for
+example a new conformance case).
+
+## 7. Counters that stop loops
+
+These counters exist because models can loop for a long time with many
+commits and no progress. `ops status` shows each one. The Git guard enforces
+the first three.
+
+| Counter | Limit | What happens at the limit |
+| --- | --- | --- |
+| Commits since the newest measured commit | 10 | The guard refuses the next commit until you commit new scoreboard rows. |
+| Experiments of one item with no gain | 3 | The guard refuses each commit until you cut the item. |
+| Commit tag | an active item, or `[ops]` | An `[ops]` commit may change only measurement, plan and tool files. Product code needs an active item. |
+| Scoreboard rows of the active item's metric with no gain | 2 in a row | You are stuck (section 8). |
+| Items cut in a row in one area | 3 | Park the area: write a `weak-spot` entry, ask the adviser one strategy question, and move to the next area of the roadmap. |
+| Full `gpt/build` measurements with no gain on any metric | 3 in a row | Stop the current approach. Run `ops next` and take the largest cluster in a different area. |
+| Review rounds of one change | 2 | No third round. The lead decides with the evidence. |
+| Questions to the adviser per stuck event | 1 | Decide and continue. |
+
+Never set a target of code size, and never start work whose only purpose is
+to remove lines. Delete code only as a part of an item that moves a metric.
+
+## 8. Stuck: definition and the one question
+
+You are stuck only in one of these four cases:
+
+1. A failure resisted two fixes (`two-fixes-failed`).
+2. A design failed one acceptance attempt (`acceptance-failed`).
+3. Two scoreboard rows of the active item's metric show no gain
+   (`two-rows-no-gain`; `ops status` detects it).
+4. You know no next step (`no-next-step`).
+
+Only then, ask the adviser one question:
+
+    tools/autobuild/ops ask --reason two-fixes-failed "QUESTION WITH ALL CONTEXT"
+
+The adviser does not see your session. Put the facts into the question: the
+item, the failing case, the command and its output, what you tried and why
+it failed. Take the one answer, decide, write the decision in
+`plan/ADVICE.md` (the command starts the entry), and continue. Do not ask a
+second question about the same event.
+
+## 9. Workers
+
+Use workers when two or more items of the current milestone are independent
+(they change different crates or files and need no result of each other).
+
+- `ops worker start ITEM` makes the worktree
+  `/Volumes/Extreme Pro/Randoc/gpt/wt/ITEM` on branch `gpt/w/ITEM` from
+  `gpt/build`. At most 4 workers. The command refuses when the drive has less
+  than 25 GB free.
+- `ops worker run ITEM` starts the worker in the background with the prompt
+  `tools/autobuild/prompts/worker.md`. A worker does one item, measures it on
+  its branch (its rows go to `plan/scoreboard/ITEM.tsv`), and stops.
+- `ops worker merge ITEM` runs the gate on the merged tree and merges with
+  `--no-ff` only when the gate passes and the worker's rows show a gain.
+  Then it removes the worktree.
+- `ops worker drop ITEM` removes a worker that failed or was cut. Its branch
+  stays for the review; it is never merged.
+- Only the lead changes `plan/ITEMS.tsv` and `plan/scoreboard/build.tsv`,
+  and only on `gpt/build`.
+
+Shared contracts (`randoc-ast`, `randoc-core`, the format registry, the
+harness, `plan/`, `tools/autobuild/`) change only on `gpt/build`, by the
+lead. A worker that needs a contract change stops and writes the request in
+its final message.
+
+## 10. Reviews
+
+Review only critical code: a change to a shared contract; a parser path that
+untrusted input reaches (depth limits, size limits, loops); `unsafe` code;
+code that touches files, archives, URLs or processes; and a change that can
+break the licence position. Other changes need no review: the measurement
+and the tests are the check.
+
+- `ops review ITEM` runs one review round in a new session. At most 2
+  rounds for one change.
+- A reviewer blocks a change only with evidence: a failing test, or a command
+  whose output shows the defect. A finding without that evidence is a note,
+  not a block. The lead writes notes as `weak-spot` entries in the log.
+- Fix each blocking finding, then run the second round, if needed. After the
+  second round, the lead decides and writes the decision in the log.
+
+## 11. Held-out measurement
+
+A part of the corpus and of the generated cases is held out. You never see
+it. The evaluator runs outside the sandbox and gives only totals.
+
+- `ops holdout request` asks for one evaluation of the current build. The
+  evaluator allows one evaluation each 6 hours; a request inside that time
+  gets the answer `deferred`.
+- `ops holdout results` shows the newest totals (metrics `holdout.corpus` and
+  `holdout.generated`). Write them as scoreboard rows with the commit that
+  the evaluator measured.
+- Request an evaluation at each milestone gate, and at most each 6 hours.
+- If the visible numbers rise and the held-out numbers do not, you overfit:
+  write a `weak-spot` entry and change the approach (general logic, not
+  special cases).
+- If `heartbeat.json` in `/Volumes/Extreme Pro/Randoc/gpt/holdout-queue/`
+  is older than 10 minutes, the evaluator does not run. Write it under
+  BLOCKED ON OWNER and continue.
+
+## 12. Commits, pushes and the review log
+
+- Small commits: one logical change each, with its test. A later reviewer
+  must be able to cherry-pick or revert each commit alone.
+- Subject: `type(scope): plain description [ITEM]`, for example
+  `fix(markdown-writer): keep the text of a heading with an escape [M2-04]`.
+  `type` is one of `feat`, `fix`, `perf`, `test`, `docs`, `chore`,
+  `refactor`. The tag is an active item id, or `[ops]` for measurement,
+  plan and tool files.
+- No attribution lines (`Co-Authored-By:`, `Claude-Session:`, "Generated
+  with") and no tool or model names in commit messages. The guard removes or
+  refuses them.
+- Push `gpt/build` after each finished item and after each milestone:
+  `git push` (the remote and the branch are preset). Before each push, run
+  `python3 -I tools/autobuild/licence_scan.py scan`; it must exit 0. If a
+  push fails, keep the local commits, write the reason in the log, and
+  continue.
+- Write `plan/REVIEW_LOG.md` entries with `ops log KIND "TEXT"`. Kinds:
+  `decision`, `deviation` (from the plan), `shortcut`, `weak-spot`, `cut`,
+  `blocked-on-owner`, `milestone`. This log is the handover to the later
+  review. Write each shortcut and each known weak spot there at the time you
+  take it, not later.
+- Write a blocker that only the owner can remove with `ops blocked "TEXT"`
+  (it goes to `plan/BLOCKED_ON_OWNER.md`). Then continue with other work.
+
+Do not use the words "HOLD" and "fresh complete review" in any file, log or
+commit message. The guard refuses them. Why: they started review loops
+without progress in an earlier project.
+
+## 13. Engineering rules for Randoc code
+
+- The oracle is `/Volumes/Extreme Pro/Randoc/env/oracle/pandoc-3.13-arm64/bin/pandoc`
+  (`$RANDOC_ORACLE_PANDOC`). It is a test tool only. Randoc never calls it.
+- Implement general logic. Never add a special case for one test input.
+  Never edit a stored oracle result to make a test pass. If an oracle output
+  looks wrong, record it in the log; the oracle still defines correct.
+- Tests are required: each new behaviour gets tests built from oracle
+  output, including the edge cases of the manual. A bug fix gets a test that
+  fails before the fix.
+- Treat all input as untrusted. Keep the nesting limit
+  (`Limits::max_nesting_depth`), the decompressed-size limit, the archive
+  path checks and the fetch limits. Each tree walk has a depth limit, with
+  tests at 10,000 and 100,000 levels on a 2 MB stack. No recursion that a
+  deep input can overflow; this includes derived `Clone` and `Drop` of deep
+  trees.
+- No `unwrap()`, `expect()`, `todo!()`, `unimplemented!()` or `panic!()` in
+  code that input can reach. `unsafe_code` is forbidden in the workspace.
+- No scan inside a loop that makes the time grow faster than linear. Each
+  parser loop consumes input or stops. Each cache has a test that compares
+  it with a plain scan.
+- Tests that measure time must not fail under load: count steps, or take the
+  minimum of several runs with a wide margin.
+- Some tests hold lists of known differences of another crate
+  (`crates/randoc-cli/tests/writer_capabilities.rs`,
+  `crates/randoc-lua/tests/replay/convert.txt`, and others named in
+  `plan/ARCHITECTURE.md`). A fix that makes a listed difference pass must
+  update the list in the same commit.
+- Formatting and lints: `cargo fmt --all`, and clippy with `-D warnings`.
+  `ops gate` runs both.
+- Reuse permissively licensed code where it helps (see section 14). Prefer a
+  pinned dependency to a copy.
+
+## 14. Licence rules
+
+Randoc is MIT OR Apache-2.0. Pandoc is GPL-2.0-or-later.
+
+Never put into the repository, in any commit:
+
+- Pandoc source code, or code ported from it, from `texmath`, from the GPL
+  `skylighting` package or from other GPL code.
+- Pandoc test files (inputs or expected results), text or examples of the
+  Pandoc manual, and examples of the CommonMark or GFM specification. Write
+  your own inputs that test the same construct.
+- Pandoc data files that have no permissive licence option (reference
+  documents, translations, `epub.css`, the CSL files, syntax definitions
+  without a permissive licence, and the others that
+  `docs/DATA_FILES_LICENCES.md` lists).
+- Stored test results that embed copyleft text: for example the output of
+  `--bash-completion`, of `-s` for `docx`, `odt`, `fodt`, `pptx` or `epub`,
+  and of `--print-default-data-file` for a non-template file. Check such a
+  result with a hash, not with stored text.
+- Any file from `/Volumes/Extreme Pro/Randoc/env/store`.
+
+Before you use third-party code: read the licence header of each file (a
+package licence file can differ from a file header), check that the licence
+is on the list in `docs/PRIOR_ART.md` (MIT, Apache-2.0, BSD-2-Clause,
+BSD-3-Clause, ISC, Zlib, Unicode-3.0, CC0-1.0, Unlicense), and add a row to
+`docs/PRIOR_ART.md`, a record to `docs/ADR.md`, a row to
+`THIRD_PARTY_NOTICES.md` and the licence text to `third_party/licences/`.
+
+The scan `python3 -I tools/autobuild/licence_scan.py scan` compares the
+text that the branch adds with a hashed index of the copyleft reference
+text. Run it before each push and in each gate. Fix each hit. If a hit is
+correct use (for example an error text that the program must print), add a
+row with the reason to `tools/autobuild/licence-allow.tsv`, and write a
+`decision` entry in the log.
+
+## 15. Machine rules
+
+The computer has 16 GB of memory, 8 cores and an exFAT drive. It stopped two
+times in earlier work because of memory.
+
+- Source `tools/autobuild/env.sh` in each shell. It sets the tool folders,
+  `TMPDIR`, `CARGO_BUILD_JOBS=2`, `RUST_TEST_THREADS=3`,
+  `CARGO_INCREMENTAL=0` and the oracle heap limit `GHCRTS=-M3g`. Never unset
+  or raise these values.
+- The `cargo` wrapper allows 3 heavy cargo commands at the same time, for
+  all sessions together. A command can wait for a slot; that is normal.
+- Run one heavy command (build, test, measurement) at a time in each
+  session. Do not start load generators.
+- Run each fuzz artifact, each large or slow input and each generated stress
+  input through `limit-run MAX_MB SECONDS COMMAND` at its first run (the
+  version in `tools/autobuild/bin` works in the sandbox). Start each large
+  input small.
+- An oracle result with exit code 251 and `Heap exhausted` means "the
+  oracle did not end". It is not a Pandoc result.
+- A watchdog outside the sandbox stops each Randoc process above 4 GB.
+- Each file on the drive uses at least 1 MB. Keep file counts low. macOS
+  makes a `._NAME` companion file for each file; never commit one, and skip
+  `._` names in code that lists folders.
+- A full gate run takes 20 to 30 minutes, and more when the machine has
+  load. Do not stop a gate run because it is slow.
+- Network access is on for `cargo`, `git push` and documentation. Do not
+  download Pandoc source code.
+
+## 16. Milestones and ExecPlans
+
+`plan/ROADMAP.md` lists the milestones in order. Each milestone has an exit
+gate in `plan/milestones.toml`; `ops milestone check M<n>` verifies it. The
+active milestone is the milestone with the lowest number whose gate does
+not pass. Take items of the active milestone first. A worker may take an
+item of a later milestone only when that milestone's entry condition holds
+and the active milestone has no independent item left. A milestone is done
+only when its gate passes and a held-out result for that commit exists. A
+gate threshold may rise; it never falls.
+
+An ExecPlan is a self-contained design and progress document for one
+milestone. A new session must be able to continue the work from the
+ExecPlan and the working tree alone. `plan/PLANS.md` gives the rules and the
+form. The ExecPlan of the first milestone is `plan/exec/M1.md`. At the start
+of each later milestone, the lead writes `plan/exec/M<n>.md` in the same form
+before the first item.
+
+Keep the four living sections of the active ExecPlan current at each stop
+point: `Progress`, `Surprises & Discoveries`, `Decision Log` and
+`Outcomes & Retrospective`.
+
+## 17. Autonomy
+
+Work without asking for confirmation. Nobody answers questions during the
+run. Make reasonable, reversible assumptions, record each one as a
+`decision` entry, and continue. If only the owner can remove a blocker,
+write it with `ops blocked` and continue with other work. When all work of
+the current milestone is blocked, continue with the next milestone that is
+not blocked. The run ends only when the final goal of `plan/SPEC.md` holds.

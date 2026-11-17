@@ -1,0 +1,17 @@
+utc	commit	dirty	item	metric	pass	total	tool	evidence
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	corpus.html	36	230	corpus@982196399307+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/corpus.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	corpus.json	63	230	corpus@982196399307+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/corpus.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	corpus.markdown	63	230	corpus@982196399307+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/corpus.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	corpus.units	162	690	corpus@982196399307+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/corpus.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	caps.options	94	109	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	caps.readers	4	52	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	caps.writers	7	77	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	harness.cmd	4823	5045	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	harness.e2e	15212	15332	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	harness.read	24674	25657	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	harness.units	59513	60946	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	harness.write	14804	14912	harness@5cb93c06972b+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/harness.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	suite.pandoc	646	2231	pandoc@707f657f5e46+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/pandoc.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	suite.pandoc.command	618	1884	pandoc@707f657f5e46+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/pandoc.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	suite.pandoc.old	28	174	pandoc@707f657f5e46+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/pandoc.json
+2026-11-17T21:35:52Z	d40a641d3b76d2270e420b9d8a48c2b9962f189f	yes	-	suite.pandoc.readers	0	173	pandoc@707f657f5e46+dirty	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261117T213552Z-d40a641d3b76/pandoc.json

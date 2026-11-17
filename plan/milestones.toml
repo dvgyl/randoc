@@ -1,0 +1,1396 @@
+# Exit gates of the milestones of plan/ROADMAP.md.
+# Format: plan/SPEC.md and the data model of the build operations.
+# `ops milestone check ID` reads this file. A threshold can rise. A threshold never falls.
+# Two entries for one metric mean that both must hold.
+# fmt.read.F and fmt.write.F are the per-format rows of the pivot measurement (ROADMAP, "Metric keys").
+
+[[milestone]]
+id = "M1"
+title = "Measurement complete and trustworthy"
+
+# Each metric key has a row.
+[[milestone.require]]
+metric = "harness.units"
+exists = true
+[[milestone.require]]
+metric = "harness.read"
+exists = true
+[[milestone.require]]
+metric = "harness.write"
+exists = true
+[[milestone.require]]
+metric = "harness.e2e"
+exists = true
+[[milestone.require]]
+metric = "harness.cmd"
+exists = true
+[[milestone.require]]
+metric = "suite.pandoc"
+exists = true
+[[milestone.require]]
+metric = "suite.pandoc.command"
+exists = true
+[[milestone.require]]
+metric = "suite.pandoc.old"
+exists = true
+[[milestone.require]]
+metric = "suite.pandoc.readers"
+exists = true
+[[milestone.require]]
+metric = "corpus.units"
+exists = true
+[[milestone.require]]
+metric = "corpus.json"
+exists = true
+[[milestone.require]]
+metric = "corpus.html"
+exists = true
+[[milestone.require]]
+metric = "corpus.markdown"
+exists = true
+[[milestone.require]]
+metric = "casegen.visible"
+exists = true
+[[milestone.require]]
+metric = "casegen.ext-matrix"
+exists = true
+[[milestone.require]]
+metric = "casegen.json-roundtrip"
+exists = true
+[[milestone.require]]
+metric = "casegen.options-cli"
+exists = true
+[[milestone.require]]
+metric = "holdout.corpus"
+exists = true
+[[milestone.require]]
+metric = "holdout.generated"
+exists = true
+[[milestone.require]]
+metric = "caps.readers"
+exists = true
+[[milestone.require]]
+metric = "caps.writers"
+exists = true
+[[milestone.require]]
+metric = "caps.extensions"
+exists = true
+[[milestone.require]]
+metric = "caps.options"
+exists = true
+[[milestone.require]]
+metric = "ast.roundtrip"
+exists = true
+[[milestone.require]]
+metric = "lua.api"
+exists = true
+[[milestone.require]]
+metric = "lua.filters"
+exists = true
+[[milestone.require]]
+metric = "custom.readers"
+exists = true
+[[milestone.require]]
+metric = "custom.writers"
+exists = true
+[[milestone.require]]
+metric = "templates.units"
+exists = true
+[[milestone.require]]
+metric = "citeproc.units"
+exists = true
+[[milestone.require]]
+metric = "defaults.units"
+exists = true
+[[milestone.require]]
+metric = "errors.units"
+exists = true
+[[milestone.require]]
+metric = "files.units"
+exists = true
+[[milestone.require]]
+metric = "zip.units"
+exists = true
+[[milestone.require]]
+metric = "pdf.units"
+exists = true
+[[milestone.require]]
+metric = "perf.startup"
+exists = true
+[[milestone.require]]
+metric = "perf.throughput"
+exists = true
+[[milestone.require]]
+metric = "perf.memory"
+exists = true
+[[milestone.require]]
+metric = "downstream.quarto"
+exists = true
+[[milestone.require]]
+metric = "downstream.rmarkdown"
+exists = true
+[[milestone.require]]
+metric = "gate.steps"
+exists = true
+[[milestone.require]]
+metric = "safety.units"
+exists = true
+[[milestone.require]]
+metric = "fmt.read"
+exists = true
+[[milestone.require]]
+metric = "fmt.write"
+exists = true
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+exists = true
+[[milestone.require]]
+metric = "suite.pandoc.lua"
+exists = true
+[[milestone.require]]
+metric = "server.units"
+exists = true
+[[milestone.require]]
+metric = "lib.units"
+exists = true
+[[milestone.require]]
+metric = "wasm.units"
+exists = true
+
+# The gate passes inside the sandbox. The numbers of the start state are kept.
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "harness.units"
+min_pass = 59513
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 646
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 162
+
+[[milestone]]
+id = "M2"
+title = "Core text formats and safety"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.markdown"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.markdown_strict"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.markdown_mmd"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.markdown_phpextra"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.markdown_github"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.commonmark"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.commonmark_x"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.gfm"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.html"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.json"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.native"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.csljson"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.latex"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.write.markdown"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.markdown_strict"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.markdown_mmd"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.markdown_phpextra"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.markdown_github"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.commonmark"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.commonmark_x"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.gfm"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.plain"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.markua"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.html"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.html4"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.html5"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.latex"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.beamer"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.json"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.native"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.csljson"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "ast.roundtrip"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "harness.units"
+min_pass = 60600
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 850
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 195
+[[milestone.require]]
+metric = "defaults.units"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "errors.units"
+min_fraction = 0.80
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 10
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 14
+
+[[milestone]]
+id = "M3"
+title = "Typst, media, embedded resources, slide shows, PDF"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.typst"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.write.typst"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.revealjs"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.s5"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.slidy"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.slideous"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.dzslides"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "files.units"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "pdf.units"
+min_fraction = 0.75
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 930
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 205
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 11
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 19
+
+[[milestone]]
+id = "M4"
+title = "Office and e-book formats"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.docx"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.read.odt"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.read.epub"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.read.fodt"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.write.docx"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.odt"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.opendocument"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.fodt"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.epub"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.epub2"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.epub3"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.chunkedhtml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "zip.units"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "files.units"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 1100
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 265
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 13
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 24
+
+[[milestone]]
+id = "M5"
+title = "Lua and citations"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "lua.api"
+min_fraction = 0.98
+[[milestone.require]]
+metric = "lua.filters"
+min_fraction = 0.98
+[[milestone.require]]
+metric = "custom.readers"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "custom.writers"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "suite.pandoc.lua"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "citeproc.units"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.bibtex"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.biblatex"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.ris"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.ris"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.endnotexml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.endnotexml"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.write.bibtex"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.biblatex"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.latex"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "caps.options"
+min_fraction = 0.85
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 1320
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 275
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 18
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 28
+
+[[milestone]]
+id = "M6"
+title = "Remaining markup and wiki formats"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.rst"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.org"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.asciidoc"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.djot"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.textile"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.muse"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.t2t"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.haddock"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.man"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.rtf"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.mediawiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.dokuwiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.jira"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.pod"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.pod"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.mdoc"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.mdoc"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.creole"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.creole"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.tikiwiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.tikiwiki"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.twiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.twiki"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.vimwiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.vimwiki"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.write.rst"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.org"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.asciidoc"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.asciidoc_legacy"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.asciidoctor"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.djot"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.textile"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.muse"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.t2t"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.haddock"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.vimdoc"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.ansi"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.context"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.texinfo"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.ms"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.man"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.rtf"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.mediawiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.dokuwiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.jira"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.xwiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.zimwiki"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.bbcode"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.bbcode_fluxbb"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.bbcode_hubzilla"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.bbcode_phpbb"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.bbcode_steam"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.bbcode_xenforo"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "pdf.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "casegen.visible"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "holdout.generated"
+min_fraction = 0.85
+[[milestone.require]]
+metric = "holdout.corpus"
+min_fraction = 0.60
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 1750
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_fraction = 0.60
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 500
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 34
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 52
+
+[[milestone]]
+id = "M7"
+title = "Remaining XML, presentation and data formats"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.docbook"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.jats"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.opml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.fb2"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.xml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.ipynb"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.bits"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.bits"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.csv"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.csv"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.tsv"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.read.tsv"
+min_pass = 36
+[[milestone.require]]
+metric = "fmt.read.pptx"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.read.xlsx"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "fmt.read.xlsx"
+min_pass = 9
+[[milestone.require]]
+metric = "fmt.write.docbook"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.docbook4"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.docbook5"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.jats"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.jats_archiving"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.jats_articleauthoring"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.jats_publishing"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.tei"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.opml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.fb2"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.xml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.icml"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.pptx"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "fmt.write.ipynb"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "templates.units"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "caps.extensions"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "zip.units"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "holdout.corpus"
+min_fraction = 0.80
+[[milestone.require]]
+metric = "suite.pandoc"
+min_pass = 1950
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_fraction = 0.85
+[[milestone.require]]
+metric = "corpus.units"
+min_pass = 590
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 44
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 66
+
+[[milestone]]
+id = "M8"
+title = "Server mode, library, WebAssembly, performance"
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "server.units"
+min_fraction = 0.98
+[[milestone.require]]
+metric = "lib.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "wasm.units"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "perf.startup"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "perf.throughput"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "perf.memory"
+min_fraction = 0.90
+[[milestone.require]]
+metric = "errors.units"
+min_fraction = 0.98
+[[milestone.require]]
+metric = "caps.options"
+min_fraction = 0.95
+[[milestone.require]]
+metric = "defaults.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read"
+min_fraction = 0.97
+[[milestone.require]]
+metric = "fmt.write"
+min_fraction = 0.97
+
+[[milestone]]
+id = "M9"
+title = "Complete drop-in replacement (the final goal)"
+
+# Each metric at TOTAL/TOTAL. The capability matrix has its full totals.
+[[milestone.require]]
+metric = "harness.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "harness.read"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "harness.write"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "harness.e2e"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "harness.cmd"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "suite.pandoc"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "suite.pandoc.command"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "suite.pandoc.old"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "suite.pandoc.readers"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "corpus.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "corpus.json"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "corpus.html"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "corpus.markdown"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "casegen.visible"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "casegen.ext-matrix"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "casegen.json-roundtrip"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "casegen.options-cli"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "holdout.corpus"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "holdout.generated"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "caps.readers"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "caps.writers"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "caps.extensions"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "caps.options"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "ast.roundtrip"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "lua.api"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "lua.filters"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "custom.readers"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "custom.writers"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "templates.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "citeproc.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "defaults.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "errors.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "files.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "zip.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "pdf.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "perf.startup"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "perf.throughput"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "perf.memory"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "downstream.quarto"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "downstream.rmarkdown"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "gate.steps"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "safety.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "suite.pandoc.lua"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "server.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "lib.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "wasm.units"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "caps.readers"
+min_pass = 52
+[[milestone.require]]
+metric = "caps.writers"
+min_pass = 77
+[[milestone.require]]
+metric = "caps.extensions"
+min_pass = 1719
+[[milestone.require]]
+metric = "caps.options"
+min_pass = 109
+
+# Each format, both directions.
+[[milestone.require]]
+metric = "fmt.read.asciidoc"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.biblatex"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.bibtex"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.bits"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.commonmark"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.commonmark_x"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.creole"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.csljson"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.csv"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.djot"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.docbook"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.docx"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.dokuwiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.endnotexml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.epub"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.fb2"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.fodt"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.gfm"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.haddock"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.html"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.ipynb"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.jats"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.jira"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.json"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.latex"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.man"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.markdown"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.markdown_github"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.markdown_mmd"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.markdown_phpextra"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.markdown_strict"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.mdoc"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.mediawiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.muse"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.native"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.odt"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.opml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.org"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.pod"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.pptx"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.ris"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.rst"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.rtf"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.t2t"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.textile"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.tikiwiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.tsv"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.twiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.typst"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.vimwiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.xlsx"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.read.xml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.ansi"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.asciidoc"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.asciidoc_legacy"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.asciidoctor"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bbcode"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bbcode_fluxbb"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bbcode_hubzilla"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bbcode_phpbb"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bbcode_steam"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bbcode_xenforo"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.beamer"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.biblatex"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.bibtex"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.chunkedhtml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.commonmark"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.commonmark_x"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.context"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.csljson"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.djot"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.docbook"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.docbook4"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.docbook5"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.docx"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.dokuwiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.dzslides"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.epub"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.epub2"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.epub3"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.fb2"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.fodt"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.gfm"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.haddock"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.html"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.html4"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.html5"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.icml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.ipynb"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.jats"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.jats_archiving"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.jats_articleauthoring"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.jats_publishing"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.jira"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.json"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.latex"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.man"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.markdown"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.markdown_github"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.markdown_mmd"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.markdown_phpextra"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.markdown_strict"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.markua"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.mediawiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.ms"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.muse"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.native"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.odt"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.opendocument"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.opml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.org"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.plain"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.pptx"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.revealjs"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.rst"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.rtf"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.s5"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.slideous"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.slidy"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.t2t"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.tei"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.texinfo"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.textile"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.typst"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.vimdoc"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.xml"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.xwiki"
+min_fraction = 1.00
+[[milestone.require]]
+metric = "fmt.write.zimwiki"
+min_fraction = 1.00
