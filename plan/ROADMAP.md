@@ -17,9 +17,12 @@ all of these hold:
 - Pandoc's own test suite passes against Randoc.
 - Quarto and R Markdown give the same results with Randoc in place of
   Pandoc.
+- The distributed package, installed as a user installs it, passes the
+  install measurement, and each PDF engine is tested as a real engine.
 
-This goal is the exit gate of the last milestone. No milestone, item or
-decision can lower it. Until it holds, there is always a next item.
+The exact list is `plan/SPEC.md` section 7. This goal is the exit gate of
+the last milestone. No milestone, item or decision can lower it. The build
+team never lowers it. Until it holds, there is always a next item.
 
 ## Terms
 
@@ -36,10 +39,16 @@ decision can lower it. Until it holds, there is always a next item.
 - **Entry condition**: what must hold before work on the milestone starts.
 - **Item**: one small piece of work with an id (`M<n>-<nn>`), one metric
   key and one expected gain. The list of items is `plan/ITEMS.tsv`.
-- **Experiment**: one measurement run for an item. **Gain**: the increase
-  of PASS of the item's metric above its baseline.
+- **Experiment**: one `measure.py --item ID` run. It writes an attempt
+  record before it starts; the count is the larger of the scoreboard runs
+  and the attempt records. **Gain**: the latest row of the item's metric
+  has a PASS above the baseline and a failing count (TOTAL - PASS) not
+  above the baseline's (`plan/SPEC.md` 4.1).
+- **Tool correction**: a recorded change of how a tool counts the units of
+  a metric (`ops correction add METRIC --item ID --reason TEXT`, rows in
+  `plan/corrections.tsv`; `plan/SPEC.md` 3.13).
 - **Cluster**: a group of failing units with one probable cause, at most
-  about 40 units. `ops next` prints clusters from the newest measurement.
+  40 units. `ops next` prints clusters from the newest measurement.
 - **Pivot set**: the fixed set of document trees that the measurement
   gives to each writer.
 - **Data pack**: the folder outside the repository with the data files
@@ -58,14 +67,20 @@ decision can lower it. Until it holds, there is always a next item.
 2. **Work ahead.** A free worker may take an item of a later milestone when
    that milestone's entry condition holds and the active milestone has no
    independent item left. Each milestone states its entry condition for
-   this purpose.
+   this purpose. When each remaining requirement of the active milestone is
+   BLOCKED ON OWNER, items of the next milestone may start; its entry
+   condition counts those requirements as met.
 3. **Each item is a slice.** An item changes all layers that it needs and
    moves its one metric. No item exists only to build a layer, to move
    code or to remove lines. A shared layer is built inside the first item
    that needs it (`plan/ARCHITECTURE.md`, section 4).
-4. **Size.** An item must show a gain within 3 experiments. If its first
-   experiment shows that it is too large, the lead splits it: the part with
-   a gain is closed as done, the rest becomes a new item.
+4. **Size.** An item must show a gain within 3 experiments. An item names
+   its failing units, at most 40. A row of the tables below with a gain
+   above 40 is a group: before the first item of the group starts, the lead
+   splits it into items of 40 units or less (`ops next` gives the clusters).
+   This rule does not apply to an M1 item that builds a measurement. If the
+   first experiment shows that an item is too large, the lead splits it:
+   the part with a gain is closed as done, the rest becomes a new item.
 5. **First items and next items.** The tables below give the first items of
    each milestone. They do not give all items. After each full measurement,
    `ops next` prints the largest clusters; the lead adds them as items of
@@ -73,12 +88,14 @@ decision can lower it. Until it holds, there is always a next item.
 6. **Expected gain.** The number in the column "Gain" is the expected
    increase of PASS. It is an estimate from the counts that are known now.
    The lead writes the real baseline when the item starts.
-7. **An item that makes a metric.** In milestone M1, the gain of an item is
-   the first row of its metric with a TOTAL above 0. Its baseline is 0/0.
+7. **An item that makes a metric or corrects it.** The baseline of an item
+   is 0/0 when its metric has no row yet (milestone M1), or when the item
+   records a tool correction of its own metric. Its gain is then the latest
+   row of its metric with a TOTAL above 0.
 8. **Thresholds only rise.** After a milestone passes, the lead may raise a
    threshold of a later milestone in `plan/milestones.toml`. A threshold
-   never falls. A TOTAL never shrinks, except through a recorded correction
-   of a tool (`plan/REVIEW_LOG.md`).
+   never falls. A TOTAL never shrinks, except through a tool correction
+   (`plan/corrections.tsv` and a `decision` entry in `plan/REVIEW_LOG.md`).
 9. **Safety is never deferred.** From M2 on, each exit gate needs
    `safety.units` and `gate.steps` at TOTAL/TOTAL. An item that adds a
    reader or a writer adds its safety cases.
@@ -87,8 +104,10 @@ decision can lower it. Until it holds, there is always a next item.
     oracle output embeds a data pack file keeps its expected result outside
     the repository.
 11. **Owner decisions.** A blocker that only the owner can remove goes to
-    `plan/BLOCKED_ON_OWNER.md`. The work continues with other items. The
-    known entries are in the last section of this file.
+    `plan/BLOCKED_ON_OWNER.md`. The work continues with other items. That
+    file holds the known entries.
+12. **Area change.** Before the lead changes to another area (`AGENTS.md`
+    section 7), it finishes or cuts the active item.
 
 ## Metric keys that this roadmap adds
 
@@ -107,6 +126,8 @@ builds their measurements. `plan/SPEC.md` gets the exact definitions.
 | `server.units` | Requests to the server mode with the same answer as the oracle server / requests. |
 | `lib.units` | Pivot conversions through the library API with a pure Host that give the same bytes as the program / conversions. |
 | `wasm.units` | The same conversions through the WebAssembly build / conversions. |
+| `tags.read.F`, `tags.write.F`, `tags.option.O` | Units of Pandoc's suite and of the corpus that read F, write F or use option O and pass / those units. Breakdown rows; one key for each tag with units. |
+| `install.units` | Units of a fixed subset of each suite that pass with Randoc installed from the distributed package, with no build tree and no `RANDOC_DATA_DIR` / units of the subset. Built in M8 (M8-09). |
 
 Two rules make the capability metrics strict. A reader counts in
 `caps.readers` only when `fmt.read.F` is at TOTAL/TOTAL and each harness
@@ -124,9 +145,10 @@ with an open licence). Their gates have a minimum PASS for this reason.
 
 ## M1. Measurement complete and trustworthy
 
-**Goal.** Each metric key has a working measurement. The gate runs inside
-the sandbox. A baseline of all metrics exists. After M1, each claim about
-compatibility comes from a scoreboard row.
+**Goal.** Each metric key except `install.units` has a working
+measurement. The gate runs inside the sandbox. A baseline of all metrics
+exists. After M1, each claim about compatibility comes from a scoreboard
+row.
 
 **Scope.** Measurement tools, the harness, the gate, test data that the
 team writes, the data pack tool. No feature work on readers, writers or
@@ -136,7 +158,9 @@ subsystems, except the smallest change that a measurement needs to run
 **Entry condition.** The repository builds on `gpt/build`, and
 `ops status` runs.
 
-**Exit gate.** Each metric key has a row; `gate.steps` is at TOTAL/TOTAL;
+**Exit gate.** Each metric key has a row with TOTAL above 0, each
+`fmt.read.F` and `fmt.write.F` included; the fixed TOTALs of
+`plan/SPEC.md` section 5 hold; `gate.steps` is at TOTAL/TOTAL;
 `harness.units` >= 59,513; `suite.pandoc` >= 646; `corpus.units` >= 162
 (the numbers of the start state).
 
@@ -170,12 +194,17 @@ subsystems, except the smallest change that a measurement needs to run
 | M1-24 | `lib.units` | first row | A small command on the library API with a pure Host (`wasm.units` in the same item: 0 until the build exists) |
 | M1-25 | `downstream.quarto` | first row | Sample projects with open licences; record each real call of the oracle; replay it with both programs (`downstream.rmarkdown` in the same form). If a tool cannot be installed, write the row 0/TOTAL and a BLOCKED ON OWNER entry |
 | M1-26 | `casegen.visible` | row for seeds 1 to 1000 | Run the visible generated cases and each family key; request the first held-out result |
+| M1-27 | `gate.steps` | +2 | Corpus tool: check the oracle SHA-256 before the oracle cache is used; reject a duplicate JSON key (two self-checks) |
+| M1-28 | `gate.steps` | +1 | Suite tool: compare the stable standard error of the reader tests (one self-check) |
+| M1-29 | `tags.read.markdown` | first row | Capability tags (formats, options) on each unit of the suite tool and the corpus tool; one row for each tag with units |
 
 Order: M1-01 and M1-02 first, then M1-03, M1-04 and M1-05, because later
-items use the file capture and the pivot set. The other items are
-independent and suit parallel workers. The last step of M1 is one full
-measurement on a clean commit and a `milestone` entry in
-`plan/REVIEW_LOG.md` with the baseline of each metric.
+items use the file capture and the pivot set. The lead also does M1-07
+(it changes an existing metric), M1-19 (the data pack tool, which other
+items need) and M1-27 to M1-29 (they change existing shared tools). The
+other items are independent and suit parallel workers. The last step of M1 is one full measurement on a clean
+commit and a `milestone` entry in `plan/REVIEW_LOG.md` with the baseline of
+each metric.
 
 ---
 
@@ -444,7 +473,7 @@ the `perf.*` metrics show.
 >= 0.98; `lib.units` at TOTAL/TOTAL; `wasm.units` >= 0.95; `perf.startup`
 >= 0.95; `perf.throughput` >= 0.90; `perf.memory` >= 0.90; `errors.units`
 >= 0.98; `caps.options` >= 0.95; `defaults.units` at TOTAL/TOTAL;
-`fmt.read` >= 0.97; `fmt.write` >= 0.97.
+`fmt.read` >= 0.97; `fmt.write` >= 0.97; `install.units` has a row.
 
 **First items.**
 
@@ -458,6 +487,7 @@ the `perf.*` metrics show.
 | M8-06 | `perf.throughput` | +10 | The largest cluster of documents where Randoc is slower: text width without an ASCII fast path in `randoc-layout` |
 | M8-07 | `perf.memory` | +10 | The largest cluster of documents where the peak memory of Randoc is above the oracle's |
 | M8-08 | `caps.options` | +5 | `--version` prints `-server` and no scripting engine line (I-CLI-09, I-CLI-50); `--bash-completion` |
+| M8-09 | `install.units` | first row | The package (program and data pack), `docs/INSTALL.md`, and the install measurement of `plan/SPEC.md`; the data files are found next to the program with no `RANDOC_DATA_DIR`. How users get the data pack is a BLOCKED ON OWNER entry; until the owner decides, the package uses the data pack that the tool makes from the oracle |
 
 ---
 
@@ -474,7 +504,10 @@ Markdown. The held-out sets.
 `holdout.generated`, `suite.pandoc`, `suite.pandoc.inline`,
 `suite.pandoc.lua`, `downstream.quarto` and `downstream.rmarkdown`;
 `caps.readers` = 52; `caps.writers` = 77; `caps.extensions` = 1,719;
-`caps.options` = 109; each `fmt.read.F` and `fmt.write.F` at TOTAL/TOTAL.
+`caps.options` = 109; each `fmt.read.F` and `fmt.write.F` at TOTAL/TOTAL;
+`install.units` at TOTAL/TOTAL; `pdf.units` at TOTAL/TOTAL with each PDF
+engine installed as a real engine. The other items of `plan/SPEC.md`
+section 7 need their evidence in the `milestone` entry.
 
 **First items.** The lead takes the clusters of `ops next`, largest first,
 in this order of suites: `safety.units`, `downstream.*`, `suite.pandoc*`,
@@ -485,22 +518,19 @@ in this order of suites: `safety.units`, `downstream.*`, `suite.pandoc*`,
 | M9-01 | `downstream.quarto` | +20 | The largest cluster of recorded Quarto calls that differ |
 | M9-02 | `downstream.rmarkdown` | +20 | The largest cluster of recorded R Markdown calls that differ |
 | M9-03 | `suite.pandoc` | +40 | The largest cluster of failing tests of Pandoc's suite |
-| M9-04 | `holdout.generated` | +20 | The area where the held-out fraction is lowest against its visible fraction: add visible cases of that area with new seeds, then correct the clusters |
+| M9-04 | `casegen.visible` | +20 | The family where the held-out fraction is lowest against its visible fraction: correct the largest visible cluster of that family; the held-out result then shows if the correction is general |
 | M9-05 | `caps.extensions` | +40 | The largest cluster of failing (format, extension) pairs |
 
-A unit that the oracle itself does not pass in two runs is not a unit. The
-tool removes it with a recorded correction (`plan/REVIEW_LOG.md`). No other
-unit leaves a TOTAL.
+Oracle failures follow the oracle failure rule of `plan/SPEC.md` 3.11: the
+oracle result is the reference, and the unit stays. A unit leaves a TOTAL
+only as unstable, oracle-limit or no input, listed with its reason.
 
 ---
 
 ## Known entries for BLOCKED ON OWNER
 
-These decisions belong to the owner. None of them stops an item.
-
-| Entry | What the team does in the meantime |
-| --- | --- |
-| How users get the data pack (reference documents, `epub.css`, translations, `default.csl`, CSL locales, Lua data files, 132 syntax definitions) | The measurement uses the data pack that the tool makes from the oracle. The repository holds none of these files |
-| The abbreviation list and the DocBook entity list | Own list from oracle tests; the entity table comes from the caller |
-| Old commits of `main` that hold GPL text | Nothing. The team never rewrites history |
-| Install of Quarto, R and the PDF engines, if the sandbox cannot install them | The rows stay at 0/TOTAL or use the recording stand-ins |
+`plan/BLOCKED_ON_OWNER.md` holds them: how users get the data pack; the
+installation of Quarto, R and the real PDF engines; the licence decisions
+D1 to D6 of `PROGRESS.md`; the old commits of `main` that hold GPL text;
+an optional separate GitHub identity for the broker. None of them stops an
+item.

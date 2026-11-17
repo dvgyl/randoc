@@ -2,6 +2,8 @@
 # Format: plan/SPEC.md and the data model of the build operations.
 # `ops milestone check ID` reads this file. A threshold can rise. A threshold never falls.
 # Two entries for one metric mean that both must hold.
+# Requirement kinds (plan/SPEC.md 4.1): exists (a row with TOTAL above 0), min_pass, min_fraction,
+# min_total, exact_total. The check uses one candidate run: the newest full, clean build run.
 # fmt.read.F and fmt.write.F are the per-format rows of the pivot measurement (ROADMAP, "Metric keys").
 
 [[milestone]]
@@ -171,6 +173,418 @@ min_pass = 646
 metric = "corpus.units"
 min_pass = 162
 
+# Each per-format key of the pivot measurement has a row (52 readers, 76 writers).
+[[milestone.require]]
+metric = "fmt.read.asciidoc"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.biblatex"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.bibtex"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.bits"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.commonmark"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.commonmark_x"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.creole"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.csljson"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.csv"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.djot"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.docbook"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.docx"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.dokuwiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.endnotexml"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.epub"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.fb2"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.fodt"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.gfm"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.haddock"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.html"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.ipynb"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.jats"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.jira"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.json"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.latex"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.man"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.markdown"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.markdown_github"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.markdown_mmd"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.markdown_phpextra"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.markdown_strict"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.mdoc"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.mediawiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.muse"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.native"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.odt"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.opml"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.org"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.pod"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.pptx"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.ris"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.rst"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.rtf"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.t2t"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.textile"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.tikiwiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.tsv"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.twiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.typst"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.vimwiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.xlsx"
+exists = true
+[[milestone.require]]
+metric = "fmt.read.xml"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.ansi"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.asciidoc"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.asciidoc_legacy"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.asciidoctor"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bbcode"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bbcode_fluxbb"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bbcode_hubzilla"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bbcode_phpbb"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bbcode_steam"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bbcode_xenforo"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.beamer"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.biblatex"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.bibtex"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.chunkedhtml"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.commonmark"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.commonmark_x"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.context"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.csljson"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.djot"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.docbook"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.docbook4"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.docbook5"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.docx"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.dokuwiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.dzslides"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.epub"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.epub2"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.epub3"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.fb2"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.fodt"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.gfm"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.haddock"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.html"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.html4"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.html5"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.icml"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.ipynb"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.jats"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.jats_archiving"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.jats_articleauthoring"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.jats_publishing"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.jira"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.json"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.latex"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.man"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.markdown"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.markdown_github"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.markdown_mmd"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.markdown_phpextra"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.markdown_strict"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.markua"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.mediawiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.ms"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.muse"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.native"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.odt"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.opendocument"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.opml"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.org"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.plain"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.pptx"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.revealjs"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.rst"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.rtf"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.s5"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.slideous"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.slidy"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.t2t"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.tei"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.texinfo"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.textile"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.typst"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.vimdoc"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.xml"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.xwiki"
+exists = true
+[[milestone.require]]
+metric = "fmt.write.zimwiki"
+exists = true
+
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "caps.extensions"
+exact_total = 1719
+[[milestone.require]]
+metric = "caps.options"
+exact_total = 109
+[[milestone.require]]
+metric = "lua.api"
+min_total = 468
+[[milestone.require]]
+metric = "files.units"
+min_total = 60
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_total = 1000
+
 [[milestone]]
 id = "M2"
 title = "Core text formats and safety"
@@ -298,6 +712,17 @@ min_pass = 10
 metric = "caps.writers"
 min_pass = 14
 
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
+
 [[milestone]]
 id = "M3"
 title = "Typst, media, embedded resources, slide shows, PDF"
@@ -346,6 +771,20 @@ min_pass = 11
 [[milestone.require]]
 metric = "caps.writers"
 min_pass = 19
+
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "files.units"
+min_total = 60
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
 
 [[milestone]]
 id = "M4"
@@ -410,6 +849,20 @@ min_pass = 13
 [[milestone.require]]
 metric = "caps.writers"
 min_pass = 24
+
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "files.units"
+min_total = 60
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
 
 [[milestone]]
 id = "M5"
@@ -480,6 +933,23 @@ min_pass = 18
 [[milestone.require]]
 metric = "caps.writers"
 min_pass = 28
+
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "caps.options"
+exact_total = 109
+[[milestone.require]]
+metric = "lua.api"
+min_total = 468
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
 
 [[milestone]]
 id = "M6"
@@ -677,6 +1147,20 @@ min_pass = 34
 metric = "caps.writers"
 min_pass = 52
 
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_total = 1000
+
 [[milestone]]
 id = "M7"
 title = "Remaining XML, presentation and data formats"
@@ -801,6 +1285,23 @@ min_pass = 44
 metric = "caps.writers"
 min_pass = 66
 
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "caps.extensions"
+exact_total = 1719
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_total = 1000
+
 [[milestone]]
 id = "M8"
 title = "Server mode, library, WebAssembly, performance"
@@ -843,6 +1344,19 @@ min_fraction = 0.97
 [[milestone.require]]
 metric = "fmt.write"
 min_fraction = 0.97
+
+# The install measurement exists (plan/SPEC.md, install.units; item M8-09).
+[[milestone.require]]
+metric = "install.units"
+exists = true
+
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.options"
+exact_total = 109
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
 
 [[milestone]]
 id = "M9"
@@ -1394,3 +1908,34 @@ min_fraction = 1.00
 [[milestone.require]]
 metric = "fmt.write.zimwiki"
 min_fraction = 1.00
+
+# Installation (plan/SPEC.md 7, item 9).
+[[milestone.require]]
+metric = "install.units"
+min_fraction = 1.00
+
+# Fixed TOTALs of plan/SPEC.md section 5 (exact for caps.*, a lower limit for "N or more").
+[[milestone.require]]
+metric = "caps.readers"
+exact_total = 52
+[[milestone.require]]
+metric = "caps.writers"
+exact_total = 77
+[[milestone.require]]
+metric = "caps.extensions"
+exact_total = 1719
+[[milestone.require]]
+metric = "caps.options"
+exact_total = 109
+[[milestone.require]]
+metric = "lua.api"
+min_total = 468
+[[milestone.require]]
+metric = "files.units"
+min_total = 60
+[[milestone.require]]
+metric = "safety.units"
+min_total = 100
+[[milestone.require]]
+metric = "suite.pandoc.inline"
+min_total = 1000

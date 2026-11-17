@@ -30,6 +30,12 @@ hold them.
    (four spaces), not as fenced blocks.
 8. **Prototypes.** A prototype step is allowed when it lowers a risk. Name
    it as a prototype, and state how you decide to keep or discard it.
+9. **No schedule.** A UTC time stamp records a past event: a done step, a
+   decision, a revision. Never write a date or a duration of future work.
+10. **Startup order.** A session first does the action that
+    `tools/autobuild/ops status` names, then the first open step of
+    `Progress`. Keep the open steps in the order of the work, so that the
+    two agree.
 
 ## The form
 
@@ -60,8 +66,9 @@ command output is the best evidence).
 
     ## Decision Log
 
-Entries of the form `- Decision: ...`, `Rationale: ...`, `Date: ...`. Each
-decision and each change of direction.
+Entries of the form `- Decision: ...`, `Rationale: ...`, `Date: ...` (the
+UTC date when the decision was made). Each decision and each change of
+direction.
 
     ## Outcomes & Retrospective
 

@@ -22,8 +22,14 @@ This file defines "100% compatible with Pandoc 3.13" for the branch
 - **Data pack**: `$RANDOC_GPT/datapack`, the data files that may not enter
   the repository (`plan/ARCHITECTURE.md`, 4.7).
 - **Held-out**: data that only the evaluator reads (section 6).
-- **Lead model**, **worker**, **reviewer**: roles of `AGENTS.md`.
-  **Evaluator**: the held-out program outside the build sandbox.
+- **Lead model**, **worker**, **reviewer**, **adviser model**: roles of
+  `AGENTS.md`. **Evaluator**: the held-out program outside the build
+  sandbox. **Broker**: the owner's support program outside the build
+  sandbox; it pushes `gpt/build`, starts the review and adviser sessions,
+  and builds the commit of a held-out request.
+- **Tool correction**: a recorded change of how a tool forms, classes or
+  counts the units of a metric (3.13).
+- **Candidate run**: the full measurement that a milestone check uses (4.1).
 
 ## 1. The oracle
 
@@ -70,7 +76,7 @@ is equal to the oracle's under section 3. The list keeps the full scope of
 | 12 | JSON document tree and `native` | `ast.roundtrip`, `fmt.*` |
 | 13 | JSON filters: interpreters, arguments, environment, data folder, errors, order | `caps.options` (`filter`) |
 | 14 | Lua filters, the `pandoc` module and its globals, custom readers and writers | `lua.*`, `custom.*`, `suite.pandoc.lua` |
-| 15 | The `lua` mode and its options `-e`, `-l`, `-i`, `-v`, `-E`, `-W`, `-`, `--` | `suite.pandoc.lua`, `harness.cmd` (`conformance/cases/cli/lua-mode.toml`) |
+| 15 | The `lua` mode and its options `-e`, `-l`, `-i`, `-v`, `-E`, `-W`, `-`, `--` | `suite.pandoc.lua`, `harness.cmd` |
 | 16 | The `server` mode, also as CGI | `server.units` |
 | 17 | Templates, `-D`, partials, variables | `templates.units` |
 | 18 | Defaults files | `defaults.units` |
@@ -85,6 +91,7 @@ is equal to the oracle's under section 3. The list keeps the full scope of
 | 27 | No crash, hang or unbounded memory | `safety.units` |
 | 28 | Not slower and not larger than the oracle | `perf.*` |
 | 29 | Quarto and R Markdown | `downstream.*` |
+| 30 | Installation: the distributed package works for a user, with no build tree; real PDF engines | `install.units`, `pdf.units` |
 
 The oracle's platform defines platform-dependent behaviour.
 
@@ -125,8 +132,8 @@ the `readers` tests of Pandoc's suite (`tools/pandoc-testsuite/suite.py:117`),
 the corpus target `json` (`tools/corpus/run.py:203`), the CommonMark
 specification tool, the evaluator, casegen and `fmt.read.F`. Why: these units
 measure the tree that a reader makes. `ast.roundtrip` measures the JSON
-writer by bytes on each oracle tree of these units, and an equal tree with a
-byte-equal writer gives equal bytes.
+writer by bytes on the oracle trees of the visible units among them, and an
+equal tree with a byte-equal writer gives equal bytes.
 
 Rule: both outputs parse as JSON with equal values. Key order does not
 count; array order counts; `1` is not `1.0`; invalid JSON or a duplicate key
@@ -165,12 +172,18 @@ and `pandoc server --version`, are byte-equal.
 ### 3.9 Limits and no result
 
 - Each run: 60 s CPU time, 600 s wall time, 3,000 MB for its process group,
-  for both programs. A tool may give a unit larger limits, for both.
+  for both programs. A tool may give a unit larger limits, for both. A tool
+  sets the CPU limit with `sh -c 'ulimit -t 60; exec PROGRAM ARGS'` (macOS
+  enforces `ulimit -t`; the workspace forbids `unsafe` code) and keeps the
+  wall limit for a hang.
 - The oracle gives no result (exit 251 with `Heap exhausted`, a limit, or a
   signal): an oracle-limit unit.
 - Randoc gives no result: the unit fails. The tool runs it once more alone
   after the main run; the second result decides. Evidence field
   `no_result`. (Today the tools use wall limits of 20 s to 60 s; M1-01.)
+- A Randoc program, build or helper that does not exist yet (for example
+  the WebAssembly build) gives no result: each of its units fails. Its
+  metric still has its full TOTAL, never 0/0.
 
 ### 3.10 Stable units
 
@@ -201,9 +214,15 @@ depends on time or chance gets a corrected input, not an exclusion.
 - PASS = pass. TOTAL = pass + fail. The other classes are never in PASS or
   TOTAL.
 - They are reported apart, never silently dropped: evidence fields
-  `unstable`, `oracle_limit`, `no_input`; `ops measure` prints their counts
-  with each row; `spec/unstable.json` keeps them with reasons.
+  `unstable`, `oracle_limit`, `no_input` list the unit ids; `ops measure`
+  prints their counts with each row; `spec/unstable.json` keeps them with
+  reasons.
 - A move into an excluded class lowers TOTAL: a tool correction (3.13).
+- **Oracle failure rule** (the one rule for oracle failures): the oracle
+  result defines correct, also when it is an error or differs from an
+  expected file of Pandoc's tests. Such a unit stays in TOTAL with the
+  oracle result as the reference. A unit leaves TOTAL only through the
+  classes unstable, oracle-limit and no input.
 - For an unstable unit the tool compares the parts where R1 and R2 agree.
   Evidence field `unstable_parts_ok`: unstable units with all such parts
   equal.
@@ -239,14 +258,25 @@ scope, pattern, replacement, log entry). N1 applies to each ZIP comparison.
 
 - A new row is of kind N2 to N6, applies to both programs, and is valid
   only when 3.10 shows the replaced text differing between two oracle runs
-  of a unit in its scope. Before first use: a `decision` entry in
-  `plan/REVIEW_LOG.md` (rule, oracle evidence, units changed). Only the
-  owner adds a new kind.
-- A tool correction corrects how a tool forms or counts units (duplicate,
-  no input, unstable, wrong count). If it lowers a TOTAL, it needs a
-  `decision` entry (old and new TOTAL, reason, removed units) and a review
-  round with verdict `approve` in `plan/REVIEWS.tsv`. The gate refuses a
-  lower TOTAL without both.
+  of a unit in its scope. Its scope is the format, the result part and the
+  field (or line pattern) where those runs differ, never wider. Example:
+  the elements of the archive entries where the two runs differ, not each
+  entry of the archive. Before first use: a `decision` entry in
+  `plan/REVIEW_LOG.md` (rule, oracle evidence, each unit that the row
+  changes). Only the owner adds a new kind.
+- A tool correction changes how a tool forms, classes or counts the units
+  of a metric: a duplicate, no input, an unstable unit, a wrong count, or a
+  stricter pass rule (for example the strict rule of `caps.writers`).
+  Before the first row with the new rule, run
+  `tools/autobuild/ops correction add METRIC --item ID --reason TEXT`. It
+  appends a row to `plan/corrections.tsv` (`utc metric commit item
+  reason`). Also write a `decision` entry: the old and new rule, the old
+  and new TOTAL, the removed units.
+- Rows of METRIC before its newest correction no longer count for gains,
+  regressions or milestone checks. When METRIC is the item's own metric,
+  the item gets the baseline 0/0 (`plan/ROADMAP.md`, rule 7).
+- A correction that lowers a TOTAL is critical code (`AGENTS.md` section
+  10): it gets a review round before the first row with the new rule.
 
 ## 4. Shared definitions
 
@@ -254,9 +284,31 @@ scope, pattern, replacement, log entry). N1 applies to each ZIP comparison.
 
 - A metric whose measurement does not exist yet has the baseline 0/0. Its
   first row with TOTAL above 0 is the gain of the item that builds it.
-- A metric with TOTAL 0 is not at TOTAL/TOTAL.
-- Only a full measurement (`ops measure`, no `--quick`, no filter, clean
-  tree) counts for a milestone gate and the final goal.
+- A metric with TOTAL 0 is not at TOTAL/TOTAL. Each row has
+  0 <= PASS <= TOTAL.
+- Gain of an item: the latest row of the item's metric has a PASS above the
+  baseline PASS, and its failing count (TOTAL - PASS) is not above the
+  baseline's. For the baseline 0/0, the latest row with TOTAL above 0 is
+  the gain. The guard and `ops` use this one rule.
+- Experiment: one `measure.py --item ID` run (`ops measure --item ID`). It
+  writes an attempt record before it starts
+  (`$RANDOC_GPT/runs/attempts.tsv`). The experiment count is the larger of
+  the item's scoreboard runs and its attempt records. After 3 experiments
+  with no gain, `measure.py --item ID` refuses to run. A run with
+  `--filter` and no `--item` is a diagnostic: it writes no row and is no
+  experiment.
+- Regression: a unit that passed in the previous clean full run and fails
+  now, compared by unit id in each active suite, unless a tool correction
+  covers it. The gate runs each active suite.
+- Candidate run of `ops milestone check`: the newest full measurement of
+  the `build` stream (no `--quick`, no filter, clean tree) whose rows share
+  `utc` and `commit`, have `dirty` `no` and `item` `-`, are not imported
+  held-out rows, and include a row for each `active` metric. Only the
+  candidate run counts for a milestone gate and the final goal.
+- Requirement kinds of `plan/milestones.toml`: `exists` (a row with TOTAL
+  above 0), `min_pass`, `min_fraction`, `min_total`, `exact_total`. The
+  held-out result must be for the candidate commit, or for a later commit
+  whose diff from it changes only `plan/`.
 
 ### 4.2 Pivot set P
 
@@ -301,7 +353,13 @@ with 3.10. Generated units (casegen, P, stress) use the same cache.
 Defaults: the pass rule is section 3; TOTAL is the input set minus the
 excluded classes (3.11); each tool is in `tools/autobuild/metrics.toml`.
 "Tool: M1-nn": item M1-nn builds it; until then no measurement exists, which
-is its weak point.
+is its weak point. A number after "TOTAL:" is the size of the input set:
+TOTAL is that number minus the excluded units, and the evidence lists each
+excluded unit. Two kinds of number are fixed: "N or more" is a lower limit
+(`min_total` in `plan/milestones.toml`), and the TOTAL of the four `caps.*`
+keys is exact (`exact_total`), because their units are formats, pairs and
+options, which no excluded class removes. `install.units` is the one key
+that M1 does not build (M8-09).
 
 ### `harness.units`
 Unit: one harness unit: `CASE#read` (`-f FROM -t json`, by 3.4),
@@ -331,10 +389,14 @@ Unit: one supported test of Pandoc's suite: `command/FILE.md#N`, `old/...`,
 with `2> `, stdout, `=> CODE` when not 0) equals the expected text (suite
 rules, 3.12); old tests: exit 0 and stdout equals the expected file (suite
 rules); readers tests: Randoc's `-f R -t json` equals the oracle's reading
-of the expected file (3.4). If the oracle fails a test, its result becomes
-the reference (`decision` entry), and the test stays. TOTAL: 2,231 today
-(command 1,884, old 174, readers 173). Weak points: `--write-baseline` runs
-before the `--baseline` check (`run.py:255-259`); no heap limit.
+of the expected file (3.4), and the exit code and standard error equal the
+oracle's on the same command (3.7; standard error that differs between two
+oracle runs makes the unit unstable, 3.10). If the oracle fails a test, its
+result becomes the reference (`decision` entry), and the test stays (3.11,
+oracle failure rule). TOTAL: 2,231 today (command 1,884, old 174, readers
+173). Weak points: `--write-baseline` runs before the `--baseline` check
+(`run.py:255-259`); no heap limit; the readers tests ignore standard error
+(M1-28).
 
 ### `suite.pandoc.command`
 As `suite.pandoc`, group `command` only.
@@ -353,9 +415,10 @@ command-line options. A builder expression becomes a JSON tree through an
 own evaluator of the `pandoc-types` builders (BSD-3-Clause). A test of an
 internal function gets a command with the same observable effect (image
 size through `--dpi -t latex`, media through `--extract-media`). Command:
-the mapped command, both programs. TOTAL: extracted inputs. Evidence field
-`not_extracted`: each test that the tool cannot map, with the reason. Tool:
-M1-17.
+the mapped command, both programs. TOTAL: extracted inputs, 1,000 or more.
+Evidence field `not_extracted`: each test that the tool cannot map, with the
+reason. The tool reads the test modules of `env/pandoc-src/test` at run
+time only, never a file of `env/pandoc-src/src` (section 8). Tool: M1-17.
 
 ### `suite.pandoc.lua`
 Unit: one test case: each `test_case` of
@@ -371,7 +434,9 @@ Unit: (document, target) for `json` (3.4), `html`, `markdown`. Inputs:
 `$RANDOC_CORPUS`. Command: `-f FORMAT -t TARGET FILE`. A document that the
 oracle rejects stays in. Tool: existing (`tools/corpus/run.py`). Weak
 points: no baseline check (`run.py:415`); cache in `env/corpus`; no heap
-limit; 19 input formats have no document. Held-out: `holdout.corpus`.
+limit; 19 input formats have no document; the tool uses the oracle cache
+before it checks the oracle SHA-256, and its JSON parser accepts a
+duplicate key (M1-27). Held-out: `holdout.corpus`.
 
 ### `corpus.json`
 As `corpus.units`, target `json` only.
@@ -383,10 +448,12 @@ As `corpus.units`, target `html` only.
 As `corpus.units`, target `markdown` only.
 
 ### `casegen.visible`
-Unit: one generated case of `tools/casegen/casegen.py --seed S --count 2`
-for S = 1 to 1000 (2,000 cases; input file and JSON argument list). Pass:
-section 3, `-t json` by 3.4 as the evaluator does. Tool: M1-26. Held-out:
-`holdout.generated`.
+Unit: one generated case of
+`tools/casegen/casegen.py --seed S --count 2 --out DIR` for S = 1 to 1000
+(input set 2,000 cases; input file and JSON argument list). Unit id:
+`S/ID`, the seed and the case id of the generator, because the case ids
+start again for each seed. Pass: section 3, `-t json` by 3.4 as the
+evaluator does. Tool: M1-26. Held-out: `holdout.generated`.
 
 ### `casegen.ext-matrix`
 As `casegen.visible`, family `ext-matrix` only.
@@ -400,10 +467,12 @@ As `casegen.visible`, family `options-cli` only.
 ### `holdout.corpus`
 Unit: (held-out document, target) for `json`, `html`, `markdown`, `latex`,
 `rst`, `plain`. Pass: equal exit code, stdout and stderr; JSON by 3.4. PASS
-and TOTAL: the newest evaluator results file (`ops holdout results`). Tool:
-existing, outside the build. Weak point: the evaluator drops unstable units
-when it records oracle results; its results must give their count, else the
-lead writes a BLOCKED ON OWNER entry.
+and TOTAL: the newest valid result in
+`/Volumes/Extreme Pro/Randoc/holdout-results/`
+(`ops holdout results --record`), without the FINAL part (section 6).
+Tool: existing, outside the build. Weak point: the evaluator drops unstable
+units when it records oracle results; its results must give their count,
+else the lead writes a BLOCKED ON OWNER entry.
 
 ### `holdout.generated`
 As `holdout.corpus`, for the held-out generated cases (about 2,000, secret
@@ -426,9 +495,13 @@ Unit: a (direction, format F, extension e) pair of the field `supported` of
 `spec/inventory/extensions.json` (771 reader, 948 writer pairs). Inputs: own
 probes for each extension. Command: reader pair `-f F+e -t json`, `-f F-e`,
 `-f F`; writer pair `-f json -t F+e`, `-t F-e`, `-t F`. Pass: a sensitive
-probe exists and each sensitive probe passes in the three settings. A pair
-with 5 or more probes and none sensitive passes only with a `decision`
-entry that names it and with each probe passing. TOTAL: 1,719. Tool: M1-06.
+probe with oracle exit 0 exists, and each sensitive probe passes in the
+three settings. An error result alone never makes a pair pass. A pair with
+no sensitive probe is inert only when the oracle result of each input of
+`fmt.read.F` (reader pair) or each tree of P (writer pair) is the same in
+the three settings; an inert pair passes when Randoc's results of those
+inputs equal the oracle's in the three settings. Evidence field `inert`:
+the inert pairs. TOTAL: 1,719. Tool: M1-06.
 Weak point today: the matrix counts names over all formats
 (`crates/randoc-harness/src/cases.rs:114-125`).
 
@@ -444,14 +517,19 @@ styles, a theme file, an own syntax file; math: P part 3; fetch: a local
 HTTP server. Bases: markdown to `html`, `latex`, `docx`, `markdown`; json
 to `native`; with needed companion options. A unit (option, value, base) is
 kept when sensitive or when the oracle exit code is not 0. Pass: a kept unit
-exists, each kept unit passes, each short form and alias has a passing unit.
-TOTAL: 109; no option is "not applicable". Tool: M1-07. Weak point today:
-20 options "pass" on 1 to 3 units.
+that is sensitive and has oracle exit 0 exists (a successful sensitive
+probe), each kept unit passes, and each short form and alias has a passing
+unit. An error case alone never makes an option pass. The one exception is
+`fail-if-warnings`, whose documented effect is an exit code: it needs a
+sensitive unit with that exit code. TOTAL: 109; no option is "not
+applicable". Tool: M1-07. Weak point today: 20 options "pass" on 1 to 3
+units.
 
 ### `fmt.write.F`
 One key for each of the 76 output formats other than `pdf`. Unit: (t, F)
-for t in P. Command: `-f json -t F` with t as input. TOTAL: 400. Tool:
-M1-04.
+for t in P. Command: `-f json -t F` with t as input. TOTAL: 400 minus the
+excluded units (3.11); the evidence keeps the list of excluded unit ids
+with their class. Tool: M1-04.
 
 ### `fmt.read.F`
 One key for each of the 52 input formats. Unit: one input of F. Inputs:
@@ -462,7 +540,8 @@ documents of F. A reader with no writer (`xlsx`, `bits`, `endnotexml`,
 `ris`, `creole`, `tikiwiki`, `twiki`, `vimwiki`, `pod`, `mdoc`, `csv`,
 `tsv`) gets 40 or more own inputs (`xlsx`: 10 or more open documents).
 Command: `-f F -t json`. Pass: equal exit code and stderr, output by 3.4.
-Tool: M1-05.
+TOTAL: the inputs minus the excluded units (3.11); the evidence keeps the
+list of excluded unit ids with their class. Tool: M1-05.
 
 ### `fmt.write`
 PASS and TOTAL: the sums over all `fmt.write.F` rows of the same run.
@@ -472,11 +551,13 @@ PASS and TOTAL: the sums over all `fmt.read.F` rows of the same run.
 
 ### `ast.roundtrip`
 Unit: a tree t of T. T: P, plus each distinct (by SHA-256) oracle JSON
-output of the units that 3.4 names, plus 10 own cases of a wrong
-`pandoc-api-version` (missing, older, newer, wrong type, wrong length).
-Command: `-f json -t json`; `-f json -t native`; `-f native -t json` on the
-oracle's native output. Pass: the three results are equal by bytes. Tool:
-M1-08.
+output of the visible units that 3.4 names (never a held-out unit), plus 10
+own cases of a wrong `pandoc-api-version` (missing, older, newer, wrong
+type, wrong length). Commands: (1) `-f json -t json` on t; (2)
+`-f json -t native` on t; (3) `-f native -t json` on the oracle's output of
+(2). Pass: for each of the three commands, Randoc's result equals the
+oracle's result of the same command under section 3 (output by bytes).
+Tool: M1-08.
 
 ### `lua.api`
 Unit: a name of the `pandoc` Lua module, or a filter global (`FORMAT`,
@@ -583,7 +664,10 @@ twice; `-V geometry:margin=1in -V fontsize=12pt`; `--resource-path` with an
 image; engine missing; engine exits 1 with a log. An own stand-in
 (`tools/pdf-shim/`) under each engine name records each call (3.6) and
 writes a fixed PDF. Plus the 5 documents with each installed real engine
-(today only `tectonic`). TOTAL: 630 + 5 x installed engines. Tool: M1-20.
+(today only `tectonic`), by 3.6 part 2. TOTAL: 630 + 5 x installed engines.
+The final goal needs each of the 15 engines installed in a pinned test
+environment (versions and SHA-256 in `spec/pdf-engines.toml`), which gives
+705. Evidence field `real_engines`: the installed engines. Tool: M1-20.
 
 ### `perf.startup`
 Unit: `--version`; `-f F -t json` on empty input for the 52 readers;
@@ -609,23 +693,27 @@ As `perf.throughput`. Pass: equal outputs, and the median peak memory
 (`ru_maxrss`, 7 runs or more) of Randoc is at or below the oracle's.
 
 ### `downstream.quarto`
-Unit: one recorded oracle call of Quarto. Inputs: a pinned Quarto (version
-and SHA-256 in `spec/downstream.toml`); 12 or more open projects in
+Unit: one (project, output format) pair of the project list in
+`spec/downstream.toml`. Inputs: a pinned Quarto (version and SHA-256 in
+`spec/downstream.toml`); 12 or more open projects in
 `$RANDOC_GPT/downstream/quarto/` (HTML, PDF with `keep-tex`, DOCX,
 revealjs, website, book, citations, Lua filter extension, cross references,
-callouts, code, math; no executed cells). Quarto calls a recording stand-in
-(`QUARTO_PANDOC`; a probe confirms it) that stores arguments, input and
-files, then runs the oracle. Command: each call replayed with both
-programs. Evidence field `renders_equal`: projects whose whole render with
-Randoc equals the oracle render. Tool: M1-25. Quarto is not installed; if
-the install needs the owner: row 0/TOTAL and a BLOCKED ON OWNER entry.
+callouts, code, math; no executed cells), each with its output formats.
+Quarto calls a recording stand-in (`QUARTO_PANDOC`; a probe confirms it)
+that stores arguments, input and files, then runs the oracle. Pass: each
+recorded oracle call of the render, replayed with Randoc, gives the oracle
+result (section 3), and the whole render with Randoc equals the render with
+the oracle. TOTAL: projects x output formats, from the project list. A
+render that cannot run (Quarto is missing, a recording fails) is a failing
+unit, never 0/0. Tool: M1-25. Quarto is not installed (BLOCKED ON OWNER).
 
 ### `downstream.rmarkdown`
 As `downstream.quarto` with a pinned R and `rmarkdown`, 10 or more projects
 (`html_document`, `pdf_document` with `keep_tex`, `word_document`,
 `ioslides_presentation`, `slidy_presentation`, `beamer_presentation`,
 `github_document`, `md_document`, citations, a Lua filter) and
-`RSTUDIO_PANDOC` (the stand-in's folder). R is not installed.
+`RSTUDIO_PANDOC` (the stand-in's folder). R is not installed (BLOCKED ON
+OWNER).
 
 ### `server.units`
 Unit: one request of Q: for each harness `e2e` unit that the server's JSON
@@ -639,7 +727,8 @@ slow input); all again through `pandoc-server.cgi`; the options `--port`,
 ### `lib.units`
 Unit: (t in P, W in the 76 writers other than `pdf`). Command: an own
 program on `randoc::pipeline::run` with `Context::pure()`. Pass: bytes (or
-error and exit code) equal to the Randoc program's. TOTAL: 30,400. Tool:
+error and exit code) equal to the Randoc program's. TOTAL: 30,400. Until
+`randoc::pipeline::run` exists (M8-01), each unit fails (3.9). Tool:
 M1-24.
 
 ### `wasm.units`
@@ -662,9 +751,35 @@ measurement no-regression); for each tool that runs the oracle, a stand-in
 oracle shows `GHCRTS=-M3g`; for each baseline check, a stand-in Randoc that
 breaks one passing unit makes it fail; two harness runs of one commit with
 `--jobs 8` give the same verdicts (`tools/harness-verdicts/compare.py`); the
-oracle SHA-256 check; the "never calls the oracle" check. Tool: M1-01,
-M1-02. Weak points today: `crates/randoc-citeproc/tests/time.rs:15` runs
-`ps` (refused); `init.sh` stops at the hook copy.
+oracle SHA-256 check; the "never calls the oracle" check; a stand-in oracle
+with a wrong SHA-256 makes the corpus tool exit 2 before it reads its
+cache; a duplicate JSON key makes a corpus `json` unit fail; a changed
+standard error makes a `suite.pandoc.readers` unit fail. Tool: M1-01,
+M1-02, M1-27, M1-28. Weak points today:
+`crates/randoc-citeproc/tests/time.rs:15` runs `ps` (refused); `init.sh`
+stops at the hook copy.
+
+### `tags.read.F`, `tags.write.F`, `tags.option.O`
+Breakdown rows of the upstream suite and the corpus. Unit: a unit of
+`suite.pandoc` or `corpus.units` whose command reads format F, writes
+format F, or uses option O (first long name; short forms and aliases map
+to it). Each such unit carries these capability tags in the evidence.
+Pass: as the unit's own metric. A key whose TOTAL is 0 writes no row.
+These keys add no condition to the final goal: they are at TOTAL/TOTAL when
+`suite.pandoc` and `corpus.units` are. Tool: M1-29.
+
+### `install.units`
+Unit: a unit of the install subset `spec/install-subset.txt`: for each
+active suite, the 20 units with the smallest SHA-256 of their unit id.
+Command: the unit's command, with Randoc installed from the distributed
+package (the program and the data pack) by the procedure of
+`docs/INSTALL.md` into a new empty folder PREFIX: the program is
+`PREFIX/bin/pandoc` on `PATH`, `HOME` is a new empty folder, and no path of
+the build tree, no `$RANDOC_GPT` path and no `RANDOC_DATA_DIR` is in the
+environment or the arguments. The oracle runs as in 3.1. Pass: section 3.
+TOTAL: 20 x active suites. Evidence: the SHA-256 of the package. Tool:
+M8-09. Why: each other metric gives `RANDOC_DATA_DIR` to Randoc; this one
+shows that a user's installation works.
 
 ## 6. Held-out rules
 
@@ -672,49 +787,71 @@ M1-02. Weak points today: `crates/randoc-citeproc/tests/time.rs:15` runs
 2. The build never reads it: no lead model, worker, reviewer, adviser or
    tool that they start lists, copies, hashes or infers it. The build
    sandbox denies each read.
-3. Only the evaluator reads it, outside the build sandbox.
-4. The evaluator reports totals only: for each set (`corpus`, `generated`)
+3. Only the evaluator reads it, outside the build sandbox. It runs the
+   candidate program in a sandbox that denies the held-out store except the
+   input of the current unit, with no network.
+4. A request (`ops holdout request`) names a commit only. The broker builds
+   that commit in its own build folder and records the commit and the
+   SHA-256 of the program that it built.
+5. The evaluator reports totals only: for each set (`corpus`, `generated`)
    and each target or family, PASS, TOTAL and unstable count; the commit,
    the program's SHA-256, the time and the duration. Never a unit name,
-   input, output, seed, case hash or difference.
-5. One request each 6 hours (`ops holdout request`). An earlier request gets
-   `deferred` and the next allowed time.
-6. `ops holdout results` writes the rows `holdout.corpus` and
+   input, output, seed, case hash or difference. It writes each result to
+   `/Volumes/Extreme Pro/Randoc/holdout-results/`, which the build can read
+   and cannot write. `ops` reads results only there. A result counts only
+   when it has both sets, counts with 0 <= PASS <= TOTAL, and the full
+   SHA-256 of the program.
+6. The FINAL part: the evaluator chose about 25% of each held-out set once.
+   It never reports the FINAL part to the build. Its totals go only to
+   `holdout/runs/`, for the later review.
+7. One request each 6 hours. An earlier request gets `deferred` and the
+   next allowed time. A deferred request at a milestone gate: continue with
+   other items and request again after that time.
+8. `ops holdout results --record` writes the rows `holdout.corpus` and
    `holdout.generated` with the measured commit.
-7. The held-out numbers count for the final goal. A milestone gate needs a
-   held-out result of the milestone commit.
-8. A held-out number is never the only evidence of a change. If a visible
-   fraction rises and the held-out one does not, write a `weak-spot` entry
-   and change the approach.
+9. The held-out numbers count for the final goal. A milestone gate needs a
+   held-out result for the candidate commit (4.1).
+10. A held-out number is never the only evidence of a change. If a visible
+    fraction rises and the held-out one does not, write a `weak-spot` entry
+    and change the approach.
 
 ## 7. The final goal
 
-Randoc is done when all of these hold on one commit, in one full
-measurement:
+Randoc is done when all of these hold on one commit, in one candidate run
+(4.1):
 
 1. Each key of section 5 has a row at TOTAL/TOTAL with TOTAL above 0: each
    `fmt.write.F` and `fmt.read.F`, `caps.readers` 52/52, `caps.writers`
-   77/77, `caps.extensions` 1,719/1,719, `caps.options` 109/109.
+   77/77, `caps.extensions` 1,719/1,719, `caps.options` 109/109. (A
+   `tags.*` key with TOTAL 0 has no row.)
 2. Each property of section 2 is measured.
-3. `holdout.corpus` and `holdout.generated` at TOTAL/TOTAL for a program
-   built from that commit.
+3. `holdout.corpus` and `holdout.generated` at TOTAL/TOTAL for the program
+   that the broker built from that commit. The later review also checks
+   the FINAL part (section 6).
 4. Pandoc's own test suite passes: `suite.pandoc`, `suite.pandoc.inline`
    and `suite.pandoc.lua` at TOTAL/TOTAL, and `not_extracted` is empty or
    each test in it has a `decision` entry that shows with an oracle command
    that no command line shows its effect.
 5. Quarto and R Markdown give the same results: both `downstream.*` keys at
-   TOTAL/TOTAL and `renders_equal` equal to the project count.
+   TOTAL/TOTAL.
 6. `value_only` is empty in each metric; `unstable_parts_ok` equals the
-   unstable count; each excluded unit has its reason in
-   `spec/unstable.json`.
+   unstable count. Each excluded unit of each metric (unstable,
+   oracle-limit, no input, `not_extracted`) is listed by unit id with its
+   reason and its oracle evidence (3.10), in `spec/unstable.json` or in the
+   evidence of its metric.
 7. Each of the 31 exit codes has a confirmed trigger, or a `decision` entry
    that shows why no command line gives it.
 8. The licence scan of the whole tree passes (section 8).
+9. Installation: `install.units` at TOTAL/TOTAL, and `pdf.units` at
+   TOTAL/TOTAL with each of the 15 PDF engines installed as real engines
+   (`real_engines` lists 15).
 
-The goal can become stronger, never weaker; only the owner can lower it. A
-TOTAL never shrinks, except through a recorded tool correction (3.13);
+The goal can become stronger, never weaker. The build team never lowers
+it. A TOTAL never shrinks, except through a recorded tool correction (3.13);
 `perf.throughput` and `perf.memory` follow `corpus.units`. Each change of
 this file makes a rule stronger or more exact and has a `decision` entry.
+`ops milestone check M9` checks the rows. The `milestone` entry of M9 names
+the evidence of each item that the rows do not show (2, 4, 6, 7, 8, 9).
 
 ## 8. Licence rules
 
@@ -752,18 +889,30 @@ the licence of each file at the exact release; add rows to
 licence text to `third_party/licences/`, and a crate `NOTICE.md`. Prefer a
 pinned dependency to a copy.
 
-Pandoc's tests run from `env/pandoc-src/test` and
-`env/pandoc-src/pandoc-lua-engine/test` at run time. A tool may read a test
-file at run time. The repository holds only numbers and the test
-identifiers that the tool makes. Never commit a test file, a part of one or
-its expected output.
+Clean-room boundary for test extraction: Pandoc's tests run from
+`env/pandoc-src/test` and `env/pandoc-src/pandoc-lua-engine/test` at run
+time. A tool may read a file of these two folders at run time (also a
+Haskell test module); it never reads a file of `env/pandoc-src/src` or of
+another source folder. A test with no command-line equivalent goes to
+`not_extracted` with its reason. The repository holds only numbers and the
+test identifiers that the tool makes. Never commit a test file, a part of
+one or its expected output.
 
-Licence scan: `python3 -I tools/autobuild/licence_scan.py scan` before each
-push and in each gate (8-word runs against a hashed copyleft index). Replace
-copied text and scan again. A correct use (for example an error text that
-the program prints) gets a row in `tools/autobuild/licence-allow.tsv` and a
-`decision` entry. The scan misses copies under 8 words, binary files, files
-above 5 MB and minified text; each new such file gets a `decision` entry
-with origin and licence. At each milestone gate, scan the whole tree
-(`--base` at the first commit). Never try to remove old GPL commits of
-`main` (that needs a forced push).
+Licence scan (8-word runs against a hashed copyleft index):
+
+- `python3 -I tools/autobuild/licence_scan.py scan` before each push and in
+  each gate. The pre-push guard and the broker also scan the text that each
+  outgoing commit adds.
+- `python3 -I tools/autobuild/licence_scan.py scan --all` scans the whole
+  tree at `HEAD`. It marks a hit that `origin/main` already has as
+  `inherited`. Run it at each milestone gate.
+- Replace copied text and scan again. A correct use (for example an error
+  text that the program prints) gets a row in
+  `tools/autobuild/licence-allow.tsv` and a `decision` entry. The row binds
+  to the SHA-256 of the file content; a changed file needs a new review of
+  its row.
+- The scan misses copies under 8 words, binary files, files above 5 MB and
+  minified text; each new such file gets a `decision` entry with origin and
+  licence.
+- Never try to remove old GPL commits of `main` (that needs a forced push).
+  They are a BLOCKED ON OWNER entry.

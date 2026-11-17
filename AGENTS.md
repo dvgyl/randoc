@@ -34,9 +34,8 @@ When two instructions disagree, the first one in this list wins:
 
 The files `PROGRESS.md`, `docs/CONTRIBUTING.md`,
 `docs/WORKER_STANDING_ORDERS.md`, `docs/OWNER_INSTRUCTIONS.md` and
-`docs/MERGE_LOG.md` describe the process of the earlier phase on `main`
-(other roles, merges into `main`, two approvals per merge). On this branch,
-their PROCESS rules do not apply. Use them only for technical facts and
+`docs/MERGE_LOG.md` describe the process of the earlier phase on `main`.
+On this branch, their PROCESS rules do not apply. Use them only for technical facts and
 history. Their hard rules that still apply are repeated in sections 4, 13,
 14 and 15 of this file.
 
@@ -52,9 +51,10 @@ that made you do it in `plan/REVIEW_LOG.md`.
 | Reviewer | `gpt-6.2-sol` | `high` | One review round in a new session (`ops review`). |
 | Adviser model | `gpt-6.2-astra` | `xhigh` | One question when the lead is stuck (`ops ask`). Advice only; it never edits. |
 
-The `ops` commands take these ids and efforts from
-`tools/autobuild/opslib/codex.py`. A change of a model changes this table and
-that file in the same commit.
+The `ops` commands read the role, the model id and the effort from this
+table (`tools/autobuild/opslib/codex.py` parses it). A change of a model
+changes only this table. Use the effort `low` for a routine worker item:
+`ops worker run ID --effort low`.
 
 Rules for every model call:
 
@@ -67,17 +67,24 @@ Rules for every model call:
   model, the effort and the service tier. Do not start subagents in another
   way, because the other ways do not log the call and do not keep the limits
   of this file.
+- The broker is the owner's support program outside the sandbox. It runs
+  each review and each adviser question as a new top-level session with
+  read-only access. It also pushes (section 12) and builds held-out
+  candidates (section 11).
 
 ## 4. Hard limits
 
 The sandbox and the Git guard enforce these limits. Do not try to get around
 them: each attempt is a defect that the later review reverts.
 
-- **Branches.** Commit only on `gpt/build` (the lead) and `gpt/w/<ITEM>`
-  (a worker). Never change, merge into, rebase or push `main` or any other
-  branch. Push only `gpt/build`, never with force. Never rewrite pushed
-  history: undo a change with `git revert`. Never change `core.hooksPath`,
-  never use `--no-verify`, never delete or edit the hooks. The guard is in
+- **Branches.** Commit only on `gpt/build` (the lead) and `gpt/w/<ITEM>`,
+  where `<ITEM>` is an active item (a worker). Never change, merge into,
+  rebase or push `main` or any other branch. The build has no GitHub
+  credential: push only with `tools/autobuild/ops push`. The broker then
+  scans the licence of each new commit and pushes `gpt/build` to
+  `gpt/build`, fast-forward only. Never rewrite pushed history: undo a
+  change with `git revert`. Never change `core.hooksPath`, never use
+  `--no-verify`, never delete or edit the hooks. The guard is in
   `/Volumes/Extreme Pro/Randoc/env/gpt-hooks/` (its source:
   `tools/autobuild/hooks/guard.py`).
 - **Old local branches.** The owner's checkout
@@ -85,8 +92,9 @@ them: each attempt is a defect that the later review reverts.
   Their early history holds files that must never be published. Never
   merge, cherry-pick, fetch into a branch, or push a commit of them. To reuse
   their code, copy the files (`git -C "/Volumes/Extreme Pro/Randoc/randoc" show COMMIT:PATH`),
-  run the licence scan, and commit them as a new commit. The push guard
-  refuses commits that are older than this branch and not on `main`.
+  run the licence scan, and commit them as a new commit. The guard refuses
+  each outgoing commit that is not on `origin/main` and does not descend
+  from the branch base `d40a641`.
 - **Held-out data.** Never try to read `/Volumes/Extreme Pro/Randoc/holdout/`
   or to find its contents in another way (for example by logging the inputs
   that the evaluator gives to the program). The sandbox denies it. Only the
@@ -94,9 +102,11 @@ them: each attempt is a defect that the later review reverts.
   number means nothing.
 - **Clean room.** Pandoc is GPL-2.0-or-later. Never read Pandoc source code:
   not in `env/pandoc-src` (the sandbox denies its source folders) and not on
-  the web. You may read the Pandoc manual and documentation, and you run
-  Pandoc's tests from `env/pandoc-src/test` as an external check. Learn the
-  behaviour from the manual and from the oracle's output.
+  the web. You may read the Pandoc manual and documentation. A tool may read
+  the files of `env/pandoc-src/test` and
+  `env/pandoc-src/pandoc-lua-engine/test` at run time only, to run Pandoc's
+  tests as an external check; never a file of `env/pandoc-src/src`. Learn
+  the behaviour from the manual and from the oracle's output.
 - **Configuration.** Never edit `~/.codex/config.toml`,
   `~/.codex/randoc-gpt.config.toml`, `~/.codex/AGENTS.md` or anything in
   `/Volumes/Extreme Pro/Randoc/env` except the folders that the sandbox lets
@@ -114,11 +124,9 @@ Run these commands from the repository root:
     tools/autobuild/ops status
 
 `ops status` shows the counters of section 7 and the next required action.
-Do that action first. Then read the active ExecPlan (`plan/exec/M<n>.md`)
-and its `Progress` section, and continue from the first open step.
-
-If `ops status` shows no measurement row for `HEAD` or for a recent commit,
-run `tools/autobuild/ops measure` first.
+Do that action first (for example `ops measure` when the commit counter is
+at its limit). Then read the active ExecPlan (`plan/exec/M<n>.md`) and its
+`Progress` section, and continue from the first open step.
 
 ## 6. The work loop
 
@@ -128,27 +136,44 @@ scoreboard metric and an expected gain.
 1. **Choose.** Take the next item of the current milestone from
    `plan/ROADMAP.md`, or run `tools/autobuild/ops next` to get items from the
    newest failure lists. An item is short: it targets one cluster of failing
-   units with one cause (at most about 40 units), and it names those units.
-   If you cannot name the failing units, the item is too large: split it.
+   units with one cause (at most 40 units), and it names those units. If
+   you cannot name the failing units, the item is too large: split it. Split
+   a roadmap row with a gain above 40 before its first item starts
+   (`plan/ROADMAP.md` rule 4).
 2. **Register.** `ops item add M<n>-<nn> --milestone M<n> --metric KEY --target +N --title "..."`,
-   then `ops item start M<n>-<nn>`. The start records the baseline.
+   then `ops item start M<n>-<nn>`. The start records the baseline. For a
+   worker item, `ops worker start` does the start (section 9).
 3. **Change.** Make the smallest change that can move the metric. Add or
    update tests built from oracle output. Commit small steps with the item id
    at the end of the subject (section 12).
-4. **Experiment.** `ops measure --item M<n>-<nn> --quick`. One run is one
-   experiment. Look at the change of the item's metric and at the other
-   metrics of the run.
-5. **Decide.**
-   - Gain and no regression: `ops item done M<n>-<nn> --weak-spots "..."`,
-     then run the gate (`ops gate`), commit, and push `gpt/build`.
+4. **Experiment.** `ops measure --item M<n>-<nn> --quick`. An item that
+   builds a measurement uses `--suite NAME` in place of `--quick`, and runs
+   its first experiment only when its suite files exist. One run is one
+   experiment: it writes an attempt record before it starts, so a failed
+   run also counts. Look at the change of the item's metric and at the
+   other metrics of the run. A run with `--filter` and no `--item` is a
+   diagnostic, not an experiment.
+5. **Decide.** Gain: the latest row of the item's metric has a PASS above
+   the baseline and a failing count (TOTAL - PASS) not above the
+   baseline's (`plan/SPEC.md` 4.1).
+   - Gain and no regression: run the gate (`ops gate`). When it passes, run
+     `ops item done M<n>-<nn> --weak-spots "..."`, then `ops measure`,
+     commit its rows, and `ops push`. When the gate fails, the item stays
+     active: fix the cause and run the next experiment.
    - No gain: find the cause, change, and run the next experiment.
    - Third experiment with no gain: `ops item cut M<n>-<nn> --reason "..."`.
-     The command reverts the item's commits. Write what you learned in the
-     log. Do not start the same item again under a new id; choose a
-     different cause or a different item.
+     The command reverts the item's commits. `measure.py` refuses a fourth
+     experiment. Write what you learned in the log. Do not start the same
+     item again under a new id; choose a different cause or a different
+     item.
 6. **Measure the branch.** After each finished item, and at least each 10
    commits, run the full measurement on `gpt/build` (`ops measure`) and
    commit its rows.
+7. **Tool corrections.** A change of how a tool counts the units of an
+   existing metric is a tool correction. Before the first row with the new
+   rule, run `ops correction add METRIC --item ID --reason TEXT` and write a
+   `decision` entry (`plan/SPEC.md` 3.13). Older rows of METRIC then no
+   longer count.
 
 Work that does not move a metric is not allowed, with two exceptions: work
 on the measurement itself (the first milestone builds it), and a fix of a
@@ -164,12 +189,12 @@ the first three.
 
 | Counter | Limit | What happens at the limit |
 | --- | --- | --- |
-| Commits since the newest measured commit | 10 | The guard refuses the next commit until you commit new scoreboard rows. |
-| Experiments of one item with no gain | 3 | The guard refuses each commit until you cut the item. |
+| Commits since the newest measured commit | 10 | The guard refuses the next commit until you commit the rows of a full measurement (clean tree, item `-`) of `HEAD` or its parent. |
+| Experiments of one item with no gain | 3 | `measure.py` refuses the next experiment; the guard refuses each commit until you cut the item. |
 | Commit tag | an active item, or `[ops]` | An `[ops]` commit may change only measurement, plan and tool files. Product code needs an active item. |
 | Scoreboard rows of the active item's metric with no gain | 2 in a row | You are stuck (section 8). |
-| Items cut in a row in one area | 3 | Park the area: write a `weak-spot` entry, ask the adviser one strategy question, and move to the next area of the roadmap. |
-| Full `gpt/build` measurements with no gain on any metric | 3 in a row | Stop the current approach. Run `ops next` and take the largest cluster in a different area. |
+| Items cut in a row in one area | 3 | Park the area: write a `weak-spot` entry, ask the adviser one strategy question (`--reason no-next-step`), and move to the next area of the roadmap. |
+| Full `gpt/build` measurements with no gain on any metric | 3 in a row | Stop the current approach. Finish or cut the active item. Then run `ops next` and take the largest cluster in a different area. |
 | Review rounds of one change | 2 | No third round. The lead decides with the evidence. |
 | Questions to the adviser per stuck event | 1 | Decide and continue. |
 
@@ -188,38 +213,46 @@ You are stuck only in one of these four cases:
 
 Only then, ask the adviser one question:
 
-    tools/autobuild/ops ask --reason two-fixes-failed "QUESTION WITH ALL CONTEXT"
+    tools/autobuild/ops ask --reason two-fixes-failed --evidence "TEST OR COMMAND AND ITS OUTPUT" "QUESTION WITH ALL CONTEXT"
 
-The adviser does not see your session. Put the facts into the question: the
-item, the failing case, the command and its output, what you tried and why
-it failed. Take the one answer, decide, write the decision in
-`plan/ADVICE.md` (the command starts the entry), and continue. Do not ask a
-second question about the same event.
+The reasons `two-fixes-failed`, `acceptance-failed` and `no-next-step` need
+`--evidence`; `ops status` detects `two-rows-no-gain`. The adviser does not
+see your session. Put the facts into the question: the item, the failing
+case, the command and its output, what you tried and why it failed. Take the
+one answer, decide, write the decision in `plan/ADVICE.md` (the command
+starts the entry), and continue. One event is one (item, reason) pair: one
+question each.
 
 ## 9. Workers
 
 Use workers when two or more items of the current milestone are independent
 (they change different crates or files and need no result of each other).
 
-- `ops worker start ITEM` makes the worktree
-  `/Volumes/Extreme Pro/Randoc/gpt/wt/ITEM` on branch `gpt/w/ITEM` from
-  `gpt/build`. At most 4 workers. The command refuses when the drive has less
-  than 25 GB free.
+- `ops worker start ITEM` activates the queued item, records its baseline,
+  and makes the worktree `/Volumes/Extreme Pro/Randoc/gpt/wt/ITEM` on
+  branch `gpt/w/ITEM` from `gpt/build`. Do not run `ops item start` for a
+  worker item. At most 4 workers. The command refuses when the drive has
+  less than 25 GB free.
 - `ops worker run ITEM` starts the worker in the background with the prompt
-  `tools/autobuild/prompts/worker.md`. A worker does one item, measures it on
-  its branch (its rows go to `plan/scoreboard/ITEM.tsv`), and stops.
-- `ops worker merge ITEM` runs the gate on the merged tree and merges with
-  `--no-ff` only when the gate passes and the worker's rows show a gain.
-  Then it removes the worktree.
+  `tools/autobuild/prompts/worker.md` (`--effort low` for a routine item).
+  A worker does one item, measures it on its branch (its rows go to
+  `plan/scoreboard/ITEM.tsv`), and stops.
+- `ops worker merge ITEM` measures the item's metric again on the merged
+  tree, runs the gate there, and merges with `--no-ff` only when both show
+  the gain and no regression. Then it removes the worktree.
 - `ops worker drop ITEM` removes a worker that failed or was cut. Its branch
-  stays for the review; it is never merged.
-- Only the lead changes `plan/ITEMS.tsv` and `plan/scoreboard/build.tsv`,
-  and only on `gpt/build`.
+  stays for the review; it is never merged. `merge` and `drop` refuse a
+  worktree that is not registered, not on its branch, or has changes.
 
-Shared contracts (`randoc-ast`, `randoc-core`, the format registry, the
-harness, `plan/`, `tools/autobuild/`) change only on `gpt/build`, by the
-lead. A worker that needs a contract change stops and writes the request in
-its final message.
+What a worker may change: NEW files under `tools/<name>/`,
+`tools/autobuild/suites/`, `tools/autobuild/metrics.d/`,
+`tools/autobuild/tests/test_suite_*.py` and `conformance/cases/`; its own
+rows in `plan/scoreboard/ITEM.tsv`; the product code of its item outside
+the shared contracts. The lead owns every other file of `plan/` and
+`tools/autobuild/`, the shared contracts (`randoc-ast`, `randoc-core`, the
+format registry, the harness), and every change of an existing metric. The
+lead changes them only on `gpt/build`. A worker that needs such a change
+stops and writes the request in its final message.
 
 ## 10. Reviews
 
@@ -229,32 +262,38 @@ code that touches files, archives, URLs or processes; and a change that can
 break the licence position. Other changes need no review: the measurement
 and the tests are the check.
 
-- `ops review ITEM` runs one review round in a new session. At most 2
-  rounds for one change.
-- A reviewer blocks a change only with evidence: a failing test, or a command
-  whose output shows the defect. A finding without that evidence is a note,
-  not a block. The lead writes notes as `weak-spot` entries in the log.
+- `ops review ITEM` asks the broker for one review round in a new
+  read-only session. At most 2 rounds for one change. `ops` records the
+  round before the launch: a failed or malformed run also uses its round.
+  After each review and each adviser run, `ops` checks that your tree did
+  not change.
+- A reviewer blocks a change only with evidence: the name of a failing test,
+  or a command, together with the output that shows the defect. A finding
+  without that evidence is a note, not a block. The lead writes notes as
+  `weak-spot` entries in the log.
 - Fix each blocking finding, then run the second round, if needed. After the
   second round, the lead decides and writes the decision in the log.
 
 ## 11. Held-out measurement
 
 A part of the corpus and of the generated cases is held out. You never see
-it. The evaluator runs outside the sandbox and gives only totals.
+it. The evaluator runs outside the sandbox and gives only totals. The rules
+are in `plan/SPEC.md` section 6.
 
-- `ops holdout request` asks for one evaluation of the current build. The
-  evaluator allows one evaluation each 6 hours; a request inside that time
-  gets the answer `deferred`.
-- `ops holdout results` shows the newest totals (metrics `holdout.corpus` and
-  `holdout.generated`). Write them as scoreboard rows with the commit that
-  the evaluator measured.
-- Request an evaluation at each milestone gate, and at most each 6 hours.
+- `ops holdout request` names a commit only; the broker builds it. Request
+  an evaluation at each milestone gate. One evaluation each 6 hours: an
+  earlier request gets `deferred` and the next allowed time. Then continue
+  with other items, and request again after that time.
+- `ops holdout results --record` writes the newest totals of
+  `/Volumes/Extreme Pro/Randoc/holdout-results/` as the rows
+  `holdout.corpus` and `holdout.generated`. A reserved FINAL part of each
+  set is never reported to you.
 - If the visible numbers rise and the held-out numbers do not, you overfit:
   write a `weak-spot` entry and change the approach (general logic, not
   special cases).
-- If `heartbeat.json` in `/Volumes/Extreme Pro/Randoc/gpt/holdout-queue/`
-  is older than 10 minutes, the evaluator does not run. Write it under
-  BLOCKED ON OWNER and continue.
+- If `ops holdout results` says that the evaluator heartbeat is older than
+  10 minutes, the evaluator does not run. Write it under BLOCKED ON OWNER
+  and continue.
 
 ## 12. Commits, pushes and the review log
 
@@ -269,10 +308,11 @@ it. The evaluator runs outside the sandbox and gives only totals.
   with") and no tool or model names in commit messages. The guard removes or
   refuses them.
 - Push `gpt/build` after each finished item and after each milestone:
-  `git push` (the remote and the branch are preset). Before each push, run
-  `python3 -I tools/autobuild/licence_scan.py scan`; it must exit 0. If a
-  push fails, keep the local commits, write the reason in the log, and
-  continue.
+  `tools/autobuild/ops push`. Never use `git push`: the build has no GitHub
+  credential. Before each push, run
+  `python3 -I tools/autobuild/licence_scan.py scan`; it must exit 0. The
+  broker scans each commit again before it pushes. If a push fails, keep the
+  local commits, write the reason in the log, and continue.
 - Write `plan/REVIEW_LOG.md` entries with `ops log KIND "TEXT"`. Kinds:
   `decision`, `deviation` (from the plan), `shortcut`, `weak-spot`, `cut`,
   `blocked-on-owner`, `milestone`. This log is the handover to the later
@@ -308,6 +348,9 @@ without progress in an earlier project.
   it with a plain scan.
 - Tests that measure time must not fail under load: count steps, or take the
   minimum of several runs with a wide margin.
+- A tool that runs a program under test sets the limits of `plan/SPEC.md`
+  3.9. It sets the CPU limit with `sh -c 'ulimit -t N; exec PROGRAM ARGS'`,
+  which macOS enforces, and needs no `unsafe` code.
 - Some tests hold lists of known differences of another crate
   (`crates/randoc-cli/tests/writer_capabilities.rs`,
   `crates/randoc-lua/tests/replay/convert.txt`, and others named in
@@ -322,21 +365,17 @@ without progress in an earlier project.
 
 Randoc is MIT OR Apache-2.0. Pandoc is GPL-2.0-or-later.
 
-Never put into the repository, in any commit:
+Never put into the repository, in any commit, what `plan/SPEC.md`
+section 8 lists. In short:
 
-- Pandoc source code, or code ported from it, from `texmath`, from the GPL
-  `skylighting` package or from other GPL code.
-- Pandoc test files (inputs or expected results), text or examples of the
-  Pandoc manual, and examples of the CommonMark or GFM specification. Write
-  your own inputs that test the same construct.
-- Pandoc data files that have no permissive licence option (reference
-  documents, translations, `epub.css`, the CSL files, syntax definitions
-  without a permissive licence, and the others that
-  `docs/DATA_FILES_LICENCES.md` lists).
-- Stored test results that embed copyleft text: for example the output of
-  `--bash-completion`, of `-s` for `docx`, `odt`, `fodt`, `pptx` or `epub`,
-  and of `--print-default-data-file` for a non-template file. Check such a
-  result with a hash, not with stored text.
+- Pandoc source code, code ported from it, `texmath`, the GPL
+  `skylighting` package, other GPL code.
+- Pandoc test files, text or examples of the Pandoc manual, examples of the
+  CommonMark or GFM specification. Write your own inputs.
+- Pandoc data files with no permissive licence option
+  (`docs/DATA_FILES_LICENCES.md`).
+- Stored test results that embed copyleft text (for example `-s -t docx`
+  output): check such a result with a hash.
 - Any file from `/Volumes/Extreme Pro/Randoc/env/store`.
 
 Before you use third-party code: read the licence header of each file (a
@@ -348,10 +387,14 @@ BSD-3-Clause, ISC, Zlib, Unicode-3.0, CC0-1.0, Unlicense), and add a row to
 
 The scan `python3 -I tools/autobuild/licence_scan.py scan` compares the
 text that the branch adds with a hashed index of the copyleft reference
-text. Run it before each push and in each gate. Fix each hit. If a hit is
+text. Run it before each push and in each gate. The pre-push guard scans
+the text that each outgoing commit adds. At each milestone gate, run
+`licence_scan.py scan --all` (the whole tree at `HEAD`; a hit that
+`origin/main` already has is marked `inherited`). Fix each hit. If a hit is
 correct use (for example an error text that the program must print), add a
 row with the reason to `tools/autobuild/licence-allow.tsv`, and write a
-`decision` entry in the log.
+`decision` entry in the log. The row binds to the SHA-256 of the file
+content: a changed file needs a new review of its row.
 
 ## 15. Machine rules
 
@@ -366,6 +409,9 @@ times in earlier work because of memory.
   all sessions together. A command can wait for a slot; that is normal.
 - Run one heavy command (build, test, measurement) at a time in each
   session. Do not start load generators.
+- `measure.py` and `gate.py` wait for one of 2 machine-wide measurement
+  slots, and refuse to start when the drive has less than 15 GB free. Each
+  measurement run uses its own hashed copy of the programs.
 - Run each fuzz artifact, each large or slow input and each generated stress
   input through `limit-run MAX_MB SECONDS COMMAND` at its first run (the
   version in `tools/autobuild/bin` works in the sandbox). Start each large
@@ -378,7 +424,7 @@ times in earlier work because of memory.
   `._` names in code that lists folders.
 - A full gate run takes 20 to 30 minutes, and more when the machine has
   load. Do not stop a gate run because it is slow.
-- Network access is on for `cargo`, `git push` and documentation. Do not
+- Network access is on for `cargo` and documentation. Do not
   download Pandoc source code.
 
 ## 16. Milestones and ExecPlans
@@ -388,14 +434,16 @@ gate in `plan/milestones.toml`; `ops milestone check M<n>` verifies it. The
 active milestone is the milestone with the lowest number whose gate does
 not pass. Take items of the active milestone first. A worker may take an
 item of a later milestone only when that milestone's entry condition holds
-and the active milestone has no independent item left. A milestone is done
-only when its gate passes and a held-out result for that commit exists. A
-gate threshold may rise; it never falls.
+and the active milestone has no independent item left. When each remaining
+requirement of the active milestone is BLOCKED ON OWNER, items of the next
+milestone may start; its entry condition counts those requirements as met.
+A milestone is done only when its gate passes on one candidate run
+(`plan/SPEC.md` 4.1) and a held-out result exists for that commit, or for a
+later commit whose diff from it changes only `plan/`. A gate threshold may
+rise; it never falls.
 
 An ExecPlan is a self-contained design and progress document for one
-milestone. A new session must be able to continue the work from the
-ExecPlan and the working tree alone. `plan/PLANS.md` gives the rules and the
-form. The ExecPlan of the first milestone is `plan/exec/M1.md`. At the start
+milestone. `plan/PLANS.md` gives the rules and the form. The ExecPlan of the first milestone is `plan/exec/M1.md`. At the start
 of each later milestone, the lead writes `plan/exec/M<n>.md` in the same form
 before the first item.
 
@@ -409,5 +457,6 @@ Work without asking for confirmation. Nobody answers questions during the
 run. Make reasonable, reversible assumptions, record each one as a
 `decision` entry, and continue. If only the owner can remove a blocker,
 write it with `ops blocked` and continue with other work. When all work of
-the current milestone is blocked, continue with the next milestone that is
-not blocked. The run ends only when the final goal of `plan/SPEC.md` holds.
+the current milestone is blocked, continue with the next milestone
+(section 16). The run ends only when the final goal of `plan/SPEC.md`
+holds. The build team never lowers that goal.
