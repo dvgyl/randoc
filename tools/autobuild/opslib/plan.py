@@ -189,31 +189,27 @@ def progress(ctx: Context, item: Item, rows: list[dict[str, str]]) -> Progress:
 class Run:
     utc: str
     commit: str
-    item: str
     gained: tuple[str, ...]
 
 
 def build_runs(rows: list[dict[str, str]]) -> list[Run]:
     """The measurement runs of gpt/build, oldest first, each with the metrics that rose."""
-    best: dict[tuple[str, int], int] = {}
-    seen: set[str] = set()
+    best: dict[str, tuple[int, int]] = {}
     runs: dict[tuple[str, str], Run] = {}
     for row in rows:
         if row["stream"] != "build":
             continue
         key = (row.get("utc", ""), row.get("commit", ""))
-        run = runs.setdefault(key, Run(key[0], key[1], row.get("item", "-") or "-", ()))
+        run = runs.setdefault(key, Run(key[0], key[1], ()))
         value, total = number(row, "pass"), number(row, "total")
-        if value is None or total is None:
+        if value is None or total is None or total == 0 or not 0 <= value <= total:
             continue
-        slot = (row.get("metric", ""), total)
-        # The first row of a metric with a TOTAL above 0 is a gain (ROADMAP rule 7).
-        new_metric = slot[0] not in seen and total > 0
-        seen.add(slot[0])
-        if new_metric or (slot in best and value > best[slot]):
-            run = runs[key]
-            runs[key] = replace(run, gained=run.gained + (slot[0],))
-        best[slot] = max(value, best.get(slot, value))
+        metric = row.get("metric", "")
+        failing = total - value
+        before = best.get(metric)
+        if before is None or (value > before[0] and failing <= before[1]):
+            runs[key] = replace(run, gained=run.gained + (metric,))
+            best[metric] = value, failing
     return list(runs.values())
 
 

@@ -139,3 +139,11 @@ After the second M1-01 review, the source scan handles Rust line comments and ne
 Item M1-01 done. Gain on gate.steps: the metric now has rows (best PASS 15) (baseline 0/0). Gate: 20261118T081646Z-20ea0e7db8eb.
 
 Weak spots: The harness uses system Perl on Unix and relies on the machine watchdog for memory. It still needs the 3,000 MB process group limit from plan/SPEC.md section 3.9. The source scan checks direct oracle references and launches with literal executable names. Dynamic executable names need a separate check.
+
+## 2026-11-18T09:41:17Z deviation M1-02 50281ad0008a
+
+I started M1-02 before I read the action from ops status after the M1-01 push. AGENTS.md section 5 puts that action first. I ran ops next before changing M1-02. It listed product corpus clusters. The status counter had compared the full run with the preceding item experiment and missed the first full gate score. I will check the counter against clean, completed full runs before I act on its advice.
+
+## 2026-11-18T09:43:33Z decision M1-02 50281ad0008a
+
+The AGENTS.md section 7 counter now compares only clean, completed full build runs, as validated by the Git guard. An item experiment cannot become the baseline for that counter. A full run gains on a metric when it establishes the metric or raises PASS without adding failures. No scoreboard row or metric rule changed. The full M1-01 run now resets the streak, and ops status directs the lead to continue M1-02.

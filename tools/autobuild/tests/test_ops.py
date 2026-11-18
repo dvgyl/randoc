@@ -447,6 +447,29 @@ class OpsTest(unittest.TestCase):
 
     # -- held-out, next, milestones, notes, pass-through ---------------------------
 
+    def test_an_item_experiment_does_not_hide_the_next_full_runs_gain(self) -> None:
+        repo = self.repo
+        head = repo.head()
+        self.rows(repo.full_run("2026-11-17T09:00:00Z", head, {"harness.units": (5, 9)}),
+                  row("2026-11-17T10:00:00Z", head, "M1-01", "harness.units", 6, 9),
+                  repo.full_run("2026-11-17T11:00:00Z", head, {"harness.units": (6, 9)}))
+        status = self.ok("status")
+        self.assertIn("full gpt/build measurements with no gain in a row: 0 (limit 3)", status)
+
+    def test_the_full_run_counter_compares_completed_full_runs(self) -> None:
+        repo = self.repo
+        head = repo.head()
+        self.rows(repo.full_run("2026-11-17T09:00:00Z", head, {"harness.units": (5, 9)}),
+                  row("2026-11-17T10:00:00Z", head, "M1-01", "harness.units", 6, 10),
+                  repo.full_run("2026-11-17T11:00:00Z", head, {"harness.units": (6, 10)}),
+                  repo.full_run("2026-11-17T12:00:00Z", head, {"harness.units": (6, 10)}),
+                  repo.full_run("2026-11-17T13:00:00Z", head, {"harness.units": (7, 12)}),
+                  repo.full_run("2026-11-17T14:00:00Z", head, {"harness.units": (7, 10)}, suites=()),
+                  row("2026-11-17T15:00:00Z", head, "-", "holdout.corpus", 1, 2))
+        status = self.ok("status")
+        self.assertIn("full gpt/build measurements with no gain in a row: 2 (limit 3)", status)
+        self.assertNotIn("stop this approach", status)
+
     def test_holdout_request_and_results(self) -> None:
         fake = fake_broker(self, self.repo, lambda kind, data: None)
         self.ok("holdout", "request")

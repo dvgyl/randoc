@@ -43,7 +43,11 @@ class Facts:
 def gather(ctx: Context) -> Facts:
     rows = read_rows(ctx)
     items = ItemsTable.load(ctx.items_file).items()
-    runs = [r for r in build_runs(rows) if r.item == "-"]
+    full = ctx.guard.full_runs([r for r in rows if r["stream"] == "build"])
+    cut = experiments.cutoffs(corrections.load(ctx))
+    full_rows = [row for _, group in sorted(full.items()) if ctx.guard.completed_run(group)
+                 for row in group if experiments.counts(row, cut)]
+    runs = build_runs(full_rows)
     no_gain = 0
     for run in reversed(runs):
         if run.gained:
@@ -132,7 +136,8 @@ def status(ctx: Context, args: argparse.Namespace) -> int:
     if f.plan_dirty:
         print(f"plan files not committed: {', '.join(f.plan_dirty)}")
     rows = read_rows(ctx)
-    runs = build_runs(rows)
+    cut = experiments.cutoffs(corrections.load(ctx))
+    runs = build_runs([r for r in rows if experiments.counts(r, cut)])
     gains = [r for r in runs if r.gained]
     build = ctx.git.rev(BUILD_BRANCH)
     if gains and build and ctx.git.rev(gains[-1].commit) and ctx.git.is_ancestor(gains[-1].commit, build):
