@@ -512,10 +512,16 @@
       "stderr": "Error parsing p.yaml:\np.yaml:3:20: number-offset[1]: parsing Int failed, expected Number, but encountered String\n  |\n3 | number-offset: [1, a]\n  |                    ^\n"
     },
     "defaults-output-file#cmd": {
-      "key": "95e9d8b82d25fd2d",
+      "key": "583ba596a6856667",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.json": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "defaults-output-file-empty#cmd": {
       "key": "9e1a287820e22b42",

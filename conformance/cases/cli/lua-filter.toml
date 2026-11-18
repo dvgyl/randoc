@@ -358,6 +358,7 @@ covers = ["opt:lua-filter"]
 
 [[case]]
 id = "lua-print"
+capture_files = {}
 cmd = ["-f", "json", "-t", "native", "-o", "out.txt", "-L", "w.lua"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
 covers = ["opt:lua-filter"]

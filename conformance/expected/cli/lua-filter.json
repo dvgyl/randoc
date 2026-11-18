@@ -170,10 +170,16 @@
       "stderr": ""
     },
     "lua-print#cmd": {
-      "key": "3e230c6143d978bd",
+      "key": "d477a9c73f2881d7",
       "exit": 0,
       "stdout": "printed\n",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.txt": {
+          "kind": "file",
+          "sha256": "8d07fe737ba0112417f797b45ca67e74231cc4936d9f99966bbbd9a674b29b20"
+        }
+      }
     },
     "lua-run-time-error#cmd": {
       "key": "3da8e9da63b1647c",

@@ -111,6 +111,7 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Hea
 
 [[case]]
 id = "output-missing-directory"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-o", "nosuchdir/out.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
@@ -140,30 +141,35 @@ covers = ["opt:eol"]
 
 [[case]]
 id = "guess-output-md"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.md"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-html"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.html"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-json"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-docx"
+capture_files = {zip = ["out.docx"]}
 cmd = ["-f", "json", "-o", "out.docx"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-1"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.1"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
@@ -182,24 +188,28 @@ covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-xyz"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.xyz"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-md-gz"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.md.gz"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-none"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "guess-output-json-upper"
+capture_files = {}
 cmd = ["-f", "json", "-o", "out.JSON"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:output"]
@@ -217,6 +227,7 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "guess-output-explicit-to-wins"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-o", "out.html"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
 

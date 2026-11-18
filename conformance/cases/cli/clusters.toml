@@ -802,201 +802,241 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-of"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-of"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-offalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-offalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-or"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-or"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-orfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-orfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ot"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-ot"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-otfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-otfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ow"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-ow"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-owfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-owfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oo"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oo"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oofalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oofalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-om_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oM"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-om_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oMfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-od"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-od"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-odfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-odfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-os"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-os"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-osfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-osfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ov_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oV"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ov_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oVfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-on_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oN"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-on_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oNfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oh_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oH"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oh_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oHfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ob_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oB"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ob_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oBfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oa_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oA"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oa_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oAfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-op"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-op"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-opfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-opfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oi"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oi"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oifalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oifalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ot_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oT"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ot_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oTfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oc"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oc"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ocfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-ocfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oc_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oC"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oc_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oCfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-od_"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oD"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-od_false"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oDfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-oh"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-oh"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "cluster-ohfalse"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-ohfalse"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 

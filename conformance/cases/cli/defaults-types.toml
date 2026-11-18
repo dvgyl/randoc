@@ -242,11 +242,13 @@ files = { "d.yaml" = "{\"writer\":{\"a\":\"b\"}}\n", "a.json" = "{\"pandoc-api-v
 
 [[case]]
 id = "output-file-string-yaml"
+capture_files = {}
 cmd = ["-d", "d.yaml", "-f", "json", "-t", "json", "a.json"]
 files = { "d.yaml" = "output-file: x\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "output-file-string-json"
+capture_files = {}
 cmd = ["-d", "d.yaml", "-f", "json", "-t", "json", "a.json"]
 files = { "d.yaml" = "{\"output-file\":\"x\"}\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 

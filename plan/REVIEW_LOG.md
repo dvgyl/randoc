@@ -185,3 +185,7 @@ The snapshot program checks the ZIP member count after the Python library reads 
 ## 2026-11-18T12:44:54Z decision M1-03 1fbc710a7055
 
 The files suite makes DOCX, ODT, EPUB and PPTX inputs in the evidence folder from one authored document. Each oracle extraction wrote PNG, JPEG and SVG file content. All four extraction results matched a second oracle run. Randoc failed all four probes in the diagnostic run.
+
+## 2026-11-18T12:47:07Z decision M1-03 324c5d358a0f
+
+A diagnostic checked 115 earlier command cases with output, extraction or log options and defaults. Pandoc wrote files in 76 cases. File capture keeps the prior verdicts of all 76. The older PDF case wrote no file and reported a different temporary path in each error. M1-20 measures PDF under plan/SPEC.md 3.6.

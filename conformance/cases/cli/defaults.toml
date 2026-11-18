@@ -246,6 +246,7 @@ files = { "x.yaml" = "from: json\nto: json\noutput-file:\n" }
 
 [[case]]
 id = "defaults-output-file"
+capture_files = {}
 cmd = ["-d", "x.yaml"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 files = { "x.yaml" = "from: json\nto: json\noutput-file: out.json\n" }

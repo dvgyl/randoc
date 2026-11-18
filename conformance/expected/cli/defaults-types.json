@@ -4238,16 +4238,28 @@
       "stderr": "Error parsing d.yaml:\nd.yaml:1:14: output-file: parsing Text failed, expected String, but encountered Number\n  |\n1 | output-file: 3\n  |              ^\n"
     },
     "output-file-string-json#cmd": {
-      "key": "998d3b7ecd2e1b70",
+      "key": "95cb66e4c6826116",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "x": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "output-file-string-yaml#cmd": {
-      "key": "4f4d23b811dec2a7",
+      "key": "457b9be2bcd1fb3d",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "x": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "pdf-engine-bool-json#cmd": {
       "key": "9c75ba6699295db1",

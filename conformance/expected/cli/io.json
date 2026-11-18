@@ -128,10 +128,16 @@
       "stderr": "[WARNING] Could not deduce format from file extension .xyz\n  Defaulting to markdown\n"
     },
     "guess-output-1#cmd": {
-      "key": "bb020d9ae58915b0",
+      "key": "99670dc33c547a56",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.1": {
+          "kind": "file",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        }
+      }
     },
     "guess-output-csv#cmd": {
       "key": "439e03ee098e9acf",
@@ -140,52 +146,101 @@
       "stderr": "Unknown output format 'csv'\n"
     },
     "guess-output-docx#cmd": {
-      "key": "77b37a0df28894da",
+      "key": "bcf655236cb00294",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.docx": {
+          "kind": "zip",
+          "sha256": "49473bdbbf668e5d4704daa14902ae57906117c096708149adc1ad5c2399603c",
+          "first_stored_mimetype": false
+        }
+      }
     },
     "guess-output-explicit-to-wins#cmd": {
-      "key": "a8338b33ddab3f36",
+      "key": "426395cd36dd80e0",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.html": {
+          "kind": "file",
+          "sha256": "c0c763125d800362d0a549dc00ca08f9a2221903f4c6ce738835ce42fb391920"
+        }
+      }
     },
     "guess-output-html#cmd": {
-      "key": "7d04dbb437a38613",
+      "key": "10148fdd04662369",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.html": {
+          "kind": "file",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        }
+      }
     },
     "guess-output-json#cmd": {
-      "key": "cdfb0938f1d9966a",
+      "key": "66cfa41dbd5e72b4",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.json": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "guess-output-json-upper#cmd": {
-      "key": "02d5b6fbe612992a",
+      "key": "2a43b2aff9bdea74",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.JSON": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "guess-output-md#cmd": {
-      "key": "9871dc8bc4718685",
+      "key": "8c25161f3afff5df",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.md": {
+          "kind": "file",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        }
+      }
     },
     "guess-output-md-gz#cmd": {
-      "key": "f2de11da6c6ae84d",
+      "key": "f4d12f58c31ac9c7",
       "exit": 0,
       "stdout": "",
-      "stderr": "[WARNING] Could not deduce format from file extension .gz\n  Defaulting to html\n"
+      "stderr": "[WARNING] Could not deduce format from file extension .gz\n  Defaulting to html\n",
+      "file_changes": {
+        "out.md.gz": {
+          "kind": "file",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        }
+      }
     },
     "guess-output-none#cmd": {
-      "key": "40d128429c8014ad",
+      "key": "a8f03f4df56481e7",
       "exit": 0,
       "stdout": "",
-      "stderr": "[WARNING] Could not deduce format from file extension \n  Defaulting to html\n"
+      "stderr": "[WARNING] Could not deduce format from file extension \n  Defaulting to html\n",
+      "file_changes": {
+        "out": {
+          "kind": "file",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        }
+      }
     },
     "guess-output-pdf#cmd": {
       "key": "9a32dec3bd44b7ad",
@@ -218,10 +273,16 @@
       "stderr": "Unknown output format 'xlsx'\n"
     },
     "guess-output-xyz#cmd": {
-      "key": "d0c9960939abdc5a",
+      "key": "8a3297b8ed052f84",
       "exit": 0,
       "stdout": "",
-      "stderr": "[WARNING] Could not deduce format from file extension .xyz\n  Defaulting to html\n"
+      "stderr": "[WARNING] Could not deduce format from file extension .xyz\n  Defaulting to html\n",
+      "file_changes": {
+        "out.xyz": {
+          "kind": "file",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        }
+      }
     },
     "missing-file#cmd": {
       "key": "26634fac2cf3daa6",
@@ -254,10 +315,19 @@
       "stderr": ""
     },
     "output-missing-directory#cmd": {
-      "key": "61a4aa969dd45b97",
+      "key": "1c057c37e715fe0d",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "nosuchdir": {
+          "kind": "directory"
+        },
+        "nosuchdir/out.json": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "stdin#cmd": {
       "key": "a29e5ad074a96407",
