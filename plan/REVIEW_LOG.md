@@ -133,3 +133,9 @@ M1-01 review round 1 found a raw string form that the source scan missed. The sc
 ## 2026-11-18T07:38:44Z decision M1-01 89edce20db9d
 
 After the second M1-01 review, the source scan handles Rust line comments and nested block comments. The launcher uses system Perl after sh sets the CPU limit. It drops the shell variables and keeps argument zero and process status. The full environment assertion and all 44 harness tests passed. AGENTS.md section 10 limits a change to two review rounds. The regression tests and the full gate will check these fixes.
+
+## 2026-11-18T08:56:50Z weak-spot M1-01 20ea0e7db8eb
+
+Item M1-01 done. Gain on gate.steps: the metric now has rows (best PASS 15) (baseline 0/0). Gate: 20261118T081646Z-20ea0e7db8eb.
+
+Weak spots: The harness uses system Perl on Unix and relies on the machine watchdog for memory. It still needs the 3,000 MB process group limit from plan/SPEC.md section 3.9. The source scan checks direct oracle references and launches with literal executable names. Dynamic executable names need a separate check.
