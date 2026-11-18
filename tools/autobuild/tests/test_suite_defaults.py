@@ -71,6 +71,14 @@ sample-key: true
         self.assertEqual(defaults.legacy_groups(case, before + file + after),
                          {"wrap", "feature/option-order"})
 
+    def test_an_equal_pair_groups_the_key_without_proving_the_feature(self):
+        before = {"key": "a", "exit": 0, "stdout": "<p>A</p>", "stderr": ""}
+        after = {**before, "key": "b"}
+        results = {"wrap/valid-1#cmd": before, "wrap/valid-2#cmd": after}
+        self.assertFalse(defaults.sensitive_pair("wrap", results))
+        after["stdout"] = "<p>B</p>"
+        self.assertTrue(defaults.sensitive_pair("wrap", results))
+
     def test_one_failing_case_fails_every_key_that_uses_it(self):
         statuses = {"probe": "pass", "legacy": "fail", "slow": "no_result", "unused": "skipped"}
         members = {"probe": {"wrap"}, "legacy": {"wrap", "to"}, "slow": {"to"}, "unused": {"wrap"}}

@@ -26,13 +26,41 @@ HIGHLIGHT_DOC = "```python\nprint(7)\n```\n"
 HIGHLIGHT_KEYS = {"highlight-style", "syntax-definition", "syntax-definitions", "syntax-highlighting"}
 MEDIA_DOC = "![Part layout](layout.svg)\n"
 MEDIA_FILE = '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="4"/></svg>\n'
+HEADING_DOC = "# Check\n\n## Cover\n\n### Seal\n\n#### Edge\n\nFit the cover.\n"
+LINK_DOC = "# Parts\n\n[Part data](https://example.org/parts).\n\n# Test\n\n[Results](https://example.org/results).\n"
+TABLE_DOC = "| Part | Count |\n|------|------:|\n| Seal | 2     |\n\n: Parts list\n"
+CODE_DOC = "```\npart\tcount\nseal\t2\n```\n"
+DOCUMENTS = {
+    **dict.fromkeys(HIGHLIGHT_KEYS, HIGHLIGHT_DOC),
+    **dict.fromkeys({"table-of-contents", "toc", "toc-depth", "number-offset"}, HEADING_DOC),
+    **dict.fromkeys({"default-image-extension", "dpi"}, "![Part layout](layout){width=96px}\n"),
+    **dict.fromkeys({"embed-resources", "extract-media", "figure-caption-position",
+                     "lof", "list-of-figures"}, MEDIA_DOC),
+    **dict.fromkeys({"list-of-tables", "list-tables", "lot", "table-caption-position"}, TABLE_DOC),
+    **dict.fromkeys({"reference-links", "reference-location", "link-images"}, LINK_DOC),
+    **dict.fromkeys({"preserve-tabs", "tab-stop", "indented-code-classes"}, CODE_DOC),
+    "ascii": "The label reads Ångström.\n",
+    "email-obfuscation": "Contact <mira@example.org>.\n",
+    "html-q-tags": 'The label reads "service".\n',
+    "strip-comments": "Open the cover.\n\n<!-- Internal note -->\n\nCheck the seal.\n",
+}
+STANDALONE = {
+    "css", "defaults", "filters", "list-of-figures", "list-of-tables", "list-tables", "lof", "lot",
+    "metadata", "metadata-file", "metadata-files", "number-offset", "table-of-contents",
+    "toc", "toc-depth", "variables",
+}
+TARGETS = {
+    **dict.fromkeys({"dpi", "lof", "lot", "list-of-figures", "list-of-tables", "list-tables"}, "latex"),
+    **dict.fromkeys({"reference-links", "reference-location", "markdown-headings"}, "markdown"),
+    "columns": "plain",
+}
 PAIR = ("alpha", "beta")
 
 
 def make_runner(measure):
     def parse(evidence, _log):
         groups = measure.read_json(evidence / REPORT)
-        units = [measure.Unit(key, measure.FAIL if row["failures"] else measure.PASS,
+        units = [measure.Unit(key, measure.PASS if row["sensitive"] and not row["failures"] else measure.FAIL,
                               METRICS, row["no_result"]) for key, row in groups.items()]
         return measure.Counts.of(units, METRICS)
 
@@ -152,7 +180,7 @@ def probe(key, value, positive=False):
     files = {"probe.cfg": json.dumps({key: value})}
     if positive and key in {"data-dir", "resource-path"}:
         files["inputs/marker.txt"] = "Quartz\n"
-    if positive and key == "extract-media":
+    if positive and key in {"embed-resources", "extract-media"}:
         files["layout.svg"] = MEDIA_FILE
     if positive and key in (FILE_OPTIONS.keys() | {
         "defaults", "epub-fonts", "filters", "input-files", "input-file",
@@ -165,7 +193,15 @@ def probe(key, value, positive=False):
     if key not in {"from", "reader"}:
         cmd += ["-f", "markdown"]
     if key not in {"to", "writer"}:
-        cmd += ["-t", "html"]
+        cmd += ["-t", TARGETS.get(key, "html")]
+    if key in STANDALONE:
+        cmd.append("-s")
+    if key == "number-offset":
+        cmd.append("--number-sections")
+    if key == "reference-location":
+        cmd.append("--reference-links")
+    if key == "toc-depth":
+        cmd.append("--toc")
     return cmd, files
 
 
@@ -236,14 +272,12 @@ def generated_cases(candidates):
 def write_cases(root, cases):
     path = root / f"conformance/cases/{GENERATED}.toml"
     path.parent.mkdir(parents=True)
-    documents = dict.fromkeys(HIGHLIGHT_KEYS, HIGHLIGHT_DOC)
-    documents["extract-media"] = MEDIA_DOC
     with path.open("w", encoding="utf-8") as stream:
         stream.write("capture_files = {}\n")
         for ident, (cmd, files) in cases.items():
             fields = ", ".join(f"{json.dumps(name)} = {json.dumps(text)}"
                                for name, text in files.items())
-            document = documents.get(ident.split("/")[0], DOC)
+            document = DOCUMENTS.get(ident.split("/")[0], DOC)
             stream.write(f"\n[[case]]\nid = {json.dumps(ident)}\ncmd = {json.dumps(cmd)}\n"
                          f"input = {json.dumps(document)}\nfiles = {{ {fields} }}\n")
 
@@ -263,6 +297,12 @@ def accepted_keys(expected, candidates):
             if result is None or result["exit"] != exit_code:
                 raise ValueError(f"Oracle result for {ident} must have exit code {exit_code}: {result}")
     return keys
+
+
+def sensitive_pair(group, expected):
+    first, second = ({key: value for key, value in expected[f"{group}/valid-{index}#cmd"].items()
+                      if key != "key"} for index in (1, 2))
+    return first != second
 
 
 def defaults_args(args):
@@ -433,7 +473,8 @@ def measure_defaults(root, args):
     time.sleep(1)
     subprocess.run(harness + ["verify-oracle", "--all"] + oracle, check=True)
     expected = generated / f"conformance/expected/{GENERATED}.json"
-    keys = accepted_keys(json.loads(expected.read_text(encoding="utf-8"))["units"], candidates)
+    oracle_units = json.loads(expected.read_text(encoding="utf-8"))["units"]
+    keys = accepted_keys(oracle_units, candidates)
     groups = keys | {f"feature/{feature}" for feature in FEATURES}
     if args.filter is not None:
         groups = {group for group in groups if args.filter in group}
@@ -465,6 +506,8 @@ def measure_defaults(root, args):
             raise ValueError(f"The harness report {report} is missing selected defaults cases.")
 
     report = group_results(groups, statuses, members)
+    for group, result in report.items():
+        result["sensitive"] = sensitive_pair(group, oracle_units)
     (evidence / REPORT).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
 
