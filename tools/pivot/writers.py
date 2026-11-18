@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import subprocess
+import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
@@ -15,7 +16,8 @@ from pathlib import Path
 from generate import ROOT, generate, json_bytes, oracle_accepts
 from normalize import RULE_ID, notebook_rule
 from observe import NoResult, run
-from reference import cache_key, cache_version, classify, compare, open_cache, read_reference, write_references
+from reference import (Reference, cache_key, cache_version, classify, compare, open_cache,
+                       read_reference, read_status, verify, write_references)
 
 
 @dataclass(frozen=True)
@@ -37,21 +39,50 @@ def attempt(binary, args, unit, oracle=False):
         return str(error)
 
 
-def references(database, units, oracle, args, pool, rule):
-    records = {unit.key: read_reference(database, unit.key) for unit in units}
-    missing = [unit for unit in units if records[unit.key] is None]
-    if missing:
-        def capture(unit):
-            return attempt(oracle, args, unit, oracle=True)
+def batches(items, size):
+    for start in range(0, len(items), size):
+        yield items[start:start + size]
 
-        first = list(pool.map(capture, missing))
+
+def first_run(result):
+    if isinstance(result, str):
+        return Reference("oracle_limit", None, reason=result)
+    return Reference("first", result)
+
+
+def record_pairs(database, units, capture, fmt, pool, rule):
+    with tempfile.TemporaryDirectory(prefix="randoc-oracle-pair-") as folder, \
+         closing(open_cache(Path(folder) / "first.sqlite")) as first:
+        for group in batches(units, 2):
+            write_references(first, [(unit.key, first_run(result))
+                                     for unit, result in zip(group, pool.map(capture, group))])
         time.sleep(1)
-        paired = list(pool.map(capture, missing))
-        fmt = args[-1]
-        fresh = [(unit.key, classify(fmt, a, b, rule)) for unit, a, b in zip(missing, first, paired)]
-        write_references(database, fresh)
-        records.update(fresh)
-    return records
+        for group in batches(units, 2):
+            fresh = []
+            for unit, second in zip(group, pool.map(capture, group)):
+                saved = read_reference(first, unit.key)
+                initial = saved.reason if saved.first is None else saved.first
+                fresh.append((unit.key, classify(fmt, initial, second, rule)))
+            write_references(database, fresh)
+
+
+def references(database, units, oracle, args, pool, rule, verify_saved=False):
+    def capture(unit):
+        return attempt(oracle, args, unit, oracle=True)
+
+    fmt = args[-1]
+    statuses = {unit.key: read_status(database, unit.key) for unit in units}
+    pending = [unit for unit in units if statuses[unit.key] in (None, "oracle_limit")]
+    if pending:
+        record_pairs(database, pending, capture, fmt, pool, rule)
+    if verify_saved:
+        saved = [unit for unit in units if statuses[unit.key] in ("stable", "unstable")]
+        for group in batches(saved, 2):
+            originals = {unit.key: read_reference(database, unit.key) for unit in group}
+            ready = [unit for unit in group if originals[unit.key].first is not None]
+            checked = [(unit.key, verify(fmt, originals[unit.key], result, rule))
+                       for unit, result in zip(ready, pool.map(capture, ready))]
+            write_references(database, checked, refresh=True)
 
 
 def verdict(unit, fmt, reference, actual, rule):
@@ -93,18 +124,20 @@ def measure(args, writers, trees, database, version, rule):
                     units.append(Unit(name, data, cache_key(version, command, data)))
             if not units:
                 continue
-            expected = references(database, units, args.oracle, command, oracle_pool, rule)
-            ready = [unit for unit in units if expected[unit.key].first is not None]
+            references(database, units, args.oracle, command, oracle_pool, rule, args.verify_oracle)
 
             def capture(unit):
                 return attempt(args.randoc, command, unit)
 
-            actual = dict(zip((unit.name for unit in ready), randoc_pool.map(capture, ready)))
-            for unit in units:
-                value = actual.get(unit.name)
-                if isinstance(value, str):
-                    retries.append((len(rows), unit, command))
-                rows.append(verdict(unit, fmt, expected[unit.key], value, rule))
+            for group in batches(units, 4):
+                expected = {unit.key: read_reference(database, unit.key) for unit in group}
+                ready = [unit for unit in group if expected[unit.key].first is not None]
+                actual = dict(zip((unit.name for unit in ready), randoc_pool.map(capture, ready)))
+                for unit in group:
+                    value = actual.get(unit.name)
+                    if isinstance(value, str):
+                        retries.append((len(rows), unit, command))
+                    rows.append(verdict(unit, fmt, expected[unit.key], value, rule))
             print(f"{fmt}: checked {len(units)} trees", flush=True)
     for index, unit, command in retries:
         recorded = read_reference(database, unit.key)
@@ -134,6 +167,8 @@ def main():
     parser.add_argument("--harness", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
     parser.add_argument("--filter")
+    parser.add_argument("--verify-oracle", action="store_true",
+                        help="run the oracle again for each saved result")
     args = parser.parse_args()
     try:
         writers, trees, version = prepare(args)

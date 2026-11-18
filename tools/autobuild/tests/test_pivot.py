@@ -1,13 +1,16 @@
 import hashlib
 import io
 import json
+import os
 import re
 import sys
 import tempfile
 import unittest
 import zipfile
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools/pivot"))
@@ -15,6 +18,7 @@ import generate as pivot
 from normalize import notebook_output, notebook_positions, notebook_rule
 from observe import NoResult, Observation, differences, run
 from reference import cache_key, classify, open_cache, read_reference, write_references
+from writers import Unit, references
 
 
 def measure_tree(value):
@@ -97,6 +101,18 @@ class ObservationTests(unittest.TestCase):
             with self.assertRaises(NoResult):
                 run(Path(folder) / "missing", [], b"")
 
+    def test_both_programs_get_the_specified_environment(self):
+        expected = {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin", "LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8",
+            "TZ": "UTC", "SOURCE_DATE_EPOCH": "1700000000", "GHCRTS": "-M3g",
+            "RANDOC_DATA_DIR": str(Path(os.environ.get("RANDOC_GPT", ROOT.parent)) / "datapack"),
+        }
+        for oracle in (False, True):
+            result = run("/usr/bin/env", [], b"", oracle=oracle)
+            observed = dict(line.split("=", 1) for line in result.stdout.decode().splitlines())
+            self.assertTrue(observed.pop("HOME").endswith("/.home"))
+            self.assertEqual(observed, expected)
+
     def test_zip_ignores_directory_entries_and_checks_the_first_entry(self):
         def output(names, method):
             stream = io.BytesIO()
@@ -160,6 +176,30 @@ class ReferenceTests(unittest.TestCase):
                 write_references(database, [(key, unstable)])
                 write_references(database, [(key, stable)])
                 self.assertEqual(read_reference(database, key), unstable)
+            finally:
+                database.close()
+
+    def test_references_retry_a_limit_and_recheck_saved_results(self):
+        good = Observation(0, b"first", b"", {})
+        changed = Observation(0, b"later", b"", {})
+        unit = Unit("one", b"data", b"key")
+        cache_args = ["-f", "json", "-t", "html"]
+        limited = classify("html", "oracle timeout", good, None)
+        with tempfile.TemporaryDirectory() as folder, ThreadPoolExecutor(max_workers=2) as pool:
+            database = open_cache(Path(folder) / "cache.sqlite")
+            try:
+                write_references(database, [(unit.key, limited)])
+                with patch("writers.attempt", side_effect=[good, good, changed]) as oracle, \
+                     patch("writers.time.sleep"):
+                    references(database, [unit], "oracle", cache_args, pool, None)
+                    self.assertEqual(oracle.call_count, 2)
+                    self.assertEqual(read_reference(database, unit.key).status, "stable")
+                    references(database, [unit], "oracle", cache_args, pool, None, verify_saved=True)
+                    updated = read_reference(database, unit.key)
+                    self.assertEqual(oracle.call_count, 3)
+                    self.assertEqual(updated.status, "unstable")
+                    self.assertEqual(updated.unstable_parts, ("stdout",))
+                    self.assertEqual(updated.first, good)
             finally:
                 database.close()
 

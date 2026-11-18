@@ -30,3 +30,8 @@ with two runs in separate work folders. The cache at
 folder holds the result of each comparison and the SHA-256 of its oracle
 output. The score for each writer uses `fmt.write.F`, where `F` is the
 format name.
+
+At each milestone, run the writer tool with `--verify-oracle` to check
+each saved oracle result in a new work folder. A later difference keeps
+the original result and records the parts that changed. An oracle run that
+hit a limit gets another pair of runs on the next measurement.

@@ -5,6 +5,23 @@ CAPABILITIES = "caps.writers"
 PIVOT_SIZE = 400
 
 
+def exclusions(measure, report):
+    path = measure.ROOT / "spec/unstable.json"
+    known = {}
+    for entry in measure.read_json(path)["units"]:
+        if entry["suite"] != "writers":
+            continue
+        unit = entry["id"]
+        if unit in known or not entry.get("reason") or not entry.get("evidence"):
+            raise measure.ToolError(f"writers: record one reason and evidence for {unit} in spec/unstable.json")
+        known[unit] = (entry["status"], entry.get("unstable_parts", []))
+    actual = {entry["id"]: (entry["status"], entry.get("unstable_parts", [])) for entry in report["units"]
+              if entry["status"] in ("unstable", "oracle_limit")}
+    if known != actual:
+        first = next(unit for unit in sorted(known.keys() | actual.keys()) if known.get(unit) != actual.get(unit))
+        raise measure.ToolError(f"writers: record the oracle class of {first} in spec/unstable.json")
+
+
 def make_runner(measure):
     classes = {"pass": measure.PASS, "fail": measure.FAIL, "no_result": measure.FAIL,
                "unstable": measure.UNSTABLE, "oracle_limit": measure.ORACLE_LIMIT}
@@ -30,6 +47,7 @@ def make_runner(measure):
             raise measure.ToolError("writers: the full report needs 400 trees per writer")
         keys = (AGGREGATE, *(f"{AGGREGATE}.{fmt}" for fmt in writers if full or writers[fmt] > 0))
         if full:
+            exclusions(measure, report)
             counts = measure.Counts.of(units, keys)
             matrix = measure.read_json(evidence / "capabilities.json")["output_formats"]
             pdf_path = evidence / "pdf.json"

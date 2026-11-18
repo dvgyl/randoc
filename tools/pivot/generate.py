@@ -6,9 +6,9 @@ import hashlib
 import json
 import os
 import random
-import subprocess
 from pathlib import Path
 
+from observe import NoResult, run
 from samples import fixed_trees, node
 
 
@@ -57,13 +57,11 @@ def json_bytes(value):
 
 
 def oracle_accepts(oracle, value):
-    command = ["limit-run", "3000", "600", "/bin/sh", "-c", 'ulimit -t 60 && exec "$@"',
-               "pivot", oracle, "-f", "json", "-t", "json"]
-    result = subprocess.run(command, input=json_bytes(value), stdout=subprocess.DEVNULL,
-                            stderr=subprocess.PIPE)
-    if result.returncode < 0 or result.returncode >= 125:
-        raise RuntimeError(f"oracle check stopped with exit code {result.returncode}")
-    return result.returncode == 0
+    try:
+        result = run(oracle, ["-f", "json", "-t", "json"], json_bytes(value), oracle=True)
+    except NoResult as error:
+        raise RuntimeError(f"the oracle membership check gave no result: {error}") from error
+    return result.exit == 0
 
 
 def generate(root, accepts):

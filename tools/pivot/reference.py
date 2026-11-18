@@ -44,6 +44,17 @@ def classify(fmt, first, second, rule):
     return recorded
 
 
+def verify(fmt, saved, current, rule):
+    if isinstance(current, str):
+        return Reference("oracle_limit", None, reason=f"oracle check: {current}")
+    changed = compare(fmt, saved, current, rule)
+    if not changed:
+        return saved
+    parts = tuple(dict.fromkeys((*saved.unstable_parts, *changed)))
+    return Reference("unstable", saved.first, saved.cell_positions, parts,
+                     "a later oracle run differs from the saved result")
+
+
 def cache_version(oracle_sha256):
     digest = hashlib.sha256(json_bytes(["writer", oracle_sha256]))
     for path in ("tools/pivot/observe.py", "tools/pivot/normalize.py", "tools/pivot/reference.py",
@@ -80,15 +91,25 @@ def read_reference(database, key):
     return Reference(status, first, tuple(json.loads(cells)), tuple(json.loads(parts)), reason)
 
 
-def write_references(database, pairs):
+def read_status(database, key):
+    row = database.execute("SELECT status FROM writer_refs WHERE key = ?", (key,)).fetchone()
+    return row[0] if row is not None else None
+
+
+def write_references(database, pairs, *, refresh=False):
     rows = []
     for key, recorded in pairs:
         first = recorded.first
         result = (None, None, None, None) if first is None else (
             first.exit, first.stdout, first.stderr, json.dumps(first.files, sort_keys=True))
         rows.append((key, recorded.status, *result, json.dumps(recorded.cell_positions),
-                     json.dumps(recorded.unstable_parts), recorded.reason))
+                     json.dumps(recorded.unstable_parts), recorded.reason, refresh))
     with database:
-        database.executemany("""INSERT OR IGNORE INTO writer_refs
+        database.executemany("""INSERT INTO writer_refs
             (key, status, result_exit, stdout, stderr, files, cells, parts, reason)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", rows)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(key) DO UPDATE SET status = excluded.status,
+                result_exit = excluded.result_exit, stdout = excluded.stdout,
+                stderr = excluded.stderr, files = excluded.files, cells = excluded.cells,
+                parts = excluded.parts, reason = excluded.reason
+            WHERE writer_refs.status = 'oracle_limit' OR ?""", rows)

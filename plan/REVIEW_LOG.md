@@ -219,3 +219,7 @@ M1-04 records each writer result with two oracle runs in separate folders. The c
 ## 2026-11-18T14:44:58Z decision M1-04 f69df7c9bd43
 
 Tool correction of caps.writers by M1-04: The old score used the harness capability matrix alone. Each non-PDF writer now needs to pass every counted pivot unit and each applicable harness conversion. PDF uses the score of pdf.units. TOTAL stays 77 and no formats are removed. The prior full score was 7/77. The rows of caps.writers before 2026-11-18T14:44:58Z no longer count for gains, regressions or milestone checks.
+
+## 2026-11-18T14:56:52Z decision M1-04 d8e99c6a41b3
+
+The first M1-04 review found different environments for the two converters. The writer tool now gives both the exact variables of plan/SPEC.md 3.1, including GHCRTS and RANDOC_DATA_DIR. A test checks the full environment for both roles. A saved oracle-limit result now gets a fresh pair on the next run. The milestone recheck keeps the first result and records any new differences. The score parser requires an entry with evidence for each exclusion. Raw observations now stay in bounded batches, with the first oracle run stored on disk until the second run finishes. The notebook diagnostic checked all 81 form trees with zero oracle exclusions after these changes.

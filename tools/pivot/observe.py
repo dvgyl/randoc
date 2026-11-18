@@ -1,6 +1,7 @@
 """Record the result of a conversion in a new work folder."""
 
 import io
+import os
 import subprocess
 import sys
 import tempfile
@@ -8,8 +9,7 @@ import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from generate import ROOT
-
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "crates/randoc-harness/src"))
 import snapshot
 
@@ -19,7 +19,7 @@ LIMIT_RUN = ROOT / "tools/autobuild/bin/limit-run"
 LAUNCH = '''
 ulimit -t 60 && ulimit -f 1048576 && PERL_BADLANG=0 exec /usr/bin/perl -e '
     my $program = shift @ARGV;
-    delete @ENV{qw(PWD OLDPWD SHLVL _ PERL_BADLANG)};
+    delete @ENV{qw(PWD OLDPWD SHLVL _ PERL_BADLANG __CF_USER_TEXT_ENCODING)};
     exec {$program} "pandoc", @ARGV;
     kill "KILL", $$;
 ' -- "$@"
@@ -53,9 +53,9 @@ def run(binary, args, data, *, oracle=False):
             "LC_ALL": "en_US.UTF-8",
             "TZ": "UTC",
             "SOURCE_DATE_EPOCH": "1700000000",
+            "GHCRTS": "-M3g",
+            "RANDOC_DATA_DIR": str(Path(os.environ.get("RANDOC_GPT", ROOT.parent)) / "datapack"),
         }
-        if oracle:
-            env["GHCRTS"] = "-M3g"
         command = [sys.executable, str(LIMIT_RUN), "3000", "600", "/bin/sh", "-c",
                    LAUNCH, "pivot", str(program), *args]
         result = subprocess.run(command, input=data, stdout=stdout, stderr=stderr, cwd=folder, env=env)

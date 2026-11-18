@@ -14,10 +14,16 @@ def unit(fmt, index, status="pass"):
 
 
 class WriterSuiteTests(unittest.TestCase):
-    def parse(self, units, *, selection=None, pdf=None):
+    def parse(self, units, *, selection=None, pdf=None, known=()):
         measure.load_metrics()
+        read = measure.read_json
+
+        def read_report(path):
+            return {"units": known} if path.name == "unstable.json" else read(path)
+
         with tempfile.TemporaryDirectory() as folder, \
-             patch.object(measure, "inventory_names", return_value=["html", "plain", "pdf"]):
+             patch.object(measure, "inventory_names", return_value=["html", "plain", "pdf"]), \
+             patch.object(measure, "read_json", side_effect=read_report):
             path = Path(folder)
             report = {"units": units, "summary": {"units": len(units), "selected": selection}}
             (path / "writers-report.json").write_text(json.dumps(report), encoding="utf-8")
@@ -31,7 +37,10 @@ class WriterSuiteTests(unittest.TestCase):
     def test_capabilities_need_the_pivot_and_harness_units(self):
         rows = [unit(fmt, index) for fmt in ("html", "plain") for index in range(400)]
         rows[0]["status"] = "unstable"
-        result = self.parse(rows, pdf={"metric": "pdf.units", "pass": 1, "total": 1})
+        rows[0]["unstable_parts"] = ["stdout"]
+        known = [{"suite": "writers", "id": "writer/html/0", "status": "unstable",
+                  "unstable_parts": ["stdout"], "reason": "stdout changed", "evidence": "writer probe"}]
+        result = self.parse(rows, pdf={"metric": "pdf.units", "pass": 1, "total": 1}, known=known)
         self.assertEqual(result.rows, {"fmt.write": (799, 799), "fmt.write.html": (399, 399),
                                       "fmt.write.plain": (400, 400), "caps.writers": (2, 3)})
         self.assertEqual(result.unstable, ["writer/html/0"])
@@ -40,6 +49,12 @@ class WriterSuiteTests(unittest.TestCase):
     def test_a_full_report_needs_every_tree(self):
         with self.assertRaisesRegex(measure.ToolError, "needs 400 trees per writer"):
             self.parse([unit("html", 0)])
+
+    def test_a_full_report_requires_each_exclusion_in_the_register(self):
+        rows = [unit(fmt, index) for fmt in ("html", "plain") for index in range(400)]
+        rows[0]["status"] = "oracle_limit"
+        with self.assertRaisesRegex(measure.ToolError, "record the oracle class of writer/html/0"):
+            self.parse(rows)
 
     def test_a_filtered_report_counts_no_result_but_excludes_oracle_limit(self):
         result = self.parse([unit("html", 0, "no_result"), unit("html", 1, "oracle_limit")],
