@@ -203,3 +203,7 @@ The second review showed that an explicit ZIP directory entry could cause a fals
 Item M1-03 done. Gain on files.units: the metric now has rows (best PASS 95) (baseline 0/0). Gate: 20261118T125326Z-f7b85c53f274.
 
 Weak spots: 68 of 163 file cases still fail. They include all four archive media extraction cases. The ZIP helper reads the central directory before it checks its entry count. M1-19 covers archive resource limits. The older PDF probe reports a temporary path in its error and writes no file. M1-20 covers PDF.
+
+## 2026-11-18T14:26:07Z decision M1-04 a5d08cdcfaa1
+
+M1-04 uses the authored file-suite tree first, then 80 other form trees, 194 highlighting trees, 60 math trees and 65 seeded trees. Pandoc 3.13 accepts each tree with -f json -t json. Two full generations produced the same SHA-256 and the same bytes. The HTML writer marks all 194 language cases as highlighted. MathML rejects all 20 malformed expressions. The writer measurement is still in progress.
