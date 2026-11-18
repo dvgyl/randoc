@@ -197,3 +197,9 @@ Tool correction of caps.options by M1-03: The old probes for epub-cover-image an
 ## 2026-11-18T12:52:53Z decision M1-03 ad46c131cf95
 
 The second review showed that an explicit ZIP directory entry could cause a false failure. The comparison now ignores directory entries under N1 in plan/SPEC.md 3.12. The new test failed before the fix and passes after it. A real oracle EPUB with one extra directory entry passes. A copy with its mimetype entry moved and compressed still fails. All 159 stored file results match the oracle. AGENTS.md section 10 limits this item to two reviews.
+
+## 2026-11-18T13:30:13Z weak-spot M1-03 f7b85c53f274
+
+Item M1-03 done. Gain on files.units: the metric now has rows (best PASS 95) (baseline 0/0). Gate: 20261118T125326Z-f7b85c53f274.
+
+Weak spots: 68 of 163 file cases still fail. They include all four archive media extraction cases. The ZIP helper reads the central directory before it checks its entry count. M1-19 covers archive resource limits. The older PDF probe reports a temporary path in its error and writes no file. M1-20 covers PDF.
