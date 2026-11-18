@@ -109,7 +109,8 @@ class Steps(unittest.TestCase):
         self.assertEqual([s.name for s in gate.STEPS],
                          ["format", "licence", "oracle-sha256", "no-oracle-call", "lints", "docs", "tests",
                           "tool-tests", "oracle-heap-harness", "oracle-heap-pandoc", "oracle-heap-corpus",
-                          "oracle-heap-commonmark", "harness", "harness-verdicts", "measurement"])
+                          "oracle-heap-commonmark", "baseline-harness", "baseline-pandoc", "baseline-corpus",
+                          "harness", "harness-verdicts", "measurement"])
 
     def test_the_oracle_check_rejects_a_different_executable(self):
         path = self.runs / "oracle"

@@ -300,11 +300,14 @@ class RunTests(unittest.TestCase):
 
     def test_the_report_file_can_be_its_own_baseline(self):
         oracle = self.program("pandoc")
-        self.main(oracle, oracle)
+        selection = ("--only", "one", "--target", "html")
+        code, report = self.main(oracle, oracle, *selection)
+        self.assertEqual(code, 0)
+        self.assertEqual(report["results"], {"one:html": "pass"})
         out = self.dir / "report.json"
-        code, report = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(out))
+        code, report = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(out), *selection)
         self.assertEqual(code, 1)
-        self.assertEqual(report["results"]["one:html"], "fail output")
+        self.assertEqual(report["results"], {"one:html": "fail output"})
 
     def test_only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result(self):
         script = 'echo "[$GHCRTS]"; exit 251'

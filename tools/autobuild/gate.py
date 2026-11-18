@@ -11,6 +11,7 @@ Steps:
   tests        cargo test --workspace --quiet --no-fail-fast, without the
                conformance test (the harness step runs the same units)
   tool-tests   python3 -m unittest discover in each tools/ folder with tests
+  baseline-*   check that each baseline detects a seeded regression
   harness      build randoc-cli and randoc-harness, take a measurement slot
                and one read-only copy of the programs for the harness and
                measurement steps, run the harness suite of measure.py; each
@@ -202,12 +203,14 @@ def python_check(tool: str, test: str) -> Callable[[Gate, Path], str | None]:
                                       {"PYTHONPATH": str(ROOT / "tools" / tool)})
 
 
-def harness_heap(_gate: Gate, log: Path) -> str | None:
-    test = "exec::tests::only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result"
-    reason = command(["cargo", "test", "--quiet", "-p", "randoc-harness", "--lib", test, "--", "--exact"], log)
-    if reason is None and "1 passed; 0 failed" not in log.read_text(encoding="utf-8"):
-        return "the harness heap-limit test did not run"
-    return reason
+def harness_check(test: str) -> Callable[[Gate, Path], str | None]:
+    def check(_gate: Gate, log: Path) -> str | None:
+        reason = command(["cargo", "test", "--quiet", "-p", "randoc-harness", "--lib", test, "--", "--exact"], log)
+        if reason is None and "test result: ok. 1 passed; 0 failed" not in log.read_text(encoding="utf-8"):
+            return f"the harness test {test} did not run"
+        return reason
+
+    return check
 
 
 def lost_units(baseline: list[str], report_units: list[dict]) -> list[str]:
@@ -358,13 +361,18 @@ STEPS = [
     Step("docs", cargo("doc", "--workspace", "--no-deps", "--quiet", env={"RUSTDOCFLAGS": "-D warnings"})),
     Step("tests", cargo("test", "--workspace", "--quiet", "--no-fail-fast", "--", "--skip", CONFORMANCE_TEST)),
     Step("tool-tests", tool_tests),
-    Step("oracle-heap-harness", harness_heap),
+    Step("oracle-heap-harness", harness_check(
+         "exec::tests::only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result")),
     Step("oracle-heap-pandoc", python_check("pandoc-testsuite",
          "test_suite.OracleHeapLimit.test_only_the_oracle_gets_the_limit_and_its_exit_251_is_no_result")),
     Step("oracle-heap-corpus", python_check("corpus",
          "test_corpus.RunTests.test_each_run_of_the_oracle_program_gets_the_heap_limit")),
     Step("oracle-heap-commonmark", python_check("commonmark-spec",
          "test_run.HeapLimitTests.test_only_the_oracle_gets_the_limit_and_its_exit_251_is_an_oracle_problem")),
+    Step("baseline-harness", harness_check("tests::a_different_output_fails_and_a_baseline_unit_that_fails_is_a_regression")),
+    Step("baseline-pandoc", python_check("pandoc-testsuite",
+         "test_suite.Baseline.test_a_lost_test_fails_when_the_baseline_and_the_new_baseline_are_one_file")),
+    Step("baseline-corpus", python_check("corpus", "test_corpus.RunTests.test_the_report_file_can_be_its_own_baseline")),
     Step("harness", harness),
     Step("harness-verdicts", harness_verdicts),
     Step("measurement", measurement),

@@ -460,13 +460,14 @@ class Baseline(unittest.TestCase):
         found = suite.Discovery([suite.CommandCase("command/1.md#1", "command", "pandoc", "", "")], [])
         with tempfile.TemporaryDirectory() as directory:
             baseline = os.path.join(directory, "baseline.json")
-            with open(baseline, "w", encoding="utf-8") as handle:
-                json.dump({"passing": ["command/1.md#1"]}, handle)
+            args = ["--suite", directory, "--oracle", "", "--write-baseline", baseline, "--jobs", "1"]
             out = io.StringIO()
             with mock.patch.object(run.testsuite, "discover", return_value=found), \
                     contextlib.redirect_stdout(out):
-                code = run.main(["--pandoc", "/usr/bin/false", "--suite", directory, "--oracle", "",
-                                 "--baseline", baseline, "--write-baseline", baseline, "--jobs", "1"])
+                self.assertEqual(run.main(["--pandoc", "/usr/bin/true", *args]), 0)
+                with open(baseline, encoding="utf-8") as handle:
+                    self.assertEqual(json.load(handle)["passing"], ["command/1.md#1"])
+                code = run.main(["--pandoc", "/usr/bin/false", "--baseline", baseline, *args])
             with open(baseline, encoding="utf-8") as handle:
                 written = json.load(handle)["passing"]
         self.assertEqual(code, 1)

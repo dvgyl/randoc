@@ -1136,6 +1136,21 @@ mod tests {
         assert_eq!(statuses["s/f/a#write:html"], "fail");
         assert_eq!(statuses["s/f/b#read"], "pass");
 
+        let reads = [
+            "--baseline",
+            baseline.to_str().unwrap(),
+            "--filter",
+            "#read",
+        ];
+        assert!(!run(fixture.session("run", &reads, &oracle, &wrong)).unwrap());
+        assert_eq!(
+            fixture.report_statuses(),
+            BTreeMap::from([
+                ("s/f/a#read".to_owned(), "fail".to_owned()),
+                ("s/f/b#read".to_owned(), "pass".to_owned()),
+            ])
+        );
+
         // A filter that selects only passing units reports no regression.
         let filtered = [
             "--baseline",

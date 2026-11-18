@@ -398,9 +398,8 @@ oracle's on the same command (3.7; standard error that differs between two
 oracle runs makes the unit unstable, 3.10). If the oracle fails a test, its
 result becomes the reference (`decision` entry), and the test stays (3.11,
 oracle failure rule). TOTAL: 2,231 today (command 1,884, old 174, readers
-173). Weak points: `--write-baseline` runs before the `--baseline` check
-(`run.py:255-259`); no heap limit; the readers tests ignore standard error
-(M1-28).
+173). The baseline check reads the saved list of passing units before it
+writes the new list. The readers tests still ignore standard error (M1-28).
 
 ### `suite.pandoc.command`
 As `suite.pandoc`, group `command` only.
@@ -436,11 +435,11 @@ TOTAL: test cases. Tool: M1-16.
 Unit: (document, target) for `json` (3.4), `html`, `markdown`. Inputs:
 `tools/corpus/manifest.toml` (230 documents, 33 formats) in
 `$RANDOC_CORPUS`. Command: `-f FORMAT -t TARGET FILE`. A document that the
-oracle rejects stays in. Tool: existing (`tools/corpus/run.py`). Weak
-points: no baseline check (`run.py:415`); cache in `env/corpus`; no heap
-limit; 19 input formats have no document; the tool uses the oracle cache
-before it checks the oracle SHA-256, and its JSON parser accepts a
-duplicate key (M1-27). Held-out: `holdout.corpus`.
+oracle rejects stays in. Tool: existing (`tools/corpus/run.py`). The
+baseline check reads the saved results before it writes the new results.
+19 input formats have no document. The tool uses the oracle cache before
+it checks the oracle SHA-256, and its JSON parser accepts a duplicate key
+(M1-27). Held-out: `holdout.corpus`.
 
 ### `corpus.json`
 As `corpus.units`, target `json` only.
@@ -759,9 +758,7 @@ oracle SHA-256 check; the "never calls the oracle" check; a stand-in oracle
 with a wrong SHA-256 makes the corpus tool exit 2 before it reads its
 cache; a duplicate JSON key makes a corpus `json` unit fail; a changed
 standard error makes a `suite.pandoc.readers` unit fail. Tool: M1-01,
-M1-02, M1-27, M1-28. Weak points today:
-`crates/randoc-citeproc/tests/time.rs:15` runs `ps` (refused); `init.sh`
-stops at the hook copy.
+M1-02, M1-27, M1-28.
 
 ### `tags.read.F`, `tags.write.F`, `tags.option.O`
 Breakdown rows of the upstream suite and the corpus. Unit: a unit of

@@ -147,3 +147,7 @@ I started M1-02 before I read the action from ops status after the M1-01 push. A
 ## 2026-11-18T09:43:33Z decision M1-02 50281ad0008a
 
 The AGENTS.md section 7 counter now compares only clean, completed full build runs, as validated by the Git guard. An item experiment cannot become the baseline for that counter. A full run gains on a metric when it establishes the metric or raises PASS without adding failures. No scoreboard row or metric rule changed. The full M1-01 run now resets the streak, and ops status directs the lead to continue M1-02.
+
+## 2026-11-18T09:45:55Z decision M1-02 5e2ef6ab3373
+
+The tests confirmed that the preparation had fixed the Pandoc suite and corpus baseline checks. M1-02 reuses the three existing baseline test paths and adds one scored gate step for each. Each fixture checks one selected regression against a passing baseline. The Pandoc suite and corpus fixtures use the same file as the old baseline and the new report. All three steps passed on their own. The plan and specification now describe the verified baseline behavior.
