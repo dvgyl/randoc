@@ -6,12 +6,11 @@ from __future__ import annotations
 import json
 import os
 import unittest
-from pathlib import Path
 from unittest import mock
 
 from fixture import ROWS_HEADER, TempRepo, row
 
-from opslib import cli, core, holdout, items
+from opslib import broker, cli, core, items
 from opslib.corrections import experiments
 
 REGISTRY = """
@@ -38,6 +37,23 @@ status = "to-build"
 command = ""
 pass = "p"
 total = "t"
+
+[[metric]]
+key = "gate.steps"
+suite = "gate"
+status = "to-build"
+command = ""
+pass = "p"
+total = "t"
+"""
+
+HELD_OUT_REQUIREMENTS = """
+[[milestone.require]]
+metric = "holdout.corpus"
+exists = true
+[[milestone.require]]
+metric = "holdout.generated"
+min_fraction = 0.5
 """
 
 MILESTONES = """
@@ -78,6 +94,11 @@ class T2Ops(unittest.TestCase):
         self.repo.write("tools/autobuild/metrics.toml", REGISTRY)
         self.repo.write("plan/milestones.toml", MILESTONES)
         self.repo.must_commit("chore(tools): registry and milestones [ops]")
+        self.results = self.repo.tmp / "holdout-results"
+        self.results.mkdir()
+        patch = mock.patch.object(broker, "RESULTS", self.results)
+        patch.start()
+        self.addCleanup(patch.stop)
 
     def tearDown(self) -> None:
         self.repo.cleanup()
@@ -102,10 +123,16 @@ class T2Ops(unittest.TestCase):
         self.ok("item", "add", "M1-01", "--milestone", "M1", "--metric", metric, "--target", "+2", "--title", "cases")
         self.ok("item", "start", "M1-01")
 
-    def check(self, held: str | None = None) -> tuple[int, str]:
-        result = (Path("r.json"), {"commit": held}) if held else None
-        with mock.patch.object(holdout, "newest", lambda ctx: result):
-            code, out, _ = self.repo.ops("milestone", "check", "M1")
+    def check(self, held: str | None = None, provenance: str = "built") -> tuple[int, str]:
+        """The milestone check with one broker result for the commit `held` (or none)."""
+        for old in self.results.glob("*.json"):
+            old.unlink()
+        if held:
+            (self.results / "r.json").write_text(json.dumps({
+                "status": "done", "utc": "2026-11-17T20:00:00Z", "commit": self.repo.out("rev-parse", held),
+                "binary_sha256": "ab" * 32, "binary_provenance": provenance,
+                "sets": {"corpus": {"pass": 4, "total": 10}, "generated": {"pass": 7, "total": 9}}}))
+        code, out, _ = self.repo.ops("milestone", "check", "M1")
         return code, out
 
     # -- milestone check -------------------------------------------------------
@@ -174,12 +201,34 @@ class T2Ops(unittest.TestCase):
         plan_only = self.repo.must_commit("chore(plan): rows [ops]", ["plan"])
         self.assertEqual(self.check(plan_only)[0], 0)
         self.assertEqual(self.check(candidate)[0], 0)
+        code, out = self.check(candidate, provenance="supplied")
+        self.assertEqual(code, 1, "a result of a supplied binary is history only")
+        self.assertIn("FAIL  a held-out result of a binary that the broker built measures the candidate", out)
+        self.assertEqual(self.check(None)[0], 1)
         self.repo.write("tools/x.py", "x = 1\n")
         code_change = self.repo.must_commit("chore(tools): x [ops]")
         code, out = self.check(code_change)
         self.assertEqual(code, 1)
-        self.assertIn("FAIL  the newest held-out result measures the candidate commit", out)
-        self.assertEqual(self.check(None)[0], 1)
+        self.assertIn("FAIL  the candidate commit is HEAD, or HEAD differs from it only in plan/", out)
+        self.assertIn("FAIL  a held-out result of a binary that the broker built measures the candidate", out)
+
+    def test_the_held_out_requirements_use_the_broker_result_of_the_candidate(self) -> None:
+        self.repo.write("plan/milestones.toml", MILESTONES + HELD_OUT_REQUIREMENTS)
+        self.repo.write("tools/x.py", "x = 1\n")
+        older = self.repo.must_commit("chore(tools): x [ops]")
+        self.repo.write("tools/x.py", "x = 2\n")
+        candidate = self.repo.must_commit("chore(tools): x [ops]")
+        self.rows(row("2026-11-17T10:00:00Z", candidate, "-", "harness.units", 6, 9),
+                  row("2026-11-17T10:00:00Z", candidate, "-", "lua.api", 80, 100))
+        code, out = self.check(candidate)
+        self.assertEqual(code, 0, out)
+        self.assertIn("pass  holdout.corpus has a row with TOTAL above 0 (4/10)", out)
+        self.assertIn("pass  holdout.generated PASS/TOTAL >= 0.5 (7/9)", out)
+        code, out = self.check(older)
+        self.assertEqual(code, 1, "a result for other code")
+        self.assertIn("FAIL  holdout.corpus has a row with TOTAL above 0 (no row)", out)
+        self.assertIn("FAIL  holdout.generated PASS/TOTAL >= 0.5 (no row)", out)
+        self.assertIn("pass  the candidate commit is HEAD", out)
 
     # -- corrections ---------------------------------------------------------------
 
@@ -197,6 +246,33 @@ class T2Ops(unittest.TestCase):
         self.assertIn("M1-01\tM1\tactive\tharness.units\t0/0\t", self.repo.read("plan/ITEMS.tsv"))
         self.assertIn("Tool correction of harness.units by M1-01", self.repo.out("show", "HEAD:plan/REVIEW_LOG.md"))
         self.assertEqual(self.repo.out("status", "--porcelain", "--untracked-files=no"), "")
+
+    def test_a_cut_withdraws_the_corrections_of_its_item(self) -> None:
+        self.start("harness.units", (5, 9))
+        self.ok("correction", "add", "harness.units", "--item", "M1-01", "--reason", "the probe rule is stricter")
+        [correction] = experiments.read_tsv(self.repo.root / "plan/corrections.tsv")
+        self.assertEqual(experiments.cutoffs([correction]), {"harness.units": correction["utc"]})
+        out = self.ok("item", "cut", "M1-01", "--reason", "the stricter rule found no gain")
+        self.assertIn("withdrew 1 tool corrections", out)
+        rows = experiments.read_tsv(self.repo.root / "plan/corrections.tsv")
+        self.assertEqual([(r["metric"], r["item"], r["withdraws"]) for r in rows],
+                         [("harness.units", "M1-01", "-"), ("harness.units", "M1-01", correction["utc"])])
+        self.assertEqual(experiments.cutoffs(rows), {}, "the rows before the correction count again")
+        self.assertIn("Withdrawn tool corrections", self.repo.out("show", "HEAD:plan/REVIEW_LOG.md"))
+        self.assertEqual(self.repo.out("status", "--porcelain", "--untracked-files=no"), "")
+
+    def test_the_experiment_of_an_item_whose_suite_is_not_active_names_the_suite(self) -> None:
+        self.ok("item", "add", "M1-01", "--milestone", "M1", "--metric", "gate.steps", "--target", "+1", "--title", "g")
+        out = self.ok("item", "start", "M1-01")
+        command = "build the suite, then `tools/autobuild/ops measure --item M1-01 --suite gate`"
+        self.assertIn(command, out)
+        status = self.ok("status")
+        self.assertIn(f"next: continue M1-01: change, commit with [M1-01]; the experiment: {command}", status)
+        self.assertNotIn("--quick", status)
+        self.ok("item", "cut", "M1-01", "--reason", "another item")
+        self.ok("item", "add", "M1-02", "--milestone", "M1", "--metric", "harness.units", "--target", "+1", "--title", "h")
+        self.ok("item", "start", "M1-02")
+        self.assertIn("the experiment: `tools/autobuild/ops measure --item M1-02 --quick`", self.ok("status"))
 
     # -- next ----------------------------------------------------------------------
 

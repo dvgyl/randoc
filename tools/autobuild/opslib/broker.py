@@ -62,11 +62,15 @@ def require_running() -> None:
         )
 
 
-def send(ctx: Context, kind: str, fields: dict[str, object]) -> str:
+def new_request_id(kind: str) -> str:
+    return f"{utc_stamp()}-{kind}-{secrets.token_hex(4)}"
+
+
+def send(ctx: Context, kind: str, fields: dict[str, object], request_id: str | None = None) -> str:
     """Write one request. The name is new each time, so the answer has the same name."""
     folder = inbox(ctx)
     folder.mkdir(parents=True, exist_ok=True)
-    request_id = f"{utc_stamp()}-{kind}-{secrets.token_hex(4)}"
+    request_id = request_id or new_request_id(kind)
     temporary = folder / f".{request_id}.json.part"
     temporary.write_text(json.dumps({"kind": kind, **fields}) + "\n", encoding="utf-8")
     temporary.rename(folder / f"{request_id}.json")

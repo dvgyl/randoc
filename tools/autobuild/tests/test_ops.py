@@ -14,10 +14,16 @@ from fixture import AUTOBUILD, ITEMS_HEADER, ROWS_HEADER, TempRepo, fake_broker,
 
 from opslib import core, fleet, holdout, workers
 
-FAKE_GATE = """import json, os, sys
+FAKE_GATE = """import json, os, pathlib, subprocess, sys
 with open(os.environ["FAKE_GATE_LOG"], "a") as log:
     log.write(json.dumps(sys.argv[1:]) + "\\n")
-sys.exit(int(os.environ.get("FAKE_GATE_EXIT", "0")))
+code = int(os.environ.get("FAKE_GATE_EXIT", "0"))
+head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+folder = pathlib.Path(os.environ["RANDOC_RUNS"]) / "gate" / f"20261117T230000Z-{head[:12]}"
+folder.mkdir(parents=True, exist_ok=True)
+(folder / "gate.json").write_text(json.dumps({"commit": head, "quick": False, "changed_outside_plan": [],
+                                              "steps": [], "result": "fail" if code else "pass"}))
+sys.exit(code)
 """
 FAKE_MEASURE = """import json, os, sys
 print("measure args: " + json.dumps(sys.argv[1:]))
@@ -81,6 +87,14 @@ class OpsTest(unittest.TestCase):
         self.repo.write("tools/autobuild/gate.py", FAKE_GATE)
         self.repo.must_commit("chore(tools): fake gate [ops]", ["tools"])
 
+    def gate_record(self, commit: str | None = None, stamp: str = "20261117T230000Z", **fields) -> None:
+        """The gate.json that gate.py writes; by default a passing full gate of HEAD on a clean tree."""
+        commit = commit or self.repo.head()
+        folder = self.repo.gpt / "runs" / "gate" / f"{stamp}-{commit[:12]}"
+        folder.mkdir(parents=True, exist_ok=True)
+        record = {"commit": commit, "quick": False, "changed_outside_plan": [], "steps": [], "result": "pass"}
+        (folder / "gate.json").write_text(json.dumps({**record, **fields}))
+
     def wait_finished(self, item_id: str) -> str:
         for _ in range(60):
             out = self.ok("worker", "list")
@@ -120,6 +134,9 @@ class OpsTest(unittest.TestCase):
         self.refused("shows no gain", "item", "done", "M1-01", "--weak-spots", "none")
         self.rows(row("2026-11-17T11:00:00Z", self.repo.head(), "M1-01", "lua.api", 0, 80))
         self.repo.must_commit("chore(plan): rows [M1-01]", ["plan/scoreboard"])
+        self.assertIn("next: `tools/autobuild/ops gate`; when it passes, `tools/autobuild/ops item done M1-01",
+                      self.ok("status"))
+        self.gate_record()
         self.assertIn("next: `tools/autobuild/ops item done M1-01", self.ok("status"))
         self.ok("item", "done", "M1-01", "--weak-spots", "none known")
         self.assertEqual(self.item_status("M1-01"), "done")
@@ -187,6 +204,7 @@ class OpsTest(unittest.TestCase):
         self.rows(row("2026-11-17T10:00:00Z", self.repo.head(), "M1-01", "harness.units", 5, 9))
         self.refused("shows no gain on harness.units", "item", "done", "M1-01", "--weak-spots", "none")
         self.rows(row("2026-11-17T11:00:00Z", self.repo.head(), "M1-01", "harness.units", 8, 9))
+        self.gate_record()
         self.ok("item", "done", "M1-01", "--weak-spots", "tables with spans are not checked")
         self.assertEqual(self.subject(), "chore(plan): finish item M1-01 [ops]")
         log = self.repo.out("show", "HEAD:plan/REVIEW_LOG.md")
@@ -194,6 +212,56 @@ class OpsTest(unittest.TestCase):
         self.assertIn("Gain on harness.units: +3", log)
         self.assertIn("tables with spans are not checked", log)
         self.assertIn("\tM1-01\tharness.units\t8\t9", self.repo.out("show", "HEAD:plan/scoreboard/build.tsv"))
+
+    def test_done_needs_a_passing_full_gate_of_the_current_commit(self) -> None:
+        self.started()
+        gated = self.code_commit("M1-01", "a", "fn a() {}\n")
+        self.rows(row("2026-11-17T10:00:00Z", gated, "M1-01", "harness.units", 8, 9))
+        self.repo.must_commit("chore(plan): rows [M1-01]", ["plan/scoreboard"])
+        self.refused("no passing full gate run of the current commit", "item", "done", "M1-01", "--weak-spots", "x")
+        self.gate_record(gated, stamp="20261117T210000Z", quick=True)
+        self.gate_record(gated, stamp="20261117T220000Z", changed_outside_plan=["crates/x/src/b.rs"])
+        self.gate_record(gated, stamp="20261117T230000Z", result="fail")
+        self.refused("no passing full gate run of the current commit", "item", "done", "M1-01", "--weak-spots", "x")
+        self.gate_record(gated, stamp="20261117T235000Z")
+        self.assertIn("next: `tools/autobuild/ops item done M1-01", self.ok("status"), "HEAD changes only plan/")
+        self.code_commit("M1-01", "b", "fn b() {}\n")
+        self.assertIn("next: `tools/autobuild/ops gate`; when it passes", self.ok("status"))
+        self.refused("no passing full gate run of the current commit", "item", "done", "M1-01", "--weak-spots", "x")
+        self.gate_record()
+        self.repo.write("crates/x/src/b.rs", "fn c() {}\n")
+        self.refused("tracked files outside plan/ have changes (crates/x/src/b.rs)", "item", "done", "M1-01",
+                     "--weak-spots", "x")
+        self.repo.git("checkout", "--", "crates/x/src/b.rs")
+        self.ok("log", "decision", "a plan change after the gate")
+        self.repo.must_commit("docs(plan): log [ops]", ["plan"])
+        self.ok("item", "done", "M1-01", "--weak-spots", "none known")
+        self.assertIn("Gate: 2026111", self.repo.out("show", "HEAD:plan/REVIEW_LOG.md"))
+
+    def test_done_with_a_coverage_rule_needs_it_in_the_latest_row(self) -> None:
+        self.add("M1-01", metric="files.units")
+        self.ok("item", "start", "M1-01")
+        self.rows(row("2026-11-17T10:00:00Z", self.repo.head(), "M1-01", "files.units", 50, 59))
+        self.gate_record()
+        self.refused("a TOTAL below --min-total 60", "item", "done", "M1-01", "--weak-spots", "x", "--min-total", "60")
+        self.refused("--all-pass needs PASS = TOTAL above 0", "item", "done", "M1-01", "--weak-spots", "x", "--all-pass")
+        self.rows(row("2026-11-17T11:00:00Z", self.repo.head(), "M1-01", "files.units", 61, 61))
+        self.ok("item", "done", "M1-01", "--weak-spots", "none known", "--min-total", "60", "--all-pass")
+        self.assertEqual(self.item_status("M1-01"), "done")
+
+    def test_a_cut_never_waits_for_the_commit_limit_or_for_another_exhausted_item(self) -> None:
+        self.started()
+        self.repo.write("plan/ITEMS.tsv", self.repo.read("plan/ITEMS.tsv") + item_line("M1-02", "active", baseline="5/9"))
+        self.repo.must_commit("chore(plan): start M1-02 [ops]", ["plan"])
+        for n in range(8):
+            self.repo.write(f"plan/n{n}.md", f"{n}\n")
+            self.repo.must_commit(f"docs(plan): note {n} [ops]", ["plan"])
+        (self.repo.gpt / "runs" / "attempts.tsv").write_text("utc\tcommit\titem\tsuites\tpid\n" + "".join(
+            f"2026-11-17T1{n}:00:00Z\t{self.repo.head()}\t{item}\tharness\t1\n" for n in range(3) for item in ("M1-01", "M1-02")))
+        self.assertIn("measurement: 10 commits since the newest measured commit", self.ok("status"))
+        self.ok("item", "cut", "M1-01", "--reason", "three experiments with no gain")
+        self.ok("item", "cut", "M1-02", "--reason", "three experiments with no gain")
+        self.assertEqual((self.item_status("M1-01"), self.item_status("M1-02")), ("cut", "cut"))
 
     def test_entry_point_runs_as_a_program(self) -> None:
         self.add("M1-01")
@@ -221,7 +289,8 @@ class OpsTest(unittest.TestCase):
         self.assertIn("Why do the units fail?", request["prompt"])
         self.assertIn("read only", request["prompt"])
         advice = self.repo.read("plan/ADVICE.md")
-        self.assertIn("event=M1-01/two-rows-no-gain reason=two-rows-no-gain session=thread-123", advice)
+        self.assertIn("event=M1-01/two-rows-no-gain reason=two-rows-no-gain session=", advice)
+        self.assertIn("Session: thread-123", advice)
         self.assertIn("Answer (summary): fix the escape table first.", advice)
         self.refused("has no decision yet", "ask", "--reason", "two-fixes-failed", "--evidence", "log", "again?")
         self.ok("ask", "--decision", "Fix the escape table, then measure.")
@@ -274,6 +343,25 @@ class OpsTest(unittest.TestCase):
         self.assertFalse(wt.exists())
         self.assertEqual(git_branch(self.repo.root), "gpt/build")
         self.ok("item", "done", "M1-01", "--weak-spots", "none known")
+
+    def test_status_reads_the_gain_of_a_worker_from_its_branch_and_waits_while_it_runs(self) -> None:
+        self.rows(row("2026-11-17T09:00:00Z", self.repo.head(), "-", "harness.units", 5, 9))
+        self.repo.must_commit("chore(plan): rows [ops]")
+        self.add("M1-01")
+        self.ok("worker", "start", "M1-01")
+        wt = self.repo.gpt / "wt" / "M1-01"
+        (self.repo.gpt / "runs" / "attempts.tsv").write_text("utc\tcommit\titem\tsuites\tpid\n" + "".join(
+            f"2026-11-17T1{n}:00:00Z\t{git_head(wt)}\tM1-01\tharness\t1\n" for n in range(3)))
+        self.ok("worker", "run", "M1-01", FAKE_CODEX_SLEEP="4")
+        out = self.ok("status")
+        self.assertNotIn("ops item cut M1-01", out, "the worker's last attempt still runs")
+        self.wait_finished("M1-01")
+        self.assertIn("next: `tools/autobuild/ops item cut M1-01", self.ok("status"))
+        self.rows(row("2026-11-17T12:00:00Z", git_head(wt), "M1-01", "harness.units", 7, 9), stream="M1-01", cwd=wt)
+        self.repo.must_commit("chore(plan): rows [M1-01]", cwd=wt)
+        out = self.ok("status")
+        self.assertIn("M1-01 (worker) harness.units baseline 5/9 target +2: experiments 3/3, gain +2", out)
+        self.assertNotIn("ops item cut M1-01", out)
 
     def test_worker_merge_keeps_build_when_the_gate_fails(self) -> None:
         self.commit_gate()
@@ -418,7 +506,7 @@ min_fraction = 0.5
                   row("2026-11-17T10:00:00Z", head, "-", "lua.api", 0, 0),
                   row("2026-11-17T10:00:00Z", head, "-", "fmt.read.markdown", 4, 10))
         held = (Path("1.json"), {"utc": "2026-11-17T12:00:00Z", "commit": head})
-        with mock.patch.object(holdout, "newest", lambda ctx: held):
+        with mock.patch.object(holdout, "matching", lambda ctx, candidate: held):
             code, out, _ = self.repo.ops("milestone", "check", "M1")
             self.assertEqual(code, 1)
             self.assertIn("FAIL  fmt.read.markdown PASS/TOTAL >= 0.5 (4/10)", out)
@@ -434,10 +522,10 @@ min_fraction = 0.5
                       row("2026-11-17T12:00:00Z", head, "-", "fmt.read.markdown", 6, 10))
             code, out, _ = self.repo.ops("milestone", "check", "M1")
             self.assertEqual(code, 0, out)
-        with mock.patch.object(holdout, "newest", lambda ctx: None):
+        with mock.patch.object(holdout, "matching", lambda ctx, candidate: None):
             code, out, _ = self.repo.ops("milestone", "check", "M1")
             self.assertEqual(code, 1)
-            self.assertIn("FAIL  the newest held-out result", out)
+            self.assertIn("FAIL  a held-out result of a binary that the broker built", out)
         self.refused("is not in plan/milestones.toml", "milestone", "check", "M9")
 
     def test_log_and_blocked(self) -> None:

@@ -85,8 +85,9 @@ def worker_rows(ctx: Context, item_id: str) -> list[dict[str, str]]:
 
 
 def worktree_changes(ctx: Context, worker: fleet.Worker) -> list[str]:
-    """Tracked and untracked changes in the worker's worktree (macOS companion files do not count)."""
-    out = ctx.git.run("-C", str(worker.path), "status", "--porcelain=v1", "-z", "--untracked-files=all", check=False)
+    """Tracked and untracked changes in the worker's worktree (macOS companion files do not count).
+    A failed `git status` raises OpsError: the worktree is then not known to be clean."""
+    out = ctx.git.run("-C", str(worker.path), "status", "--porcelain=v1", "-z", "--untracked-files=all")
     return [entry[3:] for entry in out.split("\0") if len(entry) > 3 and not Path(entry[3:]).name.startswith("._")]
 
 
@@ -108,7 +109,13 @@ def registered(ctx: Context, item_id: str) -> fleet.Worker:
 def check_removable(ctx: Context, item_id: str) -> fleet.Worker:
     """A registered worktree with no tracked or untracked changes, or a refusal (uncommitted work stays)."""
     worker = registered(ctx, item_id)
-    changes = worktree_changes(ctx, worker) if worker.present else []
+    try:
+        changes = worktree_changes(ctx, worker) if worker.present else []
+    except OpsError as error:
+        raise Refusal(
+            f"`git status` failed in {worker.path}, so ops counts it as not clean and does not remove it ({error})",
+            "look at the worktree by hand; ops removes only a worktree that `git status` shows clean",
+        ) from error
     if changes:
         raise Refusal(
             f"the worktree {worker.path} has changes that are not committed ({', '.join(changes[:3])})",

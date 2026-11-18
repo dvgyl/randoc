@@ -35,9 +35,11 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("id")
     p.add_argument("--reason", required=True)
     p.set_defaults(func=items.cut)
-    p = item.add_parser("done", help="close an item that shows a gain")
+    p = item.add_parser("done", help="close an item that shows a gain, after a passing gate")
     p.add_argument("id")
     p.add_argument("--weak-spots", required=True, help="the known weak spots, or 'none known'")
+    p.add_argument("--min-total", type=int, metavar="N", help="also require TOTAL >= N in the latest row")
+    p.add_argument("--all-pass", action="store_true", help="also require PASS = TOTAL above 0 in the latest row")
     p.set_defaults(func=items.done)
     item.add_parser("list", help="all items").set_defaults(func=items.list_items)
 
@@ -79,7 +81,8 @@ def parser() -> argparse.ArgumentParser:
     p.set_defaults(func=talk.review)
 
     held = sub.add_parser("holdout", help="the held-out evaluation").add_subparsers(dest="action", required=True)
-    p = held.add_parser("request", help="ask for one evaluation of HEAD")
+    p = held.add_parser("request", help="ask for one evaluation of HEAD or of --commit SHA")
+    p.add_argument("--commit", help="a commit of gpt/build, for example the candidate of a deferred request")
     p.set_defaults(func=holdout.request)
     p = held.add_parser("results", help="the newest totals and the heartbeat")
     p.add_argument("--record", action="store_true", help="write the totals as rows of plan/scoreboard/build.tsv")

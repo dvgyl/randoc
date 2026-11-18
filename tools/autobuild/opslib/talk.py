@@ -6,6 +6,7 @@ session with read-only access and returns the final message."""
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from . import broker, codex, notes
 from .core import WORKER_PREFIX, Context, OpsError, Refusal, append_text, check_words, stage, utc_now
@@ -30,6 +31,31 @@ def scrub(ctx: Context, text: str) -> str:
     for pattern in ctx.guard.BANNED:
         text = pattern.sub("(banned phrase removed)", text)
     return text
+
+
+def lead_tree(ctx: Context) -> tuple[str, frozenset[str]]:
+    """HEAD and the `git status` entries of the lead tree (macOS companion files do not count)."""
+    out = ctx.git.run("status", "--porcelain=v1", "-z", "--untracked-files=all")
+    entries = frozenset(e for e in out.split("\0") if e and not Path(e[3:]).name.startswith("._"))
+    return ctx.git.rev("HEAD") or "-", entries
+
+
+def tree_change(ctx: Context, before: tuple[str, frozenset[str]], role: str, item: str) -> str | None:
+    """None when the lead tree is as it was before the read-only session. Else the change, which also
+    goes to plan/REVIEW_LOG.md and plan/BLOCKED_ON_OWNER.md: the session was not read-only."""
+    after = lead_tree(ctx)
+    if after == before:
+        return None
+    parts = ([f"HEAD {before[0][:12]} -> {after[0][:12]}"] if after[0] != before[0] else []) \
+        + sorted(before[1] ^ after[1])[:5]
+    change = "; ".join(parts)
+    text = (f"The lead tree changed while the read-only {role} session ran ({change}). ops did not use the "
+            "answer. The broker's profile randoc-review must keep each session read-only.")
+    notes.write_log(ctx, "blocked-on-owner", item, text)
+    append_text(ctx.blocked_file, notes.blocked_entry(
+        ctx, text, "check the profile randoc-review of the broker", "the lead works without that answer"))
+    stage(ctx, ctx.blocked_file)
+    return change
 
 
 def log(ctx: Context, args: argparse.Namespace) -> int:
@@ -68,7 +94,7 @@ def ask(ctx: Context, args: argparse.Namespace) -> int:
         if not entries or entries[-1].decided:
             raise Refusal("no advice entry waits for a decision", "ask a question first, when you are stuck")
         check_words(ctx, args.decision, "the decision")
-        append_text(ctx.advice_file, args.decision.strip() + "\n")
+        append_text(ctx.advice_file, f"\nDecision: {args.decision.strip()}\n")
         stage(ctx, ctx.advice_file)
         print(f"decision written for the question of {entries[-1].utc} (plan/ADVICE.md, staged)")
         return 0
@@ -110,21 +136,40 @@ def ask(ctx: Context, args: argparse.Namespace) -> int:
         "experiments": state.experiments if state else 0, "question": question,
     }
     prompt = codex.render(ctx, "adviser", values)
-    answer = broker.ask(ctx, "advice", {"commit": head, "item": item_id, "prompt": prompt})
+    broker.require_running()
+    request_id = broker.new_request_id("advice")
+
+    def record(part: str) -> None:
+        append_text(ctx.advice_file, scrub(ctx, part))
+        stage(ctx, ctx.advice_file)
+
+    # The question is used when it is sent: its section comes first, so a failed request asks no second time.
+    record(notes.advice_question(event, args.reason, request_id, args.question, evidence))
+    before = lead_tree(ctx)
+    try:
+        broker.send(ctx, "advice", {"commit": head, "item": item_id, "prompt": prompt}, request_id)
+        print(f"request {request_id} sent to the broker; waiting for the answer in {broker.OUT} ...", flush=True)
+        answer = broker.wait(broker.OUT, request_id, broker.WAIT_SECONDS["advice"])
+    except OpsError as error:
+        record(notes.advice_no_answer(str(error)))
+        raise
+    change = tree_change(ctx, before, "adviser", item_id)
+    if change:
+        record(notes.advice_no_answer(f"not used: the lead tree changed during the session: {change}"))
+        raise Refusal(f"the lead tree changed during the adviser session ({change}); the answer is not used",
+                      "look at `git status` and `git log -1` and keep no change that you did not make; then "
+                      'decide without the answer: `ops ask --decision "TEXT"`')
     text = str(answer.get("final") or "")
     if answer.get("status") != "done" or not text.strip():
+        record(notes.advice_no_answer(f"{answer.get('reason') or answer.get('status')}"))
         raise OpsError(
-            f"the adviser session gave no answer ({answer.get('reason') or answer.get('status')}); "
-            "nothing was recorded, so you may ask again"
+            f"the adviser session gave no answer ({answer.get('reason') or answer.get('status')}); the question "
+            f'of {item_id}/{args.reason} is used: decide without an answer (`ops ask --decision "TEXT"`)'
         )
-    section = notes.advice_section(
-        event, args.reason, str(answer.get("session") or "-"), scrub(ctx, args.question), scrub(ctx, evidence),
-        scrub(ctx, notes.parse_summary(text)), str(broker.OUT / f"{answer.get('request')}.json"),
-    )
-    append_text(ctx.advice_file, section)
-    stage(ctx, ctx.advice_file)
+    record(notes.advice_answer(str(answer.get("session") or "-"), notes.parse_summary(text),
+                               str(broker.OUT / f"{answer.get('request')}.json")))
     print(text.rstrip())
-    print(f'\nnext: decide, then `tools/autobuild/ops ask --decision "TEXT"`, and continue')
+    print('\nnext: decide, then `tools/autobuild/ops ask --decision "TEXT"`, and continue')
     return 0
 
 
@@ -162,7 +207,16 @@ def review(ctx: Context, args: argparse.Namespace) -> int:
            "verdict": "started", "evidence": "-"}
     notes.append_review(ctx, row)  # the round is used now, also when the session fails
     print(f"review round {round_no} of {item.id} in a new session of the broker ...", flush=True)
+    before = lead_tree(ctx)
     answer = broker.ask(ctx, "review", {"commit": commit, "item": item.id, "round": round_no, "prompt": prompt})
+    change = tree_change(ctx, before, "review", item.id)
+    if change:
+        notes.append_review(ctx, {**row, "utc": utc_now(), "session": answer.get("session") or "-",
+                                  "verdict": "failed", "evidence": scrub(ctx, f"the lead tree changed: {change}")})
+        raise Refusal(f"the lead tree changed during the review session ({change}); round {round_no} is used "
+                      "and its answer is not used",
+                      "look at `git status` and `git log -1` and keep no change that you did not make; the entry "
+                      "is in plan/REVIEW_LOG.md")
     text = str(answer.get("final") or "")
     verdict, evidence, output = notes.parse_verdict(text) if answer.get("status") == "done" else (None, "", "")
     note = ""

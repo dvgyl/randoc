@@ -3,7 +3,9 @@
 The broker writes each result to broker.RESULTS, which the build can read but
 not write. A result counts only when it is complete: status done, the full
 commit id, the full SHA-256 of the binary that the broker evaluated, and both
-sets with 0 <= PASS <= TOTAL and TOTAL > 0. The totals are those of the
+sets with 0 <= PASS <= TOTAL and TOTAL > 0. It counts for a milestone gate only
+when the broker built the binary itself (binary_provenance "built"); an older
+result with a supplied binary stays for the history. The totals are those of the
 development part; the broker keeps the reserved FINAL part for the later review.
 """
 
@@ -28,19 +30,22 @@ def heartbeat_line(ctx: Context) -> str:
 
 
 def request(ctx: Context, args: argparse.Namespace) -> int:
-    if getattr(args, "binary", None):
-        raise Refusal("the broker builds the commit itself; a request names no binary",
-                      "run `tools/autobuild/ops holdout request` with no --binary")
-    head = ctx.git.rev("HEAD")
-    dirty = ctx.git.dirty_tracked()
-    if head is None or dirty:
-        raise Refusal(
-            f"a request names one commit; tracked files have changes ({', '.join(dirty[:3])})",
-            "commit or restore them, then request",
-        )
+    """One evaluation of HEAD, or of --commit SHA (for example the candidate of a deferred request)."""
+    if args.commit:
+        head = ctx.git.rev(args.commit)
+        if head is None:
+            raise Refusal(f"{args.commit} is not a commit", f"give --commit SHA of a commit of {BUILD_BRANCH}")
+    else:
+        head = ctx.git.rev("HEAD")
+        dirty = ctx.git.dirty_tracked()
+        if head is None or dirty:
+            raise Refusal(
+                f"a request names one commit; tracked files have changes ({', '.join(dirty[:3])})",
+                "commit or restore them, then request; or name a commit with --commit SHA",
+            )
     if not ctx.git.is_ancestor(head, f"refs/heads/{BUILD_BRANCH}"):
-        raise Refusal(f"HEAD {head[:12]} is not on {BUILD_BRANCH}; the broker builds only commits of {BUILD_BRANCH}",
-                      f"run it on {BUILD_BRANCH}")
+        raise Refusal(f"{head[:12]} is not on {BUILD_BRANCH}; the broker builds only commits of {BUILD_BRANCH}",
+                      f"name a commit of {BUILD_BRANCH}")
     broker.require_running()
     folder = broker.inbox(ctx)
     for old in sorted(folder.glob("*.json")) if folder.is_dir() else []:
@@ -99,13 +104,30 @@ def newest(ctx: Context) -> tuple[Path, dict] | None:
     return done[-1] if done else None
 
 
+def counts_for_gate(data: dict) -> bool:
+    return not problems(data) and data.get("binary_provenance") == "built"
+
+
+def matching(ctx: Context, candidate: str) -> tuple[Path, dict] | None:
+    """The newest result that counts for a gate and measures the candidate commit, or a later commit of
+    HEAD whose diff from the candidate changes only plan/ (plan/SPEC.md 4.1)."""
+    found = None
+    for path, data in load_results():
+        commit = str(data.get("commit", ""))
+        if (counts_for_gate(data) and ctx.git.rev(commit) and ctx.git.is_ancestor(commit, "HEAD")
+                and ctx.git.only_plan_changes(candidate, commit)):
+            found = (path, data)
+    return found
+
+
 def summary(ctx: Context) -> str:
     found = newest(ctx)
     if found is None:
         return "held-out: no complete result yet"
     path, data = found
     parts = ", ".join(f"{name} {p}/{t}" for name, (p, t) in set_totals(data).items())
-    provenance = "" if data.get("binary_provenance") == "built" else f", binary {data.get('binary_provenance', 'of unknown origin')}"
+    provenance = "" if counts_for_gate(data) else \
+        f", binary {data.get('binary_provenance', 'of unknown origin')}: history only, not valid for a gate"
     return f"held-out: {parts} at {data['commit'][:12]} ({data.get('utc', path.name)}{provenance})"
 
 

@@ -113,7 +113,8 @@ class BrokerTest(unittest.TestCase):
         self.assertEqual((request["kind"], request["item"]), ("advice", "M1-01"))
         self.assertIn("cargo test x: 2 fail after fixes a1, b2", request["prompt"])
         advice = self.repo.read("plan/ADVICE.md")
-        self.assertIn("event=M1-01/two-fixes-failed reason=two-fixes-failed session=thread-5", advice)
+        self.assertRegex(advice, r"event=M1-01/two-fixes-failed reason=two-fixes-failed session=\d{8}T\d{6}Z-advice-")
+        self.assertIn("Session: thread-5", advice)
         self.assertIn("> cargo test x: 2 fail after fixes a1, b2", advice)
         self.ok("ask", "--decision", "Fix the table, then measure.")
         self.repo.append("plan/scoreboard/build.tsv", row("2026-11-17T13:00:00Z", self.repo.head(), "M1-01",
@@ -122,11 +123,39 @@ class BrokerTest(unittest.TestCase):
         self.replies.append(dict(answer))
         self.ok("ask", "--reason", "no-next-step", "--evidence", "the table is fixed; 2 units still fail", "Next?")
 
-    def test_an_adviser_session_with_no_answer_records_nothing(self) -> None:
+    def test_a_sent_question_is_used_also_when_the_session_gives_no_answer(self) -> None:
         self.start_item()
         self.replies.append({"status": "error", "reason": "timeout"})
-        self.refused("nothing was recorded", "ask", "--reason", "no-next-step", "--evidence", "log", "Next?")
-        self.assertFalse((self.repo.root / "plan/ADVICE.md").exists())
+        self.refused("is used: decide without an answer", "ask", "--reason", "no-next-step", "--evidence", "log", "Next?")
+        advice = self.repo.read("plan/ADVICE.md")
+        self.assertIn("event=M1-01/no-next-step reason=no-next-step", advice)
+        self.assertIn("Answer: none (timeout)", advice)
+        self.refused("has no decision yet", "ask", "--reason", "no-next-step", "--evidence", "log", "Next?")
+        self.ok("ask", "--decision", "Split the item.")
+        self.refused("already has its one question", "ask", "--reason", "no-next-step", "--evidence", "log", "Next?")
+        self.assertEqual(len(self.fake.requests), 1)
+
+    def test_a_session_that_changes_the_lead_tree_is_refused_and_logged(self) -> None:
+        self.start_item()
+
+        def write_into_the_tree(reply: dict):
+            (self.repo.root / "crates/x/src/a.rs").write_text("fn changed() {}\n")
+            return reply
+
+        self.fake.answer = lambda kind, data: write_into_the_tree(self.replies.pop(0))
+        self.replies.append({"status": "done", "session": "thread-7", "final": "notes\nVERDICT: approve\n"})
+        self.refused("the lead tree changed during the review session", "review", "M1-01")
+        self.assertEqual(self.reviews(), [("1", "started"), ("1", "failed")])
+        log = self.repo.read("plan/REVIEW_LOG.md")
+        self.assertIn("blocked-on-owner M1-01", log)
+        self.assertIn("crates/x/src/a.rs", log)
+        self.assertIn("randoc-review", self.repo.read("plan/BLOCKED_ON_OWNER.md"))
+        self.repo.git("checkout", "--", "crates/x/src/a.rs")
+        self.replies.append({"status": "done", "session": "thread-8", "final": "Edit the file.\nSUMMARY: edit.\n"})
+        self.refused("the lead tree changed during the adviser session", "ask", "--reason", "no-next-step",
+                     "--evidence", "log", "Next?")
+        self.assertIn("Answer: none (not used: the lead tree changed", self.repo.read("plan/ADVICE.md"))
+        self.assertNotIn("Answer (summary)", self.repo.read("plan/ADVICE.md"))
 
     # -- held-out ------------------------------------------------------------------
 
@@ -146,6 +175,20 @@ class BrokerTest(unittest.TestCase):
         other = self.repo.out("commit-tree", self.repo.out("rev-parse", "HEAD^{tree}"), "-p", "HEAD", "-m", "x")
         self.repo.git("checkout", "-q", "--detach", other)
         self.refused("is not on gpt/build", "holdout", "request")
+        self.refused("is not on gpt/build", "holdout", "request", "--commit", other)
+        self.refused("is not a commit", "holdout", "request", "--commit", "0" * 40)
+
+    def test_a_request_can_name_the_earlier_candidate_after_a_deferral(self) -> None:
+        candidate = self.repo.head()
+        self.repo.write("tools/x.py", "x = 1\n")
+        self.repo.must_commit("chore(tools): x [ops]")
+        self.repo.write("tools/x.py", "x = 2\n")
+        self.replies.append(None)
+        self.ok("holdout", "request", "--commit", candidate[:10])
+        deadline = time.time() + 5
+        while not self.fake.requests and time.time() < deadline:
+            time.sleep(0.02)
+        self.assertEqual(self.fake.requests, [{"kind": "evaluate", "commit": candidate}])
 
     def test_only_a_complete_result_counts(self) -> None:
         self.result("1-no-hash", utc="2026-11-17T13:00:00Z", binary_sha256="abc")

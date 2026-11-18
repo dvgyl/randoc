@@ -15,10 +15,12 @@ import measure
 from . import corrections, fleet, holdout, notes
 from .corrections import experiments
 from .core import BUILD_BRANCH, Context, OpsError, Refusal, guard_paths, utc_stamp
+from .items import experiment_command, passing_gate
 from .plan import (
     Item, ItemsTable, Progress, build_runs, commits_since_measured, cut_streak, lead_active,
     plan_dirty, progress, read_rows,
 )
+from .workers import worker_rows
 
 NO_GAIN_RUNS_LIMIT = 3
 CUT_STREAK_LIMIT = 3
@@ -48,10 +50,14 @@ def gather(ctx: Context) -> Facts:
             break
         no_gain += 1
     streak, area = cut_streak(items)
+    workers = fleet.list_workers(ctx)
+    # The lead sees a worker's gain only in the committed rows of the worker branch.
+    present = {w.id for w in workers if w.present} if ctx.worker_item() is None else set()
     return Facts(
         ctx.git.branch(), commits_since_measured(ctx), items,
-        {i.id: progress(ctx, i, rows) for i in items if i.status == "active"},
-        fleet.list_workers(ctx), notes.advice_entries(ctx), plan_dirty(ctx), no_gain, streak, area,
+        {i.id: progress(ctx, i, worker_rows(ctx, i.id) if i.id in present else rows)
+         for i in items if i.status == "active"},
+        workers, notes.advice_entries(ctx), plan_dirty(ctx), no_gain, streak, area,
     )
 
 
@@ -61,7 +67,11 @@ def next_action(ctx: Context, f: Facts) -> str:
     own = ctx.worker_item()
     if not f.branch.startswith("gpt/"):
         return f"`git checkout {BUILD_BRANCH}` (work happens only on gpt/* branches)"
+    # The lead waits while a worker runs: its last attempt has a record and no row yet.
+    running = {w.id for w in f.workers if w.run.name == "running"} if own is None else set()
     for item_id, p in f.progress.items():
+        if item_id in running:
+            continue
         if (own is None or own == item_id) and p.experiments >= guard.MAX_TRIES and not p.gained:
             return (f"`tools/autobuild/ops item cut {item_id} --reason TEXT` ({p.experiments} experiments, no gain; "
                     "the cut commit also commits the new scoreboard rows)")
@@ -81,7 +91,9 @@ def next_action(ctx: Context, f: Facts) -> str:
         p = f.progress.get(own)
         if p and p.gained:
             return "the metric rose: commit the rows, then stop and write the final message"
-        return f"change, commit with [{own}], then `tools/autobuild/ops measure --item {own} --quick`"
+        item = next((i for i in f.items if i.id == own), None)
+        command = experiment_command(ctx, item) if item else f"`tools/autobuild/ops measure --item {own} --quick`"
+        return f"change, commit with [{own}]; the experiment: {command}"
     for w in f.workers:
         if w.abandoned:
             return f"`tools/autobuild/ops worker drop {w.id}`, then `tools/autobuild/ops item cut {w.id} --reason TEXT`"
@@ -93,7 +105,8 @@ def next_action(ctx: Context, f: Facts) -> str:
         p = f.progress[item.id]
         # A 0/0 item makes its metric (ROADMAP rule 7): its first row with a TOTAL is the whole gain.
         if p.gained and (item.base() == (0, 0) or (p.gain or 0) >= item.target_gain()):
-            return f"`tools/autobuild/ops item done {item.id} --weak-spots TEXT` (gain {p.gain:+d}, target {item.target})"
+            done = f"`tools/autobuild/ops item done {item.id} --weak-spots TEXT` (gain {p.gain:+d}, target {item.target})"
+            return done if passing_gate(ctx) else f"`tools/autobuild/ops gate`; when it passes, {done}"
     if f.no_gain_runs >= NO_GAIN_RUNS_LIMIT:
         return f"{f.no_gain_runs} full measurements with no gain: stop this approach; `tools/autobuild/ops next` and take a cluster in another area"
     if f.cut_streak >= CUT_STREAK_LIMIT:
@@ -101,7 +114,7 @@ def next_action(ctx: Context, f: Facts) -> str:
                 "strategy question (`ops ask --reason no-next-step`), and move to another area")
     if lead:
         item = lead[0]
-        return f"continue {item.id}: change, commit with [{item.id}], then `tools/autobuild/ops measure --item {item.id} --quick`"
+        return f"continue {item.id}: change, commit with [{item.id}]; the experiment: {experiment_command(ctx, item)}"
     queued = [i for i in f.items if i.status == "queued"]
     if queued:
         return f"`tools/autobuild/ops item start {queued[0].id}`"
@@ -304,7 +317,10 @@ def requirement_checks(req: dict, row: dict[str, str] | None, cut: dict[str, str
     elif pair is None:
         value = f"{row.get('pass')}/{row.get('total')}, not 0 <= PASS <= TOTAL"
     elif not experiments.counts(row, cut):
-        value = f"{row['pass']}/{row['total']}, older than the correction of {cut[metric]}"
+        since = cut.get(metric, "")
+        value = f"{row['pass']}/{row['total']}, " + (
+            f"older than the correction of {since}" if row.get("utc", "") < since
+            else "measured while a withdrawn correction was in force")
         pair = None
     else:
         value = f"{row['pass']}/{row['total']}"
@@ -346,17 +362,21 @@ def milestone_check(ctx: Context, args: argparse.Namespace) -> int:
     rows = read_rows(ctx)
     cut = experiments.cutoffs(corrections.load(ctx))
     found = candidate_run(rows, active)
+    held = holdout.matching(ctx, found.commit) if found else None
     print(f"milestone {args.id}: {milestone.get('title', '')}")
     if found is None:
         print(f"  candidate run: none (no clean full {BUILD_BRANCH} run with item - and a row for each of the "
               f"{len(active)} active metrics); run `tools/autobuild/ops measure` on a clean tree")
     else:
         print(f"  candidate run: {found.commit[:12]} at {found.utc} ({len(found.rows)} rows)")
+        print("  held-out result: " + (f"{held[0].name} of {held[1]['commit'][:12]}" if held else
+                                      "none that the broker built for the candidate"))
     checks: list[tuple[bool, str]] = []
     for req in milestone.get("require", []):
-        row = found.rows.get(str(req.get("metric", ""))) if found else None
+        metric = str(req.get("metric", ""))
+        row = held_out_row(held, metric) if metric.startswith(HELD_OUT) else found.rows.get(metric) if found else None
         checks += requirement_checks(req, row, cut)
-    checks += implicit_checks(ctx, rows, found, cut)
+    checks += implicit_checks(ctx, rows, found, held, cut)
     for ok, text in checks:
         print(f"  {'pass' if ok else 'FAIL'}  {text}")
     failed = sum(not ok for ok, _ in checks)
@@ -364,14 +384,30 @@ def milestone_check(ctx: Context, args: argparse.Namespace) -> int:
     return 0 if not failed else 1
 
 
-def implicit_checks(ctx: Context, rows: list[dict[str, str]], found: Candidate | None,
+def held_out_row(held: tuple | None, metric: str) -> dict[str, str] | None:
+    """The row of a held-out metric (holdout.SET) from the broker result that matches the candidate."""
+    name = metric[len(HELD_OUT):]
+    if held is None or name not in holdout.SETS:
+        return None
+    path, data = held
+    passed, total = holdout.set_totals(data)[name]
+    return {"utc": str(data.get("utc", "")), "commit": str(data["commit"]), "metric": metric,
+            "pass": str(passed), "total": str(total), "evidence": str(path)}
+
+
+def implicit_checks(ctx: Context, rows: list[dict[str, str]], found: Candidate | None, held: tuple | None,
                     cut: dict[str, str]) -> list[tuple[bool, str]]:
-    """Valid counts, no regression against earlier full measurements, and a held-out result for the candidate."""
+    """The candidate is the current tree, valid counts, no regression against earlier full measurements,
+    and a held-out result for the candidate."""
     if found is None:
         return [(False, f"a clean full measurement of {BUILD_BRANCH} exists (none)")]
+    head = ctx.git.rev("HEAD") or ""
+    checks = [(ctx.git.only_plan_changes(found.commit, "HEAD"),
+               f"the candidate commit is HEAD, or HEAD differs from it only in plan/ "
+               f"(candidate {found.commit[:12]}, HEAD {head[:12]})")]
     invalid = [f"{m} {r.get('pass')}/{r.get('total')}" for m, r in sorted(found.rows.items()) if experiments.numbers(r) is None]
-    checks = [(not invalid, "each row of the candidate run has 0 <= PASS <= TOTAL"
-               + (f": {'; '.join(invalid[:5])}" if invalid else ""))]
+    checks.append((not invalid, "each row of the candidate run has 0 <= PASS <= TOTAL"
+                   + (f": {'; '.join(invalid[:5])}" if invalid else "")))
     best: dict[tuple[str, int], int] = {}
     for row in rows:
         pair = experiments.numbers(row)
@@ -387,20 +423,8 @@ def implicit_checks(ctx: Context, rows: list[dict[str, str]], found: Candidate |
             fallen.append(f"{metric} {pair[0]}/{pair[1]} < {best[(metric, pair[1])]}")
     checks.append((not fallen, f"no metric of the candidate run is below its best earlier value with the same TOTAL"
                    + (f": {'; '.join(fallen[:5])}" if fallen else "")))
-    newest = holdout.newest(ctx)
-    held = str(newest[1].get("commit", "")) if newest else ""
-    checks.append((held_out_matches(ctx, found.commit, held),
-                   f"the newest held-out result measures the candidate commit, or a later commit that changes "
-                   f"only plan/ (held-out {held[:12] or 'none'}, candidate {found.commit[:12]})"))
+    checks.append((held is not None,
+                   f"a held-out result of a binary that the broker built measures the candidate commit, or a later "
+                   f"commit that changes only plan/ (held-out {held[1]['commit'][:12] if held else 'none'}, "
+                   f"candidate {found.commit[:12]})"))
     return checks
-
-
-def held_out_matches(ctx: Context, candidate: str, held: str) -> bool:
-    if not held or not ctx.git.rev(held) or not ctx.git.rev(candidate) or not ctx.git.is_ancestor(held, "HEAD"):
-        return False
-    if ctx.git.rev(held) == ctx.git.rev(candidate):
-        return True
-    if not ctx.git.is_ancestor(candidate, held):
-        return False
-    changed = ctx.git.run("diff", "--name-only", candidate, held).split("\n")
-    return all(name.startswith("plan/") for name in changed if name)

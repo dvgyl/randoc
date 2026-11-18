@@ -239,8 +239,12 @@ def lead_active(ctx: Context, items: list[Item], worker_ids: set[str]) -> list[I
     return [i for i in items if i.status == "active" and i.id not in worker_ids]
 
 
-def predict_commit(ctx: Context, new_items: list[Item], touches_scoreboard: bool = False) -> None:
-    """Refuse before any change when the guard would refuse the commit of a plan change."""
+def predict_commit(ctx: Context, new_items: list[Item], touches_scoreboard: bool = False,
+                   cutting: bool = False) -> None:
+    """Refuse before any change when the guard would refuse the commit of a plan change.
+
+    `cutting`: the commit cuts an item. The guard lets it pass the commit limit and the check of the
+    other items, so that a cut never waits for a measurement or for another exhausted item."""
     guard = ctx.guard
     branch = ctx.git.branch()
     if not branch.startswith("gpt/"):
@@ -248,6 +252,8 @@ def predict_commit(ctx: Context, new_items: list[Item], touches_scoreboard: bool
             f"commits are allowed only on gpt/* branches, not on {branch or 'a detached HEAD'}",
             "run `git checkout gpt/build`",
         )
+    if cutting:
+        return
     since = commits_since_measured(ctx)
     if since >= guard.MEASURE_LIMIT and not touches_scoreboard:
         raise Refusal(
@@ -299,13 +305,14 @@ def scoreboard_changes(ctx: Context) -> dict[Path, str]:
     return {path: path.read_text(encoding="utf-8") for path in paths if path.is_file()}
 
 
-def commit_transition(ctx: Context, items: list[Item], subject: str, body: str, changes: dict[Path, str]) -> str:
+def commit_transition(ctx: Context, items: list[Item], subject: str, body: str, changes: dict[Path, str],
+                      cutting: bool = False) -> str:
     """Commit a change of plan/ITEMS.tsv with the uncommitted scoreboard rows.
 
     The rows decide the transition, and the guard sees them only when they are in the same
-    commit: at the 10-commit limit, only a commit that touches the scoreboard passes."""
+    commit: at the 10-commit limit, only a commit that touches the scoreboard or cuts an item passes."""
     board = scoreboard_changes(ctx)
-    predict_commit(ctx, items, touches_scoreboard=bool(board))
+    predict_commit(ctx, items, touches_scoreboard=bool(board), cutting=cutting)
     return commit_plan(ctx, subject, body, {**changes, **board})
 
 

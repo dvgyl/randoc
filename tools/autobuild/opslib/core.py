@@ -74,6 +74,26 @@ class Git:
     def count(self, old: str, new: str) -> int:
         return int(self.run("rev-list", "--count", f"{old}..{new}").strip())
 
+    def only_plan_changes(self, old: str, new: str) -> bool:
+        """True when `new` is `old`, or descends from it and changes only files under plan/."""
+        old_sha, new_sha = self.rev(old) if old else None, self.rev(new) if new else None
+        if old_sha is None or new_sha is None:
+            return False
+        if old_sha == new_sha:
+            return True
+        if not self.is_ancestor(old_sha, new_sha):
+            return False
+        return all(name.startswith("plan/") for name in self.run("diff", "--name-only", old_sha, new_sha).splitlines() if name)
+
+    def plan_only_ancestors(self, rev: str = "HEAD", limit: int = 50) -> set[str]:
+        """`rev` and its first-parent ancestors whose diff to `rev` changes only plan/ (newest first, at most `limit`)."""
+        found: set[str] = set()
+        for sha in self.run("log", "--first-parent", f"-{limit}", "--format=%H", rev, check=False).split():
+            if not self.only_plan_changes(sha, rev):
+                break
+            found.add(sha)
+        return found
+
 
 @dataclass(frozen=True)
 class Context:

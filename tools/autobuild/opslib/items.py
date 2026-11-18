@@ -3,20 +3,55 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+import measure
 
 from . import fleet
 from .core import BUILD_BRANCH, ITEM_ID, Context, OpsError, Refusal, check_line, check_words, stage
 from .notes import log_entry
 from .plan import (
     Item, ItemsTable, commit_transition, lead_active, moved, newest_row, predict_commit, progress,
-    read_rows, scoreboard_changes,
+    read_rows, rule_inputs, scoreboard_changes,
 )
 
 METRIC_KEY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]*$")
+
+
+def experiment_command(ctx: Context, item: Item) -> str:
+    """The next experiment of `item`. While its metric is not active, `--quick` would not run its
+    suite: the suite is built first, then measured with `--suite`."""
+    try:
+        metric = measure.tree_registry(ctx.autobuild).get(item.metric)
+    except measure.ToolError:
+        return f"`tools/autobuild/ops measure --item {item.id} --quick`"
+    if metric is None or metric.status != "active":
+        suite = metric.suite if metric is not None else "NAME"
+        return f"build the suite, then `tools/autobuild/ops measure --item {item.id} --suite {suite}`"
+    return f"`tools/autobuild/ops measure --item {item.id} --quick`"
+
+
+def passing_gate(ctx: Context) -> Path | None:
+    """The gate.json of the newest full gate run that passed on HEAD, or on a commit whose diff to HEAD
+    changes only plan/, with no change outside plan/ in the tree that it checked."""
+    commits = ctx.git.plan_only_ancestors("HEAD")
+    names = {sha[:12] for sha in commits}
+    folder = ctx.runs / "gate"
+    runs = sorted((p for p in folder.iterdir() if p.is_dir() and p.name[-12:] in names), reverse=True) \
+        if folder.is_dir() else []
+    for run in runs:
+        try:
+            data = json.loads((run / "gate.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if (isinstance(data, dict) and data.get("commit") in commits and data.get("result") == "pass"
+                and data.get("quick") is False and data.get("changed_outside_plan") == []):
+            return run / "gate.json"
+    return None
 
 
 def require_lead(ctx: Context) -> None:
@@ -85,33 +120,68 @@ def start(ctx: Context, args: argparse.Namespace) -> int:
             f"(`ops item cut {others[0].id} --reason TEXT`), or give {item.id} to a worker",
         )
     start_item(ctx, table, item)
-    print(f"next: change the code, commit with [{item.id}], then `tools/autobuild/ops measure --item {item.id} --quick`")
+    print(f"next: change the code, commit with [{item.id}]; the experiment: {experiment_command(ctx, item)}")
     return 0
 
 
+def coverage_problem(ctx: Context, item: Item, rows: list[dict[str, str]], min_total: int | None,
+                     all_pass: bool) -> str | None:
+    """Why the latest row of the item's metric does not meet --min-total or --all-pass, or None."""
+    rules = ctx.guard.experiments
+    latest = rules.latest(rows, item.id, item.metric, rule_inputs(ctx)[1])
+    passed, total = rules.numbers(latest) if latest else (0, 0)
+    if min_total is not None and total < min_total:
+        return f"the latest row of {item.metric} is {passed}/{total}, a TOTAL below --min-total {min_total}"
+    if all_pass and (total == 0 or passed != total):
+        return f"the latest row of {item.metric} is {passed}/{total}; --all-pass needs PASS = TOTAL above 0"
+    return None
+
+
 def done(ctx: Context, args: argparse.Namespace) -> int:
+    """Close an item with a gain, after a passing gate of the current commit (AGENTS.md section 6)."""
     require_lead(ctx)
     table = ItemsTable.load(ctx.items_file)
     item = table.need(args.id)
     finished = moved(item, "done")
     weak = args.weak_spots.strip()
     check_words(ctx, weak, "--weak-spots")
-    state = progress(ctx, item, read_rows(ctx))
+    rows = read_rows(ctx)
+    state = progress(ctx, item, rows)
     if not state.gained:
         worker = item.id in worker_ids(ctx)
         raise Refusal(
             f"item {item.id} shows no gain on {item.metric} (baseline {item.baseline}); done needs a gain",
             f"merge its worker first (`ops worker merge {item.id}`)" if worker else
-            f"run the next experiment (`ops measure --item {item.id} --quick`) or cut it (`ops item cut {item.id} --reason TEXT`)",
+            f"run the next experiment ({experiment_command(ctx, item)}) or cut it (`ops item cut {item.id} --reason TEXT`)",
+        )
+    shortfall = coverage_problem(ctx, item, rows, args.min_total, args.all_pass)
+    if shortfall:
+        raise Refusal(
+            f"item {item.id}: {shortfall}; the acceptance rule of the item is not met",
+            f"run the next experiment ({experiment_command(ctx, item)}); after 3 experiments without it, "
+            f"cut the item (`ops item cut {item.id} --reason TEXT`)",
+        )
+    changed = [p for p in ctx.git.dirty_tracked() if not p.startswith("plan/")]
+    if changed:
+        raise Refusal(
+            f"tracked files outside plan/ have changes ({', '.join(changed[:3])}); a gate result is for a commit",
+            f"commit them with [{item.id}] or restore them, then run `tools/autobuild/ops gate`",
+        )
+    gate = passing_gate(ctx)
+    if gate is None:
+        raise Refusal(
+            "no passing full gate run of the current commit (HEAD, or a commit whose diff to HEAD changes only plan/)",
+            f"run `tools/autobuild/ops gate`; when it passes, run `ops item done {item.id}` again",
         )
     table.put(finished)
     gain = f"+{state.gain}" if item.base() != (0, 0) else f"the metric now has rows (best PASS {state.gain})"
-    text = f"Item {item.id} done. Gain on {item.metric}: {gain} (baseline {item.baseline}).\n\nWeak spots: {weak or 'none known'}"
+    text = (f"Item {item.id} done. Gain on {item.metric}: {gain} (baseline {item.baseline}). Gate: {gate.parent.name}."
+            f"\n\nWeak spots: {weak or 'none known'}")
     log = (ctx.log_file.read_text(encoding="utf-8") if ctx.log_file.exists() else "") + log_entry(ctx, "weak-spot", item.id, text)
     commit_transition(ctx, table.items(), f"chore(plan): finish item {item.id} [ops]", text,
                       {ctx.items_file: table.text(), ctx.log_file: log})
     print(f"done {item.id}: gain {gain}")
-    print("next: run the gate (`tools/autobuild/ops gate`), then push gpt/build")
+    print("next: `tools/autobuild/ops measure`, commit its rows, then `tools/autobuild/ops push`")
     return 0
 
 
@@ -141,21 +211,28 @@ def cut(ctx: Context, args: argparse.Namespace) -> int:
         print(f"branch gpt/w/{args.id} is abandoned; the lead never merges it")
         print("next: stop now and write the reason and what you learned in your final message")
         return 0
+    from . import corrections  # corrections imports this module
+
     require_lead(ctx)
     table = ItemsTable.load(ctx.items_file)
     item = table.need(args.id)
     state = progress(ctx, item, read_rows(ctx))
     table.put(moved(item, "cut"))
     board = scoreboard_changes(ctx)
-    predict_commit(ctx, table.items(), touches_scoreboard=bool(board))
+    predict_commit(ctx, table.items(), touches_scoreboard=bool(board), cutting=True)
     commits = item_commits(ctx, args.id)
     listed = "".join(f"\n- {sha[:12]} {subject}" for sha, _, subject in commits)
+    withdrawn = corrections.withdrawals(ctx, item.id)
+    gone = "".join(f"\n- {r['metric']} of {r['utc']}" for r in withdrawn[1]) if withdrawn else ""
     text = (f"Item {item.id} cut after {state.experiments} experiments with no gain on {item.metric}. "
-            f"Reason: {reason}" + (f"\n\nReverted commits:{listed}" if commits else ""))
+            f"Reason: {reason}" + (f"\n\nReverted commits:{listed}" if commits else "")
+            + (f"\n\nWithdrawn tool corrections (the rows of their time no longer count):{gone}" if gone else ""))
     log = (ctx.log_file.read_text(encoding="utf-8") if ctx.log_file.exists() else "") + log_entry(ctx, "cut", item.id, text)
+    changes = {ctx.items_file: table.text(), ctx.log_file: log}
+    if withdrawn:
+        changes[corrections.path(ctx)] = withdrawn[0]
     if not commits:
-        commit_transition(ctx, table.items(), f"chore(plan): cut item {item.id} [ops]", text,
-                          {ctx.items_file: table.text(), ctx.log_file: log})
+        commit_transition(ctx, table.items(), f"chore(plan): cut item {item.id} [ops]", text, changes, cutting=True)
     else:
         dirty = [p for p in ctx.git.dirty_tracked() if not p.startswith("plan/")]
         if dirty:
@@ -163,11 +240,12 @@ def cut(ctx: Context, args: argparse.Namespace) -> int:
                 f"tracked files have changes ({', '.join(dirty[:3])}); the revert needs a clean tree",
                 f"commit them with [{item.id}], or restore them with `git restore PATH`",
             )
-        revert_and_cut(ctx, item.id, commits, text, {ctx.items_file: table.text(), ctx.log_file: log, **board})
+        revert_and_cut(ctx, item.id, commits, text, {**changes, **board})
     if args.id in worker_ids(ctx):
         fleet.mark_abandoned(ctx, args.id, f"cut by the lead: {reason}")
     print(f"cut {item.id}: " + (f"reverted {len(commits)} commits in one commit{listed}" if commits
-                                else "no commit of the item changes code; plan/ITEMS.tsv is committed"))
+                                else "no commit of the item changes code; plan/ITEMS.tsv is committed")
+          + (f"; withdrew {len(withdrawn[1])} tool corrections" if withdrawn else ""))
     return 0
 
 
@@ -215,8 +293,6 @@ def remeasure_item(ctx: Context, item_id: str) -> bool:
     it is one experiment of the item, and its rows stay in
     plan/scoreboard/build.tsv for the next commit of the lead.
     """
-    import measure
-
     from . import corrections
 
     item = ItemsTable.load(ctx.items_file).need(item_id)

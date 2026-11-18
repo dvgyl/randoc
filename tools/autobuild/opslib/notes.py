@@ -93,18 +93,28 @@ def stuck_event(item: str, reason: str, head: str = "") -> str:
     return f"{item}/{reason}" if item != "-" else f"-/{reason}/{head}"
 
 
-def advice_section(event: str, reason: str, session: str, question: str, evidence: str, summary: str,
-                   answer_path: str) -> str:
+def advice_question(event: str, reason: str, request_id: str, question: str, evidence: str) -> str:
+    """The start of an advice section, written before the request goes to the broker: the question is
+    used from then on, also when no answer comes. The session field names the broker request."""
     quoted = "\n".join("> " + line for line in question.strip().splitlines())
     shown = "\n".join("> " + line for line in evidence.strip().splitlines()) or "> -"
     return (
-        f"\n## {utc_now()} event={event} reason={reason} session={session}\n\n"
+        f"\n## {utc_now()} event={event} reason={reason} session={request_id}\n\n"
         f"Question:\n\n{quoted}\n\n"
-        f"Evidence:\n\n{shown}\n\n"
-        f"Answer (summary): {summary.strip() or 'see the answer file'}\n\n"
-        f"Answer (full): {answer_path}\n\n"
-        "Decision:\n"
+        f"Evidence:\n\n{shown}\n"
     )
+
+
+def advice_answer(session: str, summary: str, answer_path: str) -> str:
+    return (
+        f"\nSession: {session}\n\n"
+        f"Answer (summary): {summary.strip() or 'see the answer file'}\n\n"
+        f"Answer (full): {answer_path}\n"
+    )
+
+
+def advice_no_answer(why: str) -> str:
+    return f"\nAnswer: none ({why}). The question is used; decide without an answer.\n"
 
 
 def review_rows(ctx: Context, item: str) -> list[dict[str, str]]:

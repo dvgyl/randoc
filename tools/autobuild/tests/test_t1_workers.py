@@ -67,6 +67,15 @@ class WorkerTest(unittest.TestCase):
         self.assertFalse(self.wt.exists())
         self.assertTrue(self.repo.out("rev-parse", "gpt/w/M1-01"), "the branch stays for the review")
 
+    def test_a_failed_git_status_counts_as_not_clean(self) -> None:
+        link = (self.wt / ".git").read_text()
+        (self.wt / ".git").write_text("not a git link\n")
+        self.refused("`git status` failed in", "worker", "drop", "M1-01")
+        self.assertTrue(self.wt.is_dir())
+        (self.wt / ".git").write_text(link)
+        self.ok("worker", "drop", "M1-01")
+        self.assertFalse(self.wt.exists())
+
     def test_a_pid_that_another_process_took_is_not_the_run(self) -> None:
         run = codex.RunDir.new(self.repo.gpt / "runs" / "probe")
         run.pid.write_text(f"{os.getpid()}\n")
