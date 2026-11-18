@@ -215,3 +215,7 @@ M1-04 notebook cell identifiers. Under plan/SPEC.md 3.10 and 3.13, apply N5 only
 ## 2026-11-18T14:44:56Z decision M1-04 69fc910e7f87
 
 M1-04 records each writer result with two oracle runs in separate folders. The cache holds raw results outside the repository. Its key includes the oracle SHA-256, the command, the input and the code that sets the environment and compares results. The first-tree diagnostic checked all 76 writers with zero oracle exclusions. Randoc passed 18. The 81 notebook form probes had no oracle exclusions. A generated cell identifier changed in 72 of those probes.
+
+## 2026-11-18T14:44:58Z decision M1-04 f69df7c9bd43
+
+Tool correction of caps.writers by M1-04: The old score used the harness capability matrix alone. Each non-PDF writer now needs to pass every counted pivot unit and each applicable harness conversion. PDF uses the score of pdf.units. TOTAL stays 77 and no formats are removed. The prior full score was 7/77. The rows of caps.writers before 2026-11-18T14:44:58Z no longer count for gains, regressions or milestone checks.
