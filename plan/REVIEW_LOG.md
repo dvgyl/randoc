@@ -239,3 +239,7 @@ The owner paused work on 2026-11-18. The full M1-04 diagnostic had completed 33 
 ## 2026-11-18T17:36:11Z decision M1-04 f90e6083063e
 
 The M1-04 diagnostic continued in its original process after the owner resumed work. Program checksums matched. The report contains all 30,400 distinct writer cases. All oracle pairs were repeatable. The diagnostic scored fmt.write 5,510/30,400 and caps.writers 2/77. All 61,449 harness verdicts matched the M1-03 full run. The report at $RANDOC_RUNS/m1-04-writers-diagnostic.bR6e7B/writers-report.json gives the 391 cases and cell positions affected by the notebook identifier rule.
+
+## 2026-11-18T18:33:41Z decision M1-04 d5d028524887
+
+M1-04 experiment 1 produced 78 clean rows and reproduced all 30,400 writer verdicts and all 61,449 harness verdicts from the diagnostic. The full gate failed in two plugin tests because the base registry activated a metric owned by the writer plugin. Moving the active entry into the writer overlay fixed both tests. All 14 focused tests passed. The loaded definitions and their order matched the prior registry. The ten-commit limit in AGENTS.md section 7 requires the full branch measurement before the next experiment. That measurement includes the full gate.

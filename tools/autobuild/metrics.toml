@@ -78,8 +78,8 @@ total = "input formats in spec/inventory/input-formats.json (52)"
 [[metric]]
 key = "caps.writers"
 suite = "writers"
-status = "active"
-command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+status = "to-build"
+command = ""
 pass = "writers with every pivot result and harness unit passing, plus PDF when pdf.units is at TOTAL/TOTAL"
 total = "output formats in spec/inventory/output-formats.json (77)"
 
