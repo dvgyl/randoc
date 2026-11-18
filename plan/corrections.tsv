@@ -1,1 +1,2 @@
-utc	metric	commit	item	reason
+utc	metric	commit	item	reason	withdraws
+2026-11-18T12:47:09Z	caps.options	41180cd29f0b3c535dd5bcf88f29a10276d95460	M1-03	The old probes for epub-cover-image and extract-media checked the exit code and console output. The new probes also compare file changes. TOTAL stays 109 and no option units are removed. Diagnostic PASS moves from 94 to 92. All earlier harness units keep their pass or fail status	-

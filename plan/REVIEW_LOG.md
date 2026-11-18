@@ -189,3 +189,7 @@ The files suite makes DOCX, ODT, EPUB and PPTX inputs in the evidence folder fro
 ## 2026-11-18T12:47:07Z decision M1-03 324c5d358a0f
 
 A diagnostic checked 115 earlier command cases with output, extraction or log options and defaults. Pandoc wrote files in 76 cases. File capture keeps the prior verdicts of all 76. The older PDF case wrote no file and reported a different temporary path in each error. M1-20 measures PDF under plan/SPEC.md 3.6.
+
+## 2026-11-18T12:47:09Z decision M1-03 41180cd29f0b
+
+Tool correction of caps.options by M1-03: The old probes for epub-cover-image and extract-media checked the exit code and console output. The new probes also compare file changes. TOTAL stays 109 and no option units are removed. Diagnostic PASS moves from 94 to 92. All earlier harness units keep their pass or fail status. The rows of caps.options before 2026-11-18T12:47:09Z no longer count for gains, regressions or milestone checks.
