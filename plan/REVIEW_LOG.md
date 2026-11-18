@@ -163,3 +163,9 @@ The baseline check now compares the complete saved set of passing units before i
 ## 2026-11-18T10:00:06Z decision M1-02 ca434aaa8abd
 
 The second M1-02 review reproduced a report label that replaced the saved passing list and made a failing retry exit 0. The tool now keeps that list when a labeled output would replace it. It checks the list type when it reads a baseline. Both new tests failed before the change and passed after it. All 59 suite tool tests passed. AGENTS.md section 10 limits the item to two reviews. The build continues with the scored gate experiment.
+
+## 2026-11-18T11:13:11Z weak-spot M1-02 f03459414a0f
+
+Item M1-02 done. Gain on gate.steps: +3 (baseline 15/15). Gate: 20261118T103542Z-f03459414a0f.
+
+Weak spots: The baseline self-checks use local stand-ins. The corpus oracle checksum and duplicate-key rule still need M1-27. The reader test exit code and standard error rules still need M1-28.
