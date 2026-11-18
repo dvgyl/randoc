@@ -61,7 +61,8 @@ For a case with `capture_files`, the harness starts each run in a separate
 folder. It compares the files and directories that the run adds, changes,
 or removes. This includes `.home`. The stored result uses SHA-256 for file
 contents. The harness records a symbolic link as a link and hashes its target
-name. It does not read the target file through the link.
+name. When the oracle writes a ZIP with `mimetype` as its first entry and
+leaves that entry uncompressed, Randoc must do the same.
 
 ## Commands
 
@@ -85,6 +86,12 @@ cargo run -q -p randoc-harness -- run --filter markdown/
 # Run only the units that capture work-folder changes.
 cargo run -q -p randoc-harness -- run --files
 ```
+
+The `files` measurement suite also checks media extraction from DOCX, ODT,
+EPUB and PPTX. It uses the oracle to make those inputs from
+`conformance/fixtures/files/media-sample.md` and saves them in the evidence
+folder for the run. Use `tools/autobuild/ops measure --suite files --filter
+files/media/` to run those cases and inspect their reports.
 
 ## Rules
 

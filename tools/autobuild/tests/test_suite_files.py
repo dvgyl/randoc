@@ -43,7 +43,25 @@ class CaptureTests(unittest.TestCase):
             states = snapshot.snapshot(root, {b"first.zip", b"second.zip"})
         first, second = states["first.zip"], states["second.zip"]
         self.assertNotEqual(first["sha256"], second["sha256"])
-        self.assertEqual(first["zip_sha256"], second["zip_sha256"])
+        self.assertEqual(first["zip"], second["zip"])
+
+    def test_archive_reports_if_mimetype_is_first_and_uncompressed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            paths = set()
+            for name, order, method in (
+                    ("first.epub", ("mimetype", "other"), zipfile.ZIP_STORED),
+                    ("last.epub", ("other", "mimetype"), zipfile.ZIP_STORED),
+                    ("compressed.epub", ("mimetype", "other"), zipfile.ZIP_DEFLATED)):
+                paths.add(os.fsencode(name))
+                with zipfile.ZipFile(root / name, "w", compression=method) as archive:
+                    for entry in order:
+                        archive.writestr(entry, entry.encode())
+            states = snapshot.snapshot(root, paths)
+        self.assertEqual(len({entry["zip"]["sha256"] for entry in states.values()}), 1)
+        self.assertTrue(states["first.epub"]["zip"]["first_stored_mimetype"])
+        self.assertFalse(states["last.epub"]["zip"]["first_stored_mimetype"])
+        self.assertFalse(states["compressed.epub"]["zip"]["first_stored_mimetype"])
 
     def test_declared_zip_files_refuse_duplicate_or_unsafe_members(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -56,7 +74,7 @@ class CaptureTests(unittest.TestCase):
                             archive.writestr(name, b"data")
                     entry = snapshot.snapshot(root, {b"bad.zip"})["bad.zip"]
                     self.assertTrue(entry["invalid_zip"])
-                    self.assertNotIn("zip_sha256", entry)
+                    self.assertNotIn("zip", entry)
 
     def test_the_walk_refuses_deep_directory_trees(self):
         for depth in (10_000, 100_000):
@@ -74,12 +92,13 @@ class CaptureTests(unittest.TestCase):
 
 
 class FilesSuiteTests(unittest.TestCase):
-    def parse(self, *units):
+    def parse(self, *units, media=()):
         measure.load_metrics()
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder)
-            report = {"units": units, "summary": {"units": len(units)}}
-            (path / "files-report.json").write_text(json.dumps(report), encoding="utf-8")
+            for name, results in (("files-report.json", units), ("files-media-report.json", media)):
+                report = {"units": results, "summary": {"units": len(results)}}
+                (path / name).write_text(json.dumps(report), encoding="utf-8")
             return measure.RUNNERS["files"].parse(path, "")
 
     def test_only_recorded_units_that_write_files_count_in_total(self):
@@ -88,8 +107,9 @@ class FilesSuiteTests(unittest.TestCase):
             {"id": "missing", "status": "no_result", "oracle_writes_file": True},
             {"id": "no.input", "status": "skipped", "oracle_writes_file": None},
             {"id": "no.change", "status": "pass", "oracle_writes_file": False},
+            media=({"id": "extract-docx", "status": "fail", "oracle_writes_file": True},),
         )
-        self.assertEqual(counts.rows, {"files.units": (1, 2)})
+        self.assertEqual(counts.rows, {"files.units": (1, 3)})
         self.assertEqual(counts.no_result, ["missing"])
         self.assertEqual(counts.no_input, ["no.input"])
 

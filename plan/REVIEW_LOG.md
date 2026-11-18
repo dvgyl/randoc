@@ -181,3 +181,7 @@ The first M1-03 review showed a false pass for a written EPUB with its mimetype 
 ## 2026-11-18T12:42:39Z weak-spot M1-03 132455099958
 
 The snapshot program checks the ZIP member count after the Python library reads the central directory. The written file byte limit and snapshot deadline apply before comparison. Review this resource limit with the ZIP suite in M1-19.
+
+## 2026-11-18T12:44:54Z decision M1-03 1fbc710a7055
+
+The files suite makes DOCX, ODT, EPUB and PPTX inputs in the evidence folder from one authored document. Each oracle extraction wrote PNG, JPEG and SVG file content. All four extraction results matched a second oracle run. Randoc failed all four probes in the diagnostic run.
