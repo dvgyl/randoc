@@ -243,3 +243,9 @@ The M1-04 diagnostic continued in its original process after the owner resumed w
 ## 2026-11-18T18:33:41Z decision M1-04 d5d028524887
 
 M1-04 experiment 1 produced 78 clean rows and reproduced all 30,400 writer verdicts and all 61,449 harness verdicts from the diagnostic. The full gate failed in two plugin tests because the base registry activated a metric owned by the writer plugin. Moving the active entry into the writer overlay fixed both tests. All 14 focused tests passed. The loaded definitions and their order matched the prior registry. The ten-commit limit in AGENTS.md section 7 requires the full branch measurement before the next experiment. That measurement includes the full gate.
+
+## 2026-11-18T20:48:59Z weak-spot M1-04 507cb968a7a7
+
+Item M1-04 done. Gain on fmt.write: the metric now has rows (best PASS 5510) (baseline 0/0). Gate: 20261118T183417Z-8c9b53c6816b.
+
+Weak spots: Only csljson and native meet the strict capability rule. The JSON writer passes all 400 pivot trees and has failing harness conversions. The writer suite starts a separate limiter process for each conversion.
