@@ -227,3 +227,15 @@ The first M1-04 review found different environments for the two converters. The 
 ## 2026-11-18T15:05:10Z decision M1-04 871a08503081
 
 The second M1-04 review showed that a timeout during an oracle recheck could erase the original result and the parts that had varied. The cache now keeps both. A retry compares each new result with that original. The review also showed that a damaged compressed ZIP member could stop the suite. The tool now records a standard output mismatch. Both targeted tests failed before the fixes and pass after them. AGENTS.md section 10 limits this item to two reviews.
+
+## 2026-11-18T15:13:43Z weak-spot M1-04 f90e6083063e
+
+The full writer diagnostic starts a new Python process for each limited conversion. A small timing check on one HTML table used seven interleaved pairs under the same process limits. Median time was 222 ms with the current launcher (214 to 240 ms) and 159 ms with the in-process prototype (89 to 193 ms). The exit codes, bytes and file observations matched in all seven pairs. The full diagnostic continues to collect end-to-end evidence.
+
+## 2026-11-18T16:11:59Z decision M1-04 f90e6083063e
+
+The owner paused work on 2026-11-18. The full M1-04 diagnostic had completed 33 of 76 writers and 13,200 of 30,400 cases. All completed oracle pairs were repeatable. Under AGENTS.md section 4, the lead sent SIGINT only to the diagnostic process, PID 62087. The sandbox refused it and the process still had the log open. At resumption, check the existing log and report before starting another run. No scored M1-04 experiment has run.
+
+## 2026-11-18T17:36:11Z decision M1-04 f90e6083063e
+
+The M1-04 diagnostic continued in its original process after the owner resumed work. Program checksums matched. The report contains all 30,400 distinct writer cases. All oracle pairs were repeatable. The diagnostic scored fmt.write 5,510/30,400 and caps.writers 2/77. All 61,449 harness verdicts matched the M1-03 full run. The report at $RANDOC_RUNS/m1-04-writers-diagnostic.bR6e7B/writers-report.json gives the 391 cases and cell positions affected by the notebook identifier rule.
