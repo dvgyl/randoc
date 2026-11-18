@@ -1,0 +1,7 @@
+[[metric]]
+key = "gate.steps"
+suite = "gate"
+status = "active"
+command = "{python} tools/autobuild/gate.py --report {evidence}/gate-report.json"
+pass = "gate steps with status pass"
+total = "all gate steps, plus a failure if a program copy changed"

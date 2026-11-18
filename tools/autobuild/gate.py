@@ -52,6 +52,7 @@ import argparse
 import contextlib
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -68,6 +69,7 @@ CONFORMANCE_TEST = "each_unit_of_the_baseline_passes"
 HARNESS_SUITE = "harness"
 GATE_METRIC = "gate.steps"
 LOG_TAIL_LINES = 40
+ORACLE_SHA256 = "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44"
 
 
 def gate_suites(metrics: dict[str, measure.Metric]) -> list[str]:
@@ -126,6 +128,53 @@ def tool_tests(gate: Gate, log: Path) -> str | None:
     return f"tests failed in {', '.join(failed)}" if failed else None
 
 
+def oracle_sha256(_gate: Gate, log: Path) -> str | None:
+    path = os.environ.get("RANDOC_ORACLE_PANDOC")
+    if not path:
+        return "set RANDOC_ORACLE_PANDOC"
+    try:
+        digest = measure.file_sha256(Path(path))
+    except OSError as error:
+        return f"cannot read the oracle: {error}"
+    log.write_text(f"{digest}  {path}\n", encoding="utf-8")
+    return None if digest == ORACLE_SHA256 else "the oracle SHA-256 differs from plan/SPEC.md"
+
+
+ORACLE_REFERENCE = re.compile(
+    r'RANDOC_ORACLE_PANDOC|pandoc-3\.13-arm64|'
+    r'Command\s*::\s*new\s*\(\s*(?:r#?|b)?"(?:[^"\n]*/)?pandoc"'
+)
+
+
+def no_oracle_call(_gate: Gate, log: Path) -> str | None:
+    files = measure.git("ls-files", "-z", "--", "crates").split("\0")
+    matches = []
+    for name in files:
+        path = Path(name)
+        if path.suffix != ".rs" or any(part in {"randoc-harness", "tests", "fuzz", "benches"}
+                                       for part in path.parts):
+            continue
+        source = (ROOT / path).read_text(encoding="utf-8")
+        if match := ORACLE_REFERENCE.search(source):
+            line = source.count("\n", 0, match.start()) + 1
+            matches.append(f"{name}:{line}: {match.group()}")
+    log.write_text("".join(f"{match}\n" for match in matches), encoding="utf-8")
+    return f"found an oracle reference in {matches[0]}" if matches else None
+
+
+def python_check(tool: str, test: str) -> Callable[[Gate, Path], str | None]:
+    return lambda _gate, log: command([sys.executable, "-m", "unittest", test], log,
+                                      {"PYTHONPATH": str(ROOT / "tools" / tool)})
+
+
+def harness_heap(_gate: Gate, log: Path) -> str | None:
+    test = "exec::tests::only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result"
+    reason = command(["cargo", "test", "--quiet", "-p", "randoc-harness", "--lib", test, "--", "--exact"], log)
+    if reason is None and "1 passed; 0 failed" not in log.read_text(encoding="utf-8"):
+        return "the harness heap-limit test did not run"
+    return reason
+
+
 def lost_units(baseline: list[str], report_units: list[dict]) -> list[str]:
     """The units of the baseline that do not pass. A unit that the suite no longer has is lost too."""
     passing = {unit["id"] for unit in report_units if unit["status"] == "pass"}
@@ -147,6 +196,17 @@ def harness(gate: Gate, log: Path) -> str | None:
     if lost:
         return f"{len(lost)} units of spec/baseline.json do not pass, the first is {lost[0]}"
     return None
+
+
+def harness_verdicts(gate: Gate, log: Path) -> str | None:
+    programs = gate.snapshot().paths
+    reports = [gate.evidence / f"harness-jobs8-{index}.json" for index in (1, 2)]
+    for report in reports:
+        reason = command([programs["harness"], "run", "--randoc", programs["randoc"],
+                          "--jobs", "8", "--report", str(report)], log)
+        if reason:
+            return reason
+    return command([sys.executable, "tools/harness-verdicts/compare.py", *map(str, reports)], log)
 
 
 def clean_history(history: list[measure.Row], contains: Callable[[str], bool],
@@ -257,11 +317,21 @@ def cargo(*args: str, env: dict[str, str] | None = None) -> Callable[[Gate, Path
 STEPS = [
     Step("format", cargo("fmt", "--all", "--", "--check")),
     Step("licence", licence),
+    Step("oracle-sha256", oracle_sha256),
+    Step("no-oracle-call", no_oracle_call),
     Step("lints", cargo("clippy", "--workspace", "--all-targets", "--quiet", "--", "-D", "warnings")),
     Step("docs", cargo("doc", "--workspace", "--no-deps", "--quiet", env={"RUSTDOCFLAGS": "-D warnings"})),
     Step("tests", cargo("test", "--workspace", "--quiet", "--no-fail-fast", "--", "--skip", CONFORMANCE_TEST)),
     Step("tool-tests", tool_tests),
+    Step("oracle-heap-harness", harness_heap),
+    Step("oracle-heap-pandoc", python_check("pandoc-testsuite",
+         "test_suite.OracleHeapLimit.test_only_the_oracle_gets_the_limit_and_its_exit_251_is_no_result")),
+    Step("oracle-heap-corpus", python_check("corpus",
+         "test_corpus.RunTests.test_each_run_of_the_oracle_program_gets_the_heap_limit")),
+    Step("oracle-heap-commonmark", python_check("commonmark-spec",
+         "test_run.HeapLimitTests.test_only_the_oracle_gets_the_limit_and_its_exit_251_is_an_oracle_problem")),
     Step("harness", harness),
+    Step("harness-verdicts", harness_verdicts),
     Step("measurement", measurement),
 ]
 
@@ -319,7 +389,10 @@ def main(argv: list[str] | None = None) -> int:
         failure = failure or ("programs", str(error), log)
     total = duration(time.monotonic() - started)
     ran = {s["name"] for s in done}
-    steps = done + [{"name": step.name, "status": "not-run"} for step in STEPS if step.name not in ran]
+    programs = [step for step in done if step["name"] == "programs"]
+    steps = [step for step in done if step["name"] != "programs"]
+    steps += [{"name": step.name, "status": "not-run"} for step in STEPS if step.name not in ran]
+    steps += programs
     report = json.dumps({"commit": commit, "base": args.base, "quick": args.quick, "changed_outside_plan": changed,
                          "steps": steps, "result": "pass" if failure is None else "fail"}, indent=1) + "\n"
     (evidence / "gate.json").write_text(report, encoding="utf-8")

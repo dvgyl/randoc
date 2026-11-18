@@ -98,7 +98,26 @@ class Steps(unittest.TestCase):
 
     def test_the_real_gate_has_each_step_of_the_contract(self):
         self.assertEqual([s.name for s in gate.STEPS],
-                         ["format", "licence", "lints", "docs", "tests", "tool-tests", "harness", "measurement"])
+                         ["format", "licence", "oracle-sha256", "no-oracle-call", "lints", "docs", "tests",
+                          "tool-tests", "oracle-heap-harness", "oracle-heap-pandoc", "oracle-heap-corpus",
+                          "oracle-heap-commonmark", "harness", "harness-verdicts", "measurement"])
+
+    def test_the_oracle_check_rejects_a_different_executable(self):
+        path = self.runs / "oracle"
+        path.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        log = self.runs / "oracle.log"
+        with mock.patch.dict(os.environ, {"RANDOC_ORACLE_PANDOC": str(path)}):
+            self.assertIn("SHA-256 differs", gate.oracle_sha256(None, log))
+        self.assertIn(measure.file_sha256(path), log.read_text())
+
+    def test_the_source_check_rejects_a_direct_call_in_a_crate(self):
+        code = Path("crates/converter/src/lib.rs")
+        path = self.runs / code
+        path.parent.mkdir(parents=True)
+        path.write_text('fn converter() {}\nCommand::new("pandoc");\n', encoding="utf-8")
+        log = self.runs / "source.log"
+        with mock.patch.object(gate, "ROOT", self.runs), mock.patch.object(measure, "git", return_value=f"{code}\0"):
+            self.assertIn(f"{code}:2", gate.no_oracle_call(None, log))
 
 
 if __name__ == "__main__":
