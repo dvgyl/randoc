@@ -16,3 +16,17 @@ The generator checks each tree with `pandoc -f json -t json`. It writes one
 JSON record per line with the fields `id` and `tree`. It checks the SHA-256
 of the complete list against `spec/pivot.sha256`. A change to this list
 needs a tool correction under `plan/SPEC.md` section 4.2.
+
+The `writers` suite uses each tree with each of the 76 non-PDF writers. Run
+a diagnostic for the first tree with this command.
+
+```sh
+tools/autobuild/ops measure --suite writers --filter forms/sample-cell
+```
+
+The suite checks the oracle checksum and records each new oracle result
+with two runs in separate work folders. The cache at
+`$RANDOC_GPT/cache/fmt/writers.sqlite` holds raw oracle output. The evidence
+folder holds the result of each comparison and the SHA-256 of its oracle
+output. The score for each writer uses `fmt.write.F`, where `F` is the
+format name.

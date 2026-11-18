@@ -71,7 +71,7 @@ CONFORMANCE_TEST = "each_unit_of_the_baseline_passes"
 HARNESS_SUITE = "harness"
 GATE_METRIC = "gate.steps"
 LOG_TAIL_LINES = 40
-ORACLE_SHA256 = "8f17378a70e46eed7b63b5433fff6f5a0802f92659aa5782418548e0ca4a8e44"
+ORACLE_SHA256 = json.loads((ROOT / "spec/inventory/oracle.json").read_text(encoding="utf-8"))["sha256"]
 
 
 def gate_suites(metrics: dict[str, measure.Metric]) -> list[str]:

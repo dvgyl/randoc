@@ -211,3 +211,7 @@ M1-04 uses the authored file-suite tree first, then 80 other form trees, 194 hig
 ## 2026-11-18T14:31:55Z decision M1-04 1f93e8966f73
 
 M1-04 notebook cell identifiers. Under plan/SPEC.md 3.10 and 3.13, apply N5 only to UUID version 4 values in cells[*].id of fmt.write.ipynb standard output. Use only the cell positions where two oracle runs have different UUID values. The paired runs differ only at those fields for forms/inline-str, forms/table-row-span, highlight/python and seed/0001. The explicit sample-cell identifier stays exact. Each measured result records the positions to which the rule applies.
+
+## 2026-11-18T14:44:56Z decision M1-04 69fc910e7f87
+
+M1-04 records each writer result with two oracle runs in separate folders. The cache holds raw results outside the repository. Its key includes the oracle SHA-256, the command, the input and the code that sets the environment and compares results. The first-tree diagnostic checked all 76 writers with zero oracle exclusions. Randoc passed 18. The 81 notebook form probes had no oracle exclusions. A generated cell identifier changed in 72 of those probes.

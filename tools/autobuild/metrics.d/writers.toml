@@ -1,0 +1,615 @@
+[[metric]]
+key = "fmt.write"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "sum of the passing units of the 76 writer metrics"
+total = "sum of the totals of the 76 writer metrics"
+
+[[metric]]
+key = "fmt.write.ansi"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the ansi writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.asciidoc"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the asciidoc writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.asciidoc_legacy"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the asciidoc_legacy writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.asciidoctor"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the asciidoctor writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bbcode"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bbcode writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bbcode_fluxbb"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bbcode_fluxbb writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bbcode_hubzilla"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bbcode_hubzilla writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bbcode_phpbb"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bbcode_phpbb writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bbcode_steam"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bbcode_steam writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bbcode_xenforo"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bbcode_xenforo writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.beamer"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the beamer writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.biblatex"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the biblatex writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.bibtex"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the bibtex writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.chunkedhtml"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the chunkedhtml writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.commonmark"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the commonmark writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.commonmark_x"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the commonmark_x writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.context"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the context writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.csljson"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the csljson writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.djot"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the djot writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.docbook"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the docbook writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.docbook4"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the docbook4 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.docbook5"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the docbook5 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.docx"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the docx writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.dokuwiki"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the dokuwiki writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.dzslides"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the dzslides writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.epub"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the epub writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.epub2"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the epub2 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.epub3"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the epub3 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.fb2"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the fb2 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.fodt"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the fodt writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.gfm"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the gfm writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.haddock"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the haddock writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.html"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the html writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.html4"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the html4 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.html5"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the html5 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.icml"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the icml writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.ipynb"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the ipynb writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.jats"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the jats writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.jats_archiving"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the jats_archiving writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.jats_articleauthoring"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the jats_articleauthoring writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.jats_publishing"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the jats_publishing writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.jira"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the jira writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.json"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the json writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.latex"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the latex writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.man"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the man writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.markdown"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the markdown writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.markdown_github"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the markdown_github writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.markdown_mmd"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the markdown_mmd writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.markdown_phpextra"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the markdown_phpextra writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.markdown_strict"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the markdown_strict writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.markua"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the markua writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.mediawiki"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the mediawiki writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.ms"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the ms writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.muse"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the muse writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.native"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the native writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.odt"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the odt writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.opendocument"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the opendocument writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.opml"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the opml writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.org"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the org writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.plain"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the plain writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.pptx"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the pptx writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.revealjs"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the revealjs writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.rst"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the rst writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.rtf"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the rtf writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.s5"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the s5 writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.slideous"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the slideous writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.slidy"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the slidy writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.t2t"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the t2t writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.tei"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the tei writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.texinfo"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the texinfo writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.textile"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the textile writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.typst"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the typst writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.vimdoc"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the vimdoc writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.xml"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the xml writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.xwiki"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the xwiki writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"
+
+[[metric]]
+key = "fmt.write.zimwiki"
+suite = "writers"
+status = "active"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "pivot trees that the zimwiki writer converts with the oracle result"
+total = "400 pivot trees minus the oracle exclusions"

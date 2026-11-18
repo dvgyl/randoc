@@ -57,7 +57,7 @@ class Harness(unittest.TestCase):
         }
         found = counts(measure.harness_counts, {"harness-report.json": self.REPORT, "capabilities.json": matrix})
         self.assertEqual(found.rows["caps.readers"], (1, 52))
-        self.assertEqual(found.rows["caps.writers"], (0, 77))
+        self.assertNotIn("caps.writers", found.rows)
         self.assertEqual(found.rows["caps.options"], (1, 109))
 
 

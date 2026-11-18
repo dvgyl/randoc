@@ -77,10 +77,10 @@ total = "input formats in spec/inventory/input-formats.json (52)"
 
 [[metric]]
 key = "caps.writers"
-suite = "harness"
+suite = "writers"
 status = "active"
-command = "{harness} run --randoc {randoc} --jobs 4 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
-pass = "output formats of spec/inventory/output-formats.json whose matrix entry has status passing (it has a write unit, and each of its units passes)"
+command = "{python} -B tools/pivot/writers.py --oracle {oracle} --randoc {randoc} --harness {harness} --evidence {evidence}"
+pass = "writers with every pivot result and harness unit passing, plus PDF when pdf.units is at TOTAL/TOTAL"
 total = "output formats in spec/inventory/output-formats.json (77)"
 
 [[metric]]

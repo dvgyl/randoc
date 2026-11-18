@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "tools/pivot"))
 import generate as pivot
 from normalize import notebook_output, notebook_positions, notebook_rule
 from observe import NoResult, Observation, differences, run
+from reference import cache_key, classify, open_cache, read_reference, write_references
 
 
 def measure_tree(value):
@@ -139,6 +140,28 @@ class NotebookTests(unittest.TestCase):
         duplicate = self.notebook(self.FIRST, metadata=self.FIRST)
         self.assertIsNone(notebook_output(duplicate, (0,), rule))
         self.assertIsNone(notebook_output(self.notebook("<ID1>"), (0,), rule))
+
+
+class ReferenceTests(unittest.TestCase):
+    def test_a_cached_reference_keeps_the_original_result(self):
+        first = Observation(0, b"a", b"", {})
+        second = Observation(0, b"a", b"warning\n", {})
+        stable = classify("html", first, first, None)
+        unstable = classify("html", first, second, None)
+        stopped = classify("html", first, "the oracle stopped", None)
+        self.assertEqual(stable.status, "stable")
+        self.assertEqual(unstable.unstable_parts, ("stderr",))
+        self.assertEqual(stopped.status, "oracle_limit")
+        with tempfile.TemporaryDirectory() as folder:
+            database = open_cache(Path(folder) / "cache.sqlite")
+            try:
+                key = cache_key(b"version", ["-t", "html"], b"test")
+                self.assertIsNone(read_reference(database, key))
+                write_references(database, [(key, unstable)])
+                write_references(database, [(key, stable)])
+                self.assertEqual(read_reference(database, key), unstable)
+            finally:
+                database.close()
 
 
 if __name__ == "__main__":
