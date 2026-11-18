@@ -41,10 +41,19 @@ def fake_runner(suite: str) -> measure.Runner:
 class LostUnits(unittest.TestCase):
     def test_a_unit_that_passed_and_fails_now_is_lost_unless_its_metric_is_corrected(self):
         before = {"passing": ["a", "b", "c"]}
-        now = {"failing": ["a", "c", "new"], "failing_by_metric": {"s.units": ["a", "c", "new"], "s.part": ["c"]}}
+        now = {"passing": ["b"], "failing": ["a", "c", "new"],
+               "failing_by_metric": {"s.units": ["a", "c", "new"], "s.part": ["c"]}}
         self.assertEqual(gate.lost_by_suite(now, before, set()), ["a", "c"])
         self.assertEqual(gate.lost_by_suite(now, before, {"s.part"}), ["a"])
         self.assertEqual(gate.lost_by_suite(now, before, {"s.units"}), [])
+
+    def test_a_unit_that_passed_and_is_gone_or_excluded_now_is_lost_unless_a_metric_of_the_suite_is_corrected(self):
+        before = {"passing": ["a", "gone", "flaky"], "rows": [{"metric": "s.units"}, {"metric": "s.part"}]}
+        now = {"passing": ["a"], "failing": [], "unstable": ["flaky"], "failing_by_metric": {"s.units": []},
+               "rows": [{"metric": "s.units"}]}
+        self.assertEqual(gate.lost_by_suite(now, before, set()), ["flaky", "gone"])
+        self.assertEqual(gate.lost_by_suite(now, before, {"other.units"}), ["flaky", "gone"])
+        self.assertEqual(gate.lost_by_suite(now, before, {"s.part"}), [])
 
 
 class MeasurementStep(unittest.TestCase):
@@ -101,6 +110,18 @@ class MeasurementStep(unittest.TestCase):
         reason, log = self.run_step("u2")
         self.assertEqual(reason, "1 units passed in the earlier clean run and fail now, the first is alpha u2")
         self.assertIn("LOST alpha u2", log)
+
+    def test_the_gate_never_runs_the_suite_of_gate_steps(self):
+        registry = self.folder / "metrics.toml"
+        registry.write_text(registry.read_text() + ENTRY.format(suite="gate").replace("gate.units", "gate.steps"))
+        with mock.patch.dict(measure.RUNNERS, {"gate": fake_runner("gate")}):
+            self.metrics = {k: m for k, m in measure.load_metrics().items() if m.suite in ("alpha", "beta", "gate")}
+            self.assertEqual(gate.gate_suites(self.metrics), ["alpha", "beta"])
+            reason, log = self.run_step("")
+        self.assertIsNone(reason, log)
+        self.assertIn("alpha.units 4/4", log)
+        self.assertNotIn("gate", log)
+        self.assertEqual(list((self.folder / "runs").glob("gate/*/raw-gate.txt")), [])
 
     def test_a_newer_correction_of_the_metric_covers_the_unit(self):
         self.earlier_run("2026-11-17T01:00:00Z", ["u0", "u1", "u2"])

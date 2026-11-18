@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The gate of the build. It stops at the first step that fails.
 
-Usage: gate.py [--quick] [--base REV]
+Usage: gate.py [--quick] [--base REV] [--report FILE]
 
 Steps:
   format       cargo fmt --all -- --check
@@ -17,22 +17,31 @@ Steps:
                measurement steps, run the harness suite of measure.py; each
                unit of spec/baseline.json must pass
   measurement  run each other active suite of measure.py (not with --quick),
-               so that a new suite is checked too; then two checks against
-               the clean `build` rows (item -) of commits that HEAD contains,
-               without the rows that a newer correction of their metric
-               (plan/corrections.tsv) made obsolete:
+               so that a new suite is checked too, except the suite of
+               gate.steps (that suite runs this gate, so the gate never runs
+               it); then two checks against the clean `build` rows (item -)
+               of commits that HEAD contains, without the rows that a
+               correction of their metric (plan/corrections.tsv) made
+               obsolete:
                - no metric of this run is below the best such row with the
                  same TOTAL;
-               - no unit of a suite fails that passed in the newest such run
-                 of the suite (its evidence file <suite>.json, field passing),
-                 unless a correction of one of the unit's metrics is newer
-                 than that run. A suite with no such evidence passes this
-                 check with a note in the log.
+               - each unit of a suite that passed in the newest such run of
+                 the suite (its evidence file <suite>.json, field passing)
+                 passes now. A unit that fails now, that is excluded now or
+                 that is gone is lost, unless a correction newer than that
+                 run covers it: a correction of one of its metrics, or for an
+                 excluded or gone unit (no metric list), of any metric of the
+                 suite. A suite with no such evidence passes this check with
+                 a note in the log.
 
 The gate refuses to start when the drive has less than 15 GB free.
 Output: one summary line; for a failed step also the end of its log on
 standard error. Evidence: $RANDOC_RUNS/gate/<utc>-<sha12>/ (a log for each
-step, gate.json). Exit code: 0 when each step passes, else 1.
+step, gate.json: commit, base, quick, changed_outside_plan (the tracked
+files outside plan/ with changes at the start), steps (each step of the
+contract in order, with status pass, fail or not-run), result). --report
+FILE writes the same report to FILE: the suite of gate.steps reads it.
+Exit code: 0 when each step passes, else 1.
 """
 
 from __future__ import annotations
@@ -55,7 +64,15 @@ ROOT = measure.ROOT
 BUILD_SCOREBOARD = measure.SCOREBOARD / "build.tsv"
 CONFORMANCE_TEST = "each_unit_of_the_baseline_passes"
 HARNESS_SUITE = "harness"
+GATE_METRIC = "gate.steps"
 LOG_TAIL_LINES = 40
+
+
+def gate_suites(metrics: dict[str, measure.Metric]) -> list[str]:
+    """The active suites that the gate runs: each one except the suite of gate.steps, which runs the gate."""
+    own = metrics.get(GATE_METRIC)
+    skip = own.suite if own is not None and own.status == "active" else None
+    return [suite for suite in measure.active_suites(metrics) if suite != skip]
 
 
 @dataclass
@@ -72,7 +89,7 @@ class Gate:
         """The measurement slot and the program copies of the gate, taken once for its suites."""
         if self.programs is None:
             self.stack.enter_context(measure.measurement_slot())
-            commands = [measure.suite_command(s, self.metrics) for s in measure.active_suites(self.metrics)]
+            commands = [measure.suite_command(s, self.metrics) for s in gate_suites(self.metrics)]
             self.programs = self.stack.enter_context(measure.program_snapshot(measure.programs_named(commands)))
         return self.programs
 
@@ -161,13 +178,17 @@ def earlier_evidence(history: list[measure.Row], suite: str) -> measure.Row | No
 
 
 def lost_by_suite(now: dict, before: dict, corrected: set[str]) -> list[str]:
-    """The units that passed in `before` and fail in `now`, except the units of a corrected metric."""
+    """The units that passed in `before` and do not pass in `now` (they fail, are excluded or are gone),
+    except the units that a corrected metric covers. A failing unit has its metrics in
+    `failing_by_metric`; an excluded or gone unit has none, so a correction of any metric of the suite
+    covers it."""
     metrics: dict[str, set[str]] = {}
     for metric, units in (now.get("failing_by_metric") or {}).items():
         for unit in units:
             metrics.setdefault(unit, set()).add(metric)
-    lost = set(now.get("failing") or []) & set(before.get("passing") or [])
-    return sorted(unit for unit in lost if not metrics.get(unit, set()) & corrected)
+    suite = {str(r.get("metric")) for data in (now, before) for r in data.get("rows") or [] if isinstance(r, dict)}
+    lost = set(before.get("passing") or []) - set(now.get("passing") or [])
+    return sorted(unit for unit in lost if not metrics.get(unit, suite) & corrected)
 
 
 def unit_regressions(results: list[measure.SuiteResult], history: list[measure.Row],
@@ -183,6 +204,9 @@ def unit_regressions(results: list[measure.SuiteResult], history: list[measure.R
             notes.append(f"{result.suite}: no earlier clean evidence with a unit list; the unit check passes")
             continue
         now = json.loads(result.evidence.read_text(encoding="utf-8"))
+        if not isinstance(now.get("passing"), list):
+            notes.append(f"{result.suite}: this run has no unit list; the unit check passes")
+            continue
         corrected = {metric for metric, utc in cut.items() if utc > earlier.utc}
         lost += [f"{result.suite} {unit}" for unit in lost_by_suite(now, before, corrected)]
     return lost, notes
@@ -194,7 +218,7 @@ def head_contains(commit: str) -> bool:
 
 
 def measurement(gate: Gate, log: Path) -> str | None:
-    suites = [] if gate.quick else [s for s in measure.active_suites(gate.metrics) if s != HARNESS_SUITE]
+    suites = [] if gate.quick else [s for s in gate_suites(gate.metrics) if s != HARNESS_SUITE]
     for suite in suites:
         try:
             gate.results.append(measure.run_suite(suite, gate.metrics, gate.evidence, gate.snapshot()))
@@ -235,6 +259,15 @@ STEPS = [
 ]
 
 
+def changed_outside_plan() -> list[str]:
+    """The tracked files outside plan/ with changes: a gate of such a tree is not a gate of its commit."""
+    out = subprocess.run(["git", "status", "--porcelain=v1", "-z", "--untracked-files=no"], cwd=ROOT,
+                         capture_output=True, text=True)
+    if out.returncode != 0:
+        raise measure.ToolError(f"git status: {out.stderr.strip()}")
+    return [entry[3:] for entry in out.stdout.split("\0") if len(entry) > 3 and not entry[3:].startswith("plan/")]
+
+
 def duration(seconds: float) -> str:
     whole = round(seconds)
     return f"{whole // 60}m{whole % 60:02d}s" if whole >= 60 else f"{whole}s"
@@ -244,11 +277,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--quick", action="store_true", help="skip the pandoc and corpus suites")
     parser.add_argument("--base", help="the base of the licence scan (default: the default of licence_scan.py)")
+    parser.add_argument("--report", type=Path, help="also write the report (gate.json) to FILE, for the suite of gate.steps")
     args = parser.parse_args(argv)
     try:
         measure.check_free_disk(measure.runs_folder())
         metrics = measure.load_metrics()
         commit = measure.git("rev-parse", "HEAD")
+        changed = changed_outside_plan()
         _, evidence = measure.new_evidence_dir("gate", commit)
     except measure.ToolError as error:
         print(f"gate: FAIL before the first step: {error}")
@@ -276,9 +311,13 @@ def main(argv: list[str] | None = None) -> int:
         done.append({"name": "programs", "seconds": 0, "status": "fail", "reason": str(error), "log": str(log)})
         failure = failure or ("programs", str(error), log)
     total = duration(time.monotonic() - started)
-    (evidence / "gate.json").write_text(json.dumps(
-        {"commit": commit, "base": args.base, "quick": args.quick, "steps": done,
-         "result": "pass" if failure is None else "fail"}, indent=1) + "\n", encoding="utf-8")
+    ran = {s["name"] for s in done}
+    steps = done + [{"name": step.name, "status": "not-run"} for step in STEPS if step.name not in ran]
+    report = json.dumps({"commit": commit, "base": args.base, "quick": args.quick, "changed_outside_plan": changed,
+                         "steps": steps, "result": "pass" if failure is None else "fail"}, indent=1) + "\n"
+    (evidence / "gate.json").write_text(report, encoding="utf-8")
+    if args.report:
+        args.report.write_text(report, encoding="utf-8")
     times = ", ".join(f"{s['name']} {duration(s['seconds'])}" for s in done)
     if failure is None:
         print(f"gate: PASS in {total} ({times}); evidence {evidence}")

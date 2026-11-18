@@ -69,6 +69,18 @@ class Gain(unittest.TestCase):
         later = rows + [row("2026-11-17T03:00:00Z", 30, 50)]
         self.assertTrue(rules.gained(later, "M1-01", "m", (0, 0), correction))
 
+    def test_a_withdrawn_correction_restores_the_older_rows_and_voids_the_rows_of_its_time(self):
+        old, during, after = (row("2026-11-17T01:00:00Z", 8, 9), row("2026-11-17T03:00:00Z", 2, 9),
+                              row("2026-11-17T05:00:00Z", 7, 9))
+        correction = {"utc": "2026-11-17T02:00:00Z", "metric": "m", "item": "M1-01", "withdraws": "-"}
+        withdrawal = {"utc": "2026-11-17T04:00:00Z", "metric": "m", "item": "M1-01", "withdraws": correction["utc"]}
+        in_force = rules.cutoffs([correction])
+        self.assertEqual([rules.counts(r, in_force) for r in (old, during, after)], [False, True, True])
+        withdrawn = rules.cutoffs([correction, withdrawal])
+        self.assertEqual(withdrawn, {})
+        self.assertEqual([rules.counts(r, withdrawn) for r in (old, during, after)], [True, False, True])
+        self.assertFalse(rules.gained([during], "M1-01", "m", (0, 0), [correction, withdrawal]))
+
     def test_the_newest_correction_of_each_metric_is_the_cutoff(self):
         corrections = [{"utc": "T2", "metric": "m"}, {"utc": "T5", "metric": "m"}, {"utc": "T3", "metric": "n"}]
         self.assertEqual(rules.cutoffs(corrections), {"m": "T5", "n": "T3"})

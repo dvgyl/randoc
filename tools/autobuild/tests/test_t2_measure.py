@@ -133,6 +133,28 @@ class Evidence(Flow):
             "fake.units": ["u4", "u5", "u6", "u7", "u8", "u9"], "fake.part": ["u5", "u7", "u9"]})
         self.assertEqual(evidence["programs"], {})
 
+    def test_a_completed_run_writes_its_manifest_and_a_failed_run_does_not(self):
+        self.assertEqual(self.measure(4)[0], 0)
+        [first, _] = self.rows()
+        manifest = json.loads((Path(first.evidence).parent / "run.json").read_text())
+        self.assertEqual({k: manifest[k] for k in ("utc", "commit", "item", "stream", "suites", "rows")},
+                         {"utc": first.utc, "commit": first.commit, "item": "-", "stream": "test",
+                          "suites": ["fake"], "rows": 2})
+        self.assertTrue(manifest["end"])
+        self.assertEqual(self.measure(4, exit_code=3)[0], 2)
+        folders = sorted(p for p in (self.runs / "measure").iterdir() if not p.name.startswith("._"))
+        self.assertFalse((folders[-1] / "run.json").exists())
+
+    def test_a_runner_reads_the_report_after_the_exit_codes_that_it_lists(self):
+        reporting = measure.Runner(fake_counts, "--only", "tools/autobuild", exits=(0, 3))
+        with mock.patch.dict(measure.RUNNERS, {"fake": reporting}):
+            code, out, err = self.measure(6, exit_code=3)
+        self.assertEqual(code, 0, err)
+        self.assertEqual([(r.metric, r.passed) for r in self.rows()], [("fake.part", 3), ("fake.units", 6)])
+        code, _, err = self.measure(6, exit_code=1)
+        self.assertEqual(code, 2)
+        self.assertIn("fake: exit code 1", err)
+
     def test_a_correction_makes_older_rows_no_reference_for_a_fall(self):
         board = self.folder / "plan" / "scoreboard" / "test.tsv"
         measure.append_rows(board, [measure.Row("2000-01-01T01:00:00Z", "c", "no", "-", "fake.units", 9, 10, "t", "/e")])

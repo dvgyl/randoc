@@ -10,6 +10,11 @@ one shared file.
   `measure.Unit(id, cls, metric_keys)` with `cls` one of `measure.PASS`,
   `measure.FAIL`, `measure.UNSTABLE`, `measure.ORACLE_LIMIT`,
   `measure.NO_INPUT` (plan/SPEC.md 3.10 and 3.11).
+- `measure.Runner(..., exits=(0, 1))` makes `measure.py` read the report also
+  after the exit code 1 (default: `(0,)`). Each other exit code is a tool
+  error. The suite of `gate.steps` uses it: its command is
+  `gate.py --report FILE`, which exits 1 when a step fails, and the gate
+  never runs that suite itself.
 - `tools/autobuild/metrics.d/NAME.toml` holds the `[[metric]]` entries of the
   suite, in the form of `tools/autobuild/metrics.toml`, with `suite = "NAME"`.
   An entry here may replace a `to-build` entry of `metrics.toml` with the

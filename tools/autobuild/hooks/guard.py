@@ -44,6 +44,11 @@ SETTINGS = {
 if (HERE / "guard.json").is_file():
     SETTINGS.update(json.loads((HERE / "guard.json").read_text(encoding="utf-8")))
 BANNED = (re.compile(r"\bHOLD\b"), re.compile(r"fresh\s+complete\s+review", re.IGNORECASE))
+# The files that name the banned phrases in order to ban them: the manual, this guard and its tests.
+PHRASE_FILES = (
+    "AGENTS.md", "tools/autobuild/hooks/guard.py", "tools/autobuild/tests/test_guard.py",
+    "tools/autobuild/tests/test_t1_push.py", "tools/autobuild/tests/test_ops.py",
+)
 ATTRIBUTION = re.compile(
     r"^\s*(co-authored-by:|claude-session:)|generated with", re.IGNORECASE
 )
@@ -166,20 +171,31 @@ def commits_since_measurement(rows: list[dict[str, str]]) -> int:
 
 
 def new_full_run(staged: list[dict[str, str]], committed: list[dict[str, str]]) -> bool:
-    """The staged rows add a full run of HEAD or of HEAD's parent whose evidence folders exist."""
+    """The staged rows add a full run of HEAD or of HEAD's parent that measure.py completed."""
     measured = {rev_ok(rev) for rev in ("HEAD", "HEAD^")} - {None}
     old = {tuple(sorted(r.items())) for r in committed}
     runs: dict[tuple[str, str], list[dict[str, str]]] = {}
     for row in staged:
         if tuple(sorted(row.items())) not in old:
             runs.setdefault((row.get("utc", ""), row.get("commit", "")), []).append(row)
-    return any(commit in measured and all(is_full_run_row(r) and evidence_kept(r) for r in rows)
+    return any(commit in measured and all(is_full_run_row(r) for r in rows) and completed_run(rows)
                for (_utc, commit), rows in runs.items())
 
 
-def evidence_kept(row: dict[str, str]) -> bool:
-    evidence = Path(row.get("evidence", ""))
-    return evidence.is_absolute() and evidence.parent.is_dir()
+def completed_run(rows: list[dict[str, str]]) -> bool:
+    """The rows share one evidence folder, and its run.json (measure.py writes it at the end of a
+    successful run) names their utc and commit, an end time and their number of rows."""
+    folders = {Path(r.get("evidence", "")).parent for r in rows}
+    folder = folders.pop() if len(folders) == 1 else None
+    if folder is None or not folder.is_absolute():
+        return False
+    try:
+        manifest = json.loads((folder / "run.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return (isinstance(manifest, dict) and bool(manifest.get("end"))
+            and manifest.get("utc") == rows[0].get("utc") and manifest.get("commit") == rows[0].get("commit")
+            and manifest.get("rows") == len(rows))
 
 
 def cuts_an_item() -> bool:
@@ -202,31 +218,41 @@ def check_branch(branch: str) -> None:
         raise Refused(f"item {worker.group(1)} is not active in gpt/build:{ITEMS_FILE}; its worker branch is closed")
 
 
+def added_lines() -> list[str]:
+    """The added lines of each staged text file except PHRASE_FILES (Git shows no lines of a binary file)."""
+    excluded = [f":(exclude){name}" for name in PHRASE_FILES]
+    lines, in_hunk = [], False
+    for line in git("diff", "--cached", "-U0", "--no-color", "--no-ext-diff", "--no-textconv", "--",
+                    ":/", *excluded).splitlines():
+        if line.startswith("diff --git "):
+            in_hunk = False
+        elif line.startswith("@@"):
+            in_hunk = True
+        elif in_hunk and line.startswith("+"):
+            lines.append(line[1:])
+    return lines
+
+
 def pre_commit() -> None:
     check_branch(current_branch())
     staged = [n for n in git("diff", "--cached", "--name-only", "-z").split("\0") if n]
     for name in staged:
         if Path(name).name.startswith("._"):
             raise Refused(f"{name} is a macOS companion file; unstage it")
-    # AGENTS.md is the one file that names the banned phrases (to ban them).
-    added = [
-        line[1:]
-        for line in git(
-            "diff", "--cached", "-U0", "--", "*.md", "*.tsv", "*.txt", ":(exclude)AGENTS.md"
-        ).splitlines()
-        if line.startswith("+") and not line.startswith("+++")
-    ]
-    for line in added:
+    for line in added_lines():
         hits = banned_hits(line)
         if hits:
             raise Refused(f"a staged line uses a banned phrase ({', '.join(hits)}): {line.strip()[:120]}")
 
+    # The commit that cuts an item (ops item cut: the reverts and the item's rows) passes the limit and
+    # the check of the other items: an exhausted item refuses every other commit, so the limit, or a
+    # second exhausted item, would otherwise lock the branch.
+    if cuts_an_item():
+        return
     head_rows = scoreboard_rows(lambda n: committed_file("HEAD", n)) if rev_ok("HEAD") else []
     rows = scoreboard_rows(staged_file)
     since = commits_since_measurement(head_rows)
-    # The commit that cuts an item (ops item cut: the reverts and the item's rows) passes the limit:
-    # an exhausted item refuses every other commit, so the limit would otherwise lock the branch.
-    if since >= MEASURE_LIMIT and not new_full_run(rows, head_rows) and not cuts_an_item():
+    if since >= MEASURE_LIMIT and not new_full_run(rows, head_rows):
         raise Refused(
             f"{since} commits since the last measured commit (limit {MEASURE_LIMIT}). "
             "Run `tools/autobuild/ops measure` (a full run, no --item) and commit its new scoreboard rows first."

@@ -15,7 +15,9 @@ $RANDOC_RUNS/measure/<utc>-<sha12>/<suite>.json (fields rows, passing,
 failing, failing_by_metric, no_result, unstable, oracle_limit, no_input,
 programs, duration_s; the classes of plan/SPEC.md 3.11); append one row for
 each metric to plan/scoreboard/<stream>.tsv; print each row with its change
-against the previous row of the same metric.
+against the previous row of the same metric; when each suite ran, write the
+manifest run.json (utc, end, commit, dirty, item, stream, suites, rows) into
+the evidence folder.
 
 Default suites: each suite with an active metric. --quick: the harness suite
 (harness.* and caps.*) and the suite of the metric of the --item in
@@ -274,9 +276,14 @@ def corpus_counts(evidence: Path, log: str) -> Counts:
 
 @dataclass(frozen=True)
 class Runner:
+    """`exits`: the exit codes of the suite command after which `parse` reads its report. A command
+    that reports failed units with a nonzero exit (the gate: 1) lists that code; any other code is a
+    tool error."""
+
     parse: Callable[[Path, str], Counts]
     filter_option: str
     tool_dir: str
+    exits: tuple[int, ...] = (0,)
 
 
 RUNNERS = {
@@ -484,7 +491,7 @@ def run_suite(suite: str, metrics: dict[str, Metric], evidence: Path, programs: 
             raise ToolError(f"{suite}: {argv[0]}: {error}") from error
     duration = time.monotonic() - started
     log_text = log_path.read_text(encoding="utf-8", errors="replace")
-    if code != 0:
+    if code not in runner.exits:
         tail = "\n".join(log_text.splitlines()[-5:])
         raise ToolError(f"{suite}: exit code {code} (log {log_path}):\n{tail}")
     try:
@@ -812,6 +819,11 @@ def measure_run(args: argparse.Namespace, metrics: dict[str, Metric], stream: st
     elif new_rows:
         append_rows(scoreboard, new_rows)
         print(f"measure: appended {len(new_rows)} rows to {scoreboard}")
+        if not failed:
+            # The manifest of a completed run: only such a run resets the commit counter of the guard.
+            manifest = {"utc": utc, "end": utc_now(), "commit": commit, "dirty": dirty, "item": item,
+                        "stream": stream, "suites": suites, "rows": len(new_rows)}
+            (evidence / "run.json").write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     return 2 if failed else 1 if fell else 0
 
 

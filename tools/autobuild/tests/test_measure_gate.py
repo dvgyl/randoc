@@ -61,11 +61,11 @@ class Steps(unittest.TestCase):
             return reason
         return gate.Step(name, run)
 
-    def run_gate(self, steps: list[gate.Step]) -> tuple[int, str, str, dict]:
+    def run_gate(self, steps: list[gate.Step], *argv: str) -> tuple[int, str, str, dict]:
         out, err = io.StringIO(), io.StringIO()
         with mock.patch.object(gate, "STEPS", steps), contextlib.redirect_stdout(out), \
                 contextlib.redirect_stderr(err):
-            code = gate.main([])
+            code = gate.main(list(argv))
         [record] = list(self.runs.glob("gate/*/gate.json"))
         return code, out.getvalue(), err.getvalue(), json.loads(record.read_text())
 
@@ -77,7 +77,18 @@ class Steps(unittest.TestCase):
         self.assertEqual(len(out.splitlines()), 1)
         self.assertRegex(out, r"^gate: FAIL at two after \d+s: it broke \(one \d+s, two \d+s\); log ")
         self.assertIn("log of two", err)
-        self.assertEqual([(s["name"], s["status"]) for s in record["steps"]], [("one", "pass"), ("two", "fail")])
+        self.assertEqual([(s["name"], s["status"]) for s in record["steps"]],
+                         [("one", "pass"), ("two", "fail"), ("three", "not-run")])
+        self.assertIsInstance(record["changed_outside_plan"], list)
+
+    def test_the_report_of_a_failed_gate_names_each_step_for_the_suite_of_gate_steps(self):
+        report = self.runs / "suite-evidence" / "gate-report.json"
+        report.parent.mkdir()
+        code, _, _, record = self.run_gate([self.step("one", "it broke"), self.step("two", None)],
+                                           "--report", str(report))
+        self.assertEqual(code, 1, "the gate keeps its exit code; the runner of the suite reads the report")
+        self.assertEqual(json.loads(report.read_text()), record)
+        self.assertEqual([(s["name"], s["status"]) for s in record["steps"]], [("one", "fail"), ("two", "not-run")])
 
     def test_a_gate_with_each_step_passing_exits_0(self):
         code, out, _, record = self.run_gate([self.step("one", None), self.step("two", None)])

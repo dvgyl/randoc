@@ -74,13 +74,19 @@ class GuardTest(unittest.TestCase):
         r.write("plan/p.md", "p\n")
         self.assertEqual(r.commit("chore: tools and plan [ops]").returncode, 0)
 
-    def evidence(self, name: str) -> str:
+    def evidence(self, name: str, manifest: dict | None = None) -> str:
+        """The evidence file of a run; with `manifest`, the run.json of a completed run next to it."""
         folder = self.repo.gpt / "runs" / "measure" / name
         folder.mkdir(parents=True, exist_ok=True)
+        if manifest is not None:
+            (folder / "run.json").write_text(json.dumps({"end": "2026-11-17T23:00:00Z", **manifest}))
         return str(folder / "harness.json")
 
     def full_row(self, utc: str, commit: str, evidence: str, item: str = "-", dirty: str = "no") -> str:
         return row(utc, commit, item, "harness.units", 5, 9, dirty=dirty).replace("/runs/x", evidence)
+
+    def completed(self, name: str, utc: str, commit: str, rows: int = 1) -> str:
+        return self.evidence(name, {"utc": utc, "commit": commit, "rows": rows})
 
     def test_ten_commits_after_the_measured_commit(self) -> None:
         r = self.repo
@@ -93,17 +99,22 @@ class GuardTest(unittest.TestCase):
         r.write("plan/late.md", "late\n")
         self.refused(r.commit("docs: one too many [ops]"), "10 commits since the last measured commit")
         head, old = r.head(), r.out("rev-parse", "HEAD~3")
+        utc = "2026-11-17T11:00:00Z"
         for wrong in (
-            self.full_row("2026-11-17T11:00:00Z", head, self.evidence("b"), item="M1-01"),  # an item run
-            self.full_row("2026-11-17T11:00:00Z", head, self.evidence("b"), dirty="yes"),  # a dirty tree
-            self.full_row("2026-11-17T11:00:00Z", old, self.evidence("b")),  # not HEAD or its parent
-            self.full_row("2026-11-17T11:00:00Z", head, "/nowhere/measure/x/harness.json"),  # no evidence
+            self.full_row(utc, head, self.completed("b", utc, head), item="M1-01"),  # an item run
+            self.full_row(utc, head, self.completed("b", utc, head), dirty="yes"),  # a dirty tree
+            self.full_row(utc, old, self.completed("o", utc, old)),  # not HEAD or its parent
+            self.full_row(utc, head, "/nowhere/measure/x/harness.json"),  # no evidence
+            self.full_row(utc, head, self.evidence("bare")),  # a folder with no run.json: the run did not end
+            self.full_row(utc, head, self.completed("short", utc, head, rows=2)),  # rows of the run are missing
+            self.full_row(utc, head, self.completed("other", "2026-11-17T09:00:00Z", head)),  # another run
         ):
             text = r.read("plan/scoreboard/build.tsv")
             r.append("plan/scoreboard/build.tsv", wrong)
             self.refused(r.commit("chore(plan): rows [ops]"), "10 commits since the last measured commit")
             r.write("plan/scoreboard/build.tsv", text)
-        r.append("plan/scoreboard/build.tsv", self.full_row("2026-11-17T12:00:00Z", head, self.evidence("c")))
+        utc = "2026-11-17T12:00:00Z"
+        r.append("plan/scoreboard/build.tsv", self.full_row(utc, head, self.completed("c", utc, head)))
         self.assertEqual(r.commit("chore(plan): new rows [ops]").returncode, 0)
 
     def test_three_experiments_with_no_gain_block_each_commit(self) -> None:
@@ -165,6 +176,24 @@ class GuardTest(unittest.TestCase):
         r.write("crates/x/src/lib.rs", "fn b() {}\n")
         self.refused(r.commit("feat: more code under a cut item [M1-01]"), "an active item")
 
+    def test_a_cut_does_not_wait_for_another_exhausted_item_or_for_the_commit_limit(self) -> None:
+        r = self.repo
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T09:00:00Z", r.head(), "-", "harness.units", 5, 9))
+        self.items(item_line("M1-01", "active", baseline="5/9"), item_line("M1-02", "active", baseline="5/9"))
+        r.must_commit("chore(plan): start M1-01 and M1-02 [ops]")
+        for n in range(9):
+            r.write(f"plan/n{n}.md", f"{n}\n")
+            r.must_commit(f"docs: note {n} [ops]")
+        (r.gpt / "runs" / "attempts.tsv").write_text("utc\tcommit\titem\tsuites\tpid\n" + "".join(
+            f"2026-11-17T1{n}:00:00Z\t{r.head()}\t{item}\tharness\t1\n" for n in range(3) for item in ("M1-01", "M1-02")))
+        r.write("plan/x.md", "x\n")
+        self.refused(r.commit("docs: x [ops]"), "10 commits since the last measured commit")
+        r.git("rm", "-q", "--cached", "plan/x.md")
+        self.items(item_line("M1-01", "cut", baseline="5/9"), item_line("M1-02", "active", baseline="5/9"))
+        self.assertEqual(r.commit("chore(plan): cut item M1-01 [ops]", ["plan/ITEMS.tsv"]).returncode, 0)
+        self.items(item_line("M1-01", "cut", baseline="5/9"), item_line("M1-02", "cut", baseline="5/9"))
+        self.assertEqual(r.commit("chore(plan): cut item M1-02 [ops]", ["plan/ITEMS.tsv"]).returncode, 0)
+
     def test_banned_phrases(self) -> None:
         r = self.repo
         r.write("plan/a.md", "We put this on HOLD.\n")
@@ -173,6 +202,16 @@ class GuardTest(unittest.TestCase):
         r.must_commit("docs: a [ops]")
         r.write("plan/b.md", "b\n")
         self.refused(r.commit("docs: b, then a Fresh Complete Review [ops]"), "banned phrase")
+
+    def test_banned_phrases_in_each_staged_text_file_except_the_files_that_ban_them(self) -> None:
+        r = self.repo
+        r.write("tools/x.py", "state = 'HOLD'\n")
+        self.refused(r.commit("chore(tools): x [ops]"), "banned phrase")
+        r.write("tools/x.py", "state = 'wait'\n")
+        r.write("tools/autobuild/tests/test_guard.py", "TEXT = 'put it on HOLD'\n")
+        r.write("AGENTS.md", r.read("AGENTS.md") + "Never write HOLD.\n")
+        (r.root / "plan/blob.bin").write_bytes(b"\0\1HOLD\0")
+        self.assertEqual(r.commit("chore(tools): x [ops]").returncode, 0, "binary files and the phrase files pass")
 
     def test_attribution_lines_are_removed(self) -> None:
         r = self.repo

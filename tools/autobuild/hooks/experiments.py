@@ -9,8 +9,11 @@ loads this file by its path next to its protected copy.
   pid). measure.py writes one before each run that measures an item, so a run
   that fails before it writes rows still counts as an experiment.
 - Corrections: rows of plan/corrections.tsv (utc, metric, commit, item,
-  reason). The rows of a metric that are older than its newest correction
-  do not count for gains, regressions or milestone checks.
+  reason, withdraws). The rows of a metric that are older than its newest
+  correction do not count for gains, regressions or milestone checks. A row
+  whose `withdraws` names the utc of a correction of the same metric
+  withdraws it (`ops item cut` of the item that made it): the older rows
+  count again, and the rows measured while it was in force do not.
 """
 
 from __future__ import annotations
@@ -20,7 +23,7 @@ from pathlib import Path
 
 MAX_TRIES = 3
 ATTEMPT_FIELDS = ("utc", "commit", "item", "suites", "pid")
-CORRECTION_FIELDS = ("utc", "metric", "commit", "item", "reason")
+CORRECTION_FIELDS = ("utc", "metric", "commit", "item", "reason", "withdraws")
 CORRECTIONS_FILE = "plan/corrections.tsv"
 DEFAULT_RUNS = "/Volumes/Extreme Pro/Randoc/gpt/runs"
 
@@ -62,19 +65,44 @@ def record_attempt(path: Path, utc: str, commit: str, item: str, suites: list[st
         os.close(descriptor)
 
 
-def cutoffs(corrections: list[dict[str, str]]) -> dict[str, str]:
-    """The UTC time of the newest correction of each metric."""
-    found: dict[str, str] = {}
+class Cutoffs(dict):
+    """metric -> the UTC time of its newest correction in force. `windows`: metric -> the (start, end)
+    times of each withdrawn correction, from the correction to its withdrawal."""
+
+    def __init__(self, newest: dict[str, str], windows: dict[str, list[tuple[str, str]]]):
+        super().__init__(newest)
+        self.windows = windows
+
+
+def withdrawal_of(correction: dict[str, str]) -> str:
+    """The utc of the correction that this row withdraws, or '' for a correction."""
+    value = correction.get("withdraws") or ""
+    return "" if value == "-" else value
+
+
+def cutoffs(corrections: list[dict[str, str]]) -> Cutoffs:
+    ends = {(c.get("metric", ""), withdrawal_of(c)): c.get("utc", "") for c in corrections if withdrawal_of(c)}
+    newest: dict[str, str] = {}
+    windows: dict[str, list[tuple[str, str]]] = {}
     for correction in corrections:
         metric, utc = correction.get("metric", ""), correction.get("utc", "")
-        if metric and utc > found.get(metric, ""):
-            found[metric] = utc
-    return found
+        if not metric or withdrawal_of(correction):
+            continue
+        end = ends.get((metric, utc))
+        if end:
+            windows.setdefault(metric, []).append((utc, end))
+        elif utc > newest.get(metric, ""):
+            newest[metric] = utc
+    return Cutoffs(newest, windows)
 
 
 def counts(row: dict[str, str], cut: dict[str, str]) -> bool:
-    """False for a row that is older than the newest correction of its metric."""
-    return row.get("utc", "") >= cut.get(row.get("metric", ""), "")
+    """False for a row that is older than the newest correction of its metric, or that was measured
+    while a correction that is now withdrawn was in force."""
+    utc, metric = row.get("utc", ""), row.get("metric", "")
+    if utc < cut.get(metric, ""):
+        return False
+    return not any(start <= utc < end for start, end in getattr(cut, "windows", {}).get(metric, ()))
 
 
 def numbers(row: dict[str, str]) -> tuple[int, int] | None:
