@@ -408,6 +408,8 @@ def main(argv=None):
         parser.error("set RANDOC_CORPUS or use --corpus")
     # Read the baseline before the run: --out can name the same file.
     baseline = json.loads(args.baseline.read_text(encoding="utf-8"))["results"] if args.baseline else None
+    updates_baseline = (baseline is not None and args.out is not None
+                        and args.out.exists() and args.out.samefile(args.baseline))
 
     try:
         documents = corpuslib.load_manifest(args.manifest)
@@ -440,9 +442,13 @@ def main(argv=None):
     report = summarize(units, version_line(program, HOME, program_ghcrts),
                        version_line(oracle, HOME, ORACLE_GHCRTS), targets, args.timeout, identity)
 
-    text = json.dumps(report, indent=1, ensure_ascii=False) + "\n"
     if args.out:
-        args.out.write_text(text, encoding="utf-8")
+        if updates_baseline and any(status == "pass" and report["results"].get(unit) != "pass"
+                                    for unit, status in baseline.items()):
+            print(f"Kept the baseline file {args.out}")
+        else:
+            text = json.dumps(report, indent=1, ensure_ascii=False) + "\n"
+            args.out.write_text(text, encoding="utf-8")
     totals = report["totals"]
     print(f"{report['documents']} documents, {totals['units']} units: "
           f"{totals['pass']} pass, {totals['fail']} fail")

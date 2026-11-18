@@ -151,3 +151,7 @@ The AGENTS.md section 7 counter now compares only clean, completed full build ru
 ## 2026-11-18T09:45:55Z decision M1-02 5e2ef6ab3373
 
 The tests confirmed that the preparation had fixed the Pandoc suite and corpus baseline checks. M1-02 reuses the three existing baseline test paths and adds one scored gate step for each. Each fixture checks one selected regression against a passing baseline. The Pandoc suite and corpus fixtures use the same file as the old baseline and the new report. All three steps passed on their own. The plan and specification now describe the verified baseline behavior.
+
+## 2026-11-18T09:53:16Z weak-spot M1-02 0d40f4396a6e
+
+Review round 1 showed that each Python tool replaced its input baseline with a failed report when the output named the same file. An identical retry then exited 0. A filtered success could also remove unselected passing units. The follow-up in M1-02 preserves the shared file if the new result omits a saved passing unit. Both regression tests now retain the saved file, and the failed run still exits 1 on retry.

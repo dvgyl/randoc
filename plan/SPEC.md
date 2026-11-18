@@ -399,7 +399,9 @@ oracle runs makes the unit unstable, 3.10). If the oracle fails a test, its
 result becomes the reference (`decision` entry), and the test stays (3.11,
 oracle failure rule). TOTAL: 2,231 today (command 1,884, old 174, readers
 173). The baseline check reads the saved list of passing units before it
-writes the new list. The readers tests still ignore standard error (M1-28).
+writes the new list. When the baseline input and output name the same file,
+the report can replace it only if all saved passing units still pass. The
+readers tests still ignore standard error (M1-28).
 
 ### `suite.pandoc.command`
 As `suite.pandoc`, group `command` only.
@@ -437,6 +439,8 @@ Unit: (document, target) for `json` (3.4), `html`, `markdown`. Inputs:
 `$RANDOC_CORPUS`. Command: `-f FORMAT -t TARGET FILE`. A document that the
 oracle rejects stays in. Tool: existing (`tools/corpus/run.py`). The
 baseline check reads the saved results before it writes the new results.
+When the baseline input and output name the same file, the report can
+replace it only if all saved passing units still pass.
 19 input formats have no document. The tool uses the oracle cache before
 it checks the oracle SHA-256, and its JSON parser accepts a duplicate key
 (M1-27). Held-out: `holdout.corpus`.

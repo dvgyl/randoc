@@ -460,19 +460,39 @@ class Baseline(unittest.TestCase):
         found = suite.Discovery([suite.CommandCase("command/1.md#1", "command", "pandoc", "", "")], [])
         with tempfile.TemporaryDirectory() as directory:
             baseline = os.path.join(directory, "baseline.json")
-            args = ["--suite", directory, "--oracle", "", "--write-baseline", baseline, "--jobs", "1"]
+            args = ["--suite", directory, "--oracle", "", "--jobs", "1"]
             out = io.StringIO()
             with mock.patch.object(run.testsuite, "discover", return_value=found), \
                     contextlib.redirect_stdout(out):
-                self.assertEqual(run.main(["--pandoc", "/usr/bin/true", *args]), 0)
-                with open(baseline, encoding="utf-8") as handle:
-                    self.assertEqual(json.load(handle)["passing"], ["command/1.md#1"])
-                code = run.main(["--pandoc", "/usr/bin/false", "--baseline", baseline, *args])
-            with open(baseline, encoding="utf-8") as handle:
-                written = json.load(handle)["passing"]
-        self.assertEqual(code, 1)
+                for output in ("--write-baseline", "--out"):
+                    with self.subTest(output=output):
+                        self.assertEqual(run.main(["--pandoc", "/usr/bin/true", output, baseline, *args]), 0)
+                        with open(baseline, "rb") as handle:
+                            before = handle.read()
+                        self.assertEqual(json.loads(before)["passing"], ["command/1.md#1"])
+                        wrong = ["--pandoc", "/usr/bin/false", "--baseline", baseline, output, baseline, *args]
+                        self.assertEqual([run.main(wrong), run.main(wrong)], [1, 1])
+                        with open(baseline, "rb") as handle:
+                            self.assertEqual(handle.read(), before)
         self.assertIn("REGRESSION command/1.md#1", out.getvalue())
-        self.assertEqual(written, [])
+
+    def test_a_filtered_run_keeps_unselected_units_in_the_baseline(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        found = suite.Discovery([suite.CommandCase(f"command/{name}.md#1", "command", "pandoc", "", "")
+                                 for name in ("one", "two")], [])
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            args = ["--suite", directory, "--oracle", "", "--jobs", "1", "--pandoc", "/usr/bin/true",
+                    "--write-baseline", baseline]
+            with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(run.main(args), 0)
+                self.assertEqual(run.main([*args, "--baseline", baseline, "--filter", "one"]), 0)
+            with open(baseline, encoding="utf-8") as handle:
+                self.assertEqual(json.load(handle)["passing"], ["command/one.md#1", "command/two.md#1"])
 
 
 class Timeouts(unittest.TestCase):

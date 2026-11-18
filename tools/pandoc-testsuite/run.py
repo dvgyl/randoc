@@ -266,7 +266,18 @@ def main(argv=None) -> int:
 
     if args.tables:
         print(markdown_tables(report))
-    if args.out:
+
+    protect_baseline = baseline is not None and not set(baseline).issubset(report["passing"])
+
+    def can_write(path: str | None) -> bool:
+        if not path:
+            return False
+        if protect_baseline and os.path.exists(path) and os.path.samefile(path, args.baseline):
+            print(f"Kept the baseline file {path}")
+            return False
+        return True
+
+    if can_write(args.out):
         if args.label:
             stored = {}
             if os.path.exists(args.out):
@@ -276,7 +287,7 @@ def main(argv=None) -> int:
             write_json(args.out, dict(sorted(stored.items())))
         else:
             write_json(args.out, report)
-    if args.write_baseline:
+    if can_write(args.write_baseline):
         write_json(args.write_baseline, {"program": report["program"], "passing": report["passing"]})
 
     if baseline is not None:

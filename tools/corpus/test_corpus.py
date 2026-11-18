@@ -305,9 +305,22 @@ class RunTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(report["results"], {"one:html": "pass"})
         out = self.dir / "report.json"
-        code, report = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(out), *selection)
-        self.assertEqual(code, 1)
-        self.assertEqual(report["results"], {"one:html": "fail output"})
+        before = out.read_bytes()
+        randoc = self.program("randoc", "<x>")
+        for _ in range(2):
+            code, _ = self.main(randoc, oracle, "--baseline", str(out), *selection)
+            self.assertEqual(code, 1)
+            self.assertEqual(out.read_bytes(), before)
+
+    def test_a_filtered_run_keeps_unselected_units_in_the_baseline(self):
+        oracle = self.program("pandoc")
+        code, baseline = self.main(oracle, oracle)
+        self.assertEqual(code, 0)
+        self.assertEqual(baseline["totals"]["pass"], 6)
+        out = self.dir / "report.json"
+        code, report = self.main(oracle, oracle, "--baseline", str(out), "--target", "html")
+        self.assertEqual(code, 0)
+        self.assertEqual(report, baseline)
 
     def test_only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result(self):
         script = 'echo "[$GHCRTS]"; exit 251'
