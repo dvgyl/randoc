@@ -155,3 +155,11 @@ The tests confirmed that the preparation had fixed the Pandoc suite and corpus b
 ## 2026-11-18T09:53:16Z weak-spot M1-02 0d40f4396a6e
 
 Review round 1 showed that each Python tool replaced its input baseline with a failed report when the output named the same file. An identical retry then exited 0. A filtered success could also remove unselected passing units. The follow-up in M1-02 preserves the shared file if the new result omits a saved passing unit. Both regression tests now retain the saved file, and the failed run still exits 1 on retry.
+
+## 2026-11-18T09:53:41Z decision M1-02 ca434aaa8abd
+
+The baseline check now compares the complete saved set of passing units before it replaces a shared input and output file. This covers both a failure and a filtered check that omits a saved unit. A report for a separate output can still record the current failures. plan/SPEC.md now states this file rule. The gate suite continues to count one baseline check per tool.
+
+## 2026-11-18T10:00:06Z decision M1-02 ca434aaa8abd
+
+The second M1-02 review reproduced a report label that replaced the saved passing list and made a failing retry exit 0. The tool now keeps that list when a labeled output would replace it. It checks the list type when it reads a baseline. Both new tests failed before the change and passed after it. All 59 suite tool tests passed. AGENTS.md section 10 limits the item to two reviews. The build continues with the scored gate experiment.

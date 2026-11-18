@@ -400,8 +400,9 @@ result becomes the reference (`decision` entry), and the test stays (3.11,
 oracle failure rule). TOTAL: 2,231 today (command 1,884, old 174, readers
 173). The baseline check reads the saved list of passing units before it
 writes the new list. When the baseline input and output name the same file,
-the report can replace it only if all saved passing units still pass. The
-readers tests still ignore standard error (M1-28).
+the report can replace it only if all saved passing units still pass. A
+report label cannot replace the saved `passing` list. The readers tests
+still ignore standard error (M1-28).
 
 ### `suite.pandoc.command`
 As `suite.pandoc`, group `command` only.

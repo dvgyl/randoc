@@ -133,9 +133,13 @@ def load_exclusions(path: str) -> dict:
         return {item["id"]: item["reason"] for item in json.load(handle)["exclusions"]}
 
 
-def load_baseline(path: str) -> list:
+def load_baseline(path: str) -> list[str]:
     with open(path, encoding="utf-8") as handle:
-        return json.load(handle)["passing"]
+        saved = json.load(handle)
+    passing = saved.get("passing") if isinstance(saved, dict) else None
+    if not isinstance(passing, list) or any(not isinstance(unit, str) for unit in passing):
+        raise ValueError("The baseline file needs a list of passing unit identifiers")
+    return passing
 
 
 def summarize(found, results: dict, excluded: dict, program: str, text: str = "") -> dict:
@@ -233,7 +237,11 @@ def main(argv=None) -> int:
         unchecked = set()
     excluded = load_exclusions(args.exclusions)
     # Read the baseline before the run: --write-baseline can name the same file.
-    baseline = load_baseline(args.baseline) if args.baseline else None
+    try:
+        baseline = load_baseline(args.baseline) if args.baseline else None
+    except (OSError, ValueError) as error:
+        print(f"Cannot read the baseline file {args.baseline}\n{error}", file=sys.stderr)
+        return 2
     selected = [c for c in found.cases if args.filter in c.id and c.id not in excluded]
 
     bin_dir = tempfile.mkdtemp(prefix="pandoc-testsuite-")
@@ -267,17 +275,17 @@ def main(argv=None) -> int:
     if args.tables:
         print(markdown_tables(report))
 
-    protect_baseline = baseline is not None and not set(baseline).issubset(report["passing"])
+    keeps_passing = baseline is None or set(baseline).issubset(report["passing"])
 
-    def can_write(path: str | None) -> bool:
+    def can_write(path: str | None, keeps_baseline: bool) -> bool:
         if not path:
             return False
-        if protect_baseline and os.path.exists(path) and os.path.samefile(path, args.baseline):
+        if not keeps_baseline and args.baseline and os.path.exists(path) and os.path.samefile(path, args.baseline):
             print(f"Kept the baseline file {path}")
             return False
         return True
 
-    if can_write(args.out):
+    if can_write(args.out, keeps_passing and args.label != "passing"):
         if args.label:
             stored = {}
             if os.path.exists(args.out):
@@ -287,7 +295,7 @@ def main(argv=None) -> int:
             write_json(args.out, dict(sorted(stored.items())))
         else:
             write_json(args.out, report)
-    if can_write(args.write_baseline):
+    if can_write(args.write_baseline, keeps_passing):
         write_json(args.write_baseline, {"program": report["program"], "passing": report["passing"]})
 
     if baseline is not None:

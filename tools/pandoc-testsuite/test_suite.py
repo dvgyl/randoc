@@ -494,6 +494,41 @@ class Baseline(unittest.TestCase):
             with open(baseline, encoding="utf-8") as handle:
                 self.assertEqual(json.load(handle)["passing"], ["command/one.md#1", "command/two.md#1"])
 
+    def test_an_output_label_cannot_replace_the_saved_passing_list(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        found = suite.Discovery([suite.CommandCase("command/probe.md#1", "command", "pandoc", "", "")], [])
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            args = ["--suite", directory, "--oracle", "", "--jobs", "1"]
+            good = [*args, "--pandoc", "/usr/bin/true"]
+            wrong = [*args, "--pandoc", "/usr/bin/false", "--baseline", baseline, "--filter", "probe"]
+            with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(run.main([*good, "--write-baseline", baseline]), 0)
+                self.assertEqual(run.main(wrong), 1)
+                self.assertEqual(run.main([*good, "--baseline", baseline, "--out", baseline, "--label", "passing"]), 0)
+                self.assertEqual(run.main(wrong), 1)
+            with open(baseline, encoding="utf-8") as handle:
+                self.assertEqual(json.load(handle)["passing"], ["command/probe.md#1"])
+
+    def test_an_invalid_saved_passing_list_stops_the_check(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": {"groups": {}}}, handle)
+            args = ["--suite", directory, "--oracle", "", "--pandoc", "/usr/bin/true", "--baseline", baseline]
+            with mock.patch.object(run.testsuite, "discover", return_value=suite.Discovery([], [])), \
+                    contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as error:
+                self.assertEqual(run.main(args), 2)
+            self.assertIn("list of passing unit identifiers", error.getvalue())
+
 
 class Timeouts(unittest.TestCase):
     def runner(self, directory):
