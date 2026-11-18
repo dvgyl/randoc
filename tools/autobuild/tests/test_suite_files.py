@@ -63,6 +63,18 @@ class CaptureTests(unittest.TestCase):
         self.assertFalse(states["last.epub"]["zip"]["first_stored_mimetype"])
         self.assertFalse(states["compressed.epub"]["zip"]["first_stored_mimetype"])
 
+    def test_declared_zip_comparison_ignores_explicit_directory_entries(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for name in ("implicit.epub", "explicit.epub"):
+                with zipfile.ZipFile(root / name, "w") as archive:
+                    archive.writestr("mimetype", b"application/epub+zip")
+                    if name == "explicit.epub":
+                        archive.writestr("META-INF/", b"")
+                    archive.writestr("META-INF/container.xml", b"<container/>")
+            states = snapshot.snapshot(root, {b"implicit.epub", b"explicit.epub"})
+        self.assertEqual(states["implicit.epub"]["zip"], states["explicit.epub"]["zip"])
+
     def test_declared_zip_files_refuse_duplicate_or_unsafe_members(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

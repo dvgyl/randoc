@@ -193,3 +193,7 @@ A diagnostic checked 115 earlier command cases with output, extraction or log op
 ## 2026-11-18T12:47:09Z decision M1-03 41180cd29f0b
 
 Tool correction of caps.options by M1-03: The old probes for epub-cover-image and extract-media checked the exit code and console output. The new probes also compare file changes. TOTAL stays 109 and no option units are removed. Diagnostic PASS moves from 94 to 92. All earlier harness units keep their pass or fail status. The rows of caps.options before 2026-11-18T12:47:09Z no longer count for gains, regressions or milestone checks.
+
+## 2026-11-18T12:52:53Z decision M1-03 ad46c131cf95
+
+The second review showed that an explicit ZIP directory entry could cause a false failure. The comparison now ignores directory entries under N1 in plan/SPEC.md 3.12. The new test failed before the fix and passes after it. A real oracle EPUB with one extra directory entry passes. A copy with its mimetype entry moved and compressed still fails. All 159 stored file results match the oracle. AGENTS.md section 10 limits this item to two reviews.

@@ -50,6 +50,8 @@ def digest_zip(stream, budget):
                     or any(part in ("", ".", "..") for part in name.rstrip("/").split("/"))):
                 raise ValueError("ZIP capture contains an unsafe or duplicate path")
             seen.add(name)
+            if member.is_dir():
+                continue
             if member.file_size > budget.remaining:
                 raise ValueError("ZIP capture exceeds the byte limit")
             with archive.open(member) as contents:
