@@ -7,6 +7,7 @@
 mod cases;
 mod compare;
 mod exec;
+mod files;
 mod matrix;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -33,6 +34,7 @@ Commands:
 
 Options:
   --filter TEXT       Use only the units whose identifier contains TEXT. Repeat for more.
+  --files             Use only units that capture work-folder changes.
   --all               record and verify-oracle: run the oracle again for each unit.
   --randoc PATH       The Randoc program. Default: target/debug/randoc.
   --oracle PATH       The oracle program. Default: the RANDOC_ORACLE_PANDOC environment variable.
@@ -52,6 +54,7 @@ struct Config {
     command: String,
     unit_id: Option<String>,
     filters: Vec<String>,
+    files_only: bool,
     all: bool,
     randoc: Option<PathBuf>,
     oracle: Option<PathBuf>,
@@ -67,7 +70,7 @@ struct Config {
 impl Config {
     /// Returns `true` when the run uses each unit of the suite.
     fn whole_suite(&self) -> bool {
-        self.filters.is_empty() && self.unit_id.is_none()
+        self.filters.is_empty() && self.unit_id.is_none() && !self.files_only
     }
 
     /// Returns `true` when a unit identifier is in the part of the suite that the run uses.
@@ -84,6 +87,7 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
         command: args.first().cloned().ok_or("no command")?,
         unit_id: None,
         filters: Vec::new(),
+        files_only: false,
         all: false,
         randoc: None,
         oracle: None,
@@ -100,6 +104,7 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
         let mut value = || rest.next().cloned().ok_or(format!("{arg} needs a value"));
         match arg.as_str() {
             "--filter" => config.filters.push(value()?),
+            "--files" => config.files_only = true,
             "--all" => config.all = true,
             "--randoc" => config.randoc = Some(PathBuf::from(value()?)),
             "--oracle" => config.oracle = Some(PathBuf::from(value()?)),
@@ -175,7 +180,9 @@ impl Session {
         {
             return Err(format!("there is no unit with the identifier {id}"));
         }
-        units.retain(|unit| config.selects(&unit.id));
+        units.retain(|unit| {
+            config.selects(&unit.id) && (!config.files_only || unit.capture_files.is_some())
+        });
         let expected_dir = conformance.join("expected");
         let mut expected = BTreeMap::new();
         for unit in &units {
@@ -319,7 +326,7 @@ fn record(mut session: Session) -> Result<bool, String> {
             .collect();
         let outcomes = parallel_map(&todo, session.oracle_jobs(), |worker, (unit, stdin)| {
             let stdin = stdin.as_ref()?;
-            let result = oracle.run(&unit.args, stdin, &unit.files, &session.work_dir(worker));
+            let result = oracle.run_unit(unit, stdin, &session.work_dir(worker));
             Some(result.map(|mut outcome| {
                 outcome.key = unit.fingerprint(stdin);
                 outcome
@@ -434,7 +441,7 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
         let Some(expected) = session.current(unit, &stdin) else {
             return (Status::NotRecorded, None, None);
         };
-        match randoc.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)) {
+        match randoc.run_unit(unit, &stdin, &session.work_dir(worker)) {
             Ok(actual) => {
                 let verdict = compare::compare(unit, expected, &actual);
                 let status = if verdict.pass {
@@ -503,6 +510,9 @@ fn failure_reason(result: &UnitResult<'_>) -> String {
             if !verdict.stderr_ok {
                 parts.push("stderr");
             }
+            if !verdict.files_ok {
+                parts.push("file changes");
+            }
             if !verdict.bytes_ok {
                 parts.push(if verdict.content_ok {
                     "output bytes"
@@ -527,10 +537,10 @@ fn run(session: Session) -> Result<bool, String> {
         (count("not_recorded"), count("skipped"), count("no_result"));
     let verdicts = || results.iter().filter_map(|r| r.verdict);
     let byte_identical = verdicts()
-        .filter(|v| v.exit_ok && v.stderr_ok && v.bytes_ok)
+        .filter(|v| v.exit_ok && v.stderr_ok && v.bytes_ok && v.files_ok)
         .count();
     let content_identical = verdicts()
-        .filter(|v| v.exit_ok && v.stderr_ok && v.content_ok)
+        .filter(|v| v.exit_ok && v.stderr_ok && v.content_ok && v.files_ok)
         .count();
     println!(
         "harness: {} units: {passing} pass, {failing} fail, {no_result} no result, {not_recorded} not recorded, {skipped} skipped",
@@ -560,11 +570,19 @@ fn run(session: Session) -> Result<bool, String> {
     let report_units: Vec<serde_json::Value> = results
         .iter()
         .map(|result| {
-            serde_json::json!({
+            let mut entry = serde_json::json!({
                 "id": result.unit.id,
                 "status": result.status.name(),
                 "verdict": result.verdict,
-            })
+            });
+            if result.unit.capture_files.is_some() {
+                let expected = session
+                    .stdin(result.unit)
+                    .and_then(|stdin| session.current(result.unit, &stdin));
+                entry["oracle_writes_file"] =
+                    serde_json::json!(expected.and_then(|o| o.writes_file()));
+            }
+            entry
         })
         .collect();
     write_json(
@@ -614,9 +632,21 @@ fn run(session: Session) -> Result<bool, String> {
             load_baseline(baseline_path)?
         };
         // A unit of the baseline that the suite no longer has is a regression too.
+        let selected_files: Option<BTreeSet<&str>> = config.files_only.then(|| {
+            results
+                .iter()
+                .map(|result| result.unit.id.as_str())
+                .collect()
+        });
         let regressions: Vec<&String> = baseline
             .iter()
-            .filter(|id| config.selects(id) && !passing_ids.contains(id.as_str()))
+            .filter(|id| {
+                config.selects(id)
+                    && selected_files
+                        .as_ref()
+                        .is_none_or(|files| files.contains(id.as_str()))
+                    && !passing_ids.contains(id.as_str())
+            })
             .collect();
         let new_passes = passing_ids
             .iter()
@@ -691,7 +721,7 @@ fn verify_oracle(session: Session) -> Result<bool, String> {
     let unchanged = session.units.len() - todo.len();
     let fresh = parallel_map(&todo, session.oracle_jobs(), |worker, unit| {
         let stdin = session.stdin(unit)?;
-        Some(oracle.run(&unit.args, &stdin, &unit.files, &session.work_dir(worker)))
+        Some(oracle.run_unit(unit, &stdin, &session.work_dir(worker)))
     });
     let mut different = 0usize;
     let mut checked = 0usize;
@@ -758,11 +788,17 @@ fn show(session: Session) -> Result<bool, String> {
         println!("expected exit code: {}", expected.exit);
         print_block("expected stdout", &expected.stdout_bytes());
         print_block("expected stderr", &expected.stderr_bytes());
+        if let Some(changes) = &expected.file_changes {
+            println!("expected file changes: {changes:#?}");
+        }
     }
     if let Some(actual) = &result.actual {
         println!("randoc exit code: {}", actual.exit);
         print_block("randoc stdout", &actual.stdout_bytes());
         print_block("randoc stderr", &actual.stderr_bytes());
+        if let Some(changes) = &actual.file_changes {
+            println!("randoc file changes: {changes:#?}");
+        }
     }
     if let Some(verdict) = result.verdict {
         println!("verdict: {verdict:?}");
@@ -1170,6 +1206,67 @@ mod tests {
         ];
         assert!(run(fixture.session("run", &update_filtered, &oracle, &oracle)).is_err());
         assert_eq!(load_baseline(&baseline).unwrap().len(), 6);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn an_opted_in_unit_compares_its_work_folder_changes() {
+        use crate::files::FileState;
+
+        let fixture = Fixture::new("file-changes");
+        fixture.cases(
+            r#"[[case]]
+id = "changes"
+cmd = []
+capture_files = {}
+[case.files]
+"input/keep" = "keep"
+"input/change" = "old"
+"input/remove" = "remove"
+[[case]]
+id = "ordinary"
+cmd = []
+[case.files]
+"input/keep" = "keep"
+"input/change" = "old"
+"input/remove" = "remove"
+"#,
+        );
+        let writes = "mkdir -p \"$HOME/empty\"; printf new > input/change; rm input/remove; ln -s /absent link";
+        let oracle = fixture.program(
+            "oracle",
+            &format!("if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\n{writes}"),
+        );
+        let wrong = fixture.program(
+            "wrong",
+            &format!("{writes}; printf different > input/change"),
+        );
+        assert!(record(fixture.session("record", &[], &oracle, &oracle)).unwrap());
+        let good = fixture.session("run", &["--files"], &oracle, &oracle);
+        assert_eq!(good.units.len(), 1);
+        let unit = &good.units[0];
+        let saved = good
+            .current(unit, b"")
+            .unwrap()
+            .file_changes
+            .as_ref()
+            .unwrap();
+        assert_eq!(saved[".home/empty"], Some(FileState::Directory));
+        assert_eq!(saved["input/remove"], None);
+        assert!(matches!(
+            saved["input/change"],
+            Some(FileState::File { .. })
+        ));
+        assert!(matches!(saved["link"], Some(FileState::Link { .. })));
+        assert!(!saved.contains_key("input/keep"));
+        assert!(run(good).unwrap());
+        assert_eq!(fixture.report_statuses()["s/f/changes#cmd"], "pass");
+        let report: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(fixture.root.join("report.json")).unwrap())
+                .unwrap();
+        assert_eq!(report["units"][0]["oracle_writes_file"], true);
+        assert!(run(fixture.session("run", &["--files"], &oracle, &wrong)).unwrap());
+        assert_eq!(fixture.report_statuses()["s/f/changes#cmd"], "fail");
     }
 
     #[cfg(unix)]

@@ -169,3 +169,7 @@ The second M1-02 review reproduced a report label that replaced the saved passin
 Item M1-02 done. Gain on gate.steps: +3 (baseline 15/15). Gate: 20261118T103542Z-f03459414a0f.
 
 Weak spots: The baseline self-checks use local stand-ins. The corpus oracle checksum and duplicate-key rule still need M1-27. The reader test exit code and standard error rules still need M1-28.
+
+## 2026-11-18T12:04:32Z decision M1-03 14939a79cedb
+
+After M1-02 the roadmap order and ops status select M1-03. AGENTS.md section 2 puts the roadmap before the ExecPlan, which lists M1-27 and M1-28 first. The lead will follow M1-03, M1-04 and M1-05 in roadmap order. For M1-03, a case opts in to a snapshot of changes to its work folder and names the paths of ZIP output files. The harness calls a standard-library Python snapshot program for bounded file reads and SHA-256. Stored results contain hashes of file contents, including ZIP entries.

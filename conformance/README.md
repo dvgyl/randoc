@@ -30,6 +30,7 @@ Fields of a case:
 | `from`, `to`, `args` | Replace the defaults of the file. |
 | `cmd` | A full argument list. The case then has one unit and uses no `from` or `to`. |
 | `files` | More files for the working directory: a table from file name to text. |
+| `capture_files` | Capture work-folder changes. Use `{}` for byte comparison or `{ zip = ["result.docx"] }` to compare the entries of named ZIP outputs. A file can set this field as a default for its cases. |
 | `covers` | More capability tags, for example `["ext:smart", "opt:toc"]`. |
 
 ## Units
@@ -56,6 +57,12 @@ byte-identical and content-identical results separately.
 
 The full identifier of a unit is `SUITE/NAME/CASE#UNIT`.
 
+For a case with `capture_files`, the harness starts each run in a separate
+folder. It compares the files and directories that the run adds, changes,
+or removes. This includes `.home`. The stored result uses SHA-256 for file
+contents. The harness records a symbolic link as a link and hashes its target
+name. It does not read the target file through the link.
+
 ## Commands
 
 Run these from the repository root. `record` and `verify-oracle` need the
@@ -74,6 +81,9 @@ cargo run -q -p randoc-harness -- show 'json/roundtrip/numbers#write:json'
 
 # Run only the units whose identifier contains a text.
 cargo run -q -p randoc-harness -- run --filter markdown/
+
+# Run only the units that capture work-folder changes.
+cargo run -q -p randoc-harness -- run --files
 ```
 
 ## Rules

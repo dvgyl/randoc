@@ -5,10 +5,12 @@ use std::fs;
 use std::io::{Read, Write};
 use std::path::{Component, Path};
 use std::process::{Child, Command, Stdio};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
 
-use crate::cases::Outcome;
+use crate::cases::{Outcome, Unit};
+use crate::files::{CaptureFiles, Snapshot};
 
 /// The time that both programs see as the current time, so that dates in the output are equal.
 pub const SOURCE_DATE_EPOCH: &str = "1700000000";
@@ -137,7 +139,49 @@ impl Program {
         files: &BTreeMap<String, Vec<u8>>,
         work_dir: &Path,
     ) -> Result<Outcome, String> {
-        clear_dir(work_dir).map_err(|e| format!("{}: {e}", work_dir.display()))?;
+        self.run_captured(args, stdin, files, work_dir, None)
+    }
+
+    pub(crate) fn run_unit(
+        &self,
+        unit: &Unit,
+        stdin: &[u8],
+        work_dir: &Path,
+    ) -> Result<Outcome, String> {
+        self.run_captured(
+            &unit.args,
+            stdin,
+            &unit.files,
+            work_dir,
+            unit.capture_files.as_ref(),
+        )
+    }
+
+    fn run_captured(
+        &self,
+        args: &[String],
+        stdin: &[u8],
+        files: &BTreeMap<String, Vec<u8>>,
+        work_dir: &Path,
+        capture: Option<&CaptureFiles>,
+    ) -> Result<Outcome, String> {
+        let isolated = capture.map(|_| {
+            static RUN: AtomicUsize = AtomicUsize::new(0);
+            work_dir.with_extension(format!("files-{}", RUN.fetch_add(1, Ordering::Relaxed)))
+        });
+        let work_dir = match isolated.as_deref() {
+            Some(dir) => {
+                if let Some(parent) = dir.parent().filter(|path| !path.as_os_str().is_empty()) {
+                    fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+                }
+                fs::create_dir(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+                dir
+            }
+            None => {
+                clear_dir(work_dir).map_err(|e| format!("{}: {e}", work_dir.display()))?;
+                work_dir
+            }
+        };
         for (name, contents) in files {
             if !is_safe_relative(name) {
                 return Err(format!(
@@ -150,6 +194,9 @@ impl Program {
             }
             fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))?;
         }
+        let before = capture
+            .map(|_| Snapshot::read(work_dir, None))
+            .transpose()?;
 
         #[cfg(unix)]
         let mut command = {
@@ -230,7 +277,12 @@ impl Program {
                 "the oracle reached its heap limit (GHCRTS={options})"
             ));
         }
-        Ok(Outcome::new(exit, stdout, stderr))
+        let mut outcome = Outcome::new(exit, stdout, stderr);
+        if let Some((capture, before)) = capture.zip(before) {
+            outcome.file_changes =
+                Some(before.changes(Snapshot::read(work_dir, Some(&capture.zip))?));
+        }
+        Ok(outcome)
     }
 }
 
