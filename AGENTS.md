@@ -159,13 +159,16 @@ scoreboard metric and an expected gain.
    - Gain and no regression: run the gate (`ops gate`). When it passes, run
      `ops item done M<n>-<nn> --weak-spots "..."`, then `ops measure`,
      commit its rows, and `ops push`. When the gate fails, the item stays
-     active: fix the cause and run the next experiment.
+     active: fix the cause and run the next experiment. `done` refuses
+     with no passing gate of the current commit. A title with a coverage
+     rule needs `--all-pass` or `--min-total N`.
    - No gain: find the cause, change, and run the next experiment.
    - Third experiment with no gain: `ops item cut M<n>-<nn> --reason "..."`.
-     The command reverts the item's commits. `measure.py` refuses a fourth
-     experiment. Write what you learned in the log. Do not start the same
-     item again under a new id; choose a different cause or a different
-     item.
+     The command reverts the item's commits and withdraws its tool
+     corrections. `measure.py` refuses a fourth experiment. Write what you
+     learned in the log. Do not start the same cause again under a new id
+     (a new id hides the cut streak of section 7); choose a different cause
+     or a different item.
 6. **Measure the branch.** After each finished item, and at least each 10
    commits, run the full measurement on `gpt/build` (`ops measure`) and
    commit its rows.
@@ -221,7 +224,7 @@ see your session. Put the facts into the question: the item, the failing
 case, the command and its output, what you tried and why it failed. Take the
 one answer, decide, write the decision in `plan/ADVICE.md` (the command
 starts the entry), and continue. One event is one (item, reason) pair: one
-question each.
+question each. A sent question counts also when no answer comes.
 
 ## 9. Workers
 
@@ -283,7 +286,8 @@ are in `plan/SPEC.md` section 6.
 - `ops holdout request` names a commit only; the broker builds it. Request
   an evaluation at each milestone gate. One evaluation each 6 hours: an
   earlier request gets `deferred` and the next allowed time. Then continue
-  with other items, and request again after that time.
+  with other items, and request again after that time
+  (`ops holdout request --commit SHA` names the earlier candidate).
 - `ops holdout results --record` writes the newest totals of
   `/Volumes/Extreme Pro/Randoc/holdout-results/` as the rows
   `holdout.corpus` and `holdout.generated`. A reserved FINAL part of each
@@ -384,6 +388,8 @@ is on the list in `docs/PRIOR_ART.md` (MIT, Apache-2.0, BSD-2-Clause,
 BSD-3-Clause, ISC, Zlib, Unicode-3.0, CC0-1.0, Unlicense), and add a row to
 `docs/PRIOR_ART.md`, a record to `docs/ADR.md`, a row to
 `THIRD_PARTY_NOTICES.md` and the licence text to `third_party/licences/`.
+The scan skips binary files and files above 5 MB: in the same commit, give
+each new one a row in `THIRD_PARTY_NOTICES.md` or an origin note.
 
 The scan `python3 -I tools/autobuild/licence_scan.py scan` compares the
 text that the branch adds with a hashed index of the copyleft reference

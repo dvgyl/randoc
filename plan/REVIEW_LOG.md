@@ -61,3 +61,39 @@ Accepted residual risk: held-out scores. The broker builds each requested commit
 ## 2026-11-17T22:24:12Z weak-spot - e1b8f89f0545
 
 Known weak spot: `ops milestone check M9` checks scoreboard rows only. Items 2, 4, 6, 7, 8 and 9 of the final goal (`plan/SPEC.md` section 7) also need evidence that no row shows: the `not_extracted` list, the excluded units with their reasons, the exit-code triggers, the whole-tree licence scan, and the real PDF engines. The `milestone` entry of M9 must name that evidence.
+
+## 2026-11-18T00:34:21Z decision - 91b492a67bfa
+
+Review round 2: two independent reviews and the second clarity check of the lead model gave these decisions, now in the tools with tests (commits 450f696 and 91b492a). (1) `ops milestone check` takes each `holdout.*` requirement from the broker result that matches the candidate: the candidate commit, or a later commit whose diff from it changes only `plan/`. (2) Only a result with `binary_provenance` `built` counts for a gate; the older results stay for the history. (3) The candidate commit must be `HEAD`, or `HEAD` differs from it only in `plan/`. (4) The gate never runs the suite of `gate.steps`; `gate.py --report FILE` writes the report of one gate run; a runner names the exit codes after which `measure.py` reads its report (the contract is in `plan/exec/M1.md`, step A2). (5) `ops item done` refuses without a passing full gate of the current commit, and `ops status` names `ops gate` first. (6) A cut passes the commit limit and never waits for another exhausted item, in `ops` and in the guard. (7) `ops status` reads the gain of a worker from the committed rows of its branch, and gives no cut advice while the worker runs. (8) For an item whose metric is not active, `ops status` names `--suite NAME` after the suite is built, never `--quick`. (9) Only rows with a completed run manifest (`run.json`) reset the 10-commit counter. (10) The unit check compares the earlier passing ids with the current passing ids. (11) An adviser question counts when it is sent. (12) After each review and adviser session, `ops` compares `HEAD` and `git status` of the lead tree with the state before, and refuses a change. (13) A failed `git status` in a worker worktree counts as not clean. (14) `ops item cut` withdraws each correction of the item; step A4 records its correction before the first row of the new rule. (15) `ops holdout request --commit SHA`. (16) The guard checks the added lines of each staged text file, except `AGENTS.md`, the guard and its tests. (17) `ops item done --min-total N` and `--all-pass`.
+
+## 2026-11-18T00:34:21Z weak-spot - 91b492a67bfa
+
+Binary and large files: the licence scan skips binary files and files above 5 MB, so it cannot check them. `AGENTS.md` section 14 now asks for a row in `THIRD_PARTY_NOTICES.md` or an origin note in the same commit. Why not fixed in the tools: the scanner cannot read such a file. No tool checks the rule; the later review must look at each new binary or large file.
+
+## 2026-11-18T00:34:21Z weak-spot - 91b492a67bfa
+
+Machine and recovery limits: `measure.py` holds no lock on the shared target folder from the build to the copy of the programs; after a failed revert, `ops item cut` runs `git reset --hard HEAD` in the lead tree, not in a clean worktree; the suites of the two measurement slots have no combined memory budget. Why not fixed now: the watchdog stops each Randoc process above 4 GB, and the two measurement slots limit the parallel runs, so the damage stays small.
+
+## 2026-11-18T00:34:22Z weak-spot - 91b492a67bfa
+
+Cut streak: `ops status` counts the items cut in a row by the order of `plan/ITEMS.tsv` and by the exact metric key, not by the time of the cut or by area. A new id for the same cause hides a streak. `AGENTS.md` section 6 now forbids the reuse of a cause under a new id. Why not fixed in the tools: the items table has no cut time; the later review can read the `cut` entries of this log in time order.
+
+## 2026-11-18T00:34:22Z decision - 91b492a67bfa
+
+Open questions of review round 2 go to the steps of their items, where the lead decides each with a `decision` entry before the work: M1-13 (`plan/exec/M1.md`, Phase C): the three pivot trees of each element type of `lua.filters` when P has fewer, the expected return cases of each hook, and the test of the `lua` mode with `-i`; M1-29 (step B5): how the `tags.*` keys are registered when the set of keys with units depends on the measured units; M8-09: the boundary of the install subset (20 conversion units of each active suite, but `gate.steps` holds gate checks, `install.units` itself becomes active, and a suite can have fewer than 20 units). `plan/exec/M8.md` does not exist yet: when the lead writes it, the step of M8-09 must hold this question.
+
+## 2026-11-18T00:34:22Z decision - 91b492a67bfa
+
+M1-27, M1-28 and M1-29 stay open by design: they are items of the first milestone, which the build does.
+
+## 2026-11-18T00:34:22Z weak-spot - 91b492a67bfa
+
+Unit check: an excluded or gone unit has no metric list in the evidence of the current run, so a correction of any metric of its suite covers it. A narrower rule needs the metrics of each passing unit in the evidence, which about doubles the size of the harness evidence.
+
+## 2026-11-18T00:34:22Z weak-spot - 91b492a67bfa
+
+Commit counter: the guard does not check that a run covers each active suite; a completed `--suite` run of a clean tree also resets the counter. This keeps a way out when one suite tool fails at the limit, because a run with a failed suite writes no `run.json`.
+
+## 2026-11-18T00:34:22Z weak-spot - 91b492a67bfa
+
+Worker items and the guard: while a worker item has 3 attempt records and its gain is only in the rows of its branch, the guard of the lead tree sees no gain and refuses each commit of the lead until `ops worker merge` or a cut. `ops status` no longer advises the cut in that state, but the lead cannot commit until the merge.
