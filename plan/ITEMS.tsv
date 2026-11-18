@@ -8,7 +8,7 @@ M1-06	M1	queued	caps.extensions	-	+1	One probe set for each (direction, format, 
 M1-07	M1	queued	caps.options	-	+1	Value sets for each option on 5 base conversions; short options map to long names; 20 options rest on 1 to 3 units, and `embed-resources` and `pdf-engine` are "passing" on parse-only cases (gain: TOTAL = 109)	min-total=109
 M1-08	M1	queued	ast.roundtrip	-	+1	JSON and `native` round trip of each distinct oracle tree; cases for each wrong `pandoc-api-version` form (gain: first row)	-
 M1-09	M1	queued	templates.units	-	+1	15 variable sets and 2 documents for each format with a default template; user partials (gain: first row)	-
-M1-10	M1	queued	defaults.units	-	+1	One number for each defaults key that the oracle accepts (gain: first row)	-
+M1-10	M1	active	defaults.units	0/0	+1	One number for each defaults key that the oracle accepts (gain: first row)	-
 M1-11	M1	queued	errors.units	-	+1	One confirmed trigger for each exit code; `--verbose --log` files of the corpus and pivot conversions (gain: first row)	-
 M1-12	M1	queued	lua.api	-	+1	Call probes for each name of the `pandoc` module through one printer, run as a filter (gain: TOTAL = 468)	min-total=468
 M1-13	M1	queued	lua.filters	-	+1	Filter matrix: element type, return kind, traversal, filter form, on the pivot set (gain: first row)	-
