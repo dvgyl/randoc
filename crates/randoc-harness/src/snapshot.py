@@ -4,6 +4,7 @@ import hashlib
 import json
 import ntpath
 import os
+import signal
 import stat
 import sys
 import zipfile
@@ -38,6 +39,9 @@ def digest_zip(stream, budget):
         members = archive.infolist()
         if len(members) > MAX_ENTRIES:
             raise ValueError("ZIP capture exceeds the entry limit")
+        first = min(members, key=lambda member: member.header_offset, default=None)
+        first_stored_mimetype = (first is not None and first.filename == "mimetype"
+                                 and first.compress_type == zipfile.ZIP_STORED)
         seen = set()
         for member in sorted(members, key=lambda item: item.filename):
             name = member.filename
@@ -46,8 +50,6 @@ def digest_zip(stream, budget):
                     or any(part in ("", ".", "..") for part in name.rstrip("/").split("/"))):
                 raise ValueError("ZIP capture contains an unsafe or duplicate path")
             seen.add(name)
-            if member.is_dir():
-                continue
             if member.file_size > budget.remaining:
                 raise ValueError("ZIP capture exceeds the byte limit")
             with archive.open(member) as contents:
@@ -56,7 +58,7 @@ def digest_zip(stream, budget):
             digest.update(len(key).to_bytes(8, "big"))
             digest.update(key)
             digest.update(bytes.fromhex(entry_hash))
-    return digest.hexdigest()
+    return {"sha256": digest.hexdigest(), "first_stored_mimetype": first_stored_mimetype}
 
 
 def open_directory(path, parent_fd=None):
@@ -113,7 +115,7 @@ def snapshot(root, zip_paths):
                     if relative in zip_paths:
                         stream.seek(0)
                         try:
-                            state["zip_sha256"] = digest_zip(stream, budget)
+                            state["zip"] = digest_zip(stream, budget)
                         except (ValueError, RuntimeError, NotImplementedError, zipfile.BadZipFile):
                             state["invalid_zip"] = True
                     result[path] = state
@@ -127,6 +129,7 @@ def snapshot(root, zip_paths):
 
 
 if __name__ == "__main__":
+    signal.alarm(600)
     try:
         paths = {os.fsencode(path) for path in json.loads(sys.argv[2])}
         json.dump(snapshot(sys.argv[1], paths), sys.stdout, sort_keys=True)

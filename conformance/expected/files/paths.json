@@ -8,8 +8,9 @@
       "stderr": "",
       "file_changes": {
         "covered.epub": {
-          "kind": "file",
-          "sha256": "b311373c2f637072add09a2f62bb575dafebaff2b9111a07fe9208462159752b"
+          "kind": "zip",
+          "sha256": "b311373c2f637072add09a2f62bb575dafebaff2b9111a07fe9208462159752b",
+          "first_stored_mimetype": true
         }
       }
     },

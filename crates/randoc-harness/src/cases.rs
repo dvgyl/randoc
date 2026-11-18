@@ -442,7 +442,11 @@ impl Outcome {
             changes.values().any(|state| {
                 matches!(
                     state,
-                    Some(FileState::File { .. } | FileState::InvalidZip { .. })
+                    Some(
+                        FileState::File { .. }
+                            | FileState::Zip { .. }
+                            | FileState::InvalidZip { .. }
+                    )
                 )
             })
         })
@@ -469,6 +473,14 @@ impl Outcome {
                     Some(FileState::File { sha256 }) => {
                         hash.field(b"file");
                         hash.field(sha256.as_bytes());
+                    }
+                    Some(FileState::Zip {
+                        sha256,
+                        first_stored_mimetype,
+                    }) => {
+                        hash.field(b"zip");
+                        hash.field(sha256.as_bytes());
+                        hash.field(&[u8::from(*first_stored_mimetype)]);
                     }
                     Some(FileState::InvalidZip { sha256 }) => {
                         hash.field(b"invalid-zip");

@@ -164,8 +164,9 @@
       "stderr": "",
       "file_changes": {
         "result.zip": {
-          "kind": "file",
-          "sha256": "ae63e073abfef389e06906816b746732b072c004076da677852f94c2f8c6fa4c"
+          "kind": "zip",
+          "sha256": "ae63e073abfef389e06906816b746732b072c004076da677852f94c2f8c6fa4c",
+          "first_stored_mimetype": false
         }
       }
     },
@@ -272,8 +273,9 @@
       "stderr": "",
       "file_changes": {
         "result.docx": {
-          "kind": "file",
-          "sha256": "be64384d0e87cad2646820e8732096855478690efb5eef50521635cc3305203e"
+          "kind": "zip",
+          "sha256": "be64384d0e87cad2646820e8732096855478690efb5eef50521635cc3305203e",
+          "first_stored_mimetype": false
         }
       }
     },
@@ -308,8 +310,9 @@
       "stderr": "",
       "file_changes": {
         "result.epub": {
-          "kind": "file",
-          "sha256": "b5c25e7eb54b96b4d316097d1971b9c9b0b898fa3606d7fce3233310f1e51774"
+          "kind": "zip",
+          "sha256": "b5c25e7eb54b96b4d316097d1971b9c9b0b898fa3606d7fce3233310f1e51774",
+          "first_stored_mimetype": true
         }
       }
     },
@@ -320,8 +323,9 @@
       "stderr": "",
       "file_changes": {
         "result.epub": {
-          "kind": "file",
-          "sha256": "cd7ffc65c034ff8d45dccc25767bcbb954f1c9c9d4f3f628f94545c06c25598a"
+          "kind": "zip",
+          "sha256": "cd7ffc65c034ff8d45dccc25767bcbb954f1c9c9d4f3f628f94545c06c25598a",
+          "first_stored_mimetype": true
         }
       }
     },
@@ -332,8 +336,9 @@
       "stderr": "",
       "file_changes": {
         "result.epub": {
-          "kind": "file",
-          "sha256": "b5c25e7eb54b96b4d316097d1971b9c9b0b898fa3606d7fce3233310f1e51774"
+          "kind": "zip",
+          "sha256": "b5c25e7eb54b96b4d316097d1971b9c9b0b898fa3606d7fce3233310f1e51774",
+          "first_stored_mimetype": true
         }
       }
     },
@@ -668,8 +673,9 @@
       "stderr": "",
       "file_changes": {
         "result.odt": {
-          "kind": "file",
-          "sha256": "7935d98ff50cc81c1d08704446de5500bce5533f4cebcfbf4fab400c2c775f0b"
+          "kind": "zip",
+          "sha256": "7935d98ff50cc81c1d08704446de5500bce5533f4cebcfbf4fab400c2c775f0b",
+          "first_stored_mimetype": true
         }
       }
     },
@@ -728,8 +734,9 @@
       "stderr": "",
       "file_changes": {
         "result.pptx": {
-          "kind": "file",
-          "sha256": "5d3f6cfa49d0f91b9a5b548a1b452328cdca03eb95fdac35670ab0f0ee2bc1f7"
+          "kind": "zip",
+          "sha256": "5d3f6cfa49d0f91b9a5b548a1b452328cdca03eb95fdac35670ab0f0ee2bc1f7",
+          "first_stored_mimetype": false
         }
       }
     },

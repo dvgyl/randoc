@@ -17,9 +17,19 @@ pub(crate) struct CaptureFiles {
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub(crate) enum FileState {
     Directory,
-    File { sha256: String },
-    InvalidZip { sha256: String },
-    Link { sha256: String },
+    File {
+        sha256: String,
+    },
+    Zip {
+        sha256: String,
+        first_stored_mimetype: bool,
+    },
+    InvalidZip {
+        sha256: String,
+    },
+    Link {
+        sha256: String,
+    },
 }
 
 pub(crate) type FileChanges = BTreeMap<String, Option<FileState>>;
@@ -28,9 +38,15 @@ pub(crate) type FileChanges = BTreeMap<String, Option<FileState>>;
 struct SnapshotEntry {
     #[serde(flatten)]
     state: FileState,
-    zip_sha256: Option<String>,
+    zip: Option<ZipSnapshot>,
     #[serde(default)]
     invalid_zip: bool,
+}
+
+#[derive(Deserialize)]
+struct ZipSnapshot {
+    sha256: String,
+    first_stored_mimetype: bool,
 }
 
 pub(crate) struct Snapshot(BTreeMap<String, SnapshotEntry>);
@@ -47,7 +63,8 @@ impl Snapshot {
             .map_err(|e| format!("cannot start file capture: {e}"))?;
         if !output.status.success() {
             return Err(format!(
-                "file capture failed: {}",
+                "file capture failed ({}): {}",
+                output.status,
                 String::from_utf8_lossy(&output.stderr).trim()
             ));
         }
@@ -73,8 +90,12 @@ impl Snapshot {
             }
             let state = match entry.state {
                 FileState::File { sha256 } if entry.invalid_zip => FileState::InvalidZip { sha256 },
-                FileState::File { sha256 } => FileState::File {
-                    sha256: entry.zip_sha256.unwrap_or(sha256),
+                FileState::File { sha256 } => match entry.zip {
+                    Some(archive) => FileState::Zip {
+                        sha256: archive.sha256,
+                        first_stored_mimetype: archive.first_stored_mimetype,
+                    },
+                    None => FileState::File { sha256 },
                 },
                 other => other,
             };
