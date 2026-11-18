@@ -12,8 +12,9 @@ randoc-harness (unless --no-build); copy the programs once for the whole
 run (read-only, with their SHA-256); run the command of each selected
 suite; write the evidence of each suite to
 $RANDOC_RUNS/measure/<utc>-<sha12>/<suite>.json (fields rows, passing,
-failing, failing_by_metric, no_result, unstable, oracle_limit, no_input,
-programs, duration_s; the classes of plan/SPEC.md 3.11); append one row for
+passing_by_metric, failing, failing_by_metric, no_result, unstable,
+oracle_limit, no_input, programs, duration_s; the classes of plan/SPEC.md
+3.11); append one row for
 each metric to plan/scoreboard/<stream>.tsv; print each row with its change
 against the previous row of the same metric; when each suite ran, write the
 manifest run.json (utc, end, commit, dirty, item, stream, suites, rows) into
@@ -144,9 +145,10 @@ class Counts:
     """The result of one suite run: PASS and TOTAL of each metric, and the unit lists of each class.
 
     `no_result` lists the units of class fail where Randoc gave no result.
-    `passing` (the units of class pass) and `failing_by_metric` (the failing
-    units of each metric) are None when the parser did not use `Counts.of`:
-    the gate then has no unit list to compare, and `ops next` no metric.
+    `passing` (the units of class pass), `passing_by_metric` and
+    `failing_by_metric` (the passing and the failing units of each metric) are
+    None when the parser did not use `Counts.of`: the gate then has no unit
+    list to compare, and `ops next` no metric.
     """
 
     rows: dict[str, tuple[int, int]] = field(default_factory=dict)
@@ -156,11 +158,13 @@ class Counts:
     oracle_limit: list[str] = field(default_factory=list)
     no_input: list[str] = field(default_factory=list)
     passing: list[str] | None = None
+    passing_by_metric: dict[str, list[str]] | None = None
     failing_by_metric: dict[str, list[str]] | None = None
 
     @classmethod
     def of(cls, units: list[Unit], metrics: tuple[str, ...]) -> Counts:
         counts = cls(rows={key: (0, 0) for key in metrics}, passing=[],
+                     passing_by_metric={key: [] for key in metrics},
                      failing_by_metric={key: [] for key in metrics})
         lists = {PASS: counts.passing, FAIL: counts.failing, UNSTABLE: counts.unstable,
                  ORACLE_LIMIT: counts.oracle_limit, NO_INPUT: counts.no_input}
@@ -169,8 +173,7 @@ class Counts:
                 for key in unit.metrics:
                     passed, total = counts.rows[key]
                     counts.rows[key] = (passed + (unit.cls == PASS), total + 1)
-                    if unit.cls == FAIL:
-                        counts.failing_by_metric[key].append(unit.id)
+                    (counts.passing_by_metric if unit.cls == PASS else counts.failing_by_metric)[key].append(unit.id)
             lists[unit.cls].append(unit.id)
             if unit.no_result:
                 counts.no_result.append(unit.id)
@@ -511,6 +514,7 @@ def run_suite(suite: str, metrics: dict[str, Metric], evidence: Path, programs: 
         "failing": counts.failing, "failing_by_metric": counts.failing_by_metric,
         "no_result": counts.no_result, "unstable": counts.unstable,
         "oracle_limit": counts.oracle_limit, "no_input": counts.no_input, "passing": counts.passing,
+        "passing_by_metric": counts.passing_by_metric,
         "duration_s": round(duration, 1),
     }
     path = evidence / f"{suite}.json"
@@ -634,7 +638,7 @@ def refuse_exhausted(item: str) -> None:
     attempts = experiments.read_tsv(experiments.attempts_file())
     used = experiments.experiments(rows, attempts, item)
     if experiments.exhausted(rows, attempts, item, entry.get("metric", ""),
-                             experiments.baseline(entry.get("baseline", "")), corrections()):
+                             experiments.baseline(entry.get("baseline", "")), corrections(), entry.get("accept")):
         raise ToolError(f"refused: item {item} used {used} experiments with no gain on {entry.get('metric')} "
                         f"(limit {experiments.MAX_TRIES}); cut it: `tools/autobuild/ops item cut {item} --reason TEXT`")
 

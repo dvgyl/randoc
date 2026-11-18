@@ -18,11 +18,13 @@ GIT_DIR set to its own repository:
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import importlib.util
 import json
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -56,6 +58,10 @@ TAG = re.compile(r"\[([A-Za-z0-9][A-Za-z0-9._-]*)\]")
 SCOREBOARD_DIR = "plan/scoreboard/"
 ITEMS_FILE = "plan/ITEMS.tsv"
 ALLOW_FILE = "tools/autobuild/licence-allow.tsv"
+REGISTRY_FILE = "tools/autobuild/metrics.toml"
+REGISTRY_DIR = "tools/autobuild/metrics.d"
+# The origin of each file that the licence scan skips (binary, or above its size limit).
+PROVENANCE_FILE = "tools/autobuild/provenance.tsv"
 # Files that a commit tagged [ops] may change. Product code needs an item.
 OPS_PATHS = (
     "plan/", "tools/", "spec/", "docs/", "conformance/", "benchmarks/", "scripts/",
@@ -150,17 +156,29 @@ def active_ids(items_text: str) -> set[str]:
     return {r.get("id", "") for r in tsv_rows(items_text) if r.get("status") == "active"}
 
 
+def full_runs(rows: list[dict[str, str]]) -> dict[tuple[str, str], list[dict[str, str]]]:
+    """The full-run rows of `rows`, grouped by run (utc and commit)."""
+    runs: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for row in rows:
+        if is_full_run_row(row):
+            runs.setdefault((row.get("utc", ""), row.get("commit", "")), []).append(row)
+    return runs
+
+
 def commits_since_measurement(rows: list[dict[str, str]]) -> int:
-    """Commits after the newest commit that has a full measurement run among `rows`."""
+    """Commits after the newest commit that has a completed full run (completed_run) among `rows`."""
     head = rev_ok("HEAD")
     if head is None:
         return 0
-    counts = []
-    for commit in {r.get("commit", "") for r in rows if is_full_run_row(r)}:
-        if commit and rev_ok(commit) and is_ancestor(commit, head):
-            counts.append(int(git("rev-list", "--count", f"{commit}..{head}").strip()))
-    if counts:
-        return min(counts)
+    since: dict[str, int | None] = {}
+    for commit in {commit for _utc, commit in full_runs(rows)}:
+        since[commit] = (int(git("rev-list", "--count", f"{commit}..{head}").strip())
+                         if commit and rev_ok(commit) and is_ancestor(commit, head) else None)
+    # Newest commit first: the manifest and registry reads stop at the first completed run.
+    for count, run in sorted(((since[commit], run) for (_utc, commit), run in full_runs(rows).items()
+                              if since[commit] is not None), key=lambda pair: pair[0]):
+        if completed_run(run):
+            return count
     base = rev_ok("refs/remotes/origin/main")
     if base is None:
         return 0
@@ -182,9 +200,32 @@ def new_full_run(staged: list[dict[str, str]], committed: list[dict[str, str]]) 
                for (_utc, commit), rows in runs.items())
 
 
+ACTIVE_SUITES: dict[str, frozenset[str] | None] = {}
+
+
+def active_suites_at(commit: str) -> frozenset[str] | None:
+    """The suites with an active metric in the registry of `commit` (metrics.toml, then each
+    metrics.d/*.toml, a later entry of a key in place of an earlier one, as measure.py reads them),
+    or None when the registry is missing or not valid."""
+    if commit not in ACTIVE_SUITES:
+        overlays = sorted(n for n in git("ls-tree", "-z", "--name-only", f"{commit}:{REGISTRY_DIR}",
+                                         check=False).split("\0")
+                          if n.endswith(".toml") and not n.startswith(("._", "_")))
+        entries: dict[str, dict] = {}
+        try:
+            for path in [REGISTRY_FILE, *(f"{REGISTRY_DIR}/{name}" for name in overlays)]:
+                for entry in tomllib.loads(git("show", f"{commit}:{path}"))["metric"]:
+                    entries[entry["key"]] = entry
+            ACTIVE_SUITES[commit] = frozenset(str(e["suite"]) for e in entries.values() if e.get("status") == "active")
+        except (Refused, tomllib.TOMLDecodeError, KeyError, TypeError):
+            ACTIVE_SUITES[commit] = None
+    return ACTIVE_SUITES[commit]
+
+
 def completed_run(rows: list[dict[str, str]]) -> bool:
     """The rows share one evidence folder, and its run.json (measure.py writes it at the end of a
-    successful run) names their utc and commit, an end time and their number of rows."""
+    successful run) names their utc and commit, an end time, their number of rows, and suites that
+    hold each active suite of the registry of that commit."""
     folders = {Path(r.get("evidence", "")).parent for r in rows}
     folder = folders.pop() if len(folders) == 1 else None
     if folder is None or not folder.is_absolute():
@@ -193,9 +234,12 @@ def completed_run(rows: list[dict[str, str]]) -> bool:
         manifest = json.loads((folder / "run.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return False
-    return (isinstance(manifest, dict) and bool(manifest.get("end"))
+    if not (isinstance(manifest, dict) and bool(manifest.get("end"))
             and manifest.get("utc") == rows[0].get("utc") and manifest.get("commit") == rows[0].get("commit")
-            and manifest.get("rows") == len(rows))
+            and manifest.get("rows") == len(rows) and isinstance(manifest.get("suites"), list)):
+        return False
+    required = active_suites_at(rows[0].get("commit", ""))
+    return required is not None and required <= {str(s) for s in manifest["suites"]}
 
 
 def cuts_an_item() -> bool:
@@ -216,6 +260,45 @@ def check_branch(branch: str) -> None:
     # The lead's table decides: a worker branch stays open only while the lead keeps its item active.
     if worker.group(1) not in active_ids(committed_file(BUILD_BRANCH, ITEMS_FILE)):
         raise Refused(f"item {worker.group(1)} is not active in gpt/build:{ITEMS_FILE}; its worker branch is closed")
+
+
+def staged_blobs() -> list[tuple[str, str]]:
+    """(path, blob id) of each file that the commit adds or changes. A submodule has no blob."""
+    fields = git("diff", "--cached", "--raw", "-z", "--no-renames", "--no-abbrev", "--diff-filter=d").split("\0")
+    blobs = []
+    for meta, path in zip(fields[0::2], fields[1::2]):
+        parts = meta.split()
+        if len(parts) >= 4 and parts[1] != "160000":
+            blobs.append((path, parts[3]))
+    return blobs
+
+
+def blob_facts(oid: str, sniff: int) -> tuple[int, bytes, str]:
+    """The size, the first `sniff` bytes and the SHA-256 of a blob, read in blocks."""
+    digest, size, head = hashlib.sha256(), 0, b""
+    with subprocess.Popen(["git", "cat-file", "blob", oid], stdout=subprocess.PIPE) as proc:
+        for block in iter(lambda: proc.stdout.read(1 << 20), b""):
+            head += block[: sniff - len(head)]
+            digest.update(block)
+            size += len(block)
+    if proc.returncode != 0:
+        raise Refused(f"git cat-file blob {oid} failed")
+    return size, head, digest.hexdigest()
+
+
+def files_without_origin() -> list[str]:
+    """The staged files that the licence scan skips (a NUL byte in the first SNIFF_BYTES, or more
+    than MAX_BYTES) with no row of their path and SHA-256 in the staged PROVENANCE_FILE that names
+    an origin and a licence."""
+    scan = sibling("licence_scan")
+    recorded = {(r.get("path"), r.get("sha256")) for r in tsv_rows(staged_file(PROVENANCE_FILE))
+                if all((r.get(f) or "").strip() not in ("", "-") for f in ("origin", "licence"))}
+    missing = []
+    for path, oid in staged_blobs():
+        size, head, sha = blob_facts(oid, scan.SNIFF_BYTES)
+        if (size > scan.MAX_BYTES or b"\0" in head) and (path, sha) not in recorded:
+            missing.append(path)
+    return missing
 
 
 def added_lines() -> list[str]:
@@ -246,9 +329,18 @@ def pre_commit() -> None:
 
     # The commit that cuts an item (ops item cut: the reverts and the item's rows) passes the limit and
     # the check of the other items: an exhausted item refuses every other commit, so the limit, or a
-    # second exhausted item, would otherwise lock the branch.
+    # second exhausted item, would otherwise lock the branch. Its reverts bring back only files that
+    # the history holds, so it needs no origin rows either.
     if cuts_an_item():
         return
+    unrecorded = files_without_origin()
+    if unrecorded:
+        raise Refused(
+            f"{unrecorded[0]} is a binary file or a file above 5 MB, which the licence scan skips"
+            + (f" ({len(unrecorded) - 1} more)" if len(unrecorded) > 1 else "")
+            + f". Add a row to {PROVENANCE_FILE} in the same commit: path, sha256 (of the staged content), "
+            "origin, licence"
+        )
     head_rows = scoreboard_rows(lambda n: committed_file("HEAD", n)) if rev_ok("HEAD") else []
     rows = scoreboard_rows(staged_file)
     since = commits_since_measurement(head_rows)
@@ -264,7 +356,8 @@ def pre_commit() -> None:
         if item.get("status") != "active":
             continue
         item_id, metric = item.get("id", ""), item.get("metric", "")
-        if experiments.exhausted(rows, attempts, item_id, metric, baseline(item.get("baseline", "")), corrections):
+        if experiments.exhausted(rows, attempts, item_id, metric, baseline(item.get("baseline", "")), corrections,
+                                 item.get("accept")):
             raise Refused(
                 f"item {item_id} used {experiments.experiments(rows, attempts, item_id)} experiments "
                 f"with no gain on {metric}. "

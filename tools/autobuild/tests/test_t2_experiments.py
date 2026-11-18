@@ -33,6 +33,19 @@ class Experiments(unittest.TestCase):
         self.assertTrue(rules.exhausted(rows, [attempt()] * 3, "M1-01", "m", (5, 9)))
         self.assertFalse(rules.exhausted(rows + [row("T2", 6, 9)], [attempt()] * 3, "M1-01", "m", (5, 9)))
 
+    def test_a_latest_row_below_the_coverage_rule_is_no_gain(self):
+        rows = [row("T1", 7, 10)]
+        self.assertTrue(rules.gained(rows, "M1-01", "m", (5, 10)))
+        self.assertFalse(rules.gained(rows, "M1-01", "m", (5, 10), (), "all-pass"))
+        self.assertFalse(rules.gained(rows, "M1-01", "m", (5, 10), (), "min-total=11"))
+        self.assertTrue(rules.gained(rows, "M1-01", "m", (5, 10), (), "min-total=10"))
+        self.assertFalse(rules.gained(rows, "M1-01", "m", (5, 10), (), "most-pass"), "an unknown rule is never met")
+        self.assertTrue(rules.gained([row("T1", 8, 8)], "M1-01", "m", (0, 0), (), "all-pass"))
+        self.assertFalse(rules.gained([row("T1", 0, 0)], "M1-01", "m", (0, 0), (), "all-pass"))
+        zero = [row(f"T{n}", 0, 8) for n in range(3)]
+        self.assertFalse(rules.exhausted(zero, [], "M1-01", "m", (0, 0)))
+        self.assertTrue(rules.exhausted(zero, [], "M1-01", "m", (0, 0), (), "all-pass"))
+
     def test_attempt_records_append_under_one_header(self):
         with tempfile.TemporaryDirectory() as folder:
             path = rules.attempts_file(folder)

@@ -151,7 +151,8 @@ def status(ctx: Context, args: argparse.Namespace) -> int:
         owner = "worker" if item.id in worker_ids else "lead"
         gain = "none" if p.gain is None else f"{p.gain:+d}"
         flags = [s for s, on in (("stuck: two rows with no gain", p.stuck), ("TOTAL changed", p.total_changed)) if on]
-        print(f"  {item.id} ({owner}) {item.metric} baseline {item.baseline} target {item.target}: "
+        accept = f" accept {item.accept}" if item.accept not in ("", "-") else ""
+        print(f"  {item.id} ({owner}) {item.metric} baseline {item.baseline} target {item.target}{accept}: "
               f"experiments {p.experiments}/{guard.MAX_TRIES}, gain {gain}, "
               f"reviews {len(notes.review_rows(ctx, item.id))}/2" + (f"; {'; '.join(flags)}" if flags else ""))
     print(f"workers: {len(worker_ids)}/{fleet.MAX_WORKERS}")

@@ -29,10 +29,12 @@ Steps:
                  the suite (its evidence file <suite>.json, field passing)
                  passes now. A unit that fails now, that is excluded now or
                  that is gone is lost, unless a correction newer than that
-                 run covers it: a correction of one of its metrics, or for an
-                 excluded or gone unit (no metric list), of any metric of the
-                 suite. A suite with no such evidence passes this check with
-                 a note in the log.
+                 run is of a metric of the unit: for a failing unit, a metric
+                 that it fails now (failing_by_metric); for an excluded or
+                 gone unit, a metric that it passed then (passing_by_metric
+                 of that run). A unit with no metric list is lost. A suite
+                 with no such evidence passes this check with a note in the
+                 log.
 
 The gate refuses to start when the drive has less than 15 GB free.
 Output: one summary line; for a failed step also the end of its log on
@@ -177,18 +179,23 @@ def earlier_evidence(history: list[measure.Row], suite: str) -> measure.Row | No
     return None
 
 
+def metrics_by_unit(units_by_metric: dict | None) -> dict[str, set[str]]:
+    found: dict[str, set[str]] = {}
+    for metric, units in (units_by_metric or {}).items():
+        for unit in units:
+            found.setdefault(unit, set()).add(metric)
+    return found
+
+
 def lost_by_suite(now: dict, before: dict, corrected: set[str]) -> list[str]:
     """The units that passed in `before` and do not pass in `now` (they fail, are excluded or are gone),
-    except the units that a corrected metric covers. A failing unit has its metrics in
-    `failing_by_metric`; an excluded or gone unit has none, so a correction of any metric of the suite
-    covers it."""
-    metrics: dict[str, set[str]] = {}
-    for metric, units in (now.get("failing_by_metric") or {}).items():
-        for unit in units:
-            metrics.setdefault(unit, set()).add(metric)
-    suite = {str(r.get("metric")) for data in (now, before) for r in data.get("rows") or [] if isinstance(r, dict)}
+    except the units with a corrected metric in their list. The list of a failing unit is its metrics
+    in `failing_by_metric` of `now`; the list of an excluded or gone unit is its metrics in
+    `passing_by_metric` of `before`. A correction never covers a unit with no list."""
+    failing = metrics_by_unit(now.get("failing_by_metric"))
+    passed = metrics_by_unit(before.get("passing_by_metric"))
     lost = set(before.get("passing") or []) - set(now.get("passing") or [])
-    return sorted(unit for unit in lost if not metrics.get(unit, suite) & corrected)
+    return sorted(unit for unit in lost if not failing.get(unit, passed.get(unit, set())) & corrected)
 
 
 def unit_regressions(results: list[measure.SuiteResult], history: list[measure.Row],

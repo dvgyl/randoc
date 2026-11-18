@@ -67,7 +67,7 @@ class OpsTest(unittest.TestCase):
     def started(self, item_id: str = "M1-01", baseline: tuple[int, int] = (5, 9)) -> str:
         """An active item with a committed baseline row; returns the measured commit."""
         measured = self.repo.head()
-        self.rows(row("2026-11-17T09:00:00Z", measured, "-", "harness.units", *baseline))
+        self.rows(self.repo.full_run("2026-11-17T09:00:00Z", measured, {"harness.units": baseline}))
         self.add(item_id)
         self.ok("item", "start", item_id)
         return measured
@@ -238,15 +238,24 @@ class OpsTest(unittest.TestCase):
         self.ok("item", "done", "M1-01", "--weak-spots", "none known")
         self.assertIn("Gate: 2026111", self.repo.out("show", "HEAD:plan/REVIEW_LOG.md"))
 
-    def test_done_with_a_coverage_rule_needs_it_in_the_latest_row(self) -> None:
-        self.add("M1-01", metric="files.units")
+    def test_the_coverage_rule_of_the_item_decides_done_and_status(self) -> None:
+        self.ok("item", "add", "M1-01", "--milestone", "M1", "--metric", "files.units", "--target", "+1",
+                "--title", "files", "--min-total", "60")
+        self.ok("item", "add", "M1-02", "--milestone", "M1", "--metric", "gate.steps", "--target", "+1",
+                "--title", "steps", "--all-pass")
+        self.assertTrue(self.repo.read("plan/ITEMS.tsv").endswith("\tfiles\tmin-total=60\n"
+                                                                  "M1-02\tM1\tqueued\tgate.steps\t-\t+1\tsteps\tall-pass\n"))
+        self.refused("--min-total 0 is not a coverage rule", "item", "add", "M1-03", "--milestone", "M1",
+                     "--metric", "k", "--target", "+1", "--title", "t", "--min-total", "0")
         self.ok("item", "start", "M1-01")
         self.rows(row("2026-11-17T10:00:00Z", self.repo.head(), "M1-01", "files.units", 50, 59))
         self.gate_record()
-        self.refused("a TOTAL below --min-total 60", "item", "done", "M1-01", "--weak-spots", "x", "--min-total", "60")
-        self.refused("--all-pass needs PASS = TOTAL above 0", "item", "done", "M1-01", "--weak-spots", "x", "--all-pass")
-        self.rows(row("2026-11-17T11:00:00Z", self.repo.head(), "M1-01", "files.units", 61, 61))
-        self.ok("item", "done", "M1-01", "--weak-spots", "none known", "--min-total", "60", "--all-pass")
+        status = self.ok("status")
+        self.assertIn("M1-01 (lead) files.units baseline 0/0 target +1 accept min-total=60: experiments 1/3", status)
+        self.assertNotIn("ops item done", status)
+        self.refused("the latest row 50/59 does not meet min-total=60", "item", "done", "M1-01", "--weak-spots", "x")
+        self.rows(row("2026-11-17T11:00:00Z", self.repo.head(), "M1-01", "files.units", 61, 70))
+        self.ok("item", "done", "M1-01", "--weak-spots", "none known")
         self.assertEqual(self.item_status("M1-01"), "done")
 
     def test_a_cut_never_waits_for_the_commit_limit_or_for_another_exhausted_item(self) -> None:

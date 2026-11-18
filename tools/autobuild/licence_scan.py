@@ -48,6 +48,7 @@ N = 8
 DATA_SUFFIXES = {".csl", ".xml", ".json"}
 MIN_HITS = 3
 MAX_BYTES = 5 * 1024 * 1024
+SNIFF_BYTES = 8192
 ENV = Path("/Volumes/Extreme Pro/Randoc/env")
 INDEX = ENV / "licence-index"
 ALLOW_FILE = "tools/autobuild/licence-allow.tsv"
@@ -98,7 +99,7 @@ def files_under(roots: list[Path], skip: set[Path]):
 
 
 def decode(raw: bytes | None) -> str | None:
-    if raw is None or len(raw) > MAX_BYTES or b"\0" in raw[:8192]:
+    if raw is None or len(raw) > MAX_BYTES or b"\0" in raw[:SNIFF_BYTES]:
         return None
     return raw.decode("utf-8", errors="replace")
 

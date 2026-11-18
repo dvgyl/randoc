@@ -1,0 +1,2 @@
+# Append-only: a worker branch and gpt/build both append rows; the union merge keeps both sides.
+provenance.tsv merge=union

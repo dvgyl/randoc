@@ -46,14 +46,24 @@ class LostUnits(unittest.TestCase):
         self.assertEqual(gate.lost_by_suite(now, before, set()), ["a", "c"])
         self.assertEqual(gate.lost_by_suite(now, before, {"s.part"}), ["a"])
         self.assertEqual(gate.lost_by_suite(now, before, {"s.units"}), [])
+        before["passing_by_metric"] = {"s.units": ["a", "b", "c"], "s.part": ["a", "c"]}
+        self.assertEqual(gate.lost_by_suite(now, before, {"s.part"}), ["a"], "a metric that a now passes is no cover")
 
-    def test_a_unit_that_passed_and_is_gone_or_excluded_now_is_lost_unless_a_metric_of_the_suite_is_corrected(self):
-        before = {"passing": ["a", "gone", "flaky"], "rows": [{"metric": "s.units"}, {"metric": "s.part"}]}
-        now = {"passing": ["a"], "failing": [], "unstable": ["flaky"], "failing_by_metric": {"s.units": []},
-               "rows": [{"metric": "s.units"}]}
+    def test_a_unit_that_passed_and_is_gone_or_excluded_now_is_lost_unless_a_metric_that_it_passed_is_corrected(self):
+        before = {"passing": ["a", "gone", "flaky"],
+                  "passing_by_metric": {"s.units": ["a", "gone", "flaky"], "s.part": ["gone"]}}
+        now = {"passing": ["a"], "failing": [], "unstable": ["flaky"],
+               "failing_by_metric": {"s.units": [], "s.part": []}}
         self.assertEqual(gate.lost_by_suite(now, before, set()), ["flaky", "gone"])
         self.assertEqual(gate.lost_by_suite(now, before, {"other.units"}), ["flaky", "gone"])
-        self.assertEqual(gate.lost_by_suite(now, before, {"s.part"}), [])
+        self.assertEqual(gate.lost_by_suite(now, before, {"s.part"}), ["flaky"])
+        self.assertEqual(gate.lost_by_suite(now, before, {"s.units"}), [])
+
+    def test_a_correction_never_covers_a_gone_unit_with_no_metric_list(self):
+        before = {"passing": ["a", "gone"], "rows": [{"metric": "s.units"}, {"metric": "s.part"}]}
+        now = {"passing": ["a"], "failing_by_metric": {"s.units": [], "s.part": []},
+               "rows": [{"metric": "s.units"}, {"metric": "s.part"}]}
+        self.assertEqual(gate.lost_by_suite(now, before, {"s.units", "s.part"}), ["gone"])
 
 
 class MeasurementStep(unittest.TestCase):

@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import unittest
 
-import json
+from fixture import ITEMS_HEADER, REGISTRY, TempRepo, item_line, row
 
-from fixture import ITEMS_HEADER, TempRepo, item_line, row
+PROVENANCE = "tools/autobuild/provenance.tsv"
+PROVENANCE_HEADER = "path\tsha256\torigin\tlicence\n"
 
 
 class GuardTest(unittest.TestCase):
@@ -85,13 +88,20 @@ class GuardTest(unittest.TestCase):
     def full_row(self, utc: str, commit: str, evidence: str, item: str = "-", dirty: str = "no") -> str:
         return row(utc, commit, item, "harness.units", 5, 9, dirty=dirty).replace("/runs/x", evidence)
 
-    def completed(self, name: str, utc: str, commit: str, rows: int = 1) -> str:
-        return self.evidence(name, {"utc": utc, "commit": commit, "rows": rows})
+    def completed(self, name: str, utc: str, commit: str, rows: int = 1,
+                  suites: tuple[str, ...] = ("harness", "corpus")) -> str:
+        return self.evidence(name, {"utc": utc, "commit": commit, "rows": rows, "suites": list(suites)})
+
+    def two_suites(self) -> str:
+        """Commit a registry with the active suites harness and corpus; returns that commit."""
+        self.repo.write("tools/autobuild/metrics.toml", REGISTRY + REGISTRY.replace("harness", "corpus"))
+        return self.repo.must_commit("chore(tools): two suites [ops]", ["tools"])
 
     def test_ten_commits_after_the_measured_commit(self) -> None:
         r = self.repo
-        measured = r.head()
-        r.append("plan/scoreboard/build.tsv", self.full_row("2026-11-17T10:00:00Z", measured, self.evidence("a")))
+        measured = self.two_suites()
+        utc = "2026-11-17T10:00:00Z"
+        r.append("plan/scoreboard/build.tsv", self.full_row(utc, measured, self.completed("a", utc, measured)))
         r.must_commit("chore(plan): rows [ops]")
         for n in range(9):
             r.write(f"plan/n{n}.md", f"{n}\n")
@@ -108,6 +118,7 @@ class GuardTest(unittest.TestCase):
             self.full_row(utc, head, self.evidence("bare")),  # a folder with no run.json: the run did not end
             self.full_row(utc, head, self.completed("short", utc, head, rows=2)),  # rows of the run are missing
             self.full_row(utc, head, self.completed("other", "2026-11-17T09:00:00Z", head)),  # another run
+            self.full_row(utc, head, self.completed("one", utc, head, suites=("harness",))),  # an active suite is missing
         ):
             text = r.read("plan/scoreboard/build.tsv")
             r.append("plan/scoreboard/build.tsv", wrong)
@@ -116,6 +127,24 @@ class GuardTest(unittest.TestCase):
         utc = "2026-11-17T12:00:00Z"
         r.append("plan/scoreboard/build.tsv", self.full_row(utc, head, self.completed("c", utc, head)))
         self.assertEqual(r.commit("chore(plan): new rows [ops]").returncode, 0)
+
+    def test_committed_rows_of_a_run_that_misses_an_active_suite_never_reset_the_counter(self) -> None:
+        r = self.repo
+        measured = self.two_suites()
+        r.append("plan/scoreboard/build.tsv", r.full_run("2026-11-17T10:00:00Z", measured, {"harness.units": (5, 9)},
+                                                         suites=("harness", "corpus")))
+        r.must_commit("chore(plan): rows [ops]")
+        for n in range(4):
+            r.write(f"plan/n{n}.md", f"{n}\n")
+            r.must_commit(f"docs: note {n} [ops]")
+        r.append("plan/scoreboard/build.tsv", r.full_run("2026-11-17T11:00:00Z", r.head(), {"harness.units": (5, 9)},
+                                                         suites=("harness",)))
+        r.must_commit("chore(plan): rows of one suite [ops]")
+        for n in range(4, 8):
+            r.write(f"plan/n{n}.md", f"{n}\n")
+            r.must_commit(f"docs: note {n} [ops]")
+        r.write("plan/late.md", "late\n")
+        self.refused(r.commit("docs: one too many [ops]"), "10 commits since the last measured commit")
 
     def test_three_experiments_with_no_gain_block_each_commit(self) -> None:
         r = self.repo
@@ -136,6 +165,16 @@ class GuardTest(unittest.TestCase):
         r.write("plan/x.md", "x\n")
         self.refused(r.commit("docs: x [M1-01]"), "used 3 experiments with no gain")
         r.append("plan/scoreboard/build.tsv", row("2026-11-17T13:00:00Z", r.head(), "M1-01", "harness.units", 8, 11))
+        self.assertEqual(r.commit("docs: x [M1-01]").returncode, 0)
+
+    def test_rows_below_the_coverage_rule_of_the_item_are_no_gain(self) -> None:
+        r = self.repo
+        self.items(item_line("M1-01", "active", metric="gate.steps", baseline="0/0", accept="all-pass"))
+        for n in range(3):
+            r.append("plan/scoreboard/build.tsv", row(f"2026-11-17T1{n}:00:00Z", r.head(), "M1-01", "gate.steps", 0, 8))
+        r.write("plan/x.md", "x\n")
+        self.refused(r.commit("docs: x [M1-01]"), "used 3 experiments with no gain on gate.steps")
+        r.append("plan/scoreboard/build.tsv", row("2026-11-17T14:00:00Z", r.head(), "M1-01", "gate.steps", 8, 8))
         self.assertEqual(r.commit("docs: x [M1-01]").returncode, 0)
 
     def test_attempt_records_count_as_experiments(self) -> None:
@@ -178,7 +217,7 @@ class GuardTest(unittest.TestCase):
 
     def test_a_cut_does_not_wait_for_another_exhausted_item_or_for_the_commit_limit(self) -> None:
         r = self.repo
-        r.append("plan/scoreboard/build.tsv", row("2026-11-17T09:00:00Z", r.head(), "-", "harness.units", 5, 9))
+        r.append("plan/scoreboard/build.tsv", r.full_run("2026-11-17T09:00:00Z", r.head(), {"harness.units": (5, 9)}))
         self.items(item_line("M1-01", "active", baseline="5/9"), item_line("M1-02", "active", baseline="5/9"))
         r.must_commit("chore(plan): start M1-01 and M1-02 [ops]")
         for n in range(9):
@@ -210,8 +249,31 @@ class GuardTest(unittest.TestCase):
         r.write("tools/x.py", "state = 'wait'\n")
         r.write("tools/autobuild/tests/test_guard.py", "TEXT = 'put it on HOLD'\n")
         r.write("AGENTS.md", r.read("AGENTS.md") + "Never write HOLD.\n")
-        (r.root / "plan/blob.bin").write_bytes(b"\0\1HOLD\0")
+        blob = b"\0\1HOLD\0"
+        (r.root / "plan/blob.bin").write_bytes(blob)
+        r.write(PROVENANCE, PROVENANCE_HEADER + f"plan/blob.bin\t{hashlib.sha256(blob).hexdigest()}\twritten by this test\tMIT\n")
         self.assertEqual(r.commit("chore(tools): x [ops]").returncode, 0, "binary files and the phrase files pass")
+
+    def test_a_binary_or_large_file_needs_a_row_of_its_origin(self) -> None:
+        r = self.repo
+        data = b"\x89PNG\r\n\0\1"
+        sha = hashlib.sha256(data).hexdigest()
+        (r.root / "conformance/cases").mkdir(parents=True)
+        (r.root / "conformance/cases/a.png").write_bytes(data)
+        message = "conformance/cases/a.png is a binary file or a file above 5 MB"
+        self.refused(r.commit("test: a case [ops]"), message)
+        for wrong in (f"conformance/cases/a.png\t{'0' * 64}\tdrawn by the test\tMIT\n",  # another content
+                      f"conformance/cases/a.png\t{sha}\t-\tMIT\n",  # no origin
+                      f"conformance/cases/a.png\t{sha}\tdrawn by the test\t\n",  # no licence
+                      f"conformance/cases/b.png\t{sha}\tdrawn by the test\tMIT\n"):  # another path
+            r.write(PROVENANCE, PROVENANCE_HEADER + wrong)
+            self.refused(r.commit("test: a case [ops]"), message)
+        r.write(PROVENANCE, PROVENANCE_HEADER + f"conformance/cases/a.png\t{sha}\tdrawn by the test\tMIT\n")
+        self.assertEqual(r.commit("test: a case [ops]").returncode, 0)
+        r.write("plan/big.txt", "a" * (5 * 1024 * 1024 + 1))
+        self.refused(r.commit("docs: big [ops]"), "plan/big.txt is a binary file or a file above 5 MB")
+        r.write("plan/big.txt", "a" * (5 * 1024 * 1024))
+        self.assertEqual(r.commit("docs: big [ops]").returncode, 0, "a text file of 5 MB passes")
 
     def test_attribution_lines_are_removed(self) -> None:
         r = self.repo

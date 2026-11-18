@@ -27,6 +27,9 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--metric", required=True)
     p.add_argument("--target", required=True, help="expected gain in PASS units, for example +12")
     p.add_argument("--title", required=True)
+    rule = p.add_mutually_exclusive_group()
+    rule.add_argument("--all-pass", action="store_true", help="a gain needs PASS = TOTAL above 0 in the latest row")
+    rule.add_argument("--min-total", type=int, metavar="N", help="a gain needs TOTAL >= N in the latest row")
     p.set_defaults(func=items.add)
     p = item.add_parser("start", help="make the item active and record its baseline")
     p.add_argument("id")
@@ -38,8 +41,6 @@ def parser() -> argparse.ArgumentParser:
     p = item.add_parser("done", help="close an item that shows a gain, after a passing gate")
     p.add_argument("id")
     p.add_argument("--weak-spots", required=True, help="the known weak spots, or 'none known'")
-    p.add_argument("--min-total", type=int, metavar="N", help="also require TOTAL >= N in the latest row")
-    p.add_argument("--all-pass", action="store_true", help="also require PASS = TOTAL above 0 in the latest row")
     p.set_defaults(func=items.done)
     item.add_parser("list", help="all items").set_defaults(func=items.list_items)
 

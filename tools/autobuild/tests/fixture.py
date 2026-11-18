@@ -19,8 +19,17 @@ from unittest import mock
 AUTOBUILD = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AUTOBUILD))
 
-ITEMS_HEADER = "id\tmilestone\tstatus\tmetric\tbaseline\ttarget\ttitle\n"
+ITEMS_HEADER = "id\tmilestone\tstatus\tmetric\tbaseline\ttarget\ttitle\taccept\n"
 ROWS_HEADER = "utc\tcommit\tdirty\titem\tmetric\tpass\ttotal\ttool\tevidence\n"
+# The registry of the test repository: one active suite, so a full run lists ["harness"].
+REGISTRY = """[[metric]]
+key = "harness.units"
+suite = "harness"
+status = "active"
+command = "c"
+pass = "p"
+total = "t"
+"""
 HOOKS = ("guard.py", "experiments.py", "pre-commit", "commit-msg", "pre-push", "reference-transaction")
 # The role table of AGENTS.md section 3, with model ids that are not real.
 ROLE_TABLE = """# Test manual
@@ -71,8 +80,9 @@ def row(utc: str, commit: str, item: str, metric: str, passed: int, total: int, 
     return f"{utc}\t{commit}\t{dirty}\t{item}\t{metric}\t{passed}\t{total}\ttest@1\t/runs/x\n"
 
 
-def item_line(item_id: str, status: str, metric: str = "harness.units", baseline: str = "-", target: str = "+2") -> str:
-    return f"{item_id}\tM1\t{status}\t{metric}\t{baseline}\t{target}\ttitle of {item_id}\n"
+def item_line(item_id: str, status: str, metric: str = "harness.units", baseline: str = "-", target: str = "+2",
+              accept: str = "-") -> str:
+    return f"{item_id}\tM1\t{status}\t{metric}\t{baseline}\t{target}\ttitle of {item_id}\t{accept}\n"
 
 
 class TempRepo:
@@ -101,6 +111,7 @@ class TempRepo:
         self.write("plan/ITEMS.tsv", ITEMS_HEADER)
         self.write("plan/scoreboard/build.tsv", ROWS_HEADER)
         self.write("AGENTS.md", ROLE_TABLE)
+        self.write("tools/autobuild/metrics.toml", REGISTRY)
         shutil.copy(AUTOBUILD.parents[1] / "plan" / ".gitattributes", self.root / "plan" / ".gitattributes")
         for name in ("worker.md", "review.md", "adviser.md"):
             self.write(f"tools/autobuild/prompts/{name}", (AUTOBUILD / "prompts" / name).read_text())
@@ -138,6 +149,18 @@ class TempRepo:
 
     def read(self, rel: str) -> str:
         return (self.root / rel).read_text()
+
+    def full_run(self, utc: str, commit: str, counts: dict[str, tuple[int, int]],
+                 suites: tuple[str, ...] = ("harness",), name: str | None = None) -> str:
+        """The rows of a completed full run of `commit` (item -, clean tree), with the run.json that
+        measure.py writes in its evidence folder."""
+        folder = self.gpt / "runs" / "measure" / (name or f"{utc.replace(':', '')}-{commit[:12]}")
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "run.json").write_text(json.dumps({
+            "utc": utc, "end": utc, "commit": commit, "dirty": "no", "item": "-", "stream": "build",
+            "suites": list(suites), "rows": len(counts)}))
+        return "".join(row(utc, commit, "-", metric, passed, total).replace("/runs/x", str(folder / "harness.json"))
+                       for metric, (passed, total) in counts.items())
 
     def commit(self, subject: str, paths: list[str] | None = None, cwd: Path | None = None,
                env: dict | None = None) -> subprocess.CompletedProcess:

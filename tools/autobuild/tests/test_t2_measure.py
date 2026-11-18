@@ -94,6 +94,15 @@ class ExperimentLimit(Flow):
         self.assertEqual(len(self.rows()), 6)
         self.assertEqual(len(self.attempts()), 3)
 
+    def test_rows_below_the_coverage_rule_of_the_item_exhaust_it(self):
+        items = self.folder / "plan" / "ITEMS.tsv"
+        items.write_text(ITEMS.replace("\ttitle\n", "\ttitle\taccept\n").replace("\tt\n", "\tt\tall-pass\n"))
+        for _ in range(3):
+            self.assertEqual(self.measure(7, "--item", "M1-01")[0], 0)
+        code, _, err = self.measure(10, "--item", "M1-01")
+        self.assertEqual(code, 2, "7/10 gains over 5/10 but does not meet all-pass")
+        self.assertIn("refused: item M1-01 used 3 experiments with no gain", err)
+
     def test_a_failed_run_counts_as_an_experiment(self):
         code, _, _ = self.measure(5, "--item", "M1-01", exit_code=3)
         self.assertEqual(code, 2)
@@ -131,6 +140,7 @@ class Evidence(Flow):
         self.assertEqual(evidence["passing"], ["u0", "u1", "u2", "u3"])
         self.assertEqual(evidence["failing_by_metric"], {
             "fake.units": ["u4", "u5", "u6", "u7", "u8", "u9"], "fake.part": ["u5", "u7", "u9"]})
+        self.assertEqual(evidence["passing_by_metric"], {"fake.units": ["u0", "u1", "u2", "u3"], "fake.part": ["u1", "u3"]})
         self.assertEqual(evidence["programs"], {})
 
     def test_a_completed_run_writes_its_manifest_and_a_failed_run_does_not(self):

@@ -1,30 +1,30 @@
-id	milestone	status	metric	baseline	target	title
-M1-01	M1	active	gate.steps	0/0	+1	Gate in the sandbox: `crates/randoc-citeproc/tests/time.rs` runs `ps` (refused); `init.sh` stops at the hook copy; the 20 s wall limit of a harness unit fails correct code under load (use CPU time of the child); no tool passes `GHCRTS=-M3g` to the oracle (harness `exec.rs`, the suite, corpus and CommonMark tools) (gain: first row, all steps pass)
-M1-02	M1	queued	gate.steps	-	+2	Baseline checks: the suite tool writes its baseline before it reads it, so the check cannot fail; the corpus tool has no baseline check
-M1-03	M1	queued	files.units	-	+1	Harness captures each file that a run writes (`-o`, `--log`, `--extract-media`); 0 units compare a written file today (gain: first row, TOTAL >= 60)
-M1-04	M1	queued	fmt.write	-	+1	Pivot set (each block, inline, attribute and table form) and one row for each writer (gain: first row, 76 keys)
-M1-05	M1	queued	fmt.read	-	+1	Reader inputs from the oracle's pivot output, the own cases and the corpus; one row for each reader (gain: first row, 52 keys)
-M1-06	M1	queued	caps.extensions	-	+1	One probe set for each (direction, format, extension) pair, kept only when the oracle output changes with the switch; 11 extension names have 0 units today (gain: TOTAL = 1,719)
-M1-07	M1	queued	caps.options	-	+1	Value sets for each option on 5 base conversions; short options map to long names; 20 options rest on 1 to 3 units, and `embed-resources` and `pdf-engine` are "passing" on parse-only cases (gain: TOTAL = 109)
-M1-08	M1	queued	ast.roundtrip	-	+1	JSON and `native` round trip of each distinct oracle tree; cases for each wrong `pandoc-api-version` form (gain: first row)
-M1-09	M1	queued	templates.units	-	+1	15 variable sets and 2 documents for each format with a default template; user partials (gain: first row)
-M1-10	M1	queued	defaults.units	-	+1	One number for each defaults key that the oracle accepts (gain: first row)
-M1-11	M1	queued	errors.units	-	+1	One confirmed trigger for each exit code; `--verbose --log` files of the corpus and pivot conversions (gain: first row)
-M1-12	M1	queued	lua.api	-	+1	Call probes for each name of the `pandoc` module through one printer, run as a filter (gain: TOTAL = 468)
-M1-13	M1	queued	lua.filters	-	+1	Filter matrix: element type, return kind, traversal, filter form, on the pivot set (gain: first row)
-M1-14	M1	queued	custom.readers	-	+1	10 own-written custom readers and their inputs (gain: first row)
-M1-15	M1	queued	custom.writers	-	+1	10 own-written custom writers (new form, classic form, `Template`, `Extensions`) (gain: first row)
-M1-16	M1	queued	suite.pandoc.lua	-	+1	Run the 20 Lua test files of Pandoc's Lua engine from the Pandoc tree at run time (gain: first row)
-M1-17	M1	queued	suite.pandoc.inline	-	+1	Read the input strings of the Haskell-only test groups at run time (about 1,939 tests have no number today) (gain: first row, TOTAL >= 1,000)
-M1-18	M1	queued	citeproc.units	-	+1	Styles, bibliography formats, citation matrix and 4 output formats; styles are fetched, never committed (gain: first row)
-M1-19	M1	queued	zip.units	-	+1	Data pack tool; oracle self-check that lists the archive entries that differ between two oracle runs; expected results outside the repository (gain: first row)
-M1-20	M1	queued	pdf.units	-	+1	Recording stand-in for each PDF engine; the "engine missing" case for each engine (gain: first row)
-M1-21	M1	queued	perf.throughput	-	+1	Speed, startup and peak memory against the oracle for each corpus document (`perf.startup`, `perf.memory` in the same run); the stored benchmark record is out of date (gain: first row)
-M1-22	M1	queued	safety.units	-	+1	Generated stress inputs for each reader and writer that exists, under `limit-run` (gain: first row, TOTAL >= 100)
-M1-23	M1	queued	server.units	-	+1	Requests to the oracle server on a local port; Randoc gives 0 now (gain: first row)
-M1-24	M1	queued	lib.units	-	+1	A small command on the library API with a pure Host (`wasm.units` in the same item: 0 until the build exists) (gain: first row)
-M1-25	M1	queued	downstream.quarto	-	+1	Sample projects with open licences; record each real call of the oracle; replay it with both programs (`downstream.rmarkdown` in the same form). If a tool cannot be installed, write the row 0/TOTAL and a BLOCKED ON OWNER entry (gain: first row)
-M1-26	M1	queued	casegen.visible	-	+1	Run the visible generated cases and each family key; request the first held-out result (gain: row for seeds 1 to 1000)
-M1-27	M1	queued	gate.steps	-	+2	Corpus tool: check the oracle SHA-256 before the oracle cache is used (stand-in with a wrong hash: exit 2, no row); reject a duplicate JSON key (plan/SPEC.md 3.4); two self-checks of gate.steps; if PASS of corpus.json falls, record a tool correction
-M1-28	M1	queued	gate.steps	-	+1	Suite tool: compare the exit code and the stable standard error of each reader test with the oracle's result of the same command; one self-check of gate.steps
-M1-29	M1	queued	tags.read.markdown	-	+1	Capability tags (formats read and written, options) on each unit of the suite tool and the corpus tool; one row for each tags.* key with units (gain: first row)
+id	milestone	status	metric	baseline	target	title	accept
+M1-01	M1	active	gate.steps	0/0	+1	Gate in the sandbox: `crates/randoc-citeproc/tests/time.rs` runs `ps` (refused); `init.sh` stops at the hook copy; the 20 s wall limit of a harness unit fails correct code under load (use CPU time of the child); no tool passes `GHCRTS=-M3g` to the oracle (harness `exec.rs`, the suite, corpus and CommonMark tools) (gain: first row, all steps pass)	all-pass
+M1-02	M1	queued	gate.steps	-	+2	Baseline checks: the suite tool writes its baseline before it reads it, so the check cannot fail; the corpus tool has no baseline check	all-pass
+M1-03	M1	queued	files.units	-	+1	Harness captures each file that a run writes (`-o`, `--log`, `--extract-media`); 0 units compare a written file today (gain: first row, TOTAL >= 60)	min-total=60
+M1-04	M1	queued	fmt.write	-	+1	Pivot set (each block, inline, attribute and table form) and one row for each writer (gain: first row, 76 keys)	-
+M1-05	M1	queued	fmt.read	-	+1	Reader inputs from the oracle's pivot output, the own cases and the corpus; one row for each reader (gain: first row, 52 keys)	-
+M1-06	M1	queued	caps.extensions	-	+1	One probe set for each (direction, format, extension) pair, kept only when the oracle output changes with the switch; 11 extension names have 0 units today (gain: TOTAL = 1,719)	min-total=1719
+M1-07	M1	queued	caps.options	-	+1	Value sets for each option on 5 base conversions; short options map to long names; 20 options rest on 1 to 3 units, and `embed-resources` and `pdf-engine` are "passing" on parse-only cases (gain: TOTAL = 109)	min-total=109
+M1-08	M1	queued	ast.roundtrip	-	+1	JSON and `native` round trip of each distinct oracle tree; cases for each wrong `pandoc-api-version` form (gain: first row)	-
+M1-09	M1	queued	templates.units	-	+1	15 variable sets and 2 documents for each format with a default template; user partials (gain: first row)	-
+M1-10	M1	queued	defaults.units	-	+1	One number for each defaults key that the oracle accepts (gain: first row)	-
+M1-11	M1	queued	errors.units	-	+1	One confirmed trigger for each exit code; `--verbose --log` files of the corpus and pivot conversions (gain: first row)	-
+M1-12	M1	queued	lua.api	-	+1	Call probes for each name of the `pandoc` module through one printer, run as a filter (gain: TOTAL = 468)	min-total=468
+M1-13	M1	queued	lua.filters	-	+1	Filter matrix: element type, return kind, traversal, filter form, on the pivot set (gain: first row)	-
+M1-14	M1	queued	custom.readers	-	+1	10 own-written custom readers and their inputs (gain: first row)	-
+M1-15	M1	queued	custom.writers	-	+1	10 own-written custom writers (new form, classic form, `Template`, `Extensions`) (gain: first row)	-
+M1-16	M1	queued	suite.pandoc.lua	-	+1	Run the 20 Lua test files of Pandoc's Lua engine from the Pandoc tree at run time (gain: first row)	-
+M1-17	M1	queued	suite.pandoc.inline	-	+1	Read the input strings of the Haskell-only test groups at run time (about 1,939 tests have no number today) (gain: first row, TOTAL >= 1,000)	min-total=1000
+M1-18	M1	queued	citeproc.units	-	+1	Styles, bibliography formats, citation matrix and 4 output formats; styles are fetched, never committed (gain: first row)	-
+M1-19	M1	queued	zip.units	-	+1	Data pack tool; oracle self-check that lists the archive entries that differ between two oracle runs; expected results outside the repository (gain: first row)	-
+M1-20	M1	queued	pdf.units	-	+1	Recording stand-in for each PDF engine; the "engine missing" case for each engine (gain: first row)	-
+M1-21	M1	queued	perf.throughput	-	+1	Speed, startup and peak memory against the oracle for each corpus document (`perf.startup`, `perf.memory` in the same run); the stored benchmark record is out of date (gain: first row)	-
+M1-22	M1	queued	safety.units	-	+1	Generated stress inputs for each reader and writer that exists, under `limit-run` (gain: first row, TOTAL >= 100)	min-total=100
+M1-23	M1	queued	server.units	-	+1	Requests to the oracle server on a local port; Randoc gives 0 now (gain: first row)	-
+M1-24	M1	queued	lib.units	-	+1	A small command on the library API with a pure Host (`wasm.units` in the same item: 0 until the build exists) (gain: first row)	-
+M1-25	M1	queued	downstream.quarto	-	+1	Sample projects with open licences; record each real call of the oracle; replay it with both programs (`downstream.rmarkdown` in the same form). If a tool cannot be installed, write the row 0/TOTAL and a BLOCKED ON OWNER entry (gain: first row)	-
+M1-26	M1	queued	casegen.visible	-	+1	Run the visible generated cases and each family key; request the first held-out result (gain: row for seeds 1 to 1000)	-
+M1-27	M1	queued	gate.steps	-	+2	Corpus tool: check the oracle SHA-256 before the oracle cache is used (stand-in with a wrong hash: exit 2, no row); reject a duplicate JSON key (plan/SPEC.md 3.4); two self-checks of gate.steps; if PASS of corpus.json falls, record a tool correction	-
+M1-28	M1	queued	gate.steps	-	+1	Suite tool: compare the exit code and the stable standard error of each reader test with the oracle's result of the same command; one self-check of gate.steps	-
+M1-29	M1	queued	tags.read.markdown	-	+1	Capability tags (formats read and written, options) on each unit of the suite tool and the corpus tool; one row for each tags.* key with units (gain: first row)	-

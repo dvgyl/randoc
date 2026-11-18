@@ -118,11 +118,13 @@ class PushTest(unittest.TestCase):
         changed = r.must_commit("docs: a again [ops]")
         self.refused(self.push("gpt/build"), f"licence scan: {changed[:12]}\tdocs/a.md")
 
-    def test_the_push_needs_the_licence_scanner_next_to_the_guard(self) -> None:
+    def test_the_commit_and_the_push_need_the_licence_scanner_next_to_the_guard(self) -> None:
         r = self.repo
-        (r.hooks / "licence_scan.py").unlink()
         r.write("plan/a.md", "a\n")
         r.must_commit("docs: a [ops]")
+        (r.hooks / "licence_scan.py").unlink()
+        r.write("plan/b.md", "b\n")
+        self.refused(r.commit("docs: b [ops]"), "licence_scan.py is missing")
         self.refused(self.push("gpt/build"), "licence_scan.py is missing")
 
 

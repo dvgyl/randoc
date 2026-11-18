@@ -14,6 +14,9 @@ loads this file by its path next to its protected copy.
   whose `withdraws` names the utc of a correction of the same metric
   withdraws it (`ops item cut` of the item that made it): the older rows
   count again, and the rows measured while it was in force do not.
+- Accept: the coverage rule of an item (column `accept` of plan/ITEMS.tsv):
+  `-` (none), `all-pass` (PASS = TOTAL above 0) or `min-total=N` (TOTAL >= N).
+  A latest row that does not meet it is no gain.
 """
 
 from __future__ import annotations
@@ -137,10 +140,24 @@ def latest(rows: list[dict[str, str]], item: str, metric: str,
     return max(mine, key=lambda r: r.get("utc", ""), default=None)
 
 
+def shortfall(accept: str | None, passed: int, total: int) -> str | None:
+    """Why PASS/TOTAL does not meet the coverage rule `accept`, or None. An unknown rule is never met."""
+    rule = accept or "-"
+    if rule == "-":
+        return None
+    if rule == "all-pass":
+        return None if 0 < total == passed else f"{passed}/{total} does not meet all-pass (PASS = TOTAL above 0)"
+    name, _, value = rule.partition("=")
+    if name == "min-total" and value.isdecimal():
+        return None if total >= int(value) else f"{passed}/{total} does not meet {rule} (TOTAL >= {value})"
+    return f"the rule {rule!r} is not -, all-pass or min-total=N"
+
+
 def gained(rows: list[dict[str, str]], item: str, metric: str, base: tuple[int, int] | None,
-           corrections: list[dict[str, str]] = ()) -> bool:
+           corrections: list[dict[str, str]] = (), accept: str | None = "-") -> bool:
     """The gain rule: the LATEST row of the item's metric has a PASS above the baseline PASS,
-    and its failing count (TOTAL - PASS) is not above the baseline failing count.
+    its failing count (TOTAL - PASS) is not above the baseline failing count, and it meets the
+    coverage rule `accept` of the item.
 
     Baseline 0/0 (an item that makes or corrects a metric, ROADMAP rule 7): the
     latest row has a TOTAL above 0."""
@@ -148,6 +165,8 @@ def gained(rows: list[dict[str, str]], item: str, metric: str, base: tuple[int, 
     if base is None or row is None:
         return False
     passed, total = numbers(row)
+    if shortfall(accept, passed, total):
+        return False
     base_pass, base_total = base
     if base_total == 0:
         return total > 0
@@ -155,6 +174,8 @@ def gained(rows: list[dict[str, str]], item: str, metric: str, base: tuple[int, 
 
 
 def exhausted(rows: list[dict[str, str]], attempts: list[dict[str, str]], item: str, metric: str,
-              base: tuple[int, int] | None, corrections: list[dict[str, str]] = ()) -> bool:
+              base: tuple[int, int] | None, corrections: list[dict[str, str]] = (),
+              accept: str | None = "-") -> bool:
     """True when the item used MAX_TRIES experiments and shows no gain: only a cut is allowed."""
-    return experiments(rows, attempts, item) >= MAX_TRIES and not gained(rows, item, metric, base, corrections)
+    return (experiments(rows, attempts, item) >= MAX_TRIES
+            and not gained(rows, item, metric, base, corrections, accept))

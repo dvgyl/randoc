@@ -8,7 +8,7 @@ from pathlib import Path
 
 from .core import Context, OpsError, Refusal
 
-ITEM_FIELDS = ["id", "milestone", "status", "metric", "baseline", "target", "title"]
+ITEM_FIELDS = ["id", "milestone", "status", "metric", "baseline", "target", "title", "accept"]
 ROW_FIELDS = ["utc", "commit", "dirty", "item", "metric", "pass", "total", "tool", "evidence"]
 REVIEW_FIELDS = ["utc", "item", "round", "commit", "session", "verdict", "evidence"]
 STATUSES = ("queued", "active", "done", "cut", "blocked")
@@ -31,6 +31,8 @@ class Item:
     baseline: str
     target: str
     title: str
+    # The coverage rule of hooks/experiments.py: -, all-pass or min-total=N.
+    accept: str = "-"
 
     def base(self) -> tuple[int, int] | None:
         match = FRACTION.match(self.baseline or "")
@@ -76,6 +78,8 @@ class ItemsTable:
                 continue
             if header is None:
                 header = line.split("\t")
+                if header != ITEM_FIELDS:
+                    raise OpsError(f"{self.path} has the columns {header}; ops needs {ITEM_FIELDS}")
                 continue
             values = dict(zip(header, line.split("\t")))
             rows.append((index, Item(**{f: values.get(f, "") for f in ITEM_FIELDS})))
@@ -161,8 +165,8 @@ def progress(ctx: Context, item: Item, rows: list[dict[str, str]]) -> Progress:
     """Experiments, gain and stuck state by the rule of the guard (hooks/experiments.py).
 
     The gain is that of the LATEST row of the item's metric: PASS above the baseline PASS,
-    and a failing count (TOTAL - PASS) that is not above the baseline failing count.
-    Stuck: the two newest rows of the metric both show no gain."""
+    a failing count (TOTAL - PASS) that is not above the baseline failing count, and a row that
+    meets the item's coverage rule. Stuck: the two newest rows of the metric both show no gain."""
     rules = ctx.guard.experiments
     attempts, corrections = rule_inputs(ctx)
     experiments = rules.experiments(rows, attempts, item.id)
@@ -175,9 +179,10 @@ def progress(ctx: Context, item: Item, rows: list[dict[str, str]]) -> Progress:
     if not mine:
         return Progress(experiments, False, None, None, False, False)
     passed, total = rules.numbers(mine[-1])
-    stuck = len(mine) >= 2 and not any(rules.gained([r], item.id, item.metric, base) for r in mine[-2:])
-    return Progress(experiments, rules.gained(rows, item.id, item.metric, base, corrections), passed - base[0],
-                    total, base[1] != 0 and total != base[1], stuck)
+    stuck = len(mine) >= 2 and not any(rules.gained([r], item.id, item.metric, base, (), item.accept)
+                                       for r in mine[-2:])
+    return Progress(experiments, rules.gained(rows, item.id, item.metric, base, corrections, item.accept),
+                    passed - base[0], total, base[1] != 0 and total != base[1], stuck)
 
 
 @dataclass(frozen=True)
@@ -265,7 +270,7 @@ def predict_commit(ctx: Context, new_items: list[Item], touches_scoreboard: bool
     for item in new_items:
         if item.status != "active":
             continue
-        if guard.experiments.exhausted(rows, attempts, item.id, item.metric, item.base(), corrections):
+        if guard.experiments.exhausted(rows, attempts, item.id, item.metric, item.base(), corrections, item.accept):
             raise Refusal(
                 f"item {item.id} used {guard.experiments.experiments(rows, attempts, item.id)} experiments "
                 "with no gain; the guard refuses each commit",

@@ -80,15 +80,19 @@ def add(ctx: Context, args: argparse.Namespace) -> int:
         raise Refusal(f"{args.metric!r} is not a metric key", "use one key of plan/SPEC.md, for example harness.units")
     if not re.match(r"^\+\d+$", args.target):
         raise Refusal(f"{args.target!r} is not a target", "give the expected gain in PASS units, for example +12")
+    if args.min_total is not None and args.min_total < 1:
+        raise Refusal(f"--min-total {args.min_total} is not a coverage rule", "give the smallest TOTAL, for example --min-total 60")
+    accept = "all-pass" if args.all_pass else f"min-total={args.min_total}" if args.min_total is not None else "-"
     title = check_line(ctx, args.title, "the title")
     table = ItemsTable.load(ctx.items_file)
     if table.get(args.id):
         raise Refusal(f"item {args.id} exists; an id is never used again", "choose the next free number")
-    table.add(Item(args.id, milestone, "queued", args.metric, "-", args.target, title))
+    table.add(Item(args.id, milestone, "queued", args.metric, "-", args.target, title, accept))
     ctx.items_file.parent.mkdir(parents=True, exist_ok=True)
     ctx.items_file.write_text(table.text(), encoding="utf-8")
     stage(ctx, ctx.items_file)
-    print(f"added {args.id} (queued): {args.metric} {args.target} {title}")
+    print(f"added {args.id} (queued): {args.metric} {args.target} {title}"
+          + (f" (accept {accept})" if accept != "-" else ""))
     print(f"plan/ITEMS.tsv is staged; `tools/autobuild/ops item start {args.id}` commits it")
     return 0
 
@@ -124,19 +128,6 @@ def start(ctx: Context, args: argparse.Namespace) -> int:
     return 0
 
 
-def coverage_problem(ctx: Context, item: Item, rows: list[dict[str, str]], min_total: int | None,
-                     all_pass: bool) -> str | None:
-    """Why the latest row of the item's metric does not meet --min-total or --all-pass, or None."""
-    rules = ctx.guard.experiments
-    latest = rules.latest(rows, item.id, item.metric, rule_inputs(ctx)[1])
-    passed, total = rules.numbers(latest) if latest else (0, 0)
-    if min_total is not None and total < min_total:
-        return f"the latest row of {item.metric} is {passed}/{total}, a TOTAL below --min-total {min_total}"
-    if all_pass and (total == 0 or passed != total):
-        return f"the latest row of {item.metric} is {passed}/{total}; --all-pass needs PASS = TOTAL above 0"
-    return None
-
-
 def done(ctx: Context, args: argparse.Namespace) -> int:
     """Close an item with a gain, after a passing gate of the current commit (AGENTS.md section 6)."""
     require_lead(ctx)
@@ -149,17 +140,14 @@ def done(ctx: Context, args: argparse.Namespace) -> int:
     state = progress(ctx, item, rows)
     if not state.gained:
         worker = item.id in worker_ids(ctx)
+        rules = ctx.guard.experiments
+        latest = rules.latest(rows, item.id, item.metric, rule_inputs(ctx)[1])
+        shortfall = rules.shortfall(item.accept, *rules.numbers(latest)) if latest else None
         raise Refusal(
-            f"item {item.id} shows no gain on {item.metric} (baseline {item.baseline}); done needs a gain",
+            f"item {item.id} shows no gain on {item.metric} (baseline {item.baseline}"
+            + (f"; the latest row {shortfall}" if shortfall else "") + "); done needs a gain",
             f"merge its worker first (`ops worker merge {item.id}`)" if worker else
             f"run the next experiment ({experiment_command(ctx, item)}) or cut it (`ops item cut {item.id} --reason TEXT`)",
-        )
-    shortfall = coverage_problem(ctx, item, rows, args.min_total, args.all_pass)
-    if shortfall:
-        raise Refusal(
-            f"item {item.id}: {shortfall}; the acceptance rule of the item is not met",
-            f"run the next experiment ({experiment_command(ctx, item)}); after 3 experiments without it, "
-            f"cut the item (`ops item cut {item.id} --reason TEXT`)",
         )
     changed = [p for p in ctx.git.dirty_tracked() if not p.startswith("plan/")]
     if changed:
@@ -317,7 +305,7 @@ def remeasure_item(ctx: Context, item_id: str) -> bool:
         print(f"re-measure of {item_id}: the run wrote no row of {item.metric}; no gain can be shown")
         return False
     newest = rows[-1]
-    gained = measure.experiments.gained([newest], item_id, item.metric, item.base(), corrections.load(ctx))
+    gained = measure.experiments.gained([newest], item_id, item.metric, item.base(), corrections.load(ctx), item.accept)
     print(f"re-measure of {item_id}: {item.metric} {newest['pass']}/{newest['total']} against the baseline "
           f"{item.baseline}: {'gain' if gained else 'no gain'}")
     return gained
@@ -332,6 +320,8 @@ def list_items(ctx: Context, args: argparse.Namespace) -> int:
         return 0
     for item in items:
         line = f"{item.id}  {item.status:<7}  {item.metric}  baseline {item.baseline}  target {item.target}"
+        if item.accept not in ("", "-"):
+            line += f"  accept {item.accept}"
         if item.status == "active":
             p = progress(ctx, item, rows)
             gain = "none" if p.gain is None else f"{p.gain:+d}"
