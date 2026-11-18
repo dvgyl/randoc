@@ -249,3 +249,7 @@ M1-04 experiment 1 produced 78 clean rows and reproduced all 30,400 writer verdi
 Item M1-04 done. Gain on fmt.write: the metric now has rows (best PASS 5510) (baseline 0/0). Gate: 20261118T183417Z-8c9b53c6816b.
 
 Weak spots: Only csljson and native meet the strict capability rule. The JSON writer passes all 400 pivot trees and has failing harness conversions. The writer suite starts a separate limiter process for each conversion.
+
+## 2026-11-18T22:27:56Z decision M1-04 3c25dea3d9c8
+
+Both writer experiments reproduced all 30,400 writer verdicts and all 61,449 harness verdicts. The full measurement of the closure commit 3c25dea recorded 95 rows. It passed all 18 gate checks and matched all six suites of the preceding full run. The measured writer baseline is 5,510/30,400 and the strict writer capability baseline is 2/77. The next lead item in plan/ROADMAP.md is M1-05.
