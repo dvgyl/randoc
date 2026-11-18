@@ -1,0 +1,7 @@
+[[metric]]
+key = "defaults.units"
+suite = "defaults"
+status = "active"
+command = "{python} tools/autobuild/suites/defaults.py --harness {harness} --oracle {oracle} --randoc {randoc} --evidence {evidence}"
+pass = "accepted keys and defaults features whose valid, wrong-type, and existing cases all pass"
+total = "accepted long option and manual keys, plus eight defaults features"
