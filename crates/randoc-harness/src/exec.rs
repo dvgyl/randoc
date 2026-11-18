@@ -18,10 +18,16 @@ const PIPE_GRACE: Duration = Duration::from_secs(2);
 
 pub const DEFAULT_WALL_SECONDS: u64 = 600;
 
-#[cfg(target_os = "macos")]
-const LIMIT_SHELL: &str = "/bin/sh";
-#[cfg(all(unix, not(target_os = "macos")))]
-const LIMIT_SHELL: &str = "/bin/bash";
+#[cfg(unix)]
+const EXEC_WITH_LIMIT: &str = r#"
+ulimit -t 60 && PERL_BADLANG=0 exec /usr/bin/perl -e '
+    my $program = shift @ARGV;
+    delete @ENV{qw(PWD OLDPWD SHLVL _ PERL_BADLANG)};
+    exec {$program} "pandoc", @ARGV;
+    kill "KILL", $$;
+' -- "$@"
+kill -KILL "$$"
+"#;
 
 /// The heap limit of the oracle, a Haskell program. On 2026-11-10 one oracle
 /// run used 22 GB and filled the swap space of the machine.
@@ -148,14 +154,10 @@ impl Program {
         #[cfg(unix)]
         let mut command = {
             use std::os::unix::process::CommandExt;
-            let mut shell = Command::new(LIMIT_SHELL);
-            // A failed exec must give no result. The program can itself exit 126 or 127.
+            let mut shell = Command::new("/bin/sh");
+            // Perl preserves argv[0] and removes the variables that the shell adds.
             shell
-                .args([
-                    "-c",
-                    "shopt -s execfail; ulimit -t 60 && exec -a pandoc \"$@\"; kill -KILL \"$$\"",
-                    "randoc-harness",
-                ])
+                .args(["-c", EXEC_WITH_LIMIT, "randoc-harness"])
                 .arg(&self.binary)
                 .process_group(0);
             shell
@@ -300,6 +302,32 @@ mod tests {
             String::from_utf8(outcome.stdout_bytes()).unwrap(),
             "1700000000 UTC en_US.UTF-8\npandoc\nABb.txt\nsub\n"
         );
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn the_launcher_adds_no_variables_to_the_child_environment() {
+        let dir = work_dir("fixed-env");
+        let program = Program {
+            binary: "/usr/bin/env".into(),
+            ..shell(20_000)
+        };
+        let outcome = program.run(&[], b"", &BTreeMap::new(), &dir).unwrap();
+        let stdout = String::from_utf8(outcome.stdout_bytes()).unwrap();
+        let mut variables: Vec<_> = stdout.lines().collect();
+        variables.sort_unstable();
+        assert_eq!(
+            variables,
+            [
+                format!("HOME={}", dir.join(".home").display()),
+                "LANG=en_US.UTF-8".to_owned(),
+                "LC_ALL=en_US.UTF-8".to_owned(),
+                "PATH=/usr/bin:/bin:/usr/sbin:/sbin".to_owned(),
+                "SOURCE_DATE_EPOCH=1700000000".to_owned(),
+                "TZ=UTC".to_owned(),
+            ]
+        );
+        assert!(outcome.stderr_bytes().is_empty());
         fs::remove_dir_all(&dir).unwrap();
     }
 
