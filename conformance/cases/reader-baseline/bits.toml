@@ -1,0 +1,401 @@
+from = "bits"
+
+[[case]]
+id = "sections-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><sec id="fit"><title>Fit the Pump</title><p>Close the cover.</p><sec><title>Seal</title><p>Check the edge.</p></sec></sec></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "inline-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><p>Fit the <bold>Pump</bold>. Turn it <italic>slowly</italic>. Write H<sub>2</sub> and m<sup>2</sup>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "list-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><list list-type="order"><list-item><p>Check the Pump.</p></list-item><list-item><p>Fit the cover.</p></list-item></list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "definition-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><def-list><def-item><term>Pump</term><def><p>Part of the test assembly.</p></def></def-item></def-list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "quote-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><disp-quote><p>Inspect the Pump before use.</p><attrib>Maintenance note</attrib></disp-quote></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "link-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><p>Read <ext-link ext-link-type="uri" xlink:href="https://example.org/service">Pump instructions</ext-link>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "figure-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><fig id="fig-1"><label>Figure 1</label><caption><title>Pump</title><p>Installed position.</p></caption><graphic xlink:href="part.png"/></fig></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "table-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><table-wrap id="tab-1"><caption><p>Pump parts</p></caption><table><thead><tr><th>Part</th><th>Count</th></tr></thead><tbody><tr><td>Pump</td><td>2</td></tr></tbody></table></table-wrap></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "formula-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><p>The Pump uses <inline-formula><mml:math><mml:msup><mml:mi>x</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math></inline-formula>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "footnote-pump"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Pump inspection</title></title-group></book-part-meta>
+<body><p>Fit the Pump<xref ref-type="fn" rid="f1">1</xref>.</p><fn-group><fn id="f1"><label>1</label><p>Open the cover first.</p></fn></fn-group></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "sections-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><sec id="fit"><title>Fit the Valve</title><p>Close the cover.</p><sec><title>Seal</title><p>Check the edge.</p></sec></sec></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "inline-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><p>Fit the <bold>Valve</bold>. Turn it <italic>slowly</italic>. Write H<sub>2</sub> and m<sup>2</sup>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "list-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><list list-type="order"><list-item><p>Check the Valve.</p></list-item><list-item><p>Fit the cover.</p></list-item></list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "definition-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><def-list><def-item><term>Valve</term><def><p>Part of the test assembly.</p></def></def-item></def-list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "quote-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><disp-quote><p>Inspect the Valve before use.</p><attrib>Maintenance note</attrib></disp-quote></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "link-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><p>Read <ext-link ext-link-type="uri" xlink:href="https://example.org/service">Valve instructions</ext-link>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "figure-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><fig id="fig-1"><label>Figure 1</label><caption><title>Valve</title><p>Installed position.</p></caption><graphic xlink:href="part.png"/></fig></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "table-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><table-wrap id="tab-1"><caption><p>Valve parts</p></caption><table><thead><tr><th>Part</th><th>Count</th></tr></thead><tbody><tr><td>Valve</td><td>2</td></tr></tbody></table></table-wrap></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "formula-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><p>The Valve uses <inline-formula><mml:math><mml:msup><mml:mi>x</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math></inline-formula>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "footnote-valve"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Valve inspection</title></title-group></book-part-meta>
+<body><p>Fit the Valve<xref ref-type="fn" rid="f1">1</xref>.</p><fn-group><fn id="f1"><label>1</label><p>Open the cover first.</p></fn></fn-group></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "sections-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><sec id="fit"><title>Fit the Filter</title><p>Close the cover.</p><sec><title>Seal</title><p>Check the edge.</p></sec></sec></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "inline-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><p>Fit the <bold>Filter</bold>. Turn it <italic>slowly</italic>. Write H<sub>2</sub> and m<sup>2</sup>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "list-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><list list-type="order"><list-item><p>Check the Filter.</p></list-item><list-item><p>Fit the cover.</p></list-item></list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "definition-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><def-list><def-item><term>Filter</term><def><p>Part of the test assembly.</p></def></def-item></def-list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "quote-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><disp-quote><p>Inspect the Filter before use.</p><attrib>Maintenance note</attrib></disp-quote></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "link-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><p>Read <ext-link ext-link-type="uri" xlink:href="https://example.org/service">Filter instructions</ext-link>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "figure-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><fig id="fig-1"><label>Figure 1</label><caption><title>Filter</title><p>Installed position.</p></caption><graphic xlink:href="part.png"/></fig></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "table-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><table-wrap id="tab-1"><caption><p>Filter parts</p></caption><table><thead><tr><th>Part</th><th>Count</th></tr></thead><tbody><tr><td>Filter</td><td>2</td></tr></tbody></table></table-wrap></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "formula-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><p>The Filter uses <inline-formula><mml:math><mml:msup><mml:mi>x</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math></inline-formula>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "footnote-filter"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Filter inspection</title></title-group></book-part-meta>
+<body><p>Fit the Filter<xref ref-type="fn" rid="f1">1</xref>.</p><fn-group><fn id="f1"><label>1</label><p>Open the cover first.</p></fn></fn-group></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "sections-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><sec id="fit"><title>Fit the Gauge</title><p>Close the cover.</p><sec><title>Seal</title><p>Check the edge.</p></sec></sec></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "inline-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><p>Fit the <bold>Gauge</bold>. Turn it <italic>slowly</italic>. Write H<sub>2</sub> and m<sup>2</sup>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "list-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><list list-type="order"><list-item><p>Check the Gauge.</p></list-item><list-item><p>Fit the cover.</p></list-item></list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "definition-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><def-list><def-item><term>Gauge</term><def><p>Part of the test assembly.</p></def></def-item></def-list></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "quote-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><disp-quote><p>Inspect the Gauge before use.</p><attrib>Maintenance note</attrib></disp-quote></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "link-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><p>Read <ext-link ext-link-type="uri" xlink:href="https://example.org/service">Gauge instructions</ext-link>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "figure-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><fig id="fig-1"><label>Figure 1</label><caption><title>Gauge</title><p>Installed position.</p></caption><graphic xlink:href="part.png"/></fig></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "table-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><table-wrap id="tab-1"><caption><p>Gauge parts</p></caption><table><thead><tr><th>Part</th><th>Count</th></tr></thead><tbody><tr><td>Gauge</td><td>2</td></tr></tbody></table></table-wrap></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "formula-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><p>The Gauge uses <inline-formula><mml:math><mml:msup><mml:mi>x</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math></inline-formula>.</p></body></book-part></book-body></book>
+'''
+
+[[case]]
+id = "footnote-gauge"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<book dtd-version="2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<book-meta><book-title-group><book-title>Service Guide</book-title></book-title-group></book-meta>
+<book-body><book-part book-part-type="chapter"><book-part-meta><title-group><title>Gauge inspection</title></title-group></book-part-meta>
+<body><p>Fit the Gauge<xref ref-type="fn" rid="f1">1</xref>.</p><fn-group><fn id="f1"><label>1</label><p>Open the cover first.</p></fn></fn-group></body></book-part></book-body></book>
+'''

@@ -1,0 +1,573 @@
+from = "pod"
+
+[[case]]
+id = "headings-pump"
+input = '''
+=pod
+
+=head1 Pump inspection
+
+=head2 Parts
+
+Open the cover.
+
+=cut
+'''
+
+[[case]]
+id = "inline-pump"
+input = '''
+=pod
+
+Fit the B<Pump>. Turn it I<slowly>. Use C<check>.
+
+=cut
+'''
+
+[[case]]
+id = "links-pump"
+input = '''
+=pod
+
+Read L<Pump::Service/Steps> and L<parts|https://example.org/parts>.
+
+=cut
+'''
+
+[[case]]
+id = "entities-pump"
+input = '''
+=pod
+
+The label for the Pump has E<lt> and E<gt>. Press B<C<Enter>>.
+
+=cut
+'''
+
+[[case]]
+id = "verbatim-pump"
+input = '''
+=pod
+
+Start with this command.
+
+  check pump
+  status
+
+=cut
+'''
+
+[[case]]
+id = "bullets-pump"
+input = '''
+=pod
+
+=over 4
+
+=item *
+
+Pump
+
+=item *
+
+Seal
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "ordered-pump"
+input = '''
+=pod
+
+=over
+
+=item 1.
+
+Check the Pump.
+
+=item 2.
+
+Fit the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "definitions-pump"
+input = '''
+=pod
+
+=over 4
+
+=item Pump
+
+Part of the test assembly.
+
+=item Seal
+
+Part under the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "raw-directive-pump"
+input = '''
+=pod
+
+=begin html
+
+<p class="remark">Check the Pump.</p>
+
+=end html
+
+The test is complete.
+
+=cut
+'''
+
+[[case]]
+id = "inline-spaces-pump"
+input = '''
+=pod
+
+Use S<Pump A-17> and F<pump.txt>. X<check_pump>Z<>
+
+=cut
+'''
+
+[[case]]
+id = "headings-valve"
+input = '''
+=pod
+
+=head1 Valve inspection
+
+=head2 Parts
+
+Open the cover.
+
+=cut
+'''
+
+[[case]]
+id = "inline-valve"
+input = '''
+=pod
+
+Fit the B<Valve>. Turn it I<slowly>. Use C<check>.
+
+=cut
+'''
+
+[[case]]
+id = "links-valve"
+input = '''
+=pod
+
+Read L<Valve::Service/Steps> and L<parts|https://example.org/parts>.
+
+=cut
+'''
+
+[[case]]
+id = "entities-valve"
+input = '''
+=pod
+
+The label for the Valve has E<lt> and E<gt>. Press B<C<Enter>>.
+
+=cut
+'''
+
+[[case]]
+id = "verbatim-valve"
+input = '''
+=pod
+
+Start with this command.
+
+  check valve
+  status
+
+=cut
+'''
+
+[[case]]
+id = "bullets-valve"
+input = '''
+=pod
+
+=over 4
+
+=item *
+
+Valve
+
+=item *
+
+Seal
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "ordered-valve"
+input = '''
+=pod
+
+=over
+
+=item 1.
+
+Check the Valve.
+
+=item 2.
+
+Fit the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "definitions-valve"
+input = '''
+=pod
+
+=over 4
+
+=item Valve
+
+Part of the test assembly.
+
+=item Seal
+
+Part under the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "raw-directive-valve"
+input = '''
+=pod
+
+=begin html
+
+<p class="remark">Check the Valve.</p>
+
+=end html
+
+The test is complete.
+
+=cut
+'''
+
+[[case]]
+id = "inline-spaces-valve"
+input = '''
+=pod
+
+Use S<Valve A-17> and F<valve.txt>. X<check_valve>Z<>
+
+=cut
+'''
+
+[[case]]
+id = "headings-filter"
+input = '''
+=pod
+
+=head1 Filter inspection
+
+=head2 Parts
+
+Open the cover.
+
+=cut
+'''
+
+[[case]]
+id = "inline-filter"
+input = '''
+=pod
+
+Fit the B<Filter>. Turn it I<slowly>. Use C<check>.
+
+=cut
+'''
+
+[[case]]
+id = "links-filter"
+input = '''
+=pod
+
+Read L<Filter::Service/Steps> and L<parts|https://example.org/parts>.
+
+=cut
+'''
+
+[[case]]
+id = "entities-filter"
+input = '''
+=pod
+
+The label for the Filter has E<lt> and E<gt>. Press B<C<Enter>>.
+
+=cut
+'''
+
+[[case]]
+id = "verbatim-filter"
+input = '''
+=pod
+
+Start with this command.
+
+  check filter
+  status
+
+=cut
+'''
+
+[[case]]
+id = "bullets-filter"
+input = '''
+=pod
+
+=over 4
+
+=item *
+
+Filter
+
+=item *
+
+Seal
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "ordered-filter"
+input = '''
+=pod
+
+=over
+
+=item 1.
+
+Check the Filter.
+
+=item 2.
+
+Fit the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "definitions-filter"
+input = '''
+=pod
+
+=over 4
+
+=item Filter
+
+Part of the test assembly.
+
+=item Seal
+
+Part under the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "raw-directive-filter"
+input = '''
+=pod
+
+=begin html
+
+<p class="remark">Check the Filter.</p>
+
+=end html
+
+The test is complete.
+
+=cut
+'''
+
+[[case]]
+id = "inline-spaces-filter"
+input = '''
+=pod
+
+Use S<Filter A-17> and F<filter.txt>. X<check_filter>Z<>
+
+=cut
+'''
+
+[[case]]
+id = "headings-gauge"
+input = '''
+=pod
+
+=head1 Gauge inspection
+
+=head2 Parts
+
+Open the cover.
+
+=cut
+'''
+
+[[case]]
+id = "inline-gauge"
+input = '''
+=pod
+
+Fit the B<Gauge>. Turn it I<slowly>. Use C<check>.
+
+=cut
+'''
+
+[[case]]
+id = "links-gauge"
+input = '''
+=pod
+
+Read L<Gauge::Service/Steps> and L<parts|https://example.org/parts>.
+
+=cut
+'''
+
+[[case]]
+id = "entities-gauge"
+input = '''
+=pod
+
+The label for the Gauge has E<lt> and E<gt>. Press B<C<Enter>>.
+
+=cut
+'''
+
+[[case]]
+id = "verbatim-gauge"
+input = '''
+=pod
+
+Start with this command.
+
+  check gauge
+  status
+
+=cut
+'''
+
+[[case]]
+id = "bullets-gauge"
+input = '''
+=pod
+
+=over 4
+
+=item *
+
+Gauge
+
+=item *
+
+Seal
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "ordered-gauge"
+input = '''
+=pod
+
+=over
+
+=item 1.
+
+Check the Gauge.
+
+=item 2.
+
+Fit the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "definitions-gauge"
+input = '''
+=pod
+
+=over 4
+
+=item Gauge
+
+Part of the test assembly.
+
+=item Seal
+
+Part under the cover.
+
+=back
+
+=cut
+'''
+
+[[case]]
+id = "raw-directive-gauge"
+input = '''
+=pod
+
+=begin html
+
+<p class="remark">Check the Gauge.</p>
+
+=end html
+
+The test is complete.
+
+=cut
+'''
+
+[[case]]
+id = "inline-spaces-gauge"
+input = '''
+=pod
+
+Use S<Gauge A-17> and F<gauge.txt>. X<check_gauge>Z<>
+
+=cut
+'''

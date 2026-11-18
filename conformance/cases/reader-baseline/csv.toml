@@ -1,0 +1,253 @@
+from = "csv"
+
+[[case]]
+id = "header-row-pump"
+input = '''
+Part,Count
+Pump,3
+'''
+
+[[case]]
+id = "one-cell-pump"
+input = '''
+"Pump"
+'''
+
+[[case]]
+id = "empty-fields-pump"
+input = '''
+,Pump,
+'''
+
+[[case]]
+id = "escaped-quote-pump"
+input = '''
+Part,Note
+Pump,"Use ""slow"" mode"
+'''
+
+[[case]]
+id = "quoted-separator-pump"
+input = '''
+"Pump,Assembly",4
+'''
+
+[[case]]
+id = "quoted-line-break-pump"
+input = '''
+"Pump
+assembly",1
+'''
+
+[[case]]
+id = "crlf-pump"
+input = "Part,Count\r\nPump,7\r\n"
+
+[[case]]
+id = "no-final-newline-pump"
+input = '''
+Part,Count
+Pump,8'''
+
+[[case]]
+id = "unicode-and-bom-pump"
+input = '''
+﻿Pump,"Ångström 漢字"
+'''
+
+[[case]]
+id = "ragged-rows-pump"
+input = '''
+Part,Count,Note
+Pump,2
+Cover,1,Spare,blue
+'''
+
+[[case]]
+id = "header-row-valve"
+input = '''
+Part,Count
+Valve,3
+'''
+
+[[case]]
+id = "one-cell-valve"
+input = '''
+"Valve"
+'''
+
+[[case]]
+id = "empty-fields-valve"
+input = '''
+,Valve,
+'''
+
+[[case]]
+id = "escaped-quote-valve"
+input = '''
+Part,Note
+Valve,"Use ""slow"" mode"
+'''
+
+[[case]]
+id = "quoted-separator-valve"
+input = '''
+"Valve,Assembly",4
+'''
+
+[[case]]
+id = "quoted-line-break-valve"
+input = '''
+"Valve
+assembly",1
+'''
+
+[[case]]
+id = "crlf-valve"
+input = "Part,Count\r\nValve,7\r\n"
+
+[[case]]
+id = "no-final-newline-valve"
+input = '''
+Part,Count
+Valve,8'''
+
+[[case]]
+id = "unicode-and-bom-valve"
+input = '''
+﻿Valve,"Ångström 漢字"
+'''
+
+[[case]]
+id = "ragged-rows-valve"
+input = '''
+Part,Count,Note
+Valve,2
+Cover,1,Spare,blue
+'''
+
+[[case]]
+id = "header-row-filter"
+input = '''
+Part,Count
+Filter,3
+'''
+
+[[case]]
+id = "one-cell-filter"
+input = '''
+"Filter"
+'''
+
+[[case]]
+id = "empty-fields-filter"
+input = '''
+,Filter,
+'''
+
+[[case]]
+id = "escaped-quote-filter"
+input = '''
+Part,Note
+Filter,"Use ""slow"" mode"
+'''
+
+[[case]]
+id = "quoted-separator-filter"
+input = '''
+"Filter,Assembly",4
+'''
+
+[[case]]
+id = "quoted-line-break-filter"
+input = '''
+"Filter
+assembly",1
+'''
+
+[[case]]
+id = "crlf-filter"
+input = "Part,Count\r\nFilter,7\r\n"
+
+[[case]]
+id = "no-final-newline-filter"
+input = '''
+Part,Count
+Filter,8'''
+
+[[case]]
+id = "unicode-and-bom-filter"
+input = '''
+﻿Filter,"Ångström 漢字"
+'''
+
+[[case]]
+id = "ragged-rows-filter"
+input = '''
+Part,Count,Note
+Filter,2
+Cover,1,Spare,blue
+'''
+
+[[case]]
+id = "header-row-gauge"
+input = '''
+Part,Count
+Gauge,3
+'''
+
+[[case]]
+id = "one-cell-gauge"
+input = '''
+"Gauge"
+'''
+
+[[case]]
+id = "empty-fields-gauge"
+input = '''
+,Gauge,
+'''
+
+[[case]]
+id = "escaped-quote-gauge"
+input = '''
+Part,Note
+Gauge,"Use ""slow"" mode"
+'''
+
+[[case]]
+id = "quoted-separator-gauge"
+input = '''
+"Gauge,Assembly",4
+'''
+
+[[case]]
+id = "quoted-line-break-gauge"
+input = '''
+"Gauge
+assembly",1
+'''
+
+[[case]]
+id = "crlf-gauge"
+input = "Part,Count\r\nGauge,7\r\n"
+
+[[case]]
+id = "no-final-newline-gauge"
+input = '''
+Part,Count
+Gauge,8'''
+
+[[case]]
+id = "unicode-and-bom-gauge"
+input = '''
+﻿Gauge,"Ångström 漢字"
+'''
+
+[[case]]
+id = "ragged-rows-gauge"
+input = '''
+Part,Count,Note
+Gauge,2
+Cover,1,Spare,blue
+'''

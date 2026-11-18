@@ -1,0 +1,289 @@
+from = "tikiwiki"
+
+[[case]]
+id = "headings-pump"
+input = '''
+! Pump inspection
+!! Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-pump"
+input = '''
+Fit the __Pump__. Turn it ''slowly''.
+'''
+
+[[case]]
+id = "unordered-list-pump"
+input = '''
+* Pump
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-pump"
+input = '''
+# Check the Pump.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "wiki-link-pump"
+input = '''
+Read ((PumpService|service instructions)).
+'''
+
+[[case]]
+id = "external-link-pump"
+input = '''
+[https://example.org/parts|Pump parts]
+'''
+
+[[case]]
+id = "image-pump"
+input = '''
+{img src="pump.png" alt="Pump diagram"}
+'''
+
+[[case]]
+id = "code-pump"
+input = '''
+{CODE(caption=>Pump)}start --check
+stop{CODE}
+'''
+
+[[case]]
+id = "table-pump"
+input = '''
+|| Part | Count
+Pump | 2
+Seal | 4 ||
+'''
+
+[[case]]
+id = "special-blocks-pump"
+input = '''
+::Pump inspection::
+---
+-=Parts=-
+'''
+
+[[case]]
+id = "headings-valve"
+input = '''
+! Valve inspection
+!! Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-valve"
+input = '''
+Fit the __Valve__. Turn it ''slowly''.
+'''
+
+[[case]]
+id = "unordered-list-valve"
+input = '''
+* Valve
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-valve"
+input = '''
+# Check the Valve.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "wiki-link-valve"
+input = '''
+Read ((ValveService|service instructions)).
+'''
+
+[[case]]
+id = "external-link-valve"
+input = '''
+[https://example.org/parts|Valve parts]
+'''
+
+[[case]]
+id = "image-valve"
+input = '''
+{img src="valve.png" alt="Valve diagram"}
+'''
+
+[[case]]
+id = "code-valve"
+input = '''
+{CODE(caption=>Valve)}start --check
+stop{CODE}
+'''
+
+[[case]]
+id = "table-valve"
+input = '''
+|| Part | Count
+Valve | 2
+Seal | 4 ||
+'''
+
+[[case]]
+id = "special-blocks-valve"
+input = '''
+::Valve inspection::
+---
+-=Parts=-
+'''
+
+[[case]]
+id = "headings-filter"
+input = '''
+! Filter inspection
+!! Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-filter"
+input = '''
+Fit the __Filter__. Turn it ''slowly''.
+'''
+
+[[case]]
+id = "unordered-list-filter"
+input = '''
+* Filter
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-filter"
+input = '''
+# Check the Filter.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "wiki-link-filter"
+input = '''
+Read ((FilterService|service instructions)).
+'''
+
+[[case]]
+id = "external-link-filter"
+input = '''
+[https://example.org/parts|Filter parts]
+'''
+
+[[case]]
+id = "image-filter"
+input = '''
+{img src="filter.png" alt="Filter diagram"}
+'''
+
+[[case]]
+id = "code-filter"
+input = '''
+{CODE(caption=>Filter)}start --check
+stop{CODE}
+'''
+
+[[case]]
+id = "table-filter"
+input = '''
+|| Part | Count
+Filter | 2
+Seal | 4 ||
+'''
+
+[[case]]
+id = "special-blocks-filter"
+input = '''
+::Filter inspection::
+---
+-=Parts=-
+'''
+
+[[case]]
+id = "headings-gauge"
+input = '''
+! Gauge inspection
+!! Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-gauge"
+input = '''
+Fit the __Gauge__. Turn it ''slowly''.
+'''
+
+[[case]]
+id = "unordered-list-gauge"
+input = '''
+* Gauge
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-gauge"
+input = '''
+# Check the Gauge.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "wiki-link-gauge"
+input = '''
+Read ((GaugeService|service instructions)).
+'''
+
+[[case]]
+id = "external-link-gauge"
+input = '''
+[https://example.org/parts|Gauge parts]
+'''
+
+[[case]]
+id = "image-gauge"
+input = '''
+{img src="gauge.png" alt="Gauge diagram"}
+'''
+
+[[case]]
+id = "code-gauge"
+input = '''
+{CODE(caption=>Gauge)}start --check
+stop{CODE}
+'''
+
+[[case]]
+id = "table-gauge"
+input = '''
+|| Part | Count
+Gauge | 2
+Seal | 4 ||
+'''
+
+[[case]]
+id = "special-blocks-gauge"
+input = '''
+::Gauge inspection::
+---
+-=Parts=-
+'''

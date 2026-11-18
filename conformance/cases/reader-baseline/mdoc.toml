@@ -1,0 +1,617 @@
+from = "mdoc"
+
+[[case]]
+id = "synopsis-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh SYNOPSIS
+.Nm pump
+.Op Fl v
+.Op Ar file
+'''
+
+[[case]]
+id = "description-terms-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh DESCRIPTION
+.Em Pump
+.Xr service 8
+.Pa /var/run/test
+'''
+
+[[case]]
+id = "options-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl p Ar pump
+Report the part number.
+.It Fl n
+Display the result.
+.El
+'''
+
+[[case]]
+id = "list-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh PARTS
+.Bl -bullet
+.It
+Pump
+.It
+Seal
+.El
+'''
+
+[[case]]
+id = "literal-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh EXAMPLES
+.Bd -literal -offset indent
+check pump
+result=pass
+.Ed
+'''
+
+[[case]]
+id = "function-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh FUNCTIONS
+.Ft int
+.Fn test_pump "const char *name" "int count"
+'''
+
+[[case]]
+id = "references-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh SEE ALSO
+.Xr pump 5 ,
+.Xr inspect 8
+'''
+
+[[case]]
+id = "environment-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh ENVIRONMENT
+.Ev PUMP_MODE
+Selects the test mode.
+'''
+
+[[case]]
+id = "authors-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh AUTHORS
+.An Mira Lane
+.Responsible Pump
+.Mt mira@example.org
+'''
+
+[[case]]
+id = "escaped-text-pump"
+input = '''
+.Dd November 18, 2026
+.Dt PUMP 1
+.Os
+.Sh NAME
+.Nm pump
+.Nd check a test assembly
+.Sh NOTES
+.No Pump Li "a\\-b"
+.Pp
+.Dq Fit the cover.
+'''
+
+[[case]]
+id = "synopsis-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh SYNOPSIS
+.Nm valve
+.Op Fl v
+.Op Ar file
+'''
+
+[[case]]
+id = "description-terms-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh DESCRIPTION
+.Em Valve
+.Xr service 8
+.Pa /var/run/test
+'''
+
+[[case]]
+id = "options-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl p Ar valve
+Report the part number.
+.It Fl n
+Display the result.
+.El
+'''
+
+[[case]]
+id = "list-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh PARTS
+.Bl -bullet
+.It
+Valve
+.It
+Seal
+.El
+'''
+
+[[case]]
+id = "literal-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh EXAMPLES
+.Bd -literal -offset indent
+check valve
+result=pass
+.Ed
+'''
+
+[[case]]
+id = "function-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh FUNCTIONS
+.Ft int
+.Fn test_valve "const char *name" "int count"
+'''
+
+[[case]]
+id = "references-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh SEE ALSO
+.Xr valve 5 ,
+.Xr inspect 8
+'''
+
+[[case]]
+id = "environment-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh ENVIRONMENT
+.Ev VALVE_MODE
+Selects the test mode.
+'''
+
+[[case]]
+id = "authors-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh AUTHORS
+.An Mira Lane
+.Responsible Valve
+.Mt mira@example.org
+'''
+
+[[case]]
+id = "escaped-text-valve"
+input = '''
+.Dd November 18, 2026
+.Dt VALVE 1
+.Os
+.Sh NAME
+.Nm valve
+.Nd check a test assembly
+.Sh NOTES
+.No Valve Li "a\\-b"
+.Pp
+.Dq Fit the cover.
+'''
+
+[[case]]
+id = "synopsis-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh SYNOPSIS
+.Nm filter
+.Op Fl v
+.Op Ar file
+'''
+
+[[case]]
+id = "description-terms-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh DESCRIPTION
+.Em Filter
+.Xr service 8
+.Pa /var/run/test
+'''
+
+[[case]]
+id = "options-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl p Ar filter
+Report the part number.
+.It Fl n
+Display the result.
+.El
+'''
+
+[[case]]
+id = "list-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh PARTS
+.Bl -bullet
+.It
+Filter
+.It
+Seal
+.El
+'''
+
+[[case]]
+id = "literal-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh EXAMPLES
+.Bd -literal -offset indent
+check filter
+result=pass
+.Ed
+'''
+
+[[case]]
+id = "function-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh FUNCTIONS
+.Ft int
+.Fn test_filter "const char *name" "int count"
+'''
+
+[[case]]
+id = "references-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh SEE ALSO
+.Xr filter 5 ,
+.Xr inspect 8
+'''
+
+[[case]]
+id = "environment-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh ENVIRONMENT
+.Ev FILTER_MODE
+Selects the test mode.
+'''
+
+[[case]]
+id = "authors-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh AUTHORS
+.An Mira Lane
+.Responsible Filter
+.Mt mira@example.org
+'''
+
+[[case]]
+id = "escaped-text-filter"
+input = '''
+.Dd November 18, 2026
+.Dt FILTER 1
+.Os
+.Sh NAME
+.Nm filter
+.Nd check a test assembly
+.Sh NOTES
+.No Filter Li "a\\-b"
+.Pp
+.Dq Fit the cover.
+'''
+
+[[case]]
+id = "synopsis-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh SYNOPSIS
+.Nm gauge
+.Op Fl v
+.Op Ar file
+'''
+
+[[case]]
+id = "description-terms-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh DESCRIPTION
+.Em Gauge
+.Xr service 8
+.Pa /var/run/test
+'''
+
+[[case]]
+id = "options-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl p Ar gauge
+Report the part number.
+.It Fl n
+Display the result.
+.El
+'''
+
+[[case]]
+id = "list-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh PARTS
+.Bl -bullet
+.It
+Gauge
+.It
+Seal
+.El
+'''
+
+[[case]]
+id = "literal-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh EXAMPLES
+.Bd -literal -offset indent
+check gauge
+result=pass
+.Ed
+'''
+
+[[case]]
+id = "function-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh FUNCTIONS
+.Ft int
+.Fn test_gauge "const char *name" "int count"
+'''
+
+[[case]]
+id = "references-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh SEE ALSO
+.Xr gauge 5 ,
+.Xr inspect 8
+'''
+
+[[case]]
+id = "environment-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh ENVIRONMENT
+.Ev GAUGE_MODE
+Selects the test mode.
+'''
+
+[[case]]
+id = "authors-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh AUTHORS
+.An Mira Lane
+.Responsible Gauge
+.Mt mira@example.org
+'''
+
+[[case]]
+id = "escaped-text-gauge"
+input = '''
+.Dd November 18, 2026
+.Dt GAUGE 1
+.Os
+.Sh NAME
+.Nm gauge
+.Nd check a test assembly
+.Sh NOTES
+.No Gauge Li "a\\-b"
+.Pp
+.Dq Fit the cover.
+'''

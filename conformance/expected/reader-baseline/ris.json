@@ -1,0 +1,245 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "authors-book#read": {
+      "key": "72d60aa11246a059",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Lane\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Mira\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Reed\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Evan J.\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "authors-chap#read": {
+      "key": "b8ee6345d15f7bf2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Lane\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Mira\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Reed\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Evan J.\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "authors-conf#read": {
+      "key": "9462396caed2db6e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Lane\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Mira\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Reed\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Evan J.\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "authors-jour#read": {
+      "key": "c5a36210064c89b4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Lane\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Mira\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Reed\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Evan J.\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "date-range-book#read": {
+      "key": "0dbd1f08ee177247",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2026\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "date-range-chap#read": {
+      "key": "68d3c5368c281314",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2026\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "date-range-conf#read": {
+      "key": "1e6ea16000b3a3a0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2026\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "date-range-jour#read": {
+      "key": "a108aebf35cc8e32",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issued\":{\"t\":\"MetaString\",\"c\":\"2026\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "identifiers-book#read": {
+      "key": "0298f2d056f81444",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"10.1234/field.42\"}]},\"ISSN\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"9780000000002\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "identifiers-chap#read": {
+      "key": "9e901ef5930c866b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"10.1234/field.42\"}]},\"ISSN\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"9780000000002\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "identifiers-conf#read": {
+      "key": "ca5cfd37e2bec51b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"10.1234/field.42\"}]},\"ISSN\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"9780000000002\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "identifiers-jour#read": {
+      "key": "84287fb1f3dfd911",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"10.1234/field.42\"}]},\"ISSN\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"9780000000002\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "journal-issue-book#read": {
+      "key": "c8c5d2d71c1c60c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Records\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issue\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]},\"page\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"37-49\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"},\"volume\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "journal-issue-chap#read": {
+      "key": "2f73876af18552b9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Records\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issue\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]},\"page\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"37-49\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"},\"volume\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "journal-issue-conf#read": {
+      "key": "0f57f4e080f30b71",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Records\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issue\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]},\"page\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"37-49\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"},\"volume\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "journal-issue-jour#read": {
+      "key": "a2ae34e194380703",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Records\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"issue\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"4\"}]},\"page\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"37-49\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"},\"volume\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "keywords-book#read": {
+      "key": "af9dc37d359722c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"abstract\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"operation.\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"keyword\":{\"t\":\"MetaString\",\"c\":\"inspection, seal\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "keywords-chap#read": {
+      "key": "86f934c19de082d6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"abstract\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"operation.\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"keyword\":{\"t\":\"MetaString\",\"c\":\"inspection, seal\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "keywords-conf#read": {
+      "key": "12303508ebe9aa96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"abstract\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"operation.\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"keyword\":{\"t\":\"MetaString\",\"c\":\"inspection, seal\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "keywords-jour#read": {
+      "key": "8b3f2e12ea380008",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"abstract\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"operation.\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"keyword\":{\"t\":\"MetaString\",\"c\":\"inspection, seal\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "multiline-book#read": {
+      "key": "61875a83e782b4ca",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 5, column 1):\nunexpected ' '\n      Record the result.\n^\n"
+    },
+    "multiline-chap#read": {
+      "key": "3e7828a08434ef1f",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 5, column 1):\nunexpected ' '\n      Record the result.\n^\n"
+    },
+    "multiline-conf#read": {
+      "key": "eef5c2239d37a083",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 5, column 1):\nunexpected ' '\n      Record the result.\n^\n"
+    },
+    "multiline-jour#read": {
+      "key": "f7ff513605242cf1",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "Error at (line 5, column 1):\nunexpected ' '\n      Record the result.\n^\n"
+    },
+    "publisher-book#read": {
+      "key": "28ae163f264c5f42",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"edition\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"publisher\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"North\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Workshop\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Press\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "publisher-chap#read": {
+      "key": "3372d490dc6acc5f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"edition\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"publisher\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"North\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Workshop\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Press\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "publisher-conf#read": {
+      "key": "0ef1616ccfbc5d7f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"edition\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"publisher\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"North\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Workshop\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Press\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "publisher-jour#read": {
+      "key": "2459c61e423c98d1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"edition\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"publisher\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"North\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Workshop\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Press\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "series-book#read": {
+      "key": "ff3d111b691e2946",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Equipment\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Notes\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"language\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"fr\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "series-chap#read": {
+      "key": "525a1bb4a068e2a5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Equipment\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Notes\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"language\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"fr\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "series-conf#read": {
+      "key": "60dd2477dbd48285",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Equipment\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Notes\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"language\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"fr\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "series-jour#read": {
+      "key": "91553411e9684cc3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"container-title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Equipment\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Notes\"}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"language\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"fr\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unicode-book#read": {
+      "key": "359a37e5f710a9c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Åström\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Léa\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unicode-chap#read": {
+      "key": "61e4097ad4ba11d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Åström\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Léa\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unicode-conf#read": {
+      "key": "9e9644dd5cc1da7f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Åström\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Léa\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "unicode-jour#read": {
+      "key": "2dcb96fc385302d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Åström\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Léa\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "url-book#read": {
+      "key": "f7623aacf304caba",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"},\"url\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"https://example.org/parts\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "url-chap#read": {
+      "key": "19f5b9382a9efb33",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"},\"url\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"https://example.org/parts\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "url-conf#read": {
+      "key": "4e4e33a47d981923",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"},\"url\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"https://example.org/parts\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "url-jour#read": {
+      "key": "df0dbc0929533d25",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"nocite\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"*\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[@*]\"}]]}]},\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"id\":{\"t\":\"MetaString\",\"c\":\"field-42\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Inspection\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"assembly\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"},\"url\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"https://example.org/parts\"}]}}}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    }
+  }
+}
