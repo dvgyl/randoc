@@ -47,3 +47,4 @@ utc	commit	dirty	item	metric	pass	total	tool	evidence
 2026-11-18T06:41:22Z	58be7a5d23025b4264de95c7ed7398a46ea19220	no	-	suite.pandoc.command	618	1884	pandoc@eec05c73d9f7	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261118T064122Z-58be7a5d2302/pandoc.json
 2026-11-18T06:41:22Z	58be7a5d23025b4264de95c7ed7398a46ea19220	no	-	suite.pandoc.old	28	174	pandoc@eec05c73d9f7	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261118T064122Z-58be7a5d2302/pandoc.json
 2026-11-18T06:41:22Z	58be7a5d23025b4264de95c7ed7398a46ea19220	no	-	suite.pandoc.readers	0	173	pandoc@eec05c73d9f7	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261118T064122Z-58be7a5d2302/pandoc.json
+2026-11-18T07:39:13Z	160bb2cf974f4847d632fa1e9a420a20af706bc0	no	M1-01	gate.steps	15	15	gate@54867bc37259	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261118T073913Z-160bb2cf974f/gate.json
