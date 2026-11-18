@@ -97,3 +97,15 @@ Commit counter: the guard does not check that a run covers each active suite; a 
 ## 2026-11-18T00:34:22Z weak-spot - 91b492a67bfa
 
 Worker items and the guard: while a worker item has 3 attempt records and its gain is only in the rows of its branch, the guard of the lead tree sees no gain and refuses each commit of the lead until `ops worker merge` or a cut. `ops status` no longer advises the cut in that state, but the lead cannot commit until the merge.
+
+## 2026-11-18T06:25:09Z decision - e4cba841f066
+
+Review round 3, machine and recovery limits: both reviewers rejected the reason of round 2. Decision: kept as a weak spot, not fixed. Reason: other controls bound the combined memory. The watchdog stops each Randoc process above 4 GB, and it stops the largest one when free memory falls below 15%. The cargo wrapper needs 20% free memory and has 3 slots, and measurements have 2 slots. A race on the shared target folder needs a second heavy command in one session, which `AGENTS.md` section 15 forbids; workers build in their own worktrees. The `git reset --hard` of a cut runs only when the revert fails, on a tree that `ops item cut` requires to be clean. A global memory scheduler costs more than the remaining risk on this machine.
+
+## 2026-11-18T06:25:09Z decision - e4cba841f066
+
+Review round 3, cut streak order: one reviewer rejected and one accepted the reason of round 2. Decision: kept as a weak spot, not fixed. Reason: the counter is advice in `ops status`, not a gate. The review log has the time of each cut, so the later review can rebuild the true order.
+
+## 2026-11-18T06:25:09Z decision - e4cba841f066
+
+Review round 3: two reviews of the commits 450f696, 91b492a and 1aedb6d (both `VERDICT: not ready`) gave these decisions, now in the tools with tests (commit e4cba84). (1) A run resets the 10-commit counter only when its manifest (`run.json`) lists each active suite of the registry at its commit; the guard checks the manifest also for the committed rows below the limit. (2) A correction of a metric covers only the units with that metric in their list; the evidence lists the passing units of each metric (`passing_by_metric`), and a unit with no list is never covered. (3) The column `accept` of `plan/ITEMS.tsv` (`ops item add --all-pass` or `--min-total N`): the guard, `ops` and `measure.py` count a latest row below the rule as no gain, and `ops item done` has no coverage option. (4) The pre-commit guard refuses a staged binary file or a file above 5 MB without a row of its path and SHA-256 in `tools/autobuild/provenance.tsv`. The machine limits and the cut streak order stay weak spots, with the reasons in the two entries before this one. The rows of the preparation runs have no run manifest, so the commit counter counts from the branch base: the first action of the build is `ops measure`.

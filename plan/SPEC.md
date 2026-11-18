@@ -289,7 +289,10 @@ scope, pattern, replacement, log entry). N1 applies to each ZIP comparison.
 - Gain of an item: the latest row of the item's metric has a PASS above the
   baseline PASS, and its failing count (TOTAL - PASS) is not above the
   baseline's. For the baseline 0/0, the latest row with TOTAL above 0 is
-  the gain. The guard and `ops` use this one rule.
+  the gain. An item with a coverage rule (column `accept` of
+  `plan/ITEMS.tsv`: `all-pass`, PASS = TOTAL above 0, or `min-total=N`,
+  TOTAL >= N) shows a gain only when that row also meets the rule. The
+  guard, `ops` and `measure.py` use this one rule.
 - Experiment: one `measure.py --item ID` run (`ops measure --item ID`). It
   writes an attempt record before it starts
   (`$RANDOC_GPT/runs/attempts.tsv`). The experiment count is the larger of
@@ -298,8 +301,9 @@ scope, pattern, replacement, log entry). N1 applies to each ZIP comparison.
   `--filter` and no `--item` is a diagnostic: it writes no row and is no
   experiment.
 - Regression: a unit that passed in the previous clean full run and fails
-  now, compared by unit id in each active suite, unless a tool correction
-  covers it. The gate runs each active suite.
+  now, compared by unit id in each active suite, unless a newer tool
+  correction of one of the unit's metrics covers it. The gate runs each
+  active suite.
 - Candidate run of `ops milestone check`: the newest full measurement of
   the `build` stream (no `--quick`, no filter, clean tree) whose rows share
   `utc` and `commit`, have `dirty` `no` and `item` `-`, are not imported

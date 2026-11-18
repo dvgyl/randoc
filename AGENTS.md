@@ -142,7 +142,9 @@ scoreboard metric and an expected gain.
    (`plan/ROADMAP.md` rule 4).
 2. **Register.** `ops item add M<n>-<nn> --milestone M<n> --metric KEY --target +N --title "..."`,
    then `ops item start M<n>-<nn>`. The start records the baseline. For a
-   worker item, `ops worker start` does the start (section 9).
+   worker item, `ops worker start` does the start (section 9). An item that
+   must cover all units or a minimum TOTAL gets `--all-pass` or
+   `--min-total N` (the column `accept` of `plan/ITEMS.tsv`).
 3. **Change.** Make the smallest change that can move the metric. Add or
    update tests built from oracle output. Commit small steps with the item id
    at the end of the subject (section 12).
@@ -160,8 +162,8 @@ scoreboard metric and an expected gain.
      `ops item done M<n>-<nn> --weak-spots "..."`, then `ops measure`,
      commit its rows, and `ops push`. When the gate fails, the item stays
      active: fix the cause and run the next experiment. `done` refuses
-     with no passing gate of the current commit. A title with a coverage
-     rule needs `--all-pass` or `--min-total N`.
+     with no passing gate of the current commit. For an item with a
+     coverage rule, a latest row below the rule is no gain.
    - No gain: find the cause, change, and run the next experiment.
    - Third experiment with no gain: `ops item cut M<n>-<nn> --reason "..."`.
      The command reverts the item's commits and withdraws its tool
@@ -192,7 +194,7 @@ the first three.
 
 | Counter | Limit | What happens at the limit |
 | --- | --- | --- |
-| Commits since the newest measured commit | 10 | The guard refuses the next commit until you commit the rows of a full measurement (clean tree, item `-`) of `HEAD` or its parent. |
+| Commits since the newest measured commit | 10 | The guard refuses the next commit until you commit the rows of a completed full measurement (clean tree, item `-`, each active suite) of `HEAD` or its parent. Only such a run resets the counter. |
 | Experiments of one item with no gain | 3 | `measure.py` refuses the next experiment; the guard refuses each commit until you cut the item. |
 | Commit tag | an active item, or `[ops]` | An `[ops]` commit may change only measurement, plan and tool files. Product code needs an active item. |
 | Scoreboard rows of the active item's metric with no gain | 2 in a row | You are stuck (section 8). |
@@ -250,7 +252,9 @@ Use workers when two or more items of the current milestone are independent
 What a worker may change: NEW files under `tools/<name>/`,
 `tools/autobuild/suites/`, `tools/autobuild/metrics.d/`,
 `tools/autobuild/tests/test_suite_*.py` and `conformance/cases/`; its own
-rows in `plan/scoreboard/ITEM.tsv`; the product code of its item outside
+rows in `plan/scoreboard/ITEM.tsv`; new rows of
+`tools/autobuild/provenance.tsv` for the files that it adds (section 14);
+the product code of its item outside
 the shared contracts. The lead owns every other file of `plan/` and
 `tools/autobuild/`, the shared contracts (`randoc-ast`, `randoc-core`, the
 format registry, the harness), and every change of an existing metric. The
@@ -388,8 +392,11 @@ is on the list in `docs/PRIOR_ART.md` (MIT, Apache-2.0, BSD-2-Clause,
 BSD-3-Clause, ISC, Zlib, Unicode-3.0, CC0-1.0, Unlicense), and add a row to
 `docs/PRIOR_ART.md`, a record to `docs/ADR.md`, a row to
 `THIRD_PARTY_NOTICES.md` and the licence text to `third_party/licences/`.
-The scan skips binary files and files above 5 MB: in the same commit, give
-each new one a row in `THIRD_PARTY_NOTICES.md` or an origin note.
+The scan skips binary files (a NUL byte in the first 8 KB) and files above
+5 MB. In the same commit, give each such file a row in
+`tools/autobuild/provenance.tsv`: path, the SHA-256 of the content, origin
+and licence. The guard refuses the commit without it, and a changed file
+needs a new row.
 
 The scan `python3 -I tools/autobuild/licence_scan.py scan` compares the
 text that the branch adds with a hashed index of the copyleft reference
