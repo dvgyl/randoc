@@ -207,3 +207,7 @@ Weak spots: 68 of 163 file cases still fail. They include all four archive media
 ## 2026-11-18T14:26:07Z decision M1-04 a5d08cdcfaa1
 
 M1-04 uses the authored file-suite tree first, then 80 other form trees, 194 highlighting trees, 60 math trees and 65 seeded trees. Pandoc 3.13 accepts each tree with -f json -t json. Two full generations produced the same SHA-256 and the same bytes. The HTML writer marks all 194 language cases as highlighted. MathML rejects all 20 malformed expressions. The writer measurement is still in progress.
+
+## 2026-11-18T14:31:55Z decision M1-04 1f93e8966f73
+
+M1-04 notebook cell identifiers. Under plan/SPEC.md 3.10 and 3.13, apply N5 only to UUID version 4 values in cells[*].id of fmt.write.ipynb standard output. Use only the cell positions where two oracle runs have different UUID values. The paired runs differ only at those fields for forms/inline-str, forms/table-row-span, highlight/python and seed/0001. The explicit sample-cell identifier stays exact. Each measured result records the positions to which the rule applies.

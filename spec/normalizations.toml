@@ -1,0 +1,7 @@
+[[normalization]]
+id = "pivot-ipynb-cell-id"
+kind = "N5"
+scope = { metric = "fmt.write.ipynb", part = "stdout", field = "cells[*].id" }
+pattern = '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
+replacement = "<IDn>"
+log_entry = "M1-04 notebook cell identifiers"
