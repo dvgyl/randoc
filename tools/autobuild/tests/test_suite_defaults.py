@@ -60,6 +60,17 @@ sample-key: true
         case = {"input": "to: plain\n"}
         self.assertEqual(defaults.legacy_groups(case, ["-d", "/dev/stdin"]), {"to"})
 
+    def test_option_order_needs_an_option_on_each_side_of_a_defaults_file(self):
+        case = {"files": {"sample.yaml": "wrap: none\n"}}
+        before = ["--wrap=auto"]
+        file = ["-d", "sample.yaml"]
+        after = ["--wrap=preserve"]
+        self.assertEqual(defaults.legacy_groups(case, file + after), {"wrap"})
+        self.assertEqual(defaults.legacy_groups(case, before + file), {"wrap"})
+        self.assertEqual(defaults.legacy_groups(case, before + file + ["--"] + after), {"wrap"})
+        self.assertEqual(defaults.legacy_groups(case, before + file + after),
+                         {"wrap", "feature/option-order"})
+
     def test_one_failing_case_fails_every_key_that_uses_it(self):
         statuses = {"probe": "pass", "legacy": "fail", "slow": "no_result", "unused": "skipped"}
         members = {"probe": {"wrap"}, "legacy": {"wrap", "to"}, "slow": {"to"}, "unused": {"wrap"}}

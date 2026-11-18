@@ -24,6 +24,8 @@ VARIABLES = {"${.}": "dot", "${USERDATA}": "userdata", "${HOME}": "home"}
 DOC = "# Quartz\n\nA line with *emphasis*, $x+y$, and a [link](#quartz).\n"
 HIGHLIGHT_DOC = "```python\nprint(7)\n```\n"
 HIGHLIGHT_KEYS = {"highlight-style", "syntax-definition", "syntax-definitions", "syntax-highlighting"}
+MEDIA_DOC = "![Part layout](layout.svg)\n"
+MEDIA_FILE = '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="4"/></svg>\n'
 PAIR = ("alpha", "beta")
 
 
@@ -150,6 +152,8 @@ def probe(key, value, positive=False):
     files = {"probe.cfg": json.dumps({key: value})}
     if positive and key in {"data-dir", "resource-path"}:
         files["inputs/marker.txt"] = "Quartz\n"
+    if positive and key == "extract-media":
+        files["layout.svg"] = MEDIA_FILE
     if positive and key in (FILE_OPTIONS.keys() | {
         "defaults", "epub-fonts", "filters", "input-files", "input-file",
         "metadata-files", "syntax-definitions",
@@ -232,12 +236,14 @@ def generated_cases(candidates):
 def write_cases(root, cases):
     path = root / f"conformance/cases/{GENERATED}.toml"
     path.parent.mkdir(parents=True)
+    documents = dict.fromkeys(HIGHLIGHT_KEYS, HIGHLIGHT_DOC)
+    documents["extract-media"] = MEDIA_DOC
     with path.open("w", encoding="utf-8") as stream:
         stream.write("capture_files = {}\n")
         for ident, (cmd, files) in cases.items():
             fields = ", ".join(f"{json.dumps(name)} = {json.dumps(text)}"
                                for name, text in files.items())
-            document = HIGHLIGHT_DOC if ident.split("/")[0] in HIGHLIGHT_KEYS else DOC
+            document = documents.get(ident.split("/")[0], DOC)
             stream.write(f"\n[[case]]\nid = {json.dumps(ident)}\ncmd = {json.dumps(cmd)}\n"
                          f"input = {json.dumps(document)}\nfiles = {{ {fields} }}\n")
 
@@ -298,8 +304,8 @@ def defaults_fields(text):
                 value = [name.strip() for name in value[1:-1].split(",")]
             elif key == "defaults" and not value:
                 value = []
-                for item in lines[index + 1:]:
-                    match = re.fullmatch(r"\s*-\s+(.*)", item)
+                for following in range(index + 1, len(lines)):
+                    match = re.fullmatch(r"\s*-\s+(.*)", lines[following])
                     if not match:
                         break
                     value.append(match[1])
@@ -318,10 +324,13 @@ def legacy_groups(case, args):
     features = set()
     if len(paths) > 1:
         features.add("ordered-defaults")
-    options = [i for i, arg in enumerate(args) if arg.startswith("-") and i not in {
-        option for option, _ in paths
-    }]
-    if any(i < paths[0][0] or i > paths[-1][0] for i in options):
+    defaults_positions = {position for position, _ in paths}
+    defaults_positions.update(position + 1 for position, _ in paths
+                              if args[position] in {"-d", "--defaults"})
+    end = args.index("--") if "--" in args else len(args)
+    options = [position for position in range(end)
+               if args[position].startswith("-") and args[position] != "-" and position not in defaults_positions]
+    if options and any(options[0] < position < options[-1] for position, _ in paths):
         features.add("option-order")
     pending = [path for _, path in paths]
     visited = set()
