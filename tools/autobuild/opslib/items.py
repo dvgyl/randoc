@@ -223,6 +223,10 @@ def cut(ctx: Context, args: argparse.Namespace) -> int:
         commit_transition(ctx, table.items(), f"chore(plan): cut item {item.id} [ops]", text, changes, cutting=True)
     else:
         dirty = [p for p in ctx.git.dirty_tracked() if not p.startswith("plan/")]
+        # A reset after a failed revert must not delete an untracked file either.
+        status = ctx.git.run("status", "--porcelain", "--untracked-files=all", check=False)
+        dirty += [line[3:] for line in str(status).splitlines()
+                  if line.startswith("?? ") and not line[3:].startswith("plan/")]
         if dirty:
             raise Refusal(
                 f"tracked files have changes ({', '.join(dirty[:3])}); the revert needs a clean tree",

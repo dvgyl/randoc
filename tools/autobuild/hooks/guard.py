@@ -286,17 +286,24 @@ def blob_facts(oid: str, sniff: int) -> tuple[int, bytes, str]:
     return size, head, digest.hexdigest()
 
 
-def files_without_origin() -> list[str]:
+def in_history(path: str, oid: str) -> bool:
+    """The history of HEAD holds the blob `oid` at `path`."""
+    return bool(git("log", "-1", "--format=%H", f"--find-object={oid}", "HEAD", "--", path, check=False).strip())
+
+
+def files_without_origin(cutting: bool) -> list[str]:
     """The staged files that the licence scan skips (a NUL byte in the first SNIFF_BYTES, or more
     than MAX_BYTES) with no row of their path and SHA-256 in the staged PROVENANCE_FILE that names
-    an origin and a licence."""
+    an origin and a licence. In a commit that cuts an item, a file that the history of HEAD holds
+    at the same path needs no row: the revert of the item brings it back."""
     scan = sibling("licence_scan")
     recorded = {(r.get("path"), r.get("sha256")) for r in tsv_rows(staged_file(PROVENANCE_FILE))
                 if all((r.get(f) or "").strip() not in ("", "-") for f in ("origin", "licence"))}
     missing = []
     for path, oid in staged_blobs():
         size, head, sha = blob_facts(oid, scan.SNIFF_BYTES)
-        if (size > scan.MAX_BYTES or b"\0" in head) and (path, sha) not in recorded:
+        if ((size > scan.MAX_BYTES or b"\0" in head) and (path, sha) not in recorded
+                and not (cutting and in_history(path, oid))):
             missing.append(path)
     return missing
 
@@ -327,13 +334,8 @@ def pre_commit() -> None:
         if hits:
             raise Refused(f"a staged line uses a banned phrase ({', '.join(hits)}): {line.strip()[:120]}")
 
-    # The commit that cuts an item (ops item cut: the reverts and the item's rows) passes the limit and
-    # the check of the other items: an exhausted item refuses every other commit, so the limit, or a
-    # second exhausted item, would otherwise lock the branch. Its reverts bring back only files that
-    # the history holds, so it needs no origin rows either.
-    if cuts_an_item():
-        return
-    unrecorded = files_without_origin()
+    cutting = cuts_an_item()
+    unrecorded = files_without_origin(cutting)
     if unrecorded:
         raise Refused(
             f"{unrecorded[0]} is a binary file or a file above 5 MB, which the licence scan skips"
@@ -341,6 +343,11 @@ def pre_commit() -> None:
             + f". Add a row to {PROVENANCE_FILE} in the same commit: path, sha256 (of the staged content), "
             "origin, licence"
         )
+    # The commit that cuts an item (ops item cut: the reverts and the item's rows) passes the limit and
+    # the check of the other items: an exhausted item refuses every other commit, so the limit, or a
+    # second exhausted item, would otherwise lock the branch.
+    if cutting:
+        return
     head_rows = scoreboard_rows(lambda n: committed_file("HEAD", n)) if rev_ok("HEAD") else []
     rows = scoreboard_rows(staged_file)
     since = commits_since_measurement(head_rows)

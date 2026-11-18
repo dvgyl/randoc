@@ -680,7 +680,24 @@ def slot_is_stale(slot: Path) -> bool:
     return False
 
 
+MIN_FREE_MEMORY_PERCENT = 25
+
+
+def free_memory_percent() -> int:
+    """The free memory of the machine in percent (macOS memory_pressure); 100 when unknown."""
+    try:
+        out = subprocess.run(["memory_pressure"], capture_output=True, text=True, timeout=20).stdout
+    except (OSError, subprocess.SubprocessError):
+        return 100
+    match = re.search(r"free percentage: (\d+)%", out)
+    return int(match.group(1)) if match else 100
+
+
 def take_slot() -> Path | None:
+    # Several measurements can each stay below the watchdog limit and still
+    # fill the memory together, so a new one waits for free memory.
+    if free_memory_percent() < MIN_FREE_MEMORY_PERCENT:
+        return None
     folder = slots_folder()
     folder.mkdir(parents=True, exist_ok=True)
     for number in range(1, MEASURE_SLOTS + 1):

@@ -109,3 +109,11 @@ Review round 3, cut streak order: one reviewer rejected and one accepted the rea
 ## 2026-11-18T06:25:09Z decision - e4cba841f066
 
 Review round 3: two reviews of the commits 450f696, 91b492a and 1aedb6d (both `VERDICT: not ready`) gave these decisions, now in the tools with tests (commit e4cba84). (1) A run resets the 10-commit counter only when its manifest (`run.json`) lists each active suite of the registry at its commit; the guard checks the manifest also for the committed rows below the limit. (2) A correction of a metric covers only the units with that metric in their list; the evidence lists the passing units of each metric (`passing_by_metric`), and a unit with no list is never covered. (3) The column `accept` of `plan/ITEMS.tsv` (`ops item add --all-pass` or `--min-total N`): the guard, `ops` and `measure.py` count a latest row below the rule as no gain, and `ops item done` has no coverage option. (4) The pre-commit guard refuses a staged binary file or a file above 5 MB without a row of its path and SHA-256 in `tools/autobuild/provenance.tsv`. The machine limits and the cut streak order stay weak spots, with the reasons in the two entries before this one. The rows of the preparation runs have no run manifest, so the commit counter counts from the branch base: the first action of the build is `ops measure`.
+
+## 2026-11-18T06:30:59Z decision - 58be7a5d2302
+
+Final check of review round 3: both reviewers found that a commit that cuts an item skipped the file-origin check, so an unrelated binary file could enter with the cut. Now the guard checks the file origin before the cut exception. In a cut commit, a file that the history of HEAD holds at the same path needs no row, because the revert of the item brings it back (HEAD has 7 binary fuzz seeds with no row). Each other binary or large file of a cut commit needs its row.
+
+## 2026-11-18T06:52:46Z decision M1-01 4a62b2d19e7b
+
+Round 3 machine points (both reviewers rejected the first reason): ops item cut now refuses untracked files outside plan/ before a revert that can end in a reset, and measure.py waits for 25% free memory before it takes a measurement slot. The remaining risk (a shared target folder in one session) stays a weak spot: AGENTS.md allows one heavy command per session.

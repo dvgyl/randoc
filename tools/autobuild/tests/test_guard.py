@@ -233,6 +233,26 @@ class GuardTest(unittest.TestCase):
         self.items(item_line("M1-01", "cut", baseline="5/9"), item_line("M1-02", "cut", baseline="5/9"))
         self.assertEqual(r.commit("chore(plan): cut item M1-02 [ops]", ["plan/ITEMS.tsv"]).returncode, 0)
 
+    def test_a_cut_commit_needs_origin_rows_except_for_files_that_its_revert_brings_back(self) -> None:
+        r = self.repo
+        seed = b"\0seed"
+        (r.root / "plan/seed.bin").write_bytes(seed)
+        r.write(PROVENANCE, PROVENANCE_HEADER + f"plan/seed.bin\t{hashlib.sha256(seed).hexdigest()}\tmade by the test\tMIT\n")
+        self.items(item_line("M1-01", "active", baseline="5/9"))
+        r.must_commit("test: a seed and an item [ops]")
+        r.git("rm", "-q", "plan/seed.bin")
+        r.write(PROVENANCE, PROVENANCE_HEADER)
+        r.must_commit("chore: remove the seed and its row [M1-01]")
+        r.git("checkout", "HEAD~1", "--", "plan/seed.bin")
+        self.items(item_line("M1-01", "cut", baseline="5/9"))
+        (r.root / "plan/new.bin").write_bytes(b"\0new")
+        self.refused(r.commit("chore(plan): cut item M1-01 and revert its code [M1-01]"),
+                     "plan/new.bin is a binary file or a file above 5 MB")
+        r.git("rm", "-q", "--cached", "plan/new.bin")
+        (r.root / "plan/new.bin").unlink()
+        self.assertEqual(r.commit("chore(plan): cut item M1-01 and revert its code [M1-01]").returncode, 0,
+                         "the revert brings back a file of the history with no row")
+
     def test_banned_phrases(self) -> None:
         r = self.repo
         r.write("plan/a.md", "We put this on HOLD.\n")
