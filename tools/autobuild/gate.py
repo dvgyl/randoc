@@ -145,6 +145,36 @@ ORACLE_REFERENCE = re.compile(
     r'RANDOC_ORACLE_PANDOC|pandoc-3\.13-arm64|'
     r'Command\s*::\s*new\s*\(\s*(?:b?r#*|b)?"(?:[^"\n]*/)?pandoc"'
 )
+RUST_STRING_OR_COMMENT = re.compile(
+    r'''\br(?P<hashes>#{0,255})"[\s\S]*?"(?P=hashes)|"(?:\\[\s\S]|[^"\\])*"|'''
+    r'''\bbr(?P<byte_hashes>#{0,255})"[\s\S]*?"(?P=byte_hashes)|'(?:\\.|[^'\\\n])'|//[^\n]*|/\*'''
+)
+BLOCK_DELIMITER = re.compile(r"/\*|\*/")
+
+
+def without_rust_comments(source: str) -> str:
+    parts = []
+    start = 0
+    while token := RUST_STRING_OR_COMMENT.search(source, start):
+        parts.append(source[start:token.start()])
+        text = token.group()
+        end = token.end()
+        if text == "/*":
+            depth = 1
+            for delimiter in BLOCK_DELIMITER.finditer(source, end):
+                depth += 1 if delimiter.group() == "/*" else -1
+                if depth == 0:
+                    end = delimiter.end()
+                    break
+            else:
+                end = len(source)
+        if text.startswith("/"):
+            parts.append(" " + "\n" * source.count("\n", token.start(), end))
+        else:
+            parts.append(text)
+        start = end
+    parts.append(source[start:])
+    return "".join(parts)
 
 
 def no_oracle_call(_gate: Gate, log: Path) -> str | None:
@@ -159,8 +189,9 @@ def no_oracle_call(_gate: Gate, log: Path) -> str | None:
             source = (ROOT / path).read_text(encoding="utf-8")
         except (OSError, UnicodeError) as error:
             return f"cannot read {name}: {error}"
-        if match := ORACLE_REFERENCE.search(source):
-            line = source.count("\n", 0, match.start()) + 1
+        code = without_rust_comments(source)
+        if match := ORACLE_REFERENCE.search(code):
+            line = code.count("\n", 0, match.start()) + 1
             matches.append(f"{name}:{line}: {match.group()}")
     log.write_text("".join(f"{match}\n" for match in matches), encoding="utf-8")
     return f"found an oracle reference in {matches[0]}" if matches else None

@@ -125,10 +125,15 @@ class Steps(unittest.TestCase):
         path.parent.mkdir(parents=True)
         log = self.runs / "source.log"
         with mock.patch.object(gate, "ROOT", self.runs), mock.patch.object(measure, "git", return_value=f"{code}\0"):
-            for argument in ['"pandoc"', 'r##"pandoc"##', 'r###"/usr/bin/pandoc"###']:
+            for argument in ['"pandoc"', 'r##"pandoc"##', 'r###"/usr/bin/pandoc"###',
+                             '/* first /* nested */ last */ "pandoc"', '// call\n"pandoc"']:
                 with self.subTest(argument=argument):
                     path.write_text(f'fn converter() {{}}\nCommand::new({argument});\n', encoding="utf-8")
                     self.assertIn(f"{code}:2", gate.no_oracle_call(None, log))
+
+    def test_the_source_check_keeps_slashes_inside_strings(self):
+        code = 'const URL: &str = "https://example.org"; /* comment */\nCommand::new("/usr/bin/pandoc");'
+        self.assertIsNotNone(gate.ORACLE_REFERENCE.search(gate.without_rust_comments(code)))
 
     def test_the_source_check_reports_an_unreadable_file_as_a_failed_step(self):
         code = "crates/converter/src/lib.rs"

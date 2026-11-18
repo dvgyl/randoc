@@ -129,3 +129,7 @@ The M1-01 harness enforces 60 s per process and 600 s wall time. It still relies
 ## 2026-11-18T07:28:43Z decision M1-01 c69cb950c63e
 
 M1-01 review round 1 found a raw string form that the source scan missed. The scan now accepts any number of raw string delimiters and reports a source read error as a failed step. A filtered gate runs the earlier steps that it can depend on and writes a quick report. Two test fixtures now use their own metric overlays. The 49 tests of the affected modules passed, and the no-oracle-call diagnostic wrote evidence without a scoreboard row.
+
+## 2026-11-18T07:38:44Z decision M1-01 89edce20db9d
+
+After the second M1-01 review, the source scan handles Rust line comments and nested block comments. The launcher uses system Perl after sh sets the CPU limit. It drops the shell variables and keeps argument zero and process status. The full environment assertion and all 44 harness tests passed. AGENTS.md section 10 limits a change to two review rounds. The regression tests and the full gate will check these fixes.
