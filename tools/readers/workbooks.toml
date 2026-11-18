@@ -1,0 +1,75 @@
+# Supplemental XLSX documents for the reader measurement.
+# Use the same pinned source and licence as the four XLSX corpus documents.
+# The measurement caches the document bytes outside the repository.
+
+[[document]]
+name = "reader-tika-testexcel-strict-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.strict.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "cbfff2096b33055de1686ae99ff649f78f3cc97d7271c242840be6b40837f6e6"
+size = 10006
+
+[[document]]
+name = "reader-tika-testexcel-big-numbers-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_big_numbers.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "459c2e2e3486b67fb3ee5783cacd642b0d61e57b0f0d4538bcdaadb1a6cca2ec"
+size = 8396
+
+[[document]]
+name = "reader-tika-testexcel-charts-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_charts.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "2c1a8bb222e6f4b03e4a6593c654151143231993d6fcda27d812bcf1a3fb90cd"
+size = 31677
+
+[[document]]
+name = "reader-tika-testexcel-phonetic-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_phonetic.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "3a68ed7bcd764b4f38ab6a66d5385a644b84de8572b00aefb4316b43a274882b"
+size = 10210
+
+[[document]]
+name = "reader-tika-testexcel-headers-footers-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_headers_footers.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "c317b80a473fea5549ed241e813f734bffa01c2a9587170bd4254e4d143f2b2d"
+size = 11740
+
+[[document]]
+name = "reader-tika-testexcel-textbox-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_textbox.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "0c2ba4333dec20f9a81f03e92b1031014c6173804054b1761b0f99cb94eb1cdf"
+size = 11017
+
+[[document]]
+name = "reader-tika-testexcel-custom-props-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_custom_props.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "0509234592dacacbcd9268a13750edce881aca3a6a9002ac6cc7f526ada9f983"
+size = 9230
+
+[[document]]
+name = "reader-tika-testexcel-diagramdata-xlsx"
+format = "xlsx"
+url = "https://raw.githubusercontent.com/apache/tika/a40d54f6a6d9cf8ce485f10bb07011cd32ef5925/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL_diagramData.xlsx"
+license = "Apache-2.0"
+source = "apache/tika@a40d54f6a6d9cf8ce485f10bb07011cd32ef5925"
+sha256 = "01b0caaeb55e32dc1bdf384e2752351e2d651a259f65dbfcbddf30b52f42ced1"
+size = 16654
