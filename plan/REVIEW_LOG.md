@@ -253,3 +253,7 @@ Weak spots: Only csljson and native meet the strict capability rule. The JSON wr
 ## 2026-11-18T22:27:56Z decision M1-04 3c25dea3d9c8
 
 Both writer experiments reproduced all 30,400 writer verdicts and all 61,449 harness verdicts. The full measurement of the closure commit 3c25dea recorded 95 rows. It passed all 18 gate checks and matched all six suites of the preceding full run. The measured writer baseline is 5,510/30,400 and the strict writer capability baseline is 2/77. The next lead item in plan/ROADMAP.md is M1-05.
+
+## 2026-11-18T22:42:15Z decision M1-05 84f3d6a9504e
+
+Tool correction of caps.readers by M1-05: The old rule used the harness matrix alone. The strict rule also requires every counted fmt.read.F input to pass. TOTAL stays 52. The rows of caps.readers before 2026-11-18T22:42:15Z no longer count for gains, regressions or milestone checks.
