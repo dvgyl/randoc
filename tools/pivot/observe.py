@@ -1,11 +1,13 @@
 """Record the result of a conversion in a new work folder."""
 
 import io
+import lzma
 import os
 import subprocess
 import sys
 import tempfile
 import zipfile
+import zlib
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -81,7 +83,8 @@ def zip_content(data):
     """Return the ZIP content under N1 and the first-entry check."""
     try:
         return snapshot.digest_zip(io.BytesIO(data), snapshot.ByteBudget())
-    except (ValueError, RuntimeError, NotImplementedError, zipfile.BadZipFile):
+    except (ValueError, RuntimeError, NotImplementedError, OSError, EOFError,
+            zipfile.BadZipFile, zlib.error, lzma.LZMAError):
         return None
 
 

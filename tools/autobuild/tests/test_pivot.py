@@ -130,6 +130,16 @@ class ObservationTests(unittest.TestCase):
         self.assertEqual(differences("epub", invalid, invalid), ["stdout"])
         self.assertEqual(differences("html", expected, same), ["stdout"])
 
+    def test_damaged_compressed_member_is_an_output_mismatch(self):
+        stream = io.BytesIO()
+        with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("x", b"ordinary document content")
+        data = stream.getvalue()
+        damaged = data[:31] + bytes([255]) + data[32:]
+        first = Observation(0, data, b"", {})
+        actual = Observation(0, damaged, b"", {})
+        self.assertEqual(differences("docx", first, actual), ["stdout"])
+
 
 class NotebookTests(unittest.TestCase):
     FIRST = "ab75f436-30f3-4aa0-9ae0-44837c5bbbdb"
@@ -200,6 +210,29 @@ class ReferenceTests(unittest.TestCase):
                     self.assertEqual(updated.status, "unstable")
                     self.assertEqual(updated.unstable_parts, ("stdout",))
                     self.assertEqual(updated.first, good)
+            finally:
+                database.close()
+
+    def test_limited_recheck_preserves_the_original_and_its_differences(self):
+        first = Observation(0, b"first", b"", {})
+        other = Observation(0, b"other", b"", {})
+        unit = Unit("one", b"data", b"key")
+        command = ["-f", "json", "-t", "html"]
+        with tempfile.TemporaryDirectory() as folder, ThreadPoolExecutor(max_workers=2) as pool:
+            database = open_cache(Path(folder) / "cache.sqlite")
+            try:
+                write_references(database, [(unit.key, classify("html", first, other, None))])
+                with patch("writers.attempt", side_effect=["timeout", other, other]), patch("writers.time.sleep"):
+                    references(database, [unit], "oracle", command, pool, None, verify_saved=True)
+                    stopped = read_reference(database, unit.key)
+                    self.assertEqual(stopped.status, "oracle_limit")
+                    self.assertEqual(stopped.first, first)
+                    self.assertEqual(stopped.unstable_parts, ("stdout",))
+                    references(database, [unit], "oracle", command, pool, None)
+                    retried = read_reference(database, unit.key)
+                    self.assertEqual(retried.status, "unstable")
+                    self.assertEqual(retried.first, first)
+                    self.assertEqual(retried.unstable_parts, ("stdout",))
             finally:
                 database.close()
 

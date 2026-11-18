@@ -46,13 +46,21 @@ def classify(fmt, first, second, rule):
 
 def verify(fmt, saved, current, rule):
     if isinstance(current, str):
-        return Reference("oracle_limit", None, reason=f"oracle check: {current}")
+        return Reference("oracle_limit", saved.first, saved.cell_positions, saved.unstable_parts,
+                         f"oracle check: {current}")
     changed = compare(fmt, saved, current, rule)
-    if not changed:
+    if not changed and saved.status != "oracle_limit":
         return saved
     parts = tuple(dict.fromkeys((*saved.unstable_parts, *changed)))
-    return Reference("unstable", saved.first, saved.cell_positions, parts,
-                     "a later oracle run differs from the saved result")
+    if parts:
+        return Reference("unstable", saved.first, saved.cell_positions, parts,
+                         "a later oracle run differs from the saved result")
+    return Reference("stable", saved.first, saved.cell_positions)
+
+
+def recover(fmt, saved, first, second, rule):
+    checked = verify(fmt, saved, first, rule)
+    return checked if isinstance(first, str) else verify(fmt, checked, second, rule)
 
 
 def cache_version(oracle_sha256):
@@ -112,4 +120,4 @@ def write_references(database, pairs, *, refresh=False):
                 result_exit = excluded.result_exit, stdout = excluded.stdout,
                 stderr = excluded.stderr, files = excluded.files, cells = excluded.cells,
                 parts = excluded.parts, reason = excluded.reason
-            WHERE writer_refs.status = 'oracle_limit' OR ?""", rows)
+            WHERE (writer_refs.status = 'oracle_limit' AND writer_refs.result_exit IS NULL) OR ?""", rows)

@@ -223,3 +223,7 @@ Tool correction of caps.writers by M1-04: The old score used the harness capabil
 ## 2026-11-18T14:56:52Z decision M1-04 d8e99c6a41b3
 
 The first M1-04 review found different environments for the two converters. The writer tool now gives both the exact variables of plan/SPEC.md 3.1, including GHCRTS and RANDOC_DATA_DIR. A test checks the full environment for both roles. A saved oracle-limit result now gets a fresh pair on the next run. The milestone recheck keeps the first result and records any new differences. The score parser requires an entry with evidence for each exclusion. Raw observations now stay in bounded batches, with the first oracle run stored on disk until the second run finishes. The notebook diagnostic checked all 81 form trees with zero oracle exclusions after these changes.
+
+## 2026-11-18T15:05:10Z decision M1-04 871a08503081
+
+The second M1-04 review showed that a timeout during an oracle recheck could erase the original result and the parts that had varied. The cache now keeps both. A retry compares each new result with that original. The review also showed that a damaged compressed ZIP member could stop the suite. The tool now records a standard output mismatch. Both targeted tests failed before the fixes and pass after them. AGENTS.md section 10 limits this item to two reviews.

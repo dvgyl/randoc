@@ -34,4 +34,6 @@ format name.
 At each milestone, run the writer tool with `--verify-oracle` to check
 each saved oracle result in a new work folder. A later difference keeps
 the original result and records the parts that changed. An oracle run that
-hit a limit gets another pair of runs on the next measurement.
+hit a limit gets another pair of runs on the next measurement. If an
+earlier result exists, the tool compares both new results with it and
+keeps its known differences.

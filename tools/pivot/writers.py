@@ -17,7 +17,7 @@ from generate import ROOT, generate, json_bytes, oracle_accepts
 from normalize import RULE_ID, notebook_rule
 from observe import NoResult, run
 from reference import (Reference, cache_key, cache_version, classify, compare, open_cache,
-                       read_reference, read_status, verify, write_references)
+                       read_reference, read_status, recover, verify, write_references)
 
 
 @dataclass(frozen=True)
@@ -59,11 +59,17 @@ def record_pairs(database, units, capture, fmt, pool, rule):
         time.sleep(1)
         for group in batches(units, 2):
             fresh = []
+            recovered = []
             for unit, second in zip(group, pool.map(capture, group)):
                 saved = read_reference(first, unit.key)
                 initial = saved.reason if saved.first is None else saved.first
-                fresh.append((unit.key, classify(fmt, initial, second, rule)))
+                earlier = read_reference(database, unit.key)
+                if earlier is not None and earlier.first is not None:
+                    recovered.append((unit.key, recover(fmt, earlier, initial, second, rule)))
+                else:
+                    fresh.append((unit.key, classify(fmt, initial, second, rule)))
             write_references(database, fresh)
+            write_references(database, recovered, refresh=True)
 
 
 def references(database, units, oracle, args, pool, rule, verify_saved=False):
@@ -79,7 +85,7 @@ def references(database, units, oracle, args, pool, rule, verify_saved=False):
         saved = [unit for unit in units if statuses[unit.key] in ("stable", "unstable")]
         for group in batches(saved, 2):
             originals = {unit.key: read_reference(database, unit.key) for unit in group}
-            ready = [unit for unit in group if originals[unit.key].first is not None]
+            ready = [unit for unit in group if originals[unit.key].status in ("stable", "unstable")]
             checked = [(unit.key, verify(fmt, originals[unit.key], result, rule))
                        for unit, result in zip(ready, pool.map(capture, ready))]
             write_references(database, checked, refresh=True)
@@ -88,7 +94,7 @@ def references(database, units, oracle, args, pool, rule, verify_saved=False):
 def verdict(unit, fmt, reference, actual, rule):
     status = reference.status
     row = {"id": unit.name, "format": fmt, "status": status}
-    if reference.first is None:
+    if status == "oracle_limit":
         row["reason"] = reference.reason
         return row
     if reference.cell_positions:
@@ -131,7 +137,7 @@ def measure(args, writers, trees, database, version, rule):
 
             for group in batches(units, 4):
                 expected = {unit.key: read_reference(database, unit.key) for unit in group}
-                ready = [unit for unit in group if expected[unit.key].first is not None]
+                ready = [unit for unit in group if expected[unit.key].status != "oracle_limit"]
                 actual = dict(zip((unit.name for unit in ready), randoc_pool.map(capture, ready)))
                 for unit in group:
                     value = actual.get(unit.name)
