@@ -1,1 +1,3 @@
 utc	item	round	commit	session	verdict	evidence
+2026-11-18T07:15:27Z	M1-01	1	c69cb950c63e6dbe4821b675f455b8c0d100e7b2	-	started	-
+2026-11-18T07:26:03Z	M1-01	1	c69cb950c63e6dbe4821b675f455b8c0d100e7b2	01a1ed83-8cec-71c0-ae8f-5c28517e01a6	block	PYTHONPATH=tools/autobuild python3 -B -c 'from pathlib import Path; from unittest.mock import Mock, patch; import gate; patch.object(gate.measure, "git", return_value="crates/probe/src/lib.rs\0").start(); source = """std::process::Command::new(r##"pandoc"##).status();"""; patch.object(Path, "read_text", return_value=source).start(); assert gate.no_oracle_call(None, Mock()) is not None, f"no-oracle

@@ -96,6 +96,15 @@ class Steps(unittest.TestCase):
         self.assertRegex(out, r"^gate: PASS in \d+s \(one \d+s, two \d+s\); evidence ")
         self.assertEqual(record["result"], "pass")
 
+    def test_a_filtered_gate_stops_at_the_matching_step_and_marks_the_report_quick(self):
+        steps = [self.step(name, None) for name in ("one", "two", "three")]
+        code, _, _, record = self.run_gate(steps, "--filter", "two")
+        self.assertEqual(code, 0)
+        self.assertEqual(self.ran, ["one", "two"])
+        self.assertTrue(record["quick"])
+        self.assertEqual(record["filter"], "two")
+        self.assertEqual(record["steps"][-1]["status"], "not-run")
+
     def test_the_real_gate_has_each_step_of_the_contract(self):
         self.assertEqual([s.name for s in gate.STEPS],
                          ["format", "licence", "oracle-sha256", "no-oracle-call", "lints", "docs", "tests",
@@ -114,10 +123,17 @@ class Steps(unittest.TestCase):
         code = Path("crates/converter/src/lib.rs")
         path = self.runs / code
         path.parent.mkdir(parents=True)
-        path.write_text('fn converter() {}\nCommand::new("pandoc");\n', encoding="utf-8")
         log = self.runs / "source.log"
         with mock.patch.object(gate, "ROOT", self.runs), mock.patch.object(measure, "git", return_value=f"{code}\0"):
-            self.assertIn(f"{code}:2", gate.no_oracle_call(None, log))
+            for argument in ['"pandoc"', 'r##"pandoc"##', 'r###"/usr/bin/pandoc"###']:
+                with self.subTest(argument=argument):
+                    path.write_text(f'fn converter() {{}}\nCommand::new({argument});\n', encoding="utf-8")
+                    self.assertIn(f"{code}:2", gate.no_oracle_call(None, log))
+
+    def test_the_source_check_reports_an_unreadable_file_as_a_failed_step(self):
+        code = "crates/converter/src/lib.rs"
+        with mock.patch.object(gate, "ROOT", self.runs), mock.patch.object(measure, "git", return_value=f"{code}\0"):
+            self.assertIn(f"cannot read {code}", gate.no_oracle_call(None, self.runs / "source.log"))
 
 
 if __name__ == "__main__":

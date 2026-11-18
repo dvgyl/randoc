@@ -54,6 +54,7 @@ class Flow(unittest.TestCase):
         self.runs = self.folder / "runs"
         patches = [
             mock.patch.object(measure, "METRICS_FILE", self.folder / "metrics.toml"),
+            mock.patch.object(measure, "METRICS_DIR", self.folder / "metrics.d"),
             mock.patch.object(measure, "PLAN", self.folder / "plan"),
             mock.patch.object(measure, "SCOREBOARD", self.folder / "plan" / "scoreboard"),
             mock.patch.object(measure, "MIN_FREE_BYTES", 0),

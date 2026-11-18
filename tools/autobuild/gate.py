@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The gate of the build. It stops at the first step that fails.
 
-Usage: gate.py [--quick] [--base REV] [--report FILE]
+Usage: gate.py [--quick] [--base REV] [--report FILE] [--filter TEXT]
 
 Steps:
   format       cargo fmt --all -- --check
@@ -9,8 +9,7 @@ Steps:
   lints        cargo clippy --workspace --all-targets --quiet -- -D warnings
   docs         RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps --quiet
   tests        cargo test --workspace --quiet --no-fail-fast, without the
-               conformance test (the harness step runs the same units with a
-               wider time limit); each failing test binary is in the log
+               conformance test (the harness step runs the same units)
   tool-tests   python3 -m unittest discover in each tools/ folder with tests
   harness      build randoc-cli and randoc-harness, take a measurement slot
                and one read-only copy of the programs for the harness and
@@ -43,6 +42,8 @@ step, gate.json: commit, base, quick, changed_outside_plan (the tracked
 files outside plan/ with changes at the start), steps (each step of the
 contract in order, with status pass, fail or not-run), result). --report
 FILE writes the same report to FILE: the suite of gate.steps reads it.
+--filter runs through the last step whose name contains TEXT. The report
+marks this run as quick, so it cannot close an item.
 Exit code: 0 when each step passes, else 1.
 """
 
@@ -142,7 +143,7 @@ def oracle_sha256(_gate: Gate, log: Path) -> str | None:
 
 ORACLE_REFERENCE = re.compile(
     r'RANDOC_ORACLE_PANDOC|pandoc-3\.13-arm64|'
-    r'Command\s*::\s*new\s*\(\s*(?:r#?|b)?"(?:[^"\n]*/)?pandoc"'
+    r'Command\s*::\s*new\s*\(\s*(?:b?r#*|b)?"(?:[^"\n]*/)?pandoc"'
 )
 
 
@@ -154,7 +155,10 @@ def no_oracle_call(_gate: Gate, log: Path) -> str | None:
         if path.suffix != ".rs" or any(part in {"randoc-harness", "tests", "fuzz", "benches"}
                                        for part in path.parts):
             continue
-        source = (ROOT / path).read_text(encoding="utf-8")
+        try:
+            source = (ROOT / path).read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as error:
+            return f"cannot read {name}: {error}"
         if match := ORACLE_REFERENCE.search(source):
             line = source.count("\n", 0, match.start()) + 1
             matches.append(f"{name}:{line}: {match.group()}")
@@ -355,7 +359,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--quick", action="store_true", help="skip the pandoc and corpus suites")
     parser.add_argument("--base", help="the base of the licence scan (default: the default of licence_scan.py)")
     parser.add_argument("--report", type=Path, help="also write the report (gate.json) to FILE, for the suite of gate.steps")
+    parser.add_argument("--filter", help="run through the last step whose name contains TEXT", metavar="TEXT")
     args = parser.parse_args(argv)
+    steps_to_run = STEPS
+    if args.filter is not None:
+        matches = [index for index, step in enumerate(STEPS) if args.filter in step.name]
+        if not args.filter or not matches:
+            parser.error(f"no gate step matches {args.filter!r}")
+        steps_to_run = STEPS[:matches[-1] + 1]
     try:
         measure.check_free_disk(measure.runs_folder())
         metrics = measure.load_metrics()
@@ -371,7 +382,7 @@ def main(argv: list[str] | None = None) -> int:
     started = time.monotonic()
     try:
         with gate.stack:
-            for step in STEPS:
+            for step in steps_to_run:
                 log = evidence / f"{step.name}.log"
                 log.touch()
                 begun = time.monotonic()
@@ -393,8 +404,9 @@ def main(argv: list[str] | None = None) -> int:
     steps = [step for step in done if step["name"] != "programs"]
     steps += [{"name": step.name, "status": "not-run"} for step in STEPS if step.name not in ran]
     steps += programs
-    report = json.dumps({"commit": commit, "base": args.base, "quick": args.quick, "changed_outside_plan": changed,
-                         "steps": steps, "result": "pass" if failure is None else "fail"}, indent=1) + "\n"
+    report = json.dumps({"commit": commit, "base": args.base, "quick": args.quick or args.filter is not None,
+                         "filter": args.filter, "changed_outside_plan": changed, "steps": steps,
+                         "result": "pass" if failure is None else "fail"}, indent=1) + "\n"
     (evidence / "gate.json").write_text(report, encoding="utf-8")
     if args.report:
         args.report.write_text(report, encoding="utf-8")

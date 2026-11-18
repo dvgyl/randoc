@@ -20,8 +20,8 @@ class GateSuite(unittest.TestCase):
         self.runner = measure.RUNNERS["gate"]
         self.steps = [{"name": step.name, "status": "pass"} for step in gate.STEPS]
 
-    def parse(self, result="pass", quick=False):
-        report = {"steps": self.steps, "result": result, "quick": quick}
+    def parse(self, result="pass", quick=False, text=None):
+        report = {"steps": self.steps, "result": result, "quick": quick, "filter": text}
         (self.evidence / "gate-report.json").write_text(json.dumps(report), encoding="utf-8")
         return self.runner.parse(self.evidence, "")
 
@@ -46,3 +46,8 @@ class GateSuite(unittest.TestCase):
         self.steps.pop()
         with self.assertRaises(measure.ToolError):
             self.parse()
+
+    def test_a_filtered_report_can_show_the_result_of_a_diagnostic(self):
+        self.steps[-1]["status"] = "not-run"
+        counts = self.parse(quick=True, text=self.steps[-2]["name"])
+        self.assertEqual(counts.failing, [self.steps[-1]["name"]])

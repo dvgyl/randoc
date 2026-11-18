@@ -16,9 +16,10 @@ def make_runner(measure):
         statuses = [step["status"] for step in steps]
         if names != expected or any(status not in ("pass", "fail", "not-run") for status in statuses):
             raise measure.ToolError("gate: invalid step list in gate-report.json")
-        passed = all(status == "pass" for status in statuses)
-        if report["quick"] or report["result"] != ("pass" if passed else "fail"):
-            raise measure.ToolError("gate: the report must give the result of a full gate")
+        diagnostic = report.get("filter") is not None
+        passed = "fail" not in statuses if diagnostic else all(status == "pass" for status in statuses)
+        if report["quick"] != diagnostic or report["result"] != ("pass" if passed else "fail"):
+            raise measure.ToolError("gate: the report has an invalid result")
         units = [measure.Unit(name, measure.PASS if status == "pass" else measure.FAIL, METRICS)
                  for name, status in zip(names, statuses)]
         return measure.Counts.of(units, METRICS)

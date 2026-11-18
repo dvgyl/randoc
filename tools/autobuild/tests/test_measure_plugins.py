@@ -30,8 +30,8 @@ class PluginTest(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         root = Path(self.tmp.name)
         self.saved = (measure.SUITES_DIR, measure.METRICS_DIR, dict(measure.RUNNERS))
-        for name in (measure.SUITES_DIR.glob("*.py")):
-            measure.RUNNERS.pop(name.stem, None)
+        for path in measure.plugin_files(measure.SUITES_DIR, "*.py"):
+            measure.RUNNERS.pop(path.stem, None)
         measure.SUITES_DIR, measure.METRICS_DIR = root / "suites", root / "metrics.d"
         measure.SUITES_DIR.mkdir()
         measure.METRICS_DIR.mkdir()

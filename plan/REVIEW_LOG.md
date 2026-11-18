@@ -125,3 +125,7 @@ M1-01 uses the existing gate report as the source of the gate.steps row. A step 
 ## 2026-11-18T07:12:38Z weak-spot M1-01 9d29d4c48a06
 
 The M1-01 harness enforces 60 s per process and 600 s wall time. It still relies on the machine watchdog for memory, so it does not yet enforce the 3,000 MB process group limit in plan/SPEC.md 3.9. The gate source scan detects direct oracle references and direct calls to pandoc. It does not resolve dynamically constructed executable names.
+
+## 2026-11-18T07:28:43Z decision M1-01 c69cb950c63e
+
+M1-01 review round 1 found a raw string form that the source scan missed. The scan now accepts any number of raw string delimiters and reports a source read error as a failed step. A filtered gate runs the earlier steps that it can depend on and writes a quick report. Two test fixtures now use their own metric overlays. The 49 tests of the affected modules passed, and the no-oracle-call diagnostic wrote evidence without a scoreboard row.
