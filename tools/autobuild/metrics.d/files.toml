@@ -1,0 +1,7 @@
+[[metric]]
+key = "files.units"
+suite = "files"
+status = "active"
+command = "{harness} run --randoc {randoc} --files --jobs 4 --report {evidence}/files-report.json"
+pass = "units that match the oracle exit code, output, errors, and file changes"
+total = "units for which the oracle creates or changes a file"

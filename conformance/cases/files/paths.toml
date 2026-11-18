@@ -1,0 +1,42 @@
+capture_files = {}
+
+[[case]]
+id = "overwrite"
+cmd = ["-f", "markdown", "-t", "html", "-o", "out.html"]
+input = "A new line.\n"
+[case.files]
+"out.html" = "Old content\n"
+"keep.txt" = "Keep this file\n"
+
+[[case]]
+id = "missing-parent"
+cmd = ["-f", "markdown", "-t", "html", "-o", "missing/out.html"]
+input = "A paragraph.\n"
+
+[[case]]
+id = "log"
+cmd = ["-f", "markdown", "-t", "plain", "--log", "log.json"]
+input = "A log entry test.\n"
+
+[[case]]
+id = "extract-markdown"
+cmd = ["-f", "markdown", "-t", "html", "--extract-media", "media", "-o", "out.html"]
+input = "![Pixel](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGOwmLL1PwAFCgKBOCFgpAAAAABJRU5ErkJggg==)\n"
+
+[[case]]
+id = "extract-html"
+cmd = ["-f", "html", "-t", "html", "--extract-media", "media", "-o", "out.html"]
+input = "<img alt=\"Pixel\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGOwmLL1PwAFCgKBOCFgpAAAAABJRU5ErkJggg==\">"
+
+[[case]]
+id = "extract-ipynb"
+cmd = ["-f", "ipynb", "-t", "html", "--extract-media", "media", "-o", "out.html"]
+input = "{\"cells\": [{\"cell_type\": \"markdown\", \"id\": \"pixel-cell\", \"metadata\": {}, \"source\": [\"![Pixel](attachment:pixel.png)\"], \"attachments\": {\"pixel.png\": {\"image/png\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGOwmLL1PwAFCgKBOCFgpAAAAABJRU5ErkJggg==\"}}}], \"metadata\": {}, \"nbformat\": 4, \"nbformat_minor\": 5}"
+
+[[case]]
+id = "epub-cover"
+cmd = ["-f", "json", "-t", "epub3", "--epub-cover-image", "cover.svg", "-o", "covered.epub"]
+input_file = "files/sample-cell.json"
+capture_files = { zip = ["covered.epub"] }
+[case.files]
+"cover.svg" = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"8\" height=\"8\"><rect width=\"8\" height=\"8\" fill=\"#38536b\"/></svg>"

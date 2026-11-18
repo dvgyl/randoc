@@ -1,0 +1,1 @@
+{"pandoc-api-version":[1,23,1,2],"meta":{"identifier":{"t":"MetaString","c":"urn:uuid:ed030683-29df-45f2-8b36-d8d49111221f"},"date":{"t":"MetaString","c":"2023-11-14"}},"blocks":[{"t":"Div","c":[["sample-cell",["cell","markdown"],[]],[{"t":"Plain","c":[{"t":"Str","c":"Sample"}]}]]}]}

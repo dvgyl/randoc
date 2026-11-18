@@ -1,0 +1,113 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "epub-cover#cmd": {
+      "key": "1a7308945afaeb7a",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "file_changes": {
+        "covered.epub": {
+          "kind": "file",
+          "sha256": "b311373c2f637072add09a2f62bb575dafebaff2b9111a07fe9208462159752b"
+        }
+      }
+    },
+    "extract-html#cmd": {
+      "key": "ba18e812cb9eca3b",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "file_changes": {
+        "media": {
+          "kind": "directory"
+        },
+        "media/356589482143f30d37d45c802f848534869c45dd.png": {
+          "kind": "file",
+          "sha256": "486313e8c6a72a7db263979d308658a591faeffe5a80fe7c5a77d0a32523f0e0"
+        },
+        "out.html": {
+          "kind": "file",
+          "sha256": "9759800546675181055cf768125b28e90a1e0a7fce925891fc37d0e07bdf191d"
+        }
+      }
+    },
+    "extract-ipynb#cmd": {
+      "key": "353da7cc529df5a1",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "file_changes": {
+        "media": {
+          "kind": "directory"
+        },
+        "media/pixel-cell-pixel.png": {
+          "kind": "file",
+          "sha256": "486313e8c6a72a7db263979d308658a591faeffe5a80fe7c5a77d0a32523f0e0"
+        },
+        "out.html": {
+          "kind": "file",
+          "sha256": "9948a8bf291314f1e5aabdf7f99578ec3b8b3e1b461ddd88db0f88253f1939df"
+        }
+      }
+    },
+    "extract-markdown#cmd": {
+      "key": "2dd60abbfb017398",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "file_changes": {
+        "media": {
+          "kind": "directory"
+        },
+        "media/356589482143f30d37d45c802f848534869c45dd.png": {
+          "kind": "file",
+          "sha256": "486313e8c6a72a7db263979d308658a591faeffe5a80fe7c5a77d0a32523f0e0"
+        },
+        "out.html": {
+          "kind": "file",
+          "sha256": "6cf9a93e9c0f95c593e2688bdfc11f61557065f15c1a4d78854942a9e8ac83e6"
+        }
+      }
+    },
+    "log#cmd": {
+      "key": "c4927076ff139071",
+      "exit": 0,
+      "stdout": "A log entry test.\n",
+      "stderr": "",
+      "file_changes": {
+        "log.json": {
+          "kind": "file",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    },
+    "missing-parent#cmd": {
+      "key": "ae2fb424459bf709",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "file_changes": {
+        "missing": {
+          "kind": "directory"
+        },
+        "missing/out.html": {
+          "kind": "file",
+          "sha256": "5119025734d72a084a20c7e03d7cd548911e5f0ed0c461069837815a9518212d"
+        }
+      }
+    },
+    "overwrite#cmd": {
+      "key": "013dba84e73cc591",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "file_changes": {
+        "out.html": {
+          "kind": "file",
+          "sha256": "3fa12002c839ef81e88bcc16c82dc9ee9bedd36aac33c483217c4a294e497e31"
+        }
+      }
+    }
+  }
+}
