@@ -1,7 +1,7 @@
 id	milestone	status	metric	baseline	target	title	accept
 M1-01	M1	done	gate.steps	0/0	+1	Gate in the sandbox: `crates/randoc-citeproc/tests/time.rs` runs `ps` (refused); `init.sh` stops at the hook copy; the 20 s wall limit of a harness unit fails correct code under load (use CPU time of the child); no tool passes `GHCRTS=-M3g` to the oracle (harness `exec.rs`, the suite, corpus and CommonMark tools) (gain: first row, all steps pass)	all-pass
 M1-02	M1	done	gate.steps	15/15	+2	Baseline checks: the suite tool writes its baseline before it reads it, so the check cannot fail; the corpus tool has no baseline check	all-pass
-M1-03	M1	queued	files.units	-	+1	Harness captures each file that a run writes (`-o`, `--log`, `--extract-media`); 0 units compare a written file today (gain: first row, TOTAL >= 60)	min-total=60
+M1-03	M1	active	files.units	0/0	+1	Harness captures each file that a run writes (`-o`, `--log`, `--extract-media`); 0 units compare a written file today (gain: first row, TOTAL >= 60)	min-total=60
 M1-04	M1	queued	fmt.write	-	+1	Pivot set (each block, inline, attribute and table form) and one row for each writer (gain: first row, 76 keys)	-
 M1-05	M1	queued	fmt.read	-	+1	Reader inputs from the oracle's pivot output, the own cases and the corpus; one row for each reader (gain: first row, 52 keys)	-
 M1-06	M1	queued	caps.extensions	-	+1	One probe set for each (direction, format, extension) pair, kept only when the oracle output changes with the switch; 11 extension names have 0 units today (gain: TOTAL = 1,719)	min-total=1719
