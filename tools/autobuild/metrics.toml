@@ -69,10 +69,10 @@ total = "#cmd units of class pass or fail"
 
 [[metric]]
 key = "caps.readers"
-suite = "harness"
-status = "active"
-command = "{harness} run --randoc {randoc} --jobs 4 --report {evidence}/harness-report.json --matrix {evidence}/capabilities.json"
-pass = "input formats of spec/inventory/input-formats.json whose matrix entry has status passing (it has a read unit, and each of its units passes)"
+suite = "readers"
+status = "to-build"
+command = ""
+pass = "readers with every measured input and each harness conversion passing"
 total = "input formats in spec/inventory/input-formats.json (52)"
 
 [[metric]]
@@ -370,7 +370,7 @@ total = "sum of fmt.write.F: pivot trees for each of the 76 writers other than p
 
 [[metric]]
 key = "fmt.read"
-suite = "fmt"
+suite = "readers"
 status = "to-build"
 command = ""
 pass = "sum of fmt.read.F: inputs of format F that reader F converts to the oracle tree"

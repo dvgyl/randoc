@@ -194,7 +194,6 @@ class SuiteResult:
 HARNESS_KINDS = {"read": "harness.read", "write": "harness.write", "e2e": "harness.e2e", "cmd": "harness.cmd"}
 HARNESS_CLASSES = {"pass": PASS, "fail": FAIL, "no_result": FAIL, "not_recorded": FAIL, "skipped": NO_INPUT}
 CAPS = {
-    "caps.readers": ("input_formats", "input-formats.json"),
     "caps.options": ("options", "options.json"),
 }
 

@@ -257,3 +257,7 @@ Both writer experiments reproduced all 30,400 writer verdicts and all 61,449 har
 ## 2026-11-18T22:42:15Z decision M1-05 84f3d6a9504e
 
 Tool correction of caps.readers by M1-05: The old rule used the harness matrix alone. The strict rule also requires every counted fmt.read.F input to pass. TOTAL stays 52. The rows of caps.readers before 2026-11-18T22:42:15Z no longer count for gains, regressions or milestone checks.
+
+## 2026-11-18T22:42:18Z decision M1-05 5720844bbb55
+
+Tool correction of caps.readers. The old harness-only score was 4/52. Under plan/SPEC.md section 5, a format now passes only if every counted fmt.read.F input and each harness unit with from F passes. TOTAL stays 52. The inventory keeps all 52 formats.
