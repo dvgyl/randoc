@@ -41,7 +41,7 @@ Options:
   --matrix FILE       run: write the capability matrix to FILE.
   --report FILE       run: write the result of each unit to FILE. Default: target/harness/report.json.
   --jobs N            The number of programs to run at the same time. The oracle runs at most 2 times.
-  --timeout SECONDS   The time limit for one program run. Default: 30.
+  --timeout SECONDS   The wall-time limit for one program run. Default: 600.
   --root DIR          The repository root. Default: the current directory.
 
 record and verify-oracle need the oracle: Pandoc 3.13.
@@ -92,7 +92,7 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
         matrix: None,
         report: None,
         jobs: std::thread::available_parallelism().map_or(4, usize::from),
-        timeout: Duration::from_secs(30),
+        timeout: Duration::from_secs(exec::DEFAULT_WALL_SECONDS),
         root: PathBuf::from("."),
     };
     let mut rest = args.iter().skip(1);
@@ -427,7 +427,7 @@ struct UnitResult<'a> {
 }
 
 fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> {
-    let results = parallel_map(&session.units, session.config.jobs, |worker, unit| {
+    let run = |worker, unit: &Unit| {
         let Some(stdin) = session.stdin(unit) else {
             return (Status::Skipped, None, None);
         };
@@ -446,17 +446,17 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
             }
             Err(error) => (Status::NoResult(error), None, None),
         }
-    });
+    };
+    let results = parallel_map(&session.units, session.config.jobs, run);
     session
         .units
         .iter()
         .zip(results)
         .map(|(unit, result)| {
-            let (status, verdict, actual) = result.unwrap_or((
-                Status::NoResult("the worker thread stopped".to_owned()),
-                None,
-                None,
-            ));
+            let (status, verdict, actual) = match result {
+                Some((Status::NoResult(_), _, _)) | None => run(0, unit),
+                Some(result) => result,
+            };
             UnitResult {
                 unit,
                 status,
@@ -1241,6 +1241,20 @@ mod tests {
         check.push(run_limit);
         assert!(!run(fixture.session("run", &check, &oracle, &broken)).unwrap());
         assert_eq!(fixture.report_statuses()["s/f/a#read"], "no_result");
+    }
+
+    #[test]
+    fn a_unit_with_no_result_can_pass_on_the_retry() {
+        let fixture = Fixture::new("retry");
+        let oracle = fixture.echo("oracle");
+        let randoc = fixture.program(
+            "randoc",
+            "if [ ! -f \"$0.ran\" ]; then touch \"$0.ran\"; kill -KILL $$; fi\ncat",
+        );
+        let filter = ["--filter", "s/f/a#read"];
+        assert!(record(fixture.session("record", &filter, &oracle, &randoc)).unwrap());
+        assert!(run(fixture.session("run", &filter, &oracle, &randoc)).unwrap());
+        assert_eq!(fixture.report_statuses()["s/f/a#read"], "pass");
     }
 
     #[cfg(unix)]

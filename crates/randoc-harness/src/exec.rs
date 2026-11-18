@@ -16,6 +16,13 @@ pub const SOURCE_DATE_EPOCH: &str = "1700000000";
 /// The time that the harness gives the output pipes to close after the program ends.
 const PIPE_GRACE: Duration = Duration::from_secs(2);
 
+pub const DEFAULT_WALL_SECONDS: u64 = 600;
+
+#[cfg(target_os = "macos")]
+const LIMIT_SHELL: &str = "/bin/sh";
+#[cfg(all(unix, not(target_os = "macos")))]
+const LIMIT_SHELL: &str = "/bin/bash";
+
 /// The heap limit of the oracle, a Haskell program. On 2026-11-10 one oracle
 /// run used 22 GB and filled the swap space of the machine.
 pub const ORACLE_GHCRTS: &str = "-M3g";
@@ -28,7 +35,7 @@ const HEAP_EXHAUSTED: i32 = 251;
 pub struct Program {
     /// The path of the executable file.
     pub binary: std::path::PathBuf,
-    /// The time after which the harness stops the program.
+    /// The wall time after which the harness stops the program.
     pub timeout: Duration,
     /// The GHC runtime options (`GHCRTS`) of the oracle, `None` for Randoc.
     /// An oracle run that reaches the heap limit has no result.
@@ -138,12 +145,23 @@ impl Program {
             fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))?;
         }
 
-        let mut command = Command::new(&self.binary);
         #[cfg(unix)]
-        {
+        let mut command = {
             use std::os::unix::process::CommandExt;
-            command.arg0("pandoc").process_group(0);
-        }
+            let mut shell = Command::new(LIMIT_SHELL);
+            // A failed exec must give no result. The program can itself exit 126 or 127.
+            shell
+                .args([
+                    "-c",
+                    "shopt -s execfail; ulimit -t 60 && exec -a pandoc \"$@\"; kill -KILL \"$$\"",
+                    "randoc-harness",
+                ])
+                .arg(&self.binary)
+                .process_group(0);
+            shell
+        };
+        #[cfg(not(unix))]
+        let mut command = Command::new(&self.binary);
         command
             .args(args)
             .current_dir(work_dir)
@@ -175,11 +193,11 @@ impl Program {
         let stdout = read_in_thread(child.stdout.take());
         let stderr = read_in_thread(child.stderr.take());
 
-        let deadline = Instant::now() + self.timeout;
+        let started = Instant::now();
         let status = loop {
             match child.try_wait() {
                 Ok(Some(status)) => break status,
-                Ok(None) if Instant::now() >= deadline => {
+                Ok(None) if started.elapsed() >= self.timeout => {
                     kill_tree(&mut child);
                     return Err(format!("no result after {} s", self.timeout.as_secs()));
                 }
@@ -204,7 +222,7 @@ impl Program {
         let stderr = receive(&stderr)?;
         let exit = status
             .code()
-            .ok_or("the program ended without an exit code")?;
+            .ok_or_else(|| format!("{} ended without an exit code", self.binary.display()))?;
         if let Some(options) = self.ghcrts.filter(|_| exit == HEAP_EXHAUSTED) {
             return Err(format!(
                 "the oracle reached its heap limit (GHCRTS={options})"
@@ -248,6 +266,23 @@ mod tests {
         assert_eq!(outcome.exit, 7);
         assert_eq!(outcome.stdout_bytes(), b"in\n");
         assert_eq!(outcome.stderr_bytes(), b"err\n");
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn the_child_has_a_cpu_limit_and_keeps_its_arguments_and_exit_code() {
+        let dir = work_dir("cpu");
+        let args = [
+            "-c",
+            "ulimit -t; printf '%s\\n' \"$1\"; exit 127",
+            "pandoc",
+            "a $b ' c",
+        ];
+        let outcome = shell(20_000)
+            .run(&args.map(str::to_owned), b"", &BTreeMap::new(), &dir)
+            .unwrap();
+        assert_eq!(outcome.stdout_bytes(), b"60\na $b ' c\n");
+        assert_eq!(outcome.exit, 127);
         fs::remove_dir_all(&dir).unwrap();
     }
 

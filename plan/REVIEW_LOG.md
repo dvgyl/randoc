@@ -117,3 +117,11 @@ Final check of review round 3: both reviewers found that a commit that cuts an i
 ## 2026-11-18T06:52:46Z decision M1-01 4a62b2d19e7b
 
 Round 3 machine points (both reviewers rejected the first reason): ops item cut now refuses untracked files outside plan/ before a revert that can end in a reset, and measure.py waits for 25% free memory before it takes a measurement slot. The remaining risk (a shared target folder in one session) stays a weak spot: AGENTS.md allows one heavy command per session.
+
+## 2026-11-18T07:12:38Z decision M1-01 9d29d4c48a06
+
+M1-01 uses the existing gate report as the source of the gate.steps row. A step that did not run counts as a failure. A change to a program copy adds a failed unit, even if each scheduled step passed.
+
+## 2026-11-18T07:12:38Z weak-spot M1-01 9d29d4c48a06
+
+The M1-01 harness enforces 60 s per process and 600 s wall time. It still relies on the machine watchdog for memory, so it does not yet enforce the 3,000 MB process group limit in plan/SPEC.md 3.9. The gate source scan detects direct oracle references and direct calls to pandoc. It does not resolve dynamically constructed executable names.
