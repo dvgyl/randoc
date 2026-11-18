@@ -14,11 +14,13 @@ elif [ -f .local/env.sh ]; then
   . ./.local/env.sh
 fi
 
-hooks_dir="$(git rev-parse --git-common-dir)/hooks"
-mkdir -p "$hooks_dir"
-cp scripts/hooks/commit-msg "$hooks_dir/commit-msg"
-chmod +x "$hooks_dir/commit-msg"
-echo "init: installed the commit-msg hook in $hooks_dir"
+if ! git config --get core.hooksPath >/dev/null; then
+  hooks_dir="$(git rev-parse --git-common-dir)/hooks"
+  mkdir -p "$hooks_dir"
+  cp scripts/hooks/commit-msg "$hooks_dir/commit-msg"
+  chmod +x "$hooks_dir/commit-msg"
+  echo "init: installed the commit-msg hook in $hooks_dir"
+fi
 
 cargo build --workspace --all-targets
 if [ "${1:-}" = "--quick" ]; then
