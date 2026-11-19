@@ -49,7 +49,9 @@ def capture(binary, command, *, oracle=False):
         program = binary.resolve(strict=True)
     except OSError as error:
         raise NoResult(f"The program is missing: {error}") from error
-    with tempfile.TemporaryDirectory(prefix="randoc-errors-") as folder, \
+    scratch = (tempfile.TemporaryDirectory(prefix="randoc-errors-scratch-")
+               if command.local_temp else nullcontext())
+    with scratch as temp, tempfile.TemporaryDirectory(prefix="randoc-errors-") as folder, \
          tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
         work = Path(folder)
         for name, data in command.files:
@@ -68,8 +70,8 @@ def capture(binary, command, *, oracle=False):
             "GHCRTS": "-M3g",
             "RANDOC_DATA_DIR": str(Path(os.environ.get("RANDOC_GPT", ROOT.parent)) / "datapack"),
         }
-        if command.local_temp:
-            env["TMPDIR"] = str(work)
+        if temp is not None:
+            env["TMPDIR"] = temp
         env.update(command.env)
         argv = [sys.executable, str(LIMIT_RUN), "3000", "600", "/bin/sh", "-c",
                 LAUNCH, "errors", str(program), *command.args]

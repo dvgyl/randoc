@@ -67,6 +67,27 @@ class ErrorSuiteTests(unittest.TestCase):
         })
         self.assertEqual(second, first)
 
+    def test_pdf_scratch_files_are_outside_the_measured_folder(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "stub"
+            path.write_text(
+                '#!/bin/sh\n'
+                'test -d "$TMPDIR" || exit 41\n'
+                'test ! -e "$TMPDIR/engine.tmp" || exit 42\n'
+                'printf "%s" scratch > "$TMPDIR/engine.tmp" || exit 43\n'
+                'printf "%s" output > check.pdf\n',
+                encoding="utf-8",
+            )
+            path.chmod(0o700)
+            command = errors.TRIGGERS[47]["missing-pdf-engine"]
+            first = errors.capture(path, command, oracle=True)
+            second = errors.capture(path, command, oracle=True)
+        self.assertEqual(first["exit"], 0)
+        self.assertEqual(first["files"], {
+            "check.pdf": {"kind": "file", "sha256": hashlib.sha256(b"output").hexdigest()},
+        })
+        self.assertEqual(second, first)
+
     def test_unstable_oracle_result_checks_the_parts_that_agree(self):
         unit = errors.Unit("log/example", errors.Command(()))
         first = {"exit": 0, "stdout": "same", "stderr": "old", "files": {}}
