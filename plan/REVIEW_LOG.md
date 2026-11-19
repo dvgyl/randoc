@@ -359,3 +359,9 @@ Commit 2a65313 applies the CPU limit to both remaining AST source collectors. Th
 ## 2026-11-19T18:11:17Z decision M1-05 b31ad3a046ec
 
 The first scored M1-05 run on b31ad3a recorded 54 clean rows. It passed 27,474 of 39,973 reader inputs and matched all prior verdicts. The strict capabilities score was 2/52. No inputs were excluded. The plan records also capture the completed AST reviews and recovery decision.
+
+## 2026-11-19T19:55:55Z weak-spot M1-05 a05e07ea05be
+
+Item M1-05 done. Gain on fmt.read: the metric now has rows (best PASS 27474) (baseline 0/0). Gate: 20261119T181119Z-a05e07ea05be.
+
+Weak spots: Randoc still fails 12,549 of the 39,973 reader cases. Only csljson and native pass the strict capability check. All 12 XLSX cases fail.
