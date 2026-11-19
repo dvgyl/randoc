@@ -1,0 +1,4 @@
+utc	commit	dirty	item	metric	pass	total	tool	evidence
+2026-11-18T22:40:46Z	b39e1642104edc472cee3129098fa635f68daa44	no	M1-10	defaults.units	92	103	defaults@71b743992dc1	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261118T224046Z-b39e1642104e/defaults.json
+2026-11-18T22:58:37Z	f5f315146da6f3e1ca7b972882b5a714ab7bca81	no	M1-10	defaults.units	92	103	defaults@bbff0bd54ed5	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261118T225837Z-f5f315146da6/defaults.json
+2026-11-19T04:40:08Z	31434f59363c60b17c0977f7a77ec97375475ff6	no	M1-10	defaults.units	45	103	defaults@4eeeb8023c91	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261119T044008Z-31434f59363c/defaults.json
