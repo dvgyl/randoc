@@ -365,3 +365,7 @@ The first scored M1-05 run on b31ad3a recorded 54 clean rows. It passed 27,474 o
 Item M1-05 done. Gain on fmt.read: the metric now has rows (best PASS 27474) (baseline 0/0). Gate: 20261119T181119Z-a05e07ea05be.
 
 Weak spots: Randoc still fails 12,549 of the 39,973 reader cases. Only csljson and native pass the strict capability check. All 12 XLSX cases fail.
+
+## 2026-11-19T22:59:09Z decision M1-05 bdcddc140a30
+
+The full M1-05 closure run on bdcddc1 passed all 18 gate checks and wrote 149 clean rows. All verdicts match the preceding full run, including 27,474/39,973 reader cases and 2/52 strict reader capabilities. The run manifest is in $RANDOC_RUNS/measure/20261119T195600Z-bdcddc140a30.
