@@ -307,3 +307,7 @@ Weak spots: Forty-three of the 103 keys have equal oracle results for their two 
 ## 2026-11-19T10:20:54Z blocked-on-owner M1-05 17e5239a98ff
 
 M1-12 left the M1 gate without a lua.api row. The worker recorded 0/468 on its branch, which meets the coverage rule for a new metric. The lead guard counted all three attempts and had no scored row on gpt/build. The item was cut and its branch gpt/w/M1-12 stays at 375d659. The measured row predates the final probe fix. AGENTS.md sections 6 and 9 prevent a repeat item for the same cause or a merge of the cut branch.
+
+## 2026-11-19T10:57:01Z decision M1-11 9eb271ae13a2
+
+The first review showed that exit/43 and exit/47 used a scratch folder inside the measured work folder. Pandoc left a different media directory on each run. Both oracle runs were stable when the scratch folder was outside the measured work folder. Move the scratch folder and keep both probes in the score. Send the review finding to the worker in the active item title.
