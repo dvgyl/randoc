@@ -335,3 +335,7 @@ The AST reference recorder can keep both oracle observations for 256 units in me
 ## 2026-11-19T14:37:11Z decision M1-10 c35360c07ee6
 
 The clean full run on 0d0d1ea wrote 149 rows across all eight active suites. All 18 gate checks passed. Every earlier verdict matched, and defaults.units reproduced the 45/103 result. The run manifest is in $RANDOC_RUNS/measure/20261119T094733Z-0d0d1ea52b97.
+
+## 2026-11-19T14:39:43Z decision M1-05 1ae268721291
+
+The second reader review found that a timeout could hide a completed oracle result from the same pair. The fix retains the completed observations and their differences. The two regression tests failed before the fix. All 15 reader tests pass. The second review records are in plan/REVIEWS.tsv in timestamp order. This change uses a new reader reference cache version.

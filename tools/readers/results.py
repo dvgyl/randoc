@@ -49,15 +49,16 @@ def differences(expected, actual):
 def oracle_reference(first, second, saved=None):
     original = saved.first if saved is not None else None
     parts = set(saved.unstable_parts) if saved is not None else set()
+    limits = []
     for number, observation in enumerate((first, second), start=1):
         if isinstance(observation, str):
-            return Reference("oracle_limit", original, unstable_parts=tuple(sorted(parts)),
-                             reason=f"oracle run {number}: {observation}")
-        if original is not None:
+            limits.append(f"oracle run {number}: {observation}")
+        elif original is None:
+            original = observation
+        else:
             parts.update(differences(original, observation))
-    if original is None:
-        original = first
-        parts.update(differences(first, second))
+    if limits:
+        return Reference("oracle_limit", original, unstable_parts=tuple(sorted(parts)), reason=". ".join(limits))
     if parts:
         return Reference("unstable", original, unstable_parts=tuple(sorted(parts)),
                          reason="the oracle results differ")

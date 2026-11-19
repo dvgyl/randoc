@@ -143,6 +143,26 @@ class ReaderResultsTest(unittest.TestCase):
                 stored = read_reference(database, key)
                 self.assertEqual((stored.status, stored.unstable_parts), ("unstable", ("stdout",)))
 
+    def test_a_timeout_keeps_a_difference_from_the_other_observation(self):
+        first = Observation(0, b"[]", b"", {})
+        changed = Observation(0, b"[1]", b"", {})
+        saved = results.oracle_reference(first, first)
+        limited = results.oracle_reference(first, "timeout", saved)
+        checked = results.oracle_reference("timeout", changed, limited)
+        self.assertEqual((checked.status, checked.unstable_parts), ("oracle_limit", ("stdout",)))
+        recovered = results.oracle_reference(first, first, checked)
+        self.assertEqual(results.verdict("case", "html", recovered, first)["status"], "unstable")
+
+    def test_a_new_pair_keeps_its_completed_observation_after_a_timeout(self):
+        first = Observation(0, b"[]", b"", {})
+        changed = Observation(0, b"[1]", b"", {})
+        for pair in ((first, "timeout"), ("timeout", first)):
+            with self.subTest(pair=pair):
+                limited = results.oracle_reference(*pair)
+                self.assertEqual((limited.status, limited.first), ("oracle_limit", first))
+                checked = results.oracle_reference(changed, changed, limited)
+                self.assertEqual((checked.status, checked.unstable_parts), ("unstable", ("stdout",)))
+
 
 class ReaderSuiteTest(unittest.TestCase):
     def parse(self, rows, *, selected=None, known=(), formats=("html", "markdown")):
