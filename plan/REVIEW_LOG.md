@@ -293,3 +293,13 @@ The clean full run at 768abcb wrote 148 rows and passed all 18 gate checks. It r
 ## 2026-11-19T04:39:44Z decision M1-10 4c5caec91199
 
 Tool correction of defaults.units by M1-10: The old worker score of 92/103 could pass a key whose two valid settings gave equal oracle results. A passing key now needs different oracle results for those settings. TOTAL stays 103. No key is removed. The rows of defaults.units before 2026-11-19T04:39:44Z no longer count for gains, regressions or milestone checks. The baseline of M1-10 is now 0/0: its first row with a TOTAL above 0 is its gain.
+
+## 2026-11-19T09:47:28Z decision M1-10 695621169c86
+
+The worker merge passed all 18 gate checks and reproduced all 103 defaults verdicts at 45/103. The merge brought the branch to its ten-commit limit because the guard counts the six worker commits. The guard refused the closure commit. The required clean full measurement on 6956211 wrote 149 rows and preserved every earlier verdict. Restored the exact measured M1-10 row from its verified copy. When planning later merges, count the commits that the worker branch adds and allow for the closure commit.
+
+## 2026-11-19T09:47:28Z weak-spot M1-10 695621169c86
+
+Item M1-10 done. Gain on defaults.units: the metric now has rows (best PASS 45) (baseline 0/0). Gate: 20261119T064209Z-695621169c86.
+
+Weak spots: Forty-three of the 103 keys have equal oracle results for their two valid settings. They need inputs that show the effect of each key. Fifteen of the 60 keys with a visible effect still fail compatibility checks.
