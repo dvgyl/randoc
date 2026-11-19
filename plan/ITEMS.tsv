@@ -6,7 +6,7 @@ M1-04	M1	done	fmt.write	0/0	+1	Pivot set (each block, inline, attribute and tabl
 M1-05	M1	active	fmt.read	0/0	+1	Reader inputs from the oracle's pivot output, the own cases and the corpus; one row for each reader (gain: first row, 52 keys)	-
 M1-06	M1	queued	caps.extensions	-	+1	One probe set for each (direction, format, extension) pair, kept only when the oracle output changes with the switch; 11 extension names have 0 units today (gain: TOTAL = 1,719)	min-total=1719
 M1-07	M1	queued	caps.options	-	+1	Value sets for each option on 5 base conversions; short options map to long names; 20 options rest on 1 to 3 units, and `embed-resources` and `pdf-engine` are "passing" on parse-only cases (gain: TOTAL = 109)	min-total=109
-M1-08	M1	queued	ast.roundtrip	-	+1	JSON and `native` round trip of each distinct oracle tree; cases for each wrong `pandoc-api-version` form (gain: first row)	-
+M1-08	M1	active	ast.roundtrip	0/0	+1	JSON and `native` round trip of each distinct oracle tree; cases for each wrong `pandoc-api-version` form (gain: first row)	-
 M1-09	M1	queued	templates.units	-	+1	15 variable sets and 2 documents for each format with a default template; user partials (gain: first row)	-
 M1-10	M1	done	defaults.units	0/0	+1	One number for each defaults key that the oracle accepts (gain: first row)	-
 M1-11	M1	active	errors.units	0/0	+1	One confirmed trigger for each exit code; `--verbose --log` files of the corpus and pivot conversions (gain: first row)	-
