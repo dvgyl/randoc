@@ -58,7 +58,8 @@ def harness_inputs(root, formats):
 def document_data(document, folder, *, fetch=False):
     path = folder / document.file_name
     if path.is_file():
-        data = path.read_bytes()
+        with path.open("rb") as stream:
+            data = stream.read(document.size + 1)
     elif fetch:
         data = download(document.url)
     else:

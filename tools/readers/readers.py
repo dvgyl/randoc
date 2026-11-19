@@ -21,6 +21,21 @@ from results import json_equal, oracle_reference, verdict
 from writers import attempt, batches, file_hash, first_run, prepare
 
 
+def merge_observations(database, observations):
+    with database:
+        # Merge evidence after the slow oracle calls, under the write lock.
+        database.execute("BEGIN IMMEDIATE")
+        merged = []
+        for key, first, second in observations:
+            saved = read_reference(database, key)
+            if first is None:
+                if saved is None or saved.first is None:
+                    raise ValueError("the saved oracle result disappeared during verification")
+                first = saved.first
+            merged.append((key, oracle_reference(first, second, saved)))
+        write_references(database, merged, refresh=True)
+
+
 def recorded_references(database, inputs, capture, pool, verify):
     statuses = {key: read_status(database, key) for key in inputs}
     pairs = [key for key, status in statuses.items() if status in (None, "oracle_limit")]
@@ -33,22 +48,16 @@ def recorded_references(database, inputs, capture, pool, verify):
             time.sleep(1)
             for group in batches(pairs, 2):
                 captures = pool.map(capture, (inputs[key] for key in group))
-                results = []
+                observations = []
                 for key, second in zip(group, captures):
                     initial = read_reference(first, key)
-                    earlier = read_reference(database, key)
-                    reference = oracle_reference(initial.first if initial.first is not None else initial.reason,
-                                                 second, earlier)
-                    results.append((key, reference))
-                write_references(database, results, refresh=True)
+                    observations.append((key, initial.first if initial.first is not None else initial.reason, second))
+                merge_observations(database, observations)
     if verify:
         saved = [key for key, status in statuses.items() if status in ("stable", "unstable")]
         for group in batches(saved, 2):
-            originals = {key: read_reference(database, key) for key in group}
             captures = pool.map(capture, (inputs[key] for key in group))
-            checked = [(key, oracle_reference(originals[key].first, value, originals[key]))
-                       for key, value in zip(group, captures)]
-            write_references(database, checked, refresh=True)
+            merge_observations(database, [(key, None, value) for key, value in zip(group, captures)])
 
 
 def compare_format(args, fmt, units, database, version, oracle_pool, randoc_pool, rows, retries):

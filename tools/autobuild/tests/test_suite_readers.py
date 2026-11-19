@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from contextlib import closing
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import mock_open, patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools/readers"))
@@ -15,10 +15,11 @@ sys.path.insert(0, str(ROOT / "tools/autobuild"))
 
 import inputs
 import measure
+import readers
 import results
 from corpuslib import Document
 from observe import Observation
-from reference import Reference, cache_key, open_cache, write_references
+from reference import Reference, cache_key, open_cache, read_reference, write_references
 
 
 class ReaderInputsTest(unittest.TestCase):
@@ -56,6 +57,15 @@ class ReaderInputsTest(unittest.TestCase):
             (directory / document.file_name).write_bytes(b"Bad document")
             with self.assertRaisesRegex(ValueError, "pinned size or SHA-256"):
                 inputs.document_data(document, directory)
+
+    def test_corpus_input_reads_at_most_one_byte_past_the_pinned_size(self):
+        document = Document("test-book", "xlsx", "https://example.org/test.xlsx",
+                            "Apache-2.0", "Example", hashlib.sha256(b"a").hexdigest(), 1)
+        opener = mock_open(read_data=b"ab")
+        with patch.object(Path, "is_file", return_value=True), patch.object(Path, "open", opener):
+            with self.assertRaisesRegex(ValueError, "pinned size or SHA-256"):
+                inputs.document_data(document, Path("corpus"))
+        opener().read.assert_called_once_with(2)
 
     def test_pivot_uses_pinned_raw_oracle_output_only_after_exit_zero(self):
         trees = [("forms/heading", b"first tree"), ("forms/line", b"second tree")]
@@ -114,6 +124,24 @@ class ReaderResultsTest(unittest.TestCase):
         self.assertEqual(checked.status, "unstable")
         changed = Observation(0, b"[1]", b"second", {})
         self.assertFalse(results.verdict("case", "html", checked, changed)["unstable_parts_ok"])
+
+    def test_recheck_preserves_a_difference_recorded_during_the_oracle_call(self):
+        key = b"reader"
+        first = Observation(0, b"[]", b"", {})
+        changed = Observation(0, b"[1]", b"", {})
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "readers.sqlite"
+            with closing(open_cache(path)) as database, closing(open_cache(path)) as other:
+                write_references(database, [(key, results.oracle_reference(first, first))])
+
+                def capture(_unit):
+                    write_references(other, [(key, results.oracle_reference(first, changed))], refresh=True)
+                    return first
+
+                pool = type("Pool", (), {"map": staticmethod(map)})()
+                readers.recorded_references(database, {key: None}, capture, pool, True)
+                stored = read_reference(database, key)
+                self.assertEqual((stored.status, stored.unstable_parts), ("unstable", ("stdout",)))
 
 
 class ReaderSuiteTest(unittest.TestCase):

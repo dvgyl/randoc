@@ -285,3 +285,7 @@ The Git guard refused the M1-05 fix commit because the abandoned M1-12 worker ha
 ## 2026-11-19T01:21:13Z cut M1-12 503ddbe55a81
 
 Item M1-12 cut after 3 experiments with no gain on lua.api. Reason: The worker abandoned the branch after three attempts. The Git guard refuses further build commits until this item closes. The 468-name worker row predates the final verified styling fix and the abandoned branch stays available for review.
+
+## 2026-11-19T04:39:15Z decision M1-05 974671396252
+
+The clean full run at 768abcb wrote 148 rows and passed all 18 gate checks. It retained each of the 61,449 earlier conformance verdicts and added 440 reader cases. All 39,973 reader verdicts match the unscored diagnostic. The guard had reached its ten-commit limit after closing M1-12. The run checked the committed reader suite before the two review fixes. The scoreboard commit reset the limit. Restored both fixes and their review records from the verified patch, then passed all 13 reader tests.
