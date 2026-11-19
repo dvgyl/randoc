@@ -289,3 +289,7 @@ Item M1-12 cut after 3 experiments with no gain on lua.api. Reason: The worker a
 ## 2026-11-19T04:39:15Z decision M1-05 974671396252
 
 The clean full run at 768abcb wrote 148 rows and passed all 18 gate checks. It retained each of the 61,449 earlier conformance verdicts and added 440 reader cases. All 39,973 reader verdicts match the unscored diagnostic. The guard had reached its ten-commit limit after closing M1-12. The run checked the committed reader suite before the two review fixes. The scoreboard commit reset the limit. Restored both fixes and their review records from the verified patch, then passed all 13 reader tests.
+
+## 2026-11-19T04:39:44Z decision M1-10 4c5caec91199
+
+Tool correction of defaults.units by M1-10: The old worker score of 92/103 could pass a key whose two valid settings gave equal oracle results. A passing key now needs different oracle results for those settings. TOTAL stays 103. No key is removed. The rows of defaults.units before 2026-11-19T04:39:44Z no longer count for gains, regressions or milestone checks. The baseline of M1-10 is now 0/0: its first row with a TOTAL above 0 is its gain.
