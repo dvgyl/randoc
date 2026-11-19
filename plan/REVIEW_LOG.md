@@ -261,3 +261,27 @@ Tool correction of caps.readers by M1-05: The old rule used the harness matrix a
 ## 2026-11-18T22:42:18Z decision M1-05 5720844bbb55
 
 Tool correction of caps.readers. The old harness-only score was 4/52. Under plan/SPEC.md section 5, a format now passes only if every counted fmt.read.F input and each harness unit with from F passes. TOTAL stays 52. The inventory keeps all 52 formats.
+
+## 2026-11-18T23:19:21Z decision M1-05 503ddbe55a81
+
+The first review reproduced an unsafe cache update and an unbounded corpus file read. The reader cache now checks its latest result under a write lock after the oracle call. The corpus loader reads at most one byte past the pinned size. Both regression tests failed before these fixes and all 13 reader tests passed after them. The full diagnostic in $RANDOC_RUNS/measure/20261118T225047Z-503ddbe55a81 uses both fixes.
+
+## 2026-11-18T23:19:21Z decision M1-10 503ddbe55a81
+
+The option-order group now needs a command-line option on each side of a defaults file. Both valid extraction probes now record the extracted image. The second review found that default-image-extension passed without an image. In the old report 70 of 103 pairs of valid settings had equal oracle results. Commit 31434f5 requires an observable difference to pass and gives several keys inputs that exercise their effect. The two image-extension probes produced layout.svg and layout.png. Record the tool correction before the next scored defaults run. AGENTS.md section 10 limits this item to the two review rounds already used.
+
+## 2026-11-18T23:24:42Z decision M1-12 503ddbe55a81
+
+The first Lua review found a process-output attribution error and a binary probe that measured only a file prefix. The revised worker run recorded 243 filter matches among 468 names and zero matches in standalone mode. The second review found a bold probe that passed a no-op. Commit 375d659 makes that no-op fail and keeps the literal probe passing. The worker marked its branch abandoned after three attempts. The recorded 0/468 row meets the first-baseline rule of plan/SPEC.md 4.1, and that row predates 375d659. Preserve the branch and evidence under AGENTS.md section 9.
+
+## 2026-11-19T01:20:16Z decision M1-05 503ddbe55a81
+
+The unscored reader diagnostic passed 27,474 of 39,973 inputs across 52 formats. It found no oracle exclusions and no Randoc process without a result. The writer cache contains one failed oracle write in the paired inventory, rst forms/block-header-zero with exit code 1. The remaining 15,999 pivot outputs all appear in the report, along with 23,736 distinct harness inputs and 238 corpus documents. AGENTS.md section 7 requires a clean full measurement at ten commits. Run it before recording the second review.
+
+## 2026-11-19T01:21:13Z decision M1-12 503ddbe55a81
+
+The Git guard refused the M1-05 fix commit because the abandoned M1-12 worker had used three attempts and the build stream has no Lua score. The worker branch has a 0/468 row under the first-baseline coverage rule. AGENTS.md sections 6, 7 and 9 govern the guard refusal and the abandoned branch. Close the item with ops item cut. Retain the worktree, commits and evidence for review.
+
+## 2026-11-19T01:21:13Z cut M1-12 503ddbe55a81
+
+Item M1-12 cut after 3 experiments with no gain on lua.api. Reason: The worker abandoned the branch after three attempts. The Git guard refuses further build commits until this item closes. The 468-name worker row predates the final verified styling fix and the abandoned branch stays available for review.
