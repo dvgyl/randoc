@@ -33,3 +33,5 @@ utc	item	round	commit	session	verdict	evidence
 2026-11-19T11:19:41Z	M1-11	2	d13b36d1028b15af6b075fac40c9de1ea775e8cc	01a1f378-4bdd-7fc3-9d46-498aad524748	approve	/Volumes/Extreme Pro/Randoc/broker-out/20261119T110104Z-review-5223ea4d.json
 2026-11-19T11:20:03Z	M1-08	1	563d8c43893249b6b54b4a618a3849f369ca054d	-	started	-
 2026-11-19T11:24:48Z	M1-08	1	563d8c43893249b6b54b4a618a3849f369ca054d	01a1f389-6cf4-7123-afa2-44982e77d09a	block	From the M1-08 worktree, run `PYTHONPATH=tools/ast python3 -B -c 'from pathlib import Path; import sources; print(sources.execute("/bin/sh", ["-c", "ulimit -t"], Path.cwd(), Path("/var/empty"), 2, ghcrts=sources.ORACLE_GHCRTS))'` => `Outcome(exit=0, stdout=b'unlimited\n', stderr=b'', timed_out=False)`
+2026-11-19T16:41:47Z	M1-08	2	3e280b8c68b16bb69add8326340bd64b2a0fc958	-	started	-
+2026-11-19T16:45:06Z	M1-08	2	3e280b8c68b16bb69add8326340bd64b2a0fc958	01a1f4af-d74b-7e90-9583-dbdbc6cd7693	block	Run this command from the M1-08 worktree. => commonmark/1 unlimited

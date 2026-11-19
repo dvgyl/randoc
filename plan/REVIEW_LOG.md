@@ -339,3 +339,23 @@ The clean full run on 0d0d1ea wrote 149 rows across all eight active suites. All
 ## 2026-11-19T14:39:43Z decision M1-05 1ae268721291
 
 The second reader review found that a timeout could hide a completed oracle result from the same pair. The fix retains the completed observations and their differences. The two regression tests failed before the fix. All 15 reader tests pass. The second review records are in plan/REVIEWS.tsv in timestamp order. This change uses a new reader reference cache version.
+
+## 2026-11-19T16:33:32Z decision M1-08 b31ad3a046ec
+
+The second M1-08 experiment checked all 25,393 trees. It found 25,392 passes and one oracle memory limit. The suite refused a scoreboard row because spec/unstable.json has no entry for fe5a14ba29f4998754b5fd1b11ed3ce1e29ddcd0f7c77a64524cd185a523e059. The evidence is in $RANDOC_RUNS/measure/20261119T111812Z-563d8c438932/ast-report.json. The worker can fix the source collection limits and run a filtered diagnostic. Keep the last scored attempt for a tree with the recorded exclusion.
+
+## 2026-11-19T16:45:40Z decision M1-08 b31ad3a046ec
+
+The second M1-08 review confirmed that the first fix sets a 60-second CPU limit for uncached corpus and generated inputs. It also reproduced unlimited CPU time in the CommonMark source collector. Apply the same limits to the CommonMark and Pandoc test source collectors, then run focused tests and filtered diagnostics. AGENTS.md section 10 allows two review rounds, so use the test evidence for the lead decision.
+
+## 2026-11-19T16:50:36Z decision M1-08 b31ad3a046ec
+
+The lead will put the shared AST exclusion on gpt/build and then bring the pinned lead commit into the idle active M1-08 worker. AGENTS.md sections 3 and 9 assign merges and shared files to the lead. Keep the guard in both worktrees. The worker will use its third scored attempt only after it has the lead record. The merged-tree check follows a worker gain.
+
+## 2026-11-19T17:00:09Z decision M1-08 b31ad3a046ec
+
+Commit 2a65313 applies the CPU limit to both remaining AST source collectors. The 12 focused tests passed. The CommonMark and Pandoc diagnostics each passed all three conversion comparisons with no source problems. The first two review findings have focused checks. Verify the earlier memory limit on this commit before recording the exclusion.
+
+## 2026-11-19T18:11:17Z decision M1-05 b31ad3a046ec
+
+The first scored M1-05 run on b31ad3a recorded 54 clean rows. It passed 27,474 of 39,973 reader inputs and matched all prior verdicts. The strict capabilities score was 2/52. No inputs were excluded. The plan records also capture the completed AST reviews and recovery decision.
