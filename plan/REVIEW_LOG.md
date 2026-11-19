@@ -331,3 +331,7 @@ The first M1-08 review reproduced an unlimited CPU setting in the oracle source 
 ## 2026-11-19T11:25:27Z weak-spot M1-08 78d10d4ccfe9
 
 The AST reference recorder can keep both oracle observations for 256 units in memory. The review reproduced the number of retained observations with small outputs. The review did not test memory exhaustion.
+
+## 2026-11-19T14:37:11Z decision M1-10 c35360c07ee6
+
+The clean full run on 0d0d1ea wrote 149 rows across all eight active suites. All 18 gate checks passed. Every earlier verdict matched, and defaults.units reproduced the 45/103 result. The run manifest is in $RANDOC_RUNS/measure/20261119T094733Z-0d0d1ea52b97.
