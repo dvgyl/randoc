@@ -303,3 +303,7 @@ The worker merge passed all 18 gate checks and reproduced all 103 defaults verdi
 Item M1-10 done. Gain on defaults.units: the metric now has rows (best PASS 45) (baseline 0/0). Gate: 20261119T064209Z-695621169c86.
 
 Weak spots: Forty-three of the 103 keys have equal oracle results for their two valid settings. They need inputs that show the effect of each key. Fifteen of the 60 keys with a visible effect still fail compatibility checks.
+
+## 2026-11-19T10:20:54Z blocked-on-owner M1-05 17e5239a98ff
+
+M1-12 left the M1 gate without a lua.api row. The worker recorded 0/468 on its branch, which meets the coverage rule for a new metric. The lead guard counted all three attempts and had no scored row on gpt/build. The item was cut and its branch gpt/w/M1-12 stays at 375d659. The measured row predates the final probe fix. AGENTS.md sections 6 and 9 prevent a repeat item for the same cause or a merge of the cut branch.

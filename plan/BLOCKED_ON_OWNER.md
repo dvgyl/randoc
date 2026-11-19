@@ -36,3 +36,9 @@ and what the team does in the meantime.
 - Blocked: nothing stops; this entry is an optional hardening. GitHub cannot limit the owner's credential to one branch. The broker pushes with that credential; the broker's code, the Git guard and the GitHub ruleset (no forced push, no deletion of `main` and `gpt/build`) limit what it pushes.
 - The owner must (optional): give the broker a separate GitHub identity, for example a deploy key and a ruleset that lets only that key push `gpt/build`, with an admin bypass for the owner.
 - Meanwhile the team: has no GitHub credential and pushes only with `tools/autobuild/ops push`. The broker pushes only `gpt/build` to `gpt/build`, fast-forward, after the licence scan of each commit.
+
+## 2026-11-19T10:20:54Z open
+
+- Blocked: M1-12 left the M1 gate without a lua.api row. The worker recorded 0/468 on its branch, which meets the coverage rule for a new metric. The lead guard counted all three attempts and had no scored row on gpt/build. The item was cut and its branch gpt/w/M1-12 stays at 375d659. The measured row predates the final probe fix. AGENTS.md sections 6 and 9 prevent a repeat item for the same cause or a merge of the cut branch.
+- The owner must: Specify a recovery path for the cut Lua measurement under AGENTS.md sections 6 and 9.
+- Meanwhile the team: Complete the reader measurement and the other independent M1 items.
