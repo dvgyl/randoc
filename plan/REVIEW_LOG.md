@@ -311,3 +311,23 @@ M1-12 left the M1 gate without a lua.api row. The worker recorded 0/468 on its b
 ## 2026-11-19T10:57:01Z decision M1-11 9eb271ae13a2
 
 The first review showed that exit/43 and exit/47 used a scratch folder inside the measured work folder. Pandoc left a different media directory on each run. Both oracle runs were stable when the scratch folder was outside the measured work folder. Move the scratch folder and keep both probes in the score. Send the review finding to the worker in the active item title.
+
+## 2026-11-19T11:20:01Z decision M1-11 78d10d4ccfe9
+
+The second M1-11 experiment passed 830 of 1,456 units with no exclusions. Only exit/43 and exit/47 changed status. Both now count as failures. The second review approved the fix and all eight suite tests passed. Wait for the running clean M1-10 measurement before the merge gate under AGENTS.md section 15.
+
+## 2026-11-19T11:20:02Z weak-spot M1-11 78d10d4ccfe9
+
+The oracle probes did not confirm exit codes 24, 62, 66, 89 or 95. The report records the reason for each.
+
+## 2026-11-19T11:20:02Z decision M1-08 78d10d4ccfe9
+
+The M1-08 worker stopped its own first experiment after 256 of 25,393 distinct inputs. The run used one attempt. Commit 563d8c4 reduces process setup and keeps the CPU, memory, time and output limits. The second experiment started on that commit. Review the new process launcher under AGENTS.md section 10.
+
+## 2026-11-19T11:25:26Z decision M1-08 78d10d4ccfe9
+
+The first M1-08 review reproduced an unlimited CPU setting in the oracle source collector. Require the section 3.9 limits when the collector converts generated inputs and uncached corpus inputs. Keep the current experiment as evidence of the worker implementation. Verify the corrected collector before the merge experiment.
+
+## 2026-11-19T11:25:27Z weak-spot M1-08 78d10d4ccfe9
+
+The AST reference recorder can keep both oracle observations for 256 units in memory. The review reproduced the number of retained observations with small outputs. The review did not test memory exhaustion.
