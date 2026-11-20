@@ -21,7 +21,7 @@ M1-19	M1	queued	zip.units	-	+1	Data pack tool; oracle self-check that lists the 
 M1-20	M1	queued	pdf.units	-	+1	Recording stand-in for each PDF engine; the "engine missing" case for each engine (gain: first row)	-
 M1-21	M1	queued	perf.throughput	-	+1	Speed, startup and peak memory against the oracle for each corpus document (`perf.startup`, `perf.memory` in the same run); the stored benchmark record is out of date (gain: first row)	-
 M1-22	M1	queued	safety.units	-	+1	Generated stress inputs for each reader and writer that exists, under `limit-run` (gain: first row, TOTAL >= 100)	min-total=100
-M1-23	M1	queued	server.units	-	+1	Requests to the oracle server on a local port; Randoc gives 0 now (gain: first row)	-
+M1-23	M1	active	server.units	0/0	+1	Requests to the oracle server on a local port; Randoc gives 0 now (gain: first row)	-
 M1-24	M1	queued	lib.units	-	+1	A small command on the library API with a pure Host (`wasm.units` in the same item: 0 until the build exists) (gain: first row)	-
 M1-25	M1	queued	downstream.quarto	-	+1	Sample projects with open licences; record each real call of the oracle; replay it with both programs (`downstream.rmarkdown` in the same form). If a tool cannot be installed, write the row 0/TOTAL and a BLOCKED ON OWNER entry (gain: first row)	-
 M1-26	M1	queued	casegen.visible	-	+1	Run the visible generated cases and each family key; request the first held-out result (gain: row for seeds 1 to 1000)	-
