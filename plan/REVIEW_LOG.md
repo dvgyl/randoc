@@ -379,3 +379,19 @@ The M1-11 merge at 030ec166d7fc passed all 18 gate checks. The worker run, gate 
 Item M1-11 done. Gain on errors.units: the metric now has rows (best PASS 830) (baseline 0/0). Gate: 20261119T230003Z-030ec166d7fc.
 
 Weak spots: The oracle probes did not confirm exit codes 24, 62, 66, 89 or 95. The recorded commands include 626 compatibility failures. Randoc returns exit code 4 in both PDF error probes.
+
+## 2026-11-20T03:22:33Z decision M1 29c6649d329f
+
+Start the independent M1-15 custom Lua writer and M1-23 server measurements in separate worktrees while the M1-11 full comparison runs. Their start commits bring the guard counter to nine. Reserve the next commit for the full measurement rows. AGENTS.md sections 7, 9 and 15 set the commit, worker and machine limits.
+
+## 2026-11-20T03:45:02Z decision M1-15 29c6649d329f
+
+The first M1-15 review approved the probes and passed all 11 tests. The lead reproduced a separate cache race at c1f33cf. A second SQLite connection inserted two different oracle observations while the measurement captured a stable pair. The saved verdict was unstable and the scored verdict was pass. Merge the observations under the cache write lock before scoring. Test both capture orders before integration.
+
+## 2026-11-20T03:45:03Z weak-spot M1-15 29c6649d329f
+
+The custom writer extension probe checks explicit overrides. The first review confirmed Pandoc enables smart when the probe has no explicit override.
+
+## 2026-11-20T04:52:48Z decision M1-11 29c6649d329f
+
+The full run on abfbd3d recorded 150 clean rows across nine suites and passed all 18 gate checks. All verdicts from the earlier full run match. The 1,456 error verdicts match the worker and merge runs, with 830 passes. Evidence is in $RANDOC_RUNS/measure/20261120T010139Z-abfbd3d70526.
