@@ -369,3 +369,13 @@ Weak spots: Randoc still fails 12,549 of the 39,973 reader cases. Only csljson a
 ## 2026-11-19T22:59:09Z decision M1-05 bdcddc140a30
 
 The full M1-05 closure run on bdcddc1 passed all 18 gate checks and wrote 149 clean rows. All verdicts match the preceding full run, including 27,474/39,973 reader cases and 2/52 strict reader capabilities. The run manifest is in $RANDOC_RUNS/measure/20261119T195600Z-bdcddc140a30.
+
+## 2026-11-20T01:01:35Z decision M1-11 030ec166d7fc
+
+The M1-11 merge at 030ec166d7fc passed all 18 gate checks. The worker run, gate and scored merge matched all 1,456 verdicts at 830/1,456 with no exclusions. The scored evidence is in $RANDOC_RUNS/measure/20261120T005235Z-030ec166d7fc.
+
+## 2026-11-20T01:01:36Z weak-spot M1-11 030ec166d7fc
+
+Item M1-11 done. Gain on errors.units: the metric now has rows (best PASS 830) (baseline 0/0). Gate: 20261119T230003Z-030ec166d7fc.
+
+Weak spots: The oracle probes did not confirm exit codes 24, 62, 66, 89 or 95. The recorded commands include 626 compatibility failures. Randoc returns exit code 4 in both PDF error probes.

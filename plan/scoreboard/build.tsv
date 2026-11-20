@@ -1098,3 +1098,4 @@ utc	commit	dirty	item	metric	pass	total	tool	evidence
 2026-11-19T19:56:00Z	bdcddc140a30c158c3a47b13959d8c2ccfeb5c8a	no	-	fmt.write.xml	0	400	writers@5f57772c27ba	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261119T195600Z-bdcddc140a30/writers.json
 2026-11-19T19:56:00Z	bdcddc140a30c158c3a47b13959d8c2ccfeb5c8a	no	-	fmt.write.xwiki	0	400	writers@5f57772c27ba	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261119T195600Z-bdcddc140a30/writers.json
 2026-11-19T19:56:00Z	bdcddc140a30c158c3a47b13959d8c2ccfeb5c8a	no	-	fmt.write.zimwiki	0	400	writers@5f57772c27ba	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261119T195600Z-bdcddc140a30/writers.json
+2026-11-20T00:52:35Z	030ec166d7fc1dd5528127b9d5355e0e0e0b1c23	no	M1-11	errors.units	830	1456	errors@6683b15ae158	/Volumes/Extreme Pro/Randoc/gpt/runs/measure/20261120T005235Z-030ec166d7fc/errors.json

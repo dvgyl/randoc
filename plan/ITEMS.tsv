@@ -9,7 +9,7 @@ M1-07	M1	queued	caps.options	-	+1	Value sets for each option on 5 base conversio
 M1-08	M1	active	ast.roundtrip	0/0	+1	Measure JSON and native round trips of each distinct oracle tree and incorrect API versions (gain: first row). The third scored experiment requires the lead's oracle_limit record for fe5a14ba29f4998754b5fd1b11ed3ce1e29ddcd0f7c77a64524cd185a523e059 in spec/unstable.json. Check for that record in the worker commit before the experiment.	-
 M1-09	M1	queued	templates.units	-	+1	15 variable sets and 2 documents for each format with a default template; user partials (gain: first row)	-
 M1-10	M1	done	defaults.units	0/0	+1	One number for each defaults key that the oracle accepts (gain: first row)	-
-M1-11	M1	active	errors.units	0/0	+1	Measure confirmed exit codes and conversion logs for the corpus and pivot trees (gain: first row). The first review requires a private PDF scratch folder outside the measured work folder. Verify exit/43 and exit/47 and run the next experiment.	-
+M1-11	M1	done	errors.units	0/0	+1	Measure confirmed exit codes and conversion logs for the corpus and pivot trees (gain: first row). The first review requires a private PDF scratch folder outside the measured work folder. Verify exit/43 and exit/47 and run the next experiment.	-
 M1-12	M1	cut	lua.api	0/0	+1	Call probes for each name of the `pandoc` module through one printer, run as a filter (gain: TOTAL = 468)	min-total=468
 M1-13	M1	queued	lua.filters	-	+1	Filter matrix: element type, return kind, traversal, filter form, on the pivot set (gain: first row)	-
 M1-14	M1	queued	custom.readers	-	+1	10 own-written custom readers and their inputs (gain: first row)	-
