@@ -13,7 +13,7 @@ M1-11	M1	done	errors.units	0/0	+1	Measure confirmed exit codes and conversion lo
 M1-12	M1	cut	lua.api	0/0	+1	Call probes for each name of the `pandoc` module through one printer, run as a filter (gain: TOTAL = 468)	min-total=468
 M1-13	M1	queued	lua.filters	-	+1	Filter matrix: element type, return kind, traversal, filter form, on the pivot set (gain: first row)	-
 M1-14	M1	queued	custom.readers	-	+1	10 own-written custom readers and their inputs (gain: first row)	-
-M1-15	M1	queued	custom.writers	-	+1	10 own-written custom writers (new form, classic form, `Template`, `Extensions`) (gain: first row)	-
+M1-15	M1	active	custom.writers	0/0	+1	10 own-written custom writers (new form, classic form, `Template`, `Extensions`) (gain: first row)	-
 M1-16	M1	queued	suite.pandoc.lua	-	+1	Run the 20 Lua test files of Pandoc's Lua engine from the Pandoc tree at run time (gain: first row)	-
 M1-17	M1	queued	suite.pandoc.inline	-	+1	Read the input strings of the Haskell-only test groups at run time (about 1,939 tests have no number today) (gain: first row, TOTAL >= 1,000)	min-total=1000
 M1-18	M1	queued	citeproc.units	-	+1	Styles, bibliography formats, citation matrix and 4 output formats; styles are fetched, never committed (gain: first row)	-
