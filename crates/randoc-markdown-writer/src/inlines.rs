@@ -195,19 +195,20 @@ impl W<'_> {
                 Inline::LineBreak => self.line_break(),
                 other => self.inline(other, &inlines[index + 1..])?,
             };
-            let doc = match (inline, next) {
-                // Pandoc separates math from a following digit in each form of
-                // the math, also when it converts the math.
-                (Inline::Math(..), Some(Inline::Str(s)))
-                    if s.starts_with(|c: char| c.is_ascii_digit()) && !self.plain() =>
-                {
-                    if self.has(Extension::RawAttribute) {
-                        doc + literal("`<!-- -->`{=html}")
-                    } else {
-                        doc + literal("<!-- -->")
-                    }
-                }
-                _ => doc,
+            // Pandoc separates math from a following digit or empty text
+            // with an HTML comment in each form of the math, also when it
+            // converts the math.
+            let digit_after = matches!(inline, Inline::Math(..))
+                && matches!(next, Some(Inline::Str(s))
+                    if s.is_empty() || s.starts_with(|c: char| c.is_ascii_digit()));
+            let doc = if !digit_after {
+                doc
+            } else if self.has(Extension::RawAttribute) {
+                doc + literal("`<!-- -->`{=html}")
+            } else if self.has(Extension::RawHtml) {
+                doc + literal("<!-- -->")
+            } else {
+                doc
             };
             at_start = match inline {
                 Inline::LineBreak => !self.in_heading,
@@ -255,6 +256,14 @@ impl W<'_> {
 
     fn inline(&mut self, inline: &Inline, rest: &[Inline]) -> Result<Doc> {
         let plain = self.plain();
+        if self.in_toc {
+            // An entry of the table of contents has no notes and no links.
+            match inline {
+                Inline::Note(_) => return Ok(empty()),
+                Inline::Link(_, content, _) => return self.inline_list(content, false),
+                _ => {}
+            }
+        }
         Ok(match inline {
             Inline::Str(_) | Inline::Space | Inline::SoftBreak | Inline::LineBreak => empty(),
             Inline::Emph(content) if matches!(content.as_slice(), [Inline::Emph(_)]) => {
@@ -343,7 +352,7 @@ impl W<'_> {
                 if self.has(Extension::Footnotes) && !plain {
                     literal(format!("[^{}{number}]", self.opts.identifier_prefix))
                 } else {
-                    literal(format!("[{number}]"))
+                    literal(format!("[{}{number}]", self.opts.identifier_prefix))
                 }
             }
             Inline::Span(attr, content) => self.span(attr, content)?,
@@ -506,6 +515,17 @@ impl W<'_> {
         false
     }
 
+    /// Returns the attributes with the identifier prefix of the options
+    /// before the identifier.
+    pub(crate) fn prefixed<'x>(&self, attr: &'x Attr) -> std::borrow::Cow<'x, Attr> {
+        if self.opts.identifier_prefix.is_empty() || attr.id.is_empty() {
+            return std::borrow::Cow::Borrowed(attr);
+        }
+        let mut out = attr.clone();
+        out.id = format!("{}{}", self.opts.identifier_prefix, attr.id);
+        std::borrow::Cow::Owned(out)
+    }
+
     /// Returns `true` when links and images take attributes in braces.
     pub(crate) fn link_attributes(&self) -> bool {
         self.has(Extension::LinkAttributes) || self.has(Extension::Attributes)
@@ -591,7 +611,7 @@ impl W<'_> {
         Ok(out)
     }
 
-    fn code(&self, attr: &Attr, text: &str) -> Doc {
+    pub(crate) fn code(&self, attr: &Attr, text: &str) -> Doc {
         if self.plain() {
             return literal(text);
         }
@@ -601,7 +621,7 @@ impl W<'_> {
         if !attr.is_empty()
             && (self.has(Extension::InlineCodeAttributes) || self.has(Extension::Attributes))
         {
-            return out + attr_doc(attr);
+            return out + attr_doc(&self.prefixed(attr));
         }
         out
     }
@@ -657,7 +677,7 @@ impl W<'_> {
         Ok(if display { cr() + body + cr() } else { body })
     }
 
-    fn raw_inline(&self, format: &str, text: &str) -> Doc {
+    pub(crate) fn raw_inline(&self, format: &str, text: &str) -> Doc {
         if self.plain() {
             return if format == "plain" {
                 literal(text)
@@ -769,44 +789,75 @@ impl W<'_> {
         target: &Target,
         collapsed: bool,
     ) -> Result<Doc> {
+        if !self.plain() {
+            let after_pipe = self.has(Extension::WikilinksTitleAfterPipe);
+            if (after_pipe || self.has(Extension::WikilinksTitleBeforePipe))
+                && attr.classes.iter().any(|c| c == "wikilink")
+            {
+                let text = stringify(content);
+                let url = &target.url;
+                if self.opts.reference_links {
+                    // The definition takes the Markdown form of the text.
+                    let label = self.inline_list(content, false)?.render(None);
+                    let attrs = if self.link_attributes() {
+                        attr_text(&self.prefixed(attr))
+                    } else {
+                        Text::new()
+                    };
+                    self.add_reference(&label, false, target, attr, &attrs);
+                }
+                return Ok(literal(if text == *url {
+                    format!("[[{url}]]")
+                } else if after_pipe {
+                    format!("[[{url}|{text}]]")
+                } else {
+                    format!("[[{text}|{url}]]")
+                }));
+            }
+            if let [Inline::Str(text)] = content {
+                let is_uri_auto = *text == target.url && target.url.contains(':');
+                let is_mail_auto = format!("mailto:{text}") == target.url;
+                let auto_attr = attr.id.is_empty()
+                    && attr.attributes.is_empty()
+                    && attr.classes.iter().all(|c| c == "uri" || c == "email");
+                if (is_uri_auto || is_mail_auto) && auto_attr {
+                    return Ok(literal(format!("<{text}>")));
+                }
+            }
+        }
+        let images = self.images;
+        let inner = self.inline_list(content, false)?;
+        let has_image = self.images != images;
+        Ok(self.link_with_inner(attr, inner, has_image, target, collapsed))
+    }
+
+    /// Writes a link with rendered content: in `plain` the content alone,
+    /// else an HTML link, a reference or an inline link. `has_image` is
+    /// `true` when the content holds an image, which gives a reference a
+    /// numbered label.
+    pub(crate) fn link_with_inner(
+        &mut self,
+        attr: &Attr,
+        inner: Doc,
+        has_image: bool,
+        target: &Target,
+        collapsed: bool,
+    ) -> Doc {
         if self.plain() {
-            let inner = self.inline_list(content, false)?;
             if self.opts.reference_links {
-                self.add_reference(&inner.render(None), target, "");
+                self.add_reference(&inner.render(None), has_image, target, attr, "");
             }
-            return Ok(inner);
+            return inner;
         }
-        let after_pipe = self.has(Extension::WikilinksTitleAfterPipe);
-        if (after_pipe || self.has(Extension::WikilinksTitleBeforePipe))
-            && attr.classes.iter().any(|c| c == "wikilink")
-        {
-            let text = self.inline_list(content, false)?.render(None);
-            let url = &target.url;
-            return Ok(literal(if text == *url {
-                format!("[[{url}]]")
-            } else if after_pipe {
-                format!("[[{url}|{text}]]")
-            } else {
-                format!("[[{text}|{url}]]")
-            }));
-        }
-        if let [Inline::Str(text)] = content {
-            let is_uri_auto = *text == target.url && target.url.contains(':');
-            let is_mail_auto = format!("mailto:{text}") == target.url;
-            let auto_attr = attr.id.is_empty()
-                && attr.attributes.is_empty()
-                && attr.classes.iter().all(|c| c == "uri" || c == "email");
-            if (is_uri_auto || is_mail_auto) && auto_attr {
-                return Ok(literal(format!("<{text}>")));
-            }
-        }
+        let original = attr;
+        let shown = self.prefixed(attr);
+        let attr = &*shown;
         // A reference link drops the attributes that the format cannot write.
         if !attr.is_empty()
             && !self.link_attributes()
             && self.has(Extension::RawHtml)
             && !self.opts.reference_links
         {
-            let inner = self.inline_list(content, false)?;
             let mut open = literal(format!("<a href=\"{}\"", escape_html(&target.url)));
             let mut parts = html_attr_parts(attr);
             if !target.title.is_empty() {
@@ -817,9 +868,8 @@ impl W<'_> {
             }
             // Pandoc wraps the tag on its own and puts the lines in the text.
             let open = literal(self.render_alone(open + literal(">")));
-            return Ok(open + inner + literal("</a>"));
+            return open + inner + literal("</a>");
         }
-        let inner = self.inline_list(content, false)?;
         let attrs = if !attr.is_empty() && self.link_attributes() {
             attr_text(attr)
         } else {
@@ -827,62 +877,84 @@ impl W<'_> {
         };
         if self.opts.reference_links {
             let label_text = inner.render(None);
-            let label = self.add_reference(&label_text, target, &attrs);
-            return Ok(if label != label_text {
+            let label = self.add_reference(&label_text, has_image, target, original, &attrs);
+            return if label.to_lowercase() != label_text.to_lowercase() {
                 literal("[") + inner + literal(format!("][{label}]"))
             } else if collapsed {
                 literal("[") + inner + literal("][]")
             } else {
                 literal("[") + inner + literal("]")
-            });
+            };
         }
         let attrs = if attrs.is_empty() {
             empty()
         } else {
             attr_doc(attr)
         };
-        Ok(literal("[") + inner + literal("](") + destination(target) + literal(")") + attrs)
+        literal("[") + inner + literal("](") + destination(target) + literal(")") + attrs
     }
 
-    /// Stores a link reference and returns its label.
-    fn add_reference(&mut self, label: &str, target: &Target, attrs: &str) -> Text {
-        let lower = label.to_lowercase();
-        if let Some(found) = self
-            .ref_index
-            .get(&lower)
-            .and_then(|&i| self.all_refs.get(i))
-            && found.target == *target
-            && found.attrs == attrs
-        {
-            return found.label.clone();
-        }
-        let label = if self.ref_index.contains_key(&lower) || label.is_empty() {
-            let mut number = 1;
-            while self.ref_index.contains_key(&number.to_string()) {
-                number += 1;
-            }
-            number.to_string()
+    /// Stores a link reference and returns its label. `attr` gives the
+    /// attributes of the element, and `attrs` the attributes text that the
+    /// definition shows. A target that waits for output already keeps its
+    /// label. A target that was written before under the label `text` gets
+    /// a new reference with that label. Else the label is `text`, or the
+    /// next free number when `numbered` is `true`, `text` is not a valid
+    /// label, or an other target has that label (labels ignore case).
+    fn add_reference(
+        &mut self,
+        text: &str,
+        numbered: bool,
+        target: &Target,
+        attr: &Attr,
+        attrs: &str,
+    ) -> Text {
+        let attr_key = if attr.is_empty() {
+            Text::new()
         } else {
-            label.to_owned()
+            attr_text(attr)
         };
-        let reference = LinkRef {
-            label: label.clone(),
-            target: target.clone(),
-            attrs: attrs.to_owned(),
+        let key = (target.url.clone(), target.title.clone(), attr_key);
+        if let Some(label) = self.pending_targets.get(&key) {
+            return label.clone();
+        }
+        let lower = text.to_lowercase();
+        let label = match self.ref_index.get(&lower) {
+            Some(found) if *found == key => text.to_owned(),
+            taken => {
+                // A label with a bracket would not read back as a label.
+                if numbered || taken.is_some() || !valid_label(text) {
+                    // Numbered labels are not in the index: Pandoc can give
+                    // a later text the same label.
+                    while self
+                        .ref_index
+                        .contains_key(&self.next_ref_number.to_string())
+                    {
+                        self.next_ref_number += 1;
+                    }
+                    let label = self.next_ref_number.to_string();
+                    self.next_ref_number += 1;
+                    label
+                } else {
+                    self.ref_index.insert(lower, key.clone());
+                    text.to_owned()
+                }
+            }
         };
-        self.ref_index
-            .insert(label.to_lowercase(), self.all_refs.len());
         self.refs.push(LinkRef {
             label: label.clone(),
             target: target.clone(),
             attrs: attrs.to_owned(),
         });
-        self.all_refs.push(reference);
+        self.pending_targets.insert(key, label.clone());
         label
     }
 
     /// Renders an image in Markdown syntax with rendered alternative text.
     pub(crate) fn image_doc(&mut self, attr: &Attr, inner: Doc, target: &Target) -> Doc {
+        let original = attr;
+        let shown = self.prefixed(attr);
+        let attr = &*shown;
         let attrs = if !attr.is_empty() && self.link_attributes() {
             attr_text(attr)
         } else {
@@ -890,8 +962,8 @@ impl W<'_> {
         };
         if self.opts.reference_links {
             let label_text = inner.render(None);
-            let label = self.add_reference(&label_text, target, &attrs);
-            return if label != label_text {
+            let label = self.add_reference(&label_text, false, target, original, &attrs);
+            return if label.to_lowercase() != label_text.to_lowercase() {
                 literal("![") + inner + literal(format!("][{label}]"))
             } else if self.shortcut_references() {
                 literal("![") + inner + literal("]")
@@ -908,16 +980,17 @@ impl W<'_> {
     }
 
     fn image(&mut self, attr: &Attr, content: &[Inline], target: &Target) -> Result<Doc> {
+        self.images += 1;
         if self.plain() {
             let inner = self.inline_list(content, false)?;
             if self.opts.reference_links {
-                self.add_reference(&inner.render(None), target, "");
+                self.add_reference(&inner.render(None), false, target, attr, "");
             }
             return Ok(literal("[") + inner + literal("]"));
         }
         if !attr.is_empty() && !self.link_attributes() && self.has(Extension::RawHtml) {
             // The HTML writer uses only the text of the description.
-            let alt = vec![Inline::Str(stringify(content))];
+            let alt = alt_inlines(stringify(content), content);
             let image = Inline::Image(attr.clone(), alt, target.clone());
             return self.html_blocks(&[randoc_ast::Block::Plain(vec![image])]);
         }
@@ -942,7 +1015,7 @@ impl W<'_> {
         }
         let inner = self.inline_list(content, false)?;
         if self.has(Extension::BracketedSpans) {
-            return Ok(literal("[") + inner + literal("]") + attr_doc(attr));
+            return Ok(literal("[") + inner + literal("]") + attr_doc(&self.prefixed(attr)));
         }
         if self.has(Extension::NativeSpans) || self.has(Extension::RawHtml) {
             let mut open = literal("<span");
@@ -952,6 +1025,29 @@ impl W<'_> {
             return Ok(open + literal(">") + inner + literal("</span>"));
         }
         Ok(inner)
+    }
+}
+
+/// Returns `true` when a text can be the label of a reference: it is not
+/// empty and has no brackets, or it is one pair of brackets around a text
+/// without brackets, as `[@key]`.
+fn valid_label(text: &str) -> bool {
+    let inner = text
+        .strip_prefix('[')
+        .and_then(|rest| rest.strip_suffix(']'))
+        .filter(|inner| !inner.is_empty())
+        .unwrap_or(text);
+    !text.is_empty() && !inner.contains(['[', ']'])
+}
+
+/// The alternative text of an image for the HTML writer: one `Str` with the
+/// text of `content`, or nothing for empty content. The HTML writer uses only
+/// the text, so the result is the same as for `content`.
+pub(crate) fn alt_inlines(text: Text, content: &[Inline]) -> Vec<Inline> {
+    if content.is_empty() {
+        Vec::new()
+    } else {
+        vec![Inline::Str(text)]
     }
 }
 

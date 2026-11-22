@@ -9,7 +9,7 @@ use randoc_layout::{
 };
 
 use crate::html::html_attrs;
-use crate::inlines::{attr_text, longest_run};
+use crate::inlines::{alt_inlines, attr_text, longest_run};
 use crate::{Variant, W};
 use randoc_core::shared::stringify;
 
@@ -537,7 +537,7 @@ impl W<'_> {
             if attr.id.is_empty() && attr.attributes.is_empty() && attr.classes.len() == 1 {
                 format!(" {}", attr.classes[0])
             } else {
-                format!(" {}", attr_text(attr))
+                format!(" {}", attr_text(&self.prefixed(attr)))
             }
         } else {
             // A known language comes after a space. Another class is
@@ -868,7 +868,7 @@ impl W<'_> {
             {
                 attr.classes[0].clone()
             } else {
-                attr_text(attr)
+                attr_text(&self.prefixed(attr))
             };
             return Ok(literal(format!("{fence} {info}"))
                 + cr()
@@ -922,20 +922,27 @@ impl W<'_> {
             },
             _ => None,
         };
-        let parts: Vec<&[Inline]> = caption
-            .long
-            .iter()
-            .filter_map(|block| match block {
-                Block::Plain(inlines) | Block::Para(inlines) => Some(inlines.as_slice()),
-                _ => None,
-            })
-            .collect();
         if self.plain() {
-            if image.is_some() && attr.id.is_empty() {
-                let caption_doc = self.inline_lines(&parts)?;
+            if !self.has(Extension::ImplicitFigures) {
+                // The content and the caption make one list of blocks: a
+                // final plain block of the content is a paragraph only at
+                // the top level.
+                let content = self.block_list(blocks)?;
+                let promote = self.list_level == 0
+                    && matches!(blocks.last(), Some(Block::Plain(_)))
+                    && !matches!(caption.long.first(), None | Some(Block::RawBlock(..)));
+                let gap = if promote { blankline() } else { empty() };
+                return Ok(content + gap + self.block_list(&caption.long)? + blankline());
+            }
+            // A single image without attributes gives its caption in brackets.
+            if let Some((image_attr, _, _)) = image
+                && attr.is_empty()
+                && image_attr.is_empty()
+            {
+                let caption_doc = self.caption_lines(&caption.long, (false, true))?.doc;
                 return Ok(literal("[") + caption_doc + literal("]") + blankline());
             }
-            return self.block_list(blocks);
+            return Ok(self.block_list(blocks)? + blankline());
         }
         // Without link attributes the figure identifier and the image
         // attributes have no Markdown form.
@@ -957,17 +964,24 @@ impl W<'_> {
             let mut new_attr = image_attr.clone();
             new_attr.id = attr.id.clone();
             let alt_text = stringify(alt);
-            let caption_text: Vec<Text> = parts.iter().map(|p| stringify(p)).collect();
-            if !alt.is_empty() && alt_text != caption_text.join(" ") {
-                new_attr.attributes.push((Text::from("alt"), alt_text));
+            if !alt.is_empty() && alt_text != self.caption_text(&caption.long)? {
+                new_attr
+                    .attributes
+                    .push((Text::from("alt"), alt_text.clone()));
             }
             if !new_attr.is_empty() && !self.link_attributes() && self.has(Extension::RawHtml) {
                 // The alternative text needs an attribute: Pandoc writes the
-                // image alone in HTML.
-                let image = Inline::Image(image_attr.clone(), alt.clone(), target.clone());
+                // image alone in HTML. The HTML writer uses only the text of
+                // the alternative text, and a copy of a deep tree would
+                // overflow the stack.
+                let image = Inline::Image(
+                    image_attr.clone(),
+                    alt_inlines(alt_text, alt),
+                    target.clone(),
+                );
                 return Ok(self.html_blocks(&[Block::Plain(vec![image])])? + blankline());
             }
-            let caption_doc = self.inline_lines(&parts)?;
+            let caption_doc = self.caption_lines(&caption.long, (false, true))?.doc;
             return Ok(self.image_doc(&new_attr, caption_doc, target) + blankline());
         }
         if self.has(Extension::RawHtml) {
@@ -1192,5 +1206,641 @@ mod tests {
     fn a_line_break_in_a_commonmark_heading() {
         let blocks = r##"[{"t":"Header","c":[4,["",[],[]],[{"t":"Str","c":"a"},{"t":"LineBreak"},{"t":"Str","c":"b"}]]},{"t":"Header","c":[1,["",[],[]],[{"t":"Str","c":"c"},{"t":"LineBreak"},{"t":"Str","c":"dd"}]]}]"##;
         assert_eq!(write_json("gfm", blocks), "#### a\\\nb\n\nc\\\ndd\n==");
+    }
+    /// Writes JSON blocks in a format with extension changes, with the
+    /// reference options of a command line.
+    fn write_spec(format: &str, args: &[&str], blocks: &str) -> String {
+        let input = format!(r#"{{"pandoc-api-version":[1,23,1,2],"meta":{{}},"blocks":{blocks}}}"#);
+        let doc = randoc_ast::json::from_json(&input).unwrap_or_default();
+        let spec = randoc_core::FormatSpec::parse(format);
+        let mut options = WriterOptions::default();
+        options.extensions = spec.extensions().unwrap_or_else(|_| unreachable!());
+        for arg in args {
+            match *arg {
+                "--reference-links" => options.reference_links = true,
+                "--reference-location=block" => {
+                    options.reference_location = randoc_core::ReferenceLocation::EndOfBlock;
+                }
+                _ => unreachable!("{arg}"),
+            }
+        }
+        let result =
+            crate::writer(&spec.name).map(|w| w.write(&doc, &options, &mut Context::pure()));
+        let Some(Ok(Output::Text(text))) = result else {
+            unreachable!("the writer gives text for {format}")
+        };
+        text
+    }
+
+    /// The cases below give `pandoc -f json -t FORMAT ARGS` (Pandoc 3.13).
+    type Case = (
+        &'static str,
+        &'static [&'static str],
+        &'static str,
+        &'static str,
+    );
+
+    fn check(cases: &[Case]) {
+        for (format, args, blocks, expected) in cases {
+            assert_eq!(
+                write_spec(format, args, blocks),
+                *expected,
+                "{format} {args:?} {blocks}"
+            );
+        }
+    }
+
+    #[test]
+    fn plain_figures_end_with_a_blank_line() {
+        check(&[
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Figure","c":[["f",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "[alt]\n\nNext",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p","fig:T"]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "[Cap]\n\nNext",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Figure","c":[["",["c"],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "[alt]\n\nNext",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",["w"],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "[alt]\n\nNext",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"BulletList","c":[[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]}],[{"t":"Plain","c":[{"t":"Str","c":"b"}]}]]}]"#,
+                "- [Cap]\n\n- b",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Figure","c":[["",[],[]],[null,[]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "[]\n\nNext",
+            ),
+            (
+                "plain-implicit_figures",
+                &[][..],
+                r#"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "[alt]\n\nCap\n\nNext",
+            ),
+            (
+                "plain-implicit_figures",
+                &[][..],
+                r#"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"C1"}]},{"t":"Para","c":[{"t":"Str","c":"C2"}]}]],[{"t":"Para","c":[{"t":"Str","c":"x"}]},{"t":"Para","c":[{"t":"Str","c":"y"}]}]]},{"t":"Para","c":[{"t":"Str","c":"Next"}]}]"#,
+                "x\n\ny\n\nC1\n\nC2\n\nNext",
+            ),
+            (
+                "plain-implicit_figures",
+                &[][..],
+                r#"[{"t":"BulletList","c":[[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Plain","c":[{"t":"Str","c":"Cap"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"alt"}],["p",""]]}]}]]}],[{"t":"Plain","c":[{"t":"Str","c":"b"}]}]]}]"#,
+                "- [alt]\n  Cap\n\n- b",
+            ),
+        ]);
+    }
+
+    #[test]
+    fn reference_links_reuse_the_labels_of_pandoc() {
+        check(&[
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "[a][] [b][a]\n\n  [a]: u",
+            ),
+            (
+                "gfm",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "[a][] [b][a]\n\n  [a]: u",
+            ),
+            (
+                "plain",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "a b\n\n  [a]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"A"}],["u",""]]}]}]"#,
+                "[a][] [A]\n\n  [a]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u","T"]]}]}]"#,
+                "[a][] [b]\n\n  [a]: u\n  [b]: u \"T\"",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",["c"],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",["c"],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "[a][] [b][a]\n\n  [a]: u {.c}",
+            ),
+            (
+                "gfm",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",["c"],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "[a][] [b]\n\n  [a]: u\n  [b]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "![a] [b][a]\n\n  [a]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["v",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["v",""]]}]}]"#,
+                "[a][] [a][1] [b][1]\n\n  [a]: u\n  [1]: v",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["v",""]]}]}]"#,
+                "[b][] [a][b] [b][1]\n\n  [b]: u\n  [1]: v",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"A"}],["v",""]]}]}]"#,
+                "[a][] [A][1]\n\n  [a]: u\n  [1]: v",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"2"}],["q",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["v",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["w",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"1"}],["v",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"1"}],["r",""]]}]}]"#,
+                "[2][] [a][] [a][1] [a][3] [1][] [1]\n\n  [2]: q\n  [a]: u\n  [1]: v\n  [3]: w\n  [1]: r",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"[a]"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a]"}],["v",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"[x]"}],["w",""]]}]}]"#,
+                "[\\[a\\]][1] [a\\]][2] [\\[x\\]][3]\n\n  [1]: u\n  [2]: v\n  [3]: w",
+            ),
+            (
+                "plain",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"[a]"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"i"}],["p",""]]}],["v",""]]}]}]"#,
+                "[a] [i]\n\n  [[a]]: u\n  [i]: p\n  [1]: v",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=block"][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"P1"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]}]},{"t":"Para","c":[{"t":"Str","c":"P2"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"}],["u",""]]}]}]"#,
+                "P1 [a]\n\n  [a]: u\n\nP2 [b]\n\n  [b]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=block"][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"P1"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]}]},{"t":"Para","c":[{"t":"Str","c":"P2"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]}]}]"#,
+                "P1 [a]\n\n  [a]: u\n\nP2 [a]\n\n  [a]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=block"][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"P1"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]}]},{"t":"Para","c":[{"t":"Str","c":"P2"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"A"}],["u",""]]}]}]"#,
+                "P1 [a]\n\n  [a]: u\n\nP2 [A]\n\n  [A]: u",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=block"][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"P1"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]}]},{"t":"Para","c":[{"t":"Str","c":"P2"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["v",""]]}]}]"#,
+                "P1 [a]\n\n  [a]: u\n\nP2 [a][1]\n\n  [1]: v",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=block"][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"P1"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]}]},{"t":"Para","c":[{"t":"Str","c":"P2"},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"a"}],["u",""]]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"A"}],["u",""]]}]}]"#,
+                "P1 [a]\n\n  [a]: u\n\nP2 [a][] [A]\n\n  [a]: u",
+            ),
+        ]);
+    }
+
+    #[test]
+    fn math_before_a_digit_takes_a_comment() {
+        check(&[
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$x$`<!-- -->`{=html}2",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$$x$$`<!-- -->`{=html}2",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "a$x$`<!-- -->`{=html}a",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "a$x$a",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "a$x$ 2",
+            ),
+            (
+                "markdown-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$x$<!-- -->2",
+            ),
+            (
+                "markdown-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$$x$$<!-- -->2",
+            ),
+            (
+                "markdown-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "a$x$<!-- -->a",
+            ),
+            (
+                "markdown-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "a$x$a",
+            ),
+            (
+                "markdown-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "a$x$ 2",
+            ),
+            (
+                "markdown-raw_html-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$x$2",
+            ),
+            (
+                "markdown-raw_html-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$$x$$2",
+            ),
+            (
+                "markdown-raw_html-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "a$x$a",
+            ),
+            (
+                "markdown-raw_html-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "a$x$a",
+            ),
+            (
+                "markdown-raw_html-raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "a$x$ 2",
+            ),
+            (
+                "gfm",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$`x`$<!-- -->2",
+            ),
+            (
+                "gfm",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a\n``` math\nx\n```\n<!-- -->2",
+            ),
+            (
+                "gfm",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "a$`x`$<!-- -->a",
+            ),
+            (
+                "gfm",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "a$`x`$a",
+            ),
+            (
+                "gfm",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "a$`x`$ 2",
+            ),
+            (
+                "gfm-raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a$`x`$2",
+            ),
+            (
+                "gfm-raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a\n``` math\nx\n```\n2",
+            ),
+            (
+                "gfm-raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "a$`x`$a",
+            ),
+            (
+                "gfm-raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "a$`x`$a",
+            ),
+            (
+                "gfm-raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "a$`x`$ 2",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "ax2",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a\nx\n2",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "axa",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "axa",
+            ),
+            (
+                "plain",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "ax 2",
+            ),
+            (
+                "plain+raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "ax<!-- -->2",
+            ),
+            (
+                "plain+raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a\nx\n<!-- -->2",
+            ),
+            (
+                "plain+raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "ax<!-- -->a",
+            ),
+            (
+                "plain+raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "axa",
+            ),
+            (
+                "plain+raw_html",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "ax 2",
+            ),
+            (
+                "plain+raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "ax`<!-- -->`{=html}2",
+            ),
+            (
+                "plain+raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"DisplayMath"},"x"]},{"t":"Str","c":"2"}]}]"#,
+                "a\nx\n`<!-- -->`{=html}2",
+            ),
+            (
+                "plain+raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":""},{"t":"Str","c":"a"}]}]"#,
+                "ax`<!-- -->`{=html}a",
+            ),
+            (
+                "plain+raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Str","c":"a"}]}]"#,
+                "axa",
+            ),
+            (
+                "plain+raw_attribute",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"a"},{"t":"Math","c":[{"t":"InlineMath"},"x"]},{"t":"Space"},{"t":"Str","c":"2"}]}]"#,
+                "ax 2",
+            ),
+        ]);
+    }
+
+    #[test]
+    fn caption_blocks_become_lines() {
+        check(&[
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"a"}]},{"t":"CodeBlock","c":[["",["py"],[]],"c\nd"]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : a\\\n  `c\n  d`{.py}\\\n  b\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"a"}]},{"t":"CodeBlock","c":[["",["py"],[]],"c\nd"]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : a\n  c\n  d\n  b\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"a"}]},{"t":"CodeBlock","c":[["",["py"],[]],"c\nd"]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![a\\\n`c\nd`{.py}\\\nb](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"a"}]},{"t":"HorizontalRule"},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : a\\\n  \\\n  b\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"a"}]},{"t":"HorizontalRule"},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : a\n  b\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"a"}]},{"t":"HorizontalRule"},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![a\\\n\\\nb](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"HorizontalRule"}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"HorizontalRule"}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"HorizontalRule"}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"q1"}]},{"t":"Para","c":[{"t":"Str","c":"q2"}]}]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : q1\\\n  q2\\\n  b\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"q1"}]},{"t":"Para","c":[{"t":"Str","c":"q2"}]}]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : q1\n  q2\n  b\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"BlockQuote","c":[{"t":"Para","c":[{"t":"Str","c":"q1"}]},{"t":"Para","c":[{"t":"Str","c":"q2"}]}]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![q1\\\nq2\\\nb](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"a"}]}],[{"t":"Para","c":[{"t":"Str","c":"a2"}]},{"t":"Para","c":[{"t":"Str","c":"a3"}]}]]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : aa2\\\n  a3\\\n  b\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"a"}]}],[{"t":"Para","c":[{"t":"Str","c":"a2"}]},{"t":"Para","c":[{"t":"Str","c":"a3"}]}]]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : aa2\n  a3\n  b\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"a"}]}],[{"t":"Para","c":[{"t":"Str","c":"a2"}]},{"t":"Para","c":[{"t":"Str","c":"a3"}]}]]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![aa2\\\na3\\\nb](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"DefinitionList","c":[[[{"t":"Str","c":"t"}],[[{"t":"Plain","c":[{"t":"Str","c":"d"}]}],[{"t":"Para","c":[{"t":"Str","c":"e"}]}]]],[[{"t":"Str","c":"u"}],[[{"t":"Plain","c":[{"t":"Str","c":"f"}]}]]]]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : t: deu: f\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"DefinitionList","c":[[[{"t":"Str","c":"t"}],[[{"t":"Plain","c":[{"t":"Str","c":"d"}]}],[{"t":"Para","c":[{"t":"Str","c":"e"}]}]]],[[{"t":"Str","c":"u"}],[[{"t":"Plain","c":[{"t":"Str","c":"f"}]}]]]]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : t: deu: f\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"DefinitionList","c":[[[{"t":"Str","c":"t"}],[[{"t":"Plain","c":[{"t":"Str","c":"d"}]}],[{"t":"Para","c":[{"t":"Str","c":"e"}]}]]],[[{"t":"Str","c":"u"}],[[{"t":"Plain","c":[{"t":"Str","c":"f"}]}]]]]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![t: deu: f](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"LineBlock","c":[[{"t":"Str","c":"l1"}],[{"t":"Str","c":"l2"}]]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : l1\\\n  l2\\\n  b\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"LineBlock","c":[[{"t":"Str","c":"l1"}],[{"t":"Str","c":"l2"}]]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : l1\n  l2\n  b\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"LineBlock","c":[[{"t":"Str","c":"l1"}],[{"t":"Str","c":"l2"}]]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![l1\\\nl2\\\nb](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"RawBlock","c":["html","<b>"]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : `<b>`{=html}\\\n  b\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"RawBlock","c":["html","<b>"]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : \n  b\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"RawBlock","c":["html","<b>"]},{"t":"Para","c":[{"t":"Str","c":"b"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![`<b>`{=html}\\\nb](p){alt=\"a b\"}\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"1."}]},{"t":"Para","c":[{"t":"Str","c":"#"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : 1.\\\n  \\#\n\nafter",
+            ),
+            (
+                "plain",
+                &[][..],
+                r##"[{"t":"Table","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"1."}]},{"t":"Para","c":[{"t":"Str","c":"#"}]}]],[[{"t":"AlignDefault"},{"t":"ColWidthDefault"}]],[["",[],[]],[]],[[["",[],[]],0,[],[[["",[],[]],[[["",[],[]],{"t":"AlignDefault"},1,1,[{"t":"Plain","c":[{"t":"Str","c":"x"}]}]]]]]]],[["",[],[]],[]]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "  ---\n  x\n  ---\n\n  : 1.\n  #\n\nafter",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r##"[{"t":"Figure","c":[["",[],[]],[null,[{"t":"Para","c":[{"t":"Str","c":"1."}]},{"t":"Para","c":[{"t":"Str","c":"#"}]}]],[{"t":"Plain","c":[{"t":"Image","c":[["",[],[]],[{"t":"Str","c":"a b"}],["p",""]]}]}]]},{"t":"Para","c":[{"t":"Str","c":"after"}]}]"##,
+                "![1.\\\n\\#](p){alt=\"a b\"}\n\nafter",
+            ),
+        ]);
     }
 }

@@ -7,6 +7,7 @@
 //! the format selects the rest.
 
 mod blocks;
+mod caption;
 mod escape;
 mod html;
 mod inlines;
@@ -106,6 +107,10 @@ pub(crate) struct LinkRef {
     pub attrs: Text,
 }
 
+/// The target of a link reference: the URL, the title and the attributes
+/// text of the element.
+pub(crate) type RefKey = (Text, Text, Text);
+
 /// The state of one run of the writer.
 pub(crate) struct W<'a> {
     pub opts: &'a WriterOptions,
@@ -119,8 +124,6 @@ pub(crate) struct W<'a> {
     pub notes_written: usize,
     /// The link references that wait for output.
     pub refs: Vec<LinkRef>,
-    /// The labels of all link references of the document.
-    pub all_refs: Vec<LinkRef>,
     pub depth: usize,
     pub max_depth: usize,
     pub messages: Vec<LogMessage>,
@@ -128,6 +131,11 @@ pub(crate) struct W<'a> {
     pub in_table: bool,
     /// `true` inside a heading.
     pub in_heading: bool,
+    /// The number of images written so far.
+    pub images: usize,
+    /// `true` inside an entry of the table of contents, which drops notes
+    /// and writes links as their content.
+    pub in_toc: bool,
     /// The number of fenced divs in the content written last, counted
     /// through divs only: a list or a quote between two divs stops the count.
     pub div_count: usize,
@@ -135,8 +143,13 @@ pub(crate) struct W<'a> {
     pub upper: bool,
     /// `true` inside a superscript or subscript, where spaces need a backslash.
     pub in_script: bool,
-    /// The labels of the link references, in lower case, with their index.
-    pub ref_index: std::collections::HashMap<Text, usize>,
+    /// The text labels of the link references, in lower case, with their
+    /// targets.
+    pub ref_index: std::collections::HashMap<Text, RefKey>,
+    /// The label of each target in `refs`.
+    pub pending_targets: std::collections::HashMap<RefKey, Text>,
+    /// The first number that can be free for a numbered reference label.
+    pub next_ref_number: u64,
     /// The number of enclosing list items.
     pub list_level: usize,
     /// For the next inline list: drop the outer spaces of its first and of
@@ -167,17 +180,20 @@ impl<'a> W<'a> {
             note_starts: Vec::new(),
             notes_written: 0,
             refs: Vec::new(),
-            all_refs: Vec::new(),
             depth: 0,
             max_depth,
             messages: Vec::new(),
             in_table: false,
             in_heading: false,
+            in_toc: false,
+            images: 0,
             list_level: 0,
             div_count: 0,
             upper: false,
             in_script: false,
             ref_index: std::collections::HashMap::new(),
+            pending_targets: std::collections::HashMap::new(),
+            next_ref_number: 1,
             cut_list: (false, false),
             cut_edges: (false, false),
             heading_ids: randoc_core::shared::IdentifierSet::new(),
@@ -243,7 +259,14 @@ impl<'a> W<'a> {
             for block in blocks {
                 if location == ReferenceLocation::EndOfSection && matches!(block, Block::Header(..))
                 {
-                    parts.push(self.pending_notes_and_refs());
+                    let pending = self.pending_notes_and_refs();
+                    // With a table of contents, Pandoc starts the body with
+                    // a blank line before the notes of the first section.
+                    let lead = parts.is_empty()
+                        && self.opts.table_of_contents
+                        && self.opts.template.is_some()
+                        && !pending.is_empty();
+                    parts.push(if lead { blankline() + pending } else { pending });
                 }
                 parts.push(self.block_list(std::slice::from_ref(block))?);
                 if location == ReferenceLocation::EndOfBlock {
@@ -277,11 +300,12 @@ impl<'a> W<'a> {
                     literal(marker) + cr() + nest(4, note)
                 }
             } else {
-                literal(format!("[{number}]")).spaced(note)
+                literal(format!("[{}{number}]", self.opts.identifier_prefix)).spaced(note)
             };
             notes_doc = notes_doc.above_blank(item);
         }
         let refs = std::mem::take(&mut self.refs);
+        self.pending_targets.clear();
         let mut refs_doc = empty();
         for reference in refs {
             refs_doc = refs_doc.above(self.reference_line(&reference));
@@ -293,20 +317,32 @@ impl<'a> W<'a> {
     }
 
     fn reference_line(&self, reference: &LinkRef) -> Doc {
-        let mut line = literal(format!(
-            "[{}]: {}",
-            reference.label,
-            url_text(&reference.target.url)
-        ));
+        let label = format!("[{}]:", reference.label);
+        // The destination goes to the next line only when the label fills
+        // the line (the references have an indent of 2).
+        let full = line_width(self.opts)
+            .is_some_and(|width| 2 + randoc_layout::real_length(&label) >= width);
+        let url = literal(url_text(&reference.target.url));
+        let mut line = if full {
+            literal(label) + cr() + nest(2, url)
+        } else {
+            literal(label) + literal(" ") + url
+        };
         // The title can go to the next line.
+        let mut rest = empty();
         if !reference.target.title.is_empty() {
-            line += nest(
+            rest += nest(
                 2,
                 space() + literal(format!("\"{}\"", reference.target.title)),
             );
         }
         if !reference.attrs.is_empty() {
-            line += literal(format!(" {}", reference.attrs));
+            rest += literal(format!(" {}", reference.attrs));
+        }
+        if full {
+            line += nest(2, rest);
+        } else {
+            line += rest;
         }
         line
     }

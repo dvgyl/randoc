@@ -2,7 +2,7 @@
 
 use randoc_ast::{Alignment, Attr, Block, Cell, ColWidth, Inline, Row, Table, Text};
 use randoc_core::{Extension, Result};
-use randoc_layout::{Doc, blankline, cr, empty, literal, nest, real_length};
+use randoc_layout::{Doc, blankline, cr, literal, nest, real_length};
 
 use crate::W;
 
@@ -218,19 +218,6 @@ enum Kind {
     Grid,
 }
 
-/// Returns the inline lists of the paragraphs of a table caption.
-fn caption_parts(table: &Table) -> Vec<&[Inline]> {
-    table
-        .caption
-        .long
-        .iter()
-        .filter_map(|block| match block {
-            Block::Plain(inlines) | Block::Para(inlines) => Some(inlines.as_slice()),
-            _ => None,
-        })
-        .collect()
-}
-
 /// Returns `true` when the cell holds at most one `Plain` or `Para` block.
 fn is_simple_cell(cell: &Cell) -> bool {
     match cell.content.as_slice() {
@@ -337,22 +324,20 @@ impl W<'_> {
     }
 
     /// Builds the caption that follows a table, with the blank lines around
-    /// it: the paragraphs of the caption joined by line breaks, then the
+    /// it: the lines of the caption joined by line breaks, then the
     /// attributes of the table.
     fn caption_doc(&mut self, table: &Table) -> Result<Doc> {
-        let parts = caption_parts(table);
-        if parts.is_empty() {
+        // Pandoc escapes no list marker at the start of a caption line.
+        let lines = self.caption_lines(&table.caption.long, (false, false))?;
+        if lines.empty {
             return Ok(blankline());
         }
-        let mut caption = empty();
-        for (index, part) in parts.iter().enumerate() {
-            if index > 0 {
-                caption += self.line_break();
-            }
-            caption += self.inline_list(part, index == 0)?;
-        }
+        let mut caption = lines.doc;
         if !table.attr.is_empty() {
-            caption += literal(format!(" {}", crate::inlines::attr_text(&table.attr)));
+            caption += literal(format!(
+                " {}",
+                crate::inlines::attr_text(&self.prefixed(&table.attr))
+            ));
         }
         Ok(if self.has(Extension::TableCaptions) {
             blankline() + literal(": ") + caption + blankline()

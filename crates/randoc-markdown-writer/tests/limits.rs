@@ -207,6 +207,140 @@ fn the_default_limit_is_safe_on_a_small_stack() {
     });
 }
 
+/// `[Str "x"]` inside `n` levels of emphasis.
+fn emph(n: usize) -> Vec<Inline> {
+    let mut inner = vec![Inline::Str("x".into())];
+    for _ in 0..n {
+        inner = vec![Inline::Emph(inner)];
+    }
+    inner
+}
+
+/// Writes a document without reference links, with an optional template
+/// and table of contents.
+fn write_text(
+    doc: &Pandoc,
+    format: &str,
+    template: Option<&str>,
+    toc: bool,
+) -> randoc_core::Result<String> {
+    let spec = FormatSpec::parse(format);
+    let mut options = WriterOptions::default();
+    options.extensions = spec.extensions().unwrap();
+    options.table_of_contents = toc;
+    options.template = template.map(|source| {
+        let mut load = |_: &str| Err("no partials");
+        randoc_templates::Template::compile("t", source, 64, &mut load).unwrap()
+    });
+    let writer = randoc_markdown_writer::writer(&spec.name).unwrap();
+    match writer.write(doc, &options, &mut Context::pure())? {
+        randoc_core::Output::Text(text) => Ok(text),
+        _ => unreachable!("the writer gives text"),
+    }
+}
+
+fn blocks(blocks: Vec<Block>) -> Pandoc {
+    Pandoc {
+        meta: Default::default(),
+        blocks,
+    }
+}
+
+#[test]
+fn deep_figure_alternative_text_does_not_overflow_a_small_stack() {
+    // The writer gives the HTML writer the text of the alternative text,
+    // not a copy of the deep tree. Expected texts: Pandoc 3.13 for 3 levels.
+    on_small_stack(|| {
+        for n in [835, 10_000, 100_000] {
+            let image = Inline::Image(Attr::default(), emph(n), Target::new("i", ""));
+            let caption = Caption {
+                short: None,
+                long: vec![Block::Plain(vec![Inline::Str("c".into())])],
+            };
+            let doc = blocks(vec![Block::Figure(
+                Attr::default(),
+                caption,
+                vec![Block::Plain(vec![image])],
+            )]);
+            let expected = [
+                ("markdown_mmd", "<img src=\"i\" alt=\"x\" />"),
+                ("markdown", "![c](i){alt=\"x\"}"),
+                ("plain", "[c]"),
+                (
+                    "gfm",
+                    "<figure>\n<img src=\"i\" alt=\"x\" />\n<figcaption>c</figcaption>\n</figure>",
+                ),
+            ];
+            for (format, text) in expected {
+                assert_eq!(
+                    write_text(&doc, format, None, false).unwrap(),
+                    text,
+                    "{format} {n}"
+                );
+            }
+            for format in FORMATS {
+                let _ = write_text(&doc, format, None, false);
+            }
+            std::mem::forget(doc);
+        }
+    });
+}
+
+#[test]
+fn a_deep_citation_in_a_heading_does_not_overflow_the_table_of_contents() {
+    // `pandoc -f native -t markdown --toc --template=t` with `$toc$\n$body$`.
+    on_small_stack(|| {
+        for n in [838, 10_000, 100_000] {
+            let citation = Citation {
+                id: "r".into(),
+                prefix: Vec::new(),
+                suffix: Vec::new(),
+                mode: CitationMode::NormalCitation,
+                note_num: 0,
+                hash: 0,
+            };
+            let doc = blocks(vec![Block::Header(
+                1,
+                Attr::new("h", vec![], vec![]),
+                vec![Inline::Cite(vec![citation], emph(n))],
+            )]);
+            let text = write_text(&doc, "markdown", Some("$toc$\n$body$\n"), true);
+            assert_eq!(
+                text.unwrap(),
+                "- [[@r]](#h){#toc-h}\n\n# [@r] {#h}\n",
+                "{n}"
+            );
+            std::mem::forget(doc);
+        }
+    });
+}
+
+#[test]
+fn rising_heading_levels_give_the_depth_error_in_the_table_of_contents() {
+    on_small_stack(|| {
+        for count in [4_678_i64, 100_000] {
+            let rising = blocks(
+                (0..count)
+                    .map(|i| {
+                        Block::Header(i - count, Attr::default(), vec![Inline::Str("x".into())])
+                    })
+                    .collect(),
+            );
+            let result = write_text(&rising, "markdown", Some("$toc$\n$body$\n"), true);
+            let error = result.unwrap_err().to_string();
+            assert!(error.contains("nested too deeply"), "{count}: {error}");
+            std::mem::forget(rising);
+        }
+        // Headings of one level make a flat list.
+        let flat = blocks(
+            (0..4_678)
+                .map(|_| Block::Header(1, Attr::default(), vec![Inline::Str("x".into())]))
+                .collect(),
+        );
+        assert!(write_text(&flat, "markdown", Some("$toc$\n$body$\n"), true).is_ok());
+    });
+}
+
 /// The inputs that repeat one construct `n` times.
 fn repeated(kind: &str, n: usize) -> Pandoc {
     let s = |t: &str| Inline::Str(t.into());

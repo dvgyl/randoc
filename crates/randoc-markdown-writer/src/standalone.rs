@@ -7,12 +7,12 @@
 //! from the converted values, and sets `body` and `titleblock` only where a
 //! variable does not already give them.
 
-use randoc_ast::{Attr, Block, Inline, Pandoc, Target};
-use randoc_core::{Extension, Result};
-use randoc_layout::{Doc, chomp, cr, empty, hang, literal, nest, space, vcat};
+use randoc_ast::{Attr, Block, Inline, Pandoc, Text};
+use randoc_core::{Extension, ReferenceLocation, Result};
+use randoc_layout::{Doc, blankline, chomp, cr, empty, hang, literal, nest, space, vcat};
 use randoc_templates::{Context as TemplateContext, Template, Val};
 
-use crate::{Variant, W};
+use crate::{Variant, W, depth_error};
 
 impl W<'_> {
     /// Renders a document into its template.
@@ -23,6 +23,13 @@ impl W<'_> {
             None
         } else {
             self.title_block(&context)
+        };
+        // The table of contents comes before the body, so that its link
+        // references come first.
+        let toc = if self.opts.table_of_contents {
+            Some(self.toc(&doc.blocks)?)
+        } else {
+            None
         };
         let body = self.document(&doc.blocks)?;
         // A variable replaces a metadata field, and `meta-json` replaces both.
@@ -36,12 +43,7 @@ impl W<'_> {
         if let Some(block) = title_block {
             fields.push(("titleblock", block));
         }
-        if self.opts.table_of_contents {
-            let link_ids = self.has(Extension::LinkAttributes);
-            let toc = match toc_list(&doc.blocks, self.opts.toc_depth, link_ids) {
-                Some(list) => self.block_list(&[list])?,
-                None => empty(),
-            };
+        if let Some(toc) = toc {
             fields.push(("toc", toc.clone()));
             fields.push(("table-of-contents", toc));
         }
@@ -91,56 +93,301 @@ impl W<'_> {
     }
 }
 
-/// The table of contents: a bullet list of the headings at the top level of
-/// the document up to `depth`, without the headings of the class
-/// `unlisted`. A heading with an identifier links to it.
-fn toc_list(blocks: &[Block], depth: i64, link_ids: bool) -> Option<Block> {
-    // Each open level: its heading level and its items so far.
-    let mut stack: Vec<(i64, Vec<Vec<Block>>)> = vec![(0, Vec::new())];
-    for block in blocks {
-        let Block::Header(level, attr, inlines) = block else {
-            continue;
-        };
-        if *level > depth || attr.classes.iter().any(|c| c == "unlisted") {
-            continue;
-        }
-        while stack.len() > 1 && stack.last().is_some_and(|(open, _)| *open >= *level) {
-            close_level(&mut stack);
-        }
-        let entry = if attr.id.is_empty() {
-            inlines.clone()
-        } else {
-            let id = if link_ids {
-                format!("toc-{}", attr.id)
-            } else {
-                String::new()
-            };
-            vec![Inline::Link(
-                Attr::new(id, Vec::new(), Vec::new()),
-                inlines.clone(),
-                Target::new(format!("#{}", attr.id), ""),
-            )]
-        };
-        if let Some((_, items)) = stack.last_mut() {
-            items.push(vec![Block::Plain(entry)]);
-        }
-        stack.push((*level, Vec::new()));
-    }
-    while stack.len() > 1 {
-        close_level(&mut stack);
-    }
-    let (_, items) = stack.pop()?;
-    (!items.is_empty()).then_some(Block::BulletList(items))
+/// One entry of the table of contents.
+struct TocEntry<'d> {
+    /// The nesting level of the entry in the list, from 0.
+    depth: usize,
+    id: &'d str,
+    inlines: &'d [Inline],
+    /// The section number, with `--number-sections`.
+    number: Option<Text>,
 }
 
-/// Ends the innermost level: its items become a list in the last item of
-/// the level above.
-fn close_level(stack: &mut Vec<(i64, Vec<Vec<Block>>)>) {
-    if let Some((_, items)) = stack.pop()
-        && !items.is_empty()
-        && let Some(last) = stack.last_mut().and_then(|(_, up)| up.last_mut())
-    {
-        last.push(Block::BulletList(items));
+/// The state of the walk over the headings for the table of contents.
+struct TocScan<'d> {
+    /// The open sections: the heading level and `true` when the section
+    /// is not in the table of contents.
+    open: Vec<(i64, bool)>,
+    entries: Vec<TocEntry<'d>>,
+    /// The section counters, each a heading level and its count, with
+    /// rising levels. A level that is not in the list has the count 0.
+    counters: Vec<(i64, i64)>,
+    /// The level of the first part of a section number: 1, or the lowest
+    /// heading level of the document when it is lower.
+    base: i64,
+    /// The identifier of the div whose section starts at the next heading,
+    /// when the div has one. The entry links to the div.
+    section_id: Option<&'d str>,
+}
+
+/// Returns the level of the first block when it is a heading, or of the
+/// heading at the start of a div at the start of the blocks.
+fn leading_header(mut blocks: &[Block]) -> Option<i64> {
+    loop {
+        match blocks.first()? {
+            Block::Header(level, ..) => return Some(*level),
+            Block::Div(_, inner) => blocks = inner,
+            _ => return None,
+        }
+    }
+}
+
+/// Returns the level of the section that the content of a div makes, or
+/// `None` when the headings of the div are not in the table of contents.
+/// A div makes a section when it starts with a heading and holds no other
+/// heading of the same or a higher level at its top. A div that holds only
+/// one div makes the section of that div.
+fn div_section(mut blocks: &[Block]) -> Option<i64> {
+    loop {
+        match blocks {
+            [Block::Header(level, ..), rest @ ..] => {
+                let closes = |block: &Block| match block {
+                    Block::Header(other, ..) => other <= level,
+                    Block::Div(_, inner) => leading_header(inner).is_some_and(|l| l <= *level),
+                    _ => false,
+                };
+                return (!rest.iter().any(closes)).then_some(*level);
+            }
+            [Block::Div(_, inner)] => blocks = inner,
+            _ => return None,
+        }
+    }
+}
+
+/// Returns the lowest heading level that the walk for the table of
+/// contents counts, as [`W::toc_scan`] finds the headings.
+fn lowest_level(blocks: &[Block]) -> Option<i64> {
+    let mut lowest: Option<i64> = None;
+    let mut stack = vec![blocks];
+    while let Some(list) = stack.pop() {
+        for block in list {
+            match block {
+                Block::Header(level, ..) => {
+                    lowest = Some(lowest.map_or(*level, |l| l.min(*level)));
+                }
+                Block::Div(_, inner) => stack.push(inner),
+                _ => {}
+            }
+        }
+    }
+    lowest
+}
+
+impl<'d> TocScan<'d> {
+    /// Counts a numbered heading and returns its section number.
+    fn count(&mut self, level: i64) -> Text {
+        while self.counters.last().is_some_and(|(l, _)| *l > level) {
+            self.counters.pop();
+        }
+        match self.counters.last_mut() {
+            Some((l, count)) if *l == level => *count += 1,
+            _ => self.counters.push((level, 1)),
+        }
+        let mut parts = Vec::new();
+        let mut counters = self.counters.iter().peekable();
+        let mut current = self.base;
+        // A level without a heading is 0 in the number. The number of
+        // parts is limited, so that an absurd level cannot exhaust memory.
+        while current <= level && parts.len() < crate::MAX_RUN {
+            let count = match counters.peek() {
+                Some((l, count)) if *l == current => {
+                    counters.next();
+                    *count
+                }
+                _ => 0,
+            };
+            parts.push(count.to_string());
+            current += 1;
+        }
+        parts.join(".")
+    }
+}
+
+impl W<'_> {
+    /// Renders the table of contents: a bullet list of the sections up to
+    /// the TOC depth. Each entry links to its heading when the heading has
+    /// an identifier.
+    fn toc(&mut self, blocks: &[Block]) -> Result<Doc> {
+        let mut scan = TocScan {
+            open: Vec::new(),
+            entries: Vec::new(),
+            counters: Vec::new(),
+            base: lowest_level(blocks).map_or(1, |l| l.min(1)),
+            section_id: None,
+        };
+        self.toc_scan(blocks, &mut scan)?;
+        let mut index = 0;
+        let mut out = self.toc_items(&scan.entries, &mut index, 0)?;
+        if self.opts.reference_location == ReferenceLocation::EndOfBlock {
+            out = out.above_blank(self.pending_notes_and_refs());
+        }
+        Ok(out)
+    }
+
+    /// Finds the entries of the table of contents in the blocks of a
+    /// section.
+    fn toc_scan<'d>(&mut self, blocks: &'d [Block], scan: &mut TocScan<'d>) -> Result<()> {
+        for block in blocks {
+            match block {
+                Block::Header(level, attr, inlines) => {
+                    self.toc_heading(*level, attr, inlines, scan)?;
+                }
+                Block::Div(attr, inner) => {
+                    self.enter()?;
+                    let result = match div_section(inner) {
+                        Some(level) => {
+                            scan.section_id = (!attr.id.is_empty()).then_some(attr.id.as_str());
+                            let base = scan.open.iter().take_while(|(l, _)| *l < level).count();
+                            let result = self.toc_scan(inner, scan);
+                            // The section of the div ends with the div.
+                            scan.open.truncate(base);
+                            result
+                        }
+                        None => self.toc_count(inner, scan),
+                    };
+                    self.leave();
+                    result?;
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+
+    /// Counts the headings of a div whose headings are not in the table of
+    /// contents: they still take section numbers.
+    fn toc_count(&mut self, blocks: &[Block], scan: &mut TocScan<'_>) -> Result<()> {
+        for block in blocks {
+            match block {
+                Block::Header(level, attr, _) => {
+                    if self.opts.number_sections && *level >= 1 && !attr.has_class("unnumbered") {
+                        scan.count(*level);
+                    }
+                }
+                Block::Div(_, inner) => {
+                    self.enter()?;
+                    let result = self.toc_count(inner, scan);
+                    self.leave();
+                    result?;
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+
+    /// Adds a heading to the walk for the table of contents.
+    fn toc_heading<'d>(
+        &mut self,
+        level: i64,
+        attr: &'d Attr,
+        inlines: &'d [Inline],
+        scan: &mut TocScan<'d>,
+    ) -> Result<()> {
+        let number =
+            (self.opts.number_sections && !attr.has_class("unnumbered")).then(|| scan.count(level));
+        while scan.open.last().is_some_and(|(open, _)| *open >= level) {
+            scan.open.pop();
+        }
+        // With section numbers, only a heading without a number can be
+        // unlisted.
+        let unlisted = attr.has_class("unlisted")
+            && (!self.opts.number_sections || attr.has_class("unnumbered"));
+        let hidden = scan.open.last().is_some_and(|(_, hidden)| *hidden)
+            || unlisted
+            || level > self.opts.toc_depth;
+        scan.open.push((level, hidden));
+        // Each open section is one level of the list.
+        if scan.open.len() > self.max_depth.saturating_sub(self.depth) {
+            return Err(depth_error());
+        }
+        let id = scan.section_id.take().unwrap_or(&attr.id);
+        if !hidden {
+            scan.entries.push(TocEntry {
+                depth: scan.open.len() - 1,
+                id,
+                inlines,
+                number,
+            });
+        }
+        Ok(())
+    }
+
+    /// Renders the entries at one depth of the list, from `index`, with
+    /// the entries below each one.
+    fn toc_items(
+        &mut self,
+        entries: &[TocEntry<'_>],
+        index: &mut usize,
+        depth: usize,
+    ) -> Result<Doc> {
+        self.enter()?;
+        self.list_level += 1;
+        let result = self.toc_items_at(entries, index, depth);
+        self.list_level -= 1;
+        self.leave();
+        result
+    }
+
+    fn toc_items_at(
+        &mut self,
+        entries: &[TocEntry<'_>],
+        index: &mut usize,
+        depth: usize,
+    ) -> Result<Doc> {
+        let mut items = Vec::new();
+        while let Some(entry) = entries.get(*index) {
+            if entry.depth < depth {
+                break;
+            }
+            *index += 1;
+            let mut body = self.toc_entry(entry)? + cr();
+            if entries.get(*index).is_some_and(|next| next.depth > depth) {
+                body += self.toc_items(entries, index, depth + 1)?;
+            }
+            items.push(hang(2, literal("- "), body));
+        }
+        // A table of contents without entries is a blank line, as an
+        // empty list in Pandoc.
+        Ok(vcat(items) + blankline())
+    }
+
+    /// Renders the text of one entry: the section number and the content of
+    /// the heading without its notes and links, as a link to the heading.
+    fn toc_entry(&mut self, entry: &TocEntry<'_>) -> Result<Doc> {
+        let outer = std::mem::replace(&mut self.in_toc, true);
+        let images = self.images;
+        let result = self.toc_entry_text(entry);
+        self.in_toc = outer;
+        let inner = result?;
+        let has_image = self.images != images;
+        if entry.id.is_empty() {
+            return Ok(inner);
+        }
+        // A format without link attributes drops the identifier of the entry.
+        let id = if self.link_attributes() {
+            format!("toc-{}", entry.id)
+        } else {
+            Text::new()
+        };
+        let attr = Attr::new(id, Vec::new(), Vec::new());
+        let target = randoc_ast::Target::new(format!("#{}", entry.id), "");
+        // The link takes the identifier prefix of the options.
+        let collapsed = !self.shortcut_references();
+        Ok(self.link_with_inner(&attr, inner, has_image, &target, collapsed))
+    }
+
+    fn toc_entry_text(&mut self, entry: &TocEntry<'_>) -> Result<Doc> {
+        let content =
+            self.inline_list(entry.inlines, entry.id.is_empty() && entry.number.is_none())?;
+        Ok(match &entry.number {
+            Some(number) => {
+                let attr = Attr::new("", vec![Text::from("toc-section-number")], Vec::new());
+                let number = self.span(&attr, &[Inline::Str(number.clone())])?;
+                number + space() + content
+            }
+            None => content,
+        })
     }
 }
 
@@ -289,6 +536,28 @@ fn needs_quotes(text: &str) -> bool {
         ])
         || number(["0x", "0X"], char::is_ascii_hexdigit)
         || number(["0o", "0O"], |c| ('0'..='7').contains(c))
+        || changes_as_number(text)
+}
+
+/// Returns `true` for a decimal number that the YAML reader of Pandoc does
+/// not give back as the same text: a leading zero, or a fraction that ends
+/// with a zero when the exponent is absent or zero (`007`, `1.10`, `1.0e0`).
+fn changes_as_number(text: &str) -> bool {
+    let digits = |s: &str| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit());
+    let (mantissa, exponent) = match text.find(['e', 'E']) {
+        Some(i) => (&text[..i], Some(&text[i + 1..])),
+        None => (text, None),
+    };
+    let (whole, fraction) = match mantissa.split_once('.') {
+        Some((whole, fraction)) => (whole, Some(fraction)),
+        None => (mantissa, None),
+    };
+    let exponent = exponent.map(|e| e.strip_prefix(['+', '-']).unwrap_or(e));
+    if !digits(whole) || !fraction.is_none_or(digits) || !exponent.is_none_or(digits) {
+        return false;
+    }
+    let zero_exponent = exponent.is_none_or(|e| e.bytes().all(|b| b == b'0'));
+    whole.starts_with('0') || (zero_exponent && fraction.is_some_and(|f| f.ends_with('0')))
 }
 
 #[cfg(test)]
@@ -301,7 +570,9 @@ mod tests {
         let quoted = [
             "a#b", "a:b", "a:", "%a", "!a", "&a", "?a", ",a", "-1", "-", "{x}", "}a", "@a", "null",
             "Null", "NULL", "NO", "off", "On", "True", "TRUE", "Y", "y", "0x1", "0xA", "0X1",
-            "0o1", "0O1",
+            "0o1", "0O1", "0", "00", "-0", "1.10", "1.0", "3.0", "12.0", "10.10", "0.0", "0.5",
+            "00.5", "007", "007.5", "02134", "0e0", "0e1", "1.0e0", "1.0e+0", "1.0e-0", "1.0e00",
+            "2.50E0", "1.100e00", "01e2", "-1.0", "0.10", "9.90", "0x1F", "0o7", "1:20",
         ];
         let plain = [
             "x,y",
@@ -328,6 +599,35 @@ mod tests {
             "\\[x\\]",
             "a - b",
             "2020-01-02",
+            "1",
+            "10",
+            "100",
+            "1.5",
+            "1.01",
+            "1.",
+            "0.",
+            ".50",
+            "1E3",
+            "1e03",
+            "1e+3",
+            "1e-3",
+            "1e0",
+            "1e00",
+            "10e0",
+            "1.50e3",
+            "1.0e-3",
+            "1.0E3",
+            "1.10e1",
+            "1.1e1",
+            "+1.0",
+            "1.0.0",
+            "v1.10",
+            "1.10a",
+            "inf",
+            "NaN",
+            ".nan",
+            "1,0",
+            "1 0",
         ];
         for text in quoted {
             assert!(needs_quotes(text), "{text}");
@@ -341,7 +641,7 @@ mod tests {
 #[cfg(test)]
 mod template_tests {
     use randoc_ast::Pandoc;
-    use randoc_core::{Context, FormatSpec, Output, WriterOptions};
+    use randoc_core::{Context, FormatSpec, Output, ReferenceLocation, WriterOptions};
     use randoc_templates::{Template, Val};
 
     fn compile(source: &str) -> Template {
@@ -429,6 +729,147 @@ mod template_tests {
                 write(format, json, compile(source), &[]),
                 expected,
                 "{format}"
+            );
+        }
+    }
+    /// Writes blocks with `--toc` and the options of a command line.
+    fn write_toc(format: &str, args: &[&str], blocks: &str) -> String {
+        let json = format!(r#"{{"pandoc-api-version":[1,23,1,2],"meta":{{}},"blocks":{blocks}}}"#);
+        let doc: Pandoc = randoc_ast::json::from_json(&json).unwrap_or_default();
+        let spec = FormatSpec::parse(format);
+        let mut options = WriterOptions::default();
+        options.extensions = spec.extensions().unwrap_or_else(|_| unreachable!());
+        options.template = Some(compile("$toc$\n~~~\n$body$\n"));
+        options.table_of_contents = true;
+        for arg in args {
+            match *arg {
+                "-N" => options.number_sections = true,
+                "--toc-depth=2" => options.toc_depth = 2,
+                "--reference-links" => options.reference_links = true,
+                "--reference-location=block" => {
+                    options.reference_location = ReferenceLocation::EndOfBlock;
+                }
+                "--reference-location=section" => {
+                    options.reference_location = ReferenceLocation::EndOfSection;
+                }
+                "--id-prefix=p-" => options.identifier_prefix = "p-".into(),
+                _ => unreachable!("{arg}"),
+            }
+        }
+        let writer = crate::writer(&spec.name).unwrap_or_else(|| unreachable!());
+        match writer.write(&doc, &options, &mut Context::pure()) {
+            Ok(Output::Text(text)) => text,
+            _ => unreachable!("the writer gives text"),
+        }
+    }
+
+    #[test]
+    fn the_table_of_contents_follows_the_sections_of_pandoc() {
+        // `pandoc -f json -t FORMAT --toc --template=t ARGS` with the
+        // template `$toc$\n~~~\n$body$\n`.
+        let cases = [
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Header","c":[1,["l",[],[]],[{"t":"Str","c":"A"},{"t":"Note","c":[{"t":"Para","c":[{"t":"Str","c":"n"}]}]},{"t":"Space"},{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"b"},{"t":"Space"},{"t":"Emph","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"c"}],["v",""]]}]}],["u",""]]}]]},{"t":"Para","c":[{"t":"Str","c":"y"}]}]"#,
+                "- [A b *c*](#l){#toc-l}\n\n~~~\n# A[^1] [b *[c](v)*](u) {#l}\n\ny\n\n[^1]: n\n",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Div","c":[["",[],[]],[{"t":"Header","c":[2,["b",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Para","c":[{"t":"Str","c":"x"}]}]]},{"t":"Header","c":[2,["c",[],[]],[{"t":"Str","c":"C"}]]},{"t":"Div","c":[["",[],[]],[{"t":"Para","c":[{"t":"Str","c":"p"}]},{"t":"Header","c":[1,["z",[],[]],[{"t":"Str","c":"Z"}]]}]]},{"t":"Div","c":[["dv",[],[]],[{"t":"Header","c":[2,["o",[],[]],[{"t":"Str","c":"O"}]]}]]}]"#,
+                "- [A](#a){#toc-a}\n  - [B](#b){#toc-b}\n  - [C](#c){#toc-c}\n  - [O](#dv){#toc-dv}\n\n~~~\n# A\n\n::: {}\n## B\n\nx\n:::\n\n## C\n\n::: {}\np\n\n# Z\n:::\n\n::: {#dv}\n## O\n:::\n",
+            ),
+            (
+                "gfm",
+                &[][..],
+                r#"[{"t":"Header","c":[2,["a2",[],[]],[{"t":"Str","c":"A2"}]]},{"t":"Div","c":[["",[],[]],[{"t":"Header","c":[1,["one",[],[]],[{"t":"Str","c":"One"}]]}]]},{"t":"Header","c":[3,["a3",[],[]],[{"t":"Str","c":"A3"}]]}]"#,
+                "- [A2](#a2)\n- [One](#one)\n- [A3](#a3)\n\n~~~\n## A2\n\n<div>\n\n# One\n\n</div>\n\n### A3\n",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["b",["unlisted"],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[3,["c",[],[]],[{"t":"Str","c":"C"}]]},{"t":"Header","c":[2,["d",[],[]],[{"t":"Str","c":"D"}]]}]"#,
+                "- [A](#a){#toc-a}\n  - [D](#d){#toc-d}\n\n~~~\n# A\n\n## B {#b .unlisted}\n\n### C\n\n## D\n",
+            ),
+            (
+                "markdown",
+                &["-N"][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["b",["unlisted"],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[3,["c",[],[]],[{"t":"Str","c":"C"}]]},{"t":"Header","c":[2,["d",["unlisted","unnumbered"],[]],[{"t":"Str","c":"D"}]]}]"#,
+                "- [[1]{.toc-section-number} A](#a){#toc-a}\n  - [[1.1]{.toc-section-number} B](#b){#toc-b}\n    - [[1.1.1]{.toc-section-number} C](#c){#toc-c}\n\n~~~\n# A\n\n## B {#b .unlisted}\n\n### C\n\n## D {#d .unlisted .unnumbered}\n",
+            ),
+            (
+                "markdown",
+                &["-N"][..],
+                r#"[{"t":"Header","c":[2,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[1,["b",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[3,["c",[],[]],[{"t":"Str","c":"C"}]]},{"t":"Header","c":[1,["u",["unnumbered"],[]],[{"t":"Str","c":"U"}]]},{"t":"Header","c":[2,["e",[],[]],[{"t":"Str","c":"E"}]]},{"t":"Div","c":[["",[],[]],[{"t":"Para","c":[{"t":"Str","c":"p"}]},{"t":"Header","c":[2,["x",[],[]],[{"t":"Str","c":"X"}]]}]]},{"t":"Header","c":[2,["y",[],[]],[{"t":"Str","c":"Y"}]]}]"#,
+                "- [[0.1]{.toc-section-number} A](#a){#toc-a}\n- [[1]{.toc-section-number} B](#b){#toc-b}\n  - [[1.0.1]{.toc-section-number} C](#c){#toc-c}\n- [U](#u){#toc-u}\n  - [[1.1]{.toc-section-number} E](#e){#toc-e}\n  - [[1.3]{.toc-section-number} Y](#y){#toc-y}\n\n~~~\n## A\n\n# B\n\n### C\n\n# U {#u .unnumbered}\n\n## E\n\n::: {}\np\n\n## X\n:::\n\n## Y\n",
+            ),
+            (
+                "gfm",
+                &["-N"][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["b",[],[]],[{"t":"Str","c":"B"}]]}]"#,
+                "- [<span class=\"toc-section-number\">1</span> A](#a)\n  - [<span class=\"toc-section-number\">1.1</span> B](#b)\n\n~~~\n# A\n\n## B\n",
+            ),
+            (
+                "plain",
+                &["-N"][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["b",[],[]],[{"t":"Str","c":"B"}]]}]"#,
+                "- 1 A\n  - 1.1 B\n\n~~~\nA\n\nB\n",
+            ),
+            (
+                "markdown",
+                &["--reference-links"][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"x"}]},{"t":"Header","c":[1,["z",[],[]],[{"t":"Str","c":"H"}]]},{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]"#,
+                "- [H]\n\n~~~\nx\n\n# H {#z}\n\n[x]\n\n  [H]: #z {#toc-z}\n  [x]: u\n",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=block"][..],
+                r#"[{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]},{"t":"Header","c":[1,["z",[],[]],[{"t":"Str","c":"H"}]]}]"#,
+                "- [H]\n\n  [H]: #z {#toc-z}\n\n~~~\n[x]\n\n  [x]: u\n\n# H {#z}\n",
+            ),
+            (
+                "markdown",
+                &["--reference-links", "--reference-location=section"][..],
+                r#"[{"t":"Header","c":[1,["z",[],[]],[{"t":"Str","c":"H"}]]},{"t":"Para","c":[{"t":"Link","c":[["",[],[]],[{"t":"Str","c":"x"}],["u",""]]}]}]"#,
+                "- [H]\n\n~~~\n\n  [H]: #z {#toc-z}\n\n# H {#z}\n\n[x]\n\n  [x]: u\n",
+            ),
+            (
+                "markdown",
+                &["--id-prefix=p-"][..],
+                r#"[{"t":"Header","c":[1,["z",[],[]],[{"t":"Str","c":"Z"}]]}]"#,
+                "- [Z](#z){#p-toc-z}\n\n~~~\n# Z\n",
+            ),
+            (
+                "commonmark_x",
+                &[][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]}]"#,
+                "- [A](#a){#toc-a}\n\n~~~\n# A\n",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Header","c":[1,["",[],[]],[{"t":"Str","c":"H"}]]},{"t":"Header","c":[2,["",[],[]],[{"t":"Str","c":"1. I"}]]}]"#,
+                "- H\n  - 1. I\n\n~~~\n# H\n\n## 1. I\n",
+            ),
+            (
+                "markdown",
+                &[][..],
+                r#"[{"t":"Para","c":[{"t":"Str","c":"p"}]}]"#,
+                "~~~\np\n",
+            ),
+            (
+                "markdown",
+                &["--toc-depth=2"][..],
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[2,["b",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[3,["c",[],[]],[{"t":"Str","c":"C"}]]}]"#,
+                "- [A](#a){#toc-a}\n  - [B](#b){#toc-b}\n\n~~~\n# A\n\n## B\n\n### C\n",
+            ),
+        ];
+        for (format, args, blocks, expected) in cases {
+            assert_eq!(
+                write_toc(format, args, blocks),
+                expected,
+                "{format} {args:?} {blocks}"
             );
         }
     }

@@ -3,6 +3,7 @@
 //! cannot show.
 
 use randoc_ast::{Attr, Block, Text};
+use randoc_core::shared::named_entity;
 use randoc_core::{Context, Result};
 use randoc_layout::{Doc, literal};
 
@@ -144,7 +145,8 @@ pub(crate) fn mark_last_open_tag(text: &str) -> Option<Text> {
     out.push_str(&tag[..name_end]);
     out.push_str(" markdown=\"1\"");
     for (key, value) in tag_attributes(&tag[name_end..]) {
-        if key.eq_ignore_ascii_case("markdown") {
+        // Only the lower-case name is the attribute of Pandoc.
+        if key == "markdown" {
             continue;
         }
         out.push(' ');
@@ -246,43 +248,74 @@ fn tag_attributes(mut rest: &str) -> Vec<(&str, Option<&str>)> {
     }
 }
 
-/// Decodes the character references of an attribute value.
+/// Decodes the character references of an attribute value, as the HTML
+/// parser of Pandoc does: a name is the longest run of letters and digits,
+/// and the final `;` of a numeric reference is optional. An unknown
+/// reference stays as it is.
 fn decode_entities(value: &str) -> Text {
     let mut out = Text::with_capacity(value.len());
     let mut rest = value;
     while let Some(amp) = rest.find('&') {
         out.push_str(&rest[..amp]);
-        rest = &rest[amp..];
-        let decoded = rest.find(';').and_then(|semi| {
-            let name = &rest[1..semi];
-            let c = match name {
-                "amp" => Some('&'),
-                "lt" => Some('<'),
-                "gt" => Some('>'),
-                "quot" => Some('"'),
-                "apos" => Some('\''),
-                _ => name
-                    .strip_prefix("#x")
-                    .or_else(|| name.strip_prefix("#X"))
-                    .and_then(|hex| u32::from_str_radix(hex, 16).ok())
-                    .or_else(|| name.strip_prefix('#').and_then(|d| d.parse().ok()))
-                    .and_then(char::from_u32),
-            };
-            c.map(|c| (c, semi + 1))
-        });
-        match decoded {
-            Some((c, len)) => {
-                out.push(c);
-                rest = &rest[len..];
+        rest = &rest[amp + 1..];
+        match decode_reference(rest) {
+            Some((decoded, length)) => {
+                out.push_str(&decoded);
+                rest = &rest[length..];
             }
-            None => {
-                out.push('&');
-                rest = &rest[1..];
-            }
+            None => out.push('&'),
         }
     }
     out.push_str(rest);
     out
+}
+
+/// Decodes the reference after a `&`: returns its text and the length of
+/// the reference in `rest`.
+fn decode_reference(rest: &str) -> Option<(Text, usize)> {
+    let run_end = |text: &str, ok: fn(&char) -> bool| {
+        text.char_indices()
+            .find(|(_, c)| !ok(c))
+            .map_or(text.len(), |(i, _)| i)
+    };
+    if let Some(number) = rest.strip_prefix('#') {
+        let (digits_start, hex) = match number.strip_prefix(['x', 'X']) {
+            Some(_) => (2, true),
+            None => (1, false),
+        };
+        let digits = &rest[digits_start..];
+        let end = if hex {
+            run_end(digits, char::is_ascii_hexdigit)
+        } else {
+            run_end(digits, char::is_ascii_digit)
+        };
+        if end == 0 {
+            return None;
+        }
+        let radix = if hex { 16 } else { 10 };
+        let value = digits[..end].chars().fold(0u32, |value, c| {
+            value
+                .saturating_mul(radix)
+                .saturating_add(c.to_digit(radix).unwrap_or(0))
+        });
+        let c = if value > 0x10_FFFF {
+            '?'
+        } else {
+            char::from_u32(value).unwrap_or(char::REPLACEMENT_CHARACTER)
+        };
+        let semicolon = usize::from(digits[end..].starts_with(';'));
+        return Some((c.to_string(), digits_start + end + semicolon));
+    }
+    let end = run_end(rest, char::is_ascii_alphanumeric).min(32);
+    if end == 0 {
+        return None;
+    }
+    let name = &rest[..end];
+    if rest[end..].starts_with(';') {
+        let text = named_entity(&rest[..=end])?;
+        return Some((text.to_owned(), end + 1));
+    }
+    named_entity(name).map(|text| (text.to_owned(), end))
 }
 
 #[cfg(test)]
@@ -312,6 +345,50 @@ mod tests {
             ("<a b=\"1\"/>", None),
             ("<div></div>", None),
             ("a < b", None),
+            // Character references, as the HTML parser of Pandoc reads them.
+            ("<a t=\"&copy\">", Some("<a markdown=\"1\" t=\"\u{a9}\">")),
+            ("<a t=\"&copy=\">", Some("<a markdown=\"1\" t=\"\u{a9}=\">")),
+            (
+                "<a t=\"&copyx\">",
+                Some("<a markdown=\"1\" t=\"&amp;copyx\">"),
+            ),
+            (
+                "<a t=\"&ampx\">",
+                Some("<a markdown=\"1\" t=\"&amp;ampx\">"),
+            ),
+            ("<a t=\"&AMP\">", Some("<a markdown=\"1\" t=\"&amp;\">")),
+            (
+                "<a t=\"&notit;\">",
+                Some("<a markdown=\"1\" t=\"&amp;notit;\">"),
+            ),
+            (
+                "<a t=\"&nosuch;\">",
+                Some("<a markdown=\"1\" t=\"&amp;nosuch;\">"),
+            ),
+            (
+                "<a t=\"&ngeqq;\">",
+                Some("<a markdown=\"1\" t=\"\u{2267}\u{338}\">"),
+            ),
+            ("<a t=\"&#65\">", Some("<a markdown=\"1\" t=\"A\">")),
+            ("<a t=\"&#X41;\">", Some("<a markdown=\"1\" t=\"A\">")),
+            (
+                "<a t=\"&#xD800;\">",
+                Some("<a markdown=\"1\" t=\"\u{fffd}\">"),
+            ),
+            ("<a t=\"&#x110000\">", Some("<a markdown=\"1\" t=\"?\">")),
+            (
+                "<a t=\"&;&#;&#x;\">",
+                Some("<a markdown=\"1\" t=\"&amp;;&amp;#;&amp;#x;\">"),
+            ),
+            // Only the lower-case name is the attribute of Pandoc.
+            (
+                "<a MARKDOWN=\"0\">",
+                Some("<a markdown=\"1\" MARKDOWN=\"0\">"),
+            ),
+            (
+                "<a markdown=\"0\" Markdown=\"2\" markdown=\"3\">",
+                Some("<a markdown=\"1\" Markdown=\"2\">"),
+            ),
         ];
         for (input, expected) in cases {
             assert_eq!(mark_last_open_tag(input).as_deref(), expected, "{input}");
