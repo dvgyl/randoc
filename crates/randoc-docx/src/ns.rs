@@ -1,7 +1,8 @@
 //! OOXML namespace resolution following Pandoc's dynamic root `w` prefix rule.
 
+use std::sync::Arc;
+
 use randoc_archive::xml::XmlElement;
-use randoc_ast::Text;
 
 /// Standard Transitional OOXML relationship namespace URI.
 pub const R_NS_TRANSITIONAL: &str =
@@ -44,11 +45,11 @@ pub const W14_NS: &str = "http://schemas.microsoft.com/office/word/2010/wordml";
 #[derive(Debug, Clone)]
 pub struct DocxNs {
     /// Resolved URI bound to the `w` prefix on the part's root element.
-    pub w_uri: Option<Text>,
+    pub w_uri: Option<Arc<str>>,
     /// Resolved URI bound to the `r` prefix on the part's root element, if any.
-    pub r_uri: Option<Text>,
+    pub r_uri: Option<Arc<str>>,
     /// Resolved URI bound to the `m` prefix on the part's root element, if any.
-    pub m_uri: Option<Text>,
+    pub m_uri: Option<Arc<str>>,
 }
 
 impl DocxNs {
@@ -59,9 +60,9 @@ impl DocxNs {
         let mut m_uri = None;
         for (prefix, uri) in &root.ns_decls {
             match prefix.as_deref() {
-                Some("w") => w_uri = Some(uri.clone()),
-                Some("r") => r_uri = Some(uri.clone()),
-                Some("m") => m_uri = Some(uri.clone()),
+                Some("w") => w_uri = Some(Arc::clone(uri)),
+                Some("r") => r_uri = Some(Arc::clone(uri)),
+                Some("m") => m_uri = Some(Arc::clone(uri)),
                 _ => {}
             }
         }

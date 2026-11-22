@@ -3,8 +3,9 @@
 //! Designed for strict OOXML (DOCX/PPTX/XLSX), ODF (ODT/FODT), EPUB (OPF/NCX),
 //! and future XML readers without recursion on document depth.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fmt;
+use std::sync::Arc;
 
 use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
@@ -21,6 +22,15 @@ pub const DEFAULT_MAX_ENTITIES: usize = 100_000;
 /// Default maximum size of a single attribute value in bytes (16 MiB).
 pub const DEFAULT_MAX_ATTR_BYTES: usize = 16 << 20;
 
+/// Default maximum total DOM nodes (elements, text nodes, attributes, declarations).
+pub const DEFAULT_MAX_DOM_NODES: usize = 1_000_000;
+
+/// Default maximum total allocated DOM string bytes in one document (64 MiB).
+pub const DEFAULT_MAX_DOM_BYTES: usize = 64 << 20;
+
+/// Approximate per-element structural overhead charged to `dom_bytes`.
+const ELEMENT_OVERHEAD_BYTES: usize = 64;
+
 /// Maximum depth of nested entity expansion.
 const MAX_ENTITY_DEPTH: usize = 64;
 
@@ -35,6 +45,10 @@ pub struct XmlLimits {
     pub max_entities: usize,
     /// Maximum byte length of any single attribute value.
     pub max_attr_bytes: usize,
+    /// Maximum total DOM nodes (elements, text nodes, attributes, namespace declarations).
+    pub max_nodes: usize,
+    /// Maximum cumulative bytes allocated for DOM strings and interned names.
+    pub max_dom_bytes: usize,
 }
 
 impl XmlLimits {
@@ -46,6 +60,8 @@ impl XmlLimits {
             max_entity_bytes: DEFAULT_MAX_ENTITY_BYTES.min(cap),
             max_entities: DEFAULT_MAX_ENTITIES,
             max_attr_bytes: DEFAULT_MAX_ATTR_BYTES.min(cap),
+            max_nodes: DEFAULT_MAX_DOM_NODES.min(limits.max_table_cells.saturating_mul(5)),
+            max_dom_bytes: DEFAULT_MAX_DOM_BYTES.min(cap),
         }
     }
 }
@@ -67,10 +83,10 @@ pub struct XmlOptions {
 /// A namespace-resolved XML qualified name.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct QName {
-    /// Resolved namespace URI, if any.
-    pub ns: Option<Text>,
-    /// Namespace prefix as written in the XML, if any.
-    pub prefix: Option<Text>,
+    /// Resolved namespace URI, if any (interned across the document).
+    pub ns: Option<Arc<str>>,
+    /// Namespace prefix as written in the XML, if any (interned across the document).
+    pub prefix: Option<Arc<str>>,
     /// Local name (after `:` if prefixed).
     pub local: Text,
 }
@@ -93,7 +109,7 @@ pub struct XmlElement {
     pub attrs: Vec<(QName, Text)>,
     /// Namespace declarations (`xmlns` -> `None`, `xmlns:p` -> `Some("p")`)
     /// declared directly on this element, in document order.
-    pub ns_decls: Vec<(Option<Text>, Text)>,
+    pub ns_decls: Vec<(Option<Arc<str>>, Arc<str>)>,
     /// Child nodes (elements and text).
     pub children: Vec<XmlNode>,
 }
@@ -123,6 +139,8 @@ pub enum XmlError {
     Depth(usize),
     /// Entity expansion or declaration count exceeded configured bounds.
     EntityBudget,
+    /// Total DOM node count or allocated string bytes exceeded configured bounds.
+    DomBudget,
     /// Reference to an undeclared named entity.
     UnknownEntity(Text),
     /// Input bytes are not valid UTF-8.
@@ -149,6 +167,7 @@ impl XmlError {
                 format!("XML nesting exceeded limit of {limit} levels")
             }
             XmlError::EntityBudget => "XML entity expansion exceeded limit".to_owned(),
+            XmlError::DomBudget => "XML DOM allocation exceeded limit".to_owned(),
             XmlError::UnknownEntity(name) => format!("Unresolved entity &{name};"),
             XmlError::NotUtf8 { byte, .. } => {
                 format!(
@@ -365,14 +384,17 @@ pub fn decode_utf8(bytes: &[u8]) -> Result<&str, XmlError> {
 /// Parses an XML document string into an [`XmlDoc`] within `limits`.
 pub fn parse(input: &str, limits: &XmlLimits, options: XmlOptions) -> Result<XmlDoc, XmlError> {
     let input = input.strip_prefix('\u{FEFF}').unwrap_or(input);
-    let mut parser = Parser::new(input, *limits, options);
+    let mut parser = Parser::new(input, *limits, options)?;
+    if let Some((idx, _)) = input.char_indices().find(|&(_, ch)| !is_valid_xml_char(ch)) {
+        return Err(parser.syntax_at(idx, "invalid XML 1.0 character"));
+    }
     parser.parse_stream(input, 0)?;
     parser.finish()
 }
 
 struct OpenElement {
     element: XmlElement,
-    bound_prefixes: Vec<Option<Text>>,
+    bound_prefixes: Vec<Option<Arc<str>>>,
 }
 
 struct Parser<'a> {
@@ -381,9 +403,12 @@ struct Parser<'a> {
     options: XmlOptions,
     stack: Vec<OpenElement>,
     root: Option<XmlElement>,
-    namespaces: BTreeMap<Option<Text>, Vec<Text>>,
+    namespaces: BTreeMap<Option<Arc<str>>, Vec<Arc<str>>>,
+    interned: HashSet<Arc<str>>,
     entities: BTreeMap<Text, Text>,
     entity_bytes: usize,
+    dom_nodes: usize,
+    dom_bytes: usize,
     expanding: BTreeSet<Text>,
     seen_doctype: bool,
 }
@@ -401,24 +426,47 @@ fn new_strict_reader(input: &str) -> Reader<&[u8]> {
 }
 
 impl<'a> Parser<'a> {
-    fn new(root_input: &'a str, limits: XmlLimits, options: XmlOptions) -> Self {
-        let mut namespaces = BTreeMap::new();
-        namespaces.insert(
-            Some(Text::from("xml")),
-            vec![Text::from("http://www.w3.org/XML/1998/namespace")],
-        );
-        Self {
+    fn new(root_input: &'a str, limits: XmlLimits, options: XmlOptions) -> Result<Self, XmlError> {
+        let mut parser = Self {
             root_input,
             limits,
             options,
             stack: Vec::new(),
             root: None,
-            namespaces,
+            namespaces: BTreeMap::new(),
+            interned: HashSet::new(),
             entities: BTreeMap::new(),
             entity_bytes: 0,
+            dom_nodes: 0,
+            dom_bytes: 0,
             expanding: BTreeSet::new(),
             seen_doctype: false,
+        };
+        let xml_prefix: Arc<str> = Arc::from("xml");
+        let xml_uri: Arc<str> = Arc::from("http://www.w3.org/XML/1998/namespace");
+        parser.interned.insert(Arc::clone(&xml_prefix));
+        parser.interned.insert(Arc::clone(&xml_uri));
+        parser.namespaces.insert(Some(xml_prefix), vec![xml_uri]);
+        Ok(parser)
+    }
+
+    fn charge_dom(&mut self, nodes: usize, bytes: usize) -> Result<(), XmlError> {
+        self.dom_nodes = self.dom_nodes.saturating_add(nodes);
+        self.dom_bytes = self.dom_bytes.saturating_add(bytes);
+        if self.dom_nodes > self.limits.max_nodes || self.dom_bytes > self.limits.max_dom_bytes {
+            return Err(XmlError::DomBudget);
         }
+        Ok(())
+    }
+
+    fn intern(&mut self, s: &str) -> Result<Arc<str>, XmlError> {
+        if let Some(existing) = self.interned.get(s) {
+            return Ok(Arc::clone(existing));
+        }
+        self.charge_dom(0, s.len())?;
+        let arc: Arc<str> = Arc::from(s);
+        self.interned.insert(Arc::clone(&arc));
+        Ok(arc)
     }
 
     fn syntax_at(&self, byte_offset: usize, detail: impl Into<Text>) -> XmlError {
@@ -508,8 +556,8 @@ impl<'a> Parser<'a> {
             return Err(self.syntax_at(pos, "empty element name"));
         }
 
-        let mut ns_decls: Vec<(Option<Text>, Text)> = Vec::new();
-        let mut bound_prefixes: Vec<Option<Text>> = Vec::new();
+        let mut ns_decls: Vec<(Option<Arc<str>>, Arc<str>)> = Vec::new();
+        let mut bound_prefixes: Vec<Option<Arc<str>>> = Vec::new();
         let mut raw_attrs: Vec<(Text, Text)> = Vec::new();
 
         for attr_res in tag.attributes() {
@@ -521,31 +569,38 @@ impl<'a> Parser<'a> {
                 return Err(XmlError::EntityBudget);
             }
             if key == "xmlns" {
-                let uri = value;
-                self.namespaces.entry(None).or_default().push(uri.clone());
+                let uri = self.intern(&value)?;
+                self.charge_dom(1, 0)?;
+                self.namespaces
+                    .entry(None)
+                    .or_default()
+                    .push(Arc::clone(&uri));
                 bound_prefixes.push(None);
                 ns_decls.push((None, uri));
             } else if let Some(prefix) = key.strip_prefix("xmlns:") {
                 if prefix.is_empty() {
                     return Err(self.syntax_at(pos, "empty namespace prefix"));
                 }
-                let p = Text::from(prefix);
-                let uri = value;
+                let p = self.intern(prefix)?;
+                let uri = self.intern(&value)?;
+                self.charge_dom(1, 0)?;
                 self.namespaces
-                    .entry(Some(p.clone()))
+                    .entry(Some(Arc::clone(&p)))
                     .or_default()
-                    .push(uri.clone());
-                bound_prefixes.push(Some(p.clone()));
+                    .push(Arc::clone(&uri));
+                bound_prefixes.push(Some(Arc::clone(&p)));
                 ns_decls.push((Some(p), uri));
             } else {
                 raw_attrs.push((Text::from(key), value));
             }
         }
 
-        let elem_name = self.resolve_qname(raw_name, false);
+        let elem_name = self.resolve_qname(raw_name, false)?;
+        self.charge_dom(1, ELEMENT_OVERHEAD_BYTES + elem_name.local.len())?;
         let mut attrs = Vec::with_capacity(raw_attrs.len());
         for (k, v) in raw_attrs {
-            let q = self.resolve_qname(&k, true);
+            let q = self.resolve_qname(&k, true)?;
+            self.charge_dom(1, q.local.len().saturating_add(v.len()))?;
             attrs.push((q, v));
         }
 
@@ -570,18 +625,21 @@ impl<'a> Parser<'a> {
         tag: &quick_xml::events::BytesEnd<'_>,
         pos: usize,
     ) -> Result<(), XmlError> {
-        let expected = self.resolve_qname(tag.name().0, false);
+        let raw_end = tag.name().0;
+        let (end_prefix, end_local) = match raw_end.split_once(':') {
+            Some((p, l)) => (Some(p), l),
+            None => (None, raw_end),
+        };
         let Some(open) = self.stack.last() else {
             return Err(self.syntax_at(pos, "unexpected closing tag"));
         };
-        if open.element.name.local != expected.local || open.element.name.prefix != expected.prefix
+        if open.element.name.local != end_local || open.element.name.prefix.as_deref() != end_prefix
         {
             return Err(self.syntax_at(
                 pos,
                 format!(
                     "mismatched closing tag </{}> for <{}>",
-                    tag.name().0,
-                    open.element.name.local
+                    raw_end, open.element.name.local
                 ),
             ));
         }
@@ -607,16 +665,26 @@ impl<'a> Parser<'a> {
         if text.is_empty() {
             return Ok(());
         }
-        let Some(open) = self.stack.last_mut() else {
+        if text.chars().any(|ch| !is_valid_xml_char(ch)) {
+            return Err(self.syntax_at(pos, "invalid XML 1.0 character in text"));
+        }
+        let Some(open) = self.stack.last() else {
             if text.chars().all(|c| matches!(c, ' ' | '\t' | '\r' | '\n')) {
                 return Ok(());
             }
             return Err(self.syntax_at(pos, "character data outside root element"));
         };
-        if let Some(XmlNode::Text(prev)) = open.element.children.last_mut() {
-            prev.push_str(text);
-        } else {
-            open.element.children.push(XmlNode::Text(Text::from(text)));
+        let adding_node = usize::from(!matches!(
+            open.element.children.last(),
+            Some(XmlNode::Text(_))
+        ));
+        self.charge_dom(adding_node, text.len())?;
+        if let Some(open) = self.stack.last_mut() {
+            if let Some(XmlNode::Text(prev)) = open.element.children.last_mut() {
+                prev.push_str(text);
+            } else {
+                open.element.children.push(XmlNode::Text(Text::from(text)));
+            }
         }
         Ok(())
     }
@@ -657,6 +725,9 @@ impl<'a> Parser<'a> {
     }
 
     fn expand_attr_value(&mut self, raw: &str, pos: usize) -> Result<Text, XmlError> {
+        if raw.chars().any(|ch| !is_valid_xml_char(ch)) {
+            return Err(self.syntax_at(pos, "invalid XML 1.0 character in attribute"));
+        }
         if !raw.contains('&') {
             return Ok(Text::from(raw));
         }
@@ -723,20 +794,20 @@ impl<'a> Parser<'a> {
         Ok(())
     }
 
-    fn resolve_qname(&self, raw: &str, is_attr: bool) -> QName {
+    fn resolve_qname(&mut self, raw: &str, is_attr: bool) -> Result<QName, XmlError> {
         if let Some((prefix, local)) = raw.split_once(':') {
-            let p = Text::from(prefix);
+            let p = self.intern(prefix)?;
             let ns = self
                 .namespaces
-                .get(&Some(p.clone()))
+                .get(&Some(Arc::clone(&p)))
                 .and_then(|v| v.last())
                 .filter(|u| !u.is_empty())
                 .cloned();
-            QName {
+            Ok(QName {
                 ns,
                 prefix: Some(p),
                 local: Text::from(local),
-            }
+            })
         } else {
             // Unprefixed attributes do not inherit the default namespace in XML.
             let ns = if is_attr {
@@ -748,11 +819,11 @@ impl<'a> Parser<'a> {
                     .filter(|u| !u.is_empty())
                     .cloned()
             };
-            QName {
+            Ok(QName {
                 ns,
                 prefix: None,
                 local: Text::from(raw),
-            }
+            })
         }
     }
 
@@ -830,9 +901,10 @@ impl<'a> Parser<'a> {
                             return Err(XmlError::EntityBudget);
                         }
                         // First declaration wins per XML 1.0 §4.2.
-                        self.entities
-                            .entry(Text::from(name))
-                            .or_insert_with(|| Text::from(val));
+                        if !self.entities.contains_key(name) {
+                            self.charge_dom(1, name.len().saturating_add(val.len()))?;
+                            self.entities.insert(Text::from(name), Text::from(val));
+                        }
                         let after_val = &body[end_q + 1..];
                         if let Some(gt) = after_val.find('>') {
                             cur = &after_val[gt + 1..];
@@ -1015,5 +1087,76 @@ mod tests {
                 offset: 3
             })
         );
+    }
+
+    #[test]
+    fn interns_namespace_uris_and_caps_dom_budget() {
+        let long_ns = format!("urn:{}", "x".repeat(4096));
+        let mut xml = format!(r#"<p:root xmlns:p="{long_ns}">"#);
+        for _ in 0..500 {
+            xml.push_str("<p:item/>");
+        }
+        xml.push_str("</p:root>");
+        // Without interning, 501 elements * 4 KiB > 2 MiB; with interning, well under 128 KiB.
+        let limits = XmlLimits {
+            max_dom_bytes: 128 * 1024,
+            max_nodes: 2_000,
+            ..XmlLimits::default()
+        };
+        let doc = parse(&xml, &limits, XmlOptions::default()).expect("interned ns fits");
+        let root_ns = doc.root.name.ns.as_ref().expect("root ns");
+        let first_child = doc.root.elements().next().expect("child");
+        let child_ns = first_child.name.ns.as_ref().expect("child ns");
+        assert!(Arc::ptr_eq(root_ns, child_ns));
+
+        // Node cap rejects excess DOM nodes.
+        let tight_nodes = XmlLimits {
+            max_nodes: 100,
+            ..XmlLimits::default()
+        };
+        assert_eq!(
+            parse(&xml, &tight_nodes, XmlOptions::default()).err(),
+            Some(XmlError::DomBudget)
+        );
+
+        // Byte cap rejects excess DOM string bytes.
+        let tight_bytes = XmlLimits {
+            max_dom_bytes: 2 * 1024,
+            ..XmlLimits::default()
+        };
+        assert_eq!(
+            parse(&xml, &tight_bytes, XmlOptions::default()).err(),
+            Some(XmlError::DomBudget)
+        );
+    }
+
+    #[test]
+    fn rejects_forbidden_xml10_literal_chars() {
+        for sample in [
+            "<a b='x\x00y'/>",
+            "<a>\x01</a>",
+            "<a>\x0B</a>",
+            "<a>\x0C</a>",
+            "<a>\x1F</a>",
+            "<a><![CDATA[bad\x08data]]></a>",
+            "<a>\u{FFFE}</a>",
+            "<a>\u{FFFF}</a>",
+        ] {
+            assert!(
+                matches!(
+                    parse(sample, &XmlLimits::default(), XmlOptions::default()),
+                    Err(XmlError::Syntax { .. })
+                ),
+                "expected syntax error for {sample:?}"
+            );
+        }
+        // Legal whitespace (TAB, LF, CR) remains accepted.
+        let ok = parse(
+            "<a>\t\n\r ok</a>",
+            &XmlLimits::default(),
+            XmlOptions::default(),
+        )
+        .expect("legal whitespace");
+        assert!(ok.root.text().contains("ok"));
     }
 }

@@ -40,12 +40,11 @@ pub fn rels_part_for(part: &str) -> String {
 /// Returns `None` if `target` contains backslashes, NUL bytes, or climbs above
 /// the package root.
 pub fn resolve_target(source_part: &str, target: &str) -> Option<String> {
-    if target.is_empty() || target.bytes().any(|b| b == 0) {
+    if target.is_empty() || target.bytes().any(|b| b == 0 || b == b'\\') {
         return None;
     }
     // Strip any fragment (e.g. `#anchor`) before resolving package path.
     let path_only = target.split('#').next().unwrap_or(target);
-    let path_only = path_only.replace('\\', "/");
 
     let mut stack: Vec<&str> = Vec::new();
     if let Some(abs) = path_only.strip_prefix('/') {
@@ -152,6 +151,7 @@ mod tests {
             resolve_target("word/document.xml", "../../etc/passwd"),
             None
         );
+        assert_eq!(resolve_target("word/document.xml", r"media\img1.png"), None);
     }
 
     #[test]

@@ -152,7 +152,7 @@ impl Numbering {
         let lvl = ov
             .and_then(|o| o.lvl_override.as_ref())
             .or_else(|| abs.get(&ilvl))
-            .or_else(|| abs.get(&0))?;
+            .or_else(|| (0..=8).contains(&ilvl).then(|| abs.get(&0)).flatten())?;
 
         let start = ov.and_then(|o| o.start_override).unwrap_or(lvl.start);
         match lvl.num_fmt.as_str() {

@@ -34,7 +34,10 @@ pub fn decode_symbol(font: Option<&str>, hex_char: &str) -> Option<String> {
     None
 }
 
-/// Standard Adobe Symbol encoding (public Unicode Consortium mapping table).
+/// Standard Adobe Symbol encoding mapping table.
+///
+/// Provenance: Unicode Consortium Public Mapping Table (`MAPPINGS/VENDORS/ADOBE/symbol.txt`),
+/// licensed under the Unicode License v3 (`Unicode-3.0`, see `third_party/licences/Unicode.txt`).
 fn adobe_symbol_to_unicode(b: u8) -> Option<char> {
     match b {
         0x20 => Some(' '),
@@ -199,6 +202,8 @@ fn adobe_symbol_to_unicode(b: u8) -> Option<char> {
     }
 }
 
+/// Clean-room subset mapping for common WordprocessingML Wingdings bullet/dingbat
+/// codepoints (`w:sym` and PUA `U+F000..=U+F0FF`), observed via OOXML documents.
 fn wingdings_to_unicode(b: u8) -> Option<char> {
     match b {
         0x6E | 0xA8 => Some('\u{2610}'), // ☐
@@ -217,6 +222,8 @@ fn wingdings_to_unicode(b: u8) -> Option<char> {
     }
 }
 
+/// Clean-room subset mapping for common WordprocessingML Wingdings 2 checkbox
+/// codepoints (`w:sym` and PUA `U+F000..=U+F0FF`).
 fn wingdings2_to_unicode(b: u8) -> Option<char> {
     match b {
         0x50 => Some('\u{2713}'), // ✓

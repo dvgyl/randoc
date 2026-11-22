@@ -150,9 +150,109 @@ impl std::error::Error for ArchiveError {}
 pub struct Archive<'a> {
     zip: ZipArchive<Cursor<&'a [u8]>>,
     limits: ArchiveLimits,
+    archive_len: u64,
     used: u64,
     addressable: Vec<bool>,
     names: Vec<Option<String>>,
+}
+
+/// Pre-checks the raw ZIP End of Central Directory (and ZIP64 EOCD when present)
+/// entry count before calling `ZipArchive::new`, preventing unbounded central
+/// directory allocation on crafted archives.
+fn precheck_eocd_entry_count(bytes: &[u8], max_entries: usize) -> Result<(), ArchiveError> {
+    const EOCD_MIN_LEN: usize = 22;
+    const EOCD_SIG: [u8; 4] = [0x50, 0x4b, 0x05, 0x06];
+    const ZIP64_LOC_LEN: usize = 20;
+    const ZIP64_LOC_SIG: [u8; 4] = [0x50, 0x4b, 0x06, 0x07];
+    const ZIP64_EOCD_MIN_LEN: usize = 56;
+    const ZIP64_EOCD_SIG: [u8; 4] = [0x50, 0x4b, 0x06, 0x06];
+
+    if bytes.len() < EOCD_MIN_LEN {
+        return Ok(());
+    }
+    let min_pos = bytes.len().saturating_sub(EOCD_MIN_LEN + 65_535);
+    let mut pos = bytes.len() - EOCD_MIN_LEN;
+    let eocd_pos = loop {
+        if bytes[pos..pos + 4] == EOCD_SIG {
+            let comment_len = usize::from(u16::from_le_bytes([bytes[pos + 20], bytes[pos + 21]]));
+            if pos + EOCD_MIN_LEN + comment_len == bytes.len() {
+                break Some(pos);
+            }
+        }
+        if pos == min_pos {
+            break None;
+        }
+        pos -= 1;
+    };
+    let Some(eocd_pos) = eocd_pos else {
+        return Ok(());
+    };
+
+    // Check for ZIP64 EOCD locator immediately before the standard EOCD.
+    if let Some(loc_pos) = eocd_pos.checked_sub(ZIP64_LOC_LEN)
+        && bytes[loc_pos..loc_pos + 4] == ZIP64_LOC_SIG
+    {
+        let z64_off = u64::from_le_bytes([
+            bytes[loc_pos + 8],
+            bytes[loc_pos + 9],
+            bytes[loc_pos + 10],
+            bytes[loc_pos + 11],
+            bytes[loc_pos + 12],
+            bytes[loc_pos + 13],
+            bytes[loc_pos + 14],
+            bytes[loc_pos + 15],
+        ]);
+        if let Ok(off) = usize::try_from(z64_off)
+            && off + ZIP64_EOCD_MIN_LEN <= bytes.len()
+            && bytes[off..off + 4] == ZIP64_EOCD_SIG
+        {
+            let disk_entries = u64::from_le_bytes([
+                bytes[off + 24],
+                bytes[off + 25],
+                bytes[off + 26],
+                bytes[off + 27],
+                bytes[off + 28],
+                bytes[off + 29],
+                bytes[off + 30],
+                bytes[off + 31],
+            ]);
+            let total_entries = u64::from_le_bytes([
+                bytes[off + 32],
+                bytes[off + 33],
+                bytes[off + 34],
+                bytes[off + 35],
+                bytes[off + 36],
+                bytes[off + 37],
+                bytes[off + 38],
+                bytes[off + 39],
+            ]);
+            let declared = disk_entries.max(total_entries);
+            if declared > max_entries as u64 {
+                return Err(ArchiveError::TooManyEntries {
+                    count: usize::try_from(declared).unwrap_or(usize::MAX),
+                    limit: max_entries,
+                });
+            }
+            return Ok(());
+        }
+    }
+
+    let disk_entries = usize::from(u16::from_le_bytes([
+        bytes[eocd_pos + 8],
+        bytes[eocd_pos + 9],
+    ]));
+    let total_entries = usize::from(u16::from_le_bytes([
+        bytes[eocd_pos + 10],
+        bytes[eocd_pos + 11],
+    ]));
+    let declared = disk_entries.max(total_entries);
+    if declared > max_entries {
+        return Err(ArchiveError::TooManyEntries {
+            count: declared,
+            limit: max_entries,
+        });
+    }
+    Ok(())
 }
 
 impl<'a> Archive<'a> {
@@ -169,6 +269,7 @@ impl<'a> Archive<'a> {
         if bytes.len() < 4 {
             return Err(ArchiveError::NotEnoughBytes);
         }
+        precheck_eocd_entry_count(bytes, limits.max_entries)?;
         let mut zip = ZipArchive::new(Cursor::new(bytes)).map_err(|err| match err {
             zip::result::ZipError::InvalidArchive(_) => ArchiveError::NoCentralDirectory,
             other => ArchiveError::Corrupt {
@@ -214,6 +315,7 @@ impl<'a> Archive<'a> {
         Ok(Self {
             zip,
             limits,
+            archive_len: size,
             used: 0,
             addressable,
             names,
@@ -270,7 +372,7 @@ impl<'a> Archive<'a> {
                 detail: err.to_string(),
             })?;
 
-        let compressed_size = file.compressed_size();
+        let compressed_size = file.compressed_size().min(self.archive_len);
         let remaining_total = self.limits.max_total.saturating_sub(self.used);
         let read_cap = self.limits.max_entry.min(remaining_total);
 
@@ -278,42 +380,53 @@ impl<'a> Archive<'a> {
         let declared = file.size();
         let initial_cap = usize::try_from(declared.min(read_cap).min(1 << 20)).unwrap_or(0);
         let mut buf = Vec::with_capacity(initial_cap);
+        let mut actual: u64 = 0;
+        let mut chunk = [0u8; 32 * 1024];
 
-        let take_limit = read_cap.saturating_add(1);
-        file.by_ref()
-            .take(take_limit)
-            .read_to_end(&mut buf)
-            .map_err(|err| ArchiveError::Corrupt {
-                name: display_name.clone(),
-                detail: err.to_string(),
-            })?;
+        loop {
+            let n = match file.read(&mut chunk) {
+                Ok(0) => break,
+                Ok(n) => n,
+                Err(err) => {
+                    return Err(ArchiveError::Corrupt {
+                        name: display_name,
+                        detail: err.to_string(),
+                    });
+                }
+            };
+            let n64 = n as u64;
+            actual = actual.saturating_add(n64);
+            // Charge inflated bytes immediately so failed reads (CRC/ratio/limit)
+            // cannot escape the cumulative archive budget.
+            self.used = self.used.saturating_add(n64);
 
-        let actual = buf.len() as u64;
-        if actual > self.limits.max_entry {
-            return Err(ArchiveError::EntryTooLarge {
-                name: display_name,
-                limit: self.limits.max_entry,
-            });
-        }
-        if self.used.saturating_add(actual) > self.limits.max_total {
-            return Err(ArchiveError::TotalTooLarge {
-                limit: self.limits.max_total,
-            });
-        }
-        if let Some(max_ratio) = self.limits.max_ratio
-            && actual > RATIO_CHECK_MIN_BYTES
-        {
-            let denom = compressed_size.max(1);
-            let ratio = actual / denom;
-            if ratio > max_ratio {
-                return Err(ArchiveError::CompressionRatioExceeded {
+            if actual > self.limits.max_entry {
+                return Err(ArchiveError::EntryTooLarge {
                     name: display_name,
-                    ratio,
-                    limit: max_ratio,
+                    limit: self.limits.max_entry,
                 });
             }
+            if self.used > self.limits.max_total {
+                return Err(ArchiveError::TotalTooLarge {
+                    limit: self.limits.max_total,
+                });
+            }
+            if let Some(max_ratio) = self.limits.max_ratio
+                && actual > RATIO_CHECK_MIN_BYTES
+            {
+                let denom = compressed_size.max(1);
+                let ratio = actual / denom;
+                if ratio > max_ratio {
+                    return Err(ArchiveError::CompressionRatioExceeded {
+                        name: display_name,
+                        ratio,
+                        limit: max_ratio,
+                    });
+                }
+            }
+            buf.extend_from_slice(&chunk[..n]);
         }
-        self.used = self.used.saturating_add(actual);
+
         Ok(buf)
     }
 
@@ -610,5 +723,82 @@ mod tests {
         w2.write_deflated_with_time("a.txt", b"hi", Some(1_700_000_000))
             .expect("w2");
         assert_eq!(w1.finish().expect("f1"), w2.finish().expect("f2"));
+    }
+
+    #[test]
+    fn prechecks_raw_eocd_and_zip64_entry_counts_before_allocating() {
+        // Synthetic 22-byte EOCD claiming 60,000 entries with zero central directory bytes.
+        let mut eocd = [0u8; 22];
+        eocd[0..4].copy_from_slice(&[0x50, 0x4b, 0x05, 0x06]);
+        eocd[8..10].copy_from_slice(&60_000u16.to_le_bytes());
+        eocd[10..12].copy_from_slice(&60_000u16.to_le_bytes());
+        let limits = ArchiveLimits {
+            max_entries: 100,
+            ..ArchiveLimits::default()
+        };
+        assert_eq!(
+            Archive::open(&eocd, limits).err(),
+            Some(ArchiveError::TooManyEntries {
+                count: 60_000,
+                limit: 100,
+            })
+        );
+
+        // Synthetic ZIP64 EOCD + Locator + EOCD claiming 5,000,000 entries.
+        let mut buf = Vec::new();
+        let mut z64 = [0u8; 56];
+        z64[0..4].copy_from_slice(&[0x50, 0x4b, 0x06, 0x06]);
+        z64[4..12].copy_from_slice(&44u64.to_le_bytes());
+        z64[24..32].copy_from_slice(&5_000_000u64.to_le_bytes());
+        z64[32..40].copy_from_slice(&5_000_000u64.to_le_bytes());
+        buf.extend_from_slice(&z64);
+        let mut loc = [0u8; 20];
+        loc[0..4].copy_from_slice(&[0x50, 0x4b, 0x06, 0x07]);
+        loc[8..16].copy_from_slice(&0u64.to_le_bytes());
+        buf.extend_from_slice(&loc);
+        let mut eocd64 = [0u8; 22];
+        eocd64[0..4].copy_from_slice(&[0x50, 0x4b, 0x05, 0x06]);
+        eocd64[8..10].copy_from_slice(&0xFFFFu16.to_le_bytes());
+        eocd64[10..12].copy_from_slice(&0xFFFFu16.to_le_bytes());
+        buf.extend_from_slice(&eocd64);
+        assert_eq!(
+            Archive::open(&buf, limits).err(),
+            Some(ArchiveError::TooManyEntries {
+                count: 5_000_000,
+                limit: 100,
+            })
+        );
+    }
+
+    #[test]
+    fn failed_reads_still_charge_cumulative_budget() {
+        // Create an archive with one 64 KiB entry, then corrupt its CRC32 in both
+        // local header (offset 14..18) and central directory so decompression succeeds
+        // and CRC verification fails at EOF.
+        let payload = vec![b'z'; 64 * 1024];
+        let mut bytes = make_zip(&[("bad.bin", &payload, false)]);
+        bytes[14] ^= 0xFF;
+        // Also corrupt CRC in central directory header (signature PK\x01\x02, CRC at +16).
+        for i in 0..bytes.len().saturating_sub(20) {
+            if &bytes[i..i + 4] == b"PK\x01\x02" {
+                bytes[i + 16] ^= 0xFF;
+            }
+        }
+        let limits = ArchiveLimits {
+            max_entry: 128 * 1024,
+            max_total: 100 * 1024,
+            ..ArchiveLimits::default()
+        };
+        let mut arc = Archive::open(&bytes, limits).expect("open");
+        assert!(matches!(
+            arc.read("bad.bin"),
+            Err(ArchiveError::Corrupt { .. })
+        ));
+        assert!(arc.used_bytes() >= 64 * 1024);
+        // Second read must hit TotalTooLarge because the first failed read was charged.
+        assert!(matches!(
+            arc.read("bad.bin"),
+            Err(ArchiveError::TotalTooLarge { .. })
+        ));
     }
 }

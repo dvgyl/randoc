@@ -238,4 +238,219 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn enforces_sparse_table_grid_map_bound() {
+        // 500 gridCols * 100 empty rows = 50,000 grid_map slots > restricted max_table_cells (20,000).
+        let mut xml = String::from(
+            r#"<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:tbl><w:tblGrid>"#,
+        );
+        for _ in 0..500 {
+            xml.push_str(r#"<w:gridCol w:w="100"/>"#);
+        }
+        xml.push_str("</w:tblGrid>");
+        for _ in 0..100 {
+            xml.push_str("<w:tr/>");
+        }
+        xml.push_str("</w:tbl></w:body></w:document>");
+        let bytes = build_docx(&[
+            ("_rels/.rels", ROOT_RELS),
+            ("word/document.xml", xml.as_bytes()),
+        ]);
+        let mut ctx = Context::pure();
+        ctx.limits = Limits::restricted();
+        assert!(matches!(
+            convert::read_docx(&bytes, &ReaderOptions::default(), &mut ctx),
+            Err(Error::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn post_xml_list_and_field_nesting_safe_on_small_stack() {
+        // 1. Flat paragraphs with increasing ilvl 0..500 must fail cleanly at max_nesting_depth on 2 MiB stack.
+        let handle = std::thread::Builder::new()
+            .stack_size(2 * 1024 * 1024)
+            .spawn(|| {
+                let doc_rels = br#"<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+</Relationships>"#;
+                let mut numbering = String::from(
+                    r#"<?xml version="1.0" encoding="UTF-8"?><w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:abstractNum w:abstractNumId="0">"#,
+                );
+                for lvl in 0..500 {
+                    numbering.push_str(&format!(
+                        r#"<w:lvl w:ilvl="{lvl}"><w:numFmt w:val="bullet"/><w:lvlText w:val="*"/></w:lvl>"#
+                    ));
+                }
+                numbering.push_str(
+                    r#"</w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>"#,
+                );
+                let mut doc = String::from(
+                    r#"<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>"#,
+                );
+                for lvl in 0..500 {
+                    doc.push_str(&format!(
+                        r#"<w:p><w:pPr><w:numPr><w:ilvl w:val="{lvl}"/><w:numId w:val="1"/></w:numPr></w:pPr><w:r><w:t>x</w:t></w:r></w:p>"#
+                    ));
+                }
+                doc.push_str("</w:body></w:document>");
+                let bytes = build_docx(&[
+                    ("_rels/.rels", ROOT_RELS),
+                    ("word/_rels/document.xml.rels", doc_rels),
+                    ("word/numbering.xml", numbering.as_bytes()),
+                    ("word/document.xml", doc.as_bytes()),
+                ]);
+                let mut ctx = Context::pure();
+                ctx.limits = Limits::restricted();
+                assert!(matches!(
+                    convert::read_docx(&bytes, &ReaderOptions::default(), &mut ctx),
+                    Err(Error::Parse(_))
+                ));
+            })
+            .expect("spawn list test");
+        handle.join().expect("no stack overflow on deep list");
+
+        // 2. Flat runs with 500 nested complex HYPERLINK fields must fail cleanly on 2 MiB stack.
+        let handle = std::thread::Builder::new()
+            .stack_size(2 * 1024 * 1024)
+            .spawn(|| {
+                let mut doc = String::from(
+                    r#"<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p>"#,
+                );
+                for _ in 0..500 {
+                    doc.push_str(
+                        r#"<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText>HYPERLINK "https://example.com"</w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r>"#,
+                    );
+                }
+                doc.push_str("<w:r><w:t>deep</w:t></w:r>");
+                for _ in 0..500 {
+                    doc.push_str(r#"<w:r><w:fldChar w:fldCharType="end"/></w:r>"#);
+                }
+                doc.push_str("</w:p></w:body></w:document>");
+                let bytes = build_docx(&[("_rels/.rels", ROOT_RELS), ("word/document.xml", doc.as_bytes())]);
+                let mut ctx = Context::pure();
+                ctx.limits = Limits::restricted();
+                assert!(matches!(
+                    convert::read_docx(&bytes, &ReaderOptions::default(), &mut ctx),
+                    Err(Error::Parse(_))
+                ));
+            })
+            .expect("spawn field test");
+        handle.join().expect("no stack overflow on deep fields");
+    }
+
+    #[test]
+    fn comment_cycle_guard_and_footnote_dag_budget() {
+        // 1. Self-referencing comment terminates cleanly via cycle guard.
+        let doc_rels = br#"<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="comments.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes" Target="footnotes.xml"/>
+</Relationships>"#;
+        let comments = br#"<?xml version="1.0" encoding="UTF-8"?>
+<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:comment w:id="1" w:author="A"><w:p><w:commentRangeStart w:id="1"/><w:r><w:t>loop</w:t></w:r></w:p></w:comment>
+</w:comments>"#;
+        let document = br#"<?xml version="1.0" encoding="UTF-8"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body><w:p><w:commentRangeStart w:id="1"/><w:r><w:t>hi</w:t></w:r><w:commentRangeEnd w:id="1"/></w:p></w:body>
+</w:document>"#;
+        let bytes = build_docx(&[
+            ("_rels/.rels", ROOT_RELS),
+            ("word/_rels/document.xml.rels", doc_rels),
+            ("word/comments.xml", comments),
+            ("word/document.xml", document),
+        ]);
+        let mut ctx = Context::pure();
+        let mut opts = ReaderOptions::default();
+        opts.track_changes = TrackChanges::AllChanges;
+        assert!(convert::read_docx(&bytes, &opts, &mut ctx).is_ok());
+
+        // 2. Exponential footnote DAG (depth 20, fanout 2 -> 2^20 nodes) hits expansion budget.
+        let mut fns = String::from(
+            r#"<?xml version="1.0" encoding="UTF-8"?><w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">"#,
+        );
+        for i in 1..20 {
+            let next = i + 1;
+            fns.push_str(&format!(
+                r#"<w:footnote w:id="{i}"><w:p><w:r><w:footnoteReference w:id="{next}"/><w:footnoteReference w:id="{next}"/></w:r></w:p></w:footnote>"#
+            ));
+        }
+        fns.push_str(r#"<w:footnote w:id="20"><w:p><w:r><w:t>leaf</w:t></w:r></w:p></w:footnote></w:footnotes>"#);
+        let dag_doc = br#"<?xml version="1.0" encoding="UTF-8"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body><w:p><w:r><w:footnoteReference w:id="1"/></w:r></w:p></w:body>
+</w:document>"#;
+        let dag_bytes = build_docx(&[
+            ("_rels/.rels", ROOT_RELS),
+            ("word/_rels/document.xml.rels", doc_rels),
+            ("word/footnotes.xml", fns.as_bytes()),
+            ("word/document.xml", dag_doc),
+        ]);
+        let mut ctx = Context::pure();
+        ctx.limits = Limits::restricted();
+        assert!(matches!(
+            convert::read_docx(&dag_bytes, &ReaderOptions::default(), &mut ctx),
+            Err(Error::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn zotero_locator_suffix_preserves_trailing_space() {
+        let document = br#"<?xml version="1.0" encoding="UTF-8"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    <w:p>
+      <w:r><w:fldChar w:fldCharType="begin"/></w:r>
+      <w:r><w:instrText> ADDIN ZOTERO_ITEM CSL_CITATION {"citationItems":[{"id":"s1","prefix":"see ","locator":"42","label":"page"},{"id":"s2","locator":"7","label":"chapter","suffix":", and more"}]} </w:instrText></w:r>
+      <w:r><w:fldChar w:fldCharType="separate"/></w:r>
+      <w:r><w:t>(Smith, 2020)</w:t></w:r>
+      <w:r><w:fldChar w:fldCharType="end"/></w:r>
+    </w:p>
+  </w:body>
+</w:document>"#;
+        let bytes = build_docx(&[("_rels/.rels", ROOT_RELS), ("word/document.xml", document)]);
+        let mut ctx = Context::pure();
+        let mut opts = ReaderOptions::default();
+        opts.extensions.enable(Extension::Citations);
+        let doc = convert::read_docx(&bytes, &opts, &mut ctx).expect("read");
+        let Block::Para(inlines) = &doc.blocks[0] else {
+            panic!("expected para");
+        };
+        let Inline::Cite(cites, _) = &inlines[0] else {
+            panic!("expected cite");
+        };
+        assert_eq!(
+            cites[0].prefix,
+            vec![Inline::Str("see".into()), Inline::Space]
+        );
+        assert_eq!(
+            cites[0].suffix,
+            vec![
+                Inline::Str(",".into()),
+                Inline::Space,
+                Inline::Str("page".into()),
+                Inline::Space,
+                Inline::Str("42".into()),
+                Inline::Space,
+            ]
+        );
+        assert_eq!(
+            cites[1].suffix,
+            vec![
+                Inline::Str(",".into()),
+                Inline::Space,
+                Inline::Str("chapter".into()),
+                Inline::Space,
+                Inline::Str("7".into()),
+                Inline::Space,
+                Inline::Str(",".into()),
+                Inline::Space,
+                Inline::Str("and".into()),
+                Inline::Space,
+                Inline::Str("more".into()),
+            ]
+        );
+    }
 }

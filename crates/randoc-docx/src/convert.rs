@@ -105,6 +105,7 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
 
     let page_width = extract_page_width(body, &main_ns);
 
+    let max_expanded_nodes = context.limits.max_table_cells.saturating_mul(2).max(50_000);
     let mut conv = Converter {
         archive: &mut archive,
         context,
@@ -116,6 +117,10 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
         comments: &comments,
         active_footnotes: HashSet::new(),
         active_endnotes: HashSet::new(),
+        active_comments: HashSet::new(),
+        expanded_nodes_used: 0,
+        max_expanded_nodes,
+        media_cache: HashMap::new(),
         table_cells_used: 0,
         depth: 0,
         page_width,
@@ -123,7 +128,7 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
     };
 
     let raw_items = conv.parse_body_children(body, &main_ns, &main_part, &doc_rels)?;
-    let mut blocks = conv.build_blocks(raw_items, true, true);
+    let mut blocks = conv.build_blocks(raw_items, true, true)?;
     let references: Vec<MetaValue> = conv.references.into_values().collect();
 
     // Post-passes: metadata extraction, auto-identifiers, bookmark pruning/retargeting.
@@ -211,6 +216,7 @@ fn parse_xml_strict(bytes: &[u8], limits: &XmlLimits) -> Result<XmlDoc> {
             Error::Parse(format!("DOCX XML nesting exceeded limit of {limit} levels"))
         }
         XmlError::EntityBudget => Error::Parse("DOCX XML entity expansion exceeded limit".into()),
+        XmlError::DomBudget => Error::Parse("DOCX XML DOM allocation exceeded limit".into()),
         _ => Error::Some(DOC_ERROR.into()),
     })
 }
@@ -473,6 +479,10 @@ struct Converter<'a, 'b> {
     comments: &'a CommentsPart,
     active_footnotes: HashSet<Text>,
     active_endnotes: HashSet<Text>,
+    active_comments: HashSet<Text>,
+    expanded_nodes_used: usize,
+    max_expanded_nodes: usize,
+    media_cache: HashMap<String, Option<Text>>,
     table_cells_used: usize,
     depth: usize,
     page_width: f64,
@@ -480,6 +490,22 @@ struct Converter<'a, 'b> {
 }
 
 impl<'a, 'b> Converter<'a, 'b> {
+    fn in_expanded_note_or_comment(&self) -> bool {
+        !self.active_footnotes.is_empty()
+            || !self.active_endnotes.is_empty()
+            || !self.active_comments.is_empty()
+    }
+
+    fn charge_expanded_node(&mut self) -> Result<()> {
+        self.expanded_nodes_used = self.expanded_nodes_used.saturating_add(1);
+        if self.expanded_nodes_used > self.max_expanded_nodes {
+            return Err(Error::Parse(format!(
+                "DOCX note/comment expansion exceeded limit of {} nodes",
+                self.max_expanded_nodes
+            )));
+        }
+        Ok(())
+    }
     fn keep_styles(&self) -> bool {
         self.options.extensions.contains(Extension::Styles)
     }
@@ -505,6 +531,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                 self.context.limits.max_nesting_depth
             )));
         }
+        if self.in_expanded_note_or_comment() {
+            self.charge_expanded_node()?;
+        }
         self.depth += 1;
         let mut items = Vec::new();
         for child in parent.elements() {
@@ -522,6 +551,9 @@ impl<'a, 'b> Converter<'a, 'b> {
         rels: &RelsMap,
         out: &mut Vec<BodyItem>,
     ) -> Result<()> {
+        if self.in_expanded_note_or_comment() {
+            self.charge_expanded_node()?;
+        }
         if ns.is_w(el, "p") {
             let p = self.parse_paragraph(el, ns, part_path, rels)?;
             out.push(BodyItem::Para(p));
@@ -621,7 +653,7 @@ impl<'a, 'b> Converter<'a, 'b> {
             )?;
         }
 
-        let (resolved, seq_info) = self.resolve_fields(raw_inlines);
+        let (resolved, seq_info) = self.resolve_fields(raw_inlines)?;
         let mut inlines = if is_code_para {
             flatten_code_inlines(&resolved)
         } else {
@@ -672,6 +704,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                 "DOCX nesting exceeded limit of {} levels",
                 self.context.limits.max_nesting_depth
             )));
+        }
+        if self.in_expanded_note_or_comment() {
+            self.charge_expanded_node()?;
         }
 
         if ns.is_w(el, "r") {
@@ -864,13 +899,15 @@ impl<'a, 'b> Converter<'a, 'b> {
                 && let Some(id) = ns.w_attr(el, "id")
                 && let Some(comment) = self.comments.comments.get(id)
             {
-                let comment_inlines = self.expand_comment(comment)?;
+                let author = comment.author.clone();
+                let date = comment.date.clone();
+                let comment_inlines = self.expand_comment(id)?;
                 let mut kvs = vec![("comment-id".into(), Text::from(id))];
-                if !comment.author.is_empty() {
-                    kvs.push(("author".into(), comment.author.clone()));
+                if !author.is_empty() {
+                    kvs.push(("author".into(), author));
                 }
-                if !comment.date.is_empty() {
-                    kvs.push(("date".into(), comment.date.clone()));
+                if !date.is_empty() {
+                    kvs.push(("date".into(), date));
                 }
                 out.push(RawInline::Inline(Inline::Span(
                     Attr::new("", vec!["comment-start".into()], kvs),
@@ -1100,52 +1137,72 @@ impl<'a, 'b> Converter<'a, 'b> {
     }
 
     fn expand_footnote(&mut self, id: &str) -> Result<Inline> {
+        self.charge_expanded_node()?;
         if self.active_footnotes.contains(id) {
             return Ok(Inline::Note(Vec::new()));
         }
-        let Some(note_el) = self.footnotes.notes.get(id).cloned() else {
+        let footnotes = self.footnotes;
+        let Some(note_el) = footnotes.notes.get(id) else {
             return Ok(Inline::Note(Vec::new()));
         };
-        let ns = self.footnotes.ns.clone();
-        let part_path = self.footnotes.part_path.clone();
-        let rels = self.footnotes.rels.clone();
 
         self.active_footnotes.insert(Text::from(id));
-        let items = self.parse_body_children(&note_el, &ns, &part_path, &rels)?;
+        let res = self.parse_body_children(
+            note_el,
+            &footnotes.ns,
+            &footnotes.part_path,
+            &footnotes.rels,
+        );
         self.active_footnotes.remove(id);
+        let items = res?;
 
-        let mut blocks = self.build_blocks(items, false, false);
+        let mut blocks = self.build_blocks(items, false, false)?;
         trim_all_block_edges(&mut blocks);
         Ok(Inline::Note(blocks))
     }
 
     fn expand_endnote(&mut self, id: &str) -> Result<Inline> {
+        self.charge_expanded_node()?;
         if self.active_endnotes.contains(id) {
             return Ok(Inline::Note(Vec::new()));
         }
-        let Some(note_el) = self.endnotes.notes.get(id).cloned() else {
+        let endnotes = self.endnotes;
+        let Some(note_el) = endnotes.notes.get(id) else {
             return Ok(Inline::Note(Vec::new()));
         };
-        let ns = self.endnotes.ns.clone();
-        let part_path = self.endnotes.part_path.clone();
-        let rels = self.endnotes.rels.clone();
 
         self.active_endnotes.insert(Text::from(id));
-        let items = self.parse_body_children(&note_el, &ns, &part_path, &rels)?;
+        let res =
+            self.parse_body_children(note_el, &endnotes.ns, &endnotes.part_path, &endnotes.rels);
         self.active_endnotes.remove(id);
+        let items = res?;
 
-        let mut blocks = self.build_blocks(items, false, false);
+        let mut blocks = self.build_blocks(items, false, false)?;
         trim_all_block_edges(&mut blocks);
         Ok(Inline::Note(blocks))
     }
 
-    fn expand_comment(&mut self, comment: &CommentDef) -> Result<Vec<Inline>> {
-        let el = comment.element.clone();
-        let ns = self.comments.ns.clone();
-        let part_path = self.comments.part_path.clone();
-        let rels = self.comments.rels.clone();
-        let items = self.parse_body_children(&el, &ns, &part_path, &rels)?;
-        let mut blocks = self.build_blocks(items, false, true);
+    fn expand_comment(&mut self, id: &str) -> Result<Vec<Inline>> {
+        self.charge_expanded_node()?;
+        if self.active_comments.contains(id) {
+            return Ok(Vec::new());
+        }
+        let comments = self.comments;
+        let Some(comment) = comments.comments.get(id) else {
+            return Ok(Vec::new());
+        };
+
+        self.active_comments.insert(Text::from(id));
+        let res = self.parse_body_children(
+            &comment.element,
+            &comments.ns,
+            &comments.part_path,
+            &comments.rels,
+        );
+        self.active_comments.remove(id);
+        let items = res?;
+
+        let mut blocks = self.build_blocks(items, false, true)?;
         trim_all_block_edges(&mut blocks);
         let mut out = Vec::new();
         for (idx, block) in blocks.into_iter().enumerate() {
@@ -1203,7 +1260,7 @@ impl<'a, 'b> Converter<'a, 'b> {
             let blip_rid = find_blip_rid(container, ns);
             if let Some(rid) = blip_rid
                 && let Some(img) =
-                    self.load_image(rid, part_path, rels, width, height, descr, title)
+                    self.load_image(rid, part_path, rels, width, height, descr, title)?
             {
                 let wrapped = if let Some(lrid) = link_rid
                     && let Some(rel) = rels.get(lrid)
@@ -1225,7 +1282,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 let is_cap = items.iter().any(|it| {
                     matches!(it, BodyItem::Para(p) if is_caption_style(&p.style_names) || p.has_seq_any)
                 });
-                let blocks = self.build_blocks(items, false, true);
+                let blocks = self.build_blocks(items, false, true)?;
                 if is_cap {
                     caption_blocks.extend(blocks);
                 } else {
@@ -1252,7 +1309,8 @@ impl<'a, 'b> Converter<'a, 'b> {
             if is_v(el, "imagedata") {
                 if let Some(rid) = ns.r_attr(el, "id") {
                     let title = el.attr_local("title").unwrap_or("");
-                    if let Some(img) = self.load_image(rid, part_path, rels, None, None, "", title)
+                    if let Some(img) =
+                        self.load_image(rid, part_path, rels, None, None, "", title)?
                     {
                         atoms.push(RunAtom::Inline(img));
                     }
@@ -1264,7 +1322,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 let is_cap = items.iter().any(|it| {
                     matches!(it, BodyItem::Para(p) if is_caption_style(&p.style_names) || p.has_seq_any)
                 });
-                let blocks = self.build_blocks(items, false, true);
+                let blocks = self.build_blocks(items, false, true)?;
                 if is_cap {
                     caption_blocks.extend(blocks);
                 } else {
@@ -1289,8 +1347,10 @@ impl<'a, 'b> Converter<'a, 'b> {
         height: Option<String>,
         descr: &str,
         title: &str,
-    ) -> Option<Inline> {
-        let rel = rels.get(rid)?;
+    ) -> Result<Option<Inline>> {
+        let Some(rel) = rels.get(rid) else {
+            return Ok(None);
+        };
         let mut kvs = Vec::new();
         if let Some(w) = width {
             kvs.push(("width".into(), w));
@@ -1301,15 +1361,36 @@ impl<'a, 'b> Converter<'a, 'b> {
         let alt = tokenize_plain_inlines(descr);
 
         if rel.external {
-            return Some(Inline::Image(
+            return Ok(Some(Inline::Image(
                 Attr::new("", vec![], kvs),
                 alt,
                 Target::new(rel.target.clone(), title),
-            ));
+            )));
         }
 
-        let resolved = resolve_target(part_path, &rel.target)?;
-        let bytes = self.archive.read(&resolved).ok()??;
+        let Some(resolved) = resolve_target(part_path, &rel.target) else {
+            return Ok(None);
+        };
+        if let Some(cached) = self.media_cache.get(&resolved) {
+            return Ok(cached.as_ref().map(|key| {
+                Inline::Image(
+                    Attr::new("", vec![], kvs),
+                    alt,
+                    Target::new(key.clone(), title),
+                )
+            }));
+        }
+        let bytes = match self.archive.read(&resolved) {
+            Ok(Some(bytes)) => bytes,
+            Ok(None) | Err(ArchiveError::Corrupt { .. }) => {
+                self.media_cache.insert(resolved, None);
+                return Ok(None);
+            }
+            Err(err) => {
+                self.media_cache.insert(resolved, None);
+                return Err(map_read_error(err));
+            }
+        };
         let (_, mime) = image_size_and_mime(&bytes, Some(&resolved));
         let key = media_name(&resolved, "word/", &bytes);
         let mime_type = Text::from(mime.unwrap_or("application/octet-stream"));
@@ -1320,30 +1401,47 @@ impl<'a, 'b> Converter<'a, 'b> {
                 contents: bytes,
             },
         );
-        Some(Inline::Image(
+        self.media_cache.insert(resolved, Some(key.clone()));
+        Ok(Some(Inline::Image(
             Attr::new("", vec![], kvs),
             alt,
             Target::new(key, title),
-        ))
+        )))
     }
 
     // -----------------------------------------------------------------------
     // Fields state machine (`begin` / `instrText` / `separate` / `end`)
     // -----------------------------------------------------------------------
 
-    fn resolve_fields(&mut self, items: Vec<RawInline>) -> (Vec<RawInline>, SeqInfo) {
+    fn resolve_fields(&mut self, items: Vec<RawInline>) -> Result<(Vec<RawInline>, SeqInfo)> {
         let mut seq = SeqInfo::default();
-        let resolved = self.resolve_fields_inner(items, &mut seq);
-        (resolved, seq)
+        let resolved = self.resolve_fields_inner(items, &mut seq, 0)?;
+        Ok((resolved, seq))
     }
 
-    fn resolve_fields_inner(&mut self, items: Vec<RawInline>, seq: &mut SeqInfo) -> Vec<RawInline> {
+    fn resolve_fields_inner(
+        &mut self,
+        items: Vec<RawInline>,
+        seq: &mut SeqInfo,
+        field_depth: usize,
+    ) -> Result<Vec<RawInline>> {
+        let max_depth = self.context.limits.max_nesting_depth;
+        if field_depth > max_depth {
+            return Err(Error::Parse(format!(
+                "DOCX field nesting exceeded limit of {max_depth} levels"
+            )));
+        }
         let mut out: Vec<RawInline> = Vec::new();
         let mut stack: Vec<ActiveFieldSlot> = Vec::new();
 
         for item in items {
             match item {
                 RawInline::FldBegin => {
+                    if stack.len() >= max_depth {
+                        return Err(Error::Parse(format!(
+                            "DOCX field nesting exceeded limit of {max_depth} levels"
+                        )));
+                    }
                     stack.push(ActiveFieldSlot {
                         instr: String::new(),
                         in_result: false,
@@ -1378,7 +1476,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                     }
                 }
                 RawInline::Tracked { class, info, items } => {
-                    let inner = self.resolve_fields_inner(items, seq);
+                    let inner = self.resolve_fields_inner(items, seq, field_depth + 1)?;
                     let wrapped = RawInline::Tracked {
                         class,
                         info,
@@ -1391,7 +1489,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                     title,
                     items,
                 } => {
-                    let inner = self.resolve_fields_inner(items, seq);
+                    let inner = self.resolve_fields_inner(items, seq, field_depth + 1)?;
                     let wrapped = RawInline::Link {
                         target,
                         title,
@@ -1416,7 +1514,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 out.extend(field.result);
             }
         }
-        out
+        Ok(out)
     }
 
     fn finish_field(
@@ -1539,29 +1637,29 @@ impl<'a, 'b> Converter<'a, 'b> {
             let prefix = item
                 .get("prefix")
                 .and_then(|v| v.as_str())
-                .map(tokenize_plain_inlines)
+                .map(|s| normalize_inline_list(tokenize_text_preserving_edges(s)))
                 .unwrap_or_default();
-            let mut suffix_text = String::new();
-            if let Some(locator) = item.get("locator").and_then(|v| v.as_str()) {
-                suffix_text.push_str(", ");
+            let mut suffix_inlines = Vec::new();
+            if let Some(locator) = item.get("locator").and_then(|v| v.as_str())
+                && !locator.is_empty()
+            {
+                suffix_inlines.push(Inline::Str(",".into()));
+                suffix_inlines.push(Inline::Space);
                 if let Some(label) = item.get("label").and_then(|v| v.as_str())
                     && !label.is_empty()
                 {
-                    suffix_text.push_str(label);
-                    suffix_text.push(' ');
+                    suffix_inlines.extend(tokenize_text_preserving_edges(label));
+                    suffix_inlines.push(Inline::Space);
                 }
-                suffix_text.push_str(locator);
+                suffix_inlines.extend(tokenize_text_preserving_edges(locator));
+                suffix_inlines.push(Inline::Space);
             }
-            if let Some(suf) = item.get("suffix").and_then(|v| v.as_str()) {
-                if !suffix_text.is_empty()
-                    && !suf.is_empty()
-                    && !suf.starts_with(|c: char| c.is_whitespace() || matches!(c, ',' | ';' | '.'))
-                {
-                    suffix_text.push(' ');
-                }
-                suffix_text.push_str(suf);
+            if let Some(suf) = item.get("suffix").and_then(|v| v.as_str())
+                && !suf.is_empty()
+            {
+                suffix_inlines.extend(tokenize_text_preserving_edges(suf));
             }
-            let suffix = tokenize_plain_inlines(&suffix_text);
+            let suffix = normalize_inline_list(suffix_inlines);
             let mode = if item
                 .get("suppress-author")
                 .and_then(|v| v.as_bool())
@@ -1765,18 +1863,22 @@ impl<'a, 'b> Converter<'a, 'b> {
             })
             .unwrap_or(false);
 
-        let grid_widths: Vec<f64> = ns
-            .w_child(tbl, "tblGrid")
-            .map(|grid| {
-                ns.w_children(grid, "gridCol")
-                    .map(|col| {
-                        ns.w_attr(col, "w")
-                            .and_then(|s| s.parse::<f64>().ok())
-                            .unwrap_or(0.0)
-                    })
-                    .collect()
-            })
-            .unwrap_or_default();
+        let mut grid_widths: Vec<f64> = Vec::new();
+        if let Some(grid) = ns.w_child(tbl, "tblGrid") {
+            let max_cells = self.context.limits.max_table_cells;
+            for col in ns.w_children(grid, "gridCol") {
+                if grid_widths.len() >= max_cells {
+                    return Err(Error::Parse(format!(
+                        "DOCX table column count exceeded limit of {max_cells}"
+                    )));
+                }
+                let w = ns
+                    .w_attr(col, "w")
+                    .and_then(|s| s.parse::<f64>().ok())
+                    .unwrap_or(0.0);
+                grid_widths.push(w);
+            }
+        }
 
         struct RawCell {
             blocks: Vec<Block>,
@@ -1797,6 +1899,7 @@ impl<'a, 'b> Converter<'a, 'b> {
 
         let mut raw_rows: Vec<RawRow> = Vec::new();
         let mut max_cols = grid_widths.len();
+        let mut table_explicit_cells = 0usize;
 
         let tr_elems = collect_table_children(tbl, ns, "tr");
         for tr in tr_elems {
@@ -1820,6 +1923,7 @@ impl<'a, 'b> Converter<'a, 'b> {
 
             if grid_before > 0 {
                 self.charge_table_cells(grid_before)?;
+                table_explicit_cells = table_explicit_cells.saturating_add(grid_before);
                 for _ in 0..grid_before {
                     cells.push(RawCell {
                         blocks: Vec::new(),
@@ -1828,7 +1932,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                         align: Alignment::AlignDefault,
                     });
                 }
-                row_cols += grid_before;
+                row_cols = row_cols.saturating_add(grid_before);
             }
 
             let tc_elems = collect_table_children(tr, ns, "tc");
@@ -1842,6 +1946,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                     .max(1);
 
                 self.charge_table_cells(col_span)?;
+                table_explicit_cells = table_explicit_cells.saturating_add(col_span);
 
                 let v_merge = tc_pr
                     .and_then(|p| ns.w_child(p, "vMerge"))
@@ -1853,9 +1958,9 @@ impl<'a, 'b> Converter<'a, 'b> {
 
                 let items = self.parse_body_children(tc, ns, part_path, rels)?;
                 let cell_align = infer_cell_alignment(&items);
-                let blocks = self.build_blocks(items, false, true);
+                let blocks = self.build_blocks(items, false, true)?;
 
-                row_cols += col_span;
+                row_cols = row_cols.saturating_add(col_span);
                 cells.push(RawCell {
                     blocks,
                     col_span,
@@ -1866,6 +1971,7 @@ impl<'a, 'b> Converter<'a, 'b> {
 
             if grid_after > 0 {
                 self.charge_table_cells(grid_after)?;
+                table_explicit_cells = table_explicit_cells.saturating_add(grid_after);
                 for _ in 0..grid_after {
                     cells.push(RawCell {
                         blocks: Vec::new(),
@@ -1874,7 +1980,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                         align: Alignment::AlignDefault,
                     });
                 }
-                row_cols += grid_after;
+                row_cols = row_cols.saturating_add(grid_after);
             }
 
             max_cols = max_cols.max(row_cols);
@@ -1910,6 +2016,11 @@ impl<'a, 'b> Converter<'a, 'b> {
         }
 
         let num_rows = raw_rows.len();
+        let grid_slots = num_rows.saturating_mul(max_cols);
+        let implicit_grid_cells = grid_slots.saturating_sub(table_explicit_cells);
+        if implicit_grid_cells > 0 {
+            self.charge_table_cells(implicit_grid_cells)?;
+        }
         let mut grid_map: Vec<Vec<Option<usize>>> = vec![vec![None; max_cols]; num_rows];
         let mut row_spans: Vec<Vec<usize>> = raw_rows
             .iter()
@@ -2080,10 +2191,10 @@ impl<'a, 'b> Converter<'a, 'b> {
         items: Vec<BodyItem>,
         allow_meta: bool,
         allow_lists: bool,
-    ) -> Vec<Block> {
+    ) -> Result<Vec<Block>> {
         let merged = self.merge_tracked_and_dropcap_paragraphs(items);
         let mut blocks = Vec::new();
-        let mut list_counters: HashMap<(Text, i64), i64> = HashMap::new();
+        let mut list_counters: HashMap<Text, BTreeMap<i64, i64>> = HashMap::new();
         let mut in_bibl = false;
         let mut idx = 0usize;
 
@@ -2251,7 +2362,8 @@ impl<'a, 'b> Converter<'a, 'b> {
                             ilvl,
                             kind,
                             &mut list_counters,
-                        );
+                            0,
+                        )?;
                         blocks.push(list_block);
                         idx = next_idx;
                         continue;
@@ -2315,7 +2427,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 }
             }
         }
-        blocks
+        Ok(blocks)
     }
 
     /// Merges adjacent paragraphs for tracked paragraph-mark changes (with a Space)
@@ -2360,8 +2472,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                             prev.props = p.props;
                             prev.style_names = p.style_names;
                         }
-                        prev.inlines.extend(p.inlines);
-                        prev.inlines = normalize_inline_list(std::mem::take(&mut prev.inlines));
+                        for inl in p.inlines {
+                            push_normalized_inline(&mut prev.inlines, inl);
+                        }
                         prev.extra_blocks.extend(p.extra_blocks);
                         prev.caption_blocks.extend(p.caption_blocks);
                         mode = next_mode;
@@ -2425,6 +2538,7 @@ impl<'a, 'b> Converter<'a, 'b> {
         (Block::DefinitionList(entries), idx)
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn consume_list(
         &self,
         items: &[BodyItem],
@@ -2432,17 +2546,26 @@ impl<'a, 'b> Converter<'a, 'b> {
         root_num_id: &str,
         root_ilvl: i64,
         root_kind: ListKind,
-        counters: &mut HashMap<(Text, i64), i64>,
-    ) -> (Block, usize) {
+        counters: &mut HashMap<Text, BTreeMap<i64, i64>>,
+        list_depth: usize,
+    ) -> Result<(Block, usize)> {
+        let max_depth = self.context.limits.max_nesting_depth;
+        if list_depth >= max_depth {
+            return Err(Error::Parse(format!(
+                "DOCX list nesting exceeded limit of {max_depth} levels"
+            )));
+        }
         let mut list_items: Vec<Vec<Block>> = Vec::new();
         let mut idx = start_idx;
 
         let effective_start = match &root_kind {
             ListKind::Ordered { start, .. } => {
-                let key = (Text::from(root_num_id), root_ilvl);
                 if self.numbering.has_start_override(root_num_id, root_ilvl) {
                     *start
-                } else if let Some(&prev) = counters.get(&key) {
+                } else if let Some(&prev) = counters
+                    .get(root_num_id)
+                    .and_then(|levels| levels.get(&root_ilvl))
+                {
                     prev + 1
                 } else {
                     *start
@@ -2487,8 +2610,10 @@ impl<'a, 'b> Converter<'a, 'b> {
                     if !compatible && idx > start_idx {
                         break;
                     }
-                    // Reset deeper sublist counters when a parent list item advances.
-                    counters.retain(|(nid, lvl), _| !(nid == root_num_id && *lvl > root_ilvl));
+                    // Reset deeper sublist counters for this `numId` in O(log L + removed).
+                    if let Some(levels) = counters.get_mut(root_num_id) {
+                        let _ = levels.split_off(&root_ilvl.saturating_add(1));
+                    }
                     let mut inlines = p.inlines.clone();
                     if let ListKind::Bullet {
                         checkbox: Some(box_sym),
@@ -2509,8 +2634,15 @@ impl<'a, 'b> Converter<'a, 'b> {
                     item_count += 1;
                     idx += 1;
                 } else {
-                    let (nested, next_idx) =
-                        self.consume_list(items, idx, &num_id, ilvl, kind, counters);
+                    let (nested, next_idx) = self.consume_list(
+                        items,
+                        idx,
+                        &num_id,
+                        ilvl,
+                        kind,
+                        counters,
+                        list_depth + 1,
+                    )?;
                     if let Some(last) = list_items.last_mut() {
                         last.push(nested);
                     } else {
@@ -2546,10 +2678,10 @@ impl<'a, 'b> Converter<'a, 'b> {
             ListKind::Bullet { .. } => Block::BulletList(list_items),
             ListKind::Ordered { style, delim, .. } => {
                 if item_count > 0 {
-                    counters.insert(
-                        (Text::from(root_num_id), root_ilvl),
-                        effective_start + item_count - 1,
-                    );
+                    counters
+                        .entry(Text::from(root_num_id))
+                        .or_default()
+                        .insert(root_ilvl, effective_start + item_count - 1);
                 }
                 Block::OrderedList(
                     ListAttributes {
@@ -2561,7 +2693,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 )
             }
         };
-        (block, idx)
+        Ok((block, idx))
     }
 }
 
@@ -2813,11 +2945,34 @@ fn normalize_inline_list(inlines: Vec<Inline>) -> Vec<Inline> {
 }
 
 fn push_normalized_inline(out: &mut Vec<Inline>, inl: Inline) {
+    // Fast in-place merge for adjacent formatting wrappers to avoid O(n^2) re-normalization.
+    if let Some(prev) = out.last_mut()
+        && let Some(tag_a) = format_tag(prev)
+    {
+        if format_tag(&inl) == Some(tag_a) {
+            if let Some(prev_children) = unwrap_formatted_mut(prev) {
+                for child in into_formatted_children(inl) {
+                    push_normalized_inline(prev_children, child);
+                }
+                return;
+            }
+        } else if let Some(peeled_b) = peel_format_tag(&inl, tag_a)
+            && let Some(prev_children) = unwrap_formatted_mut(prev)
+        {
+            push_normalized_inline(prev_children, peeled_b);
+            return;
+        }
+    }
     if let Some(prev) = out.last()
-        && let Some(merged) = try_merge_formatted(prev, &inl)
+        && let Some(tag_b) = format_tag(&inl)
+        && let Some(peeled_a) = peel_format_tag(prev, tag_b)
     {
         out.pop();
-        push_normalized_inline(out, merged);
+        let mut combined = vec![peeled_a];
+        for child in into_formatted_children(inl) {
+            push_normalized_inline(&mut combined, child);
+        }
+        push_normalized_inline(out, rewrap_formatted(tag_b, combined));
         return;
     }
 
@@ -2831,28 +2986,32 @@ fn push_normalized_inline(out: &mut Vec<Inline>, inl: Inline) {
     }
 }
 
-/// Attempts to merge two directly adjacent formatting inlines (including
-/// lifting a shared wrapper out of `Emph [Strong [x]]` etc.).
-fn try_merge_formatted(a: &Inline, b: &Inline) -> Option<Inline> {
-    let tag_a = format_tag(a)?;
-    if format_tag(b) == Some(tag_a) {
-        let mut combined = unwrap_formatted(a).to_vec();
-        combined.extend_from_slice(unwrap_formatted(b));
-        return Some(rewrap_formatted(tag_a, normalize_inline_list(combined)));
+fn unwrap_formatted_mut(inl: &mut Inline) -> Option<&mut Vec<Inline>> {
+    match inl {
+        Inline::Emph(v)
+        | Inline::Strong(v)
+        | Inline::Underline(v)
+        | Inline::Strikeout(v)
+        | Inline::SmallCaps(v)
+        | Inline::Superscript(v)
+        | Inline::Subscript(v)
+        | Inline::Span(_, v) => Some(v),
+        _ => None,
     }
-    if let Some(peeled_b) = peel_format_tag(b, tag_a) {
-        let mut combined = unwrap_formatted(a).to_vec();
-        combined.push(peeled_b);
-        return Some(rewrap_formatted(tag_a, normalize_inline_list(combined)));
+}
+
+fn into_formatted_children(inl: Inline) -> Vec<Inline> {
+    match inl {
+        Inline::Emph(v)
+        | Inline::Strong(v)
+        | Inline::Underline(v)
+        | Inline::Strikeout(v)
+        | Inline::SmallCaps(v)
+        | Inline::Superscript(v)
+        | Inline::Subscript(v)
+        | Inline::Span(_, v) => v,
+        _ => Vec::new(),
     }
-    if let Some(tag_b) = format_tag(b)
-        && let Some(peeled_a) = peel_format_tag(a, tag_b)
-    {
-        let mut combined = vec![peeled_a];
-        combined.extend_from_slice(unwrap_formatted(b));
-        return Some(rewrap_formatted(tag_b, normalize_inline_list(combined)));
-    }
-    None
 }
 
 /// Recursively lifts leading and trailing `Space`s outside formatting wrappers

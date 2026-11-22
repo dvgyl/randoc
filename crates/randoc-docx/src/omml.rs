@@ -814,6 +814,9 @@ fn unicode_to_tex_symbol(ch: char) -> Option<&'static str> {
 
 fn render_tokens(tokens: &[Tok]) -> String {
     let mut out = String::new();
+    let mut ends_with_backslash = false;
+    let mut in_cs_name = false;
+
     for (idx, tok) in tokens.iter().enumerate() {
         let s = match tok {
             Tok::Ident(s)
@@ -835,26 +838,32 @@ fn render_tokens(tokens: &[Tok]) -> String {
                 (Tok::Punct(_), _) => true,
                 // Avoid merging two backslash commands or command + letter (e.g. `\sin x`)
                 (_, _) => {
-                    let prev_ends_cmd = ends_with_cs_name(&out);
                     let next_starts_alpha =
-                        s.chars().next().is_some_and(|c| c.is_ascii_alphabetic());
-                    prev_ends_cmd && next_starts_alpha
+                        s.as_bytes().first().is_some_and(u8::is_ascii_alphabetic);
+                    in_cs_name && next_starts_alpha
                 }
             };
             if need_space && !out.ends_with(' ') {
                 out.push(' ');
+                ends_with_backslash = false;
+                in_cs_name = false;
             }
         }
         out.push_str(s);
+        for &b in s.as_bytes() {
+            if b == b'\\' {
+                in_cs_name = false;
+                ends_with_backslash = true;
+            } else if b.is_ascii_alphabetic() {
+                if ends_with_backslash {
+                    in_cs_name = true;
+                    ends_with_backslash = false;
+                }
+            } else {
+                in_cs_name = false;
+                ends_with_backslash = false;
+            }
+        }
     }
     out
-}
-
-fn ends_with_cs_name(s: &str) -> bool {
-    let bytes = s.as_bytes();
-    let mut i = bytes.len();
-    while i > 0 && bytes[i - 1].is_ascii_alphabetic() {
-        i -= 1;
-    }
-    i < bytes.len() && i > 0 && bytes[i - 1] == b'\\'
 }
