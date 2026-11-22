@@ -20,6 +20,14 @@ pub const XLINK: &str = "http://www.w3.org/1999/xlink";
 pub const SVG: &str = "urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0";
 /// `xmlns:math`
 pub const MATH: &str = "http://www.w3.org/1998/Math/MathML";
+/// `xmlns:dc`
+pub const DC: &str = "http://purl.org/dc/elements/1.1/";
+/// `xmlns:meta`
+pub const META: &str = "urn:oasis:names:tc:opendocument:xmlns:meta:1.0";
+/// `xmlns:config`
+pub const CONFIG: &str = "urn:oasis:names:tc:opendocument:xmlns:config:1.0";
+/// `xmlns:manifest`
+pub const MANIFEST: &str = "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0";
 /// `xmlns:xml`
 pub const XML: &str = "http://www.w3.org/XML/1998/namespace";
 

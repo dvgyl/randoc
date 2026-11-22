@@ -1,4 +1,4 @@
-//! Pandoc 3.13 compatible ODT, FODT, and OpenDocument readers.
+//! Pandoc 3.13 compatible ODT, FODT, and OpenDocument readers and writers.
 
 mod ns;
 mod reader;
@@ -36,4 +36,11 @@ impl TextReader for FodtReader {
     ) -> Result<Pandoc> {
         reader::read_fodt(sources, options, context)
     }
+}
+
+mod writer;
+
+/// Returns an OpenDocument writer for a supported format.
+pub fn writer(format: &str) -> Option<randoc_core::Writer> {
+    writer::writer(format)
 }

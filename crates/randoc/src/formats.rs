@@ -35,6 +35,7 @@ const WRITERS: &[WriterLookup] = &[
     randoc_html::writer,
     randoc_native::writer,
     randoc_citeproc::csljson::writer,
+    randoc_odt::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.
