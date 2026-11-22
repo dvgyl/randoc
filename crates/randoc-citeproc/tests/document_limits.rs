@@ -169,3 +169,140 @@ fn deep_styles_give_the_depth_error_on_a_small_stack() {
     let result = on_small_stack(move || run(&deep, &references(3, true), vec![ids(3)], 64));
     assert!(result.is_err());
 }
+
+/// References with the same family name and different given names, so
+/// that each name of the global given-name rule needs a hint.
+fn same_family(n: usize, authors: usize) -> String {
+    let items: Vec<String> = (0..n)
+        .map(|i| {
+            let names: Vec<String> = (0..authors)
+                .map(|a| format!("{{\"family\":\"Smith\",\"given\":\"G{i}x{a}\"}}"))
+                .collect();
+            format!(
+                "{{\"id\":\"r{i}\",\"type\":\"book\",\"author\":[{}],\
+                 \"issued\":{{\"date-parts\":[[2000]]}},\"title\":\"T{i}\"}}",
+                names.join(",")
+            )
+        })
+        .collect();
+    format!("[{}]", items.join(","))
+}
+
+/// GPT 6.2 Sol r-b98611b-16bf516 findings 1 and 6: the global given-name
+/// rule shares one names map (each reference had a copy of the map of
+/// all names), and the hints count the initials once.
+#[test]
+fn the_global_given_name_rule_takes_linear_time() {
+    let style = author_date(
+        "disambiguate-add-givenname=\"true\" givenname-disambiguation-rule=\"all-names\"",
+    );
+    check("same family names", (400, 1_600), &|n| {
+        let citations = ids(n).into_iter().map(|id| vec![id]).collect();
+        let doc = run(&style, &same_family(n, 1), citations, 128).unwrap();
+        let json = randoc_ast::json::to_json(&doc);
+        assert!(json.contains("G0x0") && json.contains(&format!("G{}x0", n - 1)));
+    });
+}
+
+/// Finding 6: `disambiguate-add-names` extends the key of each item by one
+/// name in each step (each step compared the first `n` names again).
+#[test]
+fn adding_names_takes_linear_time_in_the_number_of_names() {
+    let style =
+        author_date("disambiguate-add-names=\"true\" et-al-min=\"2\" et-al-use-first=\"1\"");
+    check("long author lists", (200, 1_600), &|authors| {
+        // The two items differ only in the last author.
+        let refs: Vec<String> = ["Alpha", "Beta"]
+            .iter()
+            .enumerate()
+            .map(|(i, last)| {
+                let mut names: Vec<String> = (1..authors)
+                    .map(|a| format!("{{\"family\":\"Smith\",\"given\":\"G{a}\"}}"))
+                    .collect();
+                names.push(format!("{{\"family\":\"{last}\"}}"));
+                format!(
+                    "{{\"id\":\"r{i}\",\"type\":\"book\",\"author\":[{}],\
+                     \"issued\":{{\"date-parts\":[[2000]]}},\"title\":\"T{i}\"}}",
+                    names.join(",")
+                )
+            })
+            .collect();
+        let refs = format!("[{}]", refs.join(","));
+        let doc = run(&style, &refs, vec![ids(2)], 128).unwrap();
+        let json = randoc_ast::json::to_json(&doc);
+        assert!(json.contains("Alpha") && json.contains("Beta"));
+    });
+}
+
+/// Takes a chain of `Emph` apart on the heap; the derived `Drop` recurses.
+fn take_apart(mut inlines: Vec<Inline>) {
+    while let Some(inline) = inlines.pop() {
+        if let Inline::Emph(inner) = inline {
+            inlines = inner;
+        }
+    }
+}
+
+fn deep_emph(levels: usize) -> Vec<Inline> {
+    let mut inlines = vec![cite(&ids(1))];
+    for _ in 0..levels {
+        inlines = vec![Inline::Emph(inlines)];
+    }
+    inlines
+}
+
+/// Finding 2: the filter checks the depth of the document before its walks
+/// recurse, in the blocks and in the metadata, on a thread with a 2 MiB
+/// stack.
+#[test]
+fn a_deep_document_gives_the_depth_error_on_a_small_stack() {
+    for in_meta in [false, true] {
+        let result = on_small_stack(move || {
+            let mut host = PureHost::default();
+            let locale = std::fs::read("tests/replay/document-locale.xml").unwrap();
+            host.files
+                .insert("s.csl".into(), author_date("").into_bytes());
+            host.files
+                .insert("refs.json".into(), references(1, false).into_bytes());
+            host.files
+                .insert("dd/csl/locales/locales-en-US.xml".into(), locale);
+            let mut context = Context::new(Box::new(host));
+            context.state.user_data_dir = Some("dd".into());
+            context.limits.max_nesting_depth = 128;
+            let mut meta = Meta::default();
+            meta.insert("csl", MetaValue::MetaString("s.csl".into()));
+            meta.insert("bibliography", MetaValue::MetaString("refs.json".into()));
+            let mut blocks = Vec::new();
+            if in_meta {
+                meta.insert("title", MetaValue::MetaInlines(deep_emph(16_384)));
+            } else {
+                blocks.push(Block::Para(deep_emph(16_384)));
+            }
+            let mut doc = Pandoc { meta, blocks };
+            let mut find = |context: &mut Context, name: &str| {
+                context.host().file_exists(name).then(|| name.to_owned())
+            };
+            let mut yaml = |_: &mut Context, _: &str, _: &str| Ok(Vec::new());
+            let hooks = Hooks {
+                find_resource: &mut find,
+                yaml_references: &mut yaml,
+            };
+            let result =
+                process_citations(&mut context, &mut doc, hooks).map_err(|e| e.to_string());
+            if let Some(MetaValue::MetaInlines(inlines)) = doc.meta.0.remove("title") {
+                take_apart(inlines);
+            }
+            for block in std::mem::take(&mut doc.blocks) {
+                if let Block::Para(inlines) = block {
+                    take_apart(inlines);
+                }
+            }
+            result
+        });
+        assert_eq!(
+            result,
+            Err("the document is nested too deeply for the citations".to_owned()),
+            "in the metadata: {in_meta}"
+        );
+    }
+}

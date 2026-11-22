@@ -22,10 +22,34 @@ pub fn locale_path(data_dir: &str, code: &str) -> String {
     format!("{data_dir}/{LOCALES_FOLDER}/locales-{code}.xml")
 }
 
+/// Reads at most `max_bytes` bytes of a file through the host. The read
+/// stops after the limit, so a large file does not fill the memory.
+pub(crate) fn read_limited(
+    context: &mut Context,
+    path: &str,
+    max_bytes: u64,
+) -> std::io::Result<Vec<u8>> {
+    let max_bytes = usize::try_from(max_bytes).unwrap_or(usize::MAX);
+    context.host().read_file_limited(path, max_bytes)
+}
+
+/// The error of a file larger than the limit `max_resource_size`.
+pub(crate) fn too_large(path: &str, limit: u64) -> Error {
+    Error::App(format!(
+        "{path}: the file is larger than {limit} bytes (a Randoc limit)"
+    ))
+}
+
 /// Reads a file through the context, with the limit `max_resource_size`.
 fn read_text(context: &mut Context, path: &str) -> Result<String, Error> {
-    let bytes = context.read_file(path)?;
-    decode(context, path, bytes)
+    let limit = context.limits.max_resource_size;
+    match read_limited(context, path, limit) {
+        Ok(bytes) => decode(context, path, bytes),
+        Err(error) if error.kind() == std::io::ErrorKind::FileTooLarge => {
+            Err(too_large(path, limit))
+        }
+        Err(error) => Err(Error::Io(format!("{path}: {error}"))),
+    }
 }
 
 /// Decodes the bytes of a file as Pandoc does: strict UTF-8, no byte order
@@ -33,9 +57,7 @@ fn read_text(context: &mut Context, path: &str) -> Result<String, Error> {
 fn decode(context: &Context, path: &str, bytes: Vec<u8>) -> Result<String, Error> {
     let limit = context.limits.max_resource_size;
     if u64::try_from(bytes.len()).unwrap_or(u64::MAX) > limit {
-        return Err(Error::App(format!(
-            "{path}: the file is larger than {limit} bytes (a Randoc limit)"
-        )));
+        return Err(too_large(path, limit));
     }
     let text = String::from_utf8(bytes).map_err(|error| {
         let valid = error.utf8_error().valid_up_to();
@@ -60,8 +82,12 @@ fn decode(context: &Context, path: &str, bytes: Vec<u8>) -> Result<String, Error
 /// `ResourceNotFound` (the oracle searches the resource path); an absolute
 /// path gives the I/O error with the text of the Haskell runtime.
 fn read_style_file(context: &mut Context, path: &str) -> Result<String, Error> {
-    match context.host().read_file(path) {
+    let limit = context.limits.max_resource_size;
+    match read_limited(context, path, limit) {
         Ok(bytes) => decode(context, path, bytes),
+        Err(error) if error.kind() == std::io::ErrorKind::FileTooLarge => {
+            Err(too_large(path, limit))
+        }
         Err(_) if !path.starts_with('/') => Err(Error::ResourceNotFound(path.to_owned())),
         Err(error) => Err(Error::Io(format!(
             "{path}: withBinaryFile: {}",
@@ -71,7 +97,7 @@ fn read_style_file(context: &mut Context, path: &str) -> Result<String, Error> {
 }
 
 /// The text of `IOException` for the common error kinds.
-fn haskell_io_text(error: &std::io::Error) -> String {
+pub(crate) fn haskell_io_text(error: &std::io::Error) -> String {
     match error.kind() {
         std::io::ErrorKind::NotFound => "does not exist (No such file or directory)".to_owned(),
         std::io::ErrorKind::IsADirectory => "inappropriate type (is a directory)".to_owned(),

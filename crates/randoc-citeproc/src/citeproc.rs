@@ -498,12 +498,15 @@ impl Engine<'_> {
             .is_none_or(|ids| ids.len() <= 1);
         let alone = previous.alone_in_group && alone_in_note;
         let mut positions = Vec::with_capacity(4);
-        if options.is_note_style && note_number - previous_note_number < near_note_distance {
+        // Haskell `Int` arithmetic wraps, also for extreme note numbers.
+        if options.is_note_style
+            && note_number.wrapping_sub(previous_note_number) < near_note_distance
+        {
             positions.push(Position::NearNote);
         }
         // Haskell compares `Maybe Int` values: `Nothing` is below each `Just`.
         let note_distance_at_most_one = match (note, previous.note) {
-            (Some(n), Some(p)) => n - p <= 1,
+            (Some(n), Some(p)) => n.wrapping_sub(p) <= 1,
             _ => true,
         };
         let follows = (group == previous.group

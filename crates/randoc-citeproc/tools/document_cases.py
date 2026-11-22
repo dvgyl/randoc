@@ -122,6 +122,14 @@ STYLES = {
         '<text variable="locator"/></group></layout></citation>',
         '<bibliography><layout><text variable="title"/></layout></bibliography>',
     ),
+    # A citation that ends with a period takes the place of a period after it.
+    "dot": style(
+        "in-text",
+        '<citation><layout suffix="." delimiter="; "><group delimiter=" ">'
+        '<names variable="author"><name form="short"/></names>'
+        '<date variable="issued"><date-part name="year"/></date></group></layout></citation>',
+        '<bibliography><layout><text variable="title"/></layout></bibliography>',
+    ),
     "suffix-var": style(
         "in-text",
         '<citation disambiguate-add-year-suffix="true" collapse="year"><layout prefix="(" suffix=")" delimiter="; ">'
@@ -156,6 +164,26 @@ DOCS = [
     ("note", "note", "---\nnocite: \"@a\"\n---\nOne [see @z]. Two @o. Three [@z]; four [@o, p. 3]: five [@o, p. 4]? Six [@o, p. 4]. Seven [@z].[^1] Then [ibid. @z] and [e.g., @o].\n\n[^1]: Note [@z] and @o says and [-@z].\n\n# Next {.reset-citation-positions}\n\nEight [@z]. Nine [@z].\n"),
     ("note-npa", "note", "---\nnotes-after-punctuation: false\n---\nOne [@z]. Two @o. Three [@z].\n"),
     ("suffix-var", "suffix-var", "A [@s1; @s3].\n"),
+    # GPT 6.2 Sol r-b98611b-16bf516: the citations of the metadata come
+    # first, in the order of the keys, without `nocite` (finding 7).
+    ("meta-cite", "ad", "---\ntitle: \"T [@z]\"\nabstract: \"A [@o]\"\nzz: [\"Z [@a]\", {k: \"[@s1]\"}]\nnocite: \"@d4\"\n---\nText [@a] [@o].\n"),
+    ("meta-cite-note", "note", "---\ntitle: \"T [@z].\"\nabstract: \"A [@o]\"\nnocite: \"@d4\"\n---\nText [@z]. More [@o].\n"),
+    # Finding 9: a `nocite` key with no reference.
+    ("nocite-missing", "ad", "---\nnocite: \"@missing, @z\"\n---\nA [@o].\n"),
+    # Finding 11: each div `refs` gets the bibliography.
+    ("refs-twice", "ad", "A [@z].\n\n::: {#refs}\n:::\n\nB.\n\n::: {#refs .x}\nIn.\n:::\n"),
+    # Finding 10: a normal citation that opens a note is the text of the note.
+    ("note-opens", "note", "A.[^1] B.[^2] C.[^3] D.[^4] E.^[[@z].] F.[^6] G.[^7] H.[^8] I.[^9] J.[^10]\n\n"
+     "[^1]: [@z].\n\n[^2]: [@o]. More text.\n\n[^3]: [@a] and [@z].\n\n[^4]: @o says.\n\n"
+     "[^6]: Para one.\n\n    [@o].\n\n[^7]: *[@a].*\n\n[^8]: [see @a], more.\n\n[^9]: [@z]? Yes.\n\n[^10]: [@o].x\n"),
+    # Finding 10: a reset heading counts at the top level and in a top-level div.
+    ("reset-div", "note", "# A\n\nA [@z].\n\n::: d\n# B {.reset-citation-positions}\n\nB [@z].\n:::\n\nC [@z].\n\n"
+     "> # C {.reset-citation-positions}\n>\n> D [@z].\n\n- # D {.reset-citation-positions}\n\n  E [@z].\n\n"
+     "::: a\n::: b\n# E {.reset-citation-positions}\n\nF [@z].\n:::\n:::\n\n"
+     "# F {.reset-citation-positions}\n\n::: c\nG [@z].\n:::\n\nH [@z].\n\n"
+     "# G {.reset-citation-positions}\n\n::: e\n# H {.reset-citation-positions}\n:::\n\nI [@z].\n\n"
+     "# I {.reset-citation-positions}\n\n::: f\nfoo\n:::\n\nJ [@z].\n\n::: g\n# J {.reset-citation-positions}\n:::\n\nK [@z].\n"),
+    ("dot", "dot", "Text [@z]. More [@o]? And.^[Note [@a]. x] End [@z].x\n"),
 ]
 
 DEFAULT_DOC = "A [@s1; @s2; @s3]. B [@s4; @s5]. C [@d1; @d2; @d3; @d4; @s6]. D @s1 [p. 3]. E [@s3, 4]. F [@s3; @s1].\n"

@@ -58,6 +58,8 @@ fn meta_flag(doc: &Pandoc, key: &str) -> Option<bool> {
 /// Runs the citation filter on a document.
 pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hooks) -> Result<()> {
     let max_depth = context.limits.max_nesting_depth;
+    crate::deep::check_document(doc, max_depth)
+        .map_err(|_| Error::App("the document is nested too deeply for the citations".into()))?;
     let style = match meta_text(doc, "csl").or_else(|| meta_text(doc, "citation-style")) {
         Some(name) => {
             let path = find_style(context, &name, hooks.find_resource)?;
@@ -100,8 +102,16 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
     let locale = crate::loader::style_locale(context, &style, lang.as_ref())?;
 
     let mut references = Vec::new();
+    // The bibliography files share one budget of `max_resource_size` bytes.
+    let mut budget = context.limits.max_resource_size;
     for file in bibliography_files(doc) {
-        references.extend(read_bibliography(context, &file, &locale, &mut hooks)?);
+        references.extend(read_bibliography(
+            context,
+            &file,
+            &locale,
+            &mut hooks,
+            &mut budget,
+        )?);
     }
     if let Some(MetaValue::MetaList(items)) = doc.meta.get("references") {
         for item in items {
@@ -129,9 +139,11 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
     }
     let all = nocite.iter().any(|id| id == "*");
     let mut citations: Vec<Citation> = collected.iter().map(|c| c.citation.clone()).collect();
+    // A `nocite` key with no reference gives no warning (oracle).
+    let known: HashSet<&str> = references.iter().map(|r| r.id.as_str()).collect();
     let nocite_items: Vec<CitationItem> = nocite
         .iter()
-        .filter(|id| *id != "*" && !id.is_empty())
+        .filter(|id| known.contains(id.as_str()))
         .map(|id| CitationItem::new(id))
         .collect();
     if !nocite_items.is_empty() {
@@ -183,8 +195,11 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
         contents.push(inlines);
     }
     let mut contents = contents.into_iter();
-    walk::walk_inlines_mut(&mut doc.blocks, |inline| {
-        if let Inline::Cite(_, content) = inline
+    visit_citations(doc, &mut |visit| {
+        if let Visit::Cite {
+            inline: Inline::Cite(_, content),
+            ..
+        } = visit
             && let Some(new) = contents.next()
         {
             *content = new;
@@ -195,7 +210,7 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
         after_punctuation,
         punctuation_in_quote: locale.punctuation_in_quote == Some(true),
     };
-    walk::walk_mut(&mut doc.blocks, &mut mover);
+    walk::walk_mut(doc, &mut mover);
 
     if show_bibliography {
         let entries: Vec<Block> = result
@@ -263,17 +278,43 @@ fn bibliography_files(doc: &Pandoc) -> Vec<String> {
     }
 }
 
-fn read_resource(context: &mut Context, path: &str, hooks: &mut Hooks) -> Result<String> {
-    let found = if path.starts_with('/') {
+/// Reads a file of the resource path, or an absolute file, of at most
+/// `budget` bytes, and takes its size from the budget. A missing absolute
+/// file gives the I/O error of the oracle.
+fn read_resource(
+    context: &mut Context,
+    path: &str,
+    hooks: &mut Hooks,
+    budget: &mut u64,
+) -> Result<String> {
+    let absolute = path.starts_with('/');
+    let found = if absolute {
         path.to_owned()
     } else {
         (hooks.find_resource)(context, path)
             .ok_or_else(|| Error::ResourceNotFound(path.to_owned()))?
     };
-    let bytes = context
-        .host()
-        .read_file(&found)
-        .map_err(|_| Error::ResourceNotFound(path.to_owned()))?;
+    let bytes = match crate::loader::read_limited(context, &found, *budget) {
+        Ok(bytes) => bytes,
+        Err(error) if error.kind() == std::io::ErrorKind::FileTooLarge => {
+            let limit = context.limits.max_resource_size;
+            return Err(if *budget < limit {
+                Error::App(format!(
+                    "{path}: the bibliography files are larger than {limit} bytes in all (a Randoc limit)"
+                ))
+            } else {
+                crate::loader::too_large(path, limit)
+            });
+        }
+        Err(error) if absolute => {
+            return Err(Error::Io(format!(
+                "{path}: withBinaryFile: {}",
+                crate::loader::haskell_io_text(&error)
+            )));
+        }
+        Err(_) => return Err(Error::ResourceNotFound(path.to_owned())),
+    };
+    *budget = budget.saturating_sub(u64::try_from(bytes.len()).unwrap_or(u64::MAX));
     context.report(LogMessage::LoadedResource(path.to_owned(), found));
     String::from_utf8(bytes).map_err(|error| {
         let at = error.utf8_error().valid_up_to();
@@ -290,9 +331,10 @@ fn read_bibliography(
     file: &str,
     locale: &Locale,
     hooks: &mut Hooks,
+    budget: &mut u64,
 ) -> Result<Vec<Reference<Vec<Inline>>>> {
     let max_depth = context.limits.max_nesting_depth;
-    let text = read_resource(context, file, hooks)?;
+    let text = read_resource(context, file, hooks, budget)?;
     let text = text.strip_prefix('\u{feff}').unwrap_or(&text);
     let mut out = Vec::new();
     match format_of(file) {
@@ -363,7 +405,8 @@ fn read_abbreviations(
     file: &str,
     hooks: &mut Hooks,
 ) -> Result<Abbreviations> {
-    let text = read_resource(context, file, hooks)?;
+    let mut budget = context.limits.max_resource_size;
+    let text = read_resource(context, file, hooks, &mut budget)?;
     let error = |message: String| {
         Error::Citeproc(format!(
             "CiteprocParseError: Could not parse abbreviations file {file}\n{message}"
@@ -406,49 +449,222 @@ fn to_inlines(
 struct Collected {
     citation: Citation,
     in_note: bool,
+    /// The citation is the first inline of the first paragraph of a note.
+    opens_note: bool,
     author_in_text: bool,
 }
 
-/// The citations of the document in document order. A citation inside a
-/// note knows it; a top-level heading with the class
+/// The citations of the document in document order: the citations of the
+/// metadata first (oracle). A heading with the class
 /// `reset-citation-positions` resets the positions at the next citation.
-fn collect_citations(doc: &Pandoc, terms: &[(String, String)]) -> Vec<Collected> {
+/// A reset inside a top-level div stays in the div. A reset from before
+/// the div goes on after it only when the div holds no citation and no
+/// reset heading (oracle).
+fn collect_citations(doc: &mut Pandoc, terms: &[(String, String)]) -> Vec<Collected> {
     let mut out = Vec::new();
     let mut reset = false;
-    for block in &doc.blocks {
+    // The reset before the open div, and whether a citation or a reset
+    // heading of the div used it.
+    let mut outside: Option<(bool, bool)> = None;
+    visit_citations(doc, &mut |visit| match visit {
+        Visit::Reset => {
+            reset = true;
+            if let Some((_, used)) = &mut outside {
+                *used = true;
+            }
+        }
+        Visit::EnterDiv => outside = Some((reset, false)),
+        Visit::LeaveDiv => {
+            if let Some((before, used)) = outside.take() {
+                reset = before && !used;
+            }
+        }
+        Visit::Cite {
+            inline: Inline::Cite(citations, _),
+            in_note,
+            opens_note,
+        } => {
+            let mut citation = to_citation(citations, terms);
+            citation.reset_position = std::mem::take(&mut reset);
+            if let Some((_, used)) = &mut outside {
+                *used = true;
+            }
+            out.push(Collected {
+                citation,
+                in_note,
+                opens_note,
+                author_in_text: citations
+                    .first()
+                    .is_some_and(|c| c.mode == CitationMode::AuthorInText),
+            });
+        }
+        Visit::Cite { .. } => {}
+    });
+    out
+}
+
+/// A step of [`visit_citations`].
+enum Visit<'a> {
+    /// A `Cite`, inside a note or not, and the first inline of the first
+    /// paragraph of a note or not.
+    Cite {
+        inline: &'a mut Inline,
+        in_note: bool,
+        opens_note: bool,
+    },
+    /// A heading with the class `reset-citation-positions` at the top
+    /// level or in a top-level div.
+    Reset,
+    /// The start of a top-level div.
+    EnterDiv,
+    /// The end of a top-level div.
+    LeaveDiv,
+}
+
+type Visitor<'f> = &'f mut dyn FnMut(Visit<'_>);
+
+/// Visits the citations of the metadata (in the order of the keys, without
+/// `nocite`) and then of the blocks, in document order. The walk does not
+/// go into a citation. It recurses once for each level of the document,
+/// so the depth check comes first.
+fn visit_citations(doc: &mut Pandoc, f: Visitor) {
+    for (key, value) in &mut doc.meta.0 {
+        if key.as_str() != "nocite" {
+            visit_meta(value, f);
+        }
+    }
+    let visit_top = |block: &mut Block, f: Visitor| {
         if let Block::Header(_, attr, _) = block
             && attr.classes.iter().any(|c| c == "reset-citation-positions")
         {
-            reset = true;
+            f(Visit::Reset);
         }
-        let mut in_note = 0usize;
-        walk::query_inlines(block, |inline| match inline {
-            Inline::Note(blocks) if in_note == 0 => {
-                let mut count = 0;
-                walk::query_inlines(blocks, |i| {
-                    if matches!(i, Inline::Cite(..)) {
-                        count += 1;
-                    }
-                });
-                in_note = count;
+        visit_block(block, false, f);
+    };
+    for block in &mut doc.blocks {
+        match block {
+            Block::Div(_, children) => {
+                f(Visit::EnterDiv);
+                for child in children {
+                    visit_top(child, f);
+                }
+                f(Visit::LeaveDiv);
             }
-            Inline::Cite(citations, _) => {
-                let note = in_note > 0;
-                in_note = in_note.saturating_sub(1);
-                let mut citation = to_citation(citations, terms);
-                citation.reset_position = std::mem::take(&mut reset);
-                out.push(Collected {
-                    citation,
-                    in_note: note,
-                    author_in_text: citations
-                        .first()
-                        .is_some_and(|c| c.mode == CitationMode::AuthorInText),
-                });
-            }
-            _ => {}
-        });
+            block => visit_top(block, f),
+        }
     }
-    out
+}
+
+fn visit_meta(value: &mut MetaValue, f: Visitor) {
+    match value {
+        MetaValue::MetaMap(map) => map.values_mut().for_each(|v| visit_meta(v, f)),
+        MetaValue::MetaList(list) => list.iter_mut().for_each(|v| visit_meta(v, f)),
+        MetaValue::MetaInlines(inlines) => visit_inlines(inlines, false, false, f),
+        MetaValue::MetaBlocks(blocks) => visit_blocks(blocks, false, f),
+        MetaValue::MetaBool(_) | MetaValue::MetaString(_) => {}
+    }
+}
+
+fn visit_blocks(blocks: &mut [Block], in_note: bool, f: Visitor) {
+    for block in blocks {
+        visit_block(block, in_note, f);
+    }
+}
+
+fn visit_rows(rows: &mut [randoc_ast::Row], in_note: bool, f: Visitor) {
+    for row in rows {
+        for cell in &mut row.cells {
+            visit_blocks(&mut cell.content, in_note, f);
+        }
+    }
+}
+
+fn visit_caption(caption: &mut randoc_ast::Caption, in_note: bool, f: Visitor) {
+    if let Some(short) = &mut caption.short {
+        visit_inlines(short, in_note, false, f);
+    }
+    visit_blocks(&mut caption.long, in_note, f);
+}
+
+fn visit_block(block: &mut Block, in_note: bool, f: Visitor) {
+    match block {
+        Block::Plain(parts) | Block::Para(parts) | Block::Header(_, _, parts) => {
+            visit_inlines(parts, in_note, false, f);
+        }
+        Block::LineBlock(lines) => {
+            for line in lines {
+                visit_inlines(line, in_note, false, f);
+            }
+        }
+        Block::BlockQuote(parts) | Block::Div(_, parts) => visit_blocks(parts, in_note, f),
+        Block::OrderedList(_, items) | Block::BulletList(items) => {
+            for item in items {
+                visit_blocks(item, in_note, f);
+            }
+        }
+        Block::DefinitionList(items) => {
+            for (term, definitions) in items {
+                visit_inlines(term, in_note, false, f);
+                for definition in definitions {
+                    visit_blocks(definition, in_note, f);
+                }
+            }
+        }
+        Block::Figure(_, caption, parts) => {
+            visit_caption(caption, in_note, f);
+            visit_blocks(parts, in_note, f);
+        }
+        Block::Table(table) => {
+            visit_caption(&mut table.caption, in_note, f);
+            visit_rows(&mut table.head.rows, in_note, f);
+            for body in &mut table.bodies {
+                visit_rows(&mut body.head, in_note, f);
+                visit_rows(&mut body.body, in_note, f);
+            }
+            visit_rows(&mut table.foot.rows, in_note, f);
+        }
+        Block::CodeBlock(..) | Block::RawBlock(..) | Block::HorizontalRule => {}
+    }
+}
+
+fn visit_inlines(inlines: &mut [Inline], in_note: bool, opens_note: bool, f: Visitor) {
+    for (n, inline) in inlines.iter_mut().enumerate() {
+        match inline {
+            Inline::Cite(..) => f(Visit::Cite {
+                inline,
+                in_note,
+                opens_note: opens_note && n == 0,
+            }),
+            Inline::Note(blocks) => {
+                for (m, block) in blocks.iter_mut().enumerate() {
+                    match block {
+                        Block::Para(parts) | Block::Plain(parts) if m == 0 => {
+                            visit_inlines(parts, true, true, f);
+                        }
+                        block => visit_block(block, true, f),
+                    }
+                }
+            }
+            Inline::Emph(parts)
+            | Inline::Underline(parts)
+            | Inline::Strong(parts)
+            | Inline::Strikeout(parts)
+            | Inline::Superscript(parts)
+            | Inline::Subscript(parts)
+            | Inline::SmallCaps(parts)
+            | Inline::Quoted(_, parts)
+            | Inline::Link(_, parts, _)
+            | Inline::Image(_, parts, _)
+            | Inline::Span(_, parts) => visit_inlines(parts, in_note, false, f),
+            Inline::Str(_)
+            | Inline::Code(..)
+            | Inline::Space
+            | Inline::SoftBreak
+            | Inline::LineBreak
+            | Inline::Math(..)
+            | Inline::RawInline(..) => {}
+        }
+    }
 }
 
 /// The citation of one `Cite`.
@@ -857,7 +1073,9 @@ fn is_note_span(inline: &Inline) -> bool {
 /// The output of a citation in a note style. Outside a note, the note part
 /// becomes a footnote that starts with a capital letter. In a note, a
 /// normal citation goes in parentheses and an author-in-text citation gets
-/// a comma after the author; the final period goes.
+/// a comma after the author; the final period goes. A normal citation that
+/// opens a note is the text of that note: the note part stays as it is, in
+/// a span with no class (oracle).
 fn note_citation(
     inlines: Vec<Inline>,
     cite: &Collected,
@@ -878,6 +1096,17 @@ fn note_citation(
                 }
             }
             return Ok(remove_final_period(out));
+        }
+        if cite.opens_note {
+            return Ok(inlines
+                .into_iter()
+                .map(|inline| match inline {
+                    Inline::Span(attr, content) if attr.classes == ["csl-note"] => {
+                        Inline::Span(Attr::default(), content)
+                    }
+                    other => other,
+                })
+                .collect());
         }
         let mut content = Vec::new();
         for inline in inlines {
@@ -939,9 +1168,8 @@ fn remove_final_period(mut inlines: Vec<Inline>) -> Vec<Inline> {
                     *text = format!("{stripped}{quote}");
                 }
             }
-            if text.is_empty() {
-                inlines.pop();
-            }
+            // An empty text stays (oracle: `Str ""` before the closing
+            // parenthesis of a citation in a note).
         }
         Inline::Span(_, inner)
         | Inline::Emph(inner)
@@ -980,8 +1208,31 @@ fn ends_with_note(content: &[Inline]) -> bool {
     matches!(content.last(), Some(Inline::Note(_)))
 }
 
+/// A citation whose text ends with a period takes the place of a period
+/// that follows it (oracle).
+fn drop_doubled_periods(inlines: &mut Vec<Inline>) {
+    let doubled = |before: &Inline, inline: &Inline| {
+        matches!(inline, Inline::Str(text) if text == ".")
+            && matches!(before, Inline::Cite(_, content) if stringify(content).ends_with('.'))
+    };
+    if !inlines.windows(2).any(|pair| doubled(&pair[0], &pair[1])) {
+        return;
+    }
+    let old = std::mem::take(inlines);
+    for inline in old {
+        if inlines
+            .last()
+            .is_some_and(|before| doubled(before, &inline))
+        {
+            continue;
+        }
+        inlines.push(inline);
+    }
+}
+
 impl walk::VisitorMut for MoveNotes {
     fn inlines(&mut self, inlines: &mut Vec<Inline>) {
+        drop_doubled_periods(inlines);
         if !inlines.iter().any(|i| {
             matches!(i, Inline::Cite(_, content)
                 if starts_with_note(content) || ends_with_note(content))
@@ -1054,18 +1305,19 @@ fn insert_bibliography(doc: &mut Pandoc, style: &Style, entries: Vec<Block>) {
     if let Some(n) = style.options.line_spacing {
         attributes.push(("line-spacing".to_owned(), n.to_string()));
     }
-    let mut entries = Some(entries);
+    // Each div `refs` gets the entries (oracle).
+    let mut found = false;
     walk::walk_blocks_mut(&mut doc.blocks, |block| {
         if let Block::Div(attr, content) = block
             && attr.id == "refs"
-            && let Some(entries) = entries.take()
         {
             attr.classes.extend(classes.iter().cloned());
             attr.attributes.extend(attributes.iter().cloned());
-            content.extend(entries);
+            content.extend(entries.iter().cloned());
+            found = true;
         }
     });
-    if let Some(entries) = entries {
+    if !found {
         let title = doc.meta.get("reference-section-title").cloned();
         // A final heading is the heading of the bibliography.
         if title.is_none()

@@ -1080,6 +1080,13 @@ impl Context {
         self.host.as_mut()
     }
 
+    /// Puts `host` in place of the host and returns the old host. A step
+    /// that Pandoc runs outside `--sandbox`, such as the citation filter,
+    /// uses the host of the program for its time.
+    pub fn replace_host(&mut self, host: Box<dyn Host>) -> Box<dyn Host> {
+        std::mem::replace(&mut self.host, host)
+    }
+
     /// Records a message and shows it to the user when the verbosity level permits.
     pub fn report(&mut self, message: LogMessage) {
         if message.level() <= self.state.verbosity {

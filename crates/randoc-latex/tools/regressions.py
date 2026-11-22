@@ -22,6 +22,7 @@ def H(level, title, attr=None): return {"t": "Header", "c": [level, attr or A(),
 def Div(attr, blocks): return {"t": "Div", "c": [attr, blocks]}
 def Code(text, attr=None): return {"t": "Code", "c": [attr or A(), text]}
 def CodeBlock(text, attr=None): return {"t": "CodeBlock", "c": [attr or A(), text]}
+def Lk(url, *inlines): return {"t": "Link", "c": [["", [], []], list(inlines), [url, ""]]}
 def Img(attr, alt, url): return {"t": "Image", "c": [attr, alt, [url, ""]]}
 LB = {"t": "LineBreak"}
 SP = {"t": "Space"}
@@ -236,6 +237,16 @@ CASES = [
     ("beamer_notes_div_with_a_slide_heading", [H(2, "S"), Pa(S("x")), Div(A("", ["notes"]), [H(2, "N"), Pa(S("text"))])], "beamer", ["--slide-level=3"]),
     # Codex I-LATEX-05: five more Babel names.
     ("babel_names_of_five_languages", [Pa(*[{"t": "Span", "c": [A("", [], [["lang", tag]]), [S("x")]]} for tag in ("as", "gu", "ie", "or", "ti")])], "latex", []),
+    # GPT 6.2 Sol r-b98611b-16bf516 finding 8: a link to a bibliography
+    # entry inside a citation is `\citeproc`, also nested and in a note;
+    # other links stay `\hyperref`.
+    ("citeproc_links_inside_citations", [Pa(S("x"), Lk("#ref-a", S("o")),
+        {"t": "Cite", "c": [[{"citationId": "a", "citationPrefix": [], "citationSuffix": [],
+                              "citationMode": {"t": "NormalCitation"}, "citationNoteNum": 1,
+                              "citationHash": 0}],
+                            [S("("), {"t": "Emph", "c": [Lk("#ref-a_b", S("Doe"))]}, Lk("#x", S("y")), S(")")]]},
+        {"t": "Note", "c": [Pa({"t": "Cite", "c": [[], [Lk("#ref-q", S("n"))]]})]})], "latex", []),
+    ("citeproc_links_inside_citations_in_beamer", [Pa({"t": "Cite", "c": [[], [Lk("#ref-a", S("w")), Lk("#x", S("v"))]]})], "beamer", []),
 ]
 
 def nested_lists():

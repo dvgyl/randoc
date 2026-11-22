@@ -375,7 +375,11 @@ impl LatexWriter<'_> {
         let url = &target.url;
         let doc = if let Some(identifier) = url.strip_prefix('#') {
             let contents = self.inlines(inlines)?;
-            if self.beamer {
+            if self.in_cite && identifier.starts_with("ref-") {
+                literal(format!("\\citeproc{{{}}}{{", to_label(identifier)))
+                    + contents
+                    + literal("}")
+            } else if self.beamer {
                 literal(format!("\\hyperlink{{{}}}{{", to_label(identifier)))
                     + contents
                     + literal("}")
@@ -597,7 +601,12 @@ impl LatexWriter<'_> {
 
     fn cite(&mut self, citations: &[Citation], inlines: &[Inline]) -> Result<Doc> {
         match self.options.cite_method {
-            CiteMethod::Citeproc => self.inlines(inlines),
+            CiteMethod::Citeproc => {
+                let was_in_cite = std::mem::replace(&mut self.in_cite, true);
+                let doc = self.inlines(inlines);
+                self.in_cite = was_in_cite;
+                doc
+            }
             CiteMethod::Natbib => self.natbib(citations),
             CiteMethod::Biblatex => self.biblatex(citations),
         }

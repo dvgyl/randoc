@@ -537,8 +537,9 @@ type Ymd = [Option<i64>; 3];
 pub struct DisambiguationData {
     /// The year suffix, 1 for `a`.
     pub year_suffix: Option<i64>,
-    /// The hints for names.
-    pub name_map: std::collections::BTreeMap<Name, NameHint>,
+    /// The hints for names. The references share one map of a global
+    /// given-name rule; a reference gets its own copy at its first change.
+    pub name_map: std::sync::Arc<std::collections::BTreeMap<Name, NameHint>>,
     /// The number of names to show before `et-al`.
     pub et_al_names: Option<i64>,
     /// The value of the `disambiguate` condition.

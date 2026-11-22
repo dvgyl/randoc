@@ -6,6 +6,7 @@
 //! with the same result.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::sync::Arc;
 
 use crate::citeproc::{Citation, CitationItem, Engine, Positions};
 use crate::eval::{DisambiguationData, EvalError, NameHint, initialize_name};
@@ -83,9 +84,9 @@ pub(crate) fn disambiguate_citations(
     if let Some(rule) = strategy.add_given_names
         && rule != GivenNameDisambiguationRule::ByCite
     {
-        let names_map = global_names_map(&rendered, rule, lang.as_ref());
+        let names_map = Arc::new(global_names_map(&rendered, rule, lang.as_ref()));
         for id in &ids {
-            engine.disamb.entry(id.clone()).or_default().name_map = names_map.clone();
+            engine.disamb.entry(id.clone()).or_default().name_map = Arc::clone(&names_map);
         }
         rendered = render_all(engine, &all)?;
     }
@@ -272,11 +273,17 @@ fn global_names_map(
         if names.len() <= 1 {
             continue;
         }
-        for name in names {
-            let initials_match = names
-                .iter()
-                .filter(|other| **other != *name)
-                .any(|other| initials_match(lang, name, other));
+        // The names of a group are distinct, so another name with the same
+        // initials exists when two names of the group have them.
+        let initials: Vec<Option<String>> = names.iter().map(|n| initials(lang, n)).collect();
+        let mut by_initials: HashMap<&str, usize> = HashMap::new();
+        for text in initials.iter().flatten() {
+            *by_initials.entry(text).or_default() += 1;
+        }
+        for (name, initials) in names.iter().zip(&initials) {
+            let initials_match = initials
+                .as_deref()
+                .is_some_and(|text| by_initials.get(text).copied().unwrap_or(0) > 1);
             let hint = if initials_match {
                 match rule {
                     GivenNameDisambiguationRule::AllNamesWithInitials
@@ -307,14 +314,6 @@ fn initials(lang: Option<&crate::lang::Lang>, name: &Name) -> Option<String> {
     name.given
         .as_deref()
         .map(|given| initialize_name(lang, true, false, "", given))
-}
-
-/// `initialsMatch`.
-fn initials_match(lang: Option<&crate::lang::Lang>, x: &Name, y: &Name) -> bool {
-    match (initials(lang, x), initials(lang, y)) {
-        (Some(a), Some(b)) => a == b,
-        _ => false,
-    }
 }
 
 /// The state of `analyzeAmbiguities`.
@@ -398,22 +397,37 @@ impl Disambiguation<'_, '_, '_> {
         }
     }
 
-    /// `tryAddNames`.
+    /// `tryAddNames`. The key of an item stands for its first `n` names in
+    /// the form of the rule: each step extends the key of the step before
+    /// by one name, so a step costs one name for each item.
     fn try_add_names(&mut self, rule: Option<GivenNameDisambiguationRule>, group: &[DisambData]) {
         if rule == Some(GivenNameDisambiguationRule::ByCite) {
             self.try_add_given_names(group);
         }
-        let mut remaining: Vec<&DisambData> = group.iter().collect();
+        // Key 0 is the empty list of names.
+        let mut remaining: Vec<(&DisambData, usize)> = group.iter().map(|d| (d, 0)).collect();
+        let mut keys: HashMap<(usize, Name), usize> = HashMap::new();
         let mut n = 1usize;
         loop {
-            let max_names = remaining.iter().map(|d| d.names.len()).max().unwrap_or(0);
+            let max_names = remaining
+                .iter()
+                .map(|(d, _)| d.names.len())
+                .max()
+                .unwrap_or(0);
             if n > max_names {
                 return;
             }
-            let done = disambiguated(self.lang, rule, n, &remaining);
+            for (d, key) in &mut remaining {
+                if let Some(name) = d.names.get(n - 1) {
+                    let name = name_in_form(self.lang, rule, n - 1, name);
+                    let next = keys.len() + 1;
+                    *key = *keys.entry((*key, name)).or_insert(next);
+                }
+            }
+            let done = disambiguated(&remaining);
             if done.iter().any(|d| *d) {
                 let count = i64::try_from(n).unwrap_or(i64::MAX);
-                for d in &remaining {
+                for (d, _) in &remaining {
                     let id = d.item.clone();
                     self.set(&id, |data| data.et_al_names = Some(count));
                 }
@@ -481,7 +495,7 @@ impl Disambiguation<'_, '_, '_> {
             };
             let name = (*name).clone();
             self.set(item, |data| {
-                data.name_map.insert(name, hint);
+                Arc::make_mut(&mut data.name_map).insert(name, hint);
             });
             hinted.insert((*item).to_owned());
         }
@@ -530,76 +544,65 @@ impl Disambiguation<'_, '_, '_> {
     }
 }
 
-/// `isDisambiguated` for each item: an item is disambiguated when each
-/// other item with the same first `n` names (in the form of the rule) is
-/// equal to it.
-fn disambiguated(
+/// A name in the form that a given-name rule compares: the name at
+/// `position` (0 for the first name) with all, some or none of its given
+/// name.
+fn name_in_form(
     lang: Option<&crate::lang::Lang>,
     rule: Option<GivenNameDisambiguationRule>,
-    n: usize,
-    items: &[&DisambData],
-) -> Vec<bool> {
-    let key = |d: &DisambData| -> Vec<Name> {
-        let names = d.names.iter().take(n);
-        let without_given = |name: &Name| Name {
-            given: None,
-            ..name.clone()
-        };
-        let with_initials = |name: &Name| Name {
-            given: name
-                .given
-                .as_deref()
-                .map(|g| initialize_name(lang, true, false, "", g)),
-            ..name.clone()
-        };
-        match rule {
-            Some(GivenNameDisambiguationRule::AllNames | GivenNameDisambiguationRule::ByCite) => {
-                names.cloned().collect()
-            }
-            Some(GivenNameDisambiguationRule::AllNamesWithInitials) => {
-                names.map(with_initials).collect()
-            }
-            Some(GivenNameDisambiguationRule::PrimaryName) => names
-                .enumerate()
-                .map(|(i, name)| {
-                    if i == 0 {
-                        name.clone()
-                    } else {
-                        without_given(name)
-                    }
-                })
-                .collect(),
-            Some(GivenNameDisambiguationRule::PrimaryNameWithInitials) => names
-                .enumerate()
-                .map(|(i, name)| {
-                    if i == 0 {
-                        with_initials(name)
-                    } else {
-                        without_given(name)
-                    }
-                })
-                .collect(),
-            None => names.map(without_given).collect(),
-        }
+    position: usize,
+    name: &Name,
+) -> Name {
+    let without_given = || Name {
+        given: None,
+        ..name.clone()
     };
-    let keys: Vec<Vec<Name>> = items.iter().map(|d| key(d)).collect();
-    let mut first: HashMap<&Vec<Name>, usize> = HashMap::new();
-    let mut uniform: HashMap<&Vec<Name>, bool> = HashMap::new();
-    for (n, k) in keys.iter().enumerate() {
-        match first.get(k) {
+    let with_initials = || Name {
+        given: name
+            .given
+            .as_deref()
+            .map(|g| initialize_name(lang, true, false, "", g)),
+        ..name.clone()
+    };
+    match rule {
+        Some(GivenNameDisambiguationRule::AllNames | GivenNameDisambiguationRule::ByCite) => {
+            name.clone()
+        }
+        Some(GivenNameDisambiguationRule::AllNamesWithInitials) => with_initials(),
+        Some(GivenNameDisambiguationRule::PrimaryName) if position == 0 => name.clone(),
+        Some(GivenNameDisambiguationRule::PrimaryNameWithInitials) if position == 0 => {
+            with_initials()
+        }
+        Some(
+            GivenNameDisambiguationRule::PrimaryName
+            | GivenNameDisambiguationRule::PrimaryNameWithInitials,
+        )
+        | None => without_given(),
+    }
+}
+
+/// `isDisambiguated` for each item: an item is disambiguated when each
+/// other item with the same key (the same first names in the form of the
+/// rule) is equal to it.
+fn disambiguated(items: &[(&DisambData, usize)]) -> Vec<bool> {
+    let mut first: HashMap<usize, usize> = HashMap::new();
+    let mut uniform: HashMap<usize, bool> = HashMap::new();
+    for (n, (d, key)) in items.iter().enumerate() {
+        match first.get(key) {
             None => {
-                first.insert(k, n);
-                uniform.insert(k, true);
+                first.insert(*key, n);
+                uniform.insert(*key, true);
             }
             Some(&m) => {
-                if items[m] != items[n] {
-                    uniform.insert(k, false);
+                if items[m].0 != *d {
+                    uniform.insert(*key, false);
                 }
             }
         }
     }
-    keys.iter()
-        .map(|k| uniform.get(k).copied().unwrap_or(true))
+    items
+        .iter()
+        .map(|(_, key)| uniform.get(key).copied().unwrap_or(true))
         .collect()
 }
 

@@ -214,6 +214,9 @@ pub(crate) struct LatexWriter<'a> {
     pub(crate) in_term: bool,
     /// `true` inside a caption, where `\texttt` needs `\protect`.
     pub(crate) in_caption: bool,
+    /// `true` inside the text of a citation of the citation filter, where a
+    /// link to a bibliography entry is `\citeproc`.
+    pub(crate) in_cite: bool,
     /// `true` inside a block quote.
     pub(crate) in_quote: bool,
     /// `true` at the start of a line, for `\strut` before a line break.
@@ -268,6 +271,7 @@ impl<'a> LatexWriter<'a> {
             in_heading: false,
             in_term: false,
             in_caption: false,
+            in_cite: false,
             in_quote: false,
             empty_line: true,
             enum_level: 0,

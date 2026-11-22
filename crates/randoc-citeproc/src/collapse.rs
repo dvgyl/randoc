@@ -5,6 +5,8 @@
 //! Upstream uses the raw `Formatted` constructor in some places and the
 //! filtering `formatted` in others; this port keeps each choice.
 
+use std::collections::HashMap;
+
 use crate::disambiguate::{transform, universe};
 use crate::eval::EvalError;
 use crate::output::{self, Output, Tag};
@@ -161,27 +163,55 @@ impl Collapse<'_> {
     /// Upstream puts the unmatched items back before the rest; that order
     /// is the order of the items without the taken ones, so this port
     /// marks the taken items instead of moving the others.
+    ///
+    /// An item matches only items with an equal key, so the candidates of
+    /// an item come from an index of the keys of its run of items without
+    /// a prefix or a suffix. Each taken item leaves the index.
     fn grouped(&self, xs: Vec<Output>) -> Vec<Vec<Output>> {
         let items: Vec<Item> = xs.into_iter().map(annotate).collect();
+        let affixed = |item: &Item| item.has_prefix || item.has_suffix;
         let mut taken = vec![false; items.len()];
+        let mut index: [HashMap<u64, Vec<usize>>; 2] = Default::default();
         let mut groups: Vec<Vec<usize>> = Vec::new();
         for (i, z) in items.iter().enumerate() {
+            // The run that the items from `i` on can take from.
+            if i == 0 || affixed(z) {
+                let start = if affixed(z) { i + 1 } else { i };
+                index = Default::default();
+                for (j, w) in items.iter().enumerate().skip(start) {
+                    if affixed(w) {
+                        break;
+                    }
+                    for (k, key) in w.keys.iter().enumerate() {
+                        if let Some(key) = key {
+                            index[k].entry(*key).or_default().push(j);
+                        }
+                    }
+                }
+            }
             if taken[i] {
                 continue;
             }
             taken[i] = true;
             let mut group = vec![i];
             if !z.has_suffix {
-                for (j, w) in items.iter().enumerate().skip(i + 1) {
-                    if taken[j] {
-                        continue;
+                let mut candidates: Vec<usize> = Vec::new();
+                for (k, key) in z.keys.iter().enumerate() {
+                    if let Some(list) = key.and_then(|key| index[k].get(&key)) {
+                        candidates.extend(list.iter().copied().filter(|j| *j > i));
                     }
-                    if w.has_prefix || w.has_suffix {
-                        break;
-                    }
-                    if same_names(z, w) {
+                }
+                candidates.sort_unstable();
+                candidates.dedup();
+                for j in candidates {
+                    if !taken[j] && same_names(z, &items[j]) {
                         taken[j] = true;
                         group.push(j);
+                    }
+                }
+                for (k, key) in z.keys.iter().enumerate() {
+                    if let Some(list) = key.and_then(|key| index[k].get_mut(&key)) {
+                        list.retain(|j| !taken[*j]);
                     }
                 }
             }

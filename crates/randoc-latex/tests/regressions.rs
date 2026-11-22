@@ -2746,3 +2746,29 @@ fn babel_names_of_five_languages() {
         expected
     );
 }
+
+#[test]
+fn citeproc_links_inside_citations() {
+    let input = r###"{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Str", "c": "x"}, {"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "o"}], ["#ref-a", ""]]}, {"t": "Cite", "c": [[{"citationId": "a", "citationPrefix": [], "citationSuffix": [], "citationMode": {"t": "NormalCitation"}, "citationNoteNum": 1, "citationHash": 0}], [{"t": "Str", "c": "("}, {"t": "Emph", "c": [{"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "Doe"}], ["#ref-a_b", ""]]}]}, {"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "y"}], ["#x", ""]]}, {"t": "Str", "c": ")"}]]}, {"t": "Note", "c": [{"t": "Para", "c": [{"t": "Cite", "c": [[], [{"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "n"}], ["#ref-q", ""]]}]]}]}]}]}]}"###;
+    let expected = r###"x\hyperref[ref-a]{o}(\emph{\citeproc{ref-a_b}{Doe}}\hyperref[x]{y})\footnote{\citeproc{ref-q}{n}}"###;
+    assert_eq!(
+        render(input, "latex", |options| {
+            let _ = &options;
+        }),
+        expected
+    );
+}
+
+#[test]
+fn citeproc_links_inside_citations_in_beamer() {
+    let input = r###"{"pandoc-api-version": [1, 23, 1, 2], "meta": {}, "blocks": [{"t": "Para", "c": [{"t": "Cite", "c": [[], [{"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "w"}], ["#ref-a", ""]]}, {"t": "Link", "c": [["", [], []], [{"t": "Str", "c": "v"}], ["#x", ""]]}]]}]}]}"###;
+    let expected = r###"\begin{frame}
+\citeproc{ref-a}{w}\hyperlink{x}{v}
+\end{frame}"###;
+    assert_eq!(
+        render(input, "beamer", |options| {
+            let _ = &options;
+        }),
+        expected
+    );
+}

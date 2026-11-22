@@ -1562,7 +1562,10 @@ fn utf8_error_offset(bytes: &[u8], valid: usize) -> usize {
 }
 
 /// Runs the citation filter of `randoc-citeproc` with the resource path
-/// and the Markdown reader of this program.
+/// and the Markdown reader of this program. Pandoc reads the style, the
+/// locales, the bibliographies and the abbreviations also with `--sandbox`
+/// (oracle probe of r-b98611b-16bf516 finding 4), so the filter uses the
+/// host of the program for its time.
 fn run_citeproc(
     doc: &mut Pandoc,
     settings: &Settings,
@@ -1575,14 +1578,21 @@ fn run_citeproc(
     let mut yaml = |context: &mut Context, text: &str, path: &str| {
         yaml_references(text, path, &options, context)
     };
-    randoc_citeproc::filter::process_citations(
+    let sandbox = settings
+        .sandbox
+        .then(|| context.replace_host(Box::new(randoc::NativeHost)));
+    let result = randoc_citeproc::filter::process_citations(
         context,
         doc,
         randoc_citeproc::filter::Hooks {
             find_resource: &mut find,
             yaml_references: &mut yaml,
         },
-    )
+    );
+    if let Some(host) = sandbox {
+        context.replace_host(host);
+    }
+    result
 }
 
 /// The `references` of a CSL YAML bibliography, with the strings read as
@@ -2549,6 +2559,67 @@ mod tests {
             "d"
         );
         assert_eq!(context.log().len(), 1);
+    }
+
+    /// GPT 6.2 Sol r-b98611b-16bf516 finding 4: with `--sandbox`, the
+    /// citation filter reads `--csl`, `--bibliography`, the locale and the
+    /// default style of `--data-dir`, as Pandoc does. The sandbox host
+    /// comes back after the filter.
+    #[test]
+    fn the_citation_filter_reads_its_files_under_the_sandbox() {
+        let dir = out_path("citeproc-sandbox");
+        let data = format!("{dir}/DATA");
+        std::fs::create_dir_all(format!("{data}/csl/locales")).unwrap();
+        let locale = include_str!("../../randoc-citeproc/tests/replay/document-locale.xml");
+        std::fs::write(format!("{data}/csl/locales/locales-en-US.xml"), locale).unwrap();
+        let style = "<style xmlns=\"http://purl.org/net/xbiblio/csl\" class=\"in-text\" version=\"1.0\">\
+            <citation><layout prefix=\"(\" suffix=\")\"><names variable=\"author\"><name form=\"short\"/></names>\
+            </layout></citation><bibliography><layout><text variable=\"title\"/></layout></bibliography></style>";
+        let csl = format!("{dir}/test.csl");
+        std::fs::write(&csl, style).unwrap();
+        std::fs::write(format!("{data}/default.csl"), style).unwrap();
+        let refs = format!("{dir}/refs.json");
+        std::fs::write(
+            &refs,
+            r#"[{"id":"a","type":"book","author":[{"family":"Doe"}],"title":"Alpha"}]"#,
+        )
+        .unwrap();
+        let other = format!("{dir}/other.txt");
+        std::fs::write(&other, "o").unwrap();
+        for csl in [Some(csl.clone()), None] {
+            let settings = Settings {
+                sandbox: true,
+                csl,
+                bibliography: vec![refs.clone()],
+                ..Settings::default()
+            };
+            let mut context = Context::new(Box::new(SandboxHost::new(&settings, &[], &data)));
+            context.state.user_data_dir = Some(data.clone());
+            let citation = randoc::ast::Citation {
+                id: "a".into(),
+                prefix: Vec::new(),
+                suffix: Vec::new(),
+                mode: randoc::ast::CitationMode::NormalCitation,
+                note_num: 1,
+                hash: 0,
+            };
+            let mut doc = Pandoc {
+                meta: Meta::default(),
+                blocks: vec![Block::Para(vec![Inline::Cite(vec![citation], Vec::new())])],
+            };
+            add_citation_metadata(&mut doc, &settings);
+            run_citeproc(
+                &mut doc,
+                &settings,
+                &ReaderOptions::default(),
+                "markdown",
+                &mut context,
+            )
+            .unwrap();
+            let json = randoc::ast::json::to_json(&doc);
+            assert!(json.contains("(Doe)") && json.contains("Alpha"), "{json}");
+            assert!(context.host().read_file(&other).is_err());
+        }
     }
 
     #[test]

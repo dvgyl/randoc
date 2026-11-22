@@ -3,20 +3,41 @@
 //! crate checks the depth before it clones and takes deep trees apart
 //! before it drops them (review citeproc-R3b-04).
 
-use randoc_ast::{Block, Inline, Row};
+use randoc_ast::{Block, Inline, MetaValue, Pandoc, Row};
 
 use crate::markup::TooDeep;
 
 enum Node<'a> {
     Inline(&'a Inline),
     Block(&'a Block),
+    Meta(&'a MetaValue),
+}
+
+/// Checks that no part of a document (the metadata and the blocks) is
+/// nested deeper than `max_depth`. The walks of the citation filter recurse
+/// once for each level, so this check comes first.
+pub(crate) fn check_document(doc: &Pandoc, max_depth: usize) -> Result<(), TooDeep> {
+    let pending = doc
+        .meta
+        .0
+        .values()
+        .map(Node::Meta)
+        .chain(doc.blocks.iter().map(Node::Block))
+        .map(|node| (node, 1))
+        .collect();
+    check(pending, max_depth)
 }
 
 /// Checks that no inline and no block (also in a note) is nested deeper
 /// than `max_depth`.
 pub(crate) fn check_inlines(inlines: &[Inline], max_depth: usize) -> Result<(), TooDeep> {
-    let mut pending: Vec<(Node<'_>, usize)> =
-        inlines.iter().map(|i| (Node::Inline(i), 1)).collect();
+    check(
+        inlines.iter().map(|i| (Node::Inline(i), 1)).collect(),
+        max_depth,
+    )
+}
+
+fn check(mut pending: Vec<(Node<'_>, usize)>, max_depth: usize) -> Result<(), TooDeep> {
     let mut children = Vec::new();
     while let Some((node, depth)) = pending.pop() {
         if depth > max_depth {
@@ -43,6 +64,13 @@ fn push_children<'a>(node: Node<'a>, out: &mut Vec<Node<'a>>) {
         }
     };
     match node {
+        Node::Meta(value) => match value {
+            MetaValue::MetaMap(map) => out.extend(map.values().map(Node::Meta)),
+            MetaValue::MetaList(list) => out.extend(list.iter().map(Node::Meta)),
+            MetaValue::MetaInlines(parts) => inlines(parts, out),
+            MetaValue::MetaBlocks(parts) => blocks(parts, out),
+            MetaValue::MetaBool(_) | MetaValue::MetaString(_) => {}
+        },
         Node::Inline(inline) => match inline {
             Inline::Emph(parts)
             | Inline::Underline(parts)
