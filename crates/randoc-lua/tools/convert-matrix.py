@@ -30,13 +30,13 @@ _spec.loader.exec_module(_matrix)
 DOCS, HELPER, FOOTER, lua_string = _matrix.DOCS, _matrix.HELPER, _matrix.FOOTER, _matrix.lua_string
 
 READERS = [
-    "commonmark", "commonmark_x", "csljson", "docx", "gfm", "html", "json", "latex", "markdown",
-    "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "native",
+    "commonmark", "commonmark_x", "csljson", "docx", "fodt", "gfm", "html", "json", "latex", "markdown",
+    "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "native", "odt",
 ]
 WRITERS = [
-    "beamer", "commonmark", "commonmark_x", "csljson", "gfm", "html", "html4", "html5", "json",
+    "beamer", "commonmark", "commonmark_x", "csljson", "fodt", "gfm", "html", "html4", "html5", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
-    "markdown_strict", "markua", "native", "plain",
+    "markdown_strict", "markua", "native", "odt", "opendocument", "plain",
 ]
 
 MARKDOWN = (
@@ -102,8 +102,29 @@ def docx():
     return buffer.getvalue()
 
 
+OFFICE_NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"'
+TEXT_NS = 'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"'
+ODF_BODY = '<office:body><office:text><text:p>OpenDocument</text:p></office:text></office:body>'
+FODT = f'<office:document {OFFICE_NS} {TEXT_NS}><office:styles/>{ODF_BODY}</office:document>'
+
+
+def odt():
+    """A small ODT with a stored MIME type and fixed dates."""
+    parts = {
+        "mimetype": "application/vnd.oasis.opendocument.text",
+        "content.xml":
+            f'<office:document-content {OFFICE_NS} {TEXT_NS}>{ODF_BODY}</office:document-content>',
+        "styles.xml": f'<office:document-styles {OFFICE_NS}><office:styles/></office:document-styles>',
+    }
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_STORED) as archive:
+        for name, content in parts.items():
+            archive.writestr(zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0)), content)
+    return buffer.getvalue()
+
+
 INPUT = {"csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
-         "native": NATIVE}
+         "native": NATIVE, "fodt": FODT, "odt": odt()}
 
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
@@ -122,6 +143,8 @@ READER_SPECS = {
     "json": [],
     "csljson": [],
     "docx": ["+empty_paragraphs", "+native_numbering"],
+    "fodt": ["+empty_paragraphs", "-auto_identifiers"],
+    "odt": ["+empty_paragraphs", "-auto_identifiers"],
 }
 
 READER_OPTIONS = [
@@ -174,6 +197,9 @@ WRITER_SPECS = {
     "markua": ["-smart"],
     "native": [],
     "plain": ["-smart", "+gutenberg"],
+    "fodt": ["+empty_paragraphs", "+native_numbering"],
+    "odt": ["+empty_paragraphs", "+native_numbering"],
+    "opendocument": ["+empty_paragraphs", "+native_numbering", "+xrefs_name"],
 }
 
 # Not `email_obfuscation = 'javascript'`: its output is a script of Pandoc
@@ -225,16 +251,25 @@ def written(arguments):
     return f"return (P.write({arguments}):gsub('\\n+$', ''))"
 
 
+def write_probe(name, spec, options=""):
+    arguments = f"{DOC}, {lua_string(spec)}{options}"
+    if name in ("odt", "fodt"):
+        # Reference styles and archive bytes can differ. Compare the document
+        # that each package produces when its corresponding reader opens it.
+        return f"local bytes = P.write({arguments}); return P.read(bytes, {lua_string(name)})"
+    return written(arguments)
+
+
 def write_probes(name):
-    probes = [(f"write {name}", written(f"{DOC}, {lua_string(name)}"))]
+    probes = [(f"write {name}", write_probe(name, name))]
     for spec in WRITER_SPECS[name]:
-        probes.append((f"write {name}{spec}", written(f"{DOC}, {lua_string(name + spec)}")))
+        probes.append((f"write {name}{spec}", write_probe(name, name + spec)))
     return probes
 
 
 def write_option_probes(name):
     return [
-        (f"write {name} {options}", written(f"{DOC}, {lua_string(name)}, {options}"))
+        (f"write {name} {options}", write_probe(name, name, f", {options}"))
         for options in WRITER_OPTIONS
     ]
 
@@ -246,7 +281,7 @@ for _name in WRITERS:
     GROUPS[f"convert-write-{_name}"] = write_probes(_name) + write_option_probes(_name)
 
 GROUPS["convert-final-newline"] = [
-    (f"end of {name}", f"return P.write({DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS
+    (f"end of {name}", f"return P.write({DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ("odt", "fodt")
 ]
 
 _DOC = "P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'\"q\"'}, P.Header(2, 'h')}"
