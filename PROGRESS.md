@@ -27,13 +27,14 @@ Historical handoffs from sessions 1–6 are archived in
   `gfm`, `commonmark`, `commonmark_x`, `plain` (+ variants, with standalone
   templates), `latex`, `beamer` (fragments + standalone templates, `$highlighting-macros$`, `$pdf-trailer-id$`).
 - **CLI & infrastructure:** command-line option parsing, defaults files,
-  resource search, `--extract-media`, templates, JSON filters, Lua 5.4.8 + LPeg 1.1.0 filters,
+  resource search, `--extract-media`, `--citeproc` / `-C` (full CSL 1.0.2
+  engine with DUCET 13.0.0 collation, sorting, disambiguation, collapsing,
+  positions, bibliography generation; 63/72 Pandoc `cite` tests pass with
+  runtime data dir), templates, JSON filters, Lua 5.4.8 + LPeg 1.1.0 filters,
   Lua custom readers (`-f FILE.lua`), Lua custom writers (`-t FILE.lua`),
   `pandoc lua` / `pandoc-lua` interpreter mode, `pandoc.read`/`pandoc.write`
   in filters, syntax highlighting (`randoc-highlight` wired into `randoc-html`,
   `randoc-latex`, and `randoc-cli`), logging, errors, and exit codes.
-- **Libraries ready to wire into CLI/writers:**
-  - `randoc-citeproc` (CSL style/locale parser + date/name/citation evaluation; unit 4 & `--citeproc` CLI wiring next)
 
 ### Latest recorded baseline metrics
 
@@ -57,9 +58,9 @@ Historical handoffs from sessions 1–6 are archived in
    - `randoc-html-reader`, `randoc-markdown`, `randoc-commonmark`,
      `randoc-math`, `randoc-yaml`: remaining medium/low findings in `docs/ISSUES.md`.
    - `randoc-markdown-writer`: stack overflows and round-2 high findings fixed (`fd3d4e9`); remaining minor/cross-crate items tracked in `I-MDW-18`/`I-MDW-19`.
-2. **Wire up built libraries:**
-   - Complete `randoc-citeproc` unit 4 (sorting, disambiguation, collapse, positions, bibliography) and wire `--citeproc`.
-   - Land verified review fixes for `randoc-highlight`, `randoc-markdown-writer`, `randoc-latex` standalone, and `randoc-lua` CLI integration.
+2. **Harden & close open gaps on existing crates:**
+   - Land verified GPT 6.2 Sol review fixes for `randoc-archive`, `randoc-docx`, `--extract-media`, and Slices 1–3 follow-ups.
+   - Add BibTeX / BibLaTeX / RIS bibliography readers for `--citeproc` (`I-CITE-18`) and connect `pandoc.utils.citeproc` (`I-LUA-04`).
 3. **Add next format families:**
    - `odt` (`odt`/`fodt`/`opendocument`), `epub` (`epub`/`epub2`/`epub3`), `rst`, `typst`, `org`, `docx` writer, `pptx`/`xlsx`, `djot`, `man`/`mdoc`/`ms`, `docbook`/`jats`/XML formats, wiki formats, PDF engine driver, and `pandoc-server`.
 
