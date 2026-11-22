@@ -78,8 +78,9 @@ end
 
 
 def lua_string(text):
+    """A Lua string literal of a text, or of bytes as they are."""
     out = []
-    for byte in text.encode("utf-8"):
+    for byte in text if isinstance(text, bytes) else text.encode("utf-8"):
         if 32 <= byte < 127 and chr(byte) not in "\\'":
             out.append(chr(byte))
         else:

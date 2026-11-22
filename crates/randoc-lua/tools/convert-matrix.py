@@ -17,7 +17,9 @@ The replay test runs the matrix in full mode and in restricted mode.
 """
 
 import importlib.util
+import io
 import os
+import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUTPUT = os.path.join(HERE, "..", "tests", "replay", "convert.txt")
@@ -28,7 +30,7 @@ _spec.loader.exec_module(_matrix)
 DOCS, HELPER, FOOTER, lua_string = _matrix.DOCS, _matrix.HELPER, _matrix.FOOTER, _matrix.lua_string
 
 READERS = [
-    "commonmark", "commonmark_x", "csljson", "gfm", "html", "json", "latex", "markdown",
+    "commonmark", "commonmark_x", "csljson", "docx", "gfm", "html", "json", "latex", "markdown",
     "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "native",
 ]
 WRITERS = [
@@ -59,7 +61,49 @@ CSLJSON = (
     '[{"id":"k","type":"book","title":"The title","author":[{"family":"Fam","given":"Giv"}],'
     '"issued":{"date-parts":[[2020,3]]}}]'
 )
-INPUT = {"csljson": CSLJSON, "html": HTML, "json": JSON, "latex": LATEX, "native": NATIVE}
+
+
+def docx():
+    """A small DOCX package with fixed dates, so the bytes never change:
+    a paragraph with italic and bold text, an insertion and a deletion."""
+    w = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+    change = 'w:author="A" w:date="2020-01-01T00:00:00Z"'
+    parts = {
+        "[Content_Types].xml":
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+            '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+            '<Default Extension="xml" ContentType="application/xml"/>'
+            '<Override PartName="/word/document.xml" ContentType='
+            '"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+            '</Types>',
+        "_rels/.rels":
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Id="rId1" Type='
+            '"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"'
+            ' Target="word/document.xml"/></Relationships>',
+        "word/document.xml":
+            f'<?xml version="1.0" encoding="UTF-8"?><w:document {w}><w:body>'
+            '<w:p><w:r><w:t xml:space="preserve">Some </w:t></w:r>'
+            '<w:r><w:rPr><w:i/></w:rPr><w:t>emph</w:t></w:r>'
+            '<w:r><w:t xml:space="preserve"> and </w:t></w:r>'
+            '<w:r><w:rPr><w:b/></w:rPr><w:t>strong</w:t></w:r>'
+            f'<w:ins w:id="1" {change}><w:r><w:t xml:space="preserve"> new</w:t></w:r></w:ins>'
+            f'<w:del w:id="2" {change}><w:r><w:delText xml:space="preserve"> old</w:delText></w:r></w:del>'
+            '<w:r><w:t>.</w:t></w:r></w:p>'
+            '<w:p><w:r><w:t>Second paragraph.</w:t></w:r></w:p>'
+            '</w:body></w:document>',
+    }
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_STORED) as archive:
+        for name, text in parts.items():
+            archive.writestr(zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0)), text)
+    return buffer.getvalue()
+
+
+INPUT = {"csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
+         "native": NATIVE}
 
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
@@ -77,6 +121,7 @@ READER_SPECS = {
     "native": [],
     "json": [],
     "csljson": [],
+    "docx": ["+empty_paragraphs", "+native_numbering"],
 }
 
 READER_OPTIONS = [
