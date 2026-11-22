@@ -33,8 +33,9 @@ Historical handoffs from sessions 1–6 are archived in
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`):** 61,598 passing baseline units
-  out of 64,170 (+2,085 from `randoc-highlight` integration, 0 regressions).
+- **Conformance harness (`spec/baseline.json`):** 61,608 passing baseline units
+  out of 64,170 (+2,085 from `randoc-highlight` integration, +10 from
+  `randoc-markdown-writer` round-2 fixes, 0 regressions).
 - **Capability matrix (`spec/capabilities.json`):**
   - Input formats: 4 passing, 9 partial, 11 failing (new reader baselines) of 52
   - Output formats: 7 passing, 11 partial of 77
@@ -46,12 +47,11 @@ Historical handoffs from sessions 1–6 are archived in
 ## Open priorities
 
 1. **Fix open review findings on existing crates:**
-   - `randoc-markdown-writer`: library-interface stack overflows and remaining
-     round-2 findings (`docs/ISSUES.md`).
    - `randoc-cli` / `randoc-templates`: partial re-use losing INFO/log records
      (`p_partial`) and remaining round-10 findings.
    - `randoc-html-reader`, `randoc-markdown`, `randoc-commonmark`,
      `randoc-math`, `randoc-yaml`: remaining medium/low findings in `docs/ISSUES.md`.
+   - `randoc-markdown-writer`: stack overflows and round-2 high findings fixed (`fd3d4e9`); remaining minor/cross-crate items tracked in `I-MDW-18`/`I-MDW-19`.
 2. **Wire up built libraries:**
    - Connect `randoc-lua` `FilterEnvironment::readers`/`writers`, custom readers/writers, and `pandoc lua` mode.
    - Complete `randoc-citeproc` unit 4 (sorting, disambiguation, collapse, positions, bibliography) and wire `--citeproc`.
