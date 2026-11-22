@@ -60,7 +60,24 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
     let max_depth = context.limits.max_nesting_depth;
     crate::deep::check_document(doc, max_depth)
         .map_err(|_| Error::App("the document is nested too deeply for the citations".into()))?;
-    let style = match meta_text(doc, "csl").or_else(|| meta_text(doc, "citation-style")) {
+    let style_name = meta_text(doc, "csl").or_else(|| meta_text(doc, "citation-style"));
+    let bibliography = bibliography_files(doc);
+    let has_references = matches!(doc.meta.get("references"),
+        Some(MetaValue::MetaList(items)) if !items.is_empty());
+    if style_name.is_none()
+        && bibliography.is_empty()
+        && !has_references
+        && doc.meta.get("citation-abbreviations").is_none()
+    {
+        let mut has_citations = false;
+        visit_citations(doc, &mut |visit| {
+            has_citations |= matches!(visit, Visit::Cite { .. })
+        });
+        if !has_citations {
+            return Ok(());
+        }
+    }
+    let style = match style_name {
         Some(name) => {
             let path = find_style(context, &name, hooks.find_resource)?;
             crate::loader::read_style(context, &path)?
@@ -70,12 +87,12 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
             Err(error) => {
                 // Pandoc has a built-in style, so the errors of the
                 // bibliography files come first.
-                for file in bibliography_files(doc) {
-                    if !file.starts_with('/') && (hooks.find_resource)(context, &file).is_none() {
-                        return Err(Error::ResourceNotFound(file));
+                for file in &bibliography {
+                    if !file.starts_with('/') && (hooks.find_resource)(context, file).is_none() {
+                        return Err(Error::ResourceNotFound(file.clone()));
                     }
-                    if format_of(&file).is_none() {
-                        return Err(unknown_format(&file));
+                    if format_of(file).is_none() {
+                        return Err(unknown_format(file));
                     }
                 }
                 if let Some(file) = meta_text(doc, "citation-abbreviations")
@@ -104,10 +121,10 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
     let mut references = Vec::new();
     // The bibliography files share one budget of `max_resource_size` bytes.
     let mut budget = context.limits.max_resource_size;
-    for file in bibliography_files(doc) {
+    for file in &bibliography {
         references.extend(read_bibliography(
             context,
-            &file,
+            file,
             &locale,
             &mut hooks,
             &mut budget,

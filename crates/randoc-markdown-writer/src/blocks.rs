@@ -472,7 +472,7 @@ impl W<'_> {
             }
             Block::Table(table) => self.table(block, table)?,
             Block::Figure(attr, caption, blocks) => self.figure(block, attr, caption, blocks)?,
-            Block::Div(attr, blocks) => self.div(attr, blocks)?,
+            Block::Div(attr, blocks) => self.div(attr, blocks, None)?,
         })
     }
 
@@ -558,9 +558,10 @@ impl W<'_> {
     fn raw_block(&self, format: &str, text: &str) -> Doc {
         match self.raw_body(format, text) {
             Some(RawBody::Fence(fence)) => fence + cr(),
-            Some(RawBody::Verbatim(_)) if text.ends_with('\n') => {
-                let trimmed = text.trim_end_matches('\n');
-                literal(trimmed) + blanklines(text.len() - trimmed.len())
+            Some(RawBody::Verbatim(body)) if text.ends_with('\n') => {
+                let newlines = text.len() - text.trim_end_matches('\n').len();
+                // Keep the literal breaks separate from the block separator.
+                body + prefixed("", cr()) + blanklines(newlines)
             }
             Some(RawBody::Verbatim(body) | RawBody::Trimmed(body)) => body + blankline(),
             None => empty(),
@@ -731,8 +732,14 @@ impl W<'_> {
     fn bullet_list(&mut self, items: &[Vec<Block>]) -> Result<Doc> {
         let tight = items.iter().all(|item| starts_plain(item));
         let mut docs = Vec::new();
+        let width = if self.has(Extension::FourSpaceRule) {
+            crate::run_length(self.opts.tab_stop).max(2)
+        } else {
+            2
+        };
+        let marker = format!("-{}", " ".repeat(width - 1));
         for item in items {
-            docs.push(self.list_item("- ", 2, item)?);
+            docs.push(self.list_item(&marker, width, item)?);
         }
         Ok(self.join_items(docs, tight))
     }
@@ -850,13 +857,13 @@ impl W<'_> {
         })
     }
 
-    fn div(&mut self, attr: &Attr, blocks: &[Block]) -> Result<Doc> {
+    fn div(&mut self, attr: &Attr, blocks: &[Block], caption: Option<&[Block]>) -> Result<Doc> {
         if self.plain() {
-            return self.block_list(blocks);
+            return self.div_contents(blocks, caption);
         }
         if self.has(Extension::FencedDivs) {
             let outer = std::mem::take(&mut self.div_count);
-            let inner = self.block_list(blocks);
+            let inner = self.div_contents(blocks, caption);
             let count = self.div_count;
             self.div_count = outer + count + 1;
             let inner = inner?;
@@ -883,7 +890,7 @@ impl W<'_> {
         {
             let names = Attr::new(attr.id.clone(), attr.classes.clone(), Vec::new());
             let others = Attr::new(Text::new(), Vec::new(), attr.attributes.clone());
-            let inner = self.block_list(blocks)?;
+            let inner = self.div_contents(blocks, caption)?;
             return Ok(literal(format!(
                 "<div{} markdown=\"1\"{}>",
                 html_attrs(&names),
@@ -897,7 +904,7 @@ impl W<'_> {
         let html_divs =
             self.variant == Variant::Commonmark || self.has(Extension::MarkdownInHtmlBlocks);
         if self.has(Extension::NativeDivs) || html_divs && self.has(Extension::RawHtml) {
-            let inner = self.block_list(blocks)?;
+            let inner = self.div_contents(blocks, caption)?;
             return Ok(literal(format!("<div{}>", html_attrs(attr)))
                 + blankline()
                 + inner
@@ -905,7 +912,17 @@ impl W<'_> {
                 + literal("</div>")
                 + blankline());
         }
-        self.block_list(blocks)
+        self.div_contents(blocks, caption)
+    }
+
+    fn div_contents(&mut self, blocks: &[Block], caption: Option<&[Block]>) -> Result<Doc> {
+        let body = self.block_list(blocks)?;
+        if let Some(caption) = caption {
+            let attr = Attr::new("", vec!["caption".into()], Vec::new());
+            Ok(body.above_blank(self.div(&attr, caption, None)?))
+        } else {
+            Ok(body)
+        }
     }
 
     fn figure(
@@ -987,14 +1004,17 @@ impl W<'_> {
         if self.has(Extension::RawHtml) {
             return Ok(self.html_blocks(std::slice::from_ref(figure))? + blankline());
         }
-        // Pandoc writes a figure div with a caption div here when the format
-        // has divs (I-MDW-17). A copy of the content into a div would walk the
-        // whole subtree before the depth check.
+        if self.has(Extension::FencedDivs) || self.has(Extension::NativeDivs) {
+            let mut attr = attr.clone();
+            attr.classes.insert(0, "figure".into());
+            let caption = (!caption.long.is_empty()).then_some(caption.long.as_slice());
+            return self.div(&attr, blocks, caption);
+        }
         let mut out = self.block_list(blocks)?;
-        if !caption.long.is_empty() {
+        if !self.has(Extension::ImplicitFigures) && !caption.long.is_empty() {
             out += blankline() + self.block_list(&caption.long)?;
         }
-        Ok(out)
+        Ok(out + blankline())
     }
 }
 

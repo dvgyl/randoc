@@ -1,5 +1,7 @@
 //! Backslash escapes for text in Markdown output.
 
+use std::fmt::Write;
+
 use randoc_ast::Text;
 use randoc_core::Extension;
 
@@ -20,17 +22,59 @@ fn starts_with_entity(rest: &str) -> bool {
     randoc_core::shared::named_entity(&rest[..=end]).is_some()
 }
 
+fn unsmart(c: char) -> Option<&'static str> {
+    Some(match c {
+        '‘' | '’' => "'",
+        '“' | '”' => "\"",
+        '—' => "---",
+        '–' => "--",
+        '…' => "...",
+        _ => return None,
+    })
+}
+
+fn ascii_text(text: Text, prefer_ascii: bool) -> Text {
+    if !prefer_ascii || text.is_ascii() {
+        return text;
+    }
+    let mut out = Text::with_capacity(text.len());
+    for c in text.chars() {
+        if c.is_ascii() {
+            out.push(c);
+        } else if let Some(name) = crate::entities::name(c) {
+            out.push('&');
+            out.push_str(name);
+            out.push(';');
+        } else {
+            let _ = write!(out, "&#{};", u32::from(c));
+        }
+    }
+    out
+}
+
 impl W<'_> {
     /// Escapes the text of a `Str` element.
     pub(crate) fn escape_text(&self, text: &str) -> Text {
+        let smart = self.has(Extension::Smart);
         if self.plain() {
-            return text.to_owned();
+            let text = if smart {
+                let mut out = Text::with_capacity(text.len());
+                for c in text.chars() {
+                    match unsmart(c) {
+                        Some(punctuation) => out.push_str(punctuation),
+                        None => out.push(c),
+                    }
+                }
+                out
+            } else {
+                text.to_owned()
+            };
+            return ascii_text(text, self.opts.prefer_ascii);
         }
         let commonmark = self.variant == Variant::Commonmark;
         let escapable = commonmark || self.has(Extension::AllSymbolsEscapable);
         // Pandoc escapes each backslash only where a backslash can start raw TeX.
         let raw_tex = self.variant == Variant::Markdown && self.has(Extension::RawTex);
-        let smart = self.has(Extension::Smart);
         // A run of three colons could open or close a fenced div.
         let fenced_divs = self.has(Extension::FencedDivs);
         let chars: Vec<char> = text.chars().collect();
@@ -72,9 +116,8 @@ impl W<'_> {
                 '<' => out.push_str("&lt;"),
                 '>' if escapable => out.push_str("\\>"),
                 '>' => out.push_str("&gt;"),
-                '$' if self.has(Extension::TexMathDollars) || self.has(Extension::TexMathGfm) => {
-                    out.push_str("\\$");
-                }
+                '$' if self.has(Extension::TexMathDollars) => out.push_str("\\$"),
+                '=' if next == Some('=') && self.has(Extension::Mark) => out.push_str("\\="),
                 '^' if self.has(Extension::Superscript) => out.push_str("\\^"),
                 '~' if self.has(Extension::Subscript)
                     || (self.has(Extension::Strikeout) && next == Some('~')) =>
@@ -118,16 +161,14 @@ impl W<'_> {
                     out.push_str("\\:::");
                     i += 2;
                 }
-                '\u{2019}' | '\u{2018}' if smart => out.push('\''),
-                '\u{201C}' | '\u{201D}' if smart => out.push('"'),
-                '\u{2014}' if smart => out.push_str("---"),
-                '\u{2013}' if smart => out.push_str("--"),
-                '\u{2026}' if smart => out.push_str("..."),
-                _ => out.push(c),
+                _ => match smart.then(|| unsmart(c)).flatten() {
+                    Some(punctuation) => out.push_str(punctuation),
+                    None => out.push(c),
+                },
             }
             i += 1;
         }
-        out
+        ascii_text(out, self.opts.prefer_ascii)
     }
 
     /// Escapes a list marker at the start of a line.

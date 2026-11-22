@@ -142,8 +142,8 @@ enum Find {
     Char(char),
     /// A `'` that can close a single quote.
     QuoteCloser,
-    /// A `$` with no backslash before it.
-    Dollar,
+    /// An unescaped dollar or percent sign.
+    MathBoundary,
     /// Two `$` characters.
     DoubleDollar,
     /// A blank line inside the text.
@@ -189,6 +189,8 @@ struct Tables {
     finds: HashMap<Find, (usize, Option<usize>)>,
     /// The same for literal patterns.
     patterns: HashMap<Text, (usize, Option<usize>)>,
+    /// The next closing dollar after the end of each TeX comment.
+    math_comments: HashMap<usize, Option<MathEnd>>,
     /// The positions of each `\end{name}`, by name.
     env_ends: Option<HashMap<Text, Vec<usize>>>,
     /// For each `(`, the index of its `)`, or `u32::MAX`.
@@ -197,6 +199,12 @@ struct Tables {
     braces: Option<Vec<u32>>,
     /// For each `<span>` tag, the start of its closing tag.
     spans: Option<HashMap<usize, usize>>,
+}
+
+#[derive(Clone, Copy)]
+struct MathEnd {
+    dollar: usize,
+    after_comment: bool,
 }
 
 fn is_alnum(c: Option<char>) -> bool {
@@ -327,7 +335,7 @@ impl Inl<'_> {
         match kind {
             Find::Char(c) => at(k) == Some(c),
             Find::QuoteCloser => at(k) == Some('\'') && !is_alnum(at(k + 1)),
-            Find::Dollar => at(k) == Some('$') && !self.escaped(k),
+            Find::MathBoundary => matches!(at(k), Some('$' | '%')) && !self.escaped(k),
             Find::DoubleDollar => at(k) == Some('$') && at(k + 1) == Some('$') && !self.escaped(k),
             Find::Unescaped(c) => at(k) == Some(c) && !self.escaped(k),
             Find::Space => at(k).is_some_and(char::is_whitespace),
@@ -1577,9 +1585,9 @@ impl Inl<'_> {
             && !self.in_link
             && let Some((attr, end)) = self.attrs_at(close + 1)
         {
-            let inner = self.sub_window(open + 1..close, false, Window::Content);
+            let inline = self.bracketed_span(attr, open + 1..close);
             self.i = end;
-            return Some(vec![make_span(attr, inner)]);
+            return Some(vec![inline]);
         }
         if (self.ext(Extension::WikilinksTitleAfterPipe)
             || self.ext(Extension::WikilinksTitleBeforePipe))
@@ -1676,6 +1684,41 @@ impl Inl<'_> {
         Index {
             tables: Rc::clone(&self.ix.tables),
             memo: HashMap::new(),
+        }
+    }
+
+    fn bracketed_span(&mut self, mut attr: Attr, range: Range<usize>) -> Inline {
+        let limit = self.p.max_depth.saturating_sub(self.depth) + 1;
+        let mut wrappers = Vec::new();
+        attr.classes.retain(|class| {
+            let wrap = match class.as_str() {
+                "smallcaps" => Inline::SmallCaps as fn(Vec<Inline>) -> Inline,
+                "underline" | "ul" => Inline::Underline,
+                _ => return true,
+            };
+            if wrappers.len() == limit {
+                return true;
+            }
+            wrappers.push(wrap);
+            false
+        });
+        let keep_span = attr != Attr::default();
+        let extra_depth = (wrappers.len() + usize::from(keep_span)).saturating_sub(1);
+        self.depth += extra_depth;
+        let inner = self.sub_window(range, false, Window::Content);
+        self.depth -= extra_depth;
+        let Some(first) = wrappers.first().copied() else {
+            return make_span(attr, inner);
+        };
+        let inner = wrappers[1..]
+            .iter()
+            .rev()
+            .fold(inner, |content, wrap| vec![wrap(content)]);
+        let inline = first(inner);
+        if keep_span {
+            Inline::Span(attr, vec![inline])
+        } else {
+            inline
         }
     }
 
@@ -2253,18 +2296,58 @@ impl Inl<'_> {
             return None;
         }
         let start = self.i + 1;
-        // The next unescaped `$` closes the math or ends the attempt.
-        let k = self.find(Find::Dollar, start)?;
+        let MathEnd {
+            dollar: k,
+            after_comment,
+        } = self.widened(|inl| inl.inline_math_end(start))?;
+        if k >= self.s.hi {
+            return None;
+        }
         if self.find(Find::BlankLine, start).is_some_and(|b| b < k) {
             return None;
         }
         let before = k.checked_sub(1).and_then(|j| self.s.get(j)).copied();
-        if k == start || is_space(before) || self.s.get(k + 1).is_some_and(char::is_ascii_digit) {
+        if k == start
+            || (!after_comment && is_space(before))
+            || self.s.get(k + 1).is_some_and(char::is_ascii_digit)
+        {
             return None;
         }
-        let body = self.text(start, k);
+        let mut body = self.text(start, k);
+        if after_comment {
+            body.truncate(body.trim_end_matches(SPACE).len());
+        }
         self.i = k + 1;
         Some(vec![Inline::Math(MathType::InlineMath, body)])
+    }
+
+    fn inline_math_end(&mut self, mut from: usize) -> Option<MathEnd> {
+        let tables = Rc::clone(&self.ix.tables);
+        let mut comments = Vec::new();
+        let end = loop {
+            let Some(at) = self.find_in_buffer(Find::MathBoundary, from) else {
+                break None;
+            };
+            if self.s.get(at) == Some(&'$') {
+                break Some(MathEnd {
+                    dollar: at,
+                    after_comment: at == from && !comments.is_empty(),
+                });
+            }
+            if let Some(&end) = tables.borrow().math_comments.get(&at) {
+                break end;
+            }
+            comments.push(at);
+            let Some(newline) = self.find_in_buffer(Find::Char('\n'), at + 1) else {
+                break None;
+            };
+            from = newline + 1;
+        };
+        tables
+            .borrow_mut()
+            .math_comments
+            .extend(comments.into_iter().map(|at| (at, end)));
+        end
     }
 
     fn entity(&mut self) -> Option<Vec<Inline>> {

@@ -53,6 +53,8 @@ pub(crate) enum Kind {
     Tilde,
     /// The body of `\verb`: the text between the delimiters.
     Verb(Text),
+    /// An inline listing, with an optional language.
+    InlineCode(Option<Text>, Text),
     /// The body of a verbatim environment, up to its `\end`.
     Verbatim(Text),
 }
@@ -206,9 +208,10 @@ impl Tokenizer {
         let letters = self.count_while(1, |c| c.is_ascii_alphabetic());
         if letters == 0 {
             match self.peek(1) {
-                Some('\n') => {
-                    // Pandoc counts the newline of `\` at the end of a line
-                    // as a column, so its later lines are one line lower.
+                Some('\n')
+                    if self.peek(2 + self.count_while(2, |c| c == ' ' || c == '\t'))
+                        != Some('\n') =>
+                {
                     let (line, column) = (self.line, self.column);
                     self.take(Kind::Symbol('\n'), 2);
                     (self.line, self.column) = (line, column + 2);
@@ -221,6 +224,16 @@ impl Tokenizer {
         let name: Text = self.chars[self.index + 1..self.index + 1 + letters]
             .iter()
             .collect();
+        if matches!(name.as_str(), "begingroup" | "endgroup") {
+            let spaces = self.count_while(letters + 1, |c| matches!(c, ' ' | '\t'));
+            let kind = if name == "begingroup" {
+                Kind::Open
+            } else {
+                Kind::Close
+            };
+            self.take(kind, letters + 1 + spaces);
+            return;
+        }
         if name == "par" {
             // `\par` is a paragraph break, as a blank line is.
             self.take(Kind::Par, letters + 1);
@@ -229,8 +242,9 @@ impl Tokenizer {
         self.take(Kind::Word(name.clone()), letters + 1);
         match name.as_str() {
             "verb" => self.verb(),
+            "lstinline" | "mintinline" => self.inline_listing(&name),
             "begin" => self.verbatim_environment(),
-            "url" | "href" => self.verbatim_argument(),
+            "url" | "href" | "nolinkurl" => self.verbatim_argument(),
             _ => {}
         }
     }
@@ -271,15 +285,94 @@ impl Tokenizer {
         self.take(Kind::Verb(text), star + body + 2);
     }
 
+    fn inline_listing(&mut self, name: &str) {
+        let space = |c| matches!(c, ' ' | '\t');
+        let mut prefix = usize::from(self.peek(0) == Some('*'));
+        prefix += self.count_while(prefix, space);
+        let mut language = None;
+        if self.peek(prefix) == Some('[') {
+            let options =
+                self.count_while_max(prefix + 1, MAX_URL_LENGTH, |c| c != ']' && c != '\n');
+            if self.peek(prefix + 1 + options) != Some(']') {
+                return;
+            }
+            if name == "lstinline" {
+                let text: Text = self.chars[self.index + prefix + 1..][..options]
+                    .iter()
+                    .collect();
+                language = text
+                    .split(',')
+                    .filter_map(|pair| pair.split_once('='))
+                    .find(|(key, _)| key.trim() == "language")
+                    .map(|(_, value)| listings_language(value.trim()));
+            }
+            prefix += options + 2;
+            prefix += self.count_while(prefix, space);
+        }
+        if name == "mintinline" {
+            let Some(length) = self.group_length(prefix) else {
+                return;
+            };
+            let start = self.index + prefix + 1;
+            language = Some(self.chars[start..start + length].iter().collect());
+            prefix += length + 2;
+            prefix += self.count_while(prefix, space);
+        }
+        let Some(delimiter) = self.peek(prefix) else {
+            return;
+        };
+        let length = if delimiter == '{' {
+            let Some(length) = self.group_length(prefix) else {
+                return;
+            };
+            length
+        } else {
+            if delimiter.is_alphanumeric() || delimiter.is_whitespace() {
+                return;
+            }
+            let length =
+                self.count_while_max(prefix + 1, MAX_URL_LENGTH, |c| c != delimiter && c != '\n');
+            if self.peek(prefix + 1 + length) != Some(delimiter) {
+                return;
+            }
+            length
+        };
+        let start = self.index + prefix + 1;
+        let text = self.chars[start..start + length].iter().collect();
+        self.take(Kind::InlineCode(language, text), prefix + length + 2);
+    }
+
+    fn group_length(&self, prefix: usize) -> Option<usize> {
+        if self.peek(prefix) != Some('{') {
+            return None;
+        }
+        let depth = std::cell::Cell::new(0);
+        let length = self.count_while_max(prefix + 1, MAX_URL_LENGTH, |c| match c {
+            '{' => {
+                depth.set(depth.get() + 1);
+                true
+            }
+            '}' if depth.get() > 0 => {
+                depth.set(depth.get() - 1);
+                true
+            }
+            '}' | '\n' => false,
+            _ => true,
+        });
+        (self.peek(prefix + length + 1) == Some('}')).then_some(length)
+    }
+
     /// The argument of `\url` and the first argument of `\href` are
     /// verbatim: `%` and `#` are characters there.
     fn verbatim_argument(&mut self) {
-        let spaces = self.count_while(0, |c| c == ' ');
-        if self.peek(spaces) != Some('{') {
+        let star = usize::from(self.peek(0) == Some('*'));
+        let spaces = self.count_while(star, |c| c == ' ');
+        let prefix = star + spaces;
+        if self.peek(prefix) != Some('{') {
             return;
         }
         let nesting = std::cell::Cell::new(0usize);
-        let length = self.count_while_max(spaces + 1, MAX_URL_LENGTH, |c| match c {
+        let length = self.count_while_max(prefix + 1, MAX_URL_LENGTH, |c| match c {
             '{' => {
                 nesting.set(nesting.get() + 1);
                 true
@@ -291,8 +384,11 @@ impl Tokenizer {
             '}' | '\n' => false,
             _ => true,
         });
-        if self.peek(spaces + 1 + length) != Some('}') {
+        if self.peek(prefix + 1 + length) != Some('}') {
             return;
+        }
+        if star != 0 {
+            self.take(Kind::Other('*'), star);
         }
         if spaces > 0 {
             self.take(Kind::Space, spaces);
@@ -331,6 +427,13 @@ impl Tokenizer {
             .unwrap_or(rest.len());
         let body = rest[..length].iter().collect();
         self.take(Kind::Verbatim(body), length);
+    }
+}
+
+pub(crate) fn listings_language(value: &str) -> Text {
+    match value {
+        "C" => "objectivec".into(),
+        _ => value.to_lowercase(),
     }
 }
 

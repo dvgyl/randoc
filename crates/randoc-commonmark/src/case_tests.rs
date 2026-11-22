@@ -102,11 +102,9 @@ fn on_big_stack(check: impl FnOnce() + Send + 'static) {
     }
 }
 
-/// The cases that the library alone does not give: a known divergence in `docs/ISSUES.md`
-/// (`sp-`), and the `east_asian_line_breaks` cases (`eal-`), whose transform the command
-/// line does after each reader. The conformance harness checks both through the program.
+/// The command line applies the East Asian line break rule after the reader.
 fn known_divergence(id: &str) -> bool {
-    id.starts_with("sp-") || id.starts_with("eal-") || id.starts_with("rv-eal")
+    id.starts_with("eal-") || id.starts_with("rv-eal")
 }
 
 #[test]

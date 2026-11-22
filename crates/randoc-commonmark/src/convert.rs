@@ -11,6 +11,7 @@ use crate::Config;
 use crate::attrs;
 use crate::blocks::{Align, Kind, ListKind, NumStyle, TableData, Tree};
 use crate::inlines::{Env, LinkDef, parse_inlines};
+use crate::sourcepos::{CellPos, InlineSource};
 use randoc_core::shared::{CommonmarkIdentifierSet, commonmark_auto_identifier};
 
 struct Converter<'a> {
@@ -200,17 +201,34 @@ impl Converter<'_> {
         }
     }
 
-    /// Parses inlines of the block that starts at `line`. An inline link or image
-    /// gets the folder of that block's file before a relative target.
-    fn inlines_at(&self, text: &str, depth: usize, line: usize) -> Vec<Inline> {
-        self.inlines_in(text, depth, self.config.source_dir(line))
-    }
-
     fn inlines(&self, text: &str, depth: usize) -> Vec<Inline> {
         self.inlines_in(text, depth, None)
     }
 
     fn inlines_in(&self, text: &str, depth: usize, dir: Option<&str>) -> Vec<Inline> {
+        self.parse_inlines(text, depth, dir, None)
+    }
+
+    fn node_inlines(&self, node: &crate::blocks::Node, depth: usize) -> Vec<Inline> {
+        self.parse_inlines(
+            &node.content,
+            depth,
+            self.config.source_dir(node.start_line),
+            self.config.sourcepos.then_some(InlineSource {
+                anchors: &node.anchors,
+                origin: node.content_origin,
+                escapes: &[],
+            }),
+        )
+    }
+
+    fn parse_inlines(
+        &self,
+        text: &str,
+        depth: usize,
+        dir: Option<&str>,
+        source: Option<InlineSource<'_>>,
+    ) -> Vec<Inline> {
         let env = Env {
             config: self.config,
             refs: &self.refs,
@@ -219,7 +237,7 @@ impl Converter<'_> {
             depth_budget: self.config.max_depth.saturating_sub(depth),
             dir,
         };
-        parse_inlines(text, &env)
+        parse_inlines(text, &env, source)
     }
 
     fn blocks(&self, children: &[usize], depth: usize) -> Vec<Block> {
@@ -230,8 +248,16 @@ impl Converter<'_> {
             let Some(node) = self.tree.nodes.get(index) else {
                 continue;
             };
-            if let Some(pairs) = &node.block_attrs {
-                for block in out.iter_mut().skip(before) {
+            for block in out.iter_mut().skip(before) {
+                if self.config.sourcepos {
+                    let position = ("data-pos".into(), node.source.render());
+                    if let Block::Header(_, attr, _) = block {
+                        attr.attributes.push(position);
+                    } else {
+                        add_block_attrs(&vec![position], block);
+                    }
+                }
+                if let Some(pairs) = &node.block_attrs {
                     add_block_attrs(pairs, block);
                 }
             }
@@ -271,7 +297,7 @@ impl Converter<'_> {
                         continue;
                     };
                     let tight = matches!(item_node.kind, Kind::DefItem { tight: true });
-                    let term = self.inlines_at(&item_node.content, depth + 1, item_node.start_line);
+                    let term = self.node_inlines(item_node, depth + 1);
                     let mut definitions = Vec::new();
                     for &definition in &item_node.children {
                         let mut blocks = self.item_blocks(definition, depth + 2);
@@ -285,11 +311,11 @@ impl Converter<'_> {
                 out.push(Block::DefinitionList(items));
             }
             Kind::Paragraph => {
-                let inlines = self.inlines_at(&node.content, depth, node.start_line);
+                let inlines = self.node_inlines(node, depth);
                 out.push(Block::Para(inlines));
             }
             Kind::Heading { level, .. } => {
-                let inlines = self.inlines_at(&node.content, depth, node.start_line);
+                let inlines = self.node_inlines(node, depth);
                 let mut attr = node.attr.clone();
                 if let Some(id) = self.heading_ids.get(&index) {
                     attr.id = id.clone();
@@ -341,7 +367,15 @@ impl Converter<'_> {
                     {
                         let mark =
                             Inline::Str(if checked { "\u{2612}" } else { "\u{2610}" }.into());
-                        match blocks.first_mut() {
+                        let first = match blocks.first_mut() {
+                            Some(Block::Div(attr, inner))
+                                if self.config.sourcepos && attr.get("wrapper") == Some("1") =>
+                            {
+                                inner.first_mut()
+                            }
+                            block => block,
+                        };
+                        match first {
                             Some(Block::Plain(inlines) | Block::Para(inlines)) => {
                                 inlines.insert(0, Inline::Space);
                                 inlines.insert(0, mark);
@@ -378,13 +412,23 @@ impl Converter<'_> {
                     aligns,
                     header,
                     rows,
+                    positions,
                     ..
                 }) = self.tree.tables.get(*table)
                 else {
                     return;
                 };
-                let cell = |text: &String| {
-                    let inlines = self.inlines_at(text, depth + 1, node.start_line);
+                let cell = |text: &String, position: Option<&CellPos>| {
+                    let inlines = self.parse_inlines(
+                        text,
+                        depth + 1,
+                        self.config.source_dir(node.start_line),
+                        position.map(|cell| InlineSource {
+                            anchors: std::slice::from_ref(&cell.anchor),
+                            origin: 0,
+                            escapes: &cell.escapes,
+                        }),
+                    );
                     Cell {
                         content: if inlines.is_empty() {
                             Vec::new()
@@ -394,9 +438,15 @@ impl Converter<'_> {
                         ..Cell::default()
                     }
                 };
-                let row = |cells: &Vec<String>| Row {
+                let row = |index: usize, cells: &Vec<String>| Row {
                     attr: Attr::default(),
-                    cells: cells.iter().map(cell).collect(),
+                    cells: cells
+                        .iter()
+                        .enumerate()
+                        .map(|(col, text)| {
+                            cell(text, positions.get(index).and_then(|row| row.get(col)))
+                        })
+                        .collect(),
                 };
                 let col_specs = aligns
                     .iter()
@@ -416,13 +466,17 @@ impl Converter<'_> {
                     col_specs,
                     head: TableHead {
                         attr: Attr::default(),
-                        rows: vec![row(header)],
+                        rows: vec![row(0, header)],
                     },
                     bodies: vec![TableBody {
                         attr: Attr::default(),
                         row_head_columns: 0,
                         head: Vec::new(),
-                        body: rows.iter().map(row).collect(),
+                        body: rows
+                            .iter()
+                            .enumerate()
+                            .map(|(index, cells)| row(index + 1, cells))
+                            .collect(),
                     }],
                     foot: TableFoot::default(),
                 })));

@@ -2809,7 +2809,13 @@ mod tests {
             }),
             "File 'c.csl' not found in resource path"
         );
-        assert!(error(|s| s.filters = vec![Filter::Citeproc]).contains("no built-in CSL style"));
+        assert!(
+            convert_files(&[("in.json", EMPTY)], &["in.json"], |s| {
+                s.filters = vec![Filter::Citeproc];
+            })
+            .0
+            .is_ok()
+        );
         assert!(
             convert_files(&[], &["nosuch.json"], |_| {})
                 .0

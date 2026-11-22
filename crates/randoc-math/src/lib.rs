@@ -38,7 +38,7 @@ impl MathError {
     /// The detail of the warning for the formula `tex`: the text of
     /// `LogMessage::CouldNotConvertTexMath(tex, detail)` in `randoc-core`.
     /// It is empty when the formula parses. The caller writes the TeX source
-    /// in place of the conversion.
+    /// in place of the conversion. The logger adds the indent to this plain text.
     ///
     /// ```
     /// use randoc_ast::MathType;
@@ -46,7 +46,7 @@ impl MathError {
     /// assert_eq!(err.detail(r"\frac{a}{b}"), "");
     /// // The oracle adds the list of what it expects at the place.
     /// let err = randoc_math::to_mathml(MathType::InlineMath, "x^", 128).unwrap_err();
-    /// assert!(err.detail("x^").starts_with("  x^\n    ^\n  unexpected eof\n  expecting \"%\""));
+    /// assert!(err.detail("x^").starts_with("x^\n  ^\nunexpected eof\nexpecting \"%\""));
     /// ```
     pub fn detail(&self, tex: &str) -> String {
         match self {
@@ -59,7 +59,9 @@ impl MathError {
                 let text = tex.split('\n').nth(line).unwrap_or_default();
                 let shown: String = text.chars().skip(start).take(40).collect();
                 let caret = " ".repeat(place - start);
-                format!("  {shown}\n  {caret}^\n  {message}")
+                // Remove the parser indent from continuation lines.
+                let message = message.replace("\n  ", "\n");
+                format!("{shown}\n{caret}^\n{message}")
             }
         }
     }
@@ -454,7 +456,7 @@ mod tests {
             column: 2,
             message: "unexpected eof".into(),
         };
-        assert_eq!(parse.detail("x^"), "  x^\n    ^\n  unexpected eof");
+        assert_eq!(parse.detail("x^"), "x^\n  ^\nunexpected eof");
         // The oracle shows 40 characters, with 19 before the problem.
         let long: String = ('a'..='z').chain('a'..='z').chain('a'..='z').collect();
         let far = MathError::Parse {
@@ -464,7 +466,7 @@ mod tests {
         let shown: String = long.chars().skip(11).take(40).collect();
         assert_eq!(
             far.detail(&long),
-            format!("  {shown}\n  {}^\n  m", " ".repeat(19))
+            format!("{shown}\n{}^\nm", " ".repeat(19))
         );
     }
 
@@ -482,17 +484,14 @@ mod tests {
         };
         assert_eq!(
             at(6, "\ta\t\tx^"),
-            format!("  \ta\t\tx^\n  {}^\n  m", " ".repeat(18))
+            format!("\ta\t\tx^\n{}^\nm", " ".repeat(18))
         );
-        assert_eq!(
-            at(7, "{x\n\ta\t\t"),
-            format!("  \n  {}^\n  m", " ".repeat(19))
-        );
-        assert_eq!(at(3, "\nx^"), "  \n    ^\n  m");
-        assert_eq!(at(10, "  \n  \\foo\nz"), "    \\foo\n  ^\n  m");
+        assert_eq!(at(7, "{x\n\ta\t\t"), format!("\n{}^\nm", " ".repeat(19)));
+        assert_eq!(at(3, "\nx^"), "\n  ^\nm");
+        assert_eq!(at(10, "  \n  \\foo\nz"), "  \\foo\n^\nm");
         assert_eq!(
             at(12, "\ta\t\t\\frac{a}"),
-            format!("  frac{{a}}\n  {}^\n  m", " ".repeat(19))
+            format!("frac{{a}}\n{}^\nm", " ".repeat(19))
         );
     }
 }

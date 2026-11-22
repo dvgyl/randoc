@@ -12,14 +12,8 @@ use randoc_core::{
 };
 
 /// The units that differ from Pandoc, with the reason in `docs/ISSUES.md`
-/// (`I-MDW-05` to `I-MDW-08`).
+/// (`I-MDW-06` to `I-MDW-08`).
 const KNOWN: &[&str] = &[
-    "ascii#write:commonmark",
-    "ascii#write:gfm",
-    "ascii#write:markdown",
-    "ascii#write:plain",
-    "ascii-smart-off#write:gfm",
-    "ascii-smart-off#write:markdown-smart",
     "columns-table#write:gfm",
     "dpi-image#write:gfm",
     "dpi-image#write:markdown-link_attributes+raw_html",
@@ -140,6 +134,11 @@ fn run_file(name: &str) -> BTreeMap<String, bool> {
         let doc = randoc_ast::json::from_json(case["input"].as_str().unwrap()).unwrap();
         for format in to {
             let unit = format!("{id}#write:{format}");
+            let want = &expected["units"][&unit];
+            // A writer cannot reproduce errors that the CLI reports before conversion.
+            if want["exit"].as_i64() != Some(0) {
+                continue;
+            }
             let mut options = WriterOptions::default();
             let spec = FormatSpec::parse(&format);
             if apply(&args, &spec.name, &mut options).is_none() {
@@ -147,17 +146,40 @@ fn run_file(name: &str) -> BTreeMap<String, bool> {
             }
             options.extensions = spec.extensions().unwrap();
             let writer = randoc_markdown_writer::writer(&spec.name).unwrap();
-            let Output::Text(mut text) =
-                writer.write(&doc, &options, &mut Context::pure()).unwrap()
-            else {
+            let mut context = Context::pure();
+            let Output::Text(mut text) = writer.write(&doc, &options, &mut context).unwrap() else {
                 panic!("text output expected")
             };
             // The program adds the final newline of a fragment only.
             if options.template.is_none() && !text.ends_with('\n') {
                 text.push('\n');
             }
-            let want = expected["units"][&unit]["stdout"].as_str().unwrap();
-            results.insert(unit, text == want);
+            let stderr_matches = if name == "math-raw" {
+                let stderr: String = context
+                    .log()
+                    .iter()
+                    .map(|message| message.render())
+                    .collect();
+                let expected_stderr = want["stderr"].as_str().unwrap();
+                if stderr == expected_stderr {
+                    true
+                } else if id == "edge-space-display-bad-spaces" {
+                    // The TeX parser uses different wording in the expected-token list.
+                    // Check the warning and the indent of the list.
+                    stderr
+                        .split_once("\n  expecting ")
+                        .zip(expected_stderr.split_once("\n  expecting "))
+                        .is_some_and(|((head, _), (expected_head, _))| head == expected_head)
+                } else {
+                    false
+                }
+            } else {
+                true
+            };
+            results.insert(
+                unit,
+                text == want["stdout"].as_str().unwrap() && stderr_matches,
+            );
         }
     }
     results
@@ -174,8 +196,9 @@ const FLOORS: &[(&str, usize)] = &[
     ("inlines", 471),
     ("links-images", 260),
     ("lists", 503),
-    ("math-raw", 243),
+    ("math-raw", 378),
     ("notes-citations", 229),
+    ("table-forms", 2830),
     ("tables", 250),
     ("wrapping", 388),
 ];

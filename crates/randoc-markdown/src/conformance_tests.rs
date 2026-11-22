@@ -69,18 +69,18 @@ fn results() -> Vec<(String, bool)> {
         if name.starts_with("._") || path.extension().is_none_or(|e| e != "toml") {
             continue;
         }
-        out.extend(file_results(&path, name));
+        out.extend(file_results(&path, "markdown", name));
     }
     out
 }
 
-fn file_results(path: &Path, name: &str) -> Vec<(String, bool)> {
+fn file_results(path: &Path, suite: &str, name: &str) -> Vec<(String, bool)> {
     let cases: toml::Table = std::fs::read_to_string(path)
         .ok()
         .and_then(|text| text.parse().ok())
         .unwrap_or_default();
     let expected: serde_json::Value =
-        std::fs::read_to_string(conformance_dir().join(format!("expected/markdown/{name}.json")))
+        std::fs::read_to_string(conformance_dir().join(format!("expected/{suite}/{name}.json")))
             .ok()
             .and_then(|text| serde_json::from_str(&text).ok())
             .unwrap_or_default();
@@ -351,4 +351,52 @@ fn html_closer_replay_matches_the_oracle() {
                 .join("\n")
         );
     });
+}
+
+#[test]
+fn latex_writer_inline_inputs_match_the_oracle_reader() {
+    let path = conformance_dir().join("cases/latex-writer/inlines.toml");
+    let results = file_results(&path, "latex-writer", "inlines");
+    for id in [
+        "inline-16",
+        "inline-19",
+        "inline-in-heading-16",
+        "inline-in-heading-19",
+    ] {
+        assert!(results.contains(&(format!("inlines/{id}"), true)), "{id}");
+    }
+}
+
+#[test]
+fn bracketed_span_classes_wrap_in_source_order() {
+    let (stdout, _, exit) = run_case("markdown", "# H [a]{#i .smallcaps .x .ul .smallcaps k=v}");
+    let doc: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(exit, 0);
+    assert_eq!(
+        doc["blocks"][0]["c"][2][2],
+        serde_json::json!({
+            "t": "Span", "c": [["i", ["x"], [["k", "v"]]], [
+                {"t": "SmallCaps", "c": [{"t": "Underline", "c": [
+                    {"t": "SmallCaps", "c": [{"t": "Str", "c": "a"}]}
+                ]}]}
+            ]]
+        })
+    );
+}
+
+#[test]
+fn inline_math_skips_unescaped_comments() {
+    let (stdout, _, exit) = run_case("markdown", "$a % $comment$\nb$ $a\\%b$ $a%comment \n$");
+    let doc: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(exit, 0);
+    assert_eq!(
+        doc["blocks"][0]["c"],
+        serde_json::json!([
+            {"t": "Math", "c": [{"t": "InlineMath"}, "a % $comment$\nb"]},
+            {"t": "Space"},
+            {"t": "Math", "c": [{"t": "InlineMath"}, "a\\%b"]},
+            {"t": "Space"},
+            {"t": "Math", "c": [{"t": "InlineMath"}, "a%comment"]}
+        ])
+    );
 }

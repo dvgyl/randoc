@@ -8,6 +8,9 @@
 
 mod blocks;
 mod caption;
+#[cfg(test)]
+mod conformance_tests;
+mod entities;
 mod escape;
 mod html;
 mod inlines;
@@ -84,10 +87,10 @@ fn write(
         context.report(message);
     }
     let mut text = output.render(line_width(options));
-    if options.template.is_none() {
-        while text.ends_with('\n') {
-            text.pop();
-        }
+    // Remove the layout's final line break. A final blank line can
+    // be part of a raw block and must stay.
+    if options.template.is_none() && text.ends_with('\n') && !text.ends_with("\n\n") {
+        text.pop();
     }
     Ok(text)
 }
@@ -139,7 +142,7 @@ pub(crate) struct W<'a> {
     /// The number of fenced divs in the content written last, counted
     /// through divs only: a list or a quote between two divs stops the count.
     pub div_count: usize,
-    /// `true` when plain text must be in upper case (small caps in `plain`).
+    /// `true` inside small caps that use upper-case text.
     pub upper: bool,
     /// `true` inside a superscript or subscript, where spaces need a backslash.
     pub in_script: bool,
@@ -301,7 +304,12 @@ impl<'a> W<'a> {
                     literal(marker) + cr() + nest(4, note)
                 }
             } else {
-                literal(format!("[{}{number}]", self.opts.identifier_prefix)).spaced(note)
+                let marker = literal(format!("[{}{number}]", self.opts.identifier_prefix));
+                if note_starts_inline.get(index).copied().unwrap_or(true) {
+                    marker.spaced(note)
+                } else {
+                    marker + cr() + note
+                }
             };
             notes_doc = notes_doc.above_blank(item);
         }

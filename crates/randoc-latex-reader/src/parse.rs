@@ -1,6 +1,7 @@
 //! The tree rules. Each rule was found with Pandoc 3.13 as a black box.
 
 use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
 
 use randoc_ast::walk::{walk_blocks_mut, walk_inlines_mut};
 use randoc_ast::{
@@ -11,9 +12,10 @@ use randoc_ast::{
 use randoc_core::shared::{IdentifierSet, auto_identifier, nfc};
 use randoc_core::{Context, Extension, Extensions, LogMessage, SourcePos};
 
+use crate::FieldOptions;
 use crate::inlines::Inlines;
 use crate::scope::Scoped;
-use crate::tokens::{Kind, Tok, tokenize};
+use crate::tokens::{Kind, Tok, listings_language, tokenize};
 
 /// Why the parser stopped before the end of the input.
 #[derive(Debug, Clone, PartialEq)]
@@ -22,6 +24,10 @@ pub(crate) enum Stop {
     TooDeep,
     /// A token that the grammar does not permit. The text is the message.
     Unexpected(Text),
+    /// A nested document ends the enclosing list or table.
+    NestedDocument,
+    /// The table exceeds the configured cell limit.
+    TableLimit,
     /// A macro expands without an end. The text is the macro name.
     Loop(Text),
     /// A parser loop made no progress, or the parser used its step budget.
@@ -77,11 +83,60 @@ pub(crate) const BASE_COPIES: usize = 50_000;
 struct Macro {
     parameters: usize,
     default: Option<Vec<Tok>>,
-    body: Vec<Tok>,
+    body: Arc<[Tok]>,
     /// The parameter text of a `\def` with delimiters: the tokens before
     /// the first parameter, then the delimiter after each parameter (empty
     /// for an undelimited one). Empty for a macro without delimiters.
-    delimiters: Vec<Vec<Tok>>,
+    delimiters: Option<Arc<Delimiters>>,
+}
+
+#[derive(Debug)]
+struct Delimiters {
+    id: usize,
+    chunks: Vec<Delimiter>,
+}
+
+#[derive(Debug)]
+struct Delimiter {
+    tokens: Vec<Tok>,
+    prefix: Vec<usize>,
+}
+
+impl Delimiter {
+    fn new(tokens: Vec<Tok>) -> Self {
+        let mut prefix = vec![0; tokens.len()];
+        let mut length = 0;
+        for index in 1..tokens.len() {
+            let kind = &tokens[index].kind;
+            while length > 0 && tokens[length].kind != *kind {
+                length = prefix[length - 1];
+            }
+            if tokens[length].kind == *kind {
+                length += 1;
+            }
+            prefix[index] = length;
+        }
+        Self { tokens, prefix }
+    }
+
+    fn advance(&self, mut length: usize, kind: &Kind) -> usize {
+        while length > 0 && self.tokens[length].kind != *kind {
+            length = self.prefix[length - 1];
+        }
+        length + usize::from(self.tokens[length].kind == *kind)
+    }
+}
+
+struct DelimitedMatch {
+    arguments: Vec<Vec<Tok>>,
+    consumed: usize,
+    carry: Option<Tok>,
+}
+
+enum DelimiterMiss {
+    Mismatch,
+    End(usize),
+    Paragraph,
 }
 
 #[derive(Debug, Clone)]
@@ -106,6 +161,8 @@ enum End<'a> {
 enum Until {
     /// At the `}` of the group.
     Close,
+    /// At the end of a required inline argument.
+    Argument,
     /// At a paragraph break or at the start of a block.
     Paragraph,
     /// At the closing quotation mark.
@@ -148,6 +205,8 @@ pub(crate) struct Parser<'c> {
     position: usize,
     /// Tokens of macro expansions, in reverse order: the last one is next.
     pending: Vec<Tok>,
+    /// Source token for the first token of an active macro replacement.
+    expansion_call: Option<Tok>,
     /// For the pending tokens from the bottom: the `\fi` count minus the
     /// count of words that start with `if` below each token, and the
     /// minimum of that count up to the token. With it, a conditional in
@@ -180,6 +239,7 @@ pub(crate) struct Parser<'c> {
     pub(crate) context: &'c mut Context,
     finished: bool,
     input: Text,
+    line_offsets: Vec<usize>,
     /// The number of tokens consumed, a measure of the work.
     bumps: usize,
     /// The number of consumed tokens that a rule put back into the input.
@@ -208,7 +268,10 @@ pub(crate) struct Parser<'c> {
     failed_arguments: Option<(usize, usize, usize)>,
     /// For each delimiter text: the last range in which a search for it
     /// failed at the end of the input.
-    failed_delimiters: HashMap<Text, (usize, usize)>,
+    failed_delimiters: HashMap<(usize, bool), (usize, usize)>,
+    next_delimiter_id: usize,
+    restricted_inlines: bool,
+    field: Option<FieldOptions>,
     /// The copy depth of the table cell that is read now, or 0. An
     /// environment that a cell ends inside is an error there.
     cell_copies: usize,
@@ -253,6 +316,7 @@ impl<'c> Parser<'c> {
             tokens,
             position: 0,
             pending: Vec::new(),
+            expansion_call: None,
             fi_profile: Vec::new(),
             profile_valid: 0,
             macros: Scoped::default(),
@@ -274,6 +338,9 @@ impl<'c> Parser<'c> {
             context,
             finished: false,
             input: input.to_owned(),
+            line_offsets: std::iter::once(0)
+                .chain(input.match_indices('\n').map(|(index, _)| index + 1))
+                .collect(),
             bumps: 0,
             unread: 0,
             rounds: 0,
@@ -285,6 +352,9 @@ impl<'c> Parser<'c> {
             group_ends,
             failed_arguments: None,
             failed_delimiters: HashMap::new(),
+            next_delimiter_id: 0,
+            restricted_inlines: false,
+            field: None,
             cell_copies: 0,
             top_depth: 0,
             in_preamble: false,
@@ -300,6 +370,15 @@ impl<'c> Parser<'c> {
     #[cfg(test)]
     pub(crate) fn steps(&self) -> usize {
         self.bumps + self.scanned.get()
+    }
+
+    pub(crate) fn field_inlines(&mut self, options: FieldOptions) -> R<Vec<Inline>> {
+        self.field = Some(options);
+        let result = self.inlines(Until::Close)?.trimmed();
+        if self.peek_raw().is_some() {
+            return Err(self.unexpected());
+        }
+        Ok(result)
     }
 
     pub(crate) fn document(&mut self) -> R<Vec<Block>> {
@@ -344,6 +423,7 @@ impl<'c> Parser<'c> {
                 tok
             }
         };
+        self.expansion_call = None;
         self.bumps += 1;
         for record in &mut self.recorders {
             record.push_str(&tok.text);
@@ -412,6 +492,11 @@ impl<'c> Parser<'c> {
                 }
                 _ => return Ok(()),
             };
+            if is_stream_noop(&name) {
+                self.bump();
+                self.skip_word_spaces();
+                continue;
+            }
             if let Some(value) = self.condition_value(&name, macros) {
                 if !self.conditional(value, depth)? {
                     return Ok(());
@@ -433,15 +518,20 @@ impl<'c> Parser<'c> {
             let Some(definition) = self.macros.get(&name).cloned() else {
                 return Ok(());
             };
-            if !definition.delimiters.is_empty() {
-                let Some((arguments, used, carry)) =
-                    self.delimited_arguments(&definition.delimiters)
+            if let Some(delimiters) = &definition.delimiters {
+                let Some(DelimitedMatch {
+                    arguments,
+                    consumed,
+                    carry,
+                }) = self.delimited_arguments(delimiters)?
                 else {
                     return Ok(());
                 };
                 let recorded: Vec<usize> = self.recorders.iter().map(Text::len).collect();
-                self.bump();
-                for _ in 0..used {
+                let origin = self.expansion_call.take();
+                let token = self.bump();
+                let call = origin.or(token);
+                for _ in 0..consumed {
                     self.bump();
                 }
                 if let Some(tok) = carry {
@@ -450,7 +540,7 @@ impl<'c> Parser<'c> {
                 for (record, len) in self.recorders.iter_mut().zip(recorded) {
                     record.truncate(len);
                 }
-                self.push_expansion(&name, depth, &definition.body, &arguments)?;
+                self.push_macro(&name, depth, &definition.body, &arguments, call)?;
                 continue;
             }
             let required = definition
@@ -460,14 +550,21 @@ impl<'c> Parser<'c> {
                 return Ok(());
             }
             let recorded: Vec<usize> = self.recorders.iter().map(Text::len).collect();
-            self.bump();
-            self.skip_word_spaces();
+            let origin = self.expansion_call.take();
+            let token = self.bump();
+            if token
+                .as_ref()
+                .is_some_and(|tok| matches!(tok.kind, Kind::Word(_)))
+            {
+                self.skip_word_spaces();
+            }
+            let call = origin.or(token);
             let arguments =
                 self.macro_arguments(definition.parameters, definition.default, true)?;
             for (record, len) in self.recorders.iter_mut().zip(recorded) {
                 record.truncate(len);
             }
-            self.push_expansion(&name, depth, &definition.body, &arguments)?;
+            self.push_macro(&name, depth, &definition.body, &arguments, call)?;
         }
     }
 
@@ -476,55 +573,53 @@ impl<'c> Parser<'c> {
     /// macro name that they take, and the rest of a letter run that the
     /// last undelimited argument split. `None` when the input does not
     /// match: Pandoc then reads the macro as an unknown command.
-    fn delimited_arguments(
-        &mut self,
-        delimiters: &[Vec<Tok>],
-    ) -> Option<(Vec<Vec<Tok>>, usize, Option<Tok>)> {
-        let in_input = self.pending.is_empty() && self.skips.is_empty();
+    fn delimited_arguments(&mut self, delimiters: &Delimiters) -> R<Option<DelimitedMatch>> {
+        let in_input = self.pending.is_empty() && self.skips.is_empty() && !plain_scans();
         let start = self.raw_position();
-        let key = tokens_text(&delimiters.concat());
+        let key = (delimiters.id, self.restricted_inlines);
         if in_input
             && let Some(&(from, to)) = self.failed_delimiters.get(&key)
             && from <= start
             && start < to
         {
-            return None;
+            return Ok(None);
         }
-        match self.match_delimited(delimiters) {
-            Ok(found) => Some(found),
-            Err(failed) => {
-                if let Some(used) = failed {
-                    self.remember_failed_delimiter(in_input, key, start, used);
+        match self.match_delimited(&delimiters.chunks) {
+            Ok(found) => Ok(Some(found)),
+            Err(DelimiterMiss::End(used)) => {
+                self.remember_failed_delimiter(in_input, key, start, used);
+                Ok(None)
+            }
+            Err(DelimiterMiss::Mismatch) => Ok(None),
+            Err(DelimiterMiss::Paragraph) => {
+                if let Some(tok) = self.peek_raw() {
+                    return Err(self.error_at(tok, "unexpected ()"));
                 }
-                None
+                Ok(None)
             }
         }
     }
 
     /// The plain match of `delimited_arguments`. The error holds the
     /// number of tokens examined when the input ends before a delimiter.
-    #[allow(clippy::type_complexity)]
-    fn match_delimited(
-        &self,
-        delimiters: &[Vec<Tok>],
-    ) -> Result<(Vec<Vec<Tok>>, usize, Option<Tok>), Option<usize>> {
+    fn match_delimited(&self, delimiters: &[Delimiter]) -> Result<DelimitedMatch, DelimiterMiss> {
         let mut tokens = self.scan().skip(1).peekable();
         let mut used = 0usize;
         while tokens.next_if(|tok| tok.kind == Kind::Space).is_some() {
             used += 1;
         }
-        let (prefix, rest) = delimiters.split_first().ok_or(None)?;
-        for want in prefix {
+        let (prefix, rest) = delimiters.split_first().ok_or(DelimiterMiss::Mismatch)?;
+        for want in &prefix.tokens {
             used += 1;
             if tokens.next().is_none_or(|tok| tok.kind != want.kind) {
-                return Err(None);
+                return Err(DelimiterMiss::Mismatch);
             }
         }
         let mut carry: Option<Tok> = None;
         let mut arguments = Vec::new();
         for delimiter in rest {
             let mut argument = Vec::new();
-            if delimiter.is_empty() {
+            if delimiter.tokens.is_empty() {
                 if carry.is_none() {
                     while tokens.next_if(|tok| tok.kind == Kind::Space).is_some() {
                         used += 1;
@@ -534,7 +629,7 @@ impl<'c> Parser<'c> {
                     Some(tok) => tok,
                     None => {
                         used += 1;
-                        tokens.next().ok_or(None)?.clone()
+                        tokens.next().ok_or(DelimiterMiss::Mismatch)?.clone()
                     }
                 };
                 match &tok.kind {
@@ -542,7 +637,7 @@ impl<'c> Parser<'c> {
                         let mut nesting = 0usize;
                         loop {
                             used += 1;
-                            let inner = tokens.next().ok_or(None)?;
+                            let inner = tokens.next().ok_or(DelimiterMiss::Mismatch)?;
                             match inner.kind {
                                 Kind::Open => nesting += 1,
                                 Kind::Close if nesting == 0 => break,
@@ -552,7 +647,7 @@ impl<'c> Parser<'c> {
                             argument.push(inner.clone());
                         }
                     }
-                    Kind::Close => return Err(None),
+                    Kind::Close => return Err(DelimiterMiss::Mismatch),
                     Kind::Letters(text) if text.chars().nth(1).is_some() => {
                         let mut chars = text.chars();
                         let first: Text = chars.next().map(String::from).unwrap_or_default();
@@ -576,31 +671,29 @@ impl<'c> Parser<'c> {
                 if let Some(tok) = carry.take() {
                     argument.push(tok);
                 }
+                let mut matched = 0;
                 loop {
-                    if nesting == 0 {
-                        let mut ahead = tokens.clone();
-                        if delimiter
-                            .iter()
-                            .all(|want| ahead.next().is_some_and(|tok| tok.kind == want.kind))
-                        {
-                            for _ in delimiter {
-                                tokens.next();
-                            }
-                            used += delimiter.len();
-                            break;
-                        }
-                    }
                     used += 1;
                     let Some(tok) = tokens.next() else {
-                        return Err(Some(used));
+                        return Err(DelimiterMiss::End(used));
                     };
+                    if self.restricted_inlines && tok.kind == Kind::Par {
+                        return Err(DelimiterMiss::Paragraph);
+                    }
+                    if nesting == 0 {
+                        matched = delimiter.advance(matched, &tok.kind);
+                    }
                     match tok.kind {
                         Kind::Open => nesting += 1,
-                        Kind::Close if nesting == 0 => return Err(None),
+                        Kind::Close if nesting == 0 => return Err(DelimiterMiss::Mismatch),
                         Kind::Close => nesting -= 1,
                         _ => {}
                     }
                     argument.push(tok.clone());
+                    if matched == delimiter.tokens.len() {
+                        argument.truncate(argument.len() - matched);
+                        break;
+                    }
                 }
                 // Pandoc drops the braces of the groups at the top of a
                 // delimited argument.
@@ -619,13 +712,23 @@ impl<'c> Parser<'c> {
             }
             arguments.push(argument);
         }
-        Ok((arguments, used, carry))
+        Ok(DelimitedMatch {
+            arguments,
+            consumed: used,
+            carry,
+        })
     }
 
     /// Remembers that a delimiter does not follow `start` up to the end of
     /// the input, when no group is in that range: a later search from a
     /// position in it fails too.
-    fn remember_failed_delimiter(&mut self, in_input: bool, key: Text, start: usize, used: usize) {
+    fn remember_failed_delimiter(
+        &mut self,
+        in_input: bool,
+        key: (usize, bool),
+        start: usize,
+        used: usize,
+    ) {
         let grouped = self
             .tokens
             .get(start..start + used)
@@ -729,6 +832,56 @@ impl<'c> Parser<'c> {
         Ok(arguments)
     }
 
+    fn push_macro(
+        &mut self,
+        name: &str,
+        depth: u32,
+        body: &[Tok],
+        arguments: &[Vec<Tok>],
+        call: Option<Tok>,
+    ) -> R<()> {
+        let limit = self.expansion_limit();
+        let (replacement, missing) =
+            substitute(body, arguments, limit).ok_or_else(|| Stop::Loop(name.into()))?;
+        if let Some(call) = call.as_ref().filter(|_| missing) {
+            if replacement.is_empty() {
+                return Err(self.macro_not_found(call, false));
+            }
+            let mut nesting = 0usize;
+            for token in &replacement {
+                match token.kind {
+                    Kind::Open => nesting += 1,
+                    Kind::Close => nesting = nesting.saturating_sub(1),
+                    _ => {}
+                }
+            }
+            if nesting != 0 {
+                let width = u32::try_from(call.text.chars().count()).unwrap_or(1);
+                return Err(self.error_at_position(
+                    call.line,
+                    call.column + width.saturating_sub(1),
+                    "unexpected end of input",
+                ));
+            }
+        }
+        if missing {
+            self.pending.clear();
+            self.position = self.tokens.len();
+            self.profile_valid = 0;
+        }
+        let has_tokens = !replacement.is_empty();
+        self.push_tokens(name, depth, replacement)?;
+        if has_tokens {
+            self.expansion_call = call;
+        }
+        Ok(())
+    }
+
+    fn expansion_limit(&self) -> usize {
+        (MAX_EXPANDED_TOKENS + EXPANDED_PER_INPUT_TOKEN * self.input_tokens)
+            .saturating_sub(self.expanded)
+    }
+
     fn push_expansion(
         &mut self,
         name: &str,
@@ -736,7 +889,9 @@ impl<'c> Parser<'c> {
         body: &[Tok],
         arguments: &[Vec<Tok>],
     ) -> R<()> {
-        self.push_tokens(name, depth, substitute(body, arguments))
+        let (replacement, _) = substitute(body, arguments, self.expansion_limit())
+            .ok_or_else(|| Stop::Loop(name.into()))?;
+        self.push_tokens(name, depth, replacement)
     }
 
     /// Puts the tokens of an expansion into the input.
@@ -744,10 +899,10 @@ impl<'c> Parser<'c> {
         if depth + 1 > MAX_EXPANSION_DEPTH {
             return Err(Stop::Loop(name.to_owned()));
         }
-        self.expanded += out.len();
-        if self.expanded > MAX_EXPANDED_TOKENS + EXPANDED_PER_INPUT_TOKEN * self.input_tokens {
+        if out.len() > self.expansion_limit() {
             return Err(Stop::Loop(name.to_owned()));
         }
+        self.expanded += out.len();
         for tok in &mut out {
             tok.depth = depth + 1;
         }
@@ -769,10 +924,18 @@ impl<'c> Parser<'c> {
         self.argument_tokens();
         let arguments = self.macro_arguments(definition.parameters, definition.default, false)?;
         let (body, _) = self.environment_body_tokens(&name);
+        let limit = self
+            .expansion_limit()
+            .saturating_sub(body.len())
+            .saturating_sub(2);
+        let (begin, _) = substitute(&definition.begin, &arguments, limit)
+            .ok_or_else(|| Stop::Loop(name.clone()))?;
+        let (end, _) = substitute(&definition.end, &arguments, limit - begin.len())
+            .ok_or_else(|| Stop::Loop(name.clone()))?;
         let mut all = vec![self.synthetic(Kind::Open, "{")];
-        all.extend(substitute(&definition.begin, &arguments));
+        all.extend(begin);
         all.extend(body);
-        all.extend(substitute(&definition.end, &arguments));
+        all.extend(end);
         all.push(self.synthetic(Kind::Close, "}"));
         self.push_tokens(&name, depth, all)?;
         Ok(true)
@@ -1400,6 +1563,7 @@ impl<'c> Parser<'c> {
             let saved_tokens = std::mem::replace(&mut parser.tokens, tokens);
             let saved_position = std::mem::replace(&mut parser.position, 0);
             let saved_pending = std::mem::take(&mut parser.pending);
+            let saved_expansion_call = parser.expansion_call.take();
             let saved_profile = std::mem::take(&mut parser.fi_profile);
             let saved_valid = std::mem::replace(&mut parser.profile_valid, 0);
             let saved_finished = std::mem::replace(&mut parser.finished, false);
@@ -1426,6 +1590,7 @@ impl<'c> Parser<'c> {
             parser.tokens = saved_tokens;
             parser.position = saved_position;
             parser.pending = saved_pending;
+            parser.expansion_call = saved_expansion_call;
             parser.fi_profile = saved_profile;
             parser.profile_valid = saved_valid;
             parser.finished = saved_finished;
@@ -1453,21 +1618,37 @@ impl<'c> Parser<'c> {
     fn argument_inlines_untrimmed(&mut self) -> R<Vec<Inline>> {
         self.skip_spaces();
         if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
-            let whole = self.whole_group_ahead();
             self.bump();
-            let inlines = if whole {
+            self.skip_stream_noops();
+            let inlines = if self.whole_group_after(0) {
                 self.group(Self::argument_inlines_untrimmed)?
             } else {
-                self.group(|parser| parser.inlines(Until::Close))?.0
+                self.group(|parser| parser.inlines(Until::Argument))?.0
             };
             self.close_group()?;
             return Ok(inlines);
         }
         let tokens = self.argument_tokens().unwrap_or_default();
+        if tokens
+            .first()
+            .is_some_and(|tok| matches!(tok.kind, Kind::Word(_)))
+        {
+            self.skip_word_spaces();
+        }
         self.inlines_of(tokens)
     }
 
     /// The inlines of an optional `[...]` argument, read in place.
+    fn skip_stream_noops(&mut self) {
+        while self
+            .peek_raw()
+            .is_some_and(|tok| matches!(&tok.kind, Kind::Word(name) if is_stream_noop(name)))
+        {
+            self.bump();
+            self.skip_word_spaces();
+        }
+    }
+
     fn bracket_inlines(&mut self) -> R<Option<Vec<Inline>>> {
         self.skip_to_bracket();
         if !self
@@ -1557,6 +1738,11 @@ impl<'c> Parser<'c> {
                 self.check_argument(name, 1)?;
             }
             match kind {
+                Kind::Par if self.peek_raw().is_some_and(|tok| tok.text == "\\par") => {
+                    self.bump();
+                    self.star();
+                    self.skip_options()?;
+                }
                 Kind::Par | Kind::Space | Kind::Newline | Kind::Comment => {
                     self.bump();
                 }
@@ -1584,11 +1770,23 @@ impl<'c> Parser<'c> {
                 Kind::Word(name) if name == "item" && matches!(end, End::Item(_)) => break,
                 Kind::Word(name) if name == "begin" => {
                     let environment = self.environment_name_ahead().unwrap_or_default();
+                    if environment == "document"
+                        && (matches!(end, End::Item(_))
+                            || self.copies == self.cell_copies && self.copies > 0)
+                    {
+                        return Err(Stop::NestedDocument);
+                    }
                     if is_inline_environment(&environment) {
                         self.paragraph(blocks)?;
                     } else {
                         let mut parsed = Vec::new();
-                        self.group(|parser| parser.environment(&environment, &mut parsed))?;
+                        self.group(|parser| {
+                            parser.environment(
+                                &environment,
+                                &mut parsed,
+                                matches!(end, End::Item(_)),
+                            )
+                        })?;
                         blocks.extend(parsed);
                     }
                 }
@@ -1634,8 +1832,20 @@ impl<'c> Parser<'c> {
     fn unexpected_word(&self) -> Stop {
         self.peek_raw()
             .map_or(Stop::Unexpected(Text::new()), |tok| {
-                self.error_at(tok, &format!("unexpected {}", tok.text))
+                let spelling = self.diagnostic_spelling(tok, self.scan().nth(1));
+                self.error_at(tok, &format!("unexpected {spelling}"))
             })
+    }
+
+    fn diagnostic_spelling(&self, tok: &Tok, next: Option<&Tok>) -> Text {
+        match tok.kind {
+            Kind::Par | Kind::Newline if tok.text.starts_with('\n') => "\n".into(),
+            Kind::Word(_) | Kind::Par => match next.filter(|next| next.kind == Kind::Space) {
+                Some(space) => format!("{}{}", tok.text, space.text),
+                None => tok.text.clone(),
+            },
+            _ => tok.text.clone(),
+        }
     }
 
     /// A paragraph. It consumes one token at least, so that each loop
@@ -1669,8 +1879,18 @@ impl<'c> Parser<'c> {
             return Ok(true);
         }
         match name {
+            "hypertarget" => {
+                self.bump();
+                self.star();
+                let label = self.argument_text()?;
+                let body = self.argument_blocks()?;
+                blocks.push(Block::Div(Attr::new(label, vec![], vec![]), body));
+                Ok(true)
+            }
             "title" | "author" | "date" => {
                 self.bump();
+                self.star();
+                self.skip_options()?;
                 let tokens = self.argument_tokens().unwrap_or_default();
                 let value = if name == "author" {
                     let mut authors = Vec::new();
@@ -1681,21 +1901,82 @@ impl<'c> Parser<'c> {
                 } else {
                     MetaValue::MetaInlines(self.inlines_of(tokens)?)
                 };
-                self.meta.insert(name.to_owned(), value);
+                self.append_meta(name, value);
                 Ok(true)
             }
-            "maketitle" => {
-                self.start_record();
+            "caption" => {
                 self.bump();
-                let raw = self.stop_record();
-                let alone = matches!(
-                    self.peek_raw().map(|tok| &tok.kind),
-                    None | Some(Kind::Par | Kind::Newline)
-                );
-                if self.raw_tex() && alone {
-                    blocks.push(Block::RawBlock(Format::new("latex"), raw));
+                self.star();
+                let short = if self.bracket_gap().is_some_and(|(_, line_end)| line_end) {
+                    None
                 } else {
-                    self.skip_group();
+                    self.bracket_inlines()?
+                };
+                self.skip_blank();
+                let long = self.argument_inlines()?;
+                if let Some(float) = self.floats.last_mut() {
+                    float.caption = Some((short, long));
+                }
+                Ok(true)
+            }
+            "item" | "raggedright" => {
+                self.bump();
+                self.skip_word_spaces();
+                self.star();
+                if name == "item" {
+                    self.skip_options()?;
+                }
+                Ok(true)
+            }
+            "bibliography" | "addbibresource" => {
+                self.bump();
+                self.star();
+                self.skip_options()?;
+                let names = self.argument_text()?;
+                for name in names
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|name| !name.is_empty())
+                {
+                    let filename = std::path::Path::new(name).with_extension("bib");
+                    let value = MetaValue::MetaInlines(vec![Inline::Str(
+                        filename.to_string_lossy().into_owned(),
+                    )]);
+                    self.meta
+                        .0
+                        .entry("bibliography".into())
+                        .and_modify(|entries| {
+                            if let MetaValue::MetaList(entries) = entries {
+                                entries.push(value.clone());
+                            }
+                        })
+                        .or_insert_with(|| MetaValue::MetaList(vec![value]));
+                }
+                Ok(true)
+            }
+            "parbox" => {
+                self.bump();
+                self.star();
+                self.skip_options()?;
+                self.argument_tokens();
+                blocks.extend(self.argument_blocks()?);
+                Ok(true)
+            }
+            "include" if !self.raw_tex() => {
+                let depth = self.bump().map_or(0, |tok| tok.depth);
+                self.star();
+                self.skip_options()?;
+                self.include(depth)?;
+                Ok(true)
+            }
+            "maketitle" | "bibliographystyle" | "usepackage" | "listoffigures" | "listoftables"
+            | "newtheorem" | "theoremstyle" | "addtocounter" | "graphicspath" | "include" => {
+                let raw = self.unknown_command_raw()?;
+                if self.raw_tex()
+                    && (!self.in_preamble || name == "maketitle")
+                    && !matches!(name, "newtheorem" | "theoremstyle" | "graphicspath")
+                {
+                    blocks.push(Block::RawBlock(Format::new("latex"), raw));
                 }
                 Ok(true)
             }
@@ -1706,7 +1987,14 @@ impl<'c> Parser<'c> {
                 }
                 Ok(true)
             }
-            _ if is_definition(name) && !self.extensions.contains(Extension::LatexMacros) => {
+            _ if self.is_active_definition(name) => {
+                if let Some(tok) = self.bump() {
+                    let pos = SourcePos::new(self.source_name.as_str(), tok.line, tok.column);
+                    self.definition(name, pos)?;
+                }
+                Ok(true)
+            }
+            _ if is_definition(name) => {
                 let raw = self.definition_raw();
                 blocks.push(Block::RawBlock(Format::new("latex"), raw));
                 Ok(true)
@@ -1721,6 +2009,15 @@ impl<'c> Parser<'c> {
                     None | Some(Kind::Par | Kind::Newline)
                 );
                 if alone {
+                    let raw = if consumed
+                        .iter()
+                        .skip(1)
+                        .any(|tok| self.expands_raw_token(tok))
+                    {
+                        tokens_text(&self.expand_tokens(consumed)?)
+                    } else {
+                        raw
+                    };
                     blocks.push(Block::RawBlock(Format::new("latex"), raw));
                     return Ok(true);
                 }
@@ -1728,6 +2025,25 @@ impl<'c> Parser<'c> {
                 Ok(false)
             }
             _ => Ok(false),
+        }
+    }
+
+    fn append_meta(&mut self, name: &str, value: MetaValue) {
+        use std::collections::btree_map::Entry;
+        match self.meta.0.entry(name.into()) {
+            Entry::Vacant(entry) => {
+                entry.insert(value);
+            }
+            Entry::Occupied(mut entry) => match entry.get_mut() {
+                MetaValue::MetaList(values) => match value {
+                    MetaValue::MetaList(more) => values.extend(more),
+                    value => values.push(value),
+                },
+                current => {
+                    let previous = std::mem::replace(current, MetaValue::MetaList(Vec::new()));
+                    *current = MetaValue::MetaList(vec![previous, value]);
+                }
+            },
         }
     }
 
@@ -1783,15 +2099,22 @@ impl<'c> Parser<'c> {
     /// `\input` and `\include` put the tokens of the file in the input.
     fn include(&mut self, depth: u32) -> R<()> {
         let name = self.argument_text()?;
+        if self.field.is_some() {
+            return Ok(());
+        }
         let pos = self.position_of_next();
         let path = if name.contains('.') {
             name.clone()
         } else {
             format!("{name}.tex")
         };
-        let Ok(bytes) = self.context.read_file(&path) else {
-            self.context
-                .report(LogMessage::CouldNotLoadIncludeFile(path, pos));
+        let limit = usize::try_from(self.context.limits.max_input_size).unwrap_or(usize::MAX);
+        let Ok(bytes) = self.context.read_file_limited(&path, limit) else {
+            let warning = LogMessage::CouldNotLoadIncludeFile(path, pos);
+            if self.cell_copies > 0 {
+                self.context.report(warning.clone());
+            }
+            self.context.report(warning);
             return Ok(());
         };
         let text = String::from_utf8_lossy(&bytes).replace('\r', "");
@@ -1841,8 +2164,8 @@ impl<'c> Parser<'c> {
                 .unwrap_or(Macro {
                     parameters: 0,
                     default: None,
-                    body: vec![target],
-                    delimiters: Vec::new(),
+                    body: vec![target].into(),
+                    delimiters: None,
                 });
                 self.macros.define(name, definition, level, global);
             }
@@ -1853,6 +2176,7 @@ impl<'c> Parser<'c> {
                 while let Some(tok) = self.peek_raw() {
                     match tok.kind {
                         Kind::Open => break,
+                        Kind::Newline | Kind::Par => return Err(self.unexpected_word()),
                         Kind::Param(n) => {
                             parameters = usize::from(n).max(parameters);
                             delimiters.push(Vec::new());
@@ -1873,13 +2197,20 @@ impl<'c> Parser<'c> {
                         .flatten()
                         .all(|tok| matches!(tok.kind, Kind::Other(_)));
                 let body = self.argument_tokens().unwrap_or_default();
+                let delimiters = delimited.then(|| {
+                    self.next_delimiter_id += 1;
+                    Arc::new(Delimiters {
+                        id: self.next_delimiter_id,
+                        chunks: delimiters.into_iter().map(Delimiter::new).collect(),
+                    })
+                });
                 self.macros.define(
                     name,
                     Macro {
                         parameters,
                         default: None,
-                        body,
-                        delimiters: if delimited { delimiters } else { Vec::new() },
+                        body: body.into(),
+                        delimiters,
                     },
                     level,
                     global,
@@ -1908,11 +2239,17 @@ impl<'c> Parser<'c> {
             _ => {
                 let name = self.defined_name();
                 let (parameters, default) = self.parameter_specification();
-                let body = self.argument_tokens().unwrap_or_default();
+                let mut body = self.argument_tokens().unwrap_or_default();
+                if command == "DeclareMathOperator" {
+                    let op = tokens_text(&body);
+                    body = tokenize(&format!("\\mathop{{\\mathrm{{{op}}}}}"));
+                }
                 let exists = self.macros.contains_key(&name);
                 if exists && command == "newcommand" {
-                    self.context
-                        .report(LogMessage::MacroAlreadyDefined(format!("\\{name}"), pos));
+                    if self.field.is_none() {
+                        self.context
+                            .report(LogMessage::MacroAlreadyDefined(format!("\\{name}"), pos));
+                    }
                     return Ok(());
                 }
                 if exists && command == "providecommand" {
@@ -1923,8 +2260,8 @@ impl<'c> Parser<'c> {
                     Macro {
                         parameters,
                         default,
-                        body,
-                        delimiters: Vec::new(),
+                        body: body.into(),
+                        delimiters: None,
                     },
                     level,
                     global,
@@ -1966,13 +2303,13 @@ impl<'c> Parser<'c> {
     /// in Pandoc: the reader reads the environment again with the next rule
     /// of a chain (a table as an unknown environment, then the source text
     /// as raw TeX, which only `raw_tex` keeps).
-    fn environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
+    fn environment(&mut self, name: &str, blocks: &mut Vec<Block>, in_item: bool) -> R<()> {
         let raw_tex = self.extensions.contains(Extension::RawTex);
         if raw_tex && !is_known_environment(name) {
             return self.raw_environment(name, blocks);
         }
         if !falls_back(name) {
-            return self.known_environment(name, blocks);
+            return self.known_environment(name, blocks, in_item);
         }
         let start = self.snapshot();
         let failed = start.as_ref().and_then(|s| s.source_position);
@@ -1980,10 +2317,10 @@ impl<'c> Parser<'c> {
             failed.is_some_and(|p| self.failed_tables.contains(&p)) && !plain_scans();
         if !tabular_failed {
             let Some(snapshot) = start.clone() else {
-                return self.known_environment(name, blocks);
+                return self.known_environment(name, blocks, in_item);
             };
             let mut parsed = Vec::new();
-            match self.known_environment(name, &mut parsed) {
+            match self.known_environment(name, &mut parsed, in_item) {
                 Ok(()) => {
                     blocks.extend(parsed);
                     return Ok(());
@@ -2057,6 +2394,7 @@ impl<'c> Parser<'c> {
     fn restore(&mut self, snapshot: Snapshot) {
         self.position = snapshot.position;
         self.pending = snapshot.pending;
+        self.expansion_call = None;
         self.profile_valid = 0;
         self.recorders.truncate(snapshot.recorders.len());
         for (record, len) in self.recorders.iter_mut().zip(snapshot.recorders) {
@@ -2067,7 +2405,7 @@ impl<'c> Parser<'c> {
     }
 
     /// An environment by the rule of its name.
-    fn known_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
+    fn known_environment(&mut self, name: &str, blocks: &mut Vec<Block>, in_item: bool) -> R<()> {
         self.bump();
         self.argument_tokens();
         match name {
@@ -2079,13 +2417,11 @@ impl<'c> Parser<'c> {
                 self.finished = true;
                 return Ok(());
             }
-            "abstract" => {
-                let content = self.blocks(End::Environment(name))?;
-                self.meta
-                    .insert(Text::from("abstract"), MetaValue::MetaBlocks(content));
+            "abstract" | "proof" | "sloppypar" | "otherlanguage" | "alltt" => {
+                self.semantic_environment(name, blocks)?;
             }
             "itemize" | "enumerate" | "description" => {
-                blocks.push(self.list(name)?);
+                return self.list_environment(name, blocks, in_item);
             }
             "quote" | "quotation" | "verse" => {
                 blocks.push(Block::BlockQuote(self.blocks(End::Environment(name))?));
@@ -2095,7 +2431,7 @@ impl<'c> Parser<'c> {
                     blocks.push(block);
                 }
             }
-            "figure" | "figure*" => blocks.push(self.figure(name)?),
+            "figure" | "figure*" | "subfigure" => blocks.push(self.figure(name)?),
             "tikzpicture" => {
                 let (_, closed) = self.environment_body_tokens(name);
                 if !closed {
@@ -2103,20 +2439,127 @@ impl<'c> Parser<'c> {
                 }
                 return Ok(());
             }
-            "table" | "table*" => blocks.extend(self.table_float(name)?),
-            _ if is_tabular(name) => {
-                if name != "tabular" && name != "longtable" {
-                    self.argument_tokens();
-                }
-                blocks.push(self.tabular(name)?);
-            }
+            "table" => blocks.extend(self.table_float(name)?),
+            _ if is_tabular(name) => return self.tabular_environment(name, blocks),
             _ => return self.div_body(name, blocks),
+        }
+        self.close_environment(name)
+    }
+
+    fn semantic_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
+        match name {
+            "abstract" => {
+                let content = MetaValue::MetaBlocks(self.blocks(End::Environment(name))?);
+                if self.cell_copies > 0 {
+                    self.append_meta("abstract", content.clone());
+                }
+                self.append_meta("abstract", content);
+            }
+            "proof" => blocks.push(self.proof(name)?),
+            "sloppypar" => blocks.extend(self.blocks(End::Environment(name))?),
+            "otherlanguage" => {
+                self.skip_options()?;
+                let language = babel_language(&self.argument_text()?);
+                let content = self.blocks(End::Environment(name))?;
+                if let Some(language) = language {
+                    blocks.push(Block::Div(language_attr(language), content));
+                } else {
+                    blocks.extend(content);
+                }
+            }
+            "alltt" => {
+                let mut content = self.blocks(End::Environment(name))?;
+                walk_inlines_mut(&mut content, |inline| {
+                    let replacement = match inline {
+                        Inline::Str(text) => Inline::Code(Attr::default(), std::mem::take(text)),
+                        Inline::Space => Inline::RawInline(Format::new("latex"), "\\ ".into()),
+                        Inline::SoftBreak => Inline::LineBreak,
+                        _ => return,
+                    };
+                    *inline = replacement;
+                });
+                blocks.extend(content);
+            }
+            _ => return Err(self.stuck("has no environment handler")),
+        }
+        Ok(())
+    }
+
+    fn list_environment(&mut self, name: &str, blocks: &mut Vec<Block>, in_item: bool) -> R<()> {
+        match self.list(name, in_item) {
+            Ok(Block::Div(..)) if self.raw_tex() => {
+                return Err(Stop::Unexpected("Expected list items".into()));
+            }
+            Ok(list) => blocks.push(list),
+            Err(Stop::NestedDocument) => {
+                let (_, closed) = self.environment_body_tokens(name);
+                if !closed {
+                    self.unclosed(name)?;
+                }
+                return Ok(());
+            }
+            Err(other) => return Err(other),
+        }
+        self.close_environment(name)
+    }
+
+    fn tabular_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
+        if name != "tabular" && name != "longtable" {
+            self.argument_tokens();
+        }
+        if name == "tabular*" {
+            self.skip_spaces();
+            if !self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+                return Err(Stop::Unexpected(
+                    "Expected table column specification".into(),
+                ));
+            }
+        }
+        match self.tabular(name) {
+            Ok(table) => blocks.push(table),
+            Err(Stop::NestedDocument) => {
+                let (_, closed) = self.environment_body_tokens(name);
+                if !closed {
+                    self.unclosed(name)?;
+                }
+                return Ok(());
+            }
+            Err(other) => return Err(other),
         }
         self.close_environment(name)
     }
 
     /// An environment read as a `Div` with its name as the class, from its
     /// `\begin`.
+    fn proof(&mut self, name: &str) -> R<Block> {
+        let mut heading = Inlines(
+            self.bracket_inlines()?
+                .unwrap_or_else(|| vec![Inline::Str("Proof".into())]),
+        );
+        heading.push_str(".");
+        let mut content = self.blocks(End::Environment(name))?;
+        let mut intro = vec![Inline::Emph(heading.0)];
+        if let Some(Block::Para(first)) = content.first_mut() {
+            if !first.is_empty() {
+                intro.push(Inline::Space);
+            }
+            intro.append(first);
+            *first = intro;
+        } else {
+            content.insert(0, Block::Para(intro));
+        }
+        let qed = Inline::Str("\u{a0}◻".into());
+        if let Some(Block::Para(last)) = content.last_mut() {
+            last.push(qed);
+        } else {
+            content.push(Block::Para(vec![qed]));
+        }
+        Ok(Block::Div(
+            Attr::new("", vec![name.into()], vec![]),
+            content,
+        ))
+    }
+
     fn div_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
         self.bump();
         self.argument_tokens();
@@ -2124,11 +2567,25 @@ impl<'c> Parser<'c> {
     }
 
     fn div_body(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
-        if name != "center" {
-            self.skip_options()?;
-        }
         if name == "minipage" {
-            self.argument_tokens();
+            let comments = self
+                .scan()
+                .take_while(|tok| matches!(tok.kind, Kind::Space | Kind::Comment | Kind::Newline))
+                .filter(|tok| tok.kind == Kind::Comment)
+                .count();
+            if comments < 2 {
+                if self.bracket_gap().is_some() {
+                    self.skip_options()?;
+                    self.skip_blank();
+                } else {
+                    self.skip_spaces();
+                }
+                if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+                    self.argument_tokens();
+                }
+            }
+        } else if name != "center" {
+            self.skip_options()?;
         }
         let content = self.blocks(End::Environment(name))?;
         blocks.push(Block::Div(
@@ -2158,7 +2615,7 @@ impl<'c> Parser<'c> {
 
     /// The error of Pandoc for a construct that the input ends inside.
     fn ends_inside(&self, message: &str) -> R<()> {
-        let lines = self.input.matches('\n').count() + usize::from(!self.input.ends_with('\n'));
+        let lines = self.line_offsets.len() - usize::from(self.input.ends_with('\n'));
         let line = u32::try_from(lines + 1).unwrap_or(u32::MAX);
         self.stop_at(line, 2, message)
     }
@@ -2184,6 +2641,22 @@ impl<'c> Parser<'c> {
         Ok(())
     }
 
+    fn require_link_text(&mut self) -> R<()> {
+        self.skip_spaces();
+        let paragraph_gap = self
+            .peek_raw()
+            .is_some_and(|tok| tok.kind == Kind::Par && tok.text.matches('\n').count() > 1);
+        self.skip_blank();
+        if self.peek_raw().is_none() {
+            self.ends_inside(if paragraph_gap {
+                "unexpected end of input"
+            } else {
+                "unexpected ()"
+            })?;
+        }
+        Ok(())
+    }
+
     fn end_environment(&mut self) {
         if self.peek_raw().is_some_and(|tok| tok.is_word("end")) {
             self.bump();
@@ -2197,7 +2670,7 @@ impl<'c> Parser<'c> {
     /// before its end: for `itemize` and `description` not even a space;
     /// `enumerate` permits its option, spaces and a counter command of an
     /// `enum` counter.
-    fn list(&mut self, name: &str) -> R<Block> {
+    fn list(&mut self, name: &str, in_item: bool) -> R<Block> {
         let mut attributes = ListAttributes {
             start: 1,
             style: ListNumberStyle::DefaultStyle,
@@ -2205,6 +2678,19 @@ impl<'c> Parser<'c> {
         };
         let opened = self.bumps;
         self.skip_spaces();
+        if name == "enumerate"
+            && self
+                .scan()
+                .find(|tok| {
+                    !matches!(
+                        tok.kind,
+                        Kind::Par | Kind::Space | Kind::Newline | Kind::Comment
+                    )
+                })
+                .is_some_and(|tok| tok.kind == Kind::Other('['))
+        {
+            self.skip_blank();
+        }
         let option = self.bracket_tokens();
         let mut valid = true;
         match &option {
@@ -2256,6 +2742,13 @@ impl<'c> Parser<'c> {
             self.bump();
             self.skip_word_spaces();
             let term = self.bracket_inlines()?;
+            if name == "description" && term.is_none() && in_item {
+                let mut gap = self.scan().peekable();
+                skip_option_gap(&mut gap, usize::MAX);
+                if gap.peek().is_some_and(|tok| tok.kind == Kind::Par) {
+                    return Err(Stop::Unexpected("Expected description term".into()));
+                }
+            }
             if name == "description" && term.is_none() {
                 valid = false;
             }
@@ -2341,13 +2834,18 @@ impl<'c> Parser<'c> {
             return None;
         }
         let (attr, body) = code_attributes(name, &body);
-        let body = body.strip_prefix('\n').unwrap_or(body);
+        let trimmed = body.trim_start_matches([' ', '\t']);
+        let body = trimmed.strip_prefix('\n').unwrap_or(body);
         let body = body.strip_suffix('\n').unwrap_or(body);
         Some(Block::CodeBlock(attr, body.to_owned()))
     }
 
     fn figure(&mut self, name: &str) -> R<Block> {
-        let placement = self.bracket_tokens().map(|tokens| tokens_text(&tokens));
+        let mut placement = self.bracket_tokens().map(|tokens| tokens_text(&tokens));
+        if name == "subfigure" {
+            self.argument_tokens();
+            placement = None;
+        }
         self.floats.push(Float::default());
         let content = self.blocks(End::Environment(name));
         let float = self.floats.pop().unwrap_or_default();
@@ -2410,24 +2908,49 @@ impl<'c> Parser<'c> {
         self.skip_options()?;
         let spec = self.argument_tokens().unwrap_or_default();
         let aligns = column_alignments(&spec);
+        let columns = aligns.len();
+        let cell_limit = self.context.limits.max_table_cells;
         let mut rows = Vec::new();
         let mut head_rows = None;
         let mut rounds = Rounds::default();
         loop {
             self.round(&mut rounds)?;
-            if self.skip_rules()? && !rows.is_empty() && head_rows.is_none() {
+            self.skip_blank();
+            let plain_empty = self
+                .peek_raw()
+                .is_some_and(|tok| tok.kind == Kind::Symbol('\\'));
+            let rule = self.skip_rules()?;
+            if rule && !rows.is_empty() && head_rows.is_none() {
                 head_rows = Some(rows.len());
             }
             if self.peek_raw().is_none() || self.at_end_of(name) {
                 break;
             }
+            let available = cell_limit.saturating_sub(rows.len().saturating_mul(columns));
+            if available < columns.max(1) {
+                return Err(Stop::TableLimit);
+            }
+            let row = self.row_tokens(name, available)?;
+            let empty_candidate = row.len() == 1
+                && (plain_empty && row[0].is_empty()
+                    || row[0]
+                        .iter()
+                        .find(|tok| {
+                            !matches!(
+                                tok.kind,
+                                Kind::Space | Kind::Newline | Kind::Par | Kind::Comment
+                            )
+                        })
+                        .is_some_and(|tok| tok.is_word("caption")));
             let mut cells = Vec::new();
-            for tokens in self.row_tokens(name) {
+            for tokens in row {
                 cells.push(self.cell(tokens)?);
+            }
+            if !rule && rows.is_empty() && empty_candidate && cells[0].content.is_empty() {
+                continue;
             }
             rows.push(cells);
         }
-        let columns = aligns.len();
         if rows.iter().any(|cells| cells.len() > columns) {
             return Err(Stop::Unexpected(Text::from(
                 "a row has more cells than the table has columns",
@@ -2479,7 +3002,7 @@ impl<'c> Parser<'c> {
     /// The tokens of the cells of one row, up to its `\\` (which it
     /// consumes with a star and an option) or the `\end` of the table.
     /// An environment that has its `\end` is one unit of a cell.
-    fn row_tokens(&mut self, name: &str) -> Vec<Vec<Tok>> {
+    fn row_tokens(&mut self, name: &str, cell_limit: usize) -> R<Vec<Vec<Tok>>> {
         let mut cells = vec![Vec::new()];
         let mut open: Vec<Text> = Vec::new();
         while let Some(tok) = self.peek_raw() {
@@ -2497,14 +3020,24 @@ impl<'c> Parser<'c> {
                     }
                 }
                 Kind::Tab if open.is_empty() => {
+                    if cells.len() == cell_limit {
+                        return Err(Stop::TableLimit);
+                    }
                     self.bump();
                     cells.push(Vec::new());
                     continue;
                 }
                 Kind::Symbol('\\') if open.is_empty() => {
                     self.bump();
-                    self.star();
+                    let starred = self.star();
                     self.bracket_tokens();
+                    if !starred
+                        && cells.len() == 1
+                        && cells[0].is_empty()
+                        && self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open)
+                    {
+                        continue;
+                    }
                     break;
                 }
                 _ => {}
@@ -2513,7 +3046,7 @@ impl<'c> Parser<'c> {
                 cell.push(tok);
             }
         }
-        cells
+        Ok(cells)
     }
 
     /// True when the next `\begin` has its `\end` in the input. A token of a
@@ -2541,7 +3074,26 @@ impl<'c> Parser<'c> {
     fn cell_content(&mut self) -> R<Cell> {
         let mut cell = Cell::default();
         self.skip_spaces();
-        if self.peek_kind()? == Some(Kind::Word("multicolumn".into())) {
+        let first = self.peek_kind()?;
+        if first == Some(Kind::Word("label".into())) && !self.raw_tex() {
+            self.check_argument("label", 1)?;
+            self.bump();
+            self.star();
+            let label = self.argument_text()?;
+            if let Some(float) = self.floats.last_mut() {
+                float.label = Some(label);
+            }
+        } else if first == Some(Kind::Word("multirow".into())) {
+            self.bump();
+            self.skip_options()?;
+            self.argument_tokens();
+            self.argument_tokens();
+            self.skip_options()?;
+            let content = self.argument_tokens().unwrap_or_default();
+            self.unread(content);
+        } else if first == Some(Kind::Word("tabularnewline".into())) {
+            self.bump();
+        } else if first == Some(Kind::Word("multicolumn".into())) {
             self.bump();
             let span = self.argument_text()?;
             let spec = self.argument_tokens().unwrap_or_default();
@@ -2577,8 +3129,7 @@ impl<'c> Parser<'c> {
                 }
                 "cline" | "cmidrule" => {
                     self.bump();
-                    self.argument_tokens();
-                    rule = true;
+                    return Ok(true);
                 }
                 _ => return Ok(rule),
             }
@@ -2589,7 +3140,11 @@ impl<'c> Parser<'c> {
 
     fn inlines(&mut self, until: Until) -> R<Inlines> {
         let mut out = Inlines::default();
-        self.inlines_into(&mut out, until)?;
+        let previous = self.restricted_inlines;
+        self.restricted_inlines |= matches!(until, Until::Argument | Until::Bracket);
+        let result = self.inlines_into(&mut out, until);
+        self.restricted_inlines = previous;
+        result?;
         Ok(out)
     }
 
@@ -2599,7 +3154,10 @@ impl<'c> Parser<'c> {
         while let Some(kind) = self.peek_kind()? {
             self.round(&mut rounds)?;
             match (until, &kind) {
-                (Until::Close | Until::Quote(_) | Until::Bracket, Kind::Close) => {
+                (
+                    Until::Close | Until::Argument | Until::Quote(_) | Until::Bracket,
+                    Kind::Close,
+                ) => {
                     break;
                 }
                 (Until::Bracket, Kind::Other(']')) => break,
@@ -2618,6 +3176,18 @@ impl<'c> Parser<'c> {
                     break;
                 }
                 (Until::Paragraph | Until::Quote(_), Kind::Par) => break,
+                (Until::Argument | Until::Bracket, Kind::Par) => {
+                    if let Some(tok) = self.bump() {
+                        if tok.text == "\\par" {
+                            self.skip_word_spaces();
+                            return Err(self.unexpected_word());
+                        }
+                        if tok.text.bytes().filter(|&byte| byte == b'\n').count() > 1 {
+                            self.stop_at(tok.line + 2, 1, "unexpected ()")?;
+                        }
+                    }
+                    continue;
+                }
                 (Until::Paragraph | Until::Quote(_), Kind::Open) if self.group_holds_block() => {
                     break;
                 }
@@ -2644,19 +3214,25 @@ impl<'c> Parser<'c> {
             "begin" => self
                 .environment_name_ahead()
                 .is_none_or(|environment| !is_inline_environment(&environment)),
-            "end" | "item" | "part" | "chapter" | "section" | "subsection" | "subsubsection"
-            | "paragraph" | "subparagraph" | "title" | "author" | "date" | "maketitle" => true,
-            _ => false,
+            "end" => true,
+            _ => is_block_only(name),
         }
     }
 
     fn inline(&mut self, out: &mut Inlines, until: Until) -> R<()> {
+        if let Some(Tok {
+            kind: Kind::Word(name),
+            ..
+        }) = self.peek_raw()
+        {
+            if matches!(until, Until::Argument | Until::Bracket) && is_block_only(name) {
+                return Err(self.block_in_argument());
+            }
+            self.check_argument(name, 1)?;
+        }
         let Some(tok) = self.bump() else {
             return Ok(());
         };
-        if let Kind::Word(name) = &tok.kind {
-            self.check_argument(name, 0)?;
-        }
         match tok.kind {
             Kind::Letters(text) => out.push_str(&text),
             Kind::Space => out.push(Inline::Space),
@@ -2667,11 +3243,37 @@ impl<'c> Parser<'c> {
                 let inner = if self.whole_group_after(0) {
                     self.group(Self::argument_inlines_untrimmed)?
                 } else {
-                    self.group(|parser| parser.inlines(Until::Close))?.0
+                    self.group(|parser| {
+                        parser.inlines(if until == Until::Argument {
+                            Until::Argument
+                        } else {
+                            Until::Close
+                        })
+                    })?
+                    .0
                 };
                 self.close_group()?;
                 if !inner.is_empty() {
-                    out.push(Inline::Span(Attr::default(), inner));
+                    match self.field {
+                        Some(FieldOptions {
+                            keep_brace_spans: false,
+                        }) => out.append(Inlines(inner)),
+                        Some(FieldOptions {
+                            keep_brace_spans: true,
+                        }) => {
+                            let mut attr = Attr::default();
+                            if inner.iter().any(|inline| matches!(inline, Inline::Str(text)
+                                if text.split([' ', '-']).any(|word| word.starts_with(char::is_lowercase))))
+                            {
+                                attr.classes.push("nocase".into());
+                            }
+                            out.push(Inline::Span(attr, inner));
+                        }
+                        None => out.push(Inline::Span(Attr::default(), inner)),
+                    }
+                } else if tok.text.starts_with("\\begingroup") {
+                    self.star();
+                    self.raw_inline_suffix()?;
                 }
             }
             Kind::Dollar => self.dollar_math(out)?,
@@ -2680,15 +3282,22 @@ impl<'c> Parser<'c> {
             Kind::Sup => out.push_str("^"),
             Kind::Sub => out.push_str("_"),
             Kind::Other(c) => self.punctuation(c, out, until)?,
+            Kind::Symbol('!' | ':' | ';') => {
+                self.unknown_inline(&tok.text, out)?;
+            }
             Kind::Symbol(c) => self.symbol(c, out)?,
             Kind::Verb(text) => out.push(Inline::Code(Attr::default(), text)),
+            Kind::InlineCode(language, text) => out.push(Inline::Code(
+                Attr::new("", language.into_iter().collect(), vec![]),
+                text,
+            )),
             Kind::Verbatim(text) => out.push(Inline::Code(Attr::default(), text)),
             Kind::Word(ref name) if name == "end" => {
                 return Err(self.error_at(&tok, "unexpected \\end"));
             }
             Kind::Word(ref name)
                 if name == "begin"
-                    && matches!(until, Until::Close | Until::Bracket)
+                    && matches!(until, Until::Close | Until::Argument | Until::Bracket)
                     && self
                         .environment_name_ahead_of_argument()
                         .is_none_or(|environment| !is_inline_environment(&environment)) =>
@@ -2706,6 +3315,32 @@ impl<'c> Parser<'c> {
             }
         }
         Ok(())
+    }
+
+    fn block_in_argument(&mut self) -> Stop {
+        self.bump();
+        self.skip_word_spaces();
+        if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+            let mut depth = self.depth;
+            for tok in self.scan() {
+                match tok.kind {
+                    Kind::Open => {
+                        depth += 1;
+                        if depth > self.max_depth {
+                            return Stop::TooDeep;
+                        }
+                    }
+                    Kind::Close => {
+                        depth -= 1;
+                        if depth == self.depth {
+                            break;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+        self.unexpected_word()
     }
 
     fn punctuation(&mut self, c: char, out: &mut Inlines, until: Until) -> R<()> {
@@ -2777,7 +3412,15 @@ impl<'c> Parser<'c> {
             }
             '\\' => {
                 self.skip_spaces();
-                self.bracket_tokens();
+                if self
+                    .peek_raw()
+                    .is_some_and(|tok| tok.kind == Kind::Par && tok.text.matches('\n').count() > 1)
+                {
+                    self.bump();
+                    self.skip_spaces();
+                } else {
+                    self.bracket_tokens();
+                }
                 out.push(Inline::LineBreak);
             }
             '(' => {
@@ -2843,6 +3486,7 @@ impl<'c> Parser<'c> {
             'r' => '\u{30a}',
             'k' => '\u{328}',
             'd' => '\u{323}',
+            't' => '\u{361}',
             _ => '\u{331}',
         };
         self.skip_spaces();
@@ -2850,6 +3494,14 @@ impl<'c> Parser<'c> {
         let grouped = self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open);
         let tokens = self.argument_tokens().unwrap_or_default();
         let tokens = self.expand_tokens(tokens)?;
+        let ends = match_groups(&tokens);
+        let mut from = 0;
+        let mut to = tokens.len();
+        while to > from && ends.get(&from) == Some(&(to - 1)) {
+            from += 1;
+            to -= 1;
+        }
+        let tokens: Vec<_> = tokens.into_iter().skip(from).take(to - from).collect();
         let markup = |tok: &Tok| {
             matches!(
                 tok.kind,
@@ -3056,10 +3708,7 @@ impl<'c> Parser<'c> {
         wrap: impl FnOnce(Vec<Inline>) -> Inline,
     ) -> R<()> {
         self.skip_word_spaces();
-        let rest = self.inlines(match until {
-            Until::Paragraph => until,
-            _ => Until::Close,
-        })?;
+        let rest = self.inlines(until)?;
         push_extracting_spaces(out, rest.0, wrap);
         Ok(())
     }
@@ -3074,7 +3723,7 @@ impl<'c> Parser<'c> {
     ) -> R<()> {
         let star_is_a_mode = citation_mode(name).is_some()
             || multi_citation_mode(name).is_some()
-            || name == "enquote";
+            || matches!(name, "enquote" | "foreignquote");
         if !is_unknown_command(name) && !star_is_a_mode && name != "verb" && self.star() {
             self.skip_word_spaces();
         }
@@ -3107,12 +3756,80 @@ impl<'c> Parser<'c> {
         let declaration: Option<fn(Vec<Inline>) -> Inline> = match name {
             "em" | "it" | "itshape" | "sl" | "slshape" => Some(Inline::Emph),
             "bf" | "bfseries" => Some(Inline::Strong),
+            "scshape" => Some(Inline::SmallCaps),
             _ => None,
         };
         if let Some(wrap) = declaration {
             return self.declaration(until, out, wrap);
         }
         match name {
+            name if is_size_or_fill(name) => self.text_command(name, source, out, until),
+            "tt" | "ttfamily" | "textup" | "textmd" | "textnormal" | "vbox" | "texttt" | "mbox"
+            | "hbox" | "LaTeX" | "TeX" | "ldots" | "dots" | "newline" | "NeedsTeXFormat" => {
+                self.text_command(name, source, out, until)
+            }
+            "url" | "nolinkurl" | "hyperlink" | "hypertarget" | "hyperref" | "href" | "label"
+            | "ref" | "eqref" | "autoref" | "cref" | "Cref" | "includegraphics" => {
+                self.reference_command(name, source, out)
+            }
+            "footnote" | "thanks" => {
+                self.skip_options()?;
+                let content = self.argument_blocks()?;
+                out.push(Inline::Note(content));
+                Ok(())
+            }
+            "enquote" | "foreignquote" => self.quoted_argument(name, out),
+            "textcolor" | "colorbox" | "gls" | "Gls" | "glspl" | "ac" | "MakeUppercase"
+            | "uppercase" | "MakeLowercase" | "lowercase" | "SI" | "qty" | "si" | "num" | "ang"
+            | "ensuremath" => self.semantic_command(name, out),
+            _ => self.other_inline_command(name, source, depth, out),
+        }
+    }
+
+    fn text_command(&mut self, name: &str, source: &str, out: &mut Inlines, until: Until) -> R<()> {
+        match name {
+            name if is_size_or_fill(name) => {
+                if self.raw_tex() && name != "rm" {
+                    self.start_record();
+                    self.skip_word_spaces();
+                    let gap = self.stop_record();
+                    out.push(Inline::RawInline(
+                        Format::new("latex"),
+                        format!("{source}{gap}"),
+                    ));
+                } else {
+                    self.skip_word_spaces();
+                }
+            }
+            "tt" | "ttfamily" => {
+                self.skip_word_spaces();
+                let rest = self.inlines(until)?;
+                let content = if name == "ttfamily" {
+                    rest.trimmed()
+                } else {
+                    rest.0
+                };
+                out.append(code_inlines(content));
+            }
+            "textup" | "textmd" | "textnormal" => {
+                let class = match name {
+                    "textup" => "upright",
+                    "textmd" => "medium",
+                    _ => "nodecor",
+                };
+                let content = self.argument_inlines_untrimmed()?;
+                out.push(Inline::Span(
+                    Attr::new("", vec![class.into()], vec![]),
+                    content,
+                ));
+            }
+            "vbox" if self.raw_tex() => self.unknown_inline(source, out)?,
+            "vbox" => {
+                self.skip_word_spaces();
+                if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
+                    out.append(Inlines(self.argument_inlines_untrimmed()?));
+                }
+            }
             "texttt" => {
                 self.require_text_argument()?;
                 self.code_text += 1;
@@ -3156,11 +3873,13 @@ impl<'c> Parser<'c> {
                     ));
                 }
             }
-            "footnote" | "thanks" => {
-                self.skip_options()?;
-                let content = self.argument_blocks()?;
-                out.push(Inline::Note(content));
-            }
+            _ => return Err(self.stuck("has no text command handler")),
+        }
+        Ok(())
+    }
+
+    fn reference_command(&mut self, name: &str, source: &str, out: &mut Inlines) -> R<()> {
+        match name {
             "url" => {
                 let url = self.argument_text()?;
                 let url = unescape(&self.expand_text(url)?);
@@ -3170,12 +3889,51 @@ impl<'c> Parser<'c> {
                     Target::new(url, ""),
                 ));
             }
+            "nolinkurl" => {
+                let url = unescape(&self.argument_text()?);
+                out.push(Inline::Code(Attr::default(), url));
+            }
+            "hyperlink" | "hypertarget" | "hyperref" => {
+                let target = if name == "hyperref" {
+                    if let Some(label) = self.bracket_tokens() {
+                        format!("#{}", tokens_text(&label))
+                    } else {
+                        let url = self.argument_text()?;
+                        self.argument_tokens();
+                        self.argument_tokens();
+                        url
+                    }
+                } else {
+                    let label = self.argument_text()?;
+                    if name == "hyperlink" {
+                        format!("#{label}")
+                    } else {
+                        label
+                    }
+                };
+                let text = self.argument_inlines_untrimmed()?;
+                if name == "hypertarget" {
+                    out.push(Inline::Span(Attr::new(target, vec![], vec![]), text));
+                } else {
+                    out.push(Inline::Link(Attr::default(), text, Target::new(target, "")));
+                }
+            }
             "href" => {
                 let url = self.argument_text()?;
                 let url = unescape(&self.expand_text(url)?);
-                self.require_text_argument()?;
+                self.require_link_text()?;
                 let text = self.argument_inlines_untrimmed()?;
                 out.push(Inline::Link(Attr::default(), text, Target::new(url, "")));
+            }
+            "label"
+                if self.raw_tex()
+                    && (self.floats.is_empty()
+                        || !self
+                            .scan()
+                            .find(|tok| tok.kind != Kind::Space)
+                            .is_some_and(|tok| tok.kind == Kind::Open)) =>
+            {
+                self.unknown_inline(source, out)?
             }
             "label" => {
                 let label = self.argument_text()?;
@@ -3193,16 +3951,8 @@ impl<'c> Parser<'c> {
                     ));
                 }
             }
-            "caption" => {
-                let short = if self.bracket_gap().is_some_and(|(_, line_end)| line_end) {
-                    None
-                } else {
-                    self.bracket_inlines()?
-                };
-                let long = self.argument_inlines()?;
-                if let Some(float) = self.floats.last_mut() {
-                    float.caption = Some((short, long));
-                }
+            "ref" | "eqref" | "autoref" | "cref" | "Cref" if self.raw_tex() => {
+                self.unknown_inline(source, out)?;
             }
             "ref" | "eqref" | "autoref" | "cref" | "Cref" => {
                 let label = self.argument_text()?;
@@ -3241,13 +3991,170 @@ impl<'c> Parser<'c> {
                 let alt = vec![Inline::Str("image".into())];
                 out.push(Inline::Image(attr, alt, Target::new(path, "")));
             }
-            "centering" | "noindent" if !self.raw_tex() => self.skip_group(),
-            "c" | "v" | "u" | "H" | "r" | "k" | "d" | "b" => {
+            _ => return Err(self.stuck("has no reference command handler")),
+        }
+        Ok(())
+    }
+
+    fn quoted_argument(&mut self, name: &str, out: &mut Inlines) -> R<()> {
+        let starred = self.star();
+        let language = if name == "foreignquote" {
+            babel_language(&self.argument_text()?)
+        } else {
+            None
+        };
+        let single = starred != (self.quote_kinds.last() == Some(&QuoteType::DoubleQuote));
+        if name == "enquote" {
+            self.skip_options()?;
+        }
+        let kind = if single {
+            QuoteType::SingleQuote
+        } else {
+            QuoteType::DoubleQuote
+        };
+        self.require_link_text()?;
+        self.quote_kinds.push(kind);
+        let content = self.argument_inlines_untrimmed();
+        self.quote_kinds.pop();
+        let mut content = content?;
+        if let Some(language) = language {
+            content = vec![Inline::Span(language_attr(language), content)];
+        }
+        out.push(Inline::Quoted(kind, content));
+        Ok(())
+    }
+
+    fn semantic_command(&mut self, name: &str, out: &mut Inlines) -> R<()> {
+        match name {
+            "textcolor" | "colorbox" => {
+                self.skip_options()?;
+                let value = self.argument_text()?;
+                let property = if name == "textcolor" {
+                    "color"
+                } else {
+                    "background-color"
+                };
+                let attr = Attr::new(
+                    "",
+                    vec![],
+                    vec![("style".into(), format!("{property}: {value}"))],
+                );
+                out.push(Inline::Span(attr, self.argument_inlines_untrimmed()?));
+            }
+            "gls" | "Gls" | "glspl" | "ac" => {
+                let label = self.argument_text()?;
+                let (form, display) = if name == "glspl" {
+                    ("plural+short", format!("{label}s"))
+                } else {
+                    ("singular+short", label.clone())
+                };
+                let attr = Attr::new(
+                    "",
+                    vec![],
+                    vec![
+                        ("acronym-label".into(), label),
+                        ("acronym-form".into(), form.into()),
+                    ],
+                );
+                out.push(Inline::Span(attr, vec![Inline::Str(display)]));
+            }
+            "MakeUppercase" | "uppercase" | "MakeLowercase" | "lowercase" => {
+                self.skip_options()?;
+                let mut content = self.argument_inlines_untrimmed()?;
+                let upper = matches!(name, "MakeUppercase" | "uppercase");
+                walk_inlines_mut(&mut content, |inline| {
+                    if let Inline::Str(text) = inline {
+                        *text = if upper {
+                            text.to_uppercase()
+                        } else {
+                            text.to_lowercase()
+                        };
+                    }
+                });
+                out.append(Inlines(content));
+            }
+            "SI" | "qty" | "si" | "num" | "ang" => {
+                self.skip_options()?;
+                if name == "ang" {
+                    let angle = self.argument_text()?;
+                    for (part, suffix) in angle.split(';').zip(["°", "′", "″"]) {
+                        out.push_str(&part.trim().replace('-', "−"));
+                        out.push_str(suffix);
+                    }
+                } else {
+                    if name != "si" {
+                        let value = self.argument_text()?;
+                        append_measurement_number(out, value.trim());
+                    }
+                    if name != "num" {
+                        if name != "si" {
+                            out.push_str(NBSP);
+                        }
+                        let unit = self.argument_tokens().unwrap_or_default();
+                        append_measurement_unit(out, &self.expand_tokens(unit)?);
+                    }
+                }
+            }
+            "ensuremath" => {
+                let text = self.argument_text()?;
+                out.push(Inline::Math(MathType::InlineMath, text.trim().into()));
+            }
+            _ => return Err(self.stuck("has no semantic command handler")),
+        }
+        Ok(())
+    }
+
+    fn other_inline_command(
+        &mut self,
+        name: &str,
+        source: &str,
+        depth: u32,
+        out: &mut Inlines,
+    ) -> R<()> {
+        match name {
+            "centering" | "noindent" if !self.raw_tex() => {
+                self.star();
+                self.skip_options()?;
+                self.skip_group();
+            }
+            "footnotemark" => {
+                self.skip_options()?;
+                out.push(Inline::Str(Text::new()));
+            }
+            "footnotetext" => {
+                self.skip_options()?;
+                self.argument_blocks()?;
+            }
+            "c" | "v" | "u" | "H" | "r" | "k" | "d" | "b" | "t" => {
                 let accent = name.chars().next().unwrap_or('b');
                 self.accent(accent, out)?;
             }
-            "verb" => {}
-            "input" | "include" => self.include(depth)?,
+            "verb" => match self.peek_raw() {
+                Some(Tok {
+                    kind: Kind::Verb(_),
+                    ..
+                }) => {}
+                Some(tok)
+                    if matches!(tok.kind, Kind::Newline | Kind::Par)
+                        && tok.text.starts_with('\n') =>
+                {
+                    return Err(self.error_at(tok, "unexpected \n"));
+                }
+                Some(tok) => {
+                    let line = tok.line;
+                    self.stop_at(line + 1, 1, "unexpected ()")?;
+                }
+                None => self.ends_inside("unexpected ()")?,
+            },
+            "lstinline" | "mintinline" => {}
+            "hskip" | "vskip" | "kern" => self.skip_dimension(name, source, out)?,
+            "include" if self.field.is_some() => self.include(depth)?,
+            "today" if self.field.is_some() => self.unknown_inline(source, out)?,
+            "input" if self.raw_tex() => self.unknown_inline(source, out)?,
+            "input" => {
+                self.skip_options()?;
+                self.include(depth)?;
+            }
             "today" => {
                 self.skip_word_spaces();
                 let fixed = self
@@ -3272,20 +4179,6 @@ impl<'c> Parser<'c> {
                 self.meta
                     .insert(Text::from("nocite"), MetaValue::MetaInlines(inlines.0));
             }
-            "enquote" => {
-                let single =
-                    self.star() != (self.quote_kinds.last() == Some(&QuoteType::DoubleQuote));
-                let kind = if single {
-                    QuoteType::SingleQuote
-                } else {
-                    QuoteType::DoubleQuote
-                };
-                self.require_text_argument()?;
-                self.quote_kinds.push(kind);
-                let content = self.argument_inlines_untrimmed();
-                self.quote_kinds.pop();
-                out.push(Inline::Quoted(kind, content?));
-            }
             "texorpdfstring" => {
                 let content = self.argument_inlines()?;
                 self.argument_tokens();
@@ -3300,7 +4193,10 @@ impl<'c> Parser<'c> {
                     format!("{source}{rest}"),
                 ));
             }
-            "char" => self.char_code(),
+            "char" => {
+                self.skip_options()?;
+                self.char_code();
+            }
             "footcite" => {
                 let mut cite = Inlines::default();
                 self.citation(source, CitationMode::NormalCitation, true, &mut cite)?;
@@ -3342,6 +4238,77 @@ impl<'c> Parser<'c> {
 
     /// `\char65` drops the command and its decimal code, as Pandoc does.
     /// A code with letters after it (`\char65x`) stays text.
+    fn skip_dimension(&mut self, name: &str, source: &str, out: &mut Inlines) -> R<()> {
+        self.start_record();
+        let result = (|| {
+            if name == "kern" {
+                self.skip_options()?;
+            }
+            self.tex_length()?;
+            if name != "kern" {
+                for keyword in ["plus", "minus"] {
+                    let next = self.scan().find(|tok| tok.kind != Kind::Space);
+                    if next.is_some_and(|tok| tok.text == keyword) {
+                        self.skip_word_spaces();
+                        self.bump();
+                        self.tex_length()?;
+                    }
+                }
+            }
+            Ok(())
+        })();
+        let captured = self.stop_record();
+        result?;
+        if self.raw_tex() {
+            out.push(Inline::RawInline(
+                Format::new("latex"),
+                format!("{source}{captured}"),
+            ));
+        }
+        Ok(())
+    }
+
+    fn tex_length(&mut self) -> R<()> {
+        self.skip_spaces();
+        if self
+            .peek_raw()
+            .is_some_and(|tok| matches!(tok.kind, Kind::Other('+' | '-')))
+        {
+            self.bump();
+        }
+        let digits = |tok: &Tok| {
+            matches!(tok.kind, Kind::Letters(_)) && tok.text.bytes().all(|b| b.is_ascii_digit())
+        };
+        let integer = self.peek_raw().is_some_and(digits);
+        if integer {
+            self.bump();
+        }
+        let decimal = self
+            .peek_raw()
+            .is_some_and(|tok| tok.kind == Kind::Other('.'));
+        if decimal {
+            self.bump();
+        }
+        if (integer || decimal) && self.peek_raw().is_some_and(digits) {
+            self.bump();
+        }
+        self.skip_word_spaces();
+        let Some(tok) = self.peek_raw() else {
+            return self.ends_inside("unexpected ()");
+        };
+        let unit = tok.text.trim_start_matches(|c: char| c.is_ascii_digit());
+        if (!integer && unit == tok.text)
+            || !matches!(
+                unit,
+                "pt" | "pc" | "in" | "bp" | "cm" | "mm" | "dd" | "cc" | "sp" | "em" | "ex" | "mu"
+            )
+        {
+            return Err(self.unexpected_word());
+        }
+        self.bump();
+        Ok(())
+    }
+
     fn char_code(&mut self) {
         let Some(Tok {
             kind: Kind::Letters(text),
@@ -3366,9 +4333,10 @@ impl<'c> Parser<'c> {
         };
         let shown = match &tok.kind {
             Kind::Word(name) => {
+                let spelling = self.diagnostic_spelling(tok, self.scan().nth(1));
                 format!(
-                    "(CtrlSeq \"{name}\") \"{}\"",
-                    tok.text.replace('\\', "\\\\")
+                    "(CtrlSeq \"{name}\") {}",
+                    randoc_ast::json::show_string(&spelling)
                 )
             }
             _ => format!("Symbol \"{}\"", tok.text),
@@ -3399,11 +4367,15 @@ impl<'c> Parser<'c> {
     }
 
     fn error_at_position(&self, line: u32, column: u32, message: &str) -> Stop {
-        let source_line = self
-            .input
-            .lines()
-            .nth(usize::try_from(line).unwrap_or(1).saturating_sub(1))
-            .unwrap_or_default();
+        let index = usize::try_from(line).unwrap_or(1).saturating_sub(1);
+        let source_line = self.line_offsets.get(index).map_or("", |&start| {
+            let end = self
+                .line_offsets
+                .get(index + 1)
+                .copied()
+                .unwrap_or(self.input.len());
+            self.input[start..end].trim_end_matches(['\r', '\n'])
+        });
         let caret = " ".repeat(usize::try_from(column).unwrap_or(1).saturating_sub(1));
         let source = if self.source_name.is_empty() {
             Text::new()
@@ -3415,12 +4387,28 @@ impl<'c> Parser<'c> {
         ))
     }
 
+    fn macro_not_found(&self, call: &Tok, paragraph: bool) -> Stop {
+        let name = match &call.kind {
+            Kind::Word(name) => name.as_str(),
+            _ => call.text.as_str(),
+        };
+        let prefix = if paragraph { "() or " } else { "" };
+        let (line, column) = (call.line, call.column);
+        let spelling = randoc_ast::json::show_string(&call.text);
+        self.error_at(call, &format!(
+            "unexpected {prefix}Tok (line {line}, column {column}) (CtrlSeq \"{name}\") {spelling}\nexpecting end of input\nMacro not found"
+        ))
+    }
+
     /// Pandoc stops with a parse error when a command that needs an
     /// argument group, or a definition that needs a name, has another
     /// token there. `skip` is 1 when the next token is the command itself.
     /// An argument that a macro or a conditional can give is not checked.
     /// The end of the input, or a paragraph break, is `unexpected ()`.
     fn check_argument(&self, name: &str, skip: usize) -> R<()> {
+        if name == "label" && self.raw_tex() {
+            return Ok(());
+        }
         let Some(rule) = argument_rule(name) else {
             return Ok(());
         };
@@ -3463,6 +4451,7 @@ impl<'c> Parser<'c> {
                 while tokens.next_if(blank).is_some() {}
             }
         }
+        let mut options = 0;
         if rule == ArgumentRule::Group && takes_options(name) {
             if name == "hyperref"
                 && tokens
@@ -3471,7 +4460,11 @@ impl<'c> Parser<'c> {
             {
                 return Ok(());
             }
-            while tokens.next_if(|tok| tok.kind == Kind::Other('[')).is_some() {
+            while let Some(open) = tokens.next_if(|tok| tok.kind == Kind::Other('[')) {
+                options += 1;
+                if name == "includegraphics" && options > 1 {
+                    return Err(self.error_at(open, "unexpected ["));
+                }
                 let mut nesting = 0usize;
                 let closed = tokens
                     .by_ref()
@@ -3499,11 +4492,17 @@ impl<'c> Parser<'c> {
             }
         }
         let Some(mut tok) = tokens.next() else {
+            if let Some(call) = &self.expansion_call {
+                return Err(self.macro_not_found(call, false));
+            }
             return self.ends_inside("unexpected ()");
         };
-        if tok.kind == Kind::Par && !verbatim {
+        if tok.kind == Kind::Par && (!verbatim || (name == "includegraphics" && options > 0)) {
             if !tok.text.contains("\n\n") && tokens.next().is_none() {
                 return self.ends_inside("unexpected ()");
+            }
+            if let Some(call) = &self.expansion_call {
+                return Err(self.macro_not_found(call, true));
             }
             // Pandoc stops at the line after the first blank line.
             return self.stop_at(tok.line + 2, 1, "unexpected ()");
@@ -3539,6 +4538,9 @@ impl<'c> Parser<'c> {
         if self.expands(tok) || (matches!(tok.kind, Kind::Par) && !verbatim) {
             return Ok(());
         }
+        if let Some(call) = &self.expansion_call {
+            return Err(self.macro_not_found(call, false));
+        }
         let mut shown = match tok.kind {
             Kind::Newline | Kind::Par => Text::from("\n"),
             Kind::Comment => tok.text.trim_end_matches('\n').into(),
@@ -3562,31 +4564,30 @@ impl<'c> Parser<'c> {
             || (macros && (self.macros.contains_key(word) || word == "newif"))
     }
 
+    fn expands_raw_token(&self, tok: &Tok) -> bool {
+        match &tok.kind {
+            Kind::Symbol(c) => self.macros.contains_key(&c.to_string()),
+            _ => self.expands(tok) || matches!(&tok.kind, Kind::Word(name) if is_stream_noop(name)),
+        }
+    }
+
     fn raw_tex(&self) -> bool {
         self.extensions.contains(Extension::RawTex)
     }
 
     fn unknown_inline(&mut self, source: &str, out: &mut Inlines) -> R<()> {
         self.start_record();
-        self.skip_word_spaces();
-        self.star();
-        let mut rounds = Rounds::default();
-        loop {
-            self.round(&mut rounds)?;
-            match self.peek_raw().map(|tok| &tok.kind) {
-                Some(Kind::Other('[')) => {
-                    self.bracket_tokens();
-                }
-                Some(Kind::Open) => {
-                    self.bump();
-                    if !self.tokens_until_close_or_end().1 {
-                        self.ends_inside("unexpected end of input")?;
-                    }
-                }
-                _ => break,
-            }
+        if source
+            .as_bytes()
+            .get(1)
+            .is_some_and(u8::is_ascii_alphabetic)
+        {
+            self.skip_word_spaces();
         }
+        self.star();
+        let result = self.raw_inline_suffix();
         let rest = self.stop_record();
+        result?;
         if self.raw_tex() {
             out.push(Inline::RawInline(
                 Format::new("latex"),
@@ -3594,6 +4595,72 @@ impl<'c> Parser<'c> {
             ));
         }
         Ok(())
+    }
+
+    fn raw_inline_suffix(&mut self) -> R<()> {
+        let mut rounds = Rounds::default();
+        let initial_gap = if self.raw_tex() {
+            self.bracket_gap().map_or(0, |(gap, _)| gap)
+        } else {
+            0
+        };
+        if initial_gap > 0 && self.closed_raw_option(initial_gap) {
+            for _ in 0..initial_gap {
+                self.bump();
+            }
+        }
+        loop {
+            self.round(&mut rounds)?;
+            match self.peek_raw().map(|tok| &tok.kind) {
+                Some(Kind::Other('[')) => {
+                    if self.raw_tex() && !self.closed_raw_option(0) {
+                        break;
+                    }
+                    self.bracket_tokens();
+                }
+                Some(Kind::Open) => {
+                    self.bump();
+                    let recorded = self.recorders.iter().map(Text::len).collect::<Vec<_>>();
+                    let (body, closed) = self.tokens_until_close_or_end();
+                    if !closed {
+                        self.ends_inside("unexpected end of input")?;
+                    }
+                    if self.raw_tex() && body.iter().any(|tok| self.expands_raw_token(tok)) {
+                        let body = self.expand_tokens(body)?;
+                        let body = tokens_text(&body);
+                        for (recorder, length) in self.recorders.iter_mut().zip(recorded) {
+                            recorder.truncate(length);
+                            recorder.push_str(&body);
+                            if closed {
+                                recorder.push('}');
+                            }
+                        }
+                    }
+                }
+                _ => break,
+            }
+        }
+        Ok(())
+    }
+
+    fn closed_raw_option(&self, offset: usize) -> bool {
+        let mut depth = 0usize;
+        self.scan()
+            .skip(offset + 1)
+            .take(MAX_OPTION_TOKENS)
+            .take_while(|tok| !matches!(tok.kind, Kind::Newline | Kind::Par))
+            .any(|tok| match tok.kind {
+                Kind::Open => {
+                    depth += 1;
+                    false
+                }
+                Kind::Close => {
+                    depth = depth.saturating_sub(1);
+                    false
+                }
+                Kind::Other(']') => depth == 0,
+                _ => false,
+            })
     }
 
     /// A block environment inside inline content: its paragraphs become inlines.
@@ -3609,7 +4676,7 @@ impl<'c> Parser<'c> {
         begin.push(self.synthetic(Kind::Close, "}"));
         self.pending.extend(begin.into_iter().rev());
         let mut blocks = Vec::new();
-        self.group(|parser| parser.environment(name, &mut blocks))?;
+        self.group(|parser| parser.environment(name, &mut blocks, false))?;
         for block in blocks {
             if let Block::Para(inlines) | Block::Plain(inlines) = block {
                 out.push(Inline::Space);
@@ -3633,7 +4700,7 @@ impl<'c> Parser<'c> {
         };
         let math = match name {
             "math" => Inline::Math(MathType::InlineMath, text.to_owned()),
-            "displaymath" => Inline::Math(MathType::DisplayMath, text.to_owned()),
+            "displaymath" | "subequations" => Inline::Math(MathType::DisplayMath, text.to_owned()),
             _ => Inline::Math(
                 MathType::DisplayMath,
                 format!("\\begin{{{name}}}\n{text}\n\\end{{{name}}}"),
@@ -3694,6 +4761,9 @@ impl<'c> Parser<'c> {
         out: &mut Inlines,
     ) -> R<()> {
         self.skip_word_spaces();
+        if name == "cites" {
+            self.star();
+        }
         self.start_record();
         let first = self.paren_inlines()?;
         let second = match first {
@@ -3852,7 +4922,11 @@ fn key_group(
             } else {
                 Vec::new()
             },
-            mode,
+            mode: if index > 0 && mode == CitationMode::AuthorInText {
+                CitationMode::NormalCitation
+            } else {
+                mode
+            },
             note_num: 0,
             hash: 0,
         })
@@ -3953,19 +5027,34 @@ fn fit_row(cells: Vec<Cell>, columns: usize, simple: bool) -> Vec<Cell> {
 }
 
 /// The tokens of a macro body with its parameters replaced by arguments.
-fn substitute(body: &[Tok], arguments: &[Vec<Tok>]) -> Vec<Tok> {
+fn substitute(body: &[Tok], arguments: &[Vec<Tok>], limit: usize) -> Option<(Vec<Tok>, bool)> {
+    let mut tokens = body.iter().peekable();
     let mut out = Vec::new();
-    for tok in body {
-        match tok.kind {
-            Kind::Param(n) if n >= 1 => {
-                if let Some(argument) = arguments.get(usize::from(n) - 1) {
-                    out.extend(argument.iter().cloned());
-                }
+    while let Some(tok) = tokens.next() {
+        if tok.kind == Kind::Param(0)
+            && tok.text == "#"
+            && let Some(next) = tokens.next_if(|tok| matches!(tok.kind, Kind::Param(_)))
+        {
+            if out.len() == limit {
+                return None;
             }
-            _ => out.push(tok.clone()),
+            out.push(next.clone());
+        } else if let Kind::Param(n @ 1..) = tok.kind {
+            let Some(argument) = arguments.get(usize::from(n) - 1) else {
+                return Some((out, true));
+            };
+            if argument.len() > limit - out.len() {
+                return None;
+            }
+            out.extend(argument.iter().cloned());
+        } else {
+            if out.len() == limit {
+                return None;
+            }
+            out.push(tok.clone());
         }
     }
-    out
+    Some((out, false))
 }
 
 fn match_conditionals(tokens: &[Tok]) -> HashMap<usize, (Option<usize>, usize)> {
@@ -4041,7 +5130,7 @@ fn dimension(value: &str) -> Text {
                 .chain(fraction.chars())
                 .all(|c| c.is_ascii_digit())
     };
-    for unit in ["\\textwidth", "\\linewidth", "\\columnwidth"] {
+    for unit in ["\\textwidth", "\\linewidth"] {
         if let Some(fraction) = value
             .strip_suffix(unit)
             .map(str::trim)
@@ -4224,31 +5313,163 @@ fn code_into(content: Vec<Inline>, code: &mut Text, out: &mut Inlines) {
 /// the start of the verbatim body.
 fn code_attributes<'a>(name: &str, body: &'a str) -> (Attr, &'a str) {
     let mut attr = Attr::default();
-    let (open, close) = match name {
-        "lstlisting" => ('[', ']'),
-        "minted" => ('{', '}'),
-        _ => return (attr, body),
-    };
-    let Some(rest) = body.strip_prefix(open) else {
+    if !matches!(name, "Verbatim" | "lstlisting" | "minted") {
         return (attr, body);
-    };
-    let Some((options, rest)) = rest.split_once(close) else {
-        return (attr, body);
-    };
-    if name == "minted" {
-        attr.classes.push(options.trim().to_owned());
-        return (attr, rest);
     }
-    for option in options.split(',') {
-        if let Some((key, value)) = option.split_once('=') {
+    let mut body = body;
+    if let Some((options, rest)) = body.strip_prefix('[').and_then(|rest| rest.split_once(']')) {
+        body = rest;
+        for option in options
+            .split(',')
+            .map(str::trim)
+            .filter(|option| !option.is_empty())
+        {
+            let (key, value) = option.split_once('=').unwrap_or((option, ""));
             let (key, value) = (key.trim(), value.trim());
-            if key == "language" {
-                attr.classes.push(value.to_lowercase());
+            match (name, key, value) {
+                ("lstlisting", "language", _) => attr.classes.push(listings_language(value)),
+                ("lstlisting", "numbers", "left") => attr.classes.insert(0, "numberLines".into()),
+                ("lstlisting", "label", _) => attr.id = value.to_owned(),
+                _ => {}
             }
             attr.attributes.push((key.to_owned(), value.to_owned()));
         }
     }
-    (attr, rest)
+    if name == "minted"
+        && let Some((language, rest)) = body
+            .trim_start_matches([' ', '\t'])
+            .strip_prefix('{')
+            .and_then(|rest| rest.split_once('}'))
+    {
+        body = rest;
+        attr.classes.push(language.trim().to_owned());
+    }
+    (attr, body)
+}
+
+fn is_block_only(name: &str) -> bool {
+    sectioning_level(name).is_some()
+        || matches!(
+            name,
+            "item"
+                | "title"
+                | "author"
+                | "date"
+                | "maketitle"
+                | "caption"
+                | "documentclass"
+                | "bibliography"
+                | "addbibresource"
+                | "bibliographystyle"
+                | "usepackage"
+                | "listoffigures"
+                | "listoftables"
+                | "newtheorem"
+                | "theoremstyle"
+                | "addtocounter"
+                | "graphicspath"
+                | "raggedright"
+                | "parbox"
+                | "include"
+        )
+}
+
+fn is_stream_noop(name: &str) -> bool {
+    matches!(name, "xspace" | "expandafter")
+}
+
+fn is_size_or_fill(name: &str) -> bool {
+    matches!(
+        name,
+        "small"
+            | "footnotesize"
+            | "large"
+            | "Large"
+            | "tiny"
+            | "scriptsize"
+            | "normalsize"
+            | "huge"
+            | "LARGE"
+            | "Huge"
+            | "rm"
+            | "hfill"
+            | "vfill"
+    )
+}
+
+fn babel_language(name: &str) -> Option<&'static str> {
+    match name {
+        "french" => Some("fr"),
+        "german" => Some("de-DE-1901"),
+        _ => None,
+    }
+}
+
+fn language_attr(language: &str) -> Attr {
+    Attr::new("", vec![], vec![("lang".into(), language.into())])
+}
+
+fn append_measurement_number(out: &mut Inlines, value: &str) {
+    let normalized = value.replace('-', "−");
+    if let Some((mantissa, exponent)) = value.split_once(['e', 'E'])
+        && mantissa.parse::<f64>().is_ok()
+        && let Ok(exponent) = exponent.parse::<i64>()
+    {
+        out.push_str(&mantissa.replace('-', "−"));
+        out.push_str("\u{a0}×\u{a0}10");
+        out.push(Inline::Superscript(vec![Inline::Str(
+            exponent.to_string().replace('-', "−"),
+        )]));
+    } else {
+        out.push_str(&normalized);
+    }
+}
+
+fn append_measurement_unit(out: &mut Inlines, tokens: &[Tok]) {
+    let mut per = false;
+    let mut exponent = None;
+    let mut unit = Text::new();
+    for tok in tokens {
+        if let Kind::Word(name) = &tok.kind {
+            let symbol = match name.as_str() {
+                "kilo" => {
+                    unit.push('k');
+                    continue;
+                }
+                "metre" | "meter" => "m",
+                "second" => "s",
+                "degreeCelsius" => "°C",
+                "per" => {
+                    per = true;
+                    continue;
+                }
+                "squared" => {
+                    exponent = Some(2);
+                    continue;
+                }
+                "cubed" => {
+                    exponent = Some(3);
+                    continue;
+                }
+                _ => tok.text.as_str(),
+            };
+            if per && !unit.is_empty() {
+                out.push_str(&unit);
+                out.push_str(NBSP);
+                unit.clear();
+            }
+            unit.push_str(symbol);
+        } else if !matches!(tok.kind, Kind::Space | Kind::Newline | Kind::Comment) {
+            unit.push_str(&tok.text);
+        }
+    }
+    out.push_str(&unit);
+    if let Some(power) = exponent.or(per.then_some(1)) {
+        let prefix = if per { "−" } else { "" };
+        out.push(Inline::Superscript(vec![Inline::Str(format!(
+            "{prefix}{power}"
+        ))]));
+    }
 }
 
 fn letter_symbol(name: &str) -> Option<&'static str> {
@@ -4268,6 +5489,24 @@ fn letter_symbol(name: &str) -> Option<&'static str> {
         "j" => "\u{237}",
         "textbackslash" => "\\",
         "copyright" | "textcopyright" => "\u{a9}",
+        "textregistered" => "®",
+        "textdegree" => "°",
+        "textasciitilde" => "~",
+        "textasciicircum" => "^",
+        "textless" => "<",
+        "textgreater" => ">",
+        "textquoteleft" => "‘",
+        "textquoteright" => "’",
+        "textquotedblleft" => "“",
+        "textquotedblright" => "”",
+        "guillemotleft" => "«",
+        "guillemotright" => "»",
+        "S" => "§",
+        "P" => "¶",
+        "pounds" => "£",
+        "euro" => "€",
+        "textbullet" => "•",
+        "slash" => "/",
         _ => return None,
     })
 }
@@ -4436,8 +5675,8 @@ fn argument_rule(name: &str) -> Option<ArgumentRule> {
         | "url" | "href" | "nolinkurl" | "hyperlink" | "hypertarget" | "hyperref" | "title"
         | "author" | "thanks" | "bibliography" | "addbibresource" | "input" | "include"
         | "newenvironment" | "newtheorem" | "theoremstyle" | "textcolor" | "colorbox"
-        | "foreignquote" | "SI" | "num" | "qty" | "ang" | "ensuremath" | "gls" | "ac"
-        | "parbox" | "graphicspath" => Some(ArgumentRule::Group),
+        | "foreignquote" | "SI" | "si" | "num" | "qty" | "ang" | "ensuremath" | "gls" | "Gls"
+        | "glspl" | "ac" | "parbox" | "graphicspath" => Some(ArgumentRule::Group),
         _ => None,
     }
 }
@@ -4517,6 +5756,8 @@ fn takes_options(name: &str) -> bool {
             | "foreignquote"
             | "ensuremath"
             | "gls"
+            | "Gls"
+            | "glspl"
             | "ac"
             | "graphicspath"
     )
@@ -4536,6 +5777,7 @@ fn is_definition(name: &str) -> bool {
             | "let"
             | "newenvironment"
             | "renewenvironment"
+            | "DeclareMathOperator"
     )
 }
 
@@ -4552,6 +5794,7 @@ fn is_tabular(name: &str) -> bool {
 pub(crate) const INLINE_ENVIRONMENTS: &[&str] = &[
     "math",
     "displaymath",
+    "subequations",
     "equation",
     "equation*",
     "align",
@@ -4571,6 +5814,11 @@ pub(crate) const INLINE_ENVIRONMENTS: &[&str] = &[
 /// The block environments that the reader knows. With `raw_tex`, each
 /// other environment is raw TeX.
 pub(crate) const BLOCK_ENVIRONMENTS: &[&str] = &[
+    "proof",
+    "alltt",
+    "sloppypar",
+    "subfigure",
+    "otherlanguage",
     "document",
     "abstract",
     "itemize",
@@ -4589,7 +5837,6 @@ pub(crate) const BLOCK_ENVIRONMENTS: &[&str] = &[
     "figure",
     "figure*",
     "table",
-    "table*",
     "tabular",
     "tabular*",
     "tabularx",
@@ -4660,6 +5907,42 @@ fn is_unknown_command(name: &str) -> bool {
             | "bf"
             | "bfseries"
             | "texttt"
+            | "tt"
+            | "ttfamily"
+            | "scshape"
+            | "textup"
+            | "textmd"
+            | "textnormal"
+            | "vbox"
+            | "nolinkurl"
+            | "hyperlink"
+            | "hyperref"
+            | "hypertarget"
+            | "textcolor"
+            | "colorbox"
+            | "gls"
+            | "Gls"
+            | "glspl"
+            | "ac"
+            | "foreignquote"
+            | "MakeUppercase"
+            | "MakeLowercase"
+            | "uppercase"
+            | "lowercase"
+            | "SI"
+            | "si"
+            | "qty"
+            | "ang"
+            | "num"
+            | "ensuremath"
+            | "footnotemark"
+            | "footnotetext"
+            | "t"
+            | "lstinline"
+            | "mintinline"
+            | "hskip"
+            | "vskip"
+            | "kern"
             | "mbox"
             | "hbox"
             | "LaTeX"
@@ -4701,7 +5984,9 @@ fn is_unknown_command(name: &str) -> bool {
             | "begin"
             | "end"
             | "item"
-    ) && letter_symbol(name).is_none()
+    ) && !is_size_or_fill(name)
+        && !is_block_only(name)
+        && letter_symbol(name).is_none()
         && citation_mode(name).is_none()
         && multi_citation_mode(name).is_none()
 }

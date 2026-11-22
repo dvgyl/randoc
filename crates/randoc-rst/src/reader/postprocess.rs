@@ -4,6 +4,7 @@ use randoc_ast::{Attr, Block, Inline, Meta, MetaValue, Pandoc, Row, Target};
 use randoc_core::shared::stringify;
 use randoc_core::{Error, LogMessage, Result, SourcePos};
 
+use super::inlines::words;
 use super::{Parser, Reference, TargetDef, attr, key, str_inline, too_large};
 
 #[derive(Default)]
@@ -16,6 +17,37 @@ fn reference_index(inline: &Inline) -> Option<usize> {
     match inline {
         Inline::Span(a, _) if a.has_class("\0rst-reference") => a.id.parse().ok(),
         _ => None,
+    }
+}
+
+fn is_footnote(label: &str) -> bool {
+    label == "*" || label.starts_with('#') || label.bytes().all(|b| b.is_ascii_digit())
+}
+
+fn pending_reference(reference: Reference, out: &mut Vec<Inline>) -> (Vec<Inline>, String) {
+    match reference {
+        Reference::Link(_, label) => {
+            let url = format!("##REF##{}", stringify(&label));
+            (label, url)
+        }
+        Reference::Anonymous(label) => (label, "##REF##_".into()),
+        Reference::Note(label) if is_footnote(&label) => {
+            if matches!(out.last(), Some(Inline::Space)) {
+                out.pop();
+            }
+            let url = format!("##NOTE##{label}");
+            (vec![str_inline(label)], url)
+        }
+        Reference::Note(label) => {
+            let label = format!("[{label}]");
+            let url = format!("##REF##{label}");
+            (vec![str_inline(label)], url)
+        }
+        Reference::Substitution(name) => {
+            let label = words(&format!("|{name}|"), false);
+            let url = format!("##SUBST##{}", stringify(&label));
+            (label, url)
+        }
     }
 }
 
@@ -175,6 +207,15 @@ impl Resolver<'_, '_> {
     }
 
     fn inlines(&mut self, inlines: &mut Vec<Inline>, depth: usize) -> Result<()> {
+        self.resolve_inlines(inlines, depth, true)
+    }
+
+    fn resolve_inlines(
+        &mut self,
+        inlines: &mut Vec<Inline>,
+        depth: usize,
+        resolve_references: bool,
+    ) -> Result<()> {
         self.parser.check_depth(depth)?;
         let mut out = Vec::with_capacity(inlines.len());
         for mut inline in std::mem::take(inlines) {
@@ -184,6 +225,12 @@ impl Resolver<'_, '_> {
                 else {
                     continue;
                 };
+                if !resolve_references {
+                    let (label, url) = pending_reference(reference, &mut out);
+                    self.charge(url.len())?;
+                    out.push(Inline::Link(Attr::default(), label, Target::new(url, "")));
+                    continue;
+                }
                 match reference {
                     Reference::Link(key, label) => {
                         let url = self.url(Some(&key), None, &pos);
@@ -212,10 +259,7 @@ impl Resolver<'_, '_> {
                                 vec![str_inline(format!("[{label}]"))],
                                 Target::new(format!("#{id}"), ""),
                             );
-                        } else if label == "*"
-                            || label.starts_with('#')
-                            || label.bytes().all(|b| b.is_ascii_digit())
-                        {
+                        } else if is_footnote(&label) {
                             if matches!(out.last(), Some(Inline::Space)) {
                                 out.pop();
                             }
@@ -293,7 +337,9 @@ impl Resolver<'_, '_> {
                     | Inline::Quoted(_, ils)
                     | Inline::Span(_, ils)
                     | Inline::Image(_, ils, _)
-                    | Inline::Link(_, ils, _) => self.inlines(ils, depth + 1)?,
+                    | Inline::Link(_, ils, _) => {
+                        self.resolve_inlines(ils, depth + 1, resolve_references)?
+                    }
                     _ => {}
                 }
             }
@@ -326,7 +372,15 @@ impl Resolver<'_, '_> {
             )])]));
         }
         let content = if let Some(mut blocks) = self.parser.substitutions.get(&key).cloned() {
-            self.blocks(&mut blocks, depth)?;
+            if let [Block::Para(inlines) | Block::Plain(inlines)] = blocks.as_mut_slice()
+                && !matches!(inlines.as_slice(), [inline] if reference_index(inline).is_some())
+            {
+                // An inline replacement resolves a reference only when it is the entire replacement.
+                self.charge(1)?;
+                self.resolve_inlines(inlines, depth, false)?;
+            } else {
+                self.blocks(&mut blocks, depth)?;
+            }
             Some(blocks)
         } else {
             None
@@ -347,12 +401,7 @@ impl Resolver<'_, '_> {
                         .report(LogMessage::CircularReference(key, pos.clone()));
                     return String::new();
                 }
-                target = self.parser.targets.get(&key).cloned().or_else(|| {
-                    self.parser
-                        .section_targets
-                        .get(&key)
-                        .map(|id| TargetDef::Url(format!("#{id}")))
-                });
+                target = self.parser.targets.get(&key).cloned();
             }
             match target.take() {
                 Some(TargetDef::Indirect(key)) => next = Some(key),

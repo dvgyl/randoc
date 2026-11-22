@@ -96,7 +96,7 @@ fn closing(text: &str, start: usize, marker: &str) -> Option<usize> {
     None
 }
 
-fn words(text: &str, east_asian: bool) -> Vec<Inline> {
+pub(super) fn words(text: &str, east_asian: bool) -> Vec<Inline> {
     let mut out = Vec::new();
     let mut word = String::new();
     let mut chars = text.chars().peekable();
@@ -221,16 +221,13 @@ fn internal_name(text: &str) -> Option<&str> {
         if !name_char(c) {
             break;
         }
-        if c == '_' && after(first(&text[i + 1..])) {
-            if end == i {
-                return Some(&text[..end]);
-            }
-            separator = true;
-        } else if c.is_alphanumeric() {
-            if separator {
-                return None;
-            }
+        if c.is_alphanumeric() {
             end = i + c.len_utf8();
+            separator = false;
+        } else if separator {
+            break;
+        } else {
+            separator = true;
         }
     }
     Some(&text[..end])
@@ -632,6 +629,14 @@ mod tests {
             let long = name_steps(input.repeat(16_384));
             assert!(short > 0 && long <= short * 5, "{short} -> {long}");
         }
+    }
+
+    #[test]
+    fn internal_target_names_with_a_failed_suffix_need_linear_steps() {
+        let steps = |n| name_steps(format!("{}_-b", "_a-".repeat(n)));
+        let short = steps(4_096);
+        let long = steps(16_384);
+        assert!(short > 0 && long <= short * 5, "{short} -> {long}");
     }
 
     #[test]

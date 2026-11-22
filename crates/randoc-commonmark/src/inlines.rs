@@ -15,6 +15,7 @@ use crate::scan::{
     scan_html_tag, scan_link_destination, scan_link_label, scan_link_title, scan_uri_autolink,
     skip_spnl, unescape, unescape_destination,
 };
+use crate::sourcepos::{InlinePos, InlineSource};
 use randoc_core::shared::emoji_from_alias;
 
 /// A link reference definition.
@@ -132,6 +133,7 @@ struct Node {
     /// The place of the node in the source order. An element has the place of its opener,
     /// as `chunkPos` in `Commonmark/Inlines.hs`.
     pos: usize,
+    source: std::ops::Range<usize>,
 }
 
 /// A run of one delimiter character (`Delim` in `Commonmark/Inlines.hs`).
@@ -223,6 +225,8 @@ impl Runs {
 }
 
 struct Parser<'a, 'e> {
+    positions: Option<InlinePos<'a>>,
+    token_start: usize,
     s: &'a [u8],
     text: &'a str,
     pos: usize,
@@ -255,9 +259,19 @@ struct Parser<'a, 'e> {
 }
 
 /// Parses inline content. Leading and trailing white space is removed first.
-pub(crate) fn parse_inlines(text: &str, env: &Env<'_>) -> Vec<Inline> {
+pub(crate) fn parse_inlines(
+    text: &str,
+    env: &Env<'_>,
+    source: Option<InlineSource<'_>>,
+) -> Vec<Inline> {
     let trimmed = text.trim_matches(|c| c == ' ' || c == '\t' || c == '\n' || c == '\r');
+    let positions = source.map(|source| {
+        let leading = text.len() - text.trim_start_matches([' ', '\t', '\n', '\r']).len();
+        InlinePos::new(text, source, leading)
+    });
     let mut parser = Parser {
+        positions,
+        token_start: 0,
         s: trimmed.as_bytes(),
         text: trimmed,
         pos: 0,
@@ -344,6 +358,7 @@ impl<'a, 'e> Parser<'a, 'e> {
             prev: self.tail,
             next: None,
             pos: index,
+            source: self.token_start..self.pos,
         });
         if let Some(tail) = self.tail
             && let Some(node) = self.nodes.get_mut(tail)
@@ -358,7 +373,8 @@ impl<'a, 'e> Parser<'a, 'e> {
     }
 
     fn append_text(&mut self, text: &str) {
-        if let Some(tail) = self.tail
+        if self.positions.is_none()
+            && let Some(tail) = self.tail
             && let Some(Node {
                 kind: Kind::Text(existing),
                 ..
@@ -413,6 +429,7 @@ impl<'a, 'e> Parser<'a, 'e> {
             prev: Some(after),
             next,
             pos,
+            source: 0..0,
         });
         if let Some(node) = self.nodes.get_mut(after) {
             node.next = Some(index);
@@ -465,6 +482,24 @@ impl<'a, 'e> Parser<'a, 'e> {
             );
             match attrs {
                 // An image opener that stays text is the token `!` and the token `[`.
+                Some(pairs) if bang && self.positions.is_some() => {
+                    let node = &mut self.nodes[index];
+                    node.kind = Kind::Removed;
+                    let start = node.source.start;
+                    let positions = self.positions.as_ref();
+                    for (offset, symbol) in [(start, "!"), (start + 1, "[")] {
+                        let pairs_pos = vec![(
+                            "data-pos".into(),
+                            positions.map_or_else(String::new, |p| p.render(offset..offset + 1)),
+                        )];
+                        let inline = add_inline_attrs(&pairs_pos, Inline::Str(symbol.into()));
+                        out.push(if offset == start {
+                            inline
+                        } else {
+                            add_inline_attrs(&pairs, inline)
+                        });
+                    }
+                }
                 Some(pairs) if bang => {
                     if let Some(node) = self.nodes.get_mut(index) {
                         node.kind = Kind::Removed;
@@ -490,6 +525,9 @@ impl<'a, 'e> Parser<'a, 'e> {
 
     /// Splits the last token of a text node into its own node, so that attributes apply to it only.
     fn split_last_token(&mut self) {
+        if self.positions.is_some() {
+            return;
+        }
         let Some(tail) = self.tail else { return };
         let Some(Node {
             kind: Kind::Text(text),
@@ -519,7 +557,47 @@ impl<'a, 'e> Parser<'a, 'e> {
         let Some(node) = self.nodes.get_mut(index) else {
             return;
         };
-        match std::mem::replace(&mut node.kind, Kind::Removed) {
+        let kind = std::mem::replace(&mut node.kind, Kind::Removed);
+        if let Some(positions) = &self.positions {
+            let mut range = node.source.clone();
+            if matches!(kind, Kind::Inline(Inline::LineBreak | Inline::SoftBreak, _))
+                && self.text.as_bytes().get(range.end.saturating_sub(1)) == Some(&b'\n')
+            {
+                range.end -= 1;
+            }
+            let position = ("data-pos".to_owned(), positions.render(range));
+            match kind {
+                Kind::Bracket("![") => {
+                    let start = node.source.start;
+                    for (offset, symbol) in [(start, "!"), (start + 1, "[")] {
+                        let pairs = vec![("data-pos".into(), positions.render(offset..offset + 1))];
+                        out.push(add_inline_attrs(&pairs, Inline::Str(symbol.into())));
+                    }
+                }
+                Kind::Inline(Inline::Link(mut attr, text, target), _) => {
+                    attr.attributes.push(position);
+                    out.push(Inline::Link(attr, text, target));
+                }
+                Kind::Inline(Inline::Image(mut attr, text, target), _) => {
+                    attr.attributes.push(position);
+                    out.push(Inline::Image(attr, text, target));
+                }
+                kind => {
+                    let mut inlines = Inlines::new();
+                    Self::emit_kind(kind, &mut inlines);
+                    let pairs = vec![position];
+                    for inline in inlines.0 {
+                        out.push(add_inline_attrs(&pairs, inline));
+                    }
+                }
+            }
+        } else {
+            Self::emit_kind(kind, out);
+        }
+    }
+
+    fn emit_kind(kind: Kind, out: &mut Inlines) {
+        match kind {
             Kind::Text(text) => out.text(&text),
             Kind::Bracket(text) => out.text(text),
             Kind::Token(text) => out.text(&text),
@@ -547,10 +625,16 @@ impl<'a, 'e> Parser<'a, 'e> {
     fn run(&mut self) {
         while self.pos < self.s.len() {
             crate::steps::add(1);
+            self.token_start = self.pos;
             if !self.parse_one() {
                 let start = self.pos;
                 self.pos += self.char_at(self.pos).map_or(1, char::len_utf8);
-                while self.pos < self.s.len() && !self.is_special(self.pos) {
+                let word = self.char_at(start).is_some_and(is_word_char);
+                while self.pos < self.s.len()
+                    && !self.is_special(self.pos)
+                    && (self.positions.is_none()
+                        || word && self.char_at(self.pos).is_some_and(is_word_char))
+                {
                     crate::steps::add(1);
                     self.pos += self.char_at(self.pos).map_or(1, char::len_utf8);
                 }
@@ -590,9 +674,9 @@ impl<'a, 'e> Parser<'a, 'e> {
                 self.parse_newline();
                 true
             }
-            b' ' => {
+            b' ' | b'\t' if b == b' ' || self.positions.is_some() => {
                 let start = self.pos;
-                while self.peek() == b' ' {
+                while self.peek() == b' ' || self.positions.is_some() && self.peek() == b'\t' {
                     self.pos += 1;
                 }
                 if self.peek() == b'\n' {
@@ -627,9 +711,9 @@ impl<'a, 'e> Parser<'a, 'e> {
                     && !(wiki && self.byte(self.pos + 2) == b'[')
                     && !(self.config().footnotes && self.note_label_at(self.pos + 1).is_some())
                 {
-                    let node = self.append(Kind::Bracket("!["));
-                    self.push_bracket(node, true, self.pos + 2);
                     self.pos += 2;
+                    let node = self.append(Kind::Bracket("!["));
+                    self.push_bracket(node, true, self.pos);
                 } else {
                     self.pos += 1;
                     self.append_text("!");
@@ -1182,9 +1266,9 @@ impl<'a, 'e> Parser<'a, 'e> {
         if self.config().footnotes && self.byte(self.pos + 1) == b'^' && self.parse_note_ref() {
             return true;
         }
-        let node = self.append(Kind::Bracket("["));
-        self.push_bracket(node, false, self.pos + 1);
         self.pos += 1;
+        let node = self.append(Kind::Bracket("["));
+        self.push_bracket(node, false, self.pos);
         true
     }
 
@@ -1365,8 +1449,11 @@ impl<'a, 'e> Parser<'a, 'e> {
                 if self.bracket_bottom.is_none_or(|bottom| opener_at <= bottom) {
                     self.bracket_bottom = Some(after);
                     if self.s.get(after..after + 2) == Some(b"[]") {
-                        self.pos = after + 2;
+                        self.token_start = after;
+                        self.pos = after + 1;
                         self.append_text("[");
+                        self.token_start = self.pos;
+                        self.pos += 1;
                         self.append(Kind::Token("]".into()));
                     }
                 }
@@ -1409,10 +1496,18 @@ impl<'a, 'e> Parser<'a, 'e> {
         let (children, depth) = self.take_between(opener.node, None);
         let node = opener.node;
         let inline = make(children);
+        let start = self.nodes[node].source.start + usize::from(bang);
+        let end = if matches!(inline, Inline::Span(..)) {
+            self.pos
+        } else {
+            self.bracket_end.unwrap_or(self.pos)
+        };
         let index = self.insert_after(node, Kind::Inline(inline, depth + 1));
+        self.nodes[index].source = start..end;
         if bang {
             if let Some(n) = self.nodes.get_mut(node) {
                 n.kind = Kind::Token("!".into());
+                n.source.end = start;
             }
         } else {
             self.unlink(node);
@@ -1545,7 +1640,15 @@ impl<'a, 'e> Parser<'a, 'e> {
                     Kind::Many(out.into_vec(), depth)
                 }
             };
-            self.insert_after(l, kind);
+            let start = self.nodes[l].source.start;
+            let end = self.nodes[r].source.start;
+            let index = self.insert_after(l, kind);
+            if self.positions.is_some() {
+                let start = start + open.count - used;
+                self.nodes[index].source = start..end + used;
+                self.nodes[l].source.end = start;
+                self.nodes[r].source.end = end + close.count - used;
+            }
             if open.count == used {
                 self.unlink(l);
             }

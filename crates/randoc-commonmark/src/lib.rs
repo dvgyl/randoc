@@ -16,6 +16,7 @@ mod meta;
 mod rebase;
 mod scan;
 mod schemes;
+mod sourcepos;
 
 use std::sync::Arc;
 
@@ -64,6 +65,8 @@ pub fn reader(format: &str) -> Option<Reader> {
 #[derive(Debug, Clone)]
 pub(crate) struct Config {
     pub(crate) smart: bool,
+    pub(crate) sourcepos: bool,
+    pub(crate) line_offset: usize,
     pub(crate) strikeout: bool,
     pub(crate) subscript: bool,
     pub(crate) superscript: bool,
@@ -134,6 +137,8 @@ impl Config {
         let on = |e| options.extensions.contains(e);
         Config {
             smart: on(Extension::Smart),
+            sourcepos: on(Extension::Sourcepos),
+            line_offset: 0,
             strikeout: on(Extension::Strikeout),
             subscript: on(Extension::Subscript),
             superscript: on(Extension::Superscript),
@@ -182,7 +187,10 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
         }
     }
     // The `commonmark` tokenizer normalizes the input to Unicode NFC.
-    let joined = sources.concat();
+    let mut joined = sources.concat();
+    if config.sourcepos && joined.contains('\r') {
+        joined = joined.replace("\r\n", "\n").replace('\r', "\n");
+    }
     let text = expand_tabs(&randoc_core::shared::nfc(&joined), options.tab_stop);
     let mut meta = Meta::default();
     let mut body = text.as_str();
@@ -193,6 +201,7 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
         let value_config = Config {
             sources: Vec::new(),
             strip_comments: false,
+            sourcepos: false,
             ..config.clone()
         };
         // The `commonmark` tokenizer normalizes each decoded metadata string to NFC too.
@@ -211,6 +220,7 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
         for (start, _) in &mut config.sources {
             *start = start.saturating_sub(lines).max(1);
         }
+        config.line_offset = lines;
         body = rest;
     }
     let mut body = body.to_owned();

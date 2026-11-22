@@ -387,6 +387,7 @@ fn parse_short<'a>(
     rest: &mut impl Iterator<Item = &'a String>,
     parsed: &mut Parsed,
 ) {
+    let mut split = false;
     for (index, c) in cluster.char_indices() {
         let tail = &cluster[index + c.len_utf8()..];
         let Some(def) = find_short(c) else {
@@ -394,10 +395,13 @@ fn parse_short<'a>(
             continue;
         };
         match def.arg {
-            Arg::None => parsed.actions.push(Action {
-                opt: def.id,
-                value: None,
-            }),
+            Arg::None => {
+                split = false;
+                parsed.actions.push(Action {
+                    opt: def.id,
+                    value: None,
+                });
+            }
             Arg::Required(placeholder) => {
                 let value = if tail.is_empty() {
                     match rest.next() {
@@ -417,13 +421,11 @@ fn parse_short<'a>(
                 return;
             }
             Arg::Optional(_) => {
-                // Pandoc takes the rest of the cluster as the value only when
-                // it does not start with a known option, or when the option is
-                // the first of the cluster and the rest is a Boolean word.
-                let is_word =
-                    index == 0 && matches!(tail.to_ascii_lowercase().as_str(), "true" | "false");
+                let boolean =
+                    tail.eq_ignore_ascii_case("true") || tail.eq_ignore_ascii_case("false");
                 let starts_option = tail.chars().next().is_some_and(|n| find_short(n).is_some());
-                if tail.is_empty() || (starts_option && !is_word) {
+                split |= index == 0 && starts_option && !boolean;
+                if tail.is_empty() || split && starts_option {
                     parsed.actions.push(Action {
                         opt: def.id,
                         value: None,
@@ -532,6 +534,100 @@ mod tests {
             ]
         );
         assert_eq!(parsed.positional, ["x"]);
+
+        use Opt::{Citeproc, Filter, From, Incremental, NumberSections, PreserveTabs, Standalone};
+        for (cluster, expected) in [
+            (
+                "-Csfalse",
+                &[(Citeproc, None), (Standalone, Some("false"))][..],
+            ),
+            (
+                "-Cifalse",
+                &[(Citeproc, None), (Incremental, Some("false"))],
+            ),
+            (
+                "-Cpfalse",
+                &[(Citeproc, None), (PreserveTabs, Some("false"))],
+            ),
+            (
+                "-CNfalse",
+                &[(Citeproc, None), (NumberSections, Some("false"))],
+            ),
+            ("-Csfoo", &[(Citeproc, None), (Standalone, Some("foo"))]),
+            ("-Csfjson", &[(Citeproc, None), (Standalone, Some("fjson"))]),
+            (
+                "-CNsfalse",
+                &[(Citeproc, None), (NumberSections, Some("sfalse"))],
+            ),
+            ("-sFALSE", &[(Standalone, Some("FALSE"))]),
+            (
+                "-sssx",
+                &[
+                    (Standalone, None),
+                    (Standalone, None),
+                    (Standalone, Some("x")),
+                ],
+            ),
+            (
+                "-NsFALSE",
+                &[
+                    (NumberSections, None),
+                    (Standalone, None),
+                    (Filter, Some("ALSE")),
+                ],
+            ),
+            ("-sfjson", &[(Standalone, None), (From, Some("json"))]),
+            (
+                "-Nsfalse",
+                &[
+                    (NumberSections, None),
+                    (Standalone, None),
+                    (From, Some("alse")),
+                ],
+            ),
+            (
+                "-Nsifalse",
+                &[
+                    (NumberSections, None),
+                    (Standalone, None),
+                    (Incremental, None),
+                    (From, Some("alse")),
+                ],
+            ),
+            (
+                "-NsCifalse",
+                &[
+                    (NumberSections, None),
+                    (Standalone, None),
+                    (Citeproc, None),
+                    (Incremental, Some("false")),
+                ],
+            ),
+            (
+                "-NCsfalse",
+                &[
+                    (NumberSections, None),
+                    (Citeproc, None),
+                    (Standalone, Some("false")),
+                ],
+            ),
+            (
+                "-NiN",
+                &[
+                    (NumberSections, None),
+                    (Incremental, None),
+                    (NumberSections, None),
+                ],
+            ),
+        ] {
+            let parsed = parse(&args(&[cluster]));
+            let values: Vec<_> = parsed
+                .actions
+                .iter()
+                .map(|a| (a.opt, a.value.as_deref()))
+                .collect();
+            assert_eq!(values, expected, "{cluster}");
+        }
     }
 
     #[test]

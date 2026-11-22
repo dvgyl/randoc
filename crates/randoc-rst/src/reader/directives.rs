@@ -8,7 +8,7 @@ use randoc_core::{Error, LogMessage, Result, SourcePos};
 
 use super::blocks::{indented, joined, plain_first, skip_blanks};
 use super::{
-    IncludeSource, Line, Options, Parser, Role, TargetDef, expand_tabs, key, lines, str_inline,
+    IncludeFrame, Line, Options, Parser, Role, TargetDef, expand_tabs, key, lines, str_inline,
     too_large,
 };
 
@@ -390,9 +390,9 @@ impl Parser<'_> {
             }
             let pos = SourcePos::new(
                 if line.column > 1 {
-                    "_chunk"
+                    format!("{}_chunk", line.source)
                 } else {
-                    line.source
+                    line.source.to_owned()
                 },
                 next.unwrap_or_else(|| last.number.saturating_add(2)),
                 1,
@@ -605,12 +605,12 @@ impl Parser<'_> {
         pos: SourcePos,
         depth: usize,
     ) -> Result<Vec<Block>> {
-        let relative_to = self
-            .include_dirs
-            .last()
-            .map(|(dir, _)| dir.clone())
-            .or_else(|| Path::new(source).parent().map(Path::to_path_buf));
-        let file = self.load(arg, relative_to.as_deref())?;
+        // Pandoc checks the include names as written before it loads the file.
+        if self.include_stack.iter().any(|frame| frame.name == arg) {
+            return Err(include_loop(&pos.source, &pos));
+        }
+        let relative_to = Path::new(source).parent().unwrap_or_else(|| Path::new(""));
+        let file = self.load(arg, Some(relative_to))?;
         if file.is_none() {
             self.context
                 .report(LogMessage::CouldNotLoadIncludeFile(arg.into(), pos.clone()));
@@ -652,26 +652,22 @@ impl Parser<'_> {
                 })
                 .collect();
             Ok(vec![code(language, &code_fields, text)])
-        } else if let Some((path, _)) = file {
-            let path_key = normalize_path(&self.working_dir.join(&path));
-            if let Some(active) = self.includes.get(&path_key) {
-                let pos = match active {
-                    IncludeSource::Input => self.include_dirs.first().map_or(&pos, |(_, pos)| pos),
-                    IncludeSource::Nested => &pos,
-                };
-                return Err(Error::Parse(format!(
-                    "Include file loop at {} (line {}, column {})",
-                    randoc_ast::json::show_string(arg),
-                    pos.line,
-                    pos.column
-                )));
+        } else if let Some((path_key, _)) = file {
+            // A cycle through the input file reports the position of its first include.
+            let (root, root_pos) = self
+                .include_stack
+                .first()
+                .map_or((source, &pos), |frame| (frame.source.as_str(), &frame.pos));
+            if !matches!(root, "" | "-") && path_key == normalize_path(&self.working_dir.join(root))
+            {
+                let suffix = if pos.source == source { "" } else { "_chunk" };
+                return Err(include_loop(&format!("{arg}{suffix}"), root_pos));
             }
-            self.includes
-                .insert(path_key.clone(), IncludeSource::Nested);
-            self.include_dirs.push((
-                path.parent().unwrap_or_else(|| Path::new("")).to_path_buf(),
+            self.include_stack.push(IncludeFrame {
+                name: arg.into(),
+                source: source.into(),
                 pos,
-            ));
+            });
             let text = expand_tabs(&text, self.options.tab_stop);
             let lines: Vec<_> = lines(
                 &text,
@@ -680,8 +676,7 @@ impl Parser<'_> {
             )
             .collect();
             let result = self.blocks(&lines, depth);
-            self.include_dirs.pop();
-            self.includes.remove(&path_key);
+            self.include_stack.pop();
             result
         } else {
             Ok(Vec::new())
@@ -705,9 +700,14 @@ impl Parser<'_> {
         let max = usize::try_from(remaining).unwrap_or(usize::MAX);
         let name = Path::new(name);
         let resource_path = self.context.state.resource_path.clone();
+        let fallback = if relative_to.is_none() {
+            resource_path.as_slice()
+        } else {
+            &[]
+        };
         let dirs = relative_to
             .into_iter()
-            .chain(resource_path.iter().map(Path::new));
+            .chain(fallback.iter().map(Path::new));
         let paths = name
             .is_absolute()
             .then(|| name.to_path_buf())
@@ -718,7 +718,8 @@ impl Parser<'_> {
             );
         for path in paths {
             let path = normalize_path(&path);
-            let (text, size) = if let Some((text, size)) = self.file_cache.get(&path) {
+            let cache_key = normalize_path(&self.working_dir.join(&path));
+            let (text, size) = if let Some((text, size)) = self.file_cache.get(&cache_key) {
                 (Rc::clone(text), *size)
             } else {
                 let bytes = match self
@@ -739,7 +740,7 @@ impl Parser<'_> {
                 let cached_bytes = self.cached_bytes.saturating_add(text.len());
                 if self.file_cache.len() < 256 && cached_bytes <= 8 * 1024 * 1024 {
                     self.file_cache
-                        .insert(path.clone(), (Rc::clone(&text), bytes.len()));
+                        .insert(cache_key.clone(), (Rc::clone(&text), bytes.len()));
                     self.cached_bytes = cached_bytes;
                 }
                 (text, bytes.len())
@@ -748,7 +749,7 @@ impl Parser<'_> {
                 return Err(too_large());
             }
             self.bytes = self.bytes.saturating_add(size as u64);
-            return Ok(Some((path, text)));
+            return Ok(Some((cache_key, text)));
         }
         Ok(None)
     }
@@ -782,7 +783,16 @@ impl Parser<'_> {
     }
 }
 
-pub(super) fn normalize_path(path: &Path) -> PathBuf {
+fn include_loop(source: &str, pos: &SourcePos) -> Error {
+    Error::Parse(format!(
+        "Include file loop at {} (line {}, column {})",
+        randoc_ast::json::show_string(source),
+        pos.line,
+        pos.column
+    ))
+}
+
+fn normalize_path(path: &Path) -> PathBuf {
     let mut out = PathBuf::new();
     for part in path.components() {
         match part {

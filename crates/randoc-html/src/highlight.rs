@@ -113,7 +113,16 @@ impl Html<'_> {
         div.extend(extra.iter().cloned());
         let mut doc = self.open("div", &div);
         doc += self.open("pre", &block.pre);
-        doc += lit(&format!("{}</pre></div>", block.code));
+        // Wrapping counts the closing tags. The highlighted code does not
+        // contribute to the width of the opening tag.
+        const CLOSE: &str = "</pre></div>";
+        let code = format!("{}{CLOSE}", block.code);
+        let (first, rest) = code.split_once('\n').unwrap_or((&code, ""));
+        doc += lit(CLOSE).map_text(&|_| first.to_owned());
+        if !rest.is_empty() {
+            doc += lit("\n");
+            doc += lit(rest);
+        }
         Some(doc)
     }
 
@@ -134,7 +143,7 @@ impl Html<'_> {
 #[cfg(test)]
 mod tests {
     use randoc_ast::{Block, Inline, Pandoc};
-    use randoc_core::{Context, LoadedFile, PureHost, WriterOptions};
+    use randoc_core::{Context, LoadedFile, PureHost, WrapOption, WriterOptions};
     use randoc_templates::Template;
 
     use crate::Version;
@@ -202,6 +211,37 @@ mod tests {
         let blocks = vec![code_block("", &["rust"], "fn x")];
         let html = write(&doc(blocks), &options, &mut Context::pure(), Version::Html5).unwrap();
         assert_eq!(html, "<pre class=\"rust\"><code>fn x</code></pre>");
+    }
+
+    #[test]
+    fn highlighted_pre_wraps_at_the_oracle_column() {
+        let code = "define(`greeting', `Hello, $1!')dnl\ngreeting(`world')";
+        for (columns, id_length, wraps) in [
+            (48, 3, true),
+            (72, 3, false),
+            (72, 4, true),
+            (100, 31, false),
+            (100, 32, true),
+        ] {
+            let document = doc(vec![code_block(&"a".repeat(id_length), &["m4"], code)]);
+            for mode in [
+                WrapOption::WrapAuto,
+                WrapOption::WrapNone,
+                WrapOption::WrapPreserve,
+            ] {
+                let mut options = WriterOptions::default();
+                options.columns = columns;
+                options.wrap_text = mode;
+                let html =
+                    write(&document, &options, &mut Context::pure(), Version::Html5).unwrap();
+                let gap = if wraps && mode == WrapOption::WrapAuto {
+                    "\n"
+                } else {
+                    " "
+                };
+                assert!(html.contains(&format!("<pre{gap}class=\"sourceCode m4\"><code")));
+            }
+        }
     }
 
     #[test]

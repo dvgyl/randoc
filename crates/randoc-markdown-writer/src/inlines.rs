@@ -10,6 +10,17 @@ use randoc_core::shared::stringify;
 
 use crate::{LinkRef, Variant, W};
 
+enum SpanStyle {
+    Underline,
+    SmallCaps,
+}
+
+enum SpanForm {
+    Span(&'static str),
+    Delimited(&'static str, &'static str),
+    Upper,
+}
+
 /// Returns `true` when the inlines after a shortcut reference `[text]` would
 /// change its meaning: a link, a citation or a bracket text next to it, or a
 /// parenthesis or a colon right after it.
@@ -244,7 +255,7 @@ impl W<'_> {
         if self.in_heading {
             return literal(if self.in_script { "\\ " } else { " " });
         }
-        if self.plain() {
+        if self.plain() || self.has(Extension::HardLineBreaks) {
             return cr();
         }
         if self.variant == Variant::Commonmark || self.has(Extension::EscapedLineBreaks) {
@@ -292,28 +303,9 @@ impl W<'_> {
             }
             Inline::Superscript(content) => self.script(content, true)?,
             Inline::Subscript(content) => self.script(content, false)?,
-            Inline::SmallCaps(content) => {
-                if plain {
-                    let outer = self.upper;
-                    self.upper = true;
-                    let inner = self.inline_list(content, false);
-                    self.upper = outer;
-                    inner?
-                } else {
-                    let attr = Attr::new("", vec![Text::from("smallcaps")], Vec::new());
-                    self.span(&attr, content)?
-                }
-            }
+            Inline::SmallCaps(content) => self.styled_span(SpanStyle::SmallCaps, content)?,
             Inline::Underline(content) if content.is_empty() => empty(),
-            Inline::Underline(content) => {
-                if !plain && self.has(Extension::BracketedSpans) {
-                    self.delimited(content, "[", "]{.underline}")?
-                } else if !plain && self.has(Extension::RawHtml) {
-                    self.delimited(content, "<u>", "</u>")?
-                } else {
-                    self.delimited(content, "", "")?
-                }
-            }
+            Inline::Underline(content) => self.styled_span(SpanStyle::Underline, content)?,
             Inline::Quoted(kind, content) => {
                 let inner = self.inline_list(content, false)?;
                 let ascii = self.has(Extension::Smart);
@@ -430,7 +422,7 @@ impl W<'_> {
             Inline::Underline(inner)
                 if self.plain()
                     || self.has(Extension::BracketedSpans)
-                    || !self.has(Extension::RawHtml) =>
+                    || !(self.has(Extension::NativeSpans) || self.has(Extension::RawHtml)) =>
             {
                 Some(inner)
             }
@@ -685,10 +677,12 @@ impl W<'_> {
                 empty()
             };
         }
-        let markdown = format.starts_with("markdown")
-            || matches!(format, "commonmark" | "gfm" | "commonmark_x")
-                && self.variant == Variant::Commonmark;
-        if markdown {
+        let own = if self.variant == Variant::Commonmark {
+            matches!(format, "markdown" | "commonmark" | "gfm" | "commonmark_x")
+        } else {
+            format.starts_with("markdown")
+        };
+        if own {
             return literal(text);
         }
         if self.has(Extension::RawAttribute) {
@@ -1019,6 +1013,34 @@ impl W<'_> {
         Ok(self.image_doc(attr, inner, target))
     }
 
+    fn styled_span(&mut self, style: SpanStyle, content: &[Inline]) -> Result<Doc> {
+        let native = self.has(Extension::NativeSpans);
+        let raw = self.has(Extension::RawHtml);
+        let bracketed = self.has(Extension::BracketedSpans);
+        let form = match style {
+            SpanStyle::Underline if self.plain() => SpanForm::Delimited("", ""),
+            SpanStyle::Underline if bracketed => SpanForm::Delimited("[", "]{.underline}"),
+            SpanStyle::Underline if native => SpanForm::Span("underline"),
+            SpanStyle::Underline if raw => SpanForm::Delimited("<u>", "</u>"),
+            SpanStyle::Underline => SpanForm::Delimited("*", "*"),
+            SpanStyle::SmallCaps if !self.plain() && (native || raw) => SpanForm::Span("smallcaps"),
+            SpanStyle::SmallCaps => SpanForm::Upper,
+        };
+        match form {
+            SpanForm::Span(class) => {
+                let attr = Attr::new("", vec![class.into()], Vec::new());
+                self.span(&attr, content)
+            }
+            SpanForm::Delimited(open, close) => self.delimited(content, open, close),
+            SpanForm::Upper => {
+                let outer = std::mem::replace(&mut self.upper, true);
+                let inner = self.inline_list(content, false);
+                self.upper = outer;
+                inner
+            }
+        }
+    }
+
     pub(crate) fn span(&mut self, attr: &Attr, content: &[Inline]) -> Result<Doc> {
         if self.plain() {
             return self.inline_list(content, false);
@@ -1030,6 +1052,14 @@ impl W<'_> {
                 return Ok(literal(format!(":{name}:")));
             }
             return self.inline_list(content, false);
+        }
+        if self.has(Extension::Mark)
+            && attr.id.is_empty()
+            && attr.attributes.is_empty()
+            && attr.classes.as_slice() == ["mark"]
+        {
+            let inner = self.inline_list(content, false)?;
+            return Ok(literal("==") + inner + literal("=="));
         }
         if attr.is_empty() {
             return self.inline_list(content, false);

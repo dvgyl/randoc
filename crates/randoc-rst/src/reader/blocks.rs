@@ -5,7 +5,7 @@ use randoc_core::shared::auto_identifier;
 use randoc_core::{Extension, Result};
 
 use super::directives::field_line;
-use super::{Line, Parser, attr, key};
+use super::{Line, Parser, TargetDef, attr, key};
 
 pub(super) fn skip_blanks(input: &[Line<'_>], mut i: usize) -> usize {
     while input.get(i).is_some_and(|line| line.blank()) {
@@ -258,7 +258,8 @@ impl Parser<'_> {
                 } else {
                     String::new()
                 };
-                self.section_targets.insert(key(title.text), auto.clone());
+                self.targets
+                    .insert(key(title.text), TargetDef::Url(format!("#{auto}")));
                 let id = targets.pop().unwrap_or(auto);
                 for earlier in targets.drain(..) {
                     label.push(Inline::Span(attr(earlier, &[]), Vec::new()));

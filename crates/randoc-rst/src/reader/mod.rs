@@ -105,9 +105,10 @@ struct Role {
     fields: Options,
 }
 
-enum IncludeSource {
-    Input,
-    Nested,
+struct IncludeFrame {
+    name: String,
+    source: String,
+    pos: SourcePos,
 }
 
 struct Parser<'a> {
@@ -116,7 +117,6 @@ struct Parser<'a> {
     adornments: Vec<(char, bool)>,
     ids: IdentifierSet,
     targets: HashMap<String, TargetDef>,
-    section_targets: HashMap<String, String>,
     anonymous: VecDeque<TargetDef>,
     substitutions: HashMap<String, Vec<Block>>,
     notes: HashMap<String, Vec<Block>>,
@@ -127,8 +127,7 @@ struct Parser<'a> {
     highlight: Option<String>,
     end_pos: SourcePos,
     references: Vec<(Option<Reference>, SourcePos)>,
-    includes: HashMap<PathBuf, IncludeSource>,
-    include_dirs: Vec<(PathBuf, SourcePos)>,
+    include_stack: Vec<IncludeFrame>,
     working_dir: PathBuf,
     file_cache: HashMap<PathBuf, (Rc<str>, usize)>,
     cached_bytes: usize,
@@ -216,28 +215,7 @@ pub(super) fn read(
         .map_or_else(SourcePos::default, |l| {
             SourcePos::new(l.source, l.number.saturating_add(2), 1)
         });
-    let files = context
-        .state
-        .input_files
-        .iter()
-        .chain(sources.0.iter().map(|s| &s.name))
-        .filter(|name| !name.is_empty() && name.as_str() != "-")
-        .map(PathBuf::from)
-        .collect::<Vec<_>>();
-    let working_dir = if files.is_empty() {
-        PathBuf::new()
-    } else {
-        PathBuf::from(context.host().working_directory().unwrap_or_default())
-    };
-    let includes = files
-        .iter()
-        .map(|path| {
-            (
-                directives::normalize_path(&working_dir.join(path)),
-                IncludeSource::Input,
-            )
-        })
-        .collect();
+    let working_dir = PathBuf::from(context.host().working_directory().unwrap_or_default());
     let mut parser = Parser {
         options,
         context,
@@ -246,7 +224,6 @@ pub(super) fn read(
         adornments: Vec::new(),
         ids: IdentifierSet::new(),
         targets: HashMap::new(),
-        section_targets: HashMap::new(),
         anonymous: VecDeque::new(),
         substitutions: HashMap::new(),
         notes: HashMap::new(),
@@ -257,8 +234,7 @@ pub(super) fn read(
         end_pos,
         default_role: "title-reference".into(),
         references: Vec::new(),
-        includes,
-        include_dirs: Vec::new(),
+        include_stack: Vec::new(),
         working_dir,
         file_cache: HashMap::new(),
         cached_bytes: 0,

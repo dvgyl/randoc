@@ -1401,15 +1401,39 @@ fn decode_inline_image(mut encoded: String, max_bytes: usize) -> Result<Option<V
 }
 
 fn space_count(el: &XmlElement) -> usize {
-    let count = el.attr(TEXT, "c").unwrap_or("1").trim();
-    match count.parse::<i64>() {
-        Ok(count) => count.clamp(0, 1_000) as usize,
-        Err(error) => match error.kind() {
-            std::num::IntErrorKind::PosOverflow => 1_000,
-            std::num::IntErrorKind::NegOverflow => 0,
-            _ => 1,
-        },
-    }
+    let count = el.attr(TEXT, "c").unwrap_or("1").trim_start();
+    let (negative, digits) = count
+        .strip_prefix('-')
+        .map_or((false, count), |s| (true, s));
+    let (radix, digits) = if let Some(hex) = digits
+        .strip_prefix("0x")
+        .or_else(|| digits.strip_prefix("0X"))
+    {
+        (16, hex)
+    } else if let Some(octal) = digits
+        .strip_prefix("0o")
+        .or_else(|| digits.strip_prefix("0O"))
+    {
+        (8, octal)
+    } else {
+        (10, digits)
+    };
+    let mut digits = digits.chars().map_while(|ch| ch.to_digit(radix));
+    let Some(first) = digits.next() else {
+        return 1;
+    };
+    // Pandoc reads the numeric prefix and wraps the result to a signed 64-bit integer.
+    let count = digits.fold(i64::from(first), |count, digit| {
+        count
+            .wrapping_mul(i64::from(radix))
+            .wrapping_add(i64::from(digit))
+    });
+    let count = if negative {
+        count.wrapping_neg()
+    } else {
+        count
+    };
+    count.clamp(0, 1_000) as usize
 }
 
 fn table_count(el: &XmlElement, attr_name: &str) -> i64 {

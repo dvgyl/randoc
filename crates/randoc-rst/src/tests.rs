@@ -77,19 +77,19 @@ fn standalone_metadata_and_controls_use_the_default_template() {
 #[test]
 fn includes_use_the_host_and_stop_on_a_cycle() {
     let mut host = PureHost::default();
-    host.files
-        .insert("a.rst".into(), b".. include:: b.rst\n\nA".to_vec());
+    let a = "Intro\n\n.. include:: b.rst\n\nA";
+    host.files.insert("a.rst".into(), a.as_bytes().to_vec());
     host.files
         .insert("b.rst".into(), b".. include:: ./a.rst\n\nB".to_vec());
     let mut context = Context::new(Box::new(host));
     assert!(matches!(
         read(".. include:: a.rst", &mut context),
-        Err(Error::Parse(message)) if message == "Include file loop at \"./a.rst\" (line 3, column 1)"
+        Err(Error::Parse(message)) if message == "Include file loop at \"./a.rst\" (line 5, column 1)"
     ));
 
     let sources = Sources(vec![Source {
         name: "a.rst".into(),
-        text: "Intro\n\n.. include:: b.rst\n\nA".into(),
+        text: a.into(),
     }]);
     let error = super::reader::read(&sources, &ReaderOptions::default(), &mut context)
         .expect_err("input file cycle");
@@ -101,31 +101,106 @@ fn includes_use_the_host_and_stop_on_a_cycle() {
 }
 
 #[test]
-fn nested_includes_search_the_current_file_directory_first() {
+fn include_cycles_use_the_active_source() {
+    let a = ".. include:: b.rst\n\nA";
+    let mut host = PureHost::default();
+    host.files.insert("b.rst".into(), b"B".to_vec());
+    let sources = Sources(vec![
+        Source {
+            name: "a.rst".into(),
+            text: a.into(),
+        },
+        Source {
+            name: "b.rst".into(),
+            text: "B".into(),
+        },
+    ]);
+    let doc = super::reader::read(
+        &sources,
+        &ReaderOptions::default(),
+        &mut Context::new(Box::new(host)),
+    )
+    .expect("include another input file");
+    assert_eq!(doc.blocks, [para("B"), para("A"), para("B")]);
+
+    let mut host = PureHost::default();
+    host.files.insert(
+        "a.rst".into(),
+        b".. include:: a.rst\n   :literal:\n\nA".to_vec(),
+    );
+    let error = read(".. include:: a.rst", &mut Context::new(Box::new(host)))
+        .expect_err("nested literal cycle");
+    assert_eq!(
+        error.to_string(),
+        "Include file loop at \"a.rst\" (line 4, column 1)"
+    );
+}
+
+#[test]
+fn nested_includes_use_the_directory_of_the_source_name() {
+    let first = ".. include:: sub/second.rst\n\n.. include:: sibling.rst";
     let mut host = PureHost::default();
     host.files.extend([
-        (
-            "docs/first.rst".into(),
-            b".. include:: sub/second.rst\n\n.. include:: sibling.rst".to_vec(),
-        ),
+        ("docs/first.rst".into(), first.as_bytes().to_vec()),
         (
             "docs/sub/second.rst".into(),
             b".. include:: sibling.rst\n\n.. include:: fallback.rst".to_vec(),
         ),
-        ("docs/sub/sibling.rst".into(), b"Inner".to_vec()),
+        ("docs/sub/sibling.rst".into(), b"Wrong directory".to_vec()),
+        ("sub/sibling.rst".into(), b"Inner".to_vec()),
         ("docs/sibling.rst".into(), b"Outer".to_vec()),
         ("resources/sibling.rst".into(), b"Wrong directory".to_vec()),
         ("resources/fallback.rst".into(), b"Fallback".to_vec()),
     ]);
     let mut context = Context::new(Box::new(host));
     context.state.resource_path = vec!["resources".into(), ".".into()];
-    let doc = read(".. include:: docs/first.rst", &mut context).expect("nested includes");
-    assert_eq!(doc.blocks, [para("Inner"), para("Fallback"), para("Outer")]);
-    assert!(context.log().is_empty());
+    for source in [
+        Source {
+            name: "".into(),
+            text: ".. include:: docs/first.rst".into(),
+        },
+        Source {
+            name: "docs/first.rst".into(),
+            text: first.into(),
+        },
+    ] {
+        let doc = super::reader::read(
+            &Sources(vec![source]),
+            &ReaderOptions::default(),
+            &mut context,
+        )
+        .expect("nested includes");
+        assert_eq!(doc.blocks, [para("Inner"), para("Outer")]);
+    }
+    assert_eq!(
+        context.log(),
+        [(), ()].map(|()| LogMessage::CouldNotLoadIncludeFile(
+            "fallback.rst".into(),
+            randoc_core::SourcePos::new("sub/second.rst", 5, 1)
+        ))
+    );
 }
 
 fn para(text: &str) -> Block {
     Block::Para(vec![Inline::Str(text.into())])
+}
+
+#[test]
+fn internal_targets_end_before_adjacent_name_separators() {
+    let target = Inline::Span(
+        Attr::new("a", vec![], vec![]),
+        vec![Inline::Str("a".into())],
+    );
+    let doc = read("_a-_a-_-b", &mut Context::pure()).expect("internal targets");
+    assert_eq!(
+        doc.blocks,
+        [Block::Para(vec![
+            target.clone(),
+            Inline::Str("-".into()),
+            target,
+            Inline::Str("-_-b".into()),
+        ])]
+    );
 }
 
 #[derive(Default)]
@@ -138,6 +213,10 @@ struct IncludeHost {
 impl Host for IncludeHost {
     fn is_sandboxed(&self) -> bool {
         self.sandboxed
+    }
+
+    fn working_directory(&mut self) -> std::io::Result<randoc_core::Text> {
+        Ok("/workspace".into())
     }
 
     fn read_file_limited(&mut self, path: &str, max_bytes: usize) -> std::io::Result<Vec<u8>> {
@@ -166,6 +245,22 @@ fn diamond_includes_read_shared_text_once() {
         *reads.lock().expect("read log"),
         ["left.rst", "shared.rst", "right.rst"]
     );
+}
+
+#[test]
+fn relative_and_absolute_includes_share_the_cache() {
+    for (first, second) in [
+        ("shared.rst", "/workspace/shared.rst"),
+        ("/workspace/shared.rst", "shared.rst"),
+    ] {
+        let mut host = IncludeHost::default();
+        host.files.files.insert(first.into(), b"Shared".to_vec());
+        let reads = Arc::clone(&host.reads);
+        let input = format!(".. include:: {first}\n\n.. include:: {second}");
+        let doc = read(&input, &mut Context::new(Box::new(host))).expect("cached includes");
+        assert_eq!(doc.blocks, [para("Shared"), para("Shared")]);
+        assert_eq!(*reads.lock().expect("read log"), [first]);
+    }
 }
 
 #[test]
@@ -317,12 +412,16 @@ fn empty_targets_consume_depth_only_when_they_wrap_blocks() {
 }
 
 #[test]
-fn last_duplicate_section_wins_unless_there_is_an_explicit_target() {
-    for (target, expected) in [
-        ("", "#paper-1"),
-        (".. _Paper: https://example.com\n\n", "https://example.com"),
+fn the_last_definition_of_a_heading_target_wins() {
+    let heading = "Paper\n=====\n\n";
+    let target = ".. _Paper: https://example.com\n\n";
+    for (definitions, expected) in [
+        (format!("{target}{heading}"), "#paper"),
+        (format!("{heading}{heading}"), "#paper-1"),
+        (format!("{heading}{target}{heading}"), "#paper-1"),
+        (format!("{heading}{heading}{target}"), "https://example.com"),
     ] {
-        let input = format!("Paper\n=====\n\n{target}Paper\n=====\n\nPaper_");
+        let input = format!("{definitions}Paper_");
         let doc = read(&input, &mut Context::pure()).expect("section references");
         assert!(matches!(doc.blocks.last(), Some(Block::Para(inlines))
             if matches!(inlines.as_slice(), [Inline::Link(_, _, reference)] if reference.url == expected)));
@@ -524,6 +623,50 @@ fn substitution_and_note_loops_keep_the_placeholder() {
         ]
     );
     assert!(matches!(context.log(), [LogMessage::CircularReference(label, _)] if label == "a"));
+}
+
+#[test]
+fn inline_substitutions_keep_nested_links_without_warnings() {
+    let span = |text: &str, name: &str| {
+        Inline::Span(
+            Attr::default(),
+            vec![
+                Inline::Str(text.into()),
+                Inline::Space,
+                Inline::Link(
+                    Attr::default(),
+                    vec![Inline::Str(format!("|{name}|"))],
+                    Target::new(format!("##SUBST##|{name}|"), ""),
+                ),
+            ],
+        )
+    };
+    for (definitions, name, expected) in [
+        (
+            ".. |a| replace:: begin |a|",
+            "a",
+            [span("begin", "a"), span("begin", "a")],
+        ),
+        (
+            ".. |a| replace:: begin |b|\n\n.. |b| replace:: end |a|",
+            "b",
+            [span("begin", "b"), span("end", "a")],
+        ),
+    ] {
+        let input = format!("{definitions}\n\nText |a|.\n\nText |{name}|.");
+        let mut context = Context::pure();
+        let doc = read(&input, &mut context).expect("inline substitutions");
+        assert_eq!(
+            doc.blocks,
+            expected.map(|replacement| Block::Para(vec![
+                Inline::Str("Text".into()),
+                Inline::Space,
+                replacement,
+                Inline::Str(".".into()),
+            ]))
+        );
+        assert!(context.log().is_empty());
+    }
 }
 
 #[test]

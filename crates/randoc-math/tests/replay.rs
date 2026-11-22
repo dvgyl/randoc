@@ -142,16 +142,14 @@ fn inline_expected(row: &Row) -> Option<String> {
 /// The full warning text, as `LogMessage::CouldNotConvertTexMath` writes it.
 fn warning(err: &MathError, tex: &str) -> String {
     // The oracle indents each continuation line of a warning by two spaces.
-    let head = format!(
-        "Could not convert TeX math {}, rendering as TeX",
-        tex.replace('\n', "\n  ")
-    );
+    let head = format!("Could not convert TeX math {tex}, rendering as TeX");
     let detail = err.detail(tex);
-    if detail.is_empty() {
+    let message = if detail.is_empty() {
         head
     } else {
         format!("{head}:\n{detail}")
-    }
+    };
+    message.replace('\n', "\n  ")
 }
 
 /// One output of one formula that is different from the oracle.

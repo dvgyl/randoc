@@ -13,6 +13,7 @@ use crate::scan::{
     is_space_or_tab, normalize_label, scan_closing_tag, scan_link_destination, scan_link_label,
     scan_link_title, scan_open_tag, skip_spnl, unescape, unescape_destination,
 };
+use crate::sourcepos::{Anchor, BlockPos, CellPos, Point};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ListKind {
@@ -93,6 +94,10 @@ pub(crate) struct Node {
     pub(crate) open: bool,
     pub(crate) last_line_blank: bool,
     pub(crate) start_line: usize,
+    pub(crate) source: BlockPos,
+    pub(crate) anchors: Vec<Anchor>,
+    /// Bytes of link definitions removed from the start of the inline text.
+    pub(crate) content_origin: usize,
     pub(crate) depth: usize,
     pub(crate) content: String,
     pub(crate) attr: Attr,
@@ -119,6 +124,7 @@ pub(crate) struct TableData {
     pub(crate) aligns: Vec<Align>,
     pub(crate) header: Vec<String>,
     pub(crate) rows: Vec<Vec<String>>,
+    pub(crate) positions: Vec<Vec<CellPos>>,
     /// The number of cells that the body rows hold in the source.
     pub(crate) cells: usize,
 }
@@ -166,6 +172,7 @@ struct Parser<'c> {
     tip: usize,
     oldtip: usize,
     line: String,
+    line_columns: Vec<usize>,
     line_number: usize,
     offset: usize,
     column: usize,
@@ -229,6 +236,9 @@ pub(crate) fn parse_with(text: &str, config: &Config, open_last_line: bool) -> T
             open: true,
             last_line_blank: false,
             start_line: 1,
+            source: BlockPos::default(),
+            anchors: Vec::new(),
+            content_origin: 0,
             depth: 0,
             content: String::new(),
             attr: Attr::default(),
@@ -245,6 +255,7 @@ pub(crate) fn parse_with(text: &str, config: &Config, open_last_line: bool) -> T
         tip: 0,
         oldtip: 0,
         line: String::new(),
+        line_columns: Vec::new(),
         line_number: 0,
         offset: 0,
         column: 0,
@@ -407,6 +418,35 @@ impl Parser<'_> {
         self.line.get(self.next_nonspace..).unwrap_or("")
     }
 
+    fn point(&self, byte: usize) -> Point {
+        let col = self.line_columns.get(byte).copied().unwrap_or(byte + 1);
+        Point {
+            line: self.line_number + self.config.line_offset,
+            col,
+        }
+    }
+
+    fn record_line(&mut self, index: usize, byte: usize) {
+        if self.config.sourcepos {
+            let point = self.point(byte);
+            if let Some(node) = self.nodes.get_mut(index) {
+                node.source.add_line(point);
+            }
+        }
+    }
+
+    fn anchor_content(&mut self, index: usize, byte: usize) {
+        if self.config.sourcepos {
+            let point = self.point(byte);
+            if let Some(node) = self.nodes.get_mut(index) {
+                node.anchors.push(Anchor {
+                    offset: node.content.len(),
+                    point,
+                });
+            }
+        }
+    }
+
     fn add_line(&mut self) {
         let mut text = String::new();
         if self.partially_consumed_tab {
@@ -419,6 +459,10 @@ impl Parser<'_> {
             text.push('\n');
         }
         let tip = self.tip;
+        if matches!(self.kind(tip), Kind::Paragraph) {
+            self.record_line(tip, self.offset);
+            self.anchor_content(tip, self.offset);
+        }
         if let Some(node) = self.nodes.get_mut(tip) {
             node.content.push_str(&text);
         }
@@ -454,6 +498,9 @@ impl Parser<'_> {
             open: true,
             last_line_blank: false,
             start_line: self.line_number,
+            source: BlockPos::default(),
+            anchors: Vec::new(),
+            content_origin: 0,
             depth,
             content: String::new(),
             attr: Attr::default(),
@@ -474,6 +521,11 @@ impl Parser<'_> {
             node.block_attrs = Some(pairs);
         }
         self.tip = index;
+        let start = match self.kind(index) {
+            Kind::CodeBlock { fenced: false, .. } | Kind::HtmlBlock(_) => self.offset,
+            _ => self.next_nonspace,
+        };
+        self.record_line(index, start);
         index
     }
 
@@ -504,6 +556,16 @@ impl Parser<'_> {
             return;
         }
         self.line = line.to_owned();
+        self.line_columns.clear();
+        if self.config.sourcepos && (!line.is_ascii() || line.contains('\t')) {
+            self.line_columns.resize(line.len() + 1, 0);
+            let mut col = 1;
+            for (offset, ch) in line.char_indices() {
+                self.line_columns[offset] = col;
+                col += if ch == '\t' { 4 - (col - 1) % 4 } else { 1 };
+            }
+            self.line_columns[line.len()] = col;
+        }
         crate::steps::add(1 + line.len() as u64 / 64);
         self.spaces = None;
         self.last_other = line
@@ -533,13 +595,36 @@ impl Parser<'_> {
                         container = t;
                     }
                     _ => {
+                        if self.config.sourcepos && self.offset > 0 {
+                            let mut node = container;
+                            loop {
+                                self.record_line(node, self.offset);
+                                if node == end {
+                                    break;
+                                }
+                                let Some(next) = self.last_child(node) else {
+                                    break;
+                                };
+                                node = next;
+                            }
+                        }
                         container = end;
                         continue;
                     }
                 }
             }
+            let content_start = match self.kind(container) {
+                Kind::Paragraph | Kind::BlockQuote => self.next_nonspace,
+                _ => self.offset,
+            };
             match self.continue_block(container) {
-                Continue::Matched => {}
+                Continue::Matched => {
+                    let start = match self.kind(container) {
+                        Kind::CodeBlock { .. } => self.offset,
+                        _ => content_start,
+                    };
+                    self.record_line(container, start);
+                }
                 Continue::NotMatched => {
                     container = self.parent(container);
                     break;
@@ -699,6 +784,7 @@ impl Parser<'_> {
             }
             Kind::Div { .. } => {
                 if self.div_close_target() == Some(container) {
+                    self.record_line(container, self.next_nonspace);
                     let parent = self.parent(container);
                     while self.tip != parent {
                         let tip = self.tip;
@@ -740,6 +826,7 @@ impl Parser<'_> {
                         && run >= 3
                         && after.iter().all(|&b| is_space_or_tab(b))
                     {
+                        self.record_line(container, self.next_nonspace);
                         self.finalize(container);
                         self.add_empty_paragraph();
                         return Continue::LineDone;
@@ -1073,6 +1160,7 @@ impl Parser<'_> {
             level: level as i64,
             setext: false,
         });
+        self.anchor_content(index, self.offset);
         if let Some(node) = self.nodes.get_mut(index) {
             node.content = content;
             node.attr = attr;
@@ -1230,7 +1318,11 @@ impl Parser<'_> {
             .get(container)
             .map(|n| n.content.clone())
             .unwrap_or_default();
+        let original_len = content.len();
         let content = self.extract_refs(container, &content);
+        if let Some(node) = self.nodes.get_mut(container) {
+            node.content_origin += original_len - content.len();
+        }
         if content.trim().is_empty() {
             if let Some(node) = self.nodes.get_mut(container) {
                 node.content = content;
@@ -1247,7 +1339,13 @@ impl Parser<'_> {
                 content = rest.to_owned();
             }
         }
+        let marker = self
+            .config
+            .sourcepos
+            .then(|| self.point(self.next_nonspace));
+        self.record_line(container, self.next_nonspace);
         if let Some(node) = self.nodes.get_mut(container) {
+            node.source.marker = marker;
             node.kind = Kind::Heading {
                 level,
                 setext: true,
@@ -1286,7 +1384,7 @@ impl Parser<'_> {
         let [header_line] = lines.as_slice() else {
             return Start::None;
         };
-        let Some(header) = parse_cells(header_line) else {
+        let Some(mut header) = parse_cells(header_line, self.config.sourcepos) else {
             return Start::None;
         };
         if header.len() != aligns.len() {
@@ -1294,14 +1392,30 @@ impl Parser<'_> {
         }
         self.close_unmatched_blocks();
         let table = self.tables.len();
+        let positions = if self.config.sourcepos {
+            let origin = self.nodes[container]
+                .anchors
+                .first()
+                .map_or(Point::default(), |a| a.point);
+            vec![cell_positions(header_line, &mut header, origin)]
+        } else {
+            Vec::new()
+        };
+        let marker = self
+            .config
+            .sourcepos
+            .then(|| self.point(self.next_nonspace));
+        self.record_line(container, self.next_nonspace);
         self.tables.push(TableData {
             aligns,
-            header,
+            header: header.into_iter().map(|cell| cell.text).collect(),
             rows: Vec::new(),
+            positions,
             cells: 0,
         });
         if let Some(node) = self.nodes.get_mut(container) {
             node.kind = Kind::Table(table);
+            node.source.marker = marker;
             node.content.clear();
         }
         self.consumed = true;
@@ -1312,33 +1426,37 @@ impl Parser<'_> {
     /// The cells of this line as a table row. The parser removes at most 3 spaces
     /// before a row, so a fourth space is an empty cell before the first `|`
     /// (`pCells` in `Commonmark/Extensions/PipeTable.hs`).
-    fn table_row(&self) -> Option<Vec<String>> {
+    fn table_row(&self) -> Option<Vec<ParsedCell>> {
         let line = self.rest();
         let lead = self.indent >= 4 && line.starts_with('|');
-        let mut cells = match parse_cells(line) {
+        let mut cells = match parse_cells(line, self.config.sourcepos) {
             Some(cells) => cells,
             None if lead && line.trim_matches([' ', '\t']) == "|" => Vec::new(),
             None => return None,
         };
         if lead {
-            cells.insert(0, String::new());
+            cells.insert(0, ParsedCell::default());
         }
         Some(cells)
     }
 
     fn add_table_row(&mut self, container: usize) {
-        let mut cells = self
-            .table_row()
-            .unwrap_or_else(|| vec![self.rest().trim().to_owned()]);
+        let mut cells = self.table_row().unwrap_or_default();
+        let positions = self
+            .config
+            .sourcepos
+            .then(|| cell_positions(self.rest(), &mut cells, self.point(self.next_nonspace)));
         if let Kind::Table(table) = *self.kind(container)
             && let Some(data) = self.tables.get_mut(table)
         {
             cells.truncate(data.aligns.len());
             data.cells += cells.len();
-            while cells.len() < data.aligns.len() {
-                cells.push(String::new());
+            let mut row: Vec<_> = cells.into_iter().map(|cell| cell.text).collect();
+            row.resize_with(data.aligns.len(), String::new);
+            data.rows.push(row);
+            if let Some(positions) = positions {
+                data.positions.push(positions);
             }
-            data.rows.push(cells);
         }
     }
 
@@ -1462,7 +1580,9 @@ impl Parser<'_> {
                     }
                 } else {
                     task = Some(checked);
-                    task_text = Some(rest.trim_start_matches([' ', '\t']).to_owned());
+                    let text = rest.trim_start_matches([' ', '\t']);
+                    let start = self.offset + close + 1;
+                    task_text = Some((start, start + rest.len() - text.len(), text.to_owned()));
                 }
             }
         }
@@ -1486,8 +1606,12 @@ impl Parser<'_> {
             self.add_child(Kind::List(data));
         }
         self.add_child(Kind::Item(data));
-        if let Some(text) = task_text {
+        if let Some((start, text_start, text)) = task_text {
+            let marker = self.next_nonspace;
+            self.next_nonspace = start;
             let index = self.add_child(Kind::Paragraph);
+            self.next_nonspace = marker;
+            self.anchor_content(index, text_start);
             if let Some(node) = self.nodes.get_mut(index) {
                 node.content = text;
                 node.content.push('\n');
@@ -1578,6 +1702,9 @@ impl Parser<'_> {
                     open: true,
                     last_line_blank: false,
                     start_line: self.line_number,
+                    source: BlockPos::default(),
+                    anchors: Vec::new(),
+                    content_origin: 0,
                     depth,
                     content: String::new(),
                     attr: Attr::default(),
@@ -1598,7 +1725,16 @@ impl Parser<'_> {
                 list
             }
         };
+        let term_source = self
+            .config
+            .sourcepos
+            .then(|| self.nodes[para].source.clone());
         if let Some(node) = self.nodes.get_mut(list) {
+            if node.children.is_empty()
+                && let Some(source) = term_source
+            {
+                node.source = source;
+            }
             node.open = true;
             node.children.push(para);
         }
@@ -1690,6 +1826,19 @@ impl Parser<'_> {
                 self.push_open_div(node, fence);
             }
         }
+        if self.config.sourcepos
+            && matches!(kind, Kind::Div { .. } | Kind::DefList)
+            && let Some(node) = self.nodes.get_mut(index)
+        {
+            let closing_line = self
+                .div_close
+                .is_some_and(|(line, _, target)| line == self.line_number && target == Some(index));
+            node.source.finish_at(
+                self.line_number
+                    + self.config.line_offset
+                    + usize::from(closing_line || self.at_end),
+            );
+        }
         match kind {
             Kind::Paragraph => {
                 let content = self
@@ -1697,10 +1846,12 @@ impl Parser<'_> {
                     .get(index)
                     .map(|n| n.content.clone())
                     .unwrap_or_default();
+                let original_len = content.len();
                 let content = self.extract_refs(index, &content);
                 let empty = content.trim_matches([' ', '\t', '\n']).is_empty()
                     && !self.nodes.get(index).is_some_and(|n| n.keep);
                 if let Some(node) = self.nodes.get_mut(index) {
+                    node.content_origin += original_len - content.len();
                     node.content = content;
                 }
                 if empty
@@ -1717,6 +1868,10 @@ impl Parser<'_> {
                     let mut lines: Vec<&str> = content.split_terminator('\n').collect();
                     while lines.last().is_some_and(|l| l.bytes().all(|b| b == b' ')) {
                         lines.pop();
+                    }
+                    if self.config.sourcepos {
+                        node.source
+                            .finish_at(node.start_line + self.config.line_offset + lines.len());
                     }
                     let mut text = lines.join("\n");
                     text.push('\n');
@@ -2366,15 +2521,45 @@ fn parse_dividers(line: &str) -> Option<Vec<Align>> {
     Some(aligns)
 }
 
+#[derive(Default)]
+struct ParsedCell {
+    text: String,
+    offset: usize,
+    escapes: Vec<usize>,
+}
+
+fn cell_positions(line: &str, cells: &mut [ParsedCell], mut point: Point) -> Vec<CellPos> {
+    let mut previous = 0;
+    cells
+        .iter_mut()
+        .map(|cell| {
+            for ch in line.get(previous..cell.offset).unwrap_or("").chars() {
+                point.col += if ch == '\t' {
+                    4 - (point.col - 1) % 4
+                } else {
+                    1
+                };
+            }
+            previous = cell.offset;
+            CellPos {
+                anchor: Anchor { offset: 0, point },
+                escapes: std::mem::take(&mut cell.escapes),
+            }
+        })
+        .collect()
+}
+
 /// Splits a table row into cells. A `\|` stays in the cell as `|`.
-fn parse_cells(line: &str) -> Option<Vec<String>> {
+fn parse_cells(line: &str, sourcepos: bool) -> Option<Vec<ParsedCell>> {
     let trimmed = line.trim_matches([' ', '\t']);
     if trimmed == "|" {
         return None;
     }
+    let leading = line.len() - line.trim_start_matches([' ', '\t']).len();
     let bytes = trimmed.as_bytes();
     let mut cells = Vec::new();
     let mut current = String::new();
+    let mut escapes = Vec::new();
     let mut pipes = 0;
     let mut i = 0;
     let mut start = 0;
@@ -2390,13 +2575,21 @@ fn parse_cells(line: &str) -> Option<Vec<String>> {
         match bytes.get(i) {
             Some(b'\\') if bytes.get(i + 1) == Some(&b'|') => {
                 current.push_str(trimmed.get(seg_start..i).unwrap_or(""));
+                if sourcepos {
+                    escapes.push(current.len());
+                }
                 current.push('|');
                 i += 2;
                 seg_start = i;
             }
             Some(b'|') => {
                 current.push_str(trimmed.get(seg_start..i).unwrap_or(""));
-                cells.push(current.trim_matches([' ', '\t']).to_owned());
+                cells.push(make_cell(
+                    &current,
+                    leading + start,
+                    std::mem::take(&mut escapes),
+                ));
+                start = i + 1;
                 current = String::new();
                 pipes += 1;
                 i += 1;
@@ -2409,12 +2602,25 @@ fn parse_cells(line: &str) -> Option<Vec<String>> {
     let tail = trimmed.get(seg_start..).unwrap_or("");
     current.push_str(tail);
     if !ended_with_pipe {
-        cells.push(current.trim_matches([' ', '\t']).to_owned());
+        cells.push(make_cell(&current, leading + start, escapes));
     }
     if pipes == 0 {
         return None;
     }
     Some(cells)
+}
+
+fn make_cell(text: &str, offset: usize, mut escapes: Vec<usize>) -> ParsedCell {
+    let body = text.trim_start_matches([' ', '\t']);
+    let leading = text.len() - body.len();
+    for at in &mut escapes {
+        *at -= leading;
+    }
+    ParsedCell {
+        escapes,
+        text: body.trim_end_matches([' ', '\t']).to_owned(),
+        offset: offset + leading,
+    }
 }
 
 #[cfg(test)]
@@ -2423,15 +2629,17 @@ mod tests {
 
     #[test]
     fn table_rows() {
+        let texts =
+            |cells: Vec<ParsedCell>| cells.into_iter().map(|cell| cell.text).collect::<Vec<_>>();
         assert_eq!(
-            parse_cells("| a | b \\| c |"),
+            parse_cells("| a | b \\| c |", false).map(texts),
             Some(vec!["a".to_owned(), "b | c".to_owned()])
         );
         assert_eq!(
-            parse_cells("a|b"),
+            parse_cells("a|b", false).map(texts),
             Some(vec!["a".to_owned(), "b".to_owned()])
         );
-        assert_eq!(parse_cells("ab"), None);
+        assert!(parse_cells("ab", false).is_none());
         assert_eq!(
             parse_dividers("|:-|-:|:-:|-|"),
             Some(vec![

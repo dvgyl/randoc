@@ -15,8 +15,10 @@ mod tokens;
 
 use std::sync::Arc;
 
-use randoc_ast::{Pandoc, Text};
-use randoc_core::{Context, Error, Reader, ReaderOptions, Result, Sources};
+use randoc_ast::{Inline, Pandoc, Text};
+use randoc_core::{
+    Context, Error, Extension, Extensions, Limits, Reader, ReaderOptions, Result, Sources,
+};
 
 use crate::parse::{Parser, Stop};
 
@@ -31,16 +33,49 @@ fn read(sources: &Sources, options: &ReaderOptions, context: &mut Context) -> Re
     if let [source] = sources.0.as_slice() {
         parser.source_name.clone_from(&source.name);
     }
-    let blocks = parser.document().map_err(|stop| match stop {
-        Stop::TooDeep => Error::Parse(Text::from("the document is nested too deeply")),
-        Stop::Loop(name) => Error::MacroLoop(name),
-        Stop::Unexpected(message) => Error::Parse(message),
-        Stop::Stuck(message) => Error::ShouldNeverHappen(message),
-    })?;
+    let blocks = parser.document().map_err(parse_error)?;
     Ok(Pandoc {
         meta: std::mem::take(&mut parser.meta),
         blocks,
     })
+}
+
+/// Options for parsing one bibliography field.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct FieldOptions {
+    /// Keep TeX groups as spans. A span with a lowercase word gets the `nocase` class.
+    pub keep_brace_spans: bool,
+}
+
+/// Parses one BibTeX or BibLaTeX field value within the supplied limits.
+/// The parser uses no external resources.
+pub fn parse_field_inlines(
+    text: &str,
+    options: FieldOptions,
+    limits: &Limits,
+) -> Result<Vec<Inline>> {
+    if text.len() as u64 > limits.max_input_size {
+        return Err(Error::Parse(
+            "the bibliography field exceeds the input size limit".into(),
+        ));
+    }
+    let mut context = Context::pure();
+    context.limits = *limits;
+    let extensions = Extensions::from_list(&[Extension::Smart, Extension::RawTex]);
+    Parser::new(text, extensions, &mut context)
+        .field_inlines(options)
+        .map_err(parse_error)
+}
+
+fn parse_error(stop: Stop) -> Error {
+    match stop {
+        Stop::NestedDocument => Error::Parse(Text::from("unexpected nested document")),
+        Stop::TableLimit => Error::Parse(Text::from("the table has too many cells")),
+        Stop::TooDeep => Error::Parse(Text::from("the document is nested too deeply")),
+        Stop::Loop(name) => Error::MacroLoop(name),
+        Stop::Unexpected(message) => Error::Parse(message),
+        Stop::Stuck(message) => Error::ShouldNeverHappen(message),
+    }
 }
 
 #[cfg(test)]
@@ -51,6 +86,81 @@ mod tests {
 
     use super::*;
     use crate::parse::Parser;
+
+    #[test]
+    fn bibliography_field_keeps_case_protection_on_braced_words() {
+        let source = r"{ABC} {lower} {The cat} {{École}} {\emph{hello}} \emph{world}";
+        let options = FieldOptions {
+            keep_brace_spans: true,
+        };
+        let actual = parse_field_inlines(source, options, &Limits::default()).unwrap();
+        let text = |s: &str| Inline::Str(s.into());
+        let span = |nocase: bool, children| {
+            Inline::Span(
+                Attr::new(
+                    "",
+                    if nocase {
+                        vec!["nocase".into()]
+                    } else {
+                        Vec::new()
+                    },
+                    Vec::new(),
+                ),
+                children,
+            )
+        };
+        assert_eq!(
+            actual,
+            vec![
+                span(false, vec![text("ABC")]),
+                Inline::Space,
+                span(true, vec![text("lower")]),
+                Inline::Space,
+                span(true, vec![text("The"), Inline::Space, text("cat")]),
+                Inline::Space,
+                span(false, vec![text("École")]),
+                Inline::Space,
+                span(false, vec![Inline::Emph(vec![text("hello")])]),
+                Inline::Space,
+                Inline::Emph(vec![text("world")]),
+            ]
+        );
+        assert_eq!(
+            parse_field_inlines("a{b}c", FieldOptions::default(), &Limits::default()).unwrap(),
+            vec![text("abc")]
+        );
+    }
+
+    #[test]
+    fn bibliography_field_uses_no_external_input_and_checks_limits() {
+        let options = FieldOptions {
+            keep_brace_spans: true,
+        };
+        let limits = Limits::default();
+        assert_eq!(
+            parse_field_inlines(r"\input{missing}", options, &limits).unwrap(),
+            vec![Inline::RawInline(
+                randoc_ast::Format::new("latex"),
+                r"\input{missing}".into()
+            )]
+        );
+        assert!(
+            parse_field_inlines(r"\include{missing}", options, &limits)
+                .unwrap()
+                .is_empty()
+        );
+        let limits = Limits {
+            max_nesting_depth: 2,
+            ..Limits::default()
+        };
+        assert!(matches!(parse_field_inlines("{{{x}}}", options, &limits),
+            Err(Error::Parse(message)) if message == "the document is nested too deeply"));
+        let limits = Limits {
+            max_input_size: 1,
+            ..Limits::default()
+        };
+        assert!(parse_field_inlines("é", options, &limits).is_err());
+    }
 
     fn options(format: &str) -> ReaderOptions {
         let mut options = ReaderOptions::default();
@@ -157,6 +267,65 @@ mod tests {
                 );
             }
         });
+    }
+
+    #[test]
+    fn round_two_constructs_use_the_default_stack_limit() {
+        on_small_stack(|| {
+            let limit = Context::pure().limits.max_nesting_depth;
+            for format in ["latex", "latex+raw_tex-latex_macros-smart"] {
+                for (open, close) in [
+                    ("\\begingroup ", "\\endgroup "),
+                    ("\\scshape ", ""),
+                    ("\\MakeUppercase{", "}"),
+                    ("\\begin{proof}", "\\end{proof}"),
+                    ("\\begin{alltt}", "\\end{alltt}"),
+                ] {
+                    for levels in [limit, limit + 1] {
+                        let result = convert(&nested(open, close, levels), format);
+                        assert!(
+                            result.is_ok()
+                                || matches!(result, Err(Error::Parse(message))
+                                    if message == "the document is nested too deeply"),
+                            "{open} in {format} at depth {levels}",
+                        );
+                    }
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn table_limit_applies_before_padding_rows() {
+        let mut context = Context::pure();
+        context.limits.max_table_cells = 3;
+        let result = read(
+            &Sources::from_text("\\begin{tabular}{ll}a\\\\ b\\\\\\end{tabular}"),
+            &options("latex+raw_tex"),
+            &mut context,
+        );
+        assert!(matches!(result, Err(Error::Parse(message))
+            if message == "the table has too many cells"));
+    }
+
+    #[test]
+    fn expanded_math_and_listing_arguments_keep_their_content() {
+        let result = convert(
+            r"\newcommand{\x}{q}\ensuremath{  \x+1  } \lstinline[language=C]{a  b}",
+            "latex+raw_tex",
+        )
+        .expect("LaTeX document");
+        assert_eq!(
+            result.blocks,
+            vec![Block::Para(vec![
+                Inline::Math(randoc_ast::MathType::InlineMath, "q+1".into()),
+                Inline::Space,
+                Inline::Code(
+                    Attr::new("", vec!["objectivec".into()], vec![]),
+                    "a  b".into()
+                ),
+            ])],
+        );
     }
 
     /// Found by the fuzzer: the row loop did not move past a stray `}`
@@ -683,6 +852,11 @@ mod tests {
         "\\'{\\emph{e}} ",
         "a\\newline b ",
         "\\section{x",
+        "\\foo[unclosed ",
+        "\\mintinline{c}|unclosed ",
+        "\\MakeUppercase{\\MakeLowercase{Two words}} ",
+        "\\begin{alltt}a b\\end{alltt}",
+        "MISSING DELIMITER",
     ];
 
     fn wrap_unit(unit: &str, n: usize) -> String {
@@ -692,6 +866,7 @@ mod tests {
                 format!("\\begin{{tabular}}{{ll}}{}\\end{{tabular}}", unit.repeat(n))
             }
             "MISSING ARGUMENTS" => format!("\\newcommand{{\\x}}[100000]{{a}}{}", "\\x ".repeat(n)),
+            "MISSING DELIMITER" => format!("\\def\\x#1:::::!{{#1}}{}", "\\x :::::".repeat(n)),
             "LETTER ARGUMENTS" => format!("\\newcommand{{\\x}}[{n}]{{#1}}\\x {}", "a".repeat(n)),
             "VERB DELIMITERS" => (0..n)
                 .filter_map(|i| char::from_u32(0xe000 + u32::try_from(i).unwrap_or(0)))

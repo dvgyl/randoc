@@ -20,7 +20,7 @@ impl Inlines {
             (last @ (Inline::Space | Inline::SoftBreak), Inline::LineBreak) => {
                 *last = Inline::LineBreak;
             }
-            (Inline::Str(a), Inline::Str(b)) => a.push_str(&b),
+            (Inline::Str(a), Inline::Str(b)) if !a.is_empty() && !b.is_empty() => a.push_str(&b),
             (Inline::Emph(a), Inline::Emph(b))
             | (Inline::Underline(a), Inline::Underline(b))
             | (Inline::Strong(a), Inline::Strong(b))

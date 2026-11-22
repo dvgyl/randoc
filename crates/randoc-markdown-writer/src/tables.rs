@@ -397,21 +397,27 @@ impl W<'_> {
         (head, body)
     }
 
-    fn natural_widths(
-        head: &Option<Vec<Vec<Text>>>,
-        body: &[Vec<Vec<Text>>],
+    fn natural_widths<T>(
+        head: &Option<Vec<T>>,
+        body: &[Vec<T>],
         columns: usize,
+        cell_width: impl Fn(&T) -> usize,
     ) -> Vec<usize> {
         let mut widths = vec![0usize; columns];
         for row in head.iter().chain(body.iter()) {
             for (index, cell) in row.iter().enumerate() {
-                let width = cell.iter().map(|l| real_length(l)).max().unwrap_or(0);
                 if let Some(slot) = widths.get_mut(index) {
-                    *slot = (*slot).max(width);
+                    *slot = (*slot).max(cell_width(cell));
                 }
             }
         }
         widths
+    }
+
+    fn rendered_widths(head: &Option<RowLines>, body: &[RowLines], columns: usize) -> Vec<usize> {
+        Self::natural_widths(head, body, columns, |cell| {
+            cell.iter().map(|line| real_length(line)).max().unwrap_or(0)
+        })
     }
 
     /// Lays out the lines of one row with aligned columns separated by a space.
@@ -440,9 +446,11 @@ impl W<'_> {
     }
 
     fn simple_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
-        let (head, body) = Self::rows_lines(&self.cell_docs(g)?, None);
+        let docs = self.cell_docs(g)?;
+        let (head, body) = Self::rows_lines(&docs, None);
         let columns = g.aligns.len();
-        let widths: Vec<usize> = Self::natural_widths(&head, &body, columns)
+        // The document width includes spaces that the renderer trims.
+        let widths: Vec<usize> = Self::natural_widths(&docs.0, &docs.1, columns, Doc::offset)
             .iter()
             .map(|w| w + 2)
             .collect();
@@ -480,7 +488,7 @@ impl W<'_> {
         }
         let columns = g.aligns.len();
         let (head, body) = Self::rows_lines(docs, Some(&vec![1; columns]));
-        let words = Self::natural_widths(&head, &body, columns);
+        let words = Self::rendered_widths(&head, &body, columns);
         Some(
             g.widths
                 .iter()
@@ -505,7 +513,7 @@ impl W<'_> {
         let columns = g.aligns.len();
         let widths: Vec<usize> = match &relative {
             Some(widths) => widths.clone(),
-            None => Self::natural_widths(&head, &body, columns)
+            None => Self::natural_widths(&docs.0, &docs.1, columns, Doc::offset)
                 .iter()
                 .map(|w| w + 2)
                 .collect(),
@@ -543,7 +551,7 @@ impl W<'_> {
     fn pipe_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let (head, body) = Self::rows_lines(&self.cell_docs(g)?, None);
         let columns = g.aligns.len();
-        let natural: Vec<usize> = Self::natural_widths(&head, &body, columns)
+        let natural: Vec<usize> = Self::rendered_widths(&head, &body, columns)
             .iter()
             .map(|w| (*w).max(3))
             .collect();
@@ -810,7 +818,7 @@ impl W<'_> {
         let columns = g.aligns.len();
         let widths: Vec<usize> = match &relative {
             Some(widths) => widths.clone(),
-            None => Self::natural_widths(&head, &body, columns)
+            None => Self::rendered_widths(&head, &body, columns)
                 .iter()
                 .map(|w| (*w).max(1))
                 .collect(),
