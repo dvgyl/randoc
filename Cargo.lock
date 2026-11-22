@@ -290,6 +290,7 @@ dependencies = [
  "randoc-markdown-writer",
  "randoc-native",
  "randoc-odt",
+ "randoc-rst",
 ]
 
 [[package]]
@@ -508,6 +509,17 @@ dependencies = [
  "randoc-highlight",
  "randoc-layout",
  "randoc-math",
+ "randoc-templates",
+]
+
+[[package]]
+name = "randoc-rst"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "randoc-layout",
+ "randoc-native",
  "randoc-templates",
 ]
 

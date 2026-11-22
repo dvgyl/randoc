@@ -1,0 +1,96 @@
+from = "rst"
+to = ["rst"]
+
+[[case]]
+id = "section-links"
+input = '''
+.. _inspection:
+
+Pump inspection
+===============
+
+Read inspection_ before you remove the cover.
+
+.. _parts: equipment_
+.. _equipment: https://example.org/parts
+
+Use parts_ for the list of seals.
+'''
+
+[[case]]
+id = "role-and-directives"
+input = '''
+.. role:: shell(code)
+   :language: sh
+
+Run :shell:`inspect pump`.
+
+.. warning::
+
+   Stop the pump before you open the cover.
+
+.. code-block:: sh
+   :number-lines: 2
+
+   inspect pump
+'''
+
+[[case]]
+id = "csv-table"
+input = '''
+.. csv-table:: Seal stock
+   :header: "Part", "Count"
+   :widths: 2 1
+
+   gasket,3
+   "seal, outer",5
+'''
+
+[[case]]
+id = "row-span"
+input = '''
++------+------+
+| Pump | Seal |
+|      +------+
+|      | Cap  |
++------+------+
+'''
+
+[[case]]
+id = "default-template"
+from = "markdown"
+args = ["--standalone", "--toc", "--number-sections"]
+input = '''
+---
+title: Pump inspection
+subtitle: Service instructions
+author:
+- Alex
+- Morgan
+---
+
+# Preparation
+
+Stop the pump.
+'''
+
+[[case]]
+id = "bird-tracks"
+from = "rst+literate_haskell"
+to = ["rst+literate_haskell"]
+input = '''
+Write a function.
+
+> double n = n + n
+> main = print (double 2)
+'''
+
+[[case]]
+id = "include-slice"
+input = '''
+.. include:: sample.inc
+   :start-line: 1
+   :end-line: 2
+   :code: text
+'''
+files = { "sample.inc" = "Begin\nPump\nEnd\n" }

@@ -1,0 +1,131 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bird-tracks#e2e:rst+literate_haskell": {
+      "key": "66cc11ec04598279",
+      "exit": 0,
+      "stdout": "Write a function.\n\n> double n = n + n\n> main = print (double 2)\n",
+      "stderr": ""
+    },
+    "bird-tracks#read": {
+      "key": "81b16c0cbbc5b178",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Write\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"function.\"}]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"haskell\",\"literate\"],[]],\"double n = n + n\\nmain = print (double 2)\"]}]}\n",
+      "stderr": ""
+    },
+    "bird-tracks#write:rst+literate_haskell": {
+      "key": "942a43614e8e36ff",
+      "exit": 0,
+      "stdout": "Write a function.\n\n> double n = n + n\n> main = print (double 2)\n",
+      "stderr": ""
+    },
+    "csv-table#e2e:rst": {
+      "key": "c8b00c1f35f82fef",
+      "exit": 0,
+      "stdout": ".. table:: Seal stock\n\n   +-----------------------------------------------+-----------------------+\n   | Part                                          | Count                 |\n   +===============================================+=======================+\n   | gasket                                        | 3                     |\n   +-----------------------------------------------+-----------------------+\n   | seal, outer                                   | 5                     |\n   +-----------------------------------------------+-----------------------+\n",
+      "stderr": ""
+    },
+    "csv-table#read": {
+      "key": "e76d052603b91813",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"stock\"}]}]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.6666666666666666}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":0.3333333333333333}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Part\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Count\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"gasket\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"3\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"seal,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outer\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"5\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "csv-table#write:rst": {
+      "key": "85e448f26b6b80a2",
+      "exit": 0,
+      "stdout": ".. table:: Seal stock\n\n   +-----------------------------------------------+-----------------------+\n   | Part                                          | Count                 |\n   +===============================================+=======================+\n   | gasket                                        | 3                     |\n   +-----------------------------------------------+-----------------------+\n   | seal, outer                                   | 5                     |\n   +-----------------------------------------------+-----------------------+\n",
+      "stderr": ""
+    },
+    "default-template#e2e:rst": {
+      "key": "11f1348eca0047b2",
+      "exit": 0,
+      "stdout": "===============\nPump inspection\n===============\n--------------------\nService instructions\n--------------------\n\n:Author: Alex\n:Author: Morgan\n\n.. contents::\n   :depth: 3\n..\n\n.. section-numbering::\n\nPreparation\n===========\n\nStop the pump.\n",
+      "stderr": ""
+    },
+    "default-template#read": {
+      "key": "57bf86ec86dc7864",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Alex\"}]},{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Morgan\"}]}]},\"subtitle\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Service\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"instructions\"}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inspection\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"preparation\",[],[]],[{\"t\":\"Str\",\"c\":\"Preparation\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Stop\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pump.\"}]}]}",
+      "stderr": ""
+    },
+    "default-template#write:rst": {
+      "key": "9c8af21bc8067c29",
+      "exit": 0,
+      "stdout": "===============\nPump inspection\n===============\n--------------------\nService instructions\n--------------------\n\n:Author: Alex\n:Author: Morgan\n\n.. contents::\n   :depth: 3\n..\n\n.. section-numbering::\n\nPreparation\n===========\n\nStop the pump.\n",
+      "stderr": ""
+    },
+    "include-slice#e2e:rst": {
+      "key": "46ce947de0ee408f",
+      "exit": 0,
+      "stdout": ".. code:: text\n\n   Begin\n   Pump\n",
+      "stderr": ""
+    },
+    "include-slice#read": {
+      "key": "e6cde2613de05793",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"text\"],[[\"start-line\",\"1\\n\\n\"],[\"end-line\",\"2\\n\\n\"],[\"code\",\"text\\n\\n\"]]],\"Begin\\nPump\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "include-slice#write:rst": {
+      "key": "03b989b0c2522b6d",
+      "exit": 0,
+      "stdout": ".. code:: text\n\n   Begin\n   Pump\n",
+      "stderr": ""
+    },
+    "role-and-directives#e2e:rst": {
+      "key": "dc2103c13748c83c",
+      "exit": 0,
+      "stdout": "Run ``inspect pump``.\n\n.. warning::\n\n   Stop the pump before you open the cover.\n\n.. code:: sh\n   :number-lines: 2\n\n   inspect pump\n",
+      "stderr": ""
+    },
+    "role-and-directives#read": {
+      "key": "5ecf66775fecbe28",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Run\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[\"shell\",\"sh\"],[]],\"inspect pump\"]},{\"t\":\"Str\",\"c\":\".\"}]},{\"t\":\"Div\",\"c\":[[\"\",[\"warning\"],[]],[{\"t\":\"Div\",\"c\":[[\"\",[\"title\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Warning\"}]}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Stop\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"you\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"sh\",\"numberLines\"],[[\"startFrom\",\"2\"]]],\"inspect pump\"]}]}\n",
+      "stderr": ""
+    },
+    "role-and-directives#write:rst": {
+      "key": "840d3d67bf1fc5a7",
+      "exit": 0,
+      "stdout": "Run ``inspect pump``.\n\n.. warning::\n\n   Stop the pump before you open the cover.\n\n.. code:: sh\n   :number-lines: 2\n\n   inspect pump\n",
+      "stderr": ""
+    },
+    "row-span#e2e:rst": {
+      "key": "3b61462582fd915e",
+      "exit": 0,
+      "stdout": "+------+------+\n| Pump | Seal |\n|      +------+\n|      | Cap  |\n+------+------+\n",
+      "stderr": ""
+    },
+    "row-span#read": {
+      "key": "0594ba45d0d32172",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":9.722222222222222e-2}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidth\",\"c\":9.722222222222222e-2}]],[[\"\",[],[]],[]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},2,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cap\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "row-span#write:rst": {
+      "key": "1965be65041b49cb",
+      "exit": 0,
+      "stdout": "+------+------+\n| Pump | Seal |\n|      +------+\n|      | Cap  |\n+------+------+\n",
+      "stderr": ""
+    },
+    "section-links#e2e:rst": {
+      "key": "761524d80d348657",
+      "exit": 0,
+      "stdout": ".. _inspection:\n\nPump inspection\n===============\n\nRead `inspection <#inspection>`__ before you remove the cover.\n\nUse `parts <https://example.org/parts>`__ for the list of seals.\n",
+      "stderr": ""
+    },
+    "section-links#read": {
+      "key": "914fcfcaa8268923",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"inspection\",[],[]],[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inspection\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"inspection\"}],[\"#inspection\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"you\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"remove\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"parts\"}],[\"https://example.org/parts\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"list\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"of\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seals.\"}]}]}\n",
+      "stderr": ""
+    },
+    "section-links#write:rst": {
+      "key": "b6482250e3d311ae",
+      "exit": 0,
+      "stdout": ".. _inspection:\n\nPump inspection\n===============\n\nRead `inspection <#inspection>`__ before you remove the cover.\n\nUse `parts <https://example.org/parts>`__ for the list of seals.\n",
+      "stderr": ""
+    }
+  }
+}
