@@ -9,6 +9,7 @@ use randoc_core::{CiteMethod, Result, WrapOption};
 use randoc_layout::{Doc, cr, empty, literal, nest, space};
 
 use crate::LatexWriter;
+use crate::blocks::Highlight;
 use crate::escape::{StringContext, escape_uri, to_label};
 use crate::shared::{Dimension, Direction, dimension, inlines_any, show_fl, unescape_uri};
 
@@ -339,9 +340,12 @@ impl LatexWriter<'_> {
             let protect = if self.in_caption { "\\protect" } else { "" };
             return literal(format!("{protect}{}", listings_inline(attr, code)));
         }
-        if !self.in_heading
-            && let Some(highlighted) = self.highlight(attr, code)
-        {
+        let highlight = if self.in_heading {
+            None
+        } else {
+            self.highlight(attr, code)
+        };
+        if let Some(Highlight::Code(highlighted)) = &highlight {
             self.usage.highlighting = true;
             let opts = crate::blocks::format_options(attr, &highlighted.language);
             return literal(randoc_highlight::format_latex_inline(
@@ -349,7 +353,8 @@ impl LatexWriter<'_> {
                 &highlighted.lines,
             ));
         }
-        if self.options.highlight_style.is_some()
+        if highlight.is_none()
+            && self.options.highlight_style.is_some()
             && !self.in_heading
             && (attr
                 .classes

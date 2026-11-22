@@ -19,7 +19,7 @@ pub mod shared;
 
 pub use context::{
     CommonState, Context, Host, Limits, MediaBag, MediaItem, NativeHost, PathKind, PathTimes,
-    ProcessOutput, PureHost, Timestamp,
+    ProcessOutput, PureHost, Timestamp, read_real_file_limited,
 };
 pub use error::{Error, Result};
 pub use extensions::{Extension, Extensions, FormatSpec, default_extensions, supported_extensions};
@@ -30,7 +30,7 @@ pub use format::{
 };
 pub use logging::{LogMessage, SourcePos, Verbosity};
 pub use options::{
-    CaptionPosition, CiteMethod, HtmlMathMethod, ObfuscationMethod, ReaderOptions,
+    CaptionPosition, CiteMethod, HtmlMathMethod, LoadedFile, ObfuscationMethod, ReaderOptions,
     ReferenceLocation, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
 };
 pub use randoc_ast::Text;

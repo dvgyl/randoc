@@ -69,6 +69,18 @@ pub trait Host: Send {
         Err(unsupported(path))
     }
 
+    /// Reads a file of at most `max_bytes` bytes. A larger file gives an
+    /// error of the kind [`io::ErrorKind::FileTooLarge`]. A host with
+    /// access to real files stops the read after `max_bytes + 1` bytes;
+    /// the default reads the whole file first.
+    fn read_file_limited(&mut self, path: &str, max_bytes: usize) -> io::Result<Vec<u8>> {
+        let bytes = self.read_file(path)?;
+        if bytes.len() > max_bytes {
+            return Err(too_large(max_bytes));
+        }
+        Ok(bytes)
+    }
+
     /// Returns `true` when the file exists.
     fn file_exists(&mut self, _path: &str) -> bool {
         false
@@ -196,6 +208,30 @@ pub trait Host: Send {
     }
 }
 
+fn too_large(max_bytes: usize) -> io::Error {
+    io::Error::new(
+        io::ErrorKind::FileTooLarge,
+        format!("the file is larger than {max_bytes} bytes"),
+    )
+}
+
+/// Reads at most `max_bytes` bytes of a real file and stops the read after
+/// one more byte, so that a large file or an endless stream does not fill
+/// the memory.
+pub fn read_real_file_limited(path: &str, max_bytes: usize) -> io::Result<Vec<u8>> {
+    use std::io::Read;
+    let file = std::fs::File::open(path)?;
+    let limit = u64::try_from(max_bytes)
+        .unwrap_or(u64::MAX)
+        .saturating_add(1);
+    let mut bytes = Vec::new();
+    file.take(limit).read_to_end(&mut bytes)?;
+    if bytes.len() > max_bytes {
+        return Err(too_large(max_bytes));
+    }
+    Ok(bytes)
+}
+
 fn unsupported(path: &str) -> io::Error {
     io::Error::new(
         io::ErrorKind::Unsupported,
@@ -302,6 +338,10 @@ pub struct NativeHost;
 impl Host for NativeHost {
     fn read_file(&mut self, path: &str) -> io::Result<Vec<u8>> {
         std::fs::read(path)
+    }
+
+    fn read_file_limited(&mut self, path: &str, max_bytes: usize) -> io::Result<Vec<u8>> {
+        read_real_file_limited(path, max_bytes)
     }
 
     fn file_exists(&mut self, path: &str) -> bool {
@@ -875,6 +915,15 @@ impl Context {
             .read_file(path)
             .map_err(|error| Error::Io(format!("{path}: {error}")))
     }
+
+    /// Reads a file of at most `max_bytes` bytes, as
+    /// [`Host::read_file_limited`] does, and reports a failure as a Pandoc
+    /// input and output error.
+    pub fn read_file_limited(&mut self, path: &str, max_bytes: usize) -> Result<Vec<u8>> {
+        self.host
+            .read_file_limited(path, max_bytes)
+            .map_err(|error| Error::Io(format!("{path}: {error}")))
+    }
 }
 
 #[cfg(test)]
@@ -1139,6 +1188,34 @@ mod tests {
         assert!(context.host().file_exists(path));
         assert_eq!(context.read_file(path).unwrap(), b"data");
         assert!(context.host().current_time().unix_seconds > 1_700_000_000);
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn a_limited_read_stops_after_the_limit() {
+        let dir = scratch("limited");
+        let path = format!("{dir}/f.txt");
+        std::fs::write(&path, b"data").unwrap();
+        let mut native = NativeHost;
+        assert_eq!(native.read_file_limited(&path, 4).unwrap(), b"data");
+        let error = native.read_file_limited(&path, 3).unwrap_err();
+        assert_eq!(error.kind(), io::ErrorKind::FileTooLarge);
+        // An endless stream ends after the limit.
+        #[cfg(unix)]
+        assert_eq!(
+            native
+                .read_file_limited("/dev/zero", 10)
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::FileTooLarge
+        );
+        let mut pure = PureHost::default();
+        pure.files.insert("a".into(), b"data".to_vec());
+        assert_eq!(pure.read_file_limited("a", 4).unwrap(), b"data");
+        assert!(pure.read_file_limited("a", 3).is_err());
+        let mut context = Context::new(Box::new(pure));
+        let error = context.read_file_limited("a", 3).unwrap_err();
+        assert_eq!(error.to_string(), "a: the file is larger than 3 bytes");
         std::fs::remove_dir_all(&dir).unwrap();
     }
 

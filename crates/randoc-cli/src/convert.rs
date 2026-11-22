@@ -29,61 +29,20 @@ pub fn check_highlight_style(
     if !style.ends_with(".theme") {
         return Err(Error::Option(format!("Unknown highlight-style {style}")));
     }
-    let bytes = read(style).map_err(|error| io_error(style, "openBinaryFile", &error))?;
-    // The JSON parser of the program keeps the first of two equal keys, as Pandoc does.
-    let theme = std::str::from_utf8(&bytes)
-        .ok()
-        .and_then(|text| crate::node::parse_json(text).ok())
-        .map(|node| node.to_json());
-    match theme {
-        Some(theme) if valid_theme(&theme) => Ok(()),
-        _ => Err(Error::Option(format!(
-            "Could not read highlighting theme {style}"
-        ))),
-    }
+    read_theme(style, read).map(|_| ())
 }
 
-/// Checks the field types of a theme as the theme reader of Pandoc does: a
-/// `text-styles` object of token styles, colors as `#rrggbb` or null, and
-/// Boolean font flags. Other fields and token names do not matter.
-fn valid_theme(theme: &serde_json::Value) -> bool {
-    use serde_json::Value;
-    let color = |value: Option<&Value>| match value {
-        None | Some(Value::Null) => true,
-        Some(Value::String(text)) => {
-            // `#rrggbb`, or `#rrggbbaa` with an alpha value.
-            (text.len() == 7 || text.len() == 9)
-                && text.starts_with('#')
-                && text[1..].chars().all(|c| c.is_ascii_hexdigit())
-        }
-        _ => false,
-    };
-    let flag = |value: Option<&Value>| matches!(value, None | Some(Value::Null | Value::Bool(_)));
-    let Value::Object(fields) = theme else {
-        return false;
-    };
-    let colors = [
-        "text-color",
-        "background-color",
-        "line-number-color",
-        "line-number-background-color",
-    ];
-    if !colors.iter().all(|name| color(fields.get(*name))) {
-        return false;
-    }
-    let Some(Value::Object(styles)) = fields.get("text-styles") else {
-        return false;
-    };
-    styles.values().all(|style| {
-        let Value::Object(style) = style else {
-            return false;
-        };
-        color(style.get("text-color"))
-            && color(style.get("background-color"))
-            && ["bold", "italic", "underline"]
-                .iter()
-                .all(|name| flag(style.get(*name)))
-    })
+/// Reads and parses a theme file with the theme reader of the writers, so
+/// that the check and the writers accept the same files.
+fn read_theme(
+    style: &str,
+    read: impl FnOnce(&str) -> std::io::Result<Vec<u8>>,
+) -> Result<randoc_highlight::Style> {
+    let bytes = read(style).map_err(|error| io_error(style, "openBinaryFile", &error))?;
+    std::str::from_utf8(&bytes)
+        .ok()
+        .and_then(|text| randoc_highlight::Style::from_json(text).ok())
+        .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {style}")))
 }
 
 /// Returns the error of Pandoc for a failed file operation.
@@ -667,17 +626,32 @@ fn read_named_files(point: ReadPoint, settings: &Settings, context: &mut Context
 
 /// Reads and parses each `--syntax-definition` file in the order of Pandoc,
 /// after the template. Pandoc does it for each output format, so a bad file
-/// is an error also when the writer does not highlight.
-fn read_syntax_definitions(settings: &Settings, context: &mut Context) -> Result<()> {
-    let paths: Vec<&String> = settings.syntax_definitions.iter().collect();
+/// is an error also when the writer does not highlight. Each file is read
+/// one time, so `/dev/stdin` and a pipe work; the writers get the bytes.
+fn read_syntax_definitions(
+    settings: &Settings,
+    context: &mut Context,
+) -> Result<Vec<randoc::LoadedFile>> {
+    let mut files = Vec::with_capacity(settings.syntax_definitions.len());
+    for path in &settings.syntax_definitions {
+        let bytes = context
+            .host()
+            .read_file_limited(path, randoc_highlight::MAX_DEFINITION_BYTES)
+            .map_err(|error| io_error(path, "openBinaryFile", &error))?;
+        // Pandoc decodes the file before it parses it: a byte that is not
+        // UTF-8, also in a comment, stops the run with exit code 1.
+        if let Err(error) = std::str::from_utf8(&bytes) {
+            return Err(Error::Io(randoc_highlight::utf8_message(&bytes, &error)));
+        }
+        files.push(randoc::LoadedFile {
+            path: path.clone(),
+            bytes: bytes.into(),
+        });
+    }
     randoc_highlight::Registry::new()
-        .add_files(&paths, |path| {
-            context
-                .host()
-                .read_file(path)
-                .map_err(|error| io_error(path, "openBinaryFile", &error))
-        })?
-        .map_err(Error::SyntaxMap)
+        .add_definitions(files.iter().map(|file| (file.path.as_str(), &*file.bytes)))
+        .map_err(Error::SyntaxMap)?;
+    Ok(files)
 }
 
 /// The JSON form of a built-in highlighting style or of a theme file, as
@@ -689,16 +663,10 @@ pub fn print_highlight_style(
     if let Some(builtin) = randoc_highlight::Style::builtin(style) {
         return Ok(builtin.to_json().into_bytes());
     }
-    let mut bytes = Vec::new();
-    check_highlight_style(style, |path| {
-        bytes = read(path)?;
-        Ok(bytes.clone())
-    })?;
-    std::str::from_utf8(&bytes)
-        .ok()
-        .and_then(|text| randoc_highlight::Style::from_json(text).ok())
-        .map(|theme| theme.to_json().into_bytes())
-        .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {style}")))
+    if !style.ends_with(".theme") {
+        return Err(Error::Option(format!("Unknown highlight-style {style}")));
+    }
+    Ok(read_theme(style, read)?.to_json().into_bytes())
 }
 
 /// Returns the abbreviations for the reader: one on each line of the
@@ -781,7 +749,6 @@ fn writer_options(settings: &Settings, spec: &FormatSpec) -> Result<WriterOption
     options.reference_location = settings.reference_location;
     options.figure_caption_position = settings.figure_caption_position;
     options.table_caption_position = settings.table_caption_position;
-    options.syntax_definitions = settings.syntax_definitions.iter().cloned().collect();
     options.prefer_ascii = settings.ascii;
     options.link_images = settings.link_images;
     Ok(options)
@@ -990,6 +957,14 @@ impl randoc::Host for SandboxHost {
     fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
         if self.is_named(path) {
             std::fs::read(path)
+        } else {
+            Err(std::io::Error::from(std::io::ErrorKind::NotFound))
+        }
+    }
+
+    fn read_file_limited(&mut self, path: &str, max_bytes: usize) -> std::io::Result<Vec<u8>> {
+        if self.is_named(path) {
+            randoc::read_real_file_limited(path, max_bytes)
         } else {
             Err(std::io::Error::from(std::io::ErrorKind::NotFound))
         }
@@ -1517,11 +1492,15 @@ fn convert(
         }
         None => None,
     };
-    read_syntax_definitions(settings, context)?;
+    let syntax_definitions = read_syntax_definitions(settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
     let style = settings.syntax_highlighting.as_str();
     if !matches!(style, "none" | "default" | "idiomatic") {
-        check_highlight_style(style, |path| context.host().read_file(path))?;
+        check_highlight_style(style, |path| {
+            context
+                .host()
+                .read_file_limited(path, randoc_highlight::MAX_THEME_BYTES)
+        })?;
     }
     if settings.is_standalone()
         && !writer.renders_template()
@@ -1631,6 +1610,7 @@ fn convert(
     }
     // A Lua filter sees the writer options, so they are ready before the filters.
     let mut writer_options = writer_options;
+    writer_options.syntax_definitions = syntax_definitions;
     // Pandoc ignores the template text of a format without a default
     // template; its writer takes the presence of a template as the
     // standalone flag.
@@ -2146,6 +2126,54 @@ mod tests {
         };
         let mut host = SandboxHost::new(&template, &[], "/u");
         assert!(host.read_file(&named).is_err());
+        assert!(host.read_file_limited(&named, 10).is_err());
+        let mut host = SandboxHost::new(&settings, &[], "/u");
+        assert_eq!(host.read_file_limited(&named, 1).unwrap(), b"n");
+        assert_eq!(
+            host.read_file_limited(&named, 0).unwrap_err().kind(),
+            std::io::ErrorKind::FileTooLarge
+        );
+    }
+
+    /// Each `--syntax-definition` file is read one time, so `/dev/stdin`
+    /// works; the writers get the bytes. A byte that is not UTF-8 stops
+    /// the run with the message of Pandoc and exit code 1.
+    #[test]
+    fn syntax_definitions_are_read_one_time() {
+        struct Counting(std::sync::Arc<std::sync::Mutex<Vec<String>>>);
+        impl randoc::Host for Counting {
+            fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
+                self.0.lock().unwrap().push(path.to_owned());
+                Ok(match path {
+                    "bad.xml" => b"<!-- \xff -->".to_vec(),
+                    _ => br#"<language name="Tiny" extensions="*.tiny"><highlighting>
+<contexts><context name="Normal" attribute="Normal Text"/></contexts>
+<itemDatas><itemData name="Normal Text" defStyleNum="dsNormal"/></itemDatas>
+</highlighting></language>"#
+                        .to_vec(),
+                })
+            }
+        }
+        let reads = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let settings = Settings {
+            syntax_definitions: VecDeque::from(["/dev/stdin".to_owned()]),
+            ..Settings::default()
+        };
+        let mut context = Context::new(Box::new(Counting(reads.clone())));
+        let files = read_syntax_definitions(&settings, &mut context).unwrap();
+        assert_eq!(*reads.lock().unwrap(), ["/dev/stdin"]);
+        assert_eq!(files.len(), 1);
+        assert!(files[0].bytes.starts_with(b"<language"));
+        let bad = Settings {
+            syntax_definitions: VecDeque::from(["bad.xml".to_owned()]),
+            ..Settings::default()
+        };
+        let error = read_syntax_definitions(&bad, &mut context).unwrap_err();
+        assert_eq!(error.exit_code(), 1);
+        assert_eq!(
+            error.to_string(),
+            "Cannot decode byte '\\xff': Data.Text.Internal.Encoding: Invalid UTF-8 stream"
+        );
     }
 
     #[test]
@@ -2521,6 +2549,16 @@ mod tests {
         assert!(!theme(
             r##"{"text-styles":{"Keyword":{"text-color":"#fff"}}}"##
         ));
+        // The check and the writers read a theme in one way: Pandoc 3.13
+        // refuses `editor-colors: 1` also for `-t plain`, and it ignores
+        // the alpha digits of `#zz123456`.
+        assert!(!theme(r#"{"text-styles":{},"editor-colors":1}"#));
+        assert!(theme(r##"{"text-styles":{},"text-color":"#zz123456"}"##));
+        let printed = print_highlight_style("a.theme", |_| {
+            Ok(br##"{"text-styles":{},"text-color":"#zz123456"}"##.to_vec())
+        })
+        .unwrap_or_default();
+        assert!(String::from_utf8_lossy(&printed).contains("\"text-color\": \"#123456\""));
         assert_eq!(
             check_highlight_style("a.theme", |_| Ok(b"[]".to_vec()))
                 .unwrap_err()

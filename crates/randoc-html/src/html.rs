@@ -35,7 +35,7 @@ pub(crate) fn write(
         context.limits.max_nesting_depth,
         min_heading_level(&doc.blocks),
     );
-    writer.registry = crate::highlight::load_registry(options, context)?;
+    writer.registry = crate::highlight::load_registry(options)?;
     let mut template_context = match options.template {
         Some(_) => Some(writer.meta_context(&doc.meta)?),
         None => None,
@@ -98,7 +98,7 @@ pub(crate) fn write_blocks(
         context.limits.max_nesting_depth,
         min_heading_level(blocks),
     );
-    writer.registry = crate::highlight::load_registry(options, context)?;
+    writer.registry = crate::highlight::load_registry(options)?;
     let mut body = writer.section_blocks(blocks, 0)?;
     let notes = writer.footnote_section(ReferenceLocation::EndOfDocument, "")?;
     if !notes.is_empty() {

@@ -122,9 +122,9 @@ impl FormatOptions {
 
 /// Reads an integer as Haskell's `read :: String -> Int` does.
 fn read_haskell_int(text: &str) -> Option<i64> {
-    let text = text.trim_matches(is_haskell_space);
-    if let Some(inner) = text.strip_prefix('(').and_then(|t| t.strip_suffix(')')) {
-        return read_haskell_int(inner);
+    let mut text = text.trim_matches(is_haskell_space);
+    while let Some(inner) = text.strip_prefix('(').and_then(|t| t.strip_suffix(')')) {
+        text = inner.trim_matches(is_haskell_space);
     }
     let (negative, literal) = match text.strip_prefix('-') {
         Some(rest) => (true, rest.trim_start_matches(is_haskell_space)),
@@ -1026,6 +1026,22 @@ b</code>"##,
         for (text, expected) in cases {
             assert_eq!(read_haskell_int(text), *expected, "{text:?}");
         }
+    }
+
+    /// A `startFrom` value of many parentheses is safe on a 2 MB stack.
+    #[test]
+    fn many_parentheses_are_safe_on_a_small_stack() {
+        let done = std::thread::Builder::new()
+            .stack_size(2 * 1024 * 1024)
+            .spawn(|| {
+                let n = 1_000_000;
+                let text = format!("{}7{}", "( ".repeat(n), " )".repeat(n));
+                assert_eq!(read_haskell_int(&text), Some(7));
+                let unbalanced = format!("{}7{}", "(".repeat(n), ")".repeat(n - 1));
+                assert_eq!(read_haskell_int(&unbalanced), None);
+            })
+            .map(|h| h.join().is_ok());
+        assert_eq!(done.ok(), Some(true));
     }
 
     #[test]

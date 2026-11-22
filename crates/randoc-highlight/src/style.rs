@@ -1,7 +1,7 @@
 //! Highlight styles: colours and fonts for each token type, the built-in
 //! styles, and the KDE theme JSON form of a style.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt;
 
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
@@ -744,6 +744,10 @@ fn parse_token_style(name: &str, value: &Json) -> Result<TokenStyle, String> {
     })
 }
 
+/// The largest theme file that a caller reads. A KDE theme of skylighting
+/// has about 5 KB.
+pub const MAX_THEME_BYTES: usize = 16 * 1024 * 1024;
+
 /// A JSON value whose objects keep the first of two equal keys, as aeson
 /// does. `serde_json::Value` keeps the last.
 enum Json {
@@ -814,8 +818,9 @@ impl<'de> Visitor<'de> for JsonVisitor {
 
     fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Json, A::Error> {
         let mut entries: Vec<(String, Json)> = Vec::new();
+        let mut seen: HashSet<String> = HashSet::new();
         while let Some((key, value)) = map.next_entry::<String, Json>()? {
-            if !entries.iter().any(|(k, _)| *k == key) {
+            if seen.insert(key.clone()) {
                 entries.push((key, value));
             }
         }

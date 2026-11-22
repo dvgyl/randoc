@@ -306,7 +306,14 @@ fn decode_reference(rest: &str) -> Option<(Text, usize)> {
         let semicolon = usize::from(digits[end..].starts_with(';'));
         return Some((c.to_string(), digits_start + end + semicolon));
     }
-    let end = run_end(rest, char::is_ascii_alphanumeric).min(32);
+    // The name is the whole run of letters and digits, also non-ASCII ones
+    // (oracle: `&copyé` stays as it is), of at most 32 characters.
+    let end = rest
+        .char_indices()
+        .take_while(|(_, c)| c.is_alphanumeric())
+        .take(32)
+        .last()
+        .map_or(0, |(i, c)| i + c.len_utf8());
     if end == 0 {
         return None;
     }
@@ -380,6 +387,13 @@ mod tests {
                 "<a t=\"&;&#;&#x;\">",
                 Some("<a markdown=\"1\" t=\"&amp;;&amp;#;&amp;#x;\">"),
             ),
+            // `pandoc -f html -t markdown_mmd`: a name runs on over
+            // letters that are not ASCII.
+            (
+                "<div X=\"&copyé\">",
+                Some("<div markdown=\"1\" X=\"&amp;copyé\">"),
+            ),
+            ("<a t=\"&copy;é\">", Some("<a markdown=\"1\" t=\"©é\">")),
             // Only the lower-case name is the attribute of Pandoc.
             (
                 "<a MARKDOWN=\"0\">",

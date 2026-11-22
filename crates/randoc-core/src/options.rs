@@ -153,6 +153,16 @@ pub enum CaptionPosition {
     CaptionBelow,
 }
 
+/// A file that the caller has read for a writer: the path as the user gave
+/// it and the bytes.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LoadedFile {
+    /// The path as the user gave it.
+    pub path: Text,
+    /// The content of the file.
+    pub bytes: std::sync::Arc<[u8]>,
+}
+
 /// The options of a writer. The fields match the writer options of Pandoc.
 ///
 /// The coordinator adds a field when a writer needs one. Make a value with
@@ -235,8 +245,9 @@ pub struct WriterOptions {
     pub figure_caption_position: CaptionPosition,
     /// The position of table captions.
     pub table_caption_position: CaptionPosition,
-    /// The paths of additional syntax definition files.
-    pub syntax_definitions: Vec<Text>,
+    /// The additional syntax definition files, read by the caller. A writer
+    /// does not read them again, so a path such as `/dev/stdin` works.
+    pub syntax_definitions: Vec<LoadedFile>,
     /// `true` to prefer ASCII characters in the output.
     pub prefer_ascii: bool,
     /// `true` to link to images in ODT output and not embed them.

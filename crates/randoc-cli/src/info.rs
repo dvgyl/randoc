@@ -271,7 +271,9 @@ pub fn run(command: &InfoCommand, program: &str, user_data_dir: &str) -> Result<
         }
         InfoCommand::PrintDefaultDataFile(name) => return subsystem::default_data_file(name),
         InfoCommand::PrintHighlightStyle(style) => {
-            return crate::convert::print_highlight_style(style, |path| std::fs::read(path));
+            return crate::convert::print_highlight_style(style, |path| {
+                randoc::read_real_file_limited(path, randoc_highlight::MAX_THEME_BYTES)
+            });
         }
     };
     Ok(text.into_bytes())

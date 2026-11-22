@@ -1232,6 +1232,106 @@ mod tests {
         text
     }
 
+    /// The paragraphs of a link case: each one a list of (text, URL).
+    type Paragraphs<'a> = &'a [&'a [(&'a str, &'a str)]];
+
+    /// JSON blocks: one paragraph of links for each list of (text, URL).
+    fn link_paragraphs(paragraphs: Paragraphs<'_>) -> String {
+        let paragraphs: Vec<String> = paragraphs
+            .iter()
+            .map(|links| {
+                let links: Vec<String> = links
+                    .iter()
+                    .map(|(text, url)| {
+                        format!(
+                            r#"{{"t":"Link","c":[["",[],[]],[{{"t":"Str","c":{}}}],[{},""]]}}"#,
+                            serde_json::to_string(text).unwrap_or_default(),
+                            serde_json::to_string(url).unwrap_or_default()
+                        )
+                    })
+                    .collect();
+                format!(
+                    r#"{{"t":"Para","c":[{}]}}"#,
+                    links.join(r#",{"t":"Space"},"#)
+                )
+            })
+            .collect();
+        format!("[{}]", paragraphs.join(","))
+    }
+
+    /// `pandoc -f json -t markdown --reference-links` (Pandoc 3.13): labels
+    /// that differ only in white space are one label, and a target that
+    /// had the numbered label `N` in an earlier block gets `xN`.
+    #[test]
+    fn reference_labels_follow_pandoc_across_blocks() {
+        let block = ["--reference-links", "--reference-location=block"];
+        let cases: [(&[&str], Paragraphs<'_>, &str); 6] = [
+            (
+                &["--reference-links"],
+                &[&[("A B", "a"), ("A  B", "b"), ("a b", "c")]],
+                "[A B][] [A  B][1] [a b][2]\n\n  [A B]: a\n  [1]: b\n  [2]: c",
+            ),
+            (
+                &["--reference-links"],
+                &[&[("A\u{a0}B", "a"), ("A B", "b"), ("A\tB", "a")]],
+                "[A\u{a0}B][] [A B][1] [A\tB]\n\n  [A\u{a0}B]: a\n  [1]: b",
+            ),
+            (
+                &block,
+                &[&[("x", "a"), ("x", "b")], &[("x", "b")]],
+                "[x][] [x][1]\n\n  [x]: a\n  [1]: b\n\n[x][x1]\n\n  [x1]: b",
+            ),
+            (
+                &block,
+                &[
+                    &[("x", "a"), ("x", "b")],
+                    &[("x", "a"), ("x", "b"), ("x", "c")],
+                ],
+                "[x][] [x][1]\n\n  [x]: a\n  [1]: b\n\n[x][] [x][x1] [x][2]\n\n  [x]: a\n  [x1]: b\n  [2]: c",
+            ),
+            (
+                &block,
+                &[&[("x", "a")], &[("x", "b")], &[("x", "a")], &[("x", "c")]],
+                "[x]\n\n  [x]: a\n\n[x][1]\n\n  [1]: b\n\n[x]\n\n  [x]: a\n\n[x][2]\n\n  [2]: c",
+            ),
+            (
+                &block,
+                &[&[("1", "q"), ("x", "a"), ("x", "b")], &[("x", "b")]],
+                "[1][] [x][] [x][2]\n\n  [1]: q\n  [x]: a\n  [2]: b\n\n[x][x2]\n\n  [x2]: b",
+            ),
+        ];
+        for (args, paragraphs, expected) in cases {
+            let json = link_paragraphs(paragraphs);
+            let text = write_spec("markdown", args, &json);
+            assert_eq!(text.trim_end(), expected, "{json}");
+        }
+    }
+
+    /// `pandoc -t commonmark --syntax-definition=tiny.xml` for
+    /// `![x](p){#i} y`: the HTML form of the image needs no file read.
+    #[test]
+    fn the_html_form_works_with_syntax_definitions() {
+        const TINY: &str = r#"<language name="Tiny" extensions="*.tiny"><highlighting>
+<contexts><context name="Normal" attribute="Normal Text"/></contexts>
+<itemDatas><itemData name="Normal Text" defStyleNum="dsNormal"/></itemDatas>
+</highlighting></language>"#;
+        let blocks = r#"[{"t":"Para","c":[{"t":"Image","c":[["i",[],[]],[{"t":"Str","c":"x"}],["p",""]]},{"t":"Space"},{"t":"Str","c":"y"}]}]"#;
+        let input = format!(r#"{{"pandoc-api-version":[1,23,1,2],"meta":{{}},"blocks":{blocks}}}"#);
+        let doc = randoc_ast::json::from_json(&input).unwrap_or_default();
+        let mut options = WriterOptions::default();
+        options.extensions = randoc_core::default_extensions("commonmark");
+        options.syntax_definitions = vec![randoc_core::LoadedFile {
+            path: "/dev/stdin".into(),
+            bytes: TINY.as_bytes().into(),
+        }];
+        let result =
+            crate::writer("commonmark").map(|w| w.write(&doc, &options, &mut Context::pure()));
+        let Some(Ok(Output::Text(text))) = result else {
+            panic!("no text: {result:?}");
+        };
+        assert_eq!(text, "<img src=\"p\" id=\"i\" alt=\"x\" /> y");
+    }
+
     /// The cases below give `pandoc -f json -t FORMAT ARGS` (Pandoc 3.13).
     type Case = (
         &'static str,

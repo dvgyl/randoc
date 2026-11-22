@@ -143,9 +143,10 @@ pub(crate) struct W<'a> {
     pub upper: bool,
     /// `true` inside a superscript or subscript, where spaces need a backslash.
     pub in_script: bool,
-    /// The text labels of the link references, in lower case, with their
-    /// targets.
-    pub ref_index: std::collections::HashMap<Text, RefKey>,
+    /// The text labels of the link references, as [`reference_key`] gives
+    /// them, with each target of the label and its number: 0 for the
+    /// target of the text label, else the number of its numbered label.
+    pub ref_index: std::collections::HashMap<Text, std::collections::HashMap<RefKey, u64>>,
     /// The label of each target in `refs`.
     pub pending_targets: std::collections::HashMap<RefKey, Text>,
     /// The first number that can be free for a numbered reference label.

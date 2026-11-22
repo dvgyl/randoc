@@ -2,7 +2,8 @@
 //! XML tree into that model. Ported from `Skylighting.Types` and
 //! `Skylighting.Parser` of skylighting-core 0.15.
 
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::sync::Arc;
 
 use crate::regex::{self, Regex};
 use crate::token::TokenType;
@@ -63,7 +64,8 @@ pub(crate) fn fold_case(s: &str) -> String {
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) enum KeywordList {
     Unresolved(String),
-    Resolved(WordSet),
+    /// Rules that name the same list share one set.
+    Resolved(Arc<WordSet>),
 }
 
 /// A compiled regular expression of a `RegExpr` rule.
@@ -603,69 +605,80 @@ fn to_token_type(t: &str) -> TokenType {
 }
 
 /// Resolves the keyword lists of each syntax in `syntaxes`, with the
-/// `include` items of the lists, as `resolveKeywords` does.
+/// `include` items of the lists, as `resolveKeywords` does. The rules that
+/// name one list with one case mode share one word set.
 pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
     let lists: HashMap<String, BTreeMap<String, Vec<ListItem>>> = syntaxes
         .iter()
         .map(|s| (s.name.clone(), s.lists.clone()))
         .collect();
     for syntax in syntaxes.iter_mut() {
-        let own = &syntax.lists;
+        let mut resolved: HashMap<(String, bool), Arc<WordSet>> = HashMap::new();
+        let mut budget = MAX_RESOLVED_WORDS;
         for context in syntax.contexts.values_mut() {
             for rule in &mut context.rules {
-                resolve_rule(rule, own, &lists);
+                let Matcher::Keyword(attr, list) = &mut rule.matcher else {
+                    continue;
+                };
+                let KeywordList::Unresolved(name) = list else {
+                    continue;
+                };
+                if !syntax.lists.contains_key(name.as_str()) {
+                    continue;
+                }
+                let key = (std::mem::take(name), attr.case_sensitive);
+                let words = resolved
+                    .entry(key)
+                    .or_insert_with_key(|(name, case_sensitive)| {
+                        let words = collect_words(&syntax.name, name, &lists, &mut budget);
+                        Arc::new(WordSet::new(*case_sensitive, words))
+                    });
+                *list = KeywordList::Resolved(Arc::clone(words));
             }
         }
     }
 }
 
-fn resolve_rule(
-    rule: &mut Rule,
-    own: &BTreeMap<String, Vec<ListItem>>,
+/// The largest number of distinct words that the resolver collects for all
+/// keyword lists of one syntax. A definition file of a few megabytes can
+/// otherwise include one large list from very many lists.
+const MAX_RESOLVED_WORDS: usize = 1_000_000;
+
+/// The distinct words of the list `list` of `syntax` and of each list that
+/// its `include` items reach. Each list is expanded once, so a cycle ends
+/// and a list that two paths include costs nothing the second time.
+/// `budget` is the number of words that the caller can still collect.
+fn collect_words(
+    syntax: &str,
+    list: &str,
     all: &HashMap<String, BTreeMap<String, Vec<ListItem>>>,
-) {
-    if let Matcher::Keyword(attr, list) = &mut rule.matcher
-        && let KeywordList::Unresolved(name) = list
-        && let Some(items) = own.get(name.as_str())
-    {
-        let mut words = Vec::new();
-        let mut seen = 0usize;
-        collect_items(items, all, &mut words, &mut seen, 0);
-        *list = KeywordList::Resolved(WordSet::new(attr.case_sensitive, words));
-    }
-}
-
-/// The largest number of list expansions in one keyword list. A cycle of
-/// `include` items would otherwise never end.
-const MAX_LIST_EXPANSIONS: usize = 10_000;
-
-/// The deepest chain of list `include` items that the resolver follows.
-const MAX_LIST_DEPTH: usize = 64;
-
-fn collect_items(
-    items: &[ListItem],
-    all: &HashMap<String, BTreeMap<String, Vec<ListItem>>>,
-    words: &mut Vec<String>,
-    seen: &mut usize,
-    depth: usize,
-) {
-    if depth > MAX_LIST_DEPTH {
-        return;
-    }
-    for item in items {
-        match item {
-            ListItem::Item(t) => words.push(t.clone()),
-            ListItem::IncludeList(syntax, list) => {
-                *seen += 1;
-                if *seen > MAX_LIST_EXPANSIONS {
-                    return;
+    budget: &mut usize,
+) -> Vec<String> {
+    let mut words: HashSet<&str> = HashSet::new();
+    let mut expanded: HashSet<(&str, &str)> = HashSet::new();
+    let mut pending: Vec<(&str, &str)> = vec![(syntax, list)];
+    while let Some((syntax, list)) = pending.pop() {
+        if !expanded.insert((syntax, list)) {
+            continue;
+        }
+        let Some(items) = all.get(syntax).and_then(|lists| lists.get(list)) else {
+            continue;
+        };
+        for item in items {
+            match item {
+                ListItem::Item(word) => {
+                    if *budget == 0 {
+                        break;
+                    }
+                    if words.insert(word) {
+                        *budget -= 1;
+                    }
                 }
-                if let Some(included) = all.get(syntax).and_then(|l| l.get(list)) {
-                    collect_items(included, all, words, seen, depth + 1);
-                }
+                ListItem::IncludeList(syntax, list) => pending.push((syntax, list)),
             }
         }
     }
+    words.into_iter().map(str::to_owned).collect()
 }
 
 #[cfg(test)]
@@ -844,6 +857,44 @@ mod tests {
         ));
         let insensitive = WordSet::new(false, vec!["Straße".into()]);
         assert!(insensitive.contains("STRASSE"));
+    }
+
+    /// Each list is expanded once, so many lists that include one large
+    /// list, and a cycle of includes, resolve fast; the word budget stops
+    /// the rest.
+    #[test]
+    fn included_lists_are_expanded_once_and_have_a_budget() {
+        let words: String = (0..20_000).map(|i| format!("<item>w{i}</item>")).collect();
+        let lists: String = (0..2_000)
+            .map(|i| format!("<list name=\"l{i}\"><include>big##T</include><include>l{i}##T</include><include>big##T</include></list>"))
+            .collect();
+        let rules: String = (0..2_000)
+            .map(|i| format!("<keyword String=\"l{i}\" attribute=\"K\"/>"))
+            .collect();
+        let text = definition(
+            &format!("<context name=\"A\" attribute=\"N\">{rules}</context>"),
+            &format!("<list name=\"big\">{words}</list>{lists}"),
+        );
+        let started = std::time::Instant::now();
+        let Ok(syntax) = parse(&text) else {
+            panic!("parse failed")
+        };
+        let mut all = vec![syntax];
+        resolve_keywords(&mut all);
+        let rules = &all[0].contexts["A"].rules;
+        let sizes: Vec<usize> = rules
+            .iter()
+            .map(|rule| match &rule.matcher {
+                Matcher::Keyword(_, KeywordList::Resolved(words)) => match words.as_ref() {
+                    WordSet::CaseSensitive(set) | WordSet::CaseInsensitive(set) => set.len(),
+                },
+                _ => 0,
+            })
+            .collect();
+        // 1,000,000 words in all: the first 50 lists get the 20,000 words.
+        assert_eq!(sizes[..50], [20_000; 50]);
+        assert!(sizes[50..].iter().all(|&size| size == 0));
+        assert!(started.elapsed() < std::time::Duration::from_secs(30));
     }
 
     #[test]

@@ -174,8 +174,8 @@ fn lowest_level(blocks: &[Block]) -> Option<i64> {
 }
 
 impl<'d> TocScan<'d> {
-    /// Counts a numbered heading and returns its section number.
-    fn count(&mut self, level: i64) -> Text {
+    /// Counts a numbered heading.
+    fn advance(&mut self, level: i64) {
         while self.counters.last().is_some_and(|(l, _)| *l > level) {
             self.counters.pop();
         }
@@ -183,6 +183,12 @@ impl<'d> TocScan<'d> {
             Some((l, count)) if *l == level => *count += 1,
             _ => self.counters.push((level, 1)),
         }
+    }
+
+    /// The section number of the heading that [`TocScan::advance`] counted
+    /// last, at `level`. Only a listed heading needs it: the text can have
+    /// very many parts.
+    fn number(&self, level: i64) -> Text {
         let mut parts = Vec::new();
         let mut counters = self.counters.iter().peekable();
         let mut current = self.base;
@@ -260,8 +266,8 @@ impl W<'_> {
         for block in blocks {
             match block {
                 Block::Header(level, attr, _) => {
-                    if self.opts.number_sections && *level >= 1 && !attr.has_class("unnumbered") {
-                        scan.count(*level);
+                    if self.opts.number_sections && !attr.has_class("unnumbered") {
+                        scan.advance(*level);
                     }
                 }
                 Block::Div(_, inner) => {
@@ -284,8 +290,10 @@ impl W<'_> {
         inlines: &'d [Inline],
         scan: &mut TocScan<'d>,
     ) -> Result<()> {
-        let number =
-            (self.opts.number_sections && !attr.has_class("unnumbered")).then(|| scan.count(level));
+        let numbered = self.opts.number_sections && !attr.has_class("unnumbered");
+        if numbered {
+            scan.advance(level);
+        }
         while scan.open.last().is_some_and(|(open, _)| *open >= level) {
             scan.open.pop();
         }
@@ -307,7 +315,7 @@ impl W<'_> {
                 depth: scan.open.len() - 1,
                 id,
                 inlines,
-                number,
+                number: numbered.then(|| scan.number(level)),
             });
         }
         Ok(())
@@ -761,6 +769,29 @@ mod template_tests {
             Ok(Output::Text(text)) => text,
             _ => unreachable!("the writer gives text"),
         }
+    }
+
+    /// `pandoc -f json -t markdown --toc -N --template=t`: a level 0
+    /// heading in a div that the contents skip counts, and a hidden heading
+    /// at a very deep level counts but gets no number text.
+    #[test]
+    fn hidden_headings_count_for_the_section_numbers() {
+        let toc = |blocks: &str| {
+            let text = write_toc("markdown", &["-N"], blocks);
+            text.split("\n~~~\n").next().unwrap_or_default().to_owned()
+        };
+        assert_eq!(
+            toc(
+                r#"[{"t":"Div","c":[["",[],[]],[{"t":"Para","c":[{"t":"Str","c":"p"}]},{"t":"Header","c":[0,["z",[],[]],[{"t":"Str","c":"Z"}]]}]]},{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]}]"#
+            ),
+            "- [[1.1]{.toc-section-number} A](#a){#toc-a}\n"
+        );
+        assert_eq!(
+            toc(
+                r#"[{"t":"Header","c":[1,["a",[],[]],[{"t":"Str","c":"A"}]]},{"t":"Header","c":[90000,["b",[],[]],[{"t":"Str","c":"B"}]]},{"t":"Header","c":[2,["c",[],[]],[{"t":"Str","c":"C"}]]}]"#
+            ),
+            "- [[1]{.toc-section-number} A](#a){#toc-a}\n  - [[1.1]{.toc-section-number} C](#c){#toc-c}\n"
+        );
     }
 
     #[test]

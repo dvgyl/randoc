@@ -137,20 +137,23 @@ impl Registry {
         &mut self,
         dir: &str,
         names: Vec<String>,
-        read: impl FnMut(&str) -> Result<Vec<u8>, String>,
+        mut read: impl FnMut(&str) -> Result<Vec<u8>, String>,
     ) -> Result<(), String> {
         let files = definition_files(dir, names)?;
-        let parsed = parse_files(&files, read, |path, e| {
-            format!("Error parsing file {}: {e}", haskell_show(path))
-        })??;
+        let mut parsed = Vec::with_capacity(files.len());
+        for path in &files {
+            let bytes = read(path)?;
+            let syntax = parse_bytes(path, &bytes)
+                .map_err(|e| format!("Error parsing file {}: {e}", haskell_show(path)))?;
+            parsed.push(syntax);
+        }
         self.insert_all(parsed);
         Ok(())
     }
 
-    /// Adds the definition files at `paths`, in order. `read` reads one
-    /// file; a writer passes the file read of its `Context`, so that the
-    /// sandbox rules apply. A definition with the same full name as an
-    /// earlier one replaces it.
+    /// Adds definition files that the caller has read: each one is a path
+    /// and the bytes of the file, in the order of the command line. A
+    /// definition with the same full name as an earlier one replaces it.
     ///
     /// ```
     /// use randoc_highlight::Registry;
@@ -159,24 +162,32 @@ impl Registry {
     ///   <contexts><context name="Normal" attribute="Normal Text"/></contexts>
     ///   <itemDatas><itemData name="Normal Text" defStyleNum="dsNormal"/></itemDatas>
     ///   </highlighting></language>"#;
-    /// let added = registry.add_files(&["tiny.xml"], |_| Ok::<_, ()>(xml.as_bytes().to_vec()));
-    /// assert_eq!(added, Ok(Ok(())));
+    /// assert_eq!(registry.add_definitions([("tiny.xml", xml.as_bytes())]), Ok(()));
     /// assert_eq!(registry.lookup("tiny").map(|s| s.name()), Some("Tiny"));
     /// ```
     ///
     /// # Errors
     ///
-    /// The outer result is the first error of `read`. The inner result is
-    /// the first parse error without the path, as Pandoc reports it for
-    /// `--syntax-definition`, or an error for more than
-    /// [`MAX_DEFINITION_FILES`] paths or a file larger than
-    /// [`MAX_DEFINITION_BYTES`]. On an error, the registry does not change.
-    pub fn add_files<E>(
+    /// Returns the first parse error without the path, as Pandoc reports it
+    /// for `--syntax-definition`, or an error for more than
+    /// [`MAX_DEFINITION_FILES`] files, a file larger than
+    /// [`MAX_DEFINITION_BYTES`] or a file that is not UTF-8. On an error,
+    /// the registry does not change.
+    pub fn add_definitions<'a>(
         &mut self,
-        paths: &[impl AsRef<str>],
-        read: impl FnMut(&str) -> Result<Vec<u8>, E>,
-    ) -> Result<Result<(), String>, E> {
-        Ok(parse_files(paths, read, |_, e| e)?.map(|parsed| self.insert_all(parsed)))
+        files: impl IntoIterator<Item = (&'a str, &'a [u8])>,
+    ) -> Result<(), String> {
+        let mut parsed = Vec::new();
+        for (path, bytes) in files {
+            if parsed.len() == MAX_DEFINITION_FILES {
+                return Err(format!(
+                    "more than {MAX_DEFINITION_FILES} syntax definitions"
+                ));
+            }
+            parsed.push(parse_bytes(path, bytes)?);
+        }
+        self.insert_all(parsed);
+        Ok(())
     }
 
     fn insert_all(&mut self, parsed: Vec<Syntax>) {
@@ -332,33 +343,26 @@ impl Registry {
     }
 }
 
-/// Parses the definition files at `paths`. `describe` gives the text of a
-/// parse error from the path and the error.
-fn parse_files<E>(
-    paths: &[impl AsRef<str>],
-    mut read: impl FnMut(&str) -> Result<Vec<u8>, E>,
-    describe: impl Fn(&str, String) -> String,
-) -> Result<Result<Vec<Syntax>, String>, E> {
-    if paths.len() > MAX_DEFINITION_FILES {
-        return Ok(Err(format!(
-            "more than {MAX_DEFINITION_FILES} syntax definitions"
-        )));
+/// Parses one definition file. The size limit applies first, then the
+/// UTF-8 check: Pandoc stops for a byte that is not UTF-8 also in a comment.
+fn parse_bytes(path: &str, bytes: &[u8]) -> Result<Syntax, String> {
+    if bytes.len() > MAX_DEFINITION_BYTES {
+        return Err(format!(
+            "{path}: a syntax definition is larger than {MAX_DEFINITION_BYTES} bytes"
+        ));
     }
-    let mut parsed = Vec::new();
-    for path in paths {
-        let path = path.as_ref();
-        let bytes = read(path)?;
-        if bytes.len() > MAX_DEFINITION_BYTES {
-            return Ok(Err(format!(
-                "{path}: a syntax definition is larger than {MAX_DEFINITION_BYTES} bytes"
-            )));
-        }
-        match parse_definition(path, &String::from_utf8_lossy(&bytes)) {
-            Ok(s) => parsed.push(s),
-            Err(e) => return Ok(Err(describe(path, e))),
-        }
-    }
-    Ok(Ok(parsed))
+    let text = std::str::from_utf8(bytes).map_err(|error| utf8_message(bytes, &error))?;
+    parse_definition(path, text)
+}
+
+/// The message of Pandoc 3.13 for a definition file that is not UTF-8.
+///
+/// ```text
+/// Cannot decode byte '\xff': Data.Text.Internal.Encoding: Invalid UTF-8 stream
+/// ```
+pub fn utf8_message(bytes: &[u8], error: &std::str::Utf8Error) -> String {
+    let byte = bytes.get(error.valid_up_to()).copied().unwrap_or(0);
+    format!("Cannot decode byte '\\x{byte:x}': Data.Text.Internal.Encoding: Invalid UTF-8 stream")
 }
 
 fn parse_definition(path: &str, text: &str) -> Result<Syntax, String> {
@@ -439,6 +443,28 @@ mod tests {
             Ok(vec![b' '; MAX_DEFINITION_BYTES + 1])
         });
         assert!(too_large.is_err_and(|e| e.contains("larger than")));
+    }
+
+    /// Pandoc 3.13 stops for a byte that is not UTF-8, also in a comment.
+    #[test]
+    fn a_definition_must_be_utf8() {
+        let mut bad = b"<!-- \xff -->\n".to_vec();
+        bad.extend_from_slice(TINY.as_bytes());
+        let mut registry = Registry::new();
+        assert_eq!(
+            registry.add_definitions([("bad.xml", bad.as_slice())]),
+            Err(
+                "Cannot decode byte '\\xff': Data.Text.Internal.Encoding: Invalid UTF-8 stream"
+                    .into()
+            )
+        );
+        assert!(registry.lookup("tiny").is_none());
+        let good = format!("\u{feff}<?xml version=\"1.0\"?>\n<!-- é -->\n{TINY}");
+        assert_eq!(
+            registry.add_definitions([("ok.xml", good.as_bytes())]),
+            Ok(())
+        );
+        assert!(registry.lookup("tiny").is_some());
     }
 
     #[test]

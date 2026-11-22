@@ -368,7 +368,7 @@ fn load_style(name: &str, context: &mut Context) -> Result<Style> {
     if let Some(style) = Style::builtin(name) {
         return Ok(style);
     }
-    let bytes = context.read_file(name)?;
+    let bytes = context.read_file_limited(name, randoc_highlight::MAX_THEME_BYTES)?;
     std::str::from_utf8(&bytes)
         .ok()
         .and_then(|text| Style::from_json(text).ok())

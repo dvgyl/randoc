@@ -878,7 +878,7 @@ impl W<'_> {
         if self.opts.reference_links {
             let label_text = inner.render(None);
             let label = self.add_reference(&label_text, has_image, target, original, &attrs);
-            return if label.to_lowercase() != label_text.to_lowercase() {
+            return if reference_key(&label) != reference_key(&label_text) {
                 literal("[") + inner + literal(format!("][{label}]"))
             } else if collapsed {
                 literal("[") + inner + literal("][]")
@@ -897,10 +897,11 @@ impl W<'_> {
     /// Stores a link reference and returns its label. `attr` gives the
     /// attributes of the element, and `attrs` the attributes text that the
     /// definition shows. A target that waits for output already keeps its
-    /// label. A target that was written before under the label `text` gets
-    /// a new reference with that label. Else the label is `text`, or the
-    /// next free number when `numbered` is `true`, `text` is not a valid
-    /// label, or an other target has that label (labels ignore case).
+    /// label. A text label that is new gets its target. A target that has
+    /// a text label from before gets it again, and a target that has a
+    /// numbered label `N` from an earlier block gets `textN`. Else the label
+    /// is the next free number, also when `numbered` is `true` or `text` is
+    /// not a valid label. Labels compare as [`reference_key`] gives them.
     fn add_reference(
         &mut self,
         text: &str,
@@ -918,28 +919,35 @@ impl W<'_> {
         if let Some(label) = self.pending_targets.get(&key) {
             return label.clone();
         }
-        let lower = text.to_lowercase();
-        let label = match self.ref_index.get(&lower) {
-            Some(found) if *found == key => text.to_owned(),
-            taken => {
-                // A label with a bracket would not read back as a label.
-                if numbered || taken.is_some() || !valid_label(text) {
-                    // Numbered labels are not in the index: Pandoc can give
-                    // a later text the same label.
-                    while self
-                        .ref_index
-                        .contains_key(&self.next_ref_number.to_string())
-                    {
-                        self.next_ref_number += 1;
-                    }
-                    let label = self.next_ref_number.to_string();
-                    self.next_ref_number += 1;
-                    label
-                } else {
-                    self.ref_index.insert(lower, key.clone());
-                    text.to_owned()
-                }
+        let normalized = reference_key(text);
+        // A label with a bracket would not read back as a label.
+        let text_label = !numbered && valid_label(text);
+        let known = self
+            .ref_index
+            .get(&normalized)
+            .filter(|_| text_label)
+            .map(|targets| targets.get(&key).copied());
+        let label = match known {
+            Some(Some(0)) => text.to_owned(),
+            Some(Some(number)) => format!("{text}{number}"),
+            Some(None) => {
+                let number = self.next_free_number();
+                self.ref_index
+                    .entry(normalized)
+                    .or_default()
+                    .insert(key.clone(), number);
+                number.to_string()
             }
+            None if text_label => {
+                self.ref_index
+                    .entry(normalized)
+                    .or_default()
+                    .insert(key.clone(), 0);
+                text.to_owned()
+            }
+            // Numbered labels are not in the index: Pandoc can give a later
+            // text the same label.
+            None => self.next_free_number().to_string(),
         };
         self.refs.push(LinkRef {
             label: label.clone(),
@@ -948,6 +956,19 @@ impl W<'_> {
         });
         self.pending_targets.insert(key, label.clone());
         label
+    }
+
+    /// The next number that no text label has, for a numbered label.
+    fn next_free_number(&mut self) -> u64 {
+        while self
+            .ref_index
+            .contains_key(&self.next_ref_number.to_string())
+        {
+            self.next_ref_number += 1;
+        }
+        let number = self.next_ref_number;
+        self.next_ref_number += 1;
+        number
     }
 
     /// Renders an image in Markdown syntax with rendered alternative text.
@@ -963,7 +984,7 @@ impl W<'_> {
         if self.opts.reference_links {
             let label_text = inner.render(None);
             let label = self.add_reference(&label_text, false, target, original, &attrs);
-            return if label.to_lowercase() != label_text.to_lowercase() {
+            return if reference_key(&label) != reference_key(&label_text) {
                 literal("![") + inner + literal(format!("][{label}]"))
             } else if self.shortcut_references() {
                 literal("![") + inner + literal("]")
@@ -1031,6 +1052,28 @@ impl W<'_> {
 /// Returns `true` when a text can be the label of a reference: it is not
 /// empty and has no brackets, or it is one pair of brackets around a text
 /// without brackets, as `[@key]`.
+/// The form in which two reference labels are equal: lower case, with each
+/// run of white space as one space, as Pandoc compares them (oracle: `A B`,
+/// `A  B`, `A\tB` and `a\u{a0}b` are one label; `Straße` and `STRASSE`
+/// are two).
+pub(crate) fn reference_key(label: &str) -> Text {
+    label
+        .split(is_haskell_space)
+        .filter(|word| !word.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_lowercase()
+}
+
+/// The white space of Haskell's `isSpace`.
+fn is_haskell_space(c: char) -> bool {
+    matches!(
+        c,
+        ' ' | '\t'..='\r' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}' | '\u{202f}'
+            | '\u{205f}' | '\u{3000}'
+    )
+}
+
 fn valid_label(text: &str) -> bool {
     let inner = text
         .strip_prefix('[')

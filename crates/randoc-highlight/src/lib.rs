@@ -19,8 +19,10 @@ pub use html::{
     format_html_inline, html_block, html_inline, style_css,
 };
 pub use latex::{format_latex_block, format_latex_inline, style_latex_macros};
-pub use registry::{HighlightedCode, MAX_DEFINITION_BYTES, MAX_DEFINITION_FILES, Registry};
-pub use style::{Color, Style, TokenStyle};
+pub use registry::{
+    HighlightedCode, MAX_DEFINITION_BYTES, MAX_DEFINITION_FILES, Registry, utf8_message,
+};
+pub use style::{Color, MAX_THEME_BYTES, Style, TokenStyle};
 pub use syntax::Syntax;
 pub use token::{SourceLine, Token, TokenType};
 pub use tokenizer::highlight;

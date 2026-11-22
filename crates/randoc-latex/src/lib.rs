@@ -55,7 +55,7 @@ fn write(
     beamer: bool,
 ) -> Result<Text> {
     let mut writer = LatexWriter::new(options, context.limits.max_nesting_depth, beamer);
-    writer.registry = load_registry(options, context)?;
+    writer.registry = load_registry(options)?;
     writer.chapter_class = standalone::has_chapters(
         standalone::document_class(&doc.meta, &options.variables).as_deref(),
     );
@@ -94,18 +94,21 @@ fn write(
     Ok(text)
 }
 
-/// Reads the syntax definition files of the options through the context.
-/// The result is `None` when the embedded definitions are enough.
-fn load_registry(
-    options: &WriterOptions,
-    context: &mut Context,
-) -> Result<Option<randoc_highlight::Registry>> {
+/// Adds the syntax definition files of the options to the embedded
+/// definitions. The result is `None` when the embedded definitions are
+/// enough.
+fn load_registry(options: &WriterOptions) -> Result<Option<randoc_highlight::Registry>> {
     if options.highlight_style.is_none() || options.syntax_definitions.is_empty() {
         return Ok(None);
     }
     let mut registry = randoc_highlight::Registry::embedded().clone();
     registry
-        .add_files(&options.syntax_definitions, |path| context.read_file(path))?
+        .add_definitions(
+            options
+                .syntax_definitions
+                .iter()
+                .map(|file| (file.path.as_str(), &*file.bytes)),
+        )
         .map_err(Error::SyntaxMap)?;
     Ok(Some(registry))
 }

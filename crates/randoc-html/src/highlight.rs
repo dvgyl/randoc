@@ -3,25 +3,30 @@
 
 use randoc_ast::{Attr, Text};
 use randoc_core::{Context, Error, LogMessage, Result, WriterOptions};
-use randoc_highlight::{FormatOptions, HighlightedCode, HtmlVersion, Registry, Style};
+use randoc_highlight::{
+    FormatOptions, HighlightedCode, HtmlVersion, MAX_THEME_BYTES, Registry, Style,
+};
 use randoc_layout::Doc;
 
 use crate::Version;
 use crate::html::{Attrs, Html};
 use crate::shared::lit;
 
-/// Reads the syntax definition files of the options through the context.
-/// The result is `None` when the embedded definitions are enough.
-pub(crate) fn load_registry(
-    options: &WriterOptions,
-    context: &mut Context,
-) -> Result<Option<Registry>> {
+/// Adds the syntax definition files of the options to the embedded
+/// definitions. The result is `None` when the embedded definitions are
+/// enough.
+pub(crate) fn load_registry(options: &WriterOptions) -> Result<Option<Registry>> {
     if options.highlight_style.is_none() || options.syntax_definitions.is_empty() {
         return Ok(None);
     }
     let mut registry = Registry::embedded().clone();
     registry
-        .add_files(&options.syntax_definitions, |path| context.read_file(path))?
+        .add_definitions(
+            options
+                .syntax_definitions
+                .iter()
+                .map(|file| (file.path.as_str(), &*file.bytes)),
+        )
         .map_err(Error::SyntaxMap)?;
     Ok(Some(registry))
 }
@@ -32,7 +37,7 @@ pub(crate) fn load_style(name: &str, context: &mut Context) -> Result<Style> {
     if let Some(style) = Style::builtin(name) {
         return Ok(style);
     }
-    let bytes = context.read_file(name)?;
+    let bytes = context.read_file_limited(name, MAX_THEME_BYTES)?;
     std::str::from_utf8(&bytes)
         .ok()
         .and_then(|text| Style::from_json(text).ok())
@@ -116,11 +121,18 @@ impl Html<'_> {
 #[cfg(test)]
 mod tests {
     use randoc_ast::{Block, Inline, Pandoc};
-    use randoc_core::{Context, PureHost, WriterOptions};
+    use randoc_core::{Context, LoadedFile, PureHost, WriterOptions};
     use randoc_templates::Template;
 
     use crate::Version;
     use crate::html::write;
+
+    fn loaded(path: &str, bytes: &[u8]) -> LoadedFile {
+        LoadedFile {
+            path: path.into(),
+            bytes: bytes.into(),
+        }
+    }
 
     const TINY: &str = r#"<language name="Tiny" extensions="*.tiny"><highlighting>
 <list name="kw"><item>let</item></list>
@@ -195,16 +207,14 @@ mod tests {
     }
 
     #[test]
-    fn syntax_definitions_and_themes_are_read_through_the_context() {
+    fn loaded_syntax_definitions_need_no_file_and_themes_are_read_through_the_context() {
         let mut host = PureHost::default();
-        host.files
-            .insert("tiny.xml".into(), TINY.as_bytes().to_vec());
         host.files.insert(
             "a.theme".into(),
             br##"{"text-styles": {"Keyword": {"text-color": "#112233"}}}"##.to_vec(),
         );
         let mut options = WriterOptions::default();
-        options.syntax_definitions = vec!["tiny.xml".into()];
+        options.syntax_definitions = vec![loaded("/dev/stdin", TINY.as_bytes())];
         options.highlight_style = Some("a.theme".into());
         options.template = Some(css_template());
         let mut context = Context::new(Box::new(host));
@@ -212,24 +222,25 @@ mod tests {
         let css = write(&doc(blocks.clone()), &options, &mut context, Version::Html5).unwrap();
         assert!(css.contains("code span.kw { color: #112233; } /* Keyword */"));
         options.template = None;
-        let html = write(&doc(blocks), &options, &mut context, Version::Html5).unwrap();
+        let html = write(&doc(blocks), &options, &mut Context::pure(), Version::Html5).unwrap();
         assert!(html.contains("<span class=\"kw\">let</span> x"));
 
-        options.syntax_definitions = vec!["missing.xml".into()];
-        let error = write(&doc(Vec::new()), &options, &mut context, Version::Html5).unwrap_err();
+        options.template = Some(css_template());
+        options.highlight_style = Some("missing.theme".into());
+        let blocks = vec![code_block("", &["tiny"], "let x")];
+        let error =
+            write(&doc(blocks), &options, &mut Context::pure(), Version::Html5).unwrap_err();
         assert_eq!(error.exit_code(), 1);
     }
 
     #[test]
     fn a_bad_syntax_definition_is_a_syntax_map_error() {
-        let mut host = PureHost::default();
-        host.files.insert("foo.xml".into(), b"<foo/>".to_vec());
         let mut options = WriterOptions::default();
-        options.syntax_definitions = vec!["foo.xml".into()];
+        options.syntax_definitions = vec![loaded("foo.xml", b"<foo/>")];
         let error = write(
             &doc(Vec::new()),
             &options,
-            &mut Context::new(Box::new(host)),
+            &mut Context::pure(),
             Version::Html5,
         )
         .unwrap_err();

@@ -397,11 +397,20 @@ pub(crate) fn format_options(attr: &Attr, language: &str) -> FormatOptions {
     FormatOptions::from_attr("", &attr.classes, &key_values, language)
 }
 
+/// The result of [`LatexWriter::highlight`] for code with a syntax.
+pub(crate) enum Highlight {
+    /// The highlighted code.
+    Code(HighlightedCode),
+    /// The highlighter failed.
+    Failed,
+}
+
 impl LatexWriter<'_> {
     /// Highlights code with the classes of `attr` when the options ask for
-    /// highlighting. A highlighter error gives a warning and `None`, as
-    /// Pandoc gives plain code then.
-    pub(crate) fn highlight(&mut self, attr: &Attr, code: &str) -> Option<HighlightedCode> {
+    /// highlighting. `None` means that the writer does not highlight the
+    /// code. A highlighter error gives a warning and [`Highlight::Failed`],
+    /// as Pandoc gives plain `verbatim` or `\texttt` code then.
+    pub(crate) fn highlight(&mut self, attr: &Attr, code: &str) -> Option<Highlight> {
         if self.options.listings {
             return None;
         }
@@ -411,10 +420,10 @@ impl LatexWriter<'_> {
             .as_ref()
             .unwrap_or_else(|| Registry::embedded());
         match registry.highlight_classes(&attr.classes, code, self.max_depth)? {
-            Ok(highlighted) => Some(highlighted),
+            Ok(highlighted) => Some(Highlight::Code(highlighted)),
             Err(error) => {
                 self.warnings.push(LogMessage::CouldNotHighlight(error));
-                None
+                Some(Highlight::Failed)
             }
         }
     }
@@ -585,13 +594,23 @@ impl LatexWriter<'_> {
             literal(format!("\\begin{{lstlisting}}{options}"))
                 .above(literal(code.to_owned()))
                 .above(literal("\\end{lstlisting}"))
-        } else if let Some(highlighted) = self.highlight(attr, code) {
-            self.usage.highlighting = true;
-            let opts = format_options(attr, &highlighted.language);
-            literal(randoc_highlight::format_latex_block(
-                &opts,
-                &highlighted.lines,
-            ))
+        } else if let Some(highlight) = self.highlight(attr, code) {
+            match highlight {
+                Highlight::Code(highlighted) => {
+                    self.usage.highlighting = true;
+                    let opts = format_options(attr, &highlighted.language);
+                    literal(randoc_highlight::format_latex_block(
+                        &opts,
+                        &highlighted.lines,
+                    ))
+                }
+                Highlight::Failed => {
+                    inner_line_end = false;
+                    literal(format!("\\begin{{{verbatim}}}"))
+                        .above(literal(code.to_owned()))
+                        .above(literal(format!("\\end{{{verbatim}}}")))
+                }
+            }
         } else if code.contains(&format!("\\end{{{verbatim}}}"))
             || (!attr.classes.is_empty() && self.options.highlight_style.is_some())
         {
@@ -1363,5 +1382,47 @@ mod tests {
             latex(vec![block()], &options),
             "\\begin{lstlisting}\nfn x\n\\end{lstlisting}"
         );
+    }
+
+    /// `pandoc -t latex --syntax-definition=nosuch.xml` for a definition
+    /// whose rules include an undefined context: a warning for each code
+    /// element, and plain `verbatim` and `\texttt` code, also for a code
+    /// block with `\end{verbatim}` in it.
+    #[test]
+    fn a_highlighter_error_gives_plain_verbatim_code() {
+        const NOSUCH: &str = r###"<language name="Tiny" extensions="*.tiny"><highlighting>
+<contexts><context name="Normal" attribute="Normal Text"><IncludeRules context="##NoSuch"/></context></contexts>
+<itemDatas><itemData name="Normal Text" defStyleNum="dsNormal"/></itemDatas>
+</highlighting></language>"###;
+        let mut options = randoc_core::WriterOptions::default();
+        options.syntax_definitions = vec![randoc_core::LoadedFile {
+            path: "nosuch.xml".into(),
+            bytes: NOSUCH.as_bytes().into(),
+        }];
+        let inline = Block::Para(vec![Inline::Code(
+            Attr::new("", vec!["tiny".into()], Vec::new()),
+            "y".into(),
+        )]);
+        let blocks = vec![
+            code(&["tiny"], &[], "x"),
+            inline,
+            code(&["tiny", "numberLines"], &[], "z \\end{verbatim}"),
+        ];
+        let doc = randoc_ast::Pandoc {
+            blocks,
+            ..Default::default()
+        };
+        for write in [crate::write_latex, crate::write_beamer] {
+            let mut context = randoc_core::Context::pure();
+            let text = write(&doc, &options, &mut context).unwrap_or_default();
+            assert!(
+                text.contains(
+                    "\\begin{verbatim}\nx\n\\end{verbatim}\n\n\\texttt{y}\n\n\
+                     \\begin{verbatim}\nz \\end{verbatim}\n\\end{verbatim}"
+                ),
+                "{text}"
+            );
+            assert_eq!(context.log().len(), 3);
+        }
     }
 }
