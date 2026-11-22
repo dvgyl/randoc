@@ -348,6 +348,7 @@ dependencies = [
 name = "randoc-core"
 version = "0.1.0"
 dependencies = [
+ "nix",
  "randoc-ast",
  "randoc-layout",
  "randoc-templates",

@@ -219,6 +219,10 @@ pub struct WriterOptions {
     pub listings: bool,
     /// The highlighting style name or path. `None` disables highlighting.
     pub highlight_style: Option<Text>,
+    /// Pre-loaded highlighting theme file bytes when `highlight_style` names
+    /// a `.theme` file. Writers reuse these bytes when `path == highlight_style`
+    /// without re-reading the file, so paths such as `/dev/stdin` work.
+    pub highlight_theme: Option<LoadedFile>,
     /// `true` to write setext headings in Markdown.
     pub setext_headers: bool,
     /// `true` to write list tables in reStructuredText.
@@ -281,6 +285,7 @@ impl Default for WriterOptions {
             top_level_division: TopLevelDivision::default(),
             listings: false,
             highlight_style: Some(Text::from("pygments")),
+            highlight_theme: None,
             setext_headers: false,
             list_tables: false,
             epub_subdirectory: Text::from("EPUB"),

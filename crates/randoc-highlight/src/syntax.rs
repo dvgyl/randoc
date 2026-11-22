@@ -614,7 +614,8 @@ pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
         .collect();
     for syntax in syntaxes.iter_mut() {
         let mut resolved: HashMap<(String, bool), Arc<WordSet>> = HashMap::new();
-        let mut budget = MAX_RESOLVED_WORDS;
+        let mut word_budget = MAX_RESOLVED_WORDS;
+        let mut byte_budget = MAX_RESOLVED_BYTES;
         for context in syntax.contexts.values_mut() {
             for rule in &mut context.rules {
                 let Matcher::Keyword(attr, list) = &mut rule.matcher else {
@@ -630,7 +631,13 @@ pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
                 let words = resolved
                     .entry(key)
                     .or_insert_with_key(|(name, case_sensitive)| {
-                        let words = collect_words(&syntax.name, name, &lists, &mut budget);
+                        let words = collect_words(
+                            &syntax.name,
+                            name,
+                            &lists,
+                            &mut word_budget,
+                            &mut byte_budget,
+                        );
                         Arc::new(WordSet::new(*case_sensitive, words))
                     });
                 *list = KeywordList::Resolved(Arc::clone(words));
@@ -644,20 +651,29 @@ pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
 /// otherwise include one large list from very many lists.
 const MAX_RESOLVED_WORDS: usize = 1_000_000;
 
+/// The largest cumulative byte length of resolved keyword strings collected
+/// across all keyword lists of one syntax (32 MiB), preventing byte
+/// amplification when many lists include a list containing huge words.
+const MAX_RESOLVED_BYTES: usize = 32 * 1024 * 1024;
+
 /// The distinct words of the list `list` of `syntax` and of each list that
 /// its `include` items reach. Each list is expanded once, so a cycle ends
 /// and a list that two paths include costs nothing the second time.
-/// `budget` is the number of words that the caller can still collect.
+/// `word_budget` and `byte_budget` cap total collected words and string bytes.
 fn collect_words(
     syntax: &str,
     list: &str,
     all: &HashMap<String, BTreeMap<String, Vec<ListItem>>>,
-    budget: &mut usize,
+    word_budget: &mut usize,
+    byte_budget: &mut usize,
 ) -> Vec<String> {
     let mut words: HashSet<&str> = HashSet::new();
     let mut expanded: HashSet<(&str, &str)> = HashSet::new();
     let mut pending: Vec<(&str, &str)> = vec![(syntax, list)];
     while let Some((syntax, list)) = pending.pop() {
+        if *word_budget == 0 || *byte_budget == 0 {
+            break;
+        }
         if !expanded.insert((syntax, list)) {
             continue;
         }
@@ -667,11 +683,13 @@ fn collect_words(
         for item in items {
             match item {
                 ListItem::Item(word) => {
-                    if *budget == 0 {
+                    if *word_budget == 0 || word.len() > *byte_budget {
+                        *byte_budget = 0;
                         break;
                     }
                     if words.insert(word) {
-                        *budget -= 1;
+                        *word_budget -= 1;
+                        *byte_budget -= word.len();
                     }
                 }
                 ListItem::IncludeList(syntax, list) => pending.push((syntax, list)),
@@ -915,5 +933,37 @@ mod tests {
             })
             .map(|h| h.join().is_ok());
         assert_eq!(done.ok(), Some(true));
+    }
+
+    #[test]
+    fn keyword_includes_enforce_resolved_byte_budget() {
+        // 64 distinct lists each including a 1 MiB word must stop at MAX_RESOLVED_BYTES (32 MiB).
+        let huge = "a".repeat(1024 * 1024);
+        let lists: String = (0..64)
+            .map(|i| format!("<list name=\"l{i}\"><include>big##T</include></list>"))
+            .collect();
+        let rules: String = (0..64)
+            .map(|i| format!("<keyword String=\"l{i}\" attribute=\"K\"/>"))
+            .collect();
+        let text = definition(
+            &format!("<context name=\"A\" attribute=\"N\">{rules}</context>"),
+            &format!("<list name=\"big\"><item>{huge}</item></list>{lists}"),
+        );
+        let Ok(syntax) = parse(&text) else {
+            panic!("parse failed")
+        };
+        let mut all = vec![syntax];
+        resolve_keywords(&mut all);
+        let rules = &all[0].contexts["A"].rules;
+        let populated = rules
+            .iter()
+            .filter(|rule| match &rule.matcher {
+                Matcher::Keyword(_, KeywordList::Resolved(words)) => match words.as_ref() {
+                    WordSet::CaseSensitive(set) | WordSet::CaseInsensitive(set) => !set.is_empty(),
+                },
+                _ => false,
+            })
+            .count();
+        assert_eq!(populated, 32);
     }
 }

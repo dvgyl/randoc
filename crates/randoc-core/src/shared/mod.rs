@@ -34,6 +34,7 @@ pub use emoji::{alias_from_emoji, emoji_from_alias, replace_emoji_with_aliases};
 pub use entities::{named_entity, numeric_entity};
 pub use identifiers::{
     CommonmarkIdentifierSet, IdentifierSet, auto_identifier, commonmark_auto_identifier,
+    is_haskell_alphanum, is_haskell_space,
 };
 pub use nfc::{is_nfc_quick, nfc};
 pub use randoc_ast::json::{show_char, show_string};

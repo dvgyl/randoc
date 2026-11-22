@@ -19,7 +19,7 @@ pub mod shared;
 
 pub use context::{
     CommonState, Context, Host, Limits, MediaBag, MediaItem, NativeHost, PathKind, PathTimes,
-    ProcessOutput, PureHost, Timestamp, read_real_file_limited,
+    ProcessOutput, PureHost, Timestamp, read_real_file_limited, write_real_media_file,
 };
 pub use error::{Error, Result};
 pub use extensions::{Extension, Extensions, FormatSpec, default_extensions, supported_extensions};

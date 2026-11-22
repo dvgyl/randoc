@@ -52,6 +52,17 @@ fn class(c: char) -> Option<Class> {
 }
 
 /// The `isSpace` function of GHC: the ASCII controls from tab to carriage return, and Zs.
+pub fn is_haskell_space(c: char) -> bool {
+    is_space(c)
+}
+
+/// The `isAlphaNum` function of GHC: Unicode General Categories L* and N*
+/// (excluding `Other_Alphabetic` combining marks such as U+0345).
+pub fn is_haskell_alphanum(c: char) -> bool {
+    matches!(class(c), Some(Class::Letter | Class::Number))
+}
+
+/// The `isSpace` function of GHC: the ASCII controls from tab to carriage return, and Zs.
 fn is_space(c: char) -> bool {
     ('\t'..='\r').contains(&c) || class(c) == Some(Class::Space)
 }

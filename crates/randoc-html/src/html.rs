@@ -58,8 +58,11 @@ pub(crate) fn write(
             if writer.wrote_highlighting
                 && let Some(style) = &options.highlight_style
             {
-                let css =
-                    randoc_highlight::style_css(&crate::highlight::load_style(style, context)?);
+                let css = randoc_highlight::style_css(&crate::highlight::load_style(
+                    style,
+                    options.highlight_theme.as_ref(),
+                    context,
+                )?);
                 fields
                     .0
                     .entry("highlighting-css".to_owned())

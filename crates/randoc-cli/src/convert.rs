@@ -19,18 +19,41 @@ use randoc_yaml::{Entrance, Kind, Limits, Node, Value};
 
 use crate::node::NodeExt;
 
+/// Checks a highlighting style name or a theme file, returning the loaded
+/// theme bytes when `style` names a `.theme` file so writers reuse them
+/// without re-reading (allowing single-read sources such as `/dev/stdin`).
+fn load_highlight_theme(
+    style: &str,
+    read: impl FnOnce(&str) -> std::io::Result<Vec<u8>>,
+) -> Result<Option<randoc::LoadedFile>> {
+    if HIGHLIGHT_STYLES.contains(&style.to_ascii_lowercase().as_str()) {
+        return Ok(None);
+    }
+    if !style.ends_with(".theme") {
+        return Err(Error::Option(format!("Unknown highlight-style {style}")));
+    }
+    let bytes = read(style).map_err(|error| io_error(style, "openBinaryFile", &error))?;
+    let valid = std::str::from_utf8(&bytes)
+        .ok()
+        .and_then(|text| randoc_highlight::Style::from_json(text).ok())
+        .is_some();
+    if !valid {
+        return Err(Error::Option(format!(
+            "Could not read highlighting theme {style}"
+        )));
+    }
+    Ok(Some(randoc::LoadedFile {
+        path: style.to_owned(),
+        bytes: bytes.into(),
+    }))
+}
+
 /// Checks a highlighting style name or a theme file.
 pub fn check_highlight_style(
     style: &str,
     read: impl FnOnce(&str) -> std::io::Result<Vec<u8>>,
 ) -> Result<()> {
-    if HIGHLIGHT_STYLES.contains(&style.to_ascii_lowercase().as_str()) {
-        return Ok(());
-    }
-    if !style.ends_with(".theme") {
-        return Err(Error::Option(format!("Unknown highlight-style {style}")));
-    }
-    read_theme(style, read).map(|_| ())
+    load_highlight_theme(style, read).map(|_| ())
 }
 
 /// Reads and parses a theme file with the theme reader of the writers, so
@@ -518,9 +541,107 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
     });
 }
 
-/// Extracts all entries in `context.media` into `dir` and rewrites matching
-/// `Image` URLs in `doc` to match Pandoc 3.13's `--extract-media` output.
-fn extract_media(dir: &str, doc: &mut Pandoc, context: &mut Context) -> Result<()> {
+/// Extracts media into `dir` and rewrites matching `Image` URLs in `doc` to
+/// match Pandoc 3.13's `--extract-media` output.
+///
+/// Outside `--sandbox`, also fetches referenced local images (and `data:` URIs)
+/// into `context.media` within `context.limits`, replacing missing local images
+/// with Pandoc's placeholder `Span` and warning.
+fn extract_media(
+    dir: &str,
+    doc: &mut Pandoc,
+    settings: &Settings,
+    context: &mut Context,
+) -> Result<()> {
+    let mut url_to_key: BTreeMap<String, String> = BTreeMap::new();
+    let mut missing_urls: BTreeSet<String> = BTreeSet::new();
+
+    // Step 1: Collect image URLs referenced in the document and populate
+    // `context.media` for `data:` URIs and (outside `--sandbox`) local files.
+    let mut doc_urls: Vec<String> = Vec::new();
+    {
+        struct UrlCollector<'a>(&'a mut Vec<String>);
+        impl randoc::ast::walk::Visitor for UrlCollector<'_> {
+            fn inline(&mut self, inline: &Inline) {
+                if let Inline::Image(_, _, target) = inline {
+                    self.0.push(target.url.clone());
+                }
+            }
+        }
+        let mut collector = UrlCollector(&mut doc_urls);
+        randoc::ast::walk::query(doc, &mut collector);
+    }
+
+    let max_total = context.limits.max_archive_size;
+    let max_single = context.limits.max_resource_size;
+    let mut fetched_total: u64 = context
+        .media
+        .iter()
+        .map(|(_, item)| item.contents.len() as u64)
+        .sum();
+    let mut seen_urls: BTreeSet<String> = BTreeSet::new();
+
+    for url in doc_urls {
+        if !seen_urls.insert(url.clone()) {
+            continue;
+        }
+        let stripped = url.strip_prefix("./").unwrap_or(url.as_str());
+        if context.media.get(&url).is_some() || context.media.get(stripped).is_some() {
+            continue;
+        }
+        if let Some((mime, bytes)) = decode_data_uri(&url, max_single) {
+            if fetched_total.saturating_add(bytes.len() as u64) <= max_total {
+                fetched_total = fetched_total.saturating_add(bytes.len() as u64);
+                let digest = randoc_archive::media::sha1_hex(&bytes);
+                let key = match extension_for_mime(&mime) {
+                    Some(ext) => format!("{digest}.{ext}"),
+                    None => digest,
+                };
+                context.media.insert(
+                    key.clone(),
+                    randoc::MediaItem {
+                        mime_type: mime,
+                        contents: bytes,
+                    },
+                );
+                url_to_key.insert(url, key);
+            }
+            continue;
+        }
+        if has_uri_scheme(&url) || settings.sandbox {
+            continue;
+        }
+        let remaining = max_total.saturating_sub(fetched_total).min(max_single);
+        let limit = usize::try_from(remaining).unwrap_or(usize::MAX);
+        let mut loaded: Option<Vec<u8>> = None;
+        for candidate in resource_candidates(&url, &settings.resource_path) {
+            if let Ok(bytes) = context.host().read_file_limited(&candidate, limit) {
+                loaded = Some(bytes);
+                break;
+            }
+        }
+        if let Some(bytes) = loaded {
+            fetched_total = fetched_total.saturating_add(bytes.len() as u64);
+            let (_, mime) = randoc_archive::media::image_size_and_mime(&bytes, Some(stripped));
+            let key = randoc_archive::media::sanitize_media_path(stripped, &bytes);
+            context.media.insert(
+                key.clone(),
+                randoc::MediaItem {
+                    mime_type: mime.unwrap_or("application/octet-stream").to_owned(),
+                    contents: bytes,
+                },
+            );
+            url_to_key.insert(url, key);
+        } else {
+            context.report(LogMessage::CouldNotFetchResource(
+                url.clone(),
+                "replacing image with description".to_owned(),
+            ));
+            missing_urls.insert(url);
+        }
+    }
+
+    // Step 2: Write all entries in `context.media` safely confined under `dir`.
     let entries: Vec<(String, Vec<u8>)> = context
         .media
         .iter()
@@ -541,39 +662,137 @@ fn extract_media(dir: &str, doc: &mut Pandoc, context: &mut Context) -> Result<(
             .unwrap_or(ast_target.as_str())
             .to_owned();
         context.report(LogMessage::Extracting(log_target));
-        if let Some((parent, _)) = ast_target.rsplit_once('/')
-            && !parent.is_empty()
-            && let Err(err) = context.host().create_directory(parent, true)
-            && err.kind() != std::io::ErrorKind::Unsupported
-        {
-            return Err(io_error(parent, "createDirectory", &err));
-        }
         context
             .host()
-            .write_file(&ast_target, &bytes)
+            .write_media_file(dir, &safe_key, &bytes)
             .map_err(|err| write_error(&ast_target, "withBinaryFile", &err))?;
         rewrites.insert(key, ast_target.clone());
         rewrites.insert(safe_key, ast_target);
     }
 
-    if !rewrites.is_empty() {
-        struct MediaRewriter<'a>(&'a BTreeMap<String, String>);
+    for (orig_url, key) in url_to_key {
+        if let Some(target) = rewrites.get(&key).cloned() {
+            rewrites.insert(orig_url, target);
+        }
+    }
+
+    // Step 3: Rewrite extracted image URLs and replace missing local images.
+    if !rewrites.is_empty() || !missing_urls.is_empty() {
+        struct MediaRewriter<'a> {
+            rewrites: &'a BTreeMap<String, String>,
+            missing: &'a BTreeSet<String>,
+        }
         impl randoc::ast::walk::VisitorMut for MediaRewriter<'_> {
             fn inline(&mut self, inline: &mut Inline) {
-                if let Inline::Image(_, _, target) = inline
-                    && let Some(new_url) = self
-                        .0
-                        .get(target.url.as_str())
-                        .or_else(|| target.url.strip_prefix("./").and_then(|s| self.0.get(s)))
-                {
-                    target.url = new_url.clone();
+                if let Inline::Image(_, alt, target) = inline {
+                    if let Some(new_url) = self.rewrites.get(target.url.as_str()).or_else(|| {
+                        target
+                            .url
+                            .strip_prefix("./")
+                            .and_then(|s| self.rewrites.get(s))
+                    }) {
+                        target.url = new_url.clone();
+                    } else if self.missing.contains(target.url.as_str()) {
+                        let orig_src = std::mem::take(&mut target.url);
+                        let orig_title = std::mem::take(&mut target.title);
+                        let alt_inlines = std::mem::take(alt);
+                        *inline = Inline::Span(
+                            randoc::ast::Attr::new(
+                                "",
+                                vec!["image".into(), "placeholder".into()],
+                                vec![
+                                    ("original-image-src".into(), orig_src),
+                                    ("original-image-title".into(), orig_title),
+                                ],
+                            ),
+                            alt_inlines,
+                        );
+                    }
                 }
             }
         }
-        let mut rewriter = MediaRewriter(&rewrites);
+        let mut rewriter = MediaRewriter {
+            rewrites: &rewrites,
+            missing: &missing_urls,
+        };
         randoc::ast::walk::walk_mut(doc, &mut rewriter);
     }
     Ok(())
+}
+
+fn has_uri_scheme(url: &str) -> bool {
+    let Some((scheme, _)) = url.split_once(':') else {
+        return false;
+    };
+    scheme.len() >= 2
+        && scheme.as_bytes()[0].is_ascii_alphabetic()
+        && scheme
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'+' | b'-' | b'.'))
+}
+
+fn decode_data_uri(url: &str, max_bytes: u64) -> Option<(String, Vec<u8>)> {
+    let rest = url.strip_prefix("data:")?;
+    let (meta, payload) = rest.split_once(',')?;
+    let is_base64 = meta.ends_with(";base64");
+    let mime_raw = if is_base64 {
+        meta.strip_suffix(";base64").unwrap_or("")
+    } else {
+        meta
+    };
+    let mime = mime_raw.split(';').next().unwrap_or("").trim();
+    let mime_type = if mime.is_empty() {
+        "text/plain".to_owned()
+    } else {
+        mime.to_ascii_lowercase()
+    };
+    let max_usize = usize::try_from(max_bytes).unwrap_or(usize::MAX);
+    if is_base64 {
+        if (payload.len() / 4).saturating_mul(3) > max_usize.saturating_add(3) {
+            return None;
+        }
+        let bytes = randoc_archive::media::base64_decode(payload)?;
+        if bytes.len() > max_usize {
+            return None;
+        }
+        Some((mime_type, bytes))
+    } else {
+        let mut out = Vec::with_capacity(payload.len().min(max_usize));
+        let raw = payload.as_bytes();
+        let mut i = 0usize;
+        while i < raw.len() {
+            if out.len() >= max_usize {
+                return None;
+            }
+            if raw[i] == b'%'
+                && i + 2 < raw.len()
+                && let Ok(hex) = std::str::from_utf8(&raw[i + 1..i + 3])
+                && let Ok(byte) = u8::from_str_radix(hex, 16)
+            {
+                out.push(byte);
+                i += 3;
+            } else {
+                out.push(raw[i]);
+                i += 1;
+            }
+        }
+        Some((mime_type, out))
+    }
+}
+
+fn extension_for_mime(mime: &str) -> Option<&'static str> {
+    match mime {
+        "image/png" => Some("png"),
+        "image/jpeg" => Some("jpg"),
+        "image/gif" => Some("gif"),
+        "image/svg+xml" => Some("svg"),
+        "image/webp" => Some("webp"),
+        "image/bmp" => Some("bmp"),
+        "image/tiff" => Some("tif"),
+        "image/x-icon" => Some("ico"),
+        "application/pdf" => Some("pdf"),
+        _ => None,
+    }
 }
 
 /// Builds the reader options from the settings.
@@ -691,12 +910,33 @@ fn read_syntax_definitions(
     settings: &Settings,
     context: &mut Context,
 ) -> Result<Vec<randoc::LoadedFile>> {
+    if settings.syntax_definitions.len() > randoc_highlight::MAX_DEFINITION_FILES {
+        return Err(Error::SyntaxMap(format!(
+            "more than {} syntax definitions",
+            randoc_highlight::MAX_DEFINITION_FILES
+        )));
+    }
     let mut files = Vec::with_capacity(settings.syntax_definitions.len());
+    let mut total_bytes: usize = 0;
     for path in &settings.syntax_definitions {
+        let remaining = randoc_highlight::MAX_TOTAL_DEFINITION_BYTES.saturating_sub(total_bytes);
+        let limit = randoc_highlight::MAX_DEFINITION_BYTES.min(remaining);
         let bytes = context
             .host()
-            .read_file_limited(path, randoc_highlight::MAX_DEFINITION_BYTES)
-            .map_err(|error| io_error(path, "openBinaryFile", &error))?;
+            .read_file_limited(path, limit)
+            .map_err(|error| {
+                if error.kind() == std::io::ErrorKind::FileTooLarge
+                    && remaining < randoc_highlight::MAX_DEFINITION_BYTES
+                {
+                    Error::SyntaxMap(format!(
+                        "syntax definitions exceed {} bytes",
+                        randoc_highlight::MAX_TOTAL_DEFINITION_BYTES
+                    ))
+                } else {
+                    io_error(path, "openBinaryFile", &error)
+                }
+            })?;
+        total_bytes = total_bytes.saturating_add(bytes.len());
         // Pandoc decodes the file before it parses it: a byte that is not
         // UTF-8, also in a comment, stops the run with exit code 1.
         if let Err(error) = std::str::from_utf8(&bytes) {
@@ -955,6 +1195,7 @@ pub fn template_candidates(
 #[derive(Debug, Default)]
 pub struct SandboxHost {
     permitted: BTreeSet<String>,
+    extract_media: Option<String>,
 }
 
 impl SandboxHost {
@@ -1004,7 +1245,10 @@ impl SandboxHost {
                 permitted.extend(crate::filter::candidates(path, data_dir, &path_variable));
             }
         }
-        SandboxHost { permitted }
+        SandboxHost {
+            permitted,
+            extract_media: settings.extract_media.clone(),
+        }
     }
 
     fn is_named(&self, path: &str) -> bool {
@@ -1033,6 +1277,25 @@ impl randoc::Host for SandboxHost {
     /// Only a named regular file exists, so a check never blocks on a device.
     fn file_exists(&mut self, path: &str) -> bool {
         self.is_named(path) && std::path::Path::new(path).is_file()
+    }
+
+    /// Confined write path for `--extract-media` under `--sandbox`: writes only
+    /// inside the user-specified `--extract-media` directory without following symlinks,
+    /// while keeping all other filesystem writes and arbitrary reads disabled.
+    fn write_media_file(
+        &mut self,
+        root_dir: &str,
+        rel_path: &str,
+        contents: &[u8],
+    ) -> std::io::Result<()> {
+        if self.extract_media.as_deref() == Some(root_dir) {
+            randoc::write_real_media_file(root_dir, rel_path, contents)
+        } else {
+            Err(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                format!("{root_dir}: media extraction path is not permitted in sandbox"),
+            ))
+        }
     }
 
     /// Shows warnings and info messages on standard error, as without `--sandbox`.
@@ -1664,13 +1927,15 @@ fn convert(
     let syntax_definitions = read_syntax_definitions(settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
     let style = settings.syntax_highlighting.as_str();
-    if !matches!(style, "none" | "default" | "idiomatic") {
-        check_highlight_style(style, |path| {
+    let highlight_theme = if !matches!(style, "none" | "default" | "idiomatic") {
+        load_highlight_theme(style, |path| {
             context
                 .host()
                 .read_file_limited(path, randoc_highlight::MAX_THEME_BYTES)
-        })?;
-    }
+        })?
+    } else {
+        None
+    };
     if settings.is_standalone()
         && !writer.renders_template()
         && randoc_data::default_template(&to_spec.name).is_some()
@@ -1789,6 +2054,7 @@ fn convert(
     // A Lua filter sees the writer options, so they are ready before the filters.
     let mut writer_options = writer_options;
     writer_options.syntax_definitions = syntax_definitions;
+    writer_options.highlight_theme = highlight_theme;
     // Pandoc ignores the template text of a format without a default
     // template; its writer takes the presence of a template as the
     // standalone flag.
@@ -1860,10 +2126,8 @@ fn convert(
     }
     // Pandoc shifts the headings after the filters.
     shift_headings(&mut doc, settings.shift_heading_level_by);
-    if let Some(dir) = &settings.extract_media
-        && !context.media.is_empty()
-    {
-        extract_media(dir, &mut doc, context)?;
+    if let Some(dir) = &settings.extract_media {
+        extract_media(dir, &mut doc, settings, context)?;
     }
     if settings.embed_resources && is_html_format(&to_spec.name) {
         return Err(subsystem::missing(Subsystem::EmbedResources));
@@ -2889,6 +3153,7 @@ mod tests {
             )],
         };
 
+        let settings = Settings::default();
         // 1. Standard dir, `./dir`, trailing slash, and `.` match Pandoc 3.13 AST & log rules.
         for (dir, expected_ast, expected_log) in [
             ("out", "out/media/image1.png", "out/media/image1.png"),
@@ -2905,7 +3170,7 @@ mod tests {
                 },
             );
             let mut doc = make_doc(&["media/image1.png"]);
-            extract_media(dir, &mut doc, &mut ctx).unwrap();
+            extract_media(dir, &mut doc, &settings, &mut ctx).unwrap();
 
             let Block::Para(inlines) = &doc.blocks[0] else {
                 panic!("expected Para");
@@ -2932,7 +3197,7 @@ mod tests {
             },
         );
         let mut doc = make_doc(&["../evil/../../secret.png"]);
-        extract_media("safe_dir", &mut doc, &mut ctx).unwrap();
+        extract_media("safe_dir", &mut doc, &settings, &mut ctx).unwrap();
         let Block::Para(inlines) = &doc.blocks[0] else {
             panic!("expected Para");
         };
@@ -2943,5 +3208,202 @@ mod tests {
         assert!(!target.url.contains(".."));
         assert!(target.url.ends_with(".png"));
         assert_eq!(ctx.host().read_file(&target.url).unwrap(), png);
+
+        // 3. Ordinary local image references in Markdown are fetched and extracted; missing ones become placeholders.
+        let mut host = PureHost::default();
+        randoc::Host::write_file(&mut host, "photo.png", png).unwrap();
+        let mut ctx = Context::new(Box::new(host));
+        let mut doc = make_doc(&["photo.png", "missing.png"]);
+        extract_media("md_out", &mut doc, &settings, &mut ctx).unwrap();
+        let Block::Para(inlines) = &doc.blocks[0] else {
+            panic!("expected Para");
+        };
+        assert!(matches!(
+            &inlines[0],
+            Inline::Image(_, _, t) if t.url == "md_out/photo.png"
+        ));
+        assert!(matches!(
+            &inlines[1],
+            Inline::Span(attr, _) if attr.classes == vec!["image", "placeholder"]
+        ));
+        assert_eq!(ctx.host().read_file("md_out/photo.png").unwrap(), png);
+
+        // 4. Under --sandbox, local Markdown images are NOT fetched from disk, while embedded media IS extracted.
+        let tmp =
+            std::env::temp_dir().join(format!("randoc-extract-sandbox-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&tmp);
+        let out_dir = tmp.join("out");
+        let out_dir_str = out_dir.to_string_lossy().into_owned();
+        let sb_settings = Settings {
+            sandbox: true,
+            extract_media: Some(out_dir_str.clone()),
+            ..Default::default()
+        };
+        let host = SandboxHost::new(&sb_settings, &[], "");
+        let mut ctx = Context::new(Box::new(host));
+        ctx.media.insert(
+            "media/embedded.png".to_owned(),
+            randoc::MediaItem {
+                mime_type: "image/png".to_owned(),
+                contents: png.to_vec(),
+            },
+        );
+        let mut doc = make_doc(&["media/embedded.png", "local_only.png"]);
+        extract_media(&out_dir_str, &mut doc, &sb_settings, &mut ctx).unwrap();
+        let Block::Para(inlines) = &doc.blocks[0] else {
+            panic!("expected Para");
+        };
+        assert!(matches!(
+            &inlines[0],
+            Inline::Image(_, _, t) if t.url == format!("{out_dir_str}/media/embedded.png")
+        ));
+        assert!(matches!(
+            &inlines[1],
+            Inline::Image(_, _, t) if t.url == "local_only.png"
+        ));
+        assert_eq!(
+            std::fs::read(out_dir.join("media/embedded.png")).unwrap(),
+            png
+        );
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn extract_media_refuses_symlinks_under_output_dir() {
+        use std::os::unix::fs::symlink;
+        let tmp =
+            std::env::temp_dir().join(format!("randoc-extract-symlink-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&tmp);
+        let out_dir = tmp.join("out");
+        let outside = tmp.join("outside");
+        std::fs::create_dir_all(&out_dir).unwrap();
+        std::fs::create_dir_all(&outside).unwrap();
+
+        // Symlinked subdirectory inside output dir must be rejected.
+        symlink(&outside, out_dir.join("media")).unwrap();
+        let err =
+            randoc::write_real_media_file(&out_dir.to_string_lossy(), "media/pwn.png", b"data")
+                .unwrap_err();
+        assert!(
+            !outside.join("pwn.png").exists(),
+            "wrote through dir symlink: {err}"
+        );
+
+        // Symlinked target file inside output dir must be rejected.
+        let victim = outside.join("victim.txt");
+        std::fs::write(&victim, b"original").unwrap();
+        symlink(&victim, out_dir.join("img.png")).unwrap();
+        let err =
+            randoc::write_real_media_file(&out_dir.to_string_lossy(), "img.png", b"overwritten")
+                .unwrap_err();
+        assert_eq!(
+            std::fs::read(&victim).unwrap(),
+            b"original",
+            "wrote through file symlink: {err}"
+        );
+
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn syntax_definitions_check_count_and_cumulative_bytes_before_buffering() {
+        // Too many syntax definitions fail before reading any file.
+        struct NeverReadHost;
+        impl randoc::Host for NeverReadHost {
+            fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
+                panic!("should not read {path} when count exceeds limit");
+            }
+            fn read_file_limited(&mut self, path: &str, _max: usize) -> std::io::Result<Vec<u8>> {
+                panic!("should not read {path} when count exceeds limit");
+            }
+        }
+        let settings = Settings {
+            syntax_definitions: (0..=randoc_highlight::MAX_DEFINITION_FILES)
+                .map(|i| format!("s{i}.xml"))
+                .collect(),
+            ..Default::default()
+        };
+        let mut ctx = Context::new(Box::new(NeverReadHost));
+        let err = read_syntax_definitions(&settings, &mut ctx).unwrap_err();
+        assert!(matches!(err, Error::SyntaxMap(_)), "got {err:?}");
+
+        // Cumulative byte budget stops buffering across multiple files.
+        struct ChunkHost(usize);
+        impl randoc::Host for ChunkHost {
+            fn read_file_limited(
+                &mut self,
+                _path: &str,
+                max_bytes: usize,
+            ) -> std::io::Result<Vec<u8>> {
+                if self.0 > max_bytes {
+                    Err(std::io::Error::new(
+                        std::io::ErrorKind::FileTooLarge,
+                        "too large",
+                    ))
+                } else {
+                    Ok(vec![b' '; self.0])
+                }
+            }
+        }
+        let settings = Settings {
+            syntax_definitions: (0..6).map(|i| format!("f{i}.xml")).collect(),
+            ..Default::default()
+        };
+        let mut ctx = Context::new(Box::new(ChunkHost(14 * 1024 * 1024)));
+        let err = read_syntax_definitions(&settings, &mut ctx).unwrap_err();
+        assert!(
+            matches!(err, Error::SyntaxMap(ref msg) if msg.contains("exceed")),
+            "got {err:?}"
+        );
+    }
+
+    #[test]
+    fn theme_file_is_read_only_once_across_validation_and_html_write() {
+        let theme_json = randoc_highlight::Style::builtin("pygments")
+            .unwrap()
+            .to_json()
+            .into_bytes();
+        struct OneShotThemeHost {
+            theme: Option<Vec<u8>>,
+            reads: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+        }
+        impl randoc::Host for OneShotThemeHost {
+            fn read_file_limited(&mut self, path: &str, _max: usize) -> std::io::Result<Vec<u8>> {
+                if path == "stdin.theme" {
+                    self.reads.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                    self.theme.take().ok_or_else(|| {
+                        std::io::Error::new(
+                            std::io::ErrorKind::UnexpectedEof,
+                            "stream already consumed",
+                        )
+                    })
+                } else if path == "in.md" {
+                    Ok(b"```rust\nfn main() {}\n```\n".to_vec())
+                } else {
+                    Err(std::io::Error::from(std::io::ErrorKind::NotFound))
+                }
+            }
+            fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
+                self.read_file_limited(path, usize::MAX)
+            }
+        }
+        let reads = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let host = OneShotThemeHost {
+            theme: Some(theme_json),
+            reads: std::sync::Arc::clone(&reads),
+        };
+        let settings = Settings {
+            standalone: true,
+            to: Some("html".to_owned()),
+            from: Some("markdown".to_owned()),
+            syntax_highlighting: "stdin.theme".to_owned(),
+            ..Default::default()
+        };
+        let mut ctx = Context::new(Box::new(host));
+        let out = convert(&settings, &["in.md".to_owned()], "", &mut ctx).unwrap();
+        let html = String::from_utf8(out).unwrap();
+        assert!(html.contains("sourceCode rust"));
+        assert_eq!(reads.load(std::sync::atomic::Ordering::SeqCst), 1);
     }
 }

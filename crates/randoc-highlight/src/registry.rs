@@ -36,6 +36,10 @@ pub const MAX_DEFINITION_FILES: usize = 4096;
 /// largest file of skylighting has about 300 KB.
 pub const MAX_DEFINITION_BYTES: usize = 16 * 1024 * 1024;
 
+/// The largest cumulative raw byte size across all syntax definition files
+/// loaded into one registry (64 MiB).
+pub const MAX_TOTAL_DEFINITION_BYTES: usize = 64 * 1024 * 1024;
+
 /// The sorted paths in `dir` of the `.xml` names of `names`, without `._`
 /// names.
 fn definition_files(dir: &str, names: Vec<String>) -> Result<Vec<String>, String> {
@@ -141,8 +145,15 @@ impl Registry {
     ) -> Result<(), String> {
         let files = definition_files(dir, names)?;
         let mut parsed = Vec::with_capacity(files.len());
+        let mut total_bytes: usize = 0;
         for path in &files {
             let bytes = read(path)?;
+            total_bytes = total_bytes.saturating_add(bytes.len());
+            if total_bytes > MAX_TOTAL_DEFINITION_BYTES {
+                return Err(format!(
+                    "{dir}: syntax definitions exceed {MAX_TOTAL_DEFINITION_BYTES} bytes"
+                ));
+            }
             let syntax = parse_bytes(path, &bytes)
                 .map_err(|e| format!("Error parsing file {}: {e}", haskell_show(path)))?;
             parsed.push(syntax);
@@ -178,10 +189,17 @@ impl Registry {
         files: impl IntoIterator<Item = (&'a str, &'a [u8])>,
     ) -> Result<(), String> {
         let mut parsed = Vec::new();
+        let mut total_bytes: usize = 0;
         for (path, bytes) in files {
             if parsed.len() == MAX_DEFINITION_FILES {
                 return Err(format!(
                     "more than {MAX_DEFINITION_FILES} syntax definitions"
+                ));
+            }
+            total_bytes = total_bytes.saturating_add(bytes.len());
+            if total_bytes > MAX_TOTAL_DEFINITION_BYTES {
+                return Err(format!(
+                    "syntax definitions exceed {MAX_TOTAL_DEFINITION_BYTES} bytes"
                 ));
             }
             parsed.push(parse_bytes(path, bytes)?);
@@ -538,5 +556,17 @@ mod tests {
     #[test]
     fn show_escapes() {
         assert_eq!(haskell_show("a\"b\\c\né"), "\"a\\\"b\\\\c\\n\\233\"");
+    }
+
+    #[test]
+    fn add_definitions_enforces_cumulative_byte_limit() {
+        let mut registry = Registry::new();
+        let pad = "a".repeat(10 * 1024 * 1024);
+        let doc = format!(
+            r#"<language name="Tiny" extensions="*.tiny"><!--{pad}--><highlighting><contexts><context name="N" attribute="N"/></contexts><itemDatas><itemData name="N" defStyleNum="dsNormal"/></itemDatas></highlighting></language>"#
+        );
+        let files: Vec<(&str, &[u8])> = (0..8).map(|_| ("big.xml", doc.as_bytes())).collect();
+        let err = registry.add_definitions(files).unwrap_err();
+        assert!(err.contains("exceed"), "unexpected error: {err}");
     }
 }

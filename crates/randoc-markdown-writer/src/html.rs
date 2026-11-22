@@ -307,10 +307,11 @@ fn decode_reference(rest: &str) -> Option<(Text, usize)> {
         return Some((c.to_string(), digits_start + end + semicolon));
     }
     // The name is the whole run of letters and digits, also non-ASCII ones
-    // (oracle: `&copyé` stays as it is), of at most 32 characters.
+    // (oracle: `&copyé` stays as it is; combining marks such as U+0345 stop the run),
+    // of at most 32 characters.
     let end = rest
         .char_indices()
-        .take_while(|(_, c)| c.is_alphanumeric())
+        .take_while(|(_, c)| randoc_core::shared::is_haskell_alphanum(*c))
         .take(32)
         .last()
         .map_or(0, |(i, c)| i + c.len_utf8());
@@ -394,6 +395,11 @@ mod tests {
                 Some("<div markdown=\"1\" X=\"&amp;copyé\">"),
             ),
             ("<a t=\"&copy;é\">", Some("<a markdown=\"1\" t=\"©é\">")),
+            // U+0345 is Mn (Other_Alphabetic), excluded by Haskell `isAlphaNum`.
+            (
+                "<a t=\"&copy\u{0345}\">",
+                Some("<a markdown=\"1\" t=\"\u{a9}\u{0345}\">"),
+            ),
             // Only the lower-case name is the attribute of Pandoc.
             (
                 "<a MARKDOWN=\"0\">",

@@ -241,7 +241,11 @@ impl LatexWriter<'_> {
         if self.usage.highlighting
             && let Some(style) = &options.highlight_style
         {
-            let macros = randoc_highlight::style_latex_macros(&load_style(style, context)?);
+            let macros = randoc_highlight::style_latex_macros(&load_style(
+                style,
+                options.highlight_theme.as_ref(),
+                context,
+            )?);
             new.push(("highlighting-macros", Val::text(macros)));
         }
         new.push((
@@ -312,12 +316,13 @@ impl LatexWriter<'_> {
 /// any length. Oracle probes: `(5)`, `0x5` and ` 05 ` give `5`, `(- 5)`
 /// gives `-5`; `+5`, `1e3`, `0b1` and `- (5)` are not integers.
 fn epoch_seconds(text: &str) -> Option<String> {
-    let mut text = text.trim();
+    let is_space = randoc_core::shared::is_haskell_space;
+    let mut text = text.trim_matches(is_space);
     while let Some(inner) = text.strip_prefix('(').and_then(|t| t.strip_suffix(')')) {
-        text = inner.trim();
+        text = inner.trim_matches(is_space);
     }
     let (negative, literal) = match text.strip_prefix('-') {
-        Some(rest) => (true, rest.trim_start()),
+        Some(rest) => (true, rest.trim_start_matches(is_space)),
         None => (false, text),
     };
     let (radix, digits) = if let Some(d) = literal
@@ -530,13 +535,26 @@ fn attribute_languages(blocks: &[Block], max_depth: usize) -> Result<(Vec<String
     Ok((languages, has_dir))
 }
 
-/// Reads a highlighting style: a built-in name or a theme file.
-fn load_style(name: &str, context: &mut Context) -> Result<Style> {
+/// Reads a highlighting style: a built-in name or a theme file (reusing
+/// pre-loaded bytes when provided so single-read sources like `/dev/stdin` work).
+fn load_style(
+    name: &str,
+    preloaded: Option<&randoc_core::LoadedFile>,
+    context: &mut Context,
+) -> Result<Style> {
     if let Some(style) = Style::builtin(name) {
         return Ok(style);
     }
-    let bytes = context.read_file_limited(name, randoc_highlight::MAX_THEME_BYTES)?;
-    std::str::from_utf8(&bytes)
+    let owned;
+    let bytes: &[u8] = if let Some(file) = preloaded
+        && file.path == name
+    {
+        &file.bytes
+    } else {
+        owned = context.read_file_limited(name, randoc_highlight::MAX_THEME_BYTES)?;
+        &owned
+    };
+    std::str::from_utf8(bytes)
         .ok()
         .and_then(|text| Style::from_json(text).ok())
         .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {name}")))
@@ -841,5 +859,14 @@ mod tests {
             })
             .map(|h| h.join().is_ok());
         assert_eq!(done.ok(), Some(true));
+    }
+
+    #[test]
+    fn epoch_seconds_matches_haskell_is_space() {
+        assert_eq!(epoch_seconds("(\u{0085}5)"), None);
+        assert_eq!(epoch_seconds("(\u{2028}5)"), None);
+        assert_eq!(epoch_seconds("(\u{2029}5)"), None);
+        assert_eq!(epoch_seconds("(\u{00A0}5)"), Some("5".to_owned()));
+        assert_eq!(epoch_seconds("(- \u{00A0}5)"), Some("-5".to_owned()));
     }
 }

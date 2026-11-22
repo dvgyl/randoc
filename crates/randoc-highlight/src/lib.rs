@@ -20,7 +20,8 @@ pub use html::{
 };
 pub use latex::{format_latex_block, format_latex_inline, style_latex_macros};
 pub use registry::{
-    HighlightedCode, MAX_DEFINITION_BYTES, MAX_DEFINITION_FILES, Registry, utf8_message,
+    HighlightedCode, MAX_DEFINITION_BYTES, MAX_DEFINITION_FILES, MAX_TOTAL_DEFINITION_BYTES,
+    Registry, utf8_message,
 };
 pub use style::{Color, MAX_THEME_BYTES, Style, TokenStyle};
 pub use syntax::Syntax;

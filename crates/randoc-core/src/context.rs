@@ -91,6 +91,31 @@ pub trait Host: Send {
         Err(unsupported(path))
     }
 
+    /// Writes a media file at safe relative POSIX path `rel_path` inside `root_dir`,
+    /// creating intermediate subdirectories and refusing to traverse or overwrite symlinks.
+    fn write_media_file(
+        &mut self,
+        root_dir: &str,
+        rel_path: &str,
+        contents: &[u8],
+    ) -> io::Result<()> {
+        validate_relative_media_path(rel_path)?;
+        let clean_root = root_dir.trim_end_matches('/');
+        let full = if clean_root.is_empty() {
+            format!("/{rel_path}")
+        } else {
+            format!("{clean_root}/{rel_path}")
+        };
+        if let Some((parent, _)) = full.rsplit_once('/')
+            && !parent.is_empty()
+            && let Err(err) = self.create_directory(parent, true)
+            && err.kind() != io::ErrorKind::Unsupported
+        {
+            return Err(err);
+        }
+        self.write_file(&full, contents)
+    }
+
     /// Fetches a URL. Returns the body and the content type.
     fn fetch_url(
         &mut self,
@@ -213,6 +238,156 @@ fn too_large(max_bytes: usize) -> io::Error {
         io::ErrorKind::FileTooLarge,
         format!("the file is larger than {max_bytes} bytes"),
     )
+}
+
+/// Validates that `rel_path` is a safe relative POSIX path without traversal
+/// segments, backslashes, or NUL bytes.
+fn validate_relative_media_path(rel_path: &str) -> io::Result<Vec<&str>> {
+    if rel_path.is_empty()
+        || rel_path.starts_with('/')
+        || rel_path.ends_with('/')
+        || rel_path.bytes().any(|b| b == 0 || b == b'\\')
+    {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            format!("unsafe media extraction path: {rel_path}"),
+        ));
+    }
+    let segments: Vec<&str> = rel_path.split('/').collect();
+    if segments
+        .iter()
+        .any(|s| s.is_empty() || *s == "." || *s == "..")
+    {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            format!("unsafe media extraction path: {rel_path}"),
+        ));
+    }
+    Ok(segments)
+}
+
+/// Writes `contents` to `rel_path` inside `root_dir` on the real filesystem,
+/// refusing to traverse or overwrite symbolic links in `root_dir`, any
+/// intermediate subdirectory, or the target file.
+pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) -> io::Result<()> {
+    let segments = validate_relative_media_path(rel_path)?;
+    let Some((filename, dirs)) = segments.split_last() else {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "empty media extraction path",
+        ));
+    };
+    let root = if root_dir == "/" {
+        "/"
+    } else {
+        root_dir.trim_end_matches('/')
+    };
+    if root.is_empty() {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "empty media extraction directory",
+        ));
+    }
+
+    #[cfg(unix)]
+    {
+        use nix::errno::Errno;
+        use nix::fcntl::{OFlag, open, openat};
+        use nix::sys::stat::{Mode, mkdirat};
+        use std::io::Write;
+
+        let dir_flags = OFlag::O_RDONLY | OFlag::O_DIRECTORY | OFlag::O_NOFOLLOW | OFlag::O_CLOEXEC;
+        let mut dir_fd = match open(root, dir_flags, Mode::empty()) {
+            Ok(fd) => fd,
+            Err(Errno::ENOENT) => {
+                std::fs::create_dir_all(root)?;
+                open(root, dir_flags, Mode::empty()).map_err(io::Error::from)?
+            }
+            Err(err) => return Err(io::Error::from(err)),
+        };
+
+        for &seg in dirs {
+            match mkdirat(&dir_fd, seg, Mode::from_bits_truncate(0o755)) {
+                Ok(()) | Err(Errno::EEXIST) => {}
+                Err(err) => return Err(io::Error::from(err)),
+            }
+            dir_fd = openat(&dir_fd, seg, dir_flags, Mode::empty()).map_err(io::Error::from)?;
+        }
+
+        let file_flags = OFlag::O_WRONLY
+            | OFlag::O_CREAT
+            | OFlag::O_TRUNC
+            | OFlag::O_NOFOLLOW
+            | OFlag::O_CLOEXEC;
+        let file_fd = openat(
+            &dir_fd,
+            *filename,
+            file_flags,
+            Mode::from_bits_truncate(0o666),
+        )
+        .map_err(io::Error::from)?;
+        let mut file = std::fs::File::from(file_fd);
+        file.write_all(contents)?;
+        Ok(())
+    }
+
+    #[cfg(not(unix))]
+    {
+        use std::io::Write;
+        let root_path = std::path::Path::new(root);
+        match std::fs::symlink_metadata(root_path) {
+            Ok(meta) if meta.file_type().is_symlink() || !meta.is_dir() => {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    format!("{root}: refuses to follow symlink or non-directory"),
+                ));
+            }
+            Ok(_) => {}
+            Err(err) if err.kind() == io::ErrorKind::NotFound => {
+                std::fs::create_dir_all(root_path)?;
+            }
+            Err(err) => return Err(err),
+        }
+        let mut cur = root_path.to_path_buf();
+        for &seg in dirs {
+            cur.push(seg);
+            match std::fs::symlink_metadata(&cur) {
+                Ok(meta) if meta.file_type().is_symlink() || !meta.is_dir() => {
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        format!(
+                            "{}: refuses to follow symlink or non-directory",
+                            cur.display()
+                        ),
+                    ));
+                }
+                Ok(_) => {}
+                Err(err) if err.kind() == io::ErrorKind::NotFound => {
+                    std::fs::create_dir(&cur)?;
+                }
+                Err(err) => return Err(err),
+            }
+        }
+        cur.push(filename);
+        if let Ok(meta) = std::fs::symlink_metadata(&cur)
+            && (meta.file_type().is_symlink() || meta.is_dir())
+        {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!(
+                    "{}: refuses to overwrite symlink or directory",
+                    cur.display()
+                ),
+            ));
+        }
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(&cur)?;
+        file.write_all(contents)?;
+        Ok(())
+    }
 }
 
 /// Reads at most `max_bytes` bytes of a real file and stops the read after
@@ -350,6 +525,15 @@ impl Host for NativeHost {
 
     fn write_file(&mut self, path: &str, contents: &[u8]) -> io::Result<()> {
         std::fs::write(path, contents)
+    }
+
+    fn write_media_file(
+        &mut self,
+        root_dir: &str,
+        rel_path: &str,
+        contents: &[u8],
+    ) -> io::Result<()> {
+        write_real_media_file(root_dir, rel_path, contents)
     }
 
     fn current_time(&mut self) -> Timestamp {

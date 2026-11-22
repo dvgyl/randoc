@@ -32,13 +32,26 @@ pub(crate) fn load_registry(options: &WriterOptions) -> Result<Option<Registry>>
 }
 
 /// Reads the highlight style of the options: a built-in style name or a
-/// KDE theme file, read through the context.
-pub(crate) fn load_style(name: &str, context: &mut Context) -> Result<Style> {
+/// KDE theme file, reusing pre-loaded bytes when provided or reading through
+/// the context.
+pub(crate) fn load_style(
+    name: &str,
+    preloaded: Option<&randoc_core::LoadedFile>,
+    context: &mut Context,
+) -> Result<Style> {
     if let Some(style) = Style::builtin(name) {
         return Ok(style);
     }
-    let bytes = context.read_file_limited(name, MAX_THEME_BYTES)?;
-    std::str::from_utf8(&bytes)
+    let owned;
+    let bytes: &[u8] = if let Some(file) = preloaded
+        && file.path == name
+    {
+        &file.bytes
+    } else {
+        owned = context.read_file_limited(name, MAX_THEME_BYTES)?;
+        &owned
+    };
+    std::str::from_utf8(bytes)
         .ok()
         .and_then(|text| Style::from_json(text).ok())
         .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {name}")))
