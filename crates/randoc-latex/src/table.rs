@@ -49,6 +49,7 @@ impl LatexWriter<'_> {
             literal("\\toprule\\noalign{}")
         };
         let caption_above = self.options.table_caption_position == CaptionPosition::CaptionAbove;
+        self.usage.tables = true;
         let mut doc = literal(format!("\\begin{{longtable}}[]{spec}"));
         match &caption {
             Some(caption) if caption_above => {
@@ -184,6 +185,7 @@ impl LatexWriter<'_> {
             } else {
                 "*"
             };
+            self.usage.multirow = true;
             contents =
                 literal(format!("\\multirow{{{row_span}}}{{{width}}}{{")) + contents + literal("}");
         }

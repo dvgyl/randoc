@@ -1,16 +1,20 @@
 //! The LaTeX and Beamer writers of Randoc.
 //!
 //! The writer builds a [`randoc_layout::Doc`] from the document tree and
-//! renders it at the line width of the options, as Pandoc does.
+//! renders it at the line width of the options, as Pandoc does. With a
+//! template in the options, the writer renders the template with the
+//! context of `standalone.rs`.
 
 mod beamer;
 mod blocks;
 mod escape;
 mod inlines;
 mod lang;
+mod md5;
 #[cfg(test)]
 mod option_tests;
 pub mod shared;
+mod standalone;
 mod table;
 
 use std::collections::HashSet;
@@ -18,8 +22,8 @@ use std::sync::Arc;
 
 use randoc_ast::{Block, Pandoc, Text};
 use randoc_core::{
-    CiteMethod, Context, Error, Extension, LogMessage, Result, TopLevelDivision, WrapOption,
-    Writer, WriterOptions,
+    CiteMethod, Context, Error, Extension, LogMessage, Result, TemplateWriter, TopLevelDivision,
+    WrapOption, Writer, WriterOptions,
 };
 use randoc_layout::Doc;
 
@@ -28,18 +32,18 @@ pub use escape::{StringContext, escape_uri, string_to_latex, to_label};
 /// Returns the writer for `latex` or `beamer`.
 pub fn writer(format: &str) -> Option<Writer> {
     match format {
-        "latex" => Some(Writer::Text(Arc::new(write_latex))),
-        "beamer" => Some(Writer::Text(Arc::new(write_beamer))),
+        "latex" => Some(Writer::Text(Arc::new(TemplateWriter(write_latex)))),
+        "beamer" => Some(Writer::Text(Arc::new(TemplateWriter(write_beamer)))),
         _ => None,
     }
 }
 
-/// Renders a document as a LaTeX fragment.
+/// Renders a document as LaTeX: a fragment, or the template of the options.
 pub fn write_latex(doc: &Pandoc, options: &WriterOptions, context: &mut Context) -> Result<Text> {
     write(doc, options, context, false)
 }
 
-/// Renders a document as a Beamer fragment.
+/// Renders a document as Beamer slides: a fragment, or the template of the options.
 pub fn write_beamer(doc: &Pandoc, options: &WriterOptions, context: &mut Context) -> Result<Text> {
     write(doc, options, context, true)
 }
@@ -52,6 +56,14 @@ fn write(
 ) -> Result<Text> {
     let mut writer = LatexWriter::new(options, context.limits.max_nesting_depth, beamer);
     writer.registry = load_registry(options, context)?;
+    writer.chapter_class = standalone::has_chapters(
+        standalone::document_class(&doc.meta, &options.variables).as_deref(),
+    );
+    // Pandoc converts the metadata before the body.
+    let mut fields = match options.template {
+        Some(_) => Some(writer.meta_context(&doc.meta)?),
+        None => None,
+    };
     let blocks = body_blocks(&doc.blocks, options.cite_method);
     let body = if beamer {
         writer.slides(&blocks)?
@@ -62,11 +74,20 @@ fn write(
         WrapOption::WrapAuto => usize::try_from(options.columns).ok(),
         WrapOption::WrapNone | WrapOption::WrapPreserve => None,
     };
-    let mut text = body.render(width);
-    // A fragment has no final newline. The program adds one.
-    if text.ends_with('\n') {
-        text.pop();
-    }
+    let text = match (&options.template, fields.as_mut()) {
+        (Some(template), Some(fields)) => {
+            writer.add_writer_fields(fields, doc, body, context)?;
+            template.render(fields).render(width)
+        }
+        _ => {
+            let mut text = body.render(width);
+            // A fragment has no final newline. The program adds one.
+            if text.ends_with('\n') {
+                text.pop();
+            }
+            text
+        }
+    };
     for warning in writer.warnings {
         context.report(warning);
     }
@@ -171,6 +192,9 @@ pub(crate) struct LatexWriter<'a> {
     pub(crate) in_minipage_env: bool,
     /// `true` inside a table cell, where display math is inline math.
     pub(crate) in_cell: bool,
+    /// `true` when the document class has chapters, which makes the
+    /// default top-level division the chapter.
+    pub(crate) chapter_class: bool,
     /// The slide level of a Beamer document.
     pub(crate) slide_level: i64,
     /// `true` in the first block of the first definition of a definition
@@ -202,6 +226,8 @@ pub(crate) struct LatexWriter<'a> {
     /// The syntax definitions when the options add files to the embedded
     /// definitions.
     pub(crate) registry: Option<randoc_highlight::Registry>,
+    /// The features that the output uses, for the template variables.
+    pub(crate) usage: standalone::Usage,
     /// The warnings of the conversion, in order.
     pub(crate) warnings: Vec<LogMessage>,
 }
@@ -231,6 +257,7 @@ impl<'a> LatexWriter<'a> {
             in_cell: false,
             in_soul: false,
             in_definition: false,
+            chapter_class: false,
             slide_level: 0,
             in_heading: false,
             in_term: false,
@@ -243,6 +270,7 @@ impl<'a> LatexWriter<'a> {
             emphasis_seen: HashSet::new(),
             emphasis_split: HashSet::new(),
             registry: None,
+            usage: standalone::Usage::default(),
             warnings: Vec::new(),
         }
     }
@@ -281,6 +309,8 @@ impl<'a> LatexWriter<'a> {
             TopLevelDivision::TopLevelPart => -1,
             TopLevelDivision::TopLevelChapter if self.beamer => -1,
             TopLevelDivision::TopLevelChapter => 0,
+            TopLevelDivision::TopLevelDefault if self.chapter_class && self.beamer => -1,
+            TopLevelDivision::TopLevelDefault if self.chapter_class => 0,
             TopLevelDivision::TopLevelSection | TopLevelDivision::TopLevelDefault => 1,
         }
     }

@@ -237,8 +237,14 @@ impl LatexWriter<'_> {
             Inline::Str(text) => literal(self.escape(StringContext::Text, text)),
             Inline::Emph(inlines) => self.emphasis("emph", inline, inlines)?,
             Inline::Strong(inlines) => self.emphasis("textbf", inline, inlines)?,
-            Inline::Underline(inlines) => self.emphasis("ul", inline, inlines)?,
-            Inline::Strikeout(inlines) => self.emphasis("st", inline, inlines)?,
+            Inline::Underline(inlines) => {
+                self.usage.strikeout = true;
+                self.emphasis("ul", inline, inlines)?
+            }
+            Inline::Strikeout(inlines) => {
+                self.usage.strikeout = true;
+                self.emphasis("st", inline, inlines)?
+            }
             Inline::Superscript(inlines) => self.command("textsuperscript", inlines)?,
             Inline::Subscript(inlines) => self.command("textsubscript", inlines)?,
             Inline::SmallCaps(inlines) => self.command("textsc", inlines)?,
@@ -264,6 +270,7 @@ impl LatexWriter<'_> {
                 literal(format!("{strut}\\\\")) + cr()
             }
             Inline::Math(kind, math) => {
+                self.usage.cancel |= uses_cancel(math);
                 let math = handle_math_comment(math);
                 match kind {
                     MathType::InlineMath if self.in_soul => literal(format!("${math}$")),
@@ -328,12 +335,14 @@ impl LatexWriter<'_> {
         // `\lstinline` cannot be in a moving argument, so a heading and a
         // term get `\texttt`.
         if self.options.listings && !self.in_heading && !self.in_term {
+            self.usage.verbatim_in_note |= self.in_note;
             let protect = if self.in_caption { "\\protect" } else { "" };
             return literal(format!("{protect}{}", listings_inline(attr, code)));
         }
         if !self.in_heading
             && let Some(highlighted) = self.highlight(attr, code)
         {
+            self.usage.highlighting = true;
             let opts = crate::blocks::format_options(attr, &highlighted.language);
             return literal(randoc_highlight::format_latex_inline(
                 &opts,
@@ -348,6 +357,7 @@ impl LatexWriter<'_> {
                 .any(|class| crate::blocks::is_known_language(class))
                 || crate::blocks::has_number_lines(attr))
         {
+            self.usage.highlighting = true;
             let escaped = crate::blocks::highlight_escape(code);
             return literal(format!("\\VERB|\\NormalTok{{{escaped}}}|"));
         }
@@ -373,6 +383,7 @@ impl LatexWriter<'_> {
                 [Inline::Str(text)]
                     if url.is_ascii() && unescape_uri(text) == unescape_uri(url) =>
                 {
+                    self.usage.url = true;
                     literal(format!("\\url{{{source}}}"))
                 }
                 [Inline::Str(text)]
@@ -380,6 +391,7 @@ impl LatexWriter<'_> {
                         .strip_prefix("mailto:")
                         .is_some_and(|rest| unescape_uri(text) == unescape_uri(rest)) =>
                 {
+                    self.usage.url = true;
                     let contents = self.inlines(inlines)?;
                     literal(format!("\\href{{{source}}}{{\\nolinkurl{{")) + contents + literal("}}")
                 }
@@ -450,6 +462,8 @@ impl LatexWriter<'_> {
         let mut option_doc = literal(options.join(","));
         let svg = url.to_ascii_lowercase().ends_with(".svg");
         let command = if svg { "includesvg" } else { "includegraphics" };
+        self.usage.graphics = true;
+        self.usage.svg |= svg;
         if !description.is_empty() && !svg {
             let escaped = self.escape(StringContext::Text, &alt);
             let mut words = Doc::default();
@@ -555,6 +569,7 @@ impl LatexWriter<'_> {
         }
         let soul = attr.has_class("mark") && !attr.has_class("underline") && attr.id.is_empty();
         if soul {
+            self.usage.strikeout = true;
             commands.push("hl".into());
         }
         if let Some(name) = attr.get("lang").and_then(crate::lang::babel_name) {
@@ -890,6 +905,17 @@ pub(crate) fn is_invalid_in_bookmark(inline: &Inline) -> bool {
         Inline::Span(attr, _) => !attr.id.is_empty(),
         _ => false,
     }
+}
+
+/// `true` when math uses a command of the `cancel` package: `\\cancel`,
+/// `\\bcancel` or `\\xcancel` (not `\\cancelto`).
+fn uses_cancel(math: &str) -> bool {
+    math.split('\\').skip(1).any(|rest| {
+        let name_end = rest
+            .find(|c: char| !c.is_ascii_alphabetic())
+            .unwrap_or(rest.len());
+        matches!(&rest[..name_end], "cancel" | "bcancel" | "xcancel")
+    })
 }
 
 /// Math that ends in a comment needs a newline before the closing delimiter.

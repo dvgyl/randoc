@@ -551,7 +551,15 @@ impl LatexWriter<'_> {
         let literate = self.options.extensions.contains(Extension::LiterateHaskell)
             && attr.has_class("literate")
             && attr.has_class("haskell");
+        if !self.options.listings {
+            self.usage.verbatim_in_note |= self.in_note;
+        }
+        // Pandoc ends each code block except a `verbatim` environment with
+        // a line end inside the flushed block. A template keeps it, because
+        // it removes only a final line end outside the block.
+        let mut inner_line_end = true;
         let body = if literate {
+            self.usage.lhs = true;
             literal("\\begin{code}")
                 .above(literal(code.to_owned()))
                 .above(literal("\\end{code}"))
@@ -578,6 +586,7 @@ impl LatexWriter<'_> {
                 .above(literal(code.to_owned()))
                 .above(literal("\\end{lstlisting}"))
         } else if let Some(highlighted) = self.highlight(attr, code) {
+            self.usage.highlighting = true;
             let opts = format_options(attr, &highlighted.language);
             literal(randoc_highlight::format_latex_block(
                 &opts,
@@ -586,6 +595,7 @@ impl LatexWriter<'_> {
         } else if code.contains(&format!("\\end{{{verbatim}}}"))
             || (!attr.classes.is_empty() && self.options.highlight_style.is_some())
         {
+            self.usage.highlighting = true;
             let mut options = String::new();
             if has_number_lines(attr) {
                 options.push_str("numbers=left,,");
@@ -607,11 +617,16 @@ impl LatexWriter<'_> {
             ))
             .above(literal("\\end{Shaded}"))
         } else {
+            inner_line_end = false;
             literal(format!("\\begin{{{verbatim}}}"))
                 .above(literal(code.to_owned()))
                 .above(literal(format!("\\end{{{verbatim}}}")))
         };
-        let doc = flush(anchor.above(body));
+        let mut doc = anchor.above(body);
+        if inner_line_end {
+            doc += cr();
+        }
+        let doc = flush(doc);
         if self.options.listings {
             doc
         } else {
@@ -942,10 +957,11 @@ impl LatexWriter<'_> {
         };
         let (caption_doc, notes) =
             self.with_note_marks(|writer| writer.caption(caption, &attr.id))?;
+        // A float starts on a new line, also after the text of a note.
         let mut doc = if nested {
             literal("\\centering")
         } else {
-            literal("\\begin{figure}").above(literal("\\centering"))
+            cr() + literal("\\begin{figure}").above(literal("\\centering"))
         };
         match self.options.figure_caption_position {
             randoc_core::CaptionPosition::CaptionAbove => {
@@ -972,6 +988,7 @@ impl LatexWriter<'_> {
                     self.in_figure_body = true;
                     let contents = self.block(block);
                     self.in_figure_body = was_in_body;
+                    self.usage.subfigure = true;
                     ("subfigure", contents?)
                 }
                 other => ("minipage", self.block(other)?),
@@ -1094,6 +1111,7 @@ impl LatexWriter<'_> {
             return Ok(contents);
         }
         if references && !blocks.is_empty() {
+            self.usage.csl_refs = true;
             let hanging = if attr.has_class("hanging-indent") {
                 1
             } else {

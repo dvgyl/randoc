@@ -395,6 +395,7 @@ dependencies = [
  "randoc-core",
  "randoc-highlight",
  "randoc-layout",
+ "randoc-templates",
  "serde_json",
  "toml",
 ]
