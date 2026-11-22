@@ -208,7 +208,10 @@ impl<E: fmt::Debug + fmt::Display> std::error::Error for CompileError<E> {}
 
 /// A compiled template.
 #[derive(Debug, Clone, PartialEq, Default)]
-pub struct Template {
+pub struct Template(std::sync::Arc<CompiledTemplate>);
+
+#[derive(Debug, PartialEq, Default)]
+struct CompiledTemplate {
     source: String,
     node: render::Node,
 }
@@ -216,7 +219,7 @@ pub struct Template {
 impl Template {
     /// Returns the template source text.
     pub fn source(&self) -> &str {
-        &self.source
+        &self.0.source
     }
 
     /// Compiles a template.
@@ -244,10 +247,10 @@ impl Template {
         load: &mut dyn FnMut(&str) -> Result<String, E>,
     ) -> Result<Template, CompileError<E>> {
         match parser::compile(path, source, max_depth, load) {
-            Ok(node) => Ok(Template {
+            Ok(node) => Ok(Template(std::sync::Arc::new(CompiledTemplate {
                 source: source.to_owned(),
                 node,
-            }),
+            }))),
             Err(Ok(text)) => Err(CompileError::Syntax(text)),
             Err(Err(parser::Fatal::Load(e))) => Err(CompileError::Partial(e)),
             Err(Err(parser::Fatal::TooDeep)) => Err(CompileError::TooDeep),
@@ -256,7 +259,26 @@ impl Template {
 
     /// Renders the template with the values of a context.
     pub fn render(&self, context: &Context) -> Doc {
-        render::render(&self.node, context)
+        render::render(&self.0.node, context)
+    }
+
+    /// Renders with limits on intermediate documents and the final text.
+    pub fn render_limited(
+        &self,
+        context: &Context,
+        work_bytes: usize,
+        output_bytes: usize,
+    ) -> Option<String> {
+        render::render_with_budget(&self.0.node, context, Some(work_bytes))?
+            .render_limited(output_bytes)
+    }
+
+    /// Estimates retained bytes for this compiled template.
+    pub fn estimated_size(&self) -> usize {
+        self.0
+            .source
+            .capacity()
+            .saturating_add(self.0.node.estimated_size())
     }
 }
 

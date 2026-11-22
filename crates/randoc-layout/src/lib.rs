@@ -473,6 +473,50 @@ impl Doc {
         render::render_plain(self, width.map(to_isize))
     }
 
+    /// Renders plain text without line wrapping, up to `max_bytes` bytes.
+    pub fn render_limited(&self, max_bytes: usize) -> Option<String> {
+        render::render_plain_limited(self, max_bytes)
+    }
+
+    /// Estimates the bytes needed to keep this document in memory.
+    pub fn estimated_size(&self) -> usize {
+        let mut total = 0usize;
+        let mut pending = vec![self];
+        while let Some(doc) = pending.pop() {
+            total = total.saturating_add(std::mem::size_of::<Self>());
+            let bytes = match &doc.0 {
+                Node::Text(_, text) | Node::VFill(_, text) | Node::AfterBreak(text) => {
+                    text.capacity()
+                }
+                Node::Prefixed(text, child) | Node::Linked(text, child) => {
+                    pending.push(child);
+                    text.capacity()
+                }
+                Node::BeforeNonBlank(_, child) | Node::Flush(_, child) | Node::Styled(_, child) => {
+                    pending.push(child);
+                    0
+                }
+                Node::Concat(children, _) => {
+                    pending.extend(children);
+                    0
+                }
+                Node::Block(_, lines) => lines
+                    .iter()
+                    .flatten()
+                    .fold(0usize, |bytes, attr| {
+                        bytes
+                            .saturating_add(std::mem::size_of::<render::Attr>())
+                            .saturating_add(attr.text.capacity())
+                            .saturating_add(attr.link.as_ref().map_or(0, String::capacity))
+                    })
+                    .saturating_add(lines.len().saturating_mul(std::mem::size_of::<Line>())),
+                _ => 0,
+            };
+            total = total.saturating_add(bytes);
+        }
+        total
+    }
+
     /// Renders the document with ANSI escape sequences for styles and OSC 8
     /// sequences for links. A width of `None` disables line wrapping.
     pub fn render_ansi(&self, width: Option<usize>) -> String {
@@ -1686,6 +1730,16 @@ mod tests {
         assert_eq!(remove_final_newline(literal("a") + cr()), literal("a"));
         assert_eq!(remove_final_newline(literal("ab")), literal("ab"));
         assert_eq!(remove_final_newline(nest(2, cr())), nest(2, cr()));
+    }
+
+    #[test]
+    fn render_limit_counts_the_prefix_of_each_line() {
+        let doc = nest(8, literal("a\nb"));
+        assert_eq!(
+            doc.render_limited(19).as_deref(),
+            Some("        a\n        b")
+        );
+        assert_eq!(doc.render_limited(18), None);
     }
 
     #[test]

@@ -175,7 +175,10 @@ fn doctemplates_compile_failures() {
         error_text(compile_with("test/foobar.txt", "$bad()$", &golden_files())),
         "\"test/bad.txt\" (line 2, column 7):\nunexpected \"s\"\nexpecting \"$\""
     );
-    assert_eq!(compile("$-- hi").map(|t| t.node), Ok(render::Node::Empty));
+    assert_eq!(
+        compile("$-- hi").map(|t| t.0.node.clone()),
+        Ok(render::Node::Empty)
+    );
 }
 
 #[test]

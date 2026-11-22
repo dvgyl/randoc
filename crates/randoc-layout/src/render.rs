@@ -316,6 +316,8 @@ impl Prefix {
 
 struct State<'a> {
     output: Vec<Attr>,
+    remaining_bytes: Option<usize>,
+    limit_exceeded: bool,
     prefix: Prefix,
     use_prefix: bool,
     line_length: Option<isize>,
@@ -331,6 +333,13 @@ impl<'a> State<'a> {
     }
 
     fn push(&mut self, attr: Attr) {
+        if let Some(remaining) = &mut self.remaining_bytes {
+            let Some(left) = remaining.checked_sub(attr.text.len()) else {
+                self.limit_exceeded = true;
+                return;
+            };
+            *remaining = left;
+        }
         if !attr.text.is_empty() {
             self.output.push(attr);
         }
@@ -396,6 +405,9 @@ impl<'a> State<'a> {
             restore: Restore::Nothing,
         }];
         while let Some(frame) = frames.last_mut() {
+            if self.limit_exceeded {
+                break;
+            }
             if frame.next >= frame.items.len() {
                 if let Some(done) = frames.pop() {
                     match done.restore {
@@ -476,6 +488,9 @@ impl<'a> State<'a> {
                     let count = 1isize.wrapping_add(num).wrapping_sub(newlines);
                     for _ in 0..count {
                         self.newline();
+                        if self.limit_exceeded {
+                            break;
+                        }
                     }
                 }
             }
@@ -635,9 +650,15 @@ fn merge_blocks(height: usize, first: BlockSpec, second: BlockSpec) -> BlockSpec
 
 /// Lays out a document into attributed output text.
 pub(crate) fn prerender(doc: &Doc, line_length: Option<isize>) -> Vec<Attr> {
+    layout(doc, line_length, None).output
+}
+
+fn layout(doc: &Doc, line_length: Option<isize>, remaining_bytes: Option<usize>) -> State<'_> {
     let items = flatten(doc);
     let mut state = State {
         output: Vec::new(),
+        remaining_bytes,
+        limit_exceeded: false,
         prefix: Prefix::new(String::new()),
         use_prefix: true,
         line_length,
@@ -648,7 +669,15 @@ pub(crate) fn prerender(doc: &Doc, line_length: Option<isize>) -> Vec<Attr> {
     };
     state.render_list(normalize(items));
     state.output.retain(|attr| !attr.text.is_empty());
-    state.output
+    state
+}
+
+pub(crate) fn render_plain_limited(doc: &Doc, max_bytes: usize) -> Option<String> {
+    let state = layout(doc, None, Some(max_bytes));
+    if state.limit_exceeded {
+        return None;
+    }
+    Some(state.output.into_iter().map(|attr| attr.text).collect())
 }
 
 pub(crate) fn render_plain(doc: &Doc, line_length: Option<isize>) -> String {

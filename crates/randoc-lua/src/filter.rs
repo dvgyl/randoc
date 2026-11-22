@@ -26,6 +26,9 @@ pub struct LuaFilter<'a> {
     pub source: &'a [u8],
 }
 
+/// Runs the citation filter with the conversion's resource lookup and reader options.
+pub type Citeproc = fn(&mut Context, &mut Pandoc, &FilterEnvironment) -> randoc_core::Result<()>;
+
 /// What a filter can see of the conversion that runs it.
 #[derive(Debug, Clone)]
 pub struct FilterEnvironment {
@@ -62,6 +65,10 @@ pub struct FilterEnvironment {
     /// The writers of `pandoc.write` and `pandoc.writers`. The program
     /// gives `randoc::formats::writer`; the default knows no writer.
     pub writers: WriterLookup,
+    /// The citation filter used by `pandoc.utils.citeproc`.
+    pub citeproc: Option<Citeproc>,
+    /// The conversion uses a restricted host for `--sandbox`.
+    pub sandbox: bool,
 }
 
 impl FilterEnvironment {
@@ -88,6 +95,8 @@ impl FilterEnvironment {
             limits: RuntimeLimits::for_mode(Mode::Full),
             readers: convert::no_reader,
             writers: convert::no_writer,
+            citeproc: None,
+            sandbox: false,
         }
     }
 }
@@ -249,6 +258,50 @@ pub(crate) fn in_scope<T>(
             convert::readers_table(lua, environment.readers)?,
             convert::writers_table(lua, environment.writers)?,
         ))?;
+        let citeproc = scope.create_function(|lua, arguments: Variadic<Value>| {
+            let cx = Cx { lua, max_depth };
+            let call = Call {
+                cx: &cx,
+                name: "citeproc",
+                arguments: &arguments,
+            };
+            let result = (|| {
+                let mut doc = call.required(0, "doc", |value| cx.pandoc(value))?;
+                let process = environment.citeproc.ok_or_else(|| {
+                    PeekError::Thrown("pandoc.utils.citeproc is not available".into())
+                })?;
+                let mut context = context
+                    .try_borrow_mut()
+                    .map_err(|_| PeekError::Thrown(BUSY.into()))?;
+                convert::without_system_access(environment.mode, &mut context, |context| {
+                    process(context, &mut doc, environment)
+                })
+                .map_err(|error| PeekError::Thrown(error.to_string()))?;
+                Ok(vec![crate::push::pandoc(lua, &doc)?])
+            })();
+            system_result(lua, result)
+        })?;
+        let compile_template = scope.create_function(|lua, arguments: Variadic<Value>| {
+            let cx = Cx { lua, max_depth };
+            let call = Call {
+                cx: &cx,
+                name: "compile",
+                arguments: &arguments,
+            };
+            let result = match context.try_borrow_mut() {
+                Ok(mut context) => {
+                    convert::without_system_access(environment.mode, &mut context, |context| {
+                        crate::template::compile_userdata(&call, context).map(|value| vec![value])
+                    })
+                }
+                Err(_) => Err(PeekError::Thrown(BUSY.into())),
+            };
+            system_result(lua, result)
+        })?;
+        native
+            .get::<Function>("document_functions")?
+            .call::<()>((citeproc, compile_template))?;
+
         // ADR 11: restricted mode has no function with file access. In
         // full mode the system functions use a native host of their own,
         // also when the conversion has a restricted host, because Pandoc

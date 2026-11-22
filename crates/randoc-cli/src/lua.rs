@@ -75,6 +75,8 @@ fn environment(
     let mut environment = randoc_lua::FilterEnvironment::new(format);
     environment.readers = randoc::formats::reader;
     environment.writers = randoc::formats::writer;
+    environment.citeproc = Some(crate::convert::lua_citeproc);
+    environment.sandbox = settings.sandbox;
     // Standard input is the input file `-`.
     environment.input_files = if context.state.input_files.is_empty() {
         vec!["-".to_owned()]
@@ -279,6 +281,7 @@ pub fn interpreter(program: &str, options: &[String], args: &[String]) -> Result
     };
     let settings = Settings::default();
     let data_dir = crate::default_user_data_dir();
+    context.state.user_data_dir = Some(data_dir.clone());
     let reader = ReaderOptions::default();
     let writer = WriterOptions::default();
     let options = Options {

@@ -6,6 +6,8 @@ use randoc_layout::{
 };
 
 use std::borrow::Cow;
+use std::collections::HashSet;
+use std::sync::Arc;
 
 use crate::{Context, Val};
 
@@ -42,6 +44,29 @@ pub(crate) struct Variable {
     pub(crate) pipes: Vec<Pipe>,
 }
 
+impl Variable {
+    fn estimated_size(&self) -> usize {
+        let parts = self.parts.iter().fold(0usize, |bytes, part| {
+            bytes
+                .saturating_add(std::mem::size_of::<String>())
+                .saturating_add(part.capacity())
+        });
+        parts.saturating_add(pipe_bytes(&self.pipes))
+    }
+}
+
+fn pipe_bytes(pipes: &[Pipe]) -> usize {
+    pipes.iter().fold(0usize, |bytes, pipe| {
+        let bytes = bytes.saturating_add(std::mem::size_of::<Pipe>());
+        match pipe {
+            Pipe::Block(_, _, left, right) => bytes
+                .saturating_add(left.capacity())
+                .saturating_add(right.capacity()),
+            _ => bytes,
+        }
+    })
+}
+
 /// A variable with two templates: the branches of a conditional, or the
 /// body and the separator of a loop.
 #[derive(Debug, Clone, PartialEq)]
@@ -59,7 +84,7 @@ pub(crate) enum Node {
     Conditional(Box<Branch>),
     Iterate(Box<Branch>),
     Nested(Box<Node>),
-    Partial(Vec<Pipe>, Box<Node>),
+    Partial(Vec<Pipe>, Arc<Node>),
     Literal(Doc),
     /// Two or more nodes, none of them empty or a concatenation.
     Concat(Vec<Node>),
@@ -68,6 +93,40 @@ pub(crate) enum Node {
 }
 
 impl Node {
+    pub(crate) fn estimated_size(&self) -> usize {
+        let mut partials = HashSet::new();
+        let mut pending = vec![self];
+        let mut total = 0usize;
+        while let Some(node) = pending.pop() {
+            total = total.saturating_add(std::mem::size_of::<Self>());
+            let bytes = match node {
+                Node::Interpolate(var) => var.estimated_size(),
+                Node::Conditional(branch) | Node::Iterate(branch) => {
+                    pending.extend([&branch.first, &branch.second]);
+                    branch.var.estimated_size()
+                }
+                Node::Nested(inner) => {
+                    pending.push(inner);
+                    0
+                }
+                Node::Partial(pipes, inner) => {
+                    if partials.insert(Arc::as_ptr(inner)) {
+                        pending.push(inner);
+                    }
+                    pipe_bytes(pipes)
+                }
+                Node::Concat(nodes) => {
+                    pending.extend(nodes);
+                    0
+                }
+                Node::Literal(doc) => doc.estimated_size(),
+                Node::Empty => 0,
+            };
+            total = total.saturating_add(bytes);
+        }
+        total
+    }
+
     pub(crate) fn interpolate(var: Variable) -> Node {
         Node::Interpolate(Box::new(var))
     }
@@ -722,15 +781,6 @@ impl<'a> Found<'a> {
             },
         }
     }
-
-    /// The items of a loop over the value (`withVariable`).
-    fn loop_items(self) -> Vec<Found<'a>> {
-        match self.kind() {
-            Kind::Null => Vec::new(),
-            Kind::List => self.list_items(),
-            _ => vec![self],
-        }
-    }
 }
 
 /// Counts one visited map entry in test builds (standing order 21a).
@@ -885,8 +935,29 @@ fn resolve(val: &Val, docs: &mut Vec<Doc>) {
 }
 
 pub(crate) fn render(node: &Node, ctx: &Context) -> Doc {
-    let mut column = 0;
-    render_node(node, &Scope::Root(ctx), &mut column)
+    render_with_budget(node, ctx, None).unwrap_or_default()
+}
+
+pub(crate) fn render_with_budget(node: &Node, ctx: &Context, budget: Option<usize>) -> Option<Doc> {
+    render_node(node, &Scope::Root(ctx), &mut 0, &mut RenderBudget(budget))
+}
+
+struct RenderBudget(Option<usize>);
+
+impl RenderBudget {
+    fn charge(&mut self, bytes: usize) -> Option<()> {
+        if let Some(remaining) = &mut self.0 {
+            *remaining = remaining.checked_sub(bytes)?;
+        }
+        Some(())
+    }
+
+    fn charge_doc(&mut self, doc: &Doc) -> Option<()> {
+        if self.0.is_some() {
+            self.charge(doc.estimated_size())?;
+        }
+        Some(())
+    }
 }
 
 fn update_column(doc: Doc, column: &mut usize) -> Doc {
@@ -894,56 +965,97 @@ fn update_column(doc: Doc, column: &mut usize) -> Doc {
     doc
 }
 
-fn render_node<'a>(node: &'a Node, scope: &Scope<'a>, column: &mut usize) -> Doc {
+fn render_node<'a>(
+    node: &'a Node,
+    scope: &Scope<'a>,
+    column: &mut usize,
+    budget: &mut RenderBudget,
+) -> Option<Doc> {
     #[cfg(test)]
     crate::steps::step();
-    match node {
-        Node::Literal(d) => update_column(d.clone(), column),
+    budget.charge(std::mem::size_of::<Node>())?;
+    Some(match node {
+        Node::Literal(d) => {
+            budget.charge_doc(d)?;
+            update_column(d.clone(), column)
+        }
         Node::Interpolate(var) => {
             let mut docs = Vec::new();
             lookup(var, scope).render(&mut docs);
-            update_column(docs.into_iter().sum(), column)
+            let doc: Doc = docs.into_iter().sum();
+            budget.charge_doc(&doc)?;
+            update_column(doc, column)
         }
         Node::Conditional(branch) => {
-            if lookup(&branch.var, scope).truth() {
-                render_node(&branch.first, scope, column)
+            let node = if lookup(&branch.var, scope).truth() {
+                &branch.first
             } else {
-                render_node(&branch.second, scope, column)
-            }
+                &branch.second
+            };
+            render_node(node, scope, column, budget)?
         }
-        Node::Iterate(branch) => render_loop(branch, scope, column),
+        Node::Iterate(branch) => render_loop(branch, scope, column, budget)?,
         Node::Nested(inner) => {
             let n = *column;
-            nest(n, render_node(inner, scope, column))
+            let inner = render_node(inner, scope, column, budget)?;
+            if !inner.is_empty() {
+                budget.charge(n)?;
+            }
+            nest(n, inner)
         }
         Node::Partial(pipes, inner) => {
-            let doc = render_node(inner, scope, column);
-            match apply_pipes(pipes, Val::Simple(doc)) {
-                Val::Simple(d) => d,
-                _ => Doc::default(),
+            let doc = render_node(inner, scope, column, budget)?;
+            if pipes.is_empty() {
+                doc
+            } else {
+                match apply_pipes(pipes, Val::Simple(doc)) {
+                    Val::Simple(d) => {
+                        budget.charge_doc(&d)?;
+                        d
+                    }
+                    _ => Doc::default(),
+                }
             }
         }
-        Node::Concat(items) => items.iter().map(|n| render_node(n, scope, column)).sum(),
+        Node::Concat(items) => {
+            let mut doc = Doc::default();
+            for node in items {
+                doc += render_node(node, scope, column, budget)?;
+            }
+            doc
+        }
         Node::Empty => Doc::default(),
-    }
+    })
 }
 
-fn render_loop<'a>(branch: &'a Branch, scope: &Scope<'a>, column: &mut usize) -> Doc {
-    let items = lookup(&branch.var, scope).loop_items();
-    let mut docs = Vec::with_capacity(items.len());
-    for item in items {
-        let inner = Scope::new_loop(scope, item, &branch.var.parts);
-        docs.push(render_node(&branch.first, &inner, column));
+fn render_loop<'a>(
+    branch: &'a Branch,
+    scope: &Scope<'a>,
+    column: &mut usize,
+    budget: &mut RenderBudget,
+) -> Option<Doc> {
+    let value = lookup(&branch.var, scope);
+    let mut docs = Vec::new();
+    if value.kind() == Kind::List {
+        budget.charge(value.len().saturating_mul(std::mem::size_of::<Found<'_>>()))?;
+        for item in value.list_items() {
+            let inner = Scope::new_loop(scope, item, &branch.var.parts);
+            docs.push(render_node(&branch.first, &inner, column, budget)?);
+        }
+    } else if value.kind() != Kind::Null {
+        let inner = Scope::new_loop(scope, value, &branch.var.parts);
+        docs.push(render_node(&branch.first, &inner, column, budget)?);
     }
-    let sep = render_node(&branch.second, scope, column);
+    let sep = render_node(&branch.second, scope, column, budget)?;
     let mut out = Doc::default();
     for (i, d) in docs.into_iter().enumerate() {
         if i > 0 {
+            budget.charge_doc(&sep)?;
             out += sep.clone();
         }
         out += d;
     }
-    out
+    Some(out)
 }
 
 #[cfg(test)]

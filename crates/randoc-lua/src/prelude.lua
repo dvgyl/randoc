@@ -543,6 +543,9 @@ pandoc.path.exists = refused('pandoc.path.exists')
 -- never invoke a destructed scoped callback on a later `Reader`/`Writer`/`Template` call.
 local active_report
 local active_read
+local active_citeproc
+local active_compile
+local document_installed = false
 local active_write
 local active_system
 local warn_installed = false
@@ -613,6 +616,14 @@ function native.convert_functions(read, write, readers, writers)
   convert_installed = true
   pandoc.read = function(...) return check(active_read(...)) end
   pandoc.write = function(...) return check(active_write(...)) end
+end
+function native.document_functions(citeproc, compile_template)
+  active_citeproc = citeproc
+  active_compile = compile_template
+  if document_installed then return end
+  document_installed = true
+  pandoc.utils.citeproc = function(...) return check(active_citeproc(...)) end
+  pandoc.template.compile = function(...) return check(active_compile(...)) end
 end
 function native.system_functions(system_call)
   active_system = system_call
@@ -730,7 +741,7 @@ for _, name in ipairs {
   pandoc[name] = missing_function('pandoc.' .. name)
 end
 for _, name in ipairs {
-  'citeproc', 'documentation', 'from_simple_table', 'references', 'run_json_filter',
+  'documentation', 'from_simple_table', 'references', 'run_json_filter',
   'run_lua_filter', 'to_simple_table',
 } do
   pandoc.utils[name] = missing_function('pandoc.utils.' .. name)
@@ -744,9 +755,6 @@ doc_metatable.__index = { render = function(doc) return rawget(doc, 'text') end 
 doc_metatable.__tostring = function(doc) return rawget(doc, 'text') end
 doc_metatable.__concat = function(a, b) return tostring(a) .. tostring(b) end
 pandoc.template = {
-  compile = function(text)
-    return template_call('compile', text)
-  end,
   apply = function(template, context)
     return setmetatable({ text = template_call('apply', template, context) }, doc_metatable)
   end,

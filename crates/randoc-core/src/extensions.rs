@@ -171,19 +171,31 @@ impl FormatSpec {
     pub fn extensions(&self) -> Result<Extensions> {
         let supported = supported_extensions(&self.name);
         let mut extensions = default_extensions(&self.name);
+        let mut enable_literate_haskell = false;
         for (enable, name) in &self.changes {
+            let name = if name == "lhs" {
+                "literate_haskell"
+            } else {
+                name
+            };
             let known = Extension::from_name(name).filter(|ext| supported.contains(*ext));
             let Some(extension) = known else {
                 return Err(Error::UnsupportedExtension {
-                    extension: name.clone(),
+                    extension: name.to_owned(),
                     format: self.name.clone(),
                 });
             };
+            if extension == Extension::LiterateHaskell && *enable {
+                enable_literate_haskell = true;
+            }
             if *enable {
                 extensions.enable(extension);
             } else {
                 extensions.disable(extension);
             }
+        }
+        if enable_literate_haskell {
+            extensions.enable(Extension::LiterateHaskell);
         }
         Ok(extensions)
     }
@@ -195,7 +207,11 @@ fn parse_changes(mut rest: &str) -> Vec<(bool, Text)> {
     while let Some(sign) = rest.chars().next() {
         let body = &rest[sign.len_utf8()..];
         let end = body.find(['+', '-']).unwrap_or(body.len());
-        changes.push((sign == '+', Text::from(&body[..end])));
+        let name = match &body[..end] {
+            "lhs" => "literate_haskell",
+            other => other,
+        };
+        changes.push((sign == '+', Text::from(name)));
         rest = &body[end..];
     }
     changes
@@ -320,6 +336,43 @@ mod tests {
             .extensions()
             .unwrap();
         assert!(!extensions.contains(Extension::Emoji));
+    }
+
+    #[test]
+    fn lhs_is_the_builtin_alias_for_literate_haskell() {
+        for format in [
+            "latex",
+            "beamer",
+            "html",
+            "rst",
+            "markdown",
+            "markdown_strict",
+        ] {
+            for suffix in ["+lhs", "+LHS", "+lhs-lhs", "+literate_haskell-lhs"] {
+                let spec = FormatSpec::parse(&format!("{format}{suffix}"));
+                assert!(
+                    spec.extensions()
+                        .unwrap()
+                        .contains(Extension::LiterateHaskell),
+                    "{spec:?}"
+                );
+            }
+            let spec = FormatSpec::parse(&format!("{format}-lhs"));
+            assert!(
+                !spec
+                    .extensions()
+                    .unwrap()
+                    .contains(Extension::LiterateHaskell),
+                "{spec:?}"
+            );
+        }
+        assert_eq!(
+            FormatSpec::parse("gfm+lhs").extensions(),
+            Err(Error::UnsupportedExtension {
+                extension: "literate_haskell".into(),
+                format: "gfm".into(),
+            })
+        );
     }
 
     #[test]

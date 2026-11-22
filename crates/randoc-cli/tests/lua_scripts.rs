@@ -380,3 +380,196 @@ end
         "stdout={stdout}"
     );
 }
+
+#[test]
+fn compile_resolves_partials_with_the_host_and_apply_bounds_rendering() {
+    let folder = Folder::new("lua-template-limits");
+    std::fs::create_dir_all(folder.0.join("local")).unwrap();
+    std::fs::write(folder.0.join("local/part.txt"), "SIBLING").unwrap();
+    std::fs::create_dir_all(folder.0.join("data/templates")).unwrap();
+    std::fs::write(folder.0.join("data/templates/part.txt"), "DATA").unwrap();
+    std::fs::write(folder.0.join("compile.lua"), r#"
+function Writer()
+  local tpl = pandoc.template.compile("$part()$", "./local/main.txt")
+  local fallback = pandoc.template.compile("$part()$", "./absent/main.txt")
+  return pandoc.template.apply(tpl, {}):render() .. ":" .. pandoc.template.apply(fallback, {}):render()
+end
+"#).unwrap();
+    assert_eq!(
+        folder.run(&["-t", "compile.lua", "--data-dir=data"], ""),
+        (0, "SIBLING:DATA\n".into(), String::new())
+    );
+    let (status, _, error) = folder.run(&["-t", "compile.lua", "--data-dir=data", "--sandbox"], "");
+    assert_eq!(status, 84, "{error}");
+    assert!(
+        error.contains("Could not find data file 'templates/part.txt'"),
+        "{error}"
+    );
+
+    std::fs::write(folder.0.join("bound.lua"), r#"
+function Writer()
+  local a, b = {}, {}
+  local value = string.rep("x", 100)
+  for i = 1, 1000 do a[i] = value; b[i] = value end
+  local ok, message = pcall(pandoc.template.apply, "$for(a)$$for(b)$$b$$endfor$$endfor$", {a = a, b = b})
+  assert(not ok and message == "template render exceeded size limit", tostring(message))
+  return pandoc.template.apply("OK:$x$", {x = "yes"}):render()
+end
+"#).unwrap();
+    assert_eq!(
+        folder.run(&["-t", "bound.lua"], ""),
+        (0, "OK:yes\n".into(), String::new())
+    );
+}
+
+#[test]
+fn custom_extensions_coerce_numeric_keys_and_reject_non_tables() {
+    let folder = Folder::new("lua-extension-types");
+    let writer = folder.0.join("ext.lua");
+    let script = "function Writer(doc, opts) return table.concat(opts.extensions, ',') end";
+    std::fs::write(
+        &writer,
+        format!("Extensions = {{[1] = 'enable', [1.5] = true}}\n{script}"),
+    )
+    .unwrap();
+    assert_eq!(
+        folder.run(&["-t", "ext.lua-1"], ""),
+        (0, "1.5\n".into(), String::new())
+    );
+    std::fs::write(&writer, format!("Extensions = 'foo'\n{script}")).unwrap();
+    assert_eq!(
+        folder.run(&["-t", "ext.lua"], ""),
+        (
+            84,
+            String::new(),
+            "Error running Lua:\ntable expected, got string\n".into()
+        )
+    );
+}
+
+#[test]
+fn citeproc_uses_document_metadata_and_the_cli_data_directory() {
+    let folder = Folder::new("lua-citeproc");
+    let locale = include_str!("../../randoc-citeproc/tests/replay/document-locale.xml");
+    let style = r#"<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text">
+      <info><title>Test</title><id>test</id></info>
+      <citation><layout prefix="(" suffix=")"><text variable="title"/></layout></citation>
+      </style>"#;
+    std::fs::create_dir_all(folder.0.join("data/csl/locales")).unwrap();
+    std::fs::write(folder.0.join("data/csl/locales/locales-en-US.xml"), locale).unwrap();
+    std::fs::write(folder.0.join("data/csl/test.csl"), style).unwrap();
+    std::fs::write(folder.0.join("data/default.csl"), style).unwrap();
+    std::fs::write(
+        folder.0.join("cites.lua"),
+        r#"
+function Pandoc(doc)
+  local out = pandoc.utils.citeproc(doc, "ignored")
+  assert(out.meta.csl and out.meta.references and pandoc.utils.stringify(out.meta.marker) == "text")
+  assert(pandoc.utils.stringify(doc.blocks[1]) == "See [@a].")
+  assert(pandoc.utils.stringify(out.blocks[1]) == "See (Alpha).")
+  return out
+end
+"#,
+    )
+    .unwrap();
+    let input = "---\ncsl: test\nmarker: text\nreferences: [{id: a, type: book, title: Alpha}]\n---\n\nSee [@a].\n";
+    for sandbox in [false, true] {
+        let mut args = vec!["--data-dir=data", "--lua-filter=cites.lua", "-t", "plain"];
+        if sandbox {
+            args.push("--sandbox");
+        }
+        assert_eq!(
+            folder.run(&args, input),
+            (0, "See (Alpha).\n".into(), String::new())
+        );
+    }
+    assert_eq!(
+        folder.run(
+            &[
+                "--data-dir=data",
+                "--lua-filter=cites.lua",
+                "-t",
+                "markdown"
+            ],
+            input
+        ),
+        (0, "See [@a].\n".into(), String::new())
+    );
+    let args = ["--data-dir=data", "--lua-filter=cites.lua", "-t", "plain"];
+    let missing = "---\ncsl: test\nbibliography: missing.bib\n---\n\n[@a]\n";
+    let (status, _, error) = folder.run(&args, missing);
+    assert_eq!(status, 83);
+    assert!(
+        error.contains("File 'missing.bib' not found in resource path\nstack traceback:"),
+        "{error}"
+    );
+    std::fs::write(
+        folder.0.join("cites.lua"),
+        "function Pandoc() return pandoc.utils.citeproc({}) end",
+    )
+    .unwrap();
+    let (status, _, error) = folder.run(&args, input);
+    assert_eq!(status, 83);
+    assert!(error.contains("Pandoc expected, got table\n\twhile retrieving Pandoc\n\twhile retrieving function argument doc\n\twhile retrieving arguments for function citeproc"), "{error}");
+
+    std::fs::write(
+        folder.0.join("writer-options.lua"),
+        r#"
+function Pandoc(doc)
+  for _, ext in ipairs(PANDOC_WRITER_OPTIONS.extensions) do
+    assert(ext ~= "citations")
+  end
+end
+"#,
+    )
+    .unwrap();
+    for writer in [
+        "markdown",
+        "markdown+citations",
+        "markdown-citations+citations",
+        "gfm",
+    ] {
+        for filter_order in [
+            ["-C", "--lua-filter=writer-options.lua"],
+            ["--lua-filter=writer-options.lua", "-C"],
+        ] {
+            let args = [
+                "--data-dir=data",
+                "-t",
+                writer,
+                filter_order[0],
+                filter_order[1],
+            ];
+            assert_eq!(
+                folder.run(&args, input),
+                (0, "See (Alpha).\n".into(), String::new()),
+                "{writer}"
+            );
+        }
+    }
+    let (status, _, error) = folder.run(&["-C", "-t", "gfm+citations"], input);
+    assert_eq!(status, 23);
+    assert!(
+        error.contains("The extension 'citations' is not supported for gfm."),
+        "{error}"
+    );
+}
+
+#[test]
+fn latex_writer_accepts_the_lhs_alias() {
+    let folder = Folder::new("latex-lhs");
+    let input = "~~~{.haskell .literate}\nx = 1\n~~~\n";
+    for format in ["latex+lhs", "latex+lhs-lhs", "latex+literate_haskell"] {
+        assert_eq!(
+            folder.run(&["-t", format], input),
+            (
+                0,
+                "\\begin{code}\nx = 1\n\\end{code}\n".into(),
+                String::new()
+            )
+        );
+    }
+    let (status, output, error) = folder.run(&["-t", "latex-lhs"], input);
+    assert_eq!(status, 0, "{error}");
+    assert!(!output.contains("\\begin{code}"), "{output}");
+}

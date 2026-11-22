@@ -1602,13 +1602,43 @@ fn run_citeproc(
     context: &mut Context,
 ) -> Result<()> {
     let options = metadata_options(reader_options, from);
-    let mut find = |context: &mut Context, name: &str| find_resource(name, settings, context);
-    let mut yaml = |context: &mut Context, text: &str, path: &str| {
-        yaml_references(text, path, &options, context)
+    process_citations(
+        doc,
+        &settings.resource_path,
+        &options,
+        settings.sandbox,
+        context,
+    )
+}
+
+#[cfg(feature = "lua")]
+pub(crate) fn lua_citeproc(
+    context: &mut Context,
+    doc: &mut Pandoc,
+    environment: &randoc_lua::FilterEnvironment,
+) -> Result<()> {
+    let options = metadata_options(&environment.reader_options, "");
+    let resource_path = environment.resource_path.iter().cloned().collect();
+    let bypass_sandbox = environment.sandbox && environment.mode == randoc_lua::Mode::Full;
+    process_citations(doc, &resource_path, &options, bypass_sandbox, context)
+}
+
+fn process_citations(
+    doc: &mut Pandoc,
+    resource_path: &VecDeque<String>,
+    options: &ReaderOptions,
+    sandbox: bool,
+    context: &mut Context,
+) -> Result<()> {
+    let mut find = |context: &mut Context, name: &str| {
+        resource_candidates(name, resource_path)
+            .into_iter()
+            .find(|candidate| context.host().file_exists(candidate))
     };
-    let sandbox = settings
-        .sandbox
-        .then(|| context.replace_host(Box::new(randoc::NativeHost)));
+    let mut yaml = |context: &mut Context, text: &str, path: &str| {
+        yaml_references(text, path, options, context)
+    };
+    let sandbox = sandbox.then(|| context.replace_host(Box::new(randoc::NativeHost)));
     let result = randoc_citeproc::filter::process_citations(
         context,
         doc,
@@ -1915,18 +1945,27 @@ fn convert(
     // loads the script, before the extension check; it compiles the text
     // only when it uses it.
     let mut script_template = None;
+    let citeproc_enabled = settings.filters.contains(&Filter::Citeproc);
     let (writer, writer_extensions) = if crate::lua::is_script(&to_spec.name) {
         let mut script =
             crate::lua::load_custom(&to_spec.name, settings, data_dir, script_options, context)?;
         let kind = script.writer_kind()?;
         script_template = script.template(context)?;
-        let (names, known) = script.extensions(&to_spec)?;
+        let (mut names, known) = script.extensions(&to_spec)?;
+        if citeproc_enabled {
+            names.retain(|name| name != "citations");
+        }
         (OutputWriter::Script(script, kind, names), known)
     } else {
         let writer =
             formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to_spec.name.clone()))?;
         (OutputWriter::Builtin(writer), to_spec.extensions()?)
     };
+    let mut writer_extensions = writer_extensions;
+    // Pandoc disables citations for the writer even with an explicit +citations.
+    if citeproc_enabled {
+        writer_extensions.disable(Extension::Citations);
+    }
     let writer_options = writer_options(settings, writer_extensions);
     if output.is_none()
         && settings.output_file.is_none()

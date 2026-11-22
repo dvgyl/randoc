@@ -4,6 +4,7 @@
 
 use std::collections::HashMap;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use randoc_layout::{literal, space};
 
@@ -194,7 +195,7 @@ pub(crate) struct Parser<'a, E> {
     max_depth: usize,
     /// Each partial that was parsed, by the state that its parse depends
     /// on, so that a partial used many times is read and parsed one time.
-    partials: HashMap<PartialKey, (Node, bool, PErr)>,
+    partials: HashMap<PartialKey, (Arc<Node>, bool, PErr)>,
 }
 
 /// The path of a partial and the parser state that its parse depends on.
@@ -999,7 +1000,7 @@ impl<E> Parser<'_, E> {
         };
         self.st = old_state;
         let pipes = a.step(self.many_alt(Self::p_pipe))?;
-        let partial = Node::Partial(pipes, Box::new(body));
+        let partial = Node::Partial(pipes, body);
         a.ok(match var {
             Some(var) => Node::iterate(var, partial, sep),
             None => partial,
@@ -1007,7 +1008,7 @@ impl<E> Parser<'_, E> {
     }
 
     /// Reads and parses a partial, and keeps the result for the next use.
-    fn p_partial_body(&mut self, key: &PartialKey) -> R<Node> {
+    fn p_partial_body(&mut self, key: &PartialKey) -> R<Arc<Node>> {
         let path = key.path.clone();
         let nesting = key.nesting;
         let text = match (self.load)(&path) {
@@ -1032,6 +1033,7 @@ impl<E> Parser<'_, E> {
             self.pos = old_pos;
             reply
         };
+        let reply = reply.map(|(node, consumed, error)| (Arc::new(node), consumed, error));
         if let Ok(parsed) = &reply {
             self.partials.insert(
                 PartialKey {

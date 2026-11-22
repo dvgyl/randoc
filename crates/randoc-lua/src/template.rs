@@ -3,7 +3,11 @@
 //! its `Template` global in `opts.template`, and `apply` renders it (keeping
 //! any resolved partials intact).
 
-use mlua::{MetaMethod, Table, UserData, UserDataMethods, Value};
+use std::cell::Cell;
+use std::rc::Rc;
+
+use mlua::{Lua, MetaMethod, Table, UserData, UserDataMethods, Value};
+use randoc_core::{Context, Error};
 use randoc_templates::{Context as TemplateContext, Template, Val};
 
 use crate::construct::Call;
@@ -19,15 +23,67 @@ const MAX_CONTEXT_NODES: usize = 200_000;
 /// [`TemplateContext`] (16 MiB).
 const MAX_CONTEXT_BYTES: usize = 16 * 1024 * 1024;
 
-/// A compiled template exposed to Lua as opaque `userdata`, matching Pandoc's
-/// `pandoc Template` userdata (`type(opts.template) == "userdata"`).
+const MAX_SOURCE_BYTES: usize = 1 << 20;
+const MAX_LIVE_BYTES: usize = 64 << 20;
+const MAX_RENDER_WORK_BYTES: usize = 64 << 20;
+const MAX_OUTPUT_BYTES: usize = 16 << 20;
+
 #[derive(Clone)]
-pub(crate) struct LuaTemplate(pub(crate) Template);
+struct LiveBytes {
+    used: Rc<Cell<usize>>,
+    limit: usize,
+}
+
+impl Default for LiveBytes {
+    fn default() -> Self {
+        Self {
+            used: Rc::default(),
+            limit: MAX_LIVE_BYTES,
+        }
+    }
+}
+
+/// A compiled template and its share of the Lua state's template budget.
+pub(crate) struct LuaTemplate {
+    template: Template,
+    live: LiveBytes,
+    bytes: usize,
+}
+
+impl Drop for LuaTemplate {
+    fn drop(&mut self) {
+        self.live.used.set(self.live.used.get() - self.bytes);
+    }
+}
+
+pub(crate) fn userdata(lua: &Lua, template: Template) -> mlua::Result<Value> {
+    let live = match lua.app_data_ref::<LiveBytes>() {
+        Some(live) => LiveBytes::clone(&live),
+        None => {
+            let live = LiveBytes::default();
+            lua.set_app_data(live.clone());
+            live
+        }
+    };
+    let bytes = template.estimated_size();
+    let total = live.used.get().saturating_add(bytes);
+    if total > live.limit {
+        return Err(mlua::Error::RuntimeError(
+            "compiled templates exceeded live size limit".into(),
+        ));
+    }
+    live.used.set(total);
+    Ok(Value::UserData(lua.create_userdata(LuaTemplate {
+        template,
+        live,
+        bytes,
+    })?))
+}
 
 impl UserData for LuaTemplate {
     fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
         methods.add_meta_method(MetaMethod::ToString, |_, this, ()| {
-            Ok(format!("Template: {:p}", &this.0))
+            Ok(format!("Template: {:p}", &this.template))
         });
     }
 }
@@ -65,17 +121,13 @@ impl ContextBudget {
 pub(crate) fn call(call: &Call, name: &str) -> Peek<Value> {
     let cx = call.cx;
     match name {
-        "compile" => {
-            let source = call.required(0, "template", |v| cx.text(v))?;
-            let template = compile(cx, &source)?;
-            Ok(Value::UserData(
-                cx.lua.create_userdata(LuaTemplate(template))?,
-            ))
-        }
         "apply" => {
             let template = call.required(0, "template", |v| extract_template(cx, v))?;
             let context = call.required(1, "context", |v| context(cx, v))?;
-            Ok(push::text(cx.lua, &template.render(&context).render(None))?)
+            let text = template
+                .render_limited(&context, MAX_RENDER_WORK_BYTES, MAX_OUTPUT_BYTES)
+                .ok_or_else(|| PeekError::Thrown("template render exceeded size limit".into()))?;
+            Ok(push::text(cx.lua, &text)?)
         }
         other => Err(PeekError::Thrown(format!(
             "internal error: unknown function pandoc.template.{other}"
@@ -87,16 +139,87 @@ fn extract_template(cx: &Cx, value: &Value) -> Peek<Template> {
     if let Value::UserData(ud) = value
         && let Ok(tpl) = ud.borrow::<LuaTemplate>()
     {
-        return Ok(tpl.0.clone());
+        return Ok(tpl.template.clone());
     }
     let source = cx.text(value)?;
-    compile(cx, &source)
+    compile(cx, &source, None, None)
 }
 
-fn compile(cx: &Cx, source: &str) -> Peek<Template> {
-    Template::compile("template", source, cx.max_depth, &mut |path| {
-        Err(format!("Could not find template partial {path}"))
+pub(crate) fn compile_userdata(call: &Call, host: &mut Context) -> Peek<Value> {
+    let source = call.required(0, "template", |v| call.cx.text(v))?;
+    let path = call.optional(1, "path", |v| call.cx.text(v))?;
+    let template = compile(call.cx, &source, path.as_deref(), Some(host))?;
+    userdata(call.cx.lua, template).map_err(|error| match error {
+        mlua::Error::RuntimeError(text) => PeekError::Thrown(text),
+        other => other.into(),
     })
+}
+
+fn compile(
+    cx: &Cx,
+    source: &str,
+    path: Option<&str>,
+    mut context: Option<&mut Context>,
+) -> Peek<Template> {
+    let limit = context.as_ref().map_or(MAX_SOURCE_BYTES, |context| {
+        usize::try_from(context.limits.max_resource_size)
+            .unwrap_or(usize::MAX)
+            .min(MAX_SOURCE_BYTES)
+    });
+    let limit_error = "template source exceeded size limit";
+    let mut remaining = limit
+        .checked_sub(source.len())
+        .ok_or_else(|| PeekError::Thrown(limit_error.into()))?;
+    Template::compile(
+        path.unwrap_or("template"),
+        source,
+        cx.max_depth,
+        &mut |partial| {
+            let Some(context) = context.as_deref_mut() else {
+                return Err(format!("Could not find template partial {partial}"));
+            };
+            let name = format!(
+                "templates/{}",
+                partial.rsplit('/').next().unwrap_or(partial)
+            );
+            let file = context
+                .state
+                .user_data_dir
+                .as_ref()
+                .map(|dir| format!("{dir}/{name}"));
+            let from_path = if path.is_some() {
+                match context.host().read_file_limited(partial, remaining) {
+                    Ok(bytes) => Some(bytes),
+                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+                    Err(error) => {
+                        return Err(format!(
+                            "Could not read template partial {partial}: {error}"
+                        ));
+                    }
+                }
+            } else {
+                None
+            };
+            let bytes =
+                match (from_path, file) {
+                    (Some(bytes), _) => bytes,
+                    (None, Some(file)) => context
+                        .host()
+                        .read_file_limited(&file, remaining)
+                        .map_err(|error| {
+                            if error.kind() == std::io::ErrorKind::NotFound {
+                                Error::CouldNotFindDataFile(name.clone()).to_string()
+                            } else {
+                                format!("Could not read template partial {file}: {error}")
+                            }
+                        })?,
+                    (None, None) => return Err(Error::CouldNotFindDataFile(name).to_string()),
+                };
+            remaining = remaining.checked_sub(bytes.len()).ok_or(limit_error)?;
+            let text = String::from_utf8(bytes).map_err(|error| error.to_string())?;
+            Ok(text.trim_start_matches('\u{feff}').replace('\r', ""))
+        },
+    )
     .map_err(|error| PeekError::Thrown(error.to_string()))
 }
 
@@ -173,4 +296,36 @@ fn doc_text(table: &Table) -> Peek<Option<String>> {
         return Ok(None);
     }
     Ok(table.raw_get::<Option<String>>("text")?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn compiled_templates_share_a_live_budget_and_gc_releases_it() {
+        let lua = Lua::new();
+        let tpl = Template::compile("test", "a test", 16, &mut |_| {
+            Err::<String, _>("no partials")
+        })
+        .unwrap();
+        let limit = tpl.estimated_size() * 2;
+        let budget = LiveBytes {
+            used: Rc::default(),
+            limit,
+        };
+        lua.set_app_data(budget.clone());
+        let first = userdata(&lua, tpl.clone()).unwrap();
+        let second = userdata(&lua, tpl.clone()).unwrap();
+        assert_eq!(budget.used.get(), limit);
+        assert!(userdata(&lua, tpl.clone()).is_err());
+
+        drop(first);
+        lua.gc_collect().unwrap();
+        assert_eq!(budget.used.get(), limit / 2);
+        assert!(userdata(&lua, tpl).is_ok());
+        drop(second);
+        lua.gc_collect().unwrap();
+        assert_eq!(budget.used.get(), 0);
+    }
 }

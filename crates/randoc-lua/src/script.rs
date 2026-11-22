@@ -142,39 +142,51 @@ impl CustomScript {
     ) -> Result<(Vec<Text>, Extensions), Error> {
         let mut supported = BTreeSet::new();
         let mut enabled = BTreeSet::new();
-        if let Value::Table(table) = self.global("Extensions")? {
+        let cx = Cx {
+            lua: self.runtime.lua(),
+            max_depth: 0,
+        };
+        let table = match self.global("Extensions")? {
+            Value::Nil => None,
+            Value::Table(table) => Some(table),
+            other => return Err(Error::Lua(crate::peek::mismatch("table", &other).text())),
+        };
+        if let Some(table) = table {
             for pair in table.pairs::<Value, Value>() {
                 let (name, on) = pair.map_err(|error| Error::Lua(error.to_string()))?;
-                if let Value::String(name) = name {
-                    let name = name.text();
-                    let default_on = match on {
-                        Value::Boolean(flag) => flag,
-                        Value::String(text) => match text.text().as_str() {
-                            "enable" => true,
-                            "disable" => false,
-                            _ => {
-                                return Err(Error::Lua(
-                                    "expected 'disable' or 'enable'\n\
-                                     \twhile retrieving value\n\
-                                     \twhile retrieving key-value pair"
-                                        .to_owned(),
-                                ));
-                            }
-                        },
+                let name = cx.text(&name).map_err(|error| {
+                    Error::Lua(format!(
+                        "{}\n\twhile retrieving key\n\twhile retrieving key-value pair",
+                        error.text()
+                    ))
+                })?;
+                let default_on = match on {
+                    Value::Boolean(flag) => flag,
+                    Value::String(text) => match text.text().as_str() {
+                        "enable" => true,
+                        "disable" => false,
                         _ => {
                             return Err(Error::Lua(
-                                "expected boolean or string\n\
-                                 \twhile retrieving value\n\
-                                 \twhile retrieving key-value pair"
+                                "expected 'disable' or 'enable'\n\
+                                     \twhile retrieving value\n\
+                                     \twhile retrieving key-value pair"
                                     .to_owned(),
                             ));
                         }
-                    };
-                    if default_on {
-                        enabled.insert(name.clone());
+                    },
+                    _ => {
+                        return Err(Error::Lua(
+                            "expected boolean or string\n\
+                                 \twhile retrieving value\n\
+                                 \twhile retrieving key-value pair"
+                                .to_owned(),
+                        ));
                     }
-                    supported.insert(name);
+                };
+                if default_on {
+                    enabled.insert(name.clone());
                 }
+                supported.insert(name);
             }
         }
         // Pandoc collects disables and enables into sets and applies disables

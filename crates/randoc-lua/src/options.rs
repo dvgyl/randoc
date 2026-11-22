@@ -271,9 +271,7 @@ fn push_field(lua: &Lua, field: &Field, max_depth: usize) -> mlua::Result<Value>
             table.set_metatable(Some(metatable))?;
             Value::Table(table)
         }
-        Field::Template(template) => {
-            Value::UserData(lua.create_userdata(crate::template::LuaTemplate((*template).clone()))?)
-        }
+        Field::Template(template) => crate::template::userdata(lua, (*template).clone())?,
     })
 }
 
