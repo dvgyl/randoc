@@ -52,7 +52,9 @@ pub(crate) struct LuaTemplate {
 
 impl Drop for LuaTemplate {
     fn drop(&mut self) {
-        self.live.used.set(self.live.used.get() - self.bytes);
+        self.live
+            .used
+            .set(self.live.used.get().saturating_sub(self.bytes));
     }
 }
 

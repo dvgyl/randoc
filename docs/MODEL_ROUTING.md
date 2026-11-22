@@ -11,8 +11,8 @@ the two exceptions below applies.
 
 ## Repo-specific rule for Randoc
 
-- **Primary implementation & architecture:** Use **Opus 5.5** and **Gemini 4 Neon** (across available providers).
-- **Code & work reviews:** Use **GPT 6.2 Sol** extensively for adversarial reviews.
+- **Primary implementation & architecture:** Use **Opus 5.5**, **Gemini 4 Neon**, and **GPT 6.2 Sol** in the main builder rotation (GPT 6.2 Sol writes idiomatic, well-bounded Rust; verify any parity assertions against the Pandoc 3.13 oracle during review).
+- **Code & work reviews:** Cross-review across models (**GPT 6.2 Sol**, **Opus 5.5**, and **Gemini 4 Neon** — always review with a different model than the author).
 - **Deep thinking / hard technical problems:** Consult **GPT 6.2 Astra** only when heavy reasoning is needed (never directly with the user).
 - **Disagreement resolution:** Do **not** blindly agree with other models (including Opus 5.5, GPT 6.2 Sol, or GPT 6.2 Astra). Verify claims against the codebase and black-box Pandoc 3.13 oracle probes, reason disagreements out to reach agreement, and if deadlocked, **Opus 5.5 or Gemini 4 Neon** makes the final decision.
 - **Last resort only:** Do **not** use Fable 5.2 unless the user explicitly asks for it.

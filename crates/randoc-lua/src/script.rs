@@ -160,6 +160,11 @@ impl CustomScript {
                         error.text()
                     ))
                 })?;
+                let name = if name == "lhs" {
+                    Text::from("literate_haskell")
+                } else {
+                    name
+                };
                 let default_on = match on {
                     Value::Boolean(flag) => flag,
                     Value::String(text) => match text.text().as_str() {

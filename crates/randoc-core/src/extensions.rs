@@ -171,31 +171,30 @@ impl FormatSpec {
     pub fn extensions(&self) -> Result<Extensions> {
         let supported = supported_extensions(&self.name);
         let mut extensions = default_extensions(&self.name);
-        let mut enable_literate_haskell = false;
+        let mut to_disable = Extensions::empty();
+        let mut to_enable = Extensions::empty();
         for (enable, name) in &self.changes {
-            let name = if name == "lhs" {
-                "literate_haskell"
-            } else {
-                name
-            };
             let known = Extension::from_name(name).filter(|ext| supported.contains(*ext));
             let Some(extension) = known else {
                 return Err(Error::UnsupportedExtension {
-                    extension: name.to_owned(),
+                    extension: name.clone(),
                     format: self.name.clone(),
                 });
             };
-            if extension == Extension::LiterateHaskell && *enable {
-                enable_literate_haskell = true;
-            }
             if *enable {
-                extensions.enable(extension);
+                to_enable.enable(extension);
             } else {
-                extensions.disable(extension);
+                to_disable.enable(extension);
             }
         }
-        if enable_literate_haskell {
-            extensions.enable(Extension::LiterateHaskell);
+        // Pandoc applies disables before enables so `+ext-ext` leaves `ext` enabled.
+        for (extension, _) in ALL_EXTENSIONS {
+            if to_disable.contains(extension) {
+                extensions.disable(extension);
+            }
+            if to_enable.contains(extension) {
+                extensions.enable(extension);
+            }
         }
         Ok(extensions)
     }
@@ -327,15 +326,23 @@ mod tests {
     }
 
     #[test]
-    fn later_changes_override_earlier_changes() {
+    fn enable_overrides_disable_as_in_pandoc() {
+        // Pandoc 3.13 collects disables and enables into sets and applies
+        // disables before enables, so `+ext-ext` leaves `ext` enabled.
         let extensions = FormatSpec::parse("markdown-smart+smart")
+            .extensions()
+            .unwrap();
+        assert!(extensions.contains(Extension::Smart));
+        let extensions = FormatSpec::parse("markdown+smart-smart")
             .extensions()
             .unwrap();
         assert!(extensions.contains(Extension::Smart));
         let extensions = FormatSpec::parse("markdown+emoji-emoji")
             .extensions()
             .unwrap();
-        assert!(!extensions.contains(Extension::Emoji));
+        assert!(extensions.contains(Extension::Emoji));
+        let extensions = FormatSpec::parse("markdown-smart").extensions().unwrap();
+        assert!(!extensions.contains(Extension::Smart));
     }
 
     #[test]

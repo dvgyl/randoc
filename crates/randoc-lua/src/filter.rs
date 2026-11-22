@@ -290,9 +290,17 @@ pub(crate) fn in_scope<T>(
             };
             let result = match context.try_borrow_mut() {
                 Ok(mut context) => {
-                    convert::without_system_access(environment.mode, &mut context, |context| {
-                        crate::template::compile_userdata(&call, context).map(|value| vec![value])
-                    })
+                    let saved = (environment.sandbox && environment.mode == Mode::Full)
+                        .then(|| context.replace_host(Box::new(randoc_core::NativeHost)));
+                    let compiled =
+                        convert::without_system_access(environment.mode, &mut context, |context| {
+                            crate::template::compile_userdata(&call, context)
+                                .map(|value| vec![value])
+                        });
+                    if let Some(saved) = saved {
+                        context.replace_host(saved);
+                    }
+                    compiled
                 }
                 Err(_) => Err(PeekError::Thrown(BUSY.into())),
             };

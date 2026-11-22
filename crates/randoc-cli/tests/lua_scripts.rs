@@ -399,11 +399,9 @@ end
         folder.run(&["-t", "compile.lua", "--data-dir=data"], ""),
         (0, "SIBLING:DATA\n".into(), String::new())
     );
-    let (status, _, error) = folder.run(&["-t", "compile.lua", "--data-dir=data", "--sandbox"], "");
-    assert_eq!(status, 84, "{error}");
-    assert!(
-        error.contains("Could not find data file 'templates/part.txt'"),
-        "{error}"
+    assert_eq!(
+        folder.run(&["-t", "compile.lua", "--data-dir=data", "--sandbox"], ""),
+        (0, "SIBLING:DATA\n".into(), String::new())
     );
 
     std::fs::write(folder.0.join("bound.lua"), r#"
