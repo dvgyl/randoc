@@ -16,6 +16,21 @@ licence. The rest of the crate has the licence `MIT OR Apache-2.0`.
   (`src/eval.rs`, `src/output.rs`, `src/case_transform.rs`): a port of
   `citeproc` 0.14.1.1 (`src/Citeproc/Eval.hs`, `src/Citeproc/Types.hs`,
   `src/Citeproc/Pandoc.hs`, `src/Citeproc/CaseTransform.hs`), BSD-2-Clause.
+- The evaluation of a whole document (`src/citeproc.rs`), the sort keys
+  (`src/sort.rs`), disambiguation and the subsequent author substitute
+  (`src/disambiguate.rs`), grouping and collapse (`src/collapse.rs`) and the
+  abbreviations (`src/abbreviations.rs`): a port of `citeproc` 0.14.1.1
+  (`src/Citeproc.hs`, `src/Citeproc/Eval.hs`, `src/Citeproc/Types.hs`),
+  BSD-2-Clause.
+- `src/collate/mod.rs`: the Unicode Collation Algorithm and the NFD
+  normalization, a port of `unicode-collation` 0.1.3.7
+  (`src/Text/Collate/Collation.hs`, `Collator.hs`, `Normalize.hs`,
+  `Trie.hs`), BSD-2-Clause. No tailoring and no CJK data file of
+  `unicode-collation` is copied.
+- `src/collate/ducet.bin`: the collation table of `allkeys.txt` 13.0.0 and
+  the canonical decompositions and combining classes of the Unicode
+  Character Database 13.0.0 (Unicode License v3), written from the
+  unicode.org files by `tools/collation_tables.py`.
 - `src/unicode_class.rs`: ranges of general categories, derived from the
   Unicode Character Database 16.0.0 (Unicode License v3) by
   `tools/unicode_classes.py`.

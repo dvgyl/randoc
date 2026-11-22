@@ -582,7 +582,7 @@ fn tagged_output(levels: usize) -> (String, bool) {
             tree = Output::Formatted(
                 Box::default(),
                 vec![
-                    Output::Tagged(Tag::Other, Box::new(tree)),
+                    Output::Tagged(Tag::Title, Box::new(tree)),
                     Output::Literal(vec![randoc_ast::Inline::Str("y".into())]),
                 ],
             );

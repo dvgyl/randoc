@@ -14,10 +14,10 @@ use crate::case_transform::add_text_case;
 use crate::csljson::Inlines;
 use crate::haskell;
 use crate::markup::{self, Markup, Quotes, Style as MarkupStyle, TooDeep};
-use crate::reference::Name;
+use crate::reference::{Date, Name};
 use crate::types::{
-    DisplayStyle, FontStyle, FontVariant, FontWeight, Formatting, ItemType, Locale, TextCase,
-    TextDecoration, VerticalAlign,
+    DisplayStyle, FontStyle, FontVariant, FontWeight, Formatting, ItemType, Locale, NamesFormat,
+    Term, TextCase, TextDecoration, VerticalAlign,
 };
 use crate::unicode_class::{is_letter, is_lower};
 
@@ -38,8 +38,9 @@ pub enum Output {
     Null,
 }
 
-/// The tags of output that rendering reads (`Tag`). Evaluation uses more
-/// tags; they render as [`Tag::Other`].
+/// The tags of output (`Tag`). Rendering reads the item and the names
+/// tags; sorting, disambiguation, collapse and the subsequent author
+/// substitute read the others.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Tag {
     /// One cited item (`TagItem`).
@@ -49,18 +50,36 @@ pub enum Tag {
         /// The identifier of the item.
         id: String,
     },
-    /// Names (`TagNames`).
-    Names(Vec<Name>),
+    /// The names of a `names` element (`TagNames`): the variable (empty for
+    /// a substitute that is not a name), the options and the names.
+    Names {
+        /// The variable.
+        variable: String,
+        /// The options of the `names` element.
+        format: Box<NamesFormat>,
+        /// The names.
+        names: Vec<Name>,
+    },
+    /// One name (`TagName`).
+    Name(Box<Name>),
     /// A term (`TagTerm`).
-    Term,
+    Term(Box<Term>),
+    /// The title of the item (`TagTitle`).
+    Title,
+    /// The citation number (`TagCitationNumber`).
+    CitationNumber(i64),
+    /// The citation label (`TagCitationLabel`).
+    CitationLabel,
+    /// A date (`TagDate`).
+    Date(Box<Date>),
+    /// A year suffix (`TagYearSuffix`).
+    YearSuffix(i64),
     /// The locator of an item (`TagLocator`).
     Locator,
     /// The prefix of an item (`TagPrefix`).
     Prefix,
     /// The suffix of an item (`TagSuffix`).
     Suffix,
-    /// Each other tag.
-    Other,
 }
 
 /// The rendering options (`CiteprocOptions`).
@@ -108,7 +127,9 @@ pub fn render_output(
         {
             add_hyperlink(&format!("#ref-{id}"), render(inner)?)
         }
-        Output::Tagged(Tag::Names(names), inner) if names.iter().any(has_nonstandard_case) => {
+        Output::Tagged(Tag::Names { names, .. }, inner)
+            if names.iter().any(has_nonstandard_case) =>
+        {
             add_text_case(None, TextCase::PreserveCase, render(inner)?, depth)?
         }
         Output::Tagged(_, inner) => render(inner)?,

@@ -166,8 +166,9 @@ pub enum Val<T> {
     Date(Date),
 }
 
-/// A name (`Name`).
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+/// A name (`Name`). The order of the fields is the order of the derived
+/// `Ord` of upstream.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct Name {
     /// The family name.
     pub family: Option<String>,
@@ -188,7 +189,7 @@ pub struct Name {
 }
 
 /// A date: one date or a range of dates (`Date`).
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct Date {
     /// The parts of each date: year, month and day. Month 13 to 16 is a season.
     pub parts: Vec<DateParts>,
@@ -201,7 +202,7 @@ pub struct Date {
 }
 
 /// Year, month and day; each part is optional from the end (`DateParts`).
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct DateParts(pub Vec<i64>);
 
 /// One bibliographic item (`Reference`).

@@ -647,3 +647,31 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   repository.
 - **Consequences.** No code is ported, so no attribution is necessary. The
   results stay equal to the oracle by construction of the port.
+
+## ADR 21: Citation sorting ports the code of `unicode-collation` 0.1.3.7 with the DUCET of unicode.org (2026-11-22)
+
+- **Context.** `citeproc` sorts citations and bibliographies with the
+  Unicode Collation Algorithm of `unicode-collation` 0.1.3.7, with the root
+  table `allkeys.txt` 13.0.0, the canonical decompositions of
+  `UnicodeData.txt` 13.0.0, and tailorings for 88 languages. The code of the
+  library is BSD-2-Clause. The tailorings (`data/tailorings/*`,
+  `data/cjk/*`) come from the Perl module `Unicode::Collate` under the terms
+  of Perl (PRIOR_ART row 130).
+- **Decision.** `crates/randoc-citeproc/src/collate/mod.rs` ports the code
+  of `Collation.hs`, `Collator.hs`, `Normalize.hs` and `Trie.hs`.
+  `tools/collation_tables.py` writes `src/collate/ducet.bin` from
+  `allkeys.txt` and `UnicodeData.txt` 13.0.0 of unicode.org (SHA-256 pinned
+  in the tool). No tailoring and no CJK data is in the repository: a
+  tailored language sorts in root order (row I-CITE-17 of
+  `docs/ISSUES.md`).
+- **Why.** The oracle normalizes and collates with the Unicode 13.0.0 data.
+  A crate such as `icu_collator` uses the CLDR root order and newer Unicode
+  data, which differ from the oracle in some orders, and it is a large
+  dependency.
+- **Licence.** BSD-2-Clause for the code (`third_party/licences/unicode-collation.txt`)
+  and the Unicode License for the data (`third_party/licences/Unicode.txt`),
+  both in `THIRD_PARTY_NOTICES.md` and `crates/randoc-citeproc/NOTICE.md`.
+- **Consequences.** The sort order equals the oracle for each language
+  without a tailoring. A later unit can build tailorings from CLDR
+  `common/collation/*.xml` (Unicode License) and test each against the
+  oracle.

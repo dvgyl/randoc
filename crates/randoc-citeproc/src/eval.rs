@@ -1,14 +1,12 @@
-//! The evaluation of one citation: a port of the parts of `Citeproc.Eval`
-//! (`citeproc` 0.14.1.1) that need no sorting, no disambiguation and no
-//! collapse: `evalLayout` and `evalItem` for one citation with the affixes,
-//! locators and forms of its items, the author-only and suppress-author
-//! steps of `evalStyle`, `text` (variables, values, terms and macros),
-//! `group` with its suppression rule, `choose`, `number`, `label`, `date`,
-//! `names` (with `substitute`), page ranges and term lookup. Cite positions
-//! come from the items of the same citation (the cite history of a document
-//! is a later unit).
+//! The evaluation of the elements of a style for one item: a port of the
+//! parts of `Citeproc.Eval` (`citeproc` 0.14.1.1) for `text` (variables,
+//! values, terms and macros), `group` with its suppression rule, `choose`,
+//! `number`, `label`, `date`, `names` (with `substitute`), page ranges and
+//! term lookup, with the sort key mode, the bibliography mode and the hooks
+//! of disambiguation. [`crate::citeproc`] evaluates a whole document;
+//! [`eval_citation`] evaluates one citation alone.
 
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeSet, HashSet};
 
 use randoc_ast::Inline;
 
@@ -108,236 +106,72 @@ pub struct Citation<'a> {
     pub items: Vec<CitationItem<'a>>,
 }
 
-/// An earlier item of the cite history (`stateLastCitedMap`).
-struct Cited {
-    group: i64,
-    note: Option<i64>,
-    position_in_group: i64,
-    alone_in_group: bool,
-    label: Option<String>,
-    locator: Option<String>,
-}
-
-/// The cite history that gives the positions of the items
-/// (`stateLastCitedMap`, `stateNoteMap` and `first-reference-note-number`).
-#[derive(Default)]
-struct History {
-    last_cited: HashMap<String, Cited>,
-    notes: HashMap<i64, HashSet<String>>,
-    first_note: HashMap<String, i64>,
-}
-
-impl History {
-    /// `getPosition` outside the bibliography.
-    fn position(
-        &self,
-        options: &crate::types::StyleOptions,
-        group: i64,
-        note: Option<i64>,
-        item: &CitationItem,
-        position_in_group: i64,
-    ) -> Vec<Position> {
-        let Some(previous) = self.last_cited.get(&item.id) else {
-            return vec![Position::First];
-        };
-        let near_note_distance = options.near_note_distance.unwrap_or(5);
-        let note_number = note.unwrap_or(group);
-        let previous_note_number = previous.note.unwrap_or(previous.group);
-        let alone_in_note = self
-            .notes
-            .get(&previous_note_number)
-            .is_none_or(|ids| ids.len() <= 1);
-        let alone = previous.alone_in_group && alone_in_note;
-        let mut positions = Vec::with_capacity(4);
-        if options.is_note_style && note_number - previous_note_number < near_note_distance {
-            positions.push(Position::NearNote);
-        }
-        // Haskell compares `Maybe Int` values: `Nothing` is below each `Just`.
-        let note_distance_at_most_one = match (note, previous.note) {
-            (Some(n), Some(p)) => n - p <= 1,
-            _ => true,
-        };
-        let follows = (group == previous.group
-            && position_in_group == previous.position_in_group + 1)
-            || (group == previous.group + 1
-                && note_distance_at_most_one
-                && position_in_group == 1
-                && alone);
-        if follows {
-            match (&previous.locator, &item.locator) {
-                (None, Some(_)) => positions.extend([Position::IbidWithLocator, Position::Ibid]),
-                (None, None) => positions.push(Position::Ibid),
-                (Some(_), None) => {}
-                (Some(l1), Some(l2)) if l1 == l2 && item.label == previous.label => {
-                    positions.push(Position::Ibid);
-                }
-                (Some(_), Some(_)) => {
-                    positions.extend([Position::IbidWithLocator, Position::Ibid]);
-                }
-            }
-        }
-        positions.push(Position::Subsequent);
-        positions
-    }
-
-    /// `updateRefMap` and `updateLastCitedMap`.
-    fn update(
-        &mut self,
-        is_note: bool,
-        group: i64,
-        citation: &Citation,
-        item: &CitationItem,
-        position_in_group: i64,
-    ) {
-        if let Some(note) = citation.note_number {
-            self.notes.entry(note).or_default().insert(item.id.clone());
-        }
-        if is_note && !self.last_cited.contains_key(&item.id) {
-            self.first_note
-                .insert(item.id.clone(), citation.note_number.unwrap_or(group));
-        }
-        if item.kind == ItemType::AuthorOnly {
-            return;
-        }
-        let alone_in_group = match citation.items.as_slice() {
-            [_] => true,
-            [x, y] => {
-                x.id == y.id && x.kind == ItemType::AuthorOnly && y.kind == ItemType::SuppressAuthor
-            }
-            _ => false,
-        };
-        self.last_cited.insert(
-            item.id.clone(),
-            Cited {
-                group,
-                note: citation.note_number,
-                position_in_group,
-                alone_in_group,
-                label: item.label.clone(),
-                locator: item.locator.clone(),
-            },
-        );
-    }
-}
-
-/// Evaluates one citation with the citation layout of `style` (`evalLayout`
-/// and the author-only and suppress-author steps of `evalStyle`). `locale`
-/// is the merged locale of the style. An item with no reference gives the
-/// bold identifier and a question mark, with a warning. The citation
-/// numbers follow the first place of each item in the citation.
+/// Evaluates one citation with the citation layout of `style`: the
+/// pipeline of [`crate::citeproc::evaluate`] for a document with this one
+/// citation and the references of its items. `locale` is the merged locale
+/// of the style. An item with no reference gives the bold identifier and a
+/// question mark, with a warning.
 pub fn eval_citation(
     style: &Style,
     locale: &Locale,
     citation: &Citation,
     max_depth: usize,
 ) -> Result<Evaluated, EvalError> {
-    let mut warnings = BTreeSet::new();
-    let mut numbers: HashMap<&str, i64> = HashMap::new();
+    let mut seen = HashSet::new();
+    let mut references = Vec::new();
     for item in &citation.items {
-        if item.reference.is_some() {
-            let next = i64::try_from(numbers.len()).unwrap_or(i64::MAX - 1) + 1;
-            numbers.entry(item.id.as_str()).or_insert(next);
+        if let Some(reference) = item.reference
+            && seen.insert(item.id.as_str())
+        {
+            let mut reference = reference.clone();
+            reference.id.clone_from(&item.id);
+            references.push(reference);
         }
     }
-    let is_note = style.options.is_note_style;
-    let items = add_citation_affixes(citation);
-    let first_position = match items.first() {
-        Some(item) if item.kind == ItemType::AuthorOnly => 0,
-        _ => 1,
+    let cite = crate::citeproc::Citation {
+        id: None,
+        note_number: citation.note_number,
+        reset_position: false,
+        prefix: citation.prefix.clone(),
+        suffix: citation.suffix.clone(),
+        items: citation
+            .items
+            .iter()
+            .map(|item| crate::citeproc::CitationItem {
+                id: item.id.clone(),
+                kind: item.kind,
+                label: item.label.clone(),
+                locator: item.locator.clone(),
+                prefix: item.prefix.clone(),
+                suffix: item.suffix.clone(),
+            })
+            .collect(),
     };
-    let mut history = History::default();
-    let mut outputs = Vec::with_capacity(items.len());
-    for (position_in_group, item) in (first_position..).zip(&items) {
-        let positions = history.position(
-            &style.options,
-            1,
-            citation.note_number,
-            item,
-            position_in_group,
-        );
-        let xs = match item.reference {
-            Some(reference) => {
-                let mut reference = reference.clone();
-                let mut set = |name: &str, value: Val<Vec<Inline>>| {
-                    reference
-                        .variables
-                        .insert(reference::Variable::new(name), value);
-                };
-                if let Some(number) = numbers.get(item.id.as_str()) {
-                    set("citation-number", Val::Num(*number));
-                }
-                set("citation-key", Val::Text(item.id.clone()));
-                if let Some(note) = history.first_note.get(&item.id) {
-                    set("first-reference-note-number", Val::Num(*note));
-                }
-                let label = reference::Variable::new("citation-label");
-                if !reference.variables.contains_key(&label) {
-                    let trigraph = citation_label(&reference);
-                    reference.variables.insert(label, Val::Text(trigraph));
-                }
-                let mut eval = Eval {
-                    style,
-                    locale,
-                    reference: &reference,
-                    reference_lang: reference_lang(&reference),
-                    locator: item.locator.as_deref(),
-                    label: item.label.as_deref(),
-                    positions,
-                    var_count: VarCount::default(),
-                    in_substitute: false,
-                    substitute_names_form: None,
-                    name_format: style
-                        .citation
-                        .options
-                        .name_format
-                        .combine(&style.options.name_format),
-                    substituted: BTreeSet::new(),
-                    warnings: &mut warnings,
-                };
-                let mut xs = eval.elements(&style.citation.elements, max_depth)?;
-                if let Some(lang) = &eval.reference_lang {
-                    for x in &mut xs {
-                        add_lang(x, lang);
-                    }
-                }
-                xs
-            }
-            None => {
-                warnings.insert(format!("citation {} not found", item.id));
-                vec![Output::Literal(output::add_font_weight(
-                    crate::types::FontWeight::Bold,
-                    output::from_text(&format!("{}?", item.id)),
-                ))]
-            }
-        };
-        history.update(is_note, 1, citation, item, position_in_group);
-        outputs.push(wrap_item(item, xs, is_note));
-    }
-    let formatting = &style.citation.formatting;
-    let layout = match &formatting.suffix {
-        None => output::formatted(formatting.clone(), outputs),
-        Some(suffix) => match move_suffix_inside_display(&outputs, suffix, max_depth)? {
-            None => output::formatted(formatting.clone(), outputs),
-            Some(moved) => output::formatted(
-                Formatting {
-                    suffix: None,
-                    ..formatting.clone()
-                },
-                moved,
-            ),
-        },
+    let input = crate::citeproc::Input {
+        style,
+        locale,
+        lang: None,
+        abbreviations: None,
+        references,
+        citations: std::slice::from_ref(&cite),
+        max_depth,
     };
-    let mut output = handle_author_only(layout, is_note);
-    remove_names_if_suppress_author(&mut output, max_depth)?;
+    let evaluated = crate::citeproc::evaluate(input)?;
     Ok(Evaluated {
-        output,
-        warnings: warnings.into_iter().collect(),
+        output: evaluated
+            .citations
+            .into_iter()
+            .next()
+            .unwrap_or(Output::Null),
+        warnings: evaluated.warnings,
     })
 }
 
 /// `addCitationAffixes`: the prefix of the citation goes before the prefix
 /// of the first item, the suffix after the suffix of the last item.
-fn add_citation_affixes<'a>(citation: &Citation<'a>) -> Vec<CitationItem<'a>> {
+pub(crate) fn add_citation_affixes(
+    citation: &crate::citeproc::Citation,
+) -> Vec<crate::citeproc::CitationItem> {
     let mut items = citation.items.clone();
     if let (Some(prefix), Some(first)) = (&citation.prefix, items.first_mut()) {
         let mut joined = crate::csljson::Inlines(prefix.clone());
@@ -353,7 +187,15 @@ fn add_citation_affixes<'a>(citation: &Citation<'a>) -> Vec<CitationItem<'a>> {
 }
 
 /// The steps of `evalItem'` after the evaluation of the layout.
-fn wrap_item(item: &CitationItem, mut xs: Vec<Output>, is_note: bool) -> Output {
+pub(crate) fn wrap_item(
+    item: &crate::citeproc::CitationItem,
+    mut xs: Vec<Output>,
+    is_note: bool,
+    second_field_align: bool,
+) -> Output {
+    if second_field_align {
+        xs = align_second_field(xs);
+    }
     let whole_sentence = |prefix: &Vec<Inline>| {
         let text = output::stringify(prefix);
         text.ends_with(". ") && text.matches(' ').count() > 1
@@ -395,13 +237,42 @@ fn wrap_item(item: &CitationItem, mut xs: Vec<Output>, is_note: bool) -> Output 
     x
 }
 
+/// `secondFieldAlign`: the first part goes in the left margin, the rest
+/// inline on the right. A link around all parts gives its first part up.
+fn align_second_field(mut xs: Vec<Output>) -> Vec<Output> {
+    if let [Output::Linked(url, parts)] = xs.as_mut_slice()
+        && !parts.is_empty()
+    {
+        let first = parts.remove(0);
+        let rest = Output::Linked(std::mem::take(url), std::mem::take(parts));
+        return align_second_field(vec![first, rest]);
+    }
+    if xs.is_empty() {
+        return xs;
+    }
+    let first = xs.remove(0);
+    let display = |display, parts| {
+        output::formatted(
+            Formatting {
+                display: Some(display),
+                ..Formatting::default()
+            },
+            parts,
+        )
+    };
+    vec![
+        display(crate::types::DisplayStyle::LeftMargin, vec![first]),
+        display(crate::types::DisplayStyle::RightInline, xs),
+    ]
+}
+
 /// `capitalizeInitialTerm`: the first term of the first part, along the
 /// first parts, starts with a capital letter.
 fn capitalize_initial_term(xs: &mut [Output]) {
     let mut current = xs.first_mut();
     while let Some(x) = current {
         current = match x {
-            Output::Tagged(Tag::Term, inner) => {
+            Output::Tagged(Tag::Term(_), inner) => {
                 let term = std::mem::replace(inner.as_mut(), Output::Null);
                 **inner = output::formatted(
                     Formatting {
@@ -420,11 +291,11 @@ fn capitalize_initial_term(xs: &mut [Output]) {
 }
 
 /// `getAuthors`: the first names output in pre-order, or nothing.
-fn get_authors(x: &Output) -> Output {
+pub(crate) fn get_authors(x: &Output) -> Output {
     let mut pending = vec![x];
     while let Some(x) = pending.pop() {
         match x {
-            Output::Tagged(Tag::Names(_), _) => return x.clone(),
+            Output::Tagged(Tag::Names { .. }, _) => return x.clone(),
             Output::Tagged(_, inner) | Output::InNote(inner) => pending.push(inner),
             Output::Formatted(_, parts) | Output::Linked(_, parts) => {
                 pending.extend(parts.iter().rev());
@@ -437,7 +308,7 @@ fn get_authors(x: &Output) -> Output {
 
 /// `moveSuffixInsideDisplay`: the suffix of the layout goes into the last
 /// part with a `display` attribute, along the last parts.
-fn move_suffix_inside_display(
+pub(crate) fn move_suffix_inside_display(
     zs: &[Output],
     suffix: &str,
     depth: usize,
@@ -470,7 +341,7 @@ fn move_suffix_inside_display(
 
 /// `handleAuthorOnly`: an author-only item at the start of the citation
 /// stands apart from the other items.
-fn handle_author_only(cite: Output, is_note: bool) -> Output {
+pub(crate) fn handle_author_only(cite: Output, is_note: bool) -> Output {
     let is_author_only = |x: &Output| {
         matches!(
             x,
@@ -528,7 +399,10 @@ fn handle_author_only(cite: Output, is_note: bool) -> Output {
 
 /// `removeNamesIfSuppressAuthor` on each part (`transform`): in a
 /// suppress-author item, each part equal to the first names is removed.
-fn remove_names_if_suppress_author(x: &mut Output, depth: usize) -> Result<(), EvalError> {
+pub(crate) fn remove_names_if_suppress_author(
+    x: &mut Output,
+    depth: usize,
+) -> Result<(), EvalError> {
     let depth = depth.checked_sub(1).ok_or(EvalError::TooDeep)?;
     for child in children_mut(x) {
         remove_names_if_suppress_author(child, depth)?;
@@ -560,7 +434,7 @@ fn remove_equal(x: &mut Output, y: &Output, depth: usize) -> Result<(), EvalErro
 }
 
 /// The direct output parts of an output (the children of `uniplate`).
-fn children_mut(x: &mut Output) -> Vec<&mut Output> {
+pub(crate) fn children_mut(x: &mut Output) -> Vec<&mut Output> {
     match x {
         Output::Formatted(_, parts) | Output::Linked(_, parts) => parts.iter_mut().collect(),
         Output::Tagged(_, inner) | Output::InNote(inner) => vec![inner.as_mut()],
@@ -569,7 +443,7 @@ fn children_mut(x: &mut Output) -> Vec<&mut Output> {
 }
 
 /// `citationLabel`: a trigraph from the names and the year of the reference.
-fn citation_label(reference: &Reference<Vec<Inline>>) -> String {
+pub(crate) fn citation_label(reference: &Reference<Vec<Inline>>) -> String {
     let names = |variable: &reference::Variable| match reference.variables.get(variable) {
         Some(Val::Names(names)) => {
             let take = match names.len() {
@@ -658,6 +532,96 @@ enum Found {
 /// The year, the month and the day of one date (`bindDateParts`).
 type Ymd = [Option<i64>; 3];
 
+/// The disambiguation data of a reference (`DisambiguationData`).
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct DisambiguationData {
+    /// The year suffix, 1 for `a`.
+    pub year_suffix: Option<i64>,
+    /// The hints for names.
+    pub name_map: std::collections::BTreeMap<Name, NameHint>,
+    /// The number of names to show before `et-al`.
+    pub et_al_names: Option<i64>,
+    /// The value of the `disambiguate` condition.
+    pub condition: bool,
+}
+
+/// `NameHints`: how a name shows more of its given name.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(missing_docs)]
+pub enum NameHint {
+    AddInitials,
+    AddGivenName,
+    AddInitialsIfPrimary,
+    AddGivenNameIfPrimary,
+}
+
+/// The context of the evaluation of one item.
+pub(crate) struct ItemContext<'a> {
+    pub style: &'a Style,
+    pub locale: &'a Locale,
+    pub reference: &'a Reference<Vec<Inline>>,
+    pub disamb: Option<&'a DisambiguationData>,
+    pub abbreviations: Option<&'a crate::abbreviations::Abbreviations>,
+    pub name_format: NameFormat,
+    pub locator: Option<&'a str>,
+    pub label: Option<&'a str>,
+    pub positions: Vec<Position>,
+    pub in_sort_key: bool,
+    pub in_bibliography: bool,
+}
+
+/// What the evaluation of an item used (`stateUsedIdentifier`, `stateUsedTitle`).
+#[derive(Debug, Clone, Copy, Default)]
+pub(crate) struct Used {
+    pub identifier: bool,
+    pub title: bool,
+}
+
+/// `eElements` for one item: the outputs, with the language of the item on
+/// each formatted part.
+pub(crate) fn eval_elements(
+    context: ItemContext,
+    elements: &[Element],
+    warnings: &mut BTreeSet<String>,
+    depth: usize,
+) -> Result<(Vec<Output>, Used), EvalError> {
+    let mut eval = Eval {
+        style: context.style,
+        locale: context.locale,
+        reference: context.reference,
+        reference_lang: reference_lang(context.reference),
+        locator: context.locator,
+        label: context.label,
+        positions: context.positions,
+        var_count: VarCount::default(),
+        in_substitute: false,
+        substitute_names_form: None,
+        name_format: context.name_format,
+        substituted: BTreeSet::new(),
+        warnings,
+        in_sort_key: context.in_sort_key,
+        in_bibliography: context.in_bibliography,
+        disamb: context.disamb,
+        abbreviations: context.abbreviations,
+        used_year_suffix: false,
+        used: Used::default(),
+    };
+    let xs = eval.elements(elements, depth)?;
+    Ok((xs, eval.used))
+}
+
+/// `stateReferenceLang` of a reference.
+pub(crate) fn language_of(reference: &Reference<Vec<Inline>>) -> Option<Lang> {
+    reference_lang(reference)
+}
+
+/// `addLangToFormatting` on each formatted part of the outputs.
+pub(crate) fn add_language(outputs: &mut [Output], lang: &Lang) {
+    for x in outputs {
+        add_lang(x, lang);
+    }
+}
+
 struct Eval<'a, 'w> {
     style: &'a Style,
     locale: &'a Locale,
@@ -680,6 +644,17 @@ struct Eval<'a, 'w> {
     /// The variables that a `substitute` element has used.
     substituted: BTreeSet<reference::Variable>,
     warnings: &'w mut BTreeSet<String>,
+    /// `contextInSortKey`.
+    in_sort_key: bool,
+    /// `contextInBibliography`.
+    in_bibliography: bool,
+    /// `referenceDisambiguation` of the reference.
+    disamb: Option<&'a DisambiguationData>,
+    /// `contextAbbreviations`.
+    abbreviations: Option<&'a crate::abbreviations::Abbreviations>,
+    /// `stateUsedYearSuffix`.
+    used_year_suffix: bool,
+    used: Used,
 }
 
 impl<'a> Eval<'a, '_> {
@@ -835,13 +810,42 @@ impl<'a> Eval<'a, '_> {
         }
     }
 
+    /// `getYearSuffix`: the automatic year suffix, once per item, when the
+    /// style does not use the variable `year-suffix`.
+    fn year_suffix(&mut self) -> Option<Output> {
+        let n = self.disamb?.year_suffix?;
+        if self.style.options.uses_year_suffix_variable || self.used_year_suffix {
+            return None;
+        }
+        self.used_year_suffix = true;
+        Some(Output::Tagged(
+            Tag::YearSuffix(n),
+            Box::new(Output::Literal(output::from_text(&show_year_suffix(n)))),
+        ))
+    }
+
     /// `eText`.
     fn text(&mut self, text: &TextType, depth: usize) -> Result<Output, EvalError> {
         Ok(match text {
             TextType::Value(value) => {
                 Output::Literal(output::parse_csl_json(self.locale, value, depth)?)
             }
-            TextType::Term(term) => Output::Tagged(Tag::Term, Box::new(self.term(term, depth)?)),
+            TextType::Term(term) => {
+                let mut output = self.term(term, depth)?;
+                if term.name == "no date"
+                    && let Some(suffix) = self.year_suffix()
+                {
+                    output = if term.form == TermForm::Long {
+                        output::formatted(
+                            Formatting::default(),
+                            vec![output, Output::Literal(output::from_text(" ")), suffix],
+                        )
+                    } else {
+                        output::formatted(Formatting::default(), vec![output, suffix])
+                    };
+                }
+                Output::Tagged(Tag::Term(Box::new(term.clone())), Box::new(output))
+            }
             TextType::Macro(name) => {
                 self.warnings.insert(format!("unexpanded macro {name}"));
                 Output::Null
@@ -910,20 +914,36 @@ impl<'a> Eval<'a, '_> {
                     Output::Tagged(Tag::Locator, Box::new(inner))
                 }
             },
-            "year-suffix" => Output::Null,
+            // The year suffix does not count as a variable.
+            "year-suffix" => match self.disamb.and_then(|d| d.year_suffix) {
+                Some(n) => Output::Tagged(
+                    Tag::YearSuffix(n),
+                    Box::new(Output::Literal(output::from_text(&show_year_suffix(n)))),
+                ),
+                None => Output::Null,
+            },
             "citation-number" | "citation-label" => {
                 let value = self.ask_variable(name);
+                let suffix = if special == "citation-label" {
+                    self.year_suffix()
+                } else {
+                    None
+                };
+                let label = |x: Vec<Inline>, suffix: Option<Output>| {
+                    let mut parts = vec![Output::Literal(x)];
+                    parts.extend(suffix);
+                    Output::Tagged(
+                        Tag::CitationLabel,
+                        Box::new(output::formatted(Formatting::default(), parts)),
+                    )
+                };
                 match (special, value) {
                     ("citation-number", Some(Val::Num(n))) => Output::Tagged(
-                        Tag::Other,
+                        Tag::CitationNumber(n),
                         Box::new(Output::Literal(output::from_text(&n.to_string()))),
                     ),
-                    ("citation-label", Some(Val::Text(t))) => {
-                        Output::Tagged(Tag::Other, Box::new(Output::Literal(output::from_text(&t))))
-                    }
-                    ("citation-label", Some(Val::Fancy(x))) => {
-                        Output::Tagged(Tag::Other, Box::new(Output::Literal(x)))
-                    }
+                    ("citation-label", Some(Val::Text(t))) => label(output::from_text(&t), suffix),
+                    ("citation-label", Some(Val::Fancy(x))) => label(x, suffix),
                     _ => {
                         let what = if special == "citation-number" {
                             "citation-number not defined for "
@@ -940,17 +960,24 @@ impl<'a> Eval<'a, '_> {
                 self.delete_substituted(name);
                 match value.as_ref().and_then(val_to_text) {
                     None => Output::Null,
-                    Some(text) => Output::Linked(
-                        identifier_url(special, &text),
-                        vec![Output::Literal(output::from_text(&text))],
-                    ),
+                    Some(text) => {
+                        self.used.identifier = true;
+                        Output::Linked(
+                            identifier_url(special, &text),
+                            vec![Output::Literal(output::from_text(&text))],
+                        )
+                    }
                 }
             }
             _ => {
                 let value = if form == VariableForm::Short {
                     let short = self.ask_variable(&format!("{name}-short"));
                     let long = self.ask_variable(name);
-                    short.or(long)
+                    short.or(long).map(|value| {
+                        self.abbreviations
+                            .and_then(|a| a.lookup(name, &value))
+                            .unwrap_or(value)
+                    })
                 } else {
                     self.ask_variable(name)
                 };
@@ -971,7 +998,8 @@ impl<'a> Eval<'a, '_> {
                     _ => Output::Null,
                 };
                 if same(name, "title") && result != Output::Null {
-                    Output::Tagged(Tag::Other, Box::new(result))
+                    self.used.title = true;
+                    Output::Tagged(Tag::Title, Box::new(result))
                 } else {
                     result
                 }
@@ -1220,12 +1248,25 @@ impl<'a> Eval<'a, '_> {
         {
             dates = vec![DateParts(vec![*year, season.wrapping_add(12)])];
         }
-        let xs = self.date_parts(&parts, dates.first(), dates.get(1), depth)?;
+        let mut xs = if self.in_sort_key {
+            let sort_date = |ymd: Ymd| format_sort_date(&parts, ymd);
+            match (dates.first(), dates.get(1)) {
+                (first, None) => vec![sort_date(bind_date_parts(first))],
+                (first, Some(next)) => vec![
+                    sort_date(bind_date_parts(first)),
+                    Output::Literal(output::from_text("-")),
+                    sort_date(bind_date_parts(Some(next))),
+                ],
+            }
+        } else {
+            self.date_parts(&parts, dates.first(), dates.get(1), depth)?
+        };
         if xs.iter().all(|x| *x == Output::Null) {
             self.update_var_count(0, -1);
         }
+        xs.extend(self.year_suffix());
         Ok(Output::Tagged(
-            Tag::Other,
+            Tag::Date(Box::new(date)),
             Box::new(output::formatted(formatting, xs)),
         ))
     }
@@ -1410,7 +1451,12 @@ impl<'a> Eval<'a, '_> {
         let names_format = match &self.substitute_names_form {
             None => own_format.clone(),
             Some(outer) => NamesFormat {
-                label: own_format.label.clone().or_else(|| outer.label.clone()),
+                // `sort_DropNameLabelInSort.txt`.
+                label: if self.in_sort_key {
+                    None
+                } else {
+                    own_format.label.clone().or_else(|| outer.label.clone())
+                },
                 et_al: own_format.et_al.clone().or_else(|| outer.et_al.clone()),
                 name: own_format.name.clone().or_else(|| outer.name.clone()),
                 label_before_name: if own_format.name.is_some() && own_format.label.is_some() {
@@ -1464,19 +1510,23 @@ impl<'a> Eval<'a, '_> {
                 return Ok(Output::Null);
             }
             let outer_in = std::mem::replace(&mut self.in_substitute, true);
-            let outer_form = self.substitute_names_form.replace(names_format);
+            let outer_form = self.substitute_names_form.replace(names_format.clone());
             let found = self.substitute(substitute, depth);
             self.in_substitute = outer_in;
             self.substitute_names_form = outer_form;
             let found = found?;
             return Ok(match found {
-                Some(found @ Output::Tagged(Tag::Names(_), _)) => {
+                Some(found @ Output::Tagged(Tag::Names { .. }, _)) => {
                     output::formatted(formatting, vec![found])
                 }
                 found => output::formatted(
                     formatting,
                     vec![Output::Tagged(
-                        Tag::Names(Vec::new()),
+                        Tag::Names {
+                            variable: String::new(),
+                            format: Box::new(names_format),
+                            names: Vec::new(),
+                        },
                         Box::new(found.unwrap_or(Output::Null)),
                     )],
                 ),
@@ -1558,6 +1608,17 @@ impl<'a> Eval<'a, '_> {
         for (order, name) in (1..).zip(names) {
             formatted_names.push(self.format_name(name_format, formatting, order, name));
         }
+        let subsequent = !self.in_bibliography && self.positions.contains(&Position::Subsequent);
+        let (et_al_min, et_al_use_first) = if subsequent {
+            (
+                name_format.et_al_subsequent_min.or(name_format.et_al_min),
+                name_format
+                    .et_al_subsequent_use_first
+                    .or(name_format.et_al_use_first),
+            )
+        } else {
+            (name_format.et_al_min, name_format.et_al_use_first)
+        };
         let delimiter = formatting
             .delimiter
             .as_deref()
@@ -1574,10 +1635,10 @@ impl<'a> Eval<'a, '_> {
         .to_owned();
         let count = i64::try_from(names.len()).unwrap_or(i64::MAX);
         let label = match &names_format.label {
-            Some((form, pluralize, label_formatting)) => {
+            Some((form, pluralize, label_formatting)) if !self.in_sort_key => {
                 Some(self.label(variable, *form, *pluralize, label_formatting, depth)?)
             }
-            None => None,
+            _ => None,
         };
         let and_term = match name_format.and_style {
             Some(TermForm::Symbol) => Some(
@@ -1595,8 +1656,13 @@ impl<'a> Eval<'a, '_> {
             .last()
             .is_some_and(|name| name.literal.as_deref() == Some("others"));
         let use_last = name_format.et_al_use_last.unwrap_or(false);
-        let threshold = match name_format.et_al_min {
-            Some(min) if count >= min => name_format.et_al_use_first,
+        let threshold = match et_al_min {
+            Some(min) if count >= min => {
+                match (self.disamb.and_then(|d| d.et_al_names), et_al_use_first) {
+                    (Some(n), Some(m)) => Some(m.max(n)),
+                    (_, y) => y,
+                }
+            }
             Some(_) if final_is_others => Some(count - 1),
             _ => None,
         };
@@ -1661,6 +1727,10 @@ impl<'a> Eval<'a, '_> {
             _ => et_al_pre_space,
         }
         .to_owned();
+        let et_al_term = match &names_format.et_al {
+            Some((term, _)) => term.as_str(),
+            None => "et-al",
+        };
         let et_al = match &names_format.et_al {
             Some((term, f)) => {
                 let prefix = format!("{before_et_al}{}", f.prefix.as_deref().unwrap_or(""));
@@ -1686,7 +1756,7 @@ impl<'a> Eval<'a, '_> {
                 vec![self.term(&term_named("et-al"), depth)?],
             ),
         };
-        let et_al = Output::Tagged(Tag::Other, Box::new(et_al));
+        let et_al = Output::Tagged(Tag::Term(Box::new(term_named(et_al_term))), Box::new(et_al));
         let with_prefix = |prefix: String, name: Output| {
             output::formatted(
                 Formatting {
@@ -1707,12 +1777,19 @@ impl<'a> Eval<'a, '_> {
                 shown += 1;
                 name
             } else if threshold == Some(index - 1) {
-                et_al.clone()
+                if self.in_sort_key {
+                    Output::Null
+                } else {
+                    et_al.clone()
+                }
             } else if index == count && use_last && !final_is_others && after_threshold(0) {
                 shown += 1;
                 name
             } else if after_threshold(1) {
                 Output::Null
+            } else if self.in_sort_key {
+                shown += 1;
+                name
             } else if index == count {
                 shown += 1;
                 with_prefix(format!("{before_last}{and_delimiter}"), name)
@@ -1731,7 +1808,11 @@ impl<'a> Eval<'a, '_> {
         }
         Ok((
             Output::Tagged(
-                Tag::Names(names.clone()),
+                Tag::Names {
+                    variable: variable.to_owned(),
+                    format: Box::new(names_format.clone()),
+                    names: names.clone(),
+                },
                 Box::new(output::formatted(Formatting::default(), parts)),
             ),
             shown,
@@ -1746,6 +1827,34 @@ impl<'a> Eval<'a, '_> {
         order: i64,
         name: &Name,
     ) -> Output {
+        let hinted;
+        let hint = self.disamb.and_then(|d| d.name_map.get(name));
+        let name_format = match hint {
+            None => name_format,
+            Some(hint) => {
+                let primary = order == 1;
+                let (form, full) = match hint {
+                    NameHint::AddInitials => (true, false),
+                    NameHint::AddInitialsIfPrimary => (primary, false),
+                    NameHint::AddGivenName => (true, true),
+                    NameHint::AddGivenNameIfPrimary => (primary, primary),
+                };
+                hinted = NameFormat {
+                    form: if form {
+                        Some(NameForm::Long)
+                    } else {
+                        name_format.form
+                    },
+                    initialize: if full {
+                        Some(false)
+                    } else {
+                        name_format.initialize
+                    },
+                    ..name_format.clone()
+                };
+                &hinted
+            }
+        };
         let output = match &name.literal {
             Some(text) => {
                 let literal = Output::Literal(output::from_text(text));
@@ -1759,7 +1868,7 @@ impl<'a> Eval<'a, '_> {
             }
             None => self.display_name(name_format, formatting, order, name),
         };
-        Output::Tagged(Tag::Other, Box::new(output))
+        Output::Tagged(Tag::Name(Box::new(name.clone())), Box::new(output))
     }
 
     /// `getDisplayName`: the parts of a personal name in the order of the
@@ -1836,14 +1945,14 @@ impl<'a> Eval<'a, '_> {
         };
         let form = name_format.form.unwrap_or(NameForm::Long);
         let demote = options.demote_non_dropping_particle;
+        let sort_key = self.in_sort_key;
         let output = if byzantine {
             match form {
                 NameForm::Long
-                    if as_sort
-                        && matches!(
-                            demote,
-                            DemoteNonDroppingParticle::Never | DemoteNonDroppingParticle::SortOnly
-                        ) =>
+                    if (demote == DemoteNonDroppingParticle::Never && (sort_key || as_sort))
+                        || (demote == DemoteNonDroppingParticle::SortOnly
+                            && !sort_key
+                            && as_sort) =>
                 {
                     sort_join(
                         sort_join(
@@ -1854,7 +1963,9 @@ impl<'a> Eval<'a, '_> {
                     )
                 }
                 NameForm::Long
-                    if as_sort && demote == DemoteNonDroppingParticle::DisplayAndSort =>
+                    if (demote == DemoteNonDroppingParticle::SortOnly && sort_key)
+                        || (demote == DemoteNonDroppingParticle::DisplayAndSort
+                            && (sort_key || as_sort)) =>
                 {
                     sort_join(
                         sort_join(
@@ -1952,7 +2063,7 @@ impl<'a> Eval<'a, '_> {
         }
     }
 
-    /// The test of a `choose` branch. No disambiguation exists in this port.
+    /// The test of a `choose` branch.
     fn matches(&self, matching: Match, conditions: &[Condition]) -> bool {
         let test = |condition: &Condition| match condition {
             Condition::HasVariable(v) if same(v.as_str(), "locator") => self.locator.is_some(),
@@ -1983,7 +2094,7 @@ impl<'a> Eval<'a, '_> {
                 None => same(t.as_str(), "page") && self.locator.is_some(),
             },
             Condition::HasPosition(position) => self.positions.contains(position),
-            Condition::WouldDisambiguate => false,
+            Condition::WouldDisambiguate => self.disamb.is_some_and(|d| d.condition),
         };
         match matching {
             Match::All => conditions.iter().all(test),
@@ -2071,7 +2182,7 @@ enum Word {
 
 /// `initialize`: the given name as initials with `initialize-with` after
 /// each one.
-fn initialize_name(
+pub(crate) fn initialize_name(
     lang: Option<&crate::lang::Lang>,
     make_initials: bool,
     use_hyphen: bool,
@@ -2161,6 +2272,35 @@ fn initialize_name(
         }
     }
     out.replace(" -", "-").trim_matches(' ').to_owned()
+}
+
+/// `showYearSuffix`: 1 is `a`, 26 is `z`, 27 is `aa` (bijective base 26).
+pub(crate) fn show_year_suffix(n: i64) -> String {
+    let mut letters = Vec::new();
+    let mut x = n;
+    while x >= 1 {
+        let r = (x - 1).rem_euclid(26);
+        x = (x - 1).div_euclid(26);
+        letters.push(char::from(b'a' + u8::try_from(r).unwrap_or(0)));
+    }
+    letters.iter().rev().collect()
+}
+
+/// `formatSortDate`: the parts of the date that the element shows, as
+/// digits that sort (the year plus 5000).
+fn format_sort_date(specs: &[DatePart], ymd: Ymd) -> Output {
+    let has = |name: DatePartName| specs.iter().any(|p| p.name == name);
+    let mut text = String::new();
+    if let (Some(year), true) = (ymd[0], has(DatePartName::Year)) {
+        text.push_str(&format!("{:04}", year.saturating_add(5000)));
+    }
+    if let (Some(month), true) = (ymd[1], has(DatePartName::Month)) {
+        text.push_str(&format!("{month:02}"));
+    }
+    if let (Some(day), true) = (ymd[2], has(DatePartName::Day)) {
+        text.push_str(&format!("{day:02}"));
+    }
+    Output::Literal(output::from_text(&text))
 }
 
 /// `removeDoubleSpaces`: each run of spaces becomes one space.
@@ -2263,7 +2403,10 @@ fn term_matches(a: &Term, b: &Term) -> bool {
 
 /// `lookupVariable`: `id` and `type` come from the reference fields, and
 /// `page-first` from the digits at the start of `page`.
-fn lookup_variable(reference: &Reference<Vec<Inline>>, name: &str) -> Option<Val<Vec<Inline>>> {
+pub(crate) fn lookup_variable(
+    reference: &Reference<Vec<Inline>>,
+    name: &str,
+) -> Option<Val<Vec<Inline>>> {
     match name {
         _ if same(name, "id") => {
             (!reference.id.is_empty()).then(|| Val::Text(reference.id.clone()))
@@ -2435,7 +2578,7 @@ fn is_nonempty(value: &Val<Vec<Inline>>) -> bool {
 }
 
 /// `valToText`.
-fn val_to_text(value: &Val<Vec<Inline>>) -> Option<String> {
+pub(crate) fn val_to_text(value: &Val<Vec<Inline>>) -> Option<String> {
     match value {
         Val::Text(t) => Some(t.clone()),
         Val::Fancy(x) => Some(output::stringify(x)),
@@ -2455,7 +2598,7 @@ fn same(name: &str, key: &str) -> bool {
 }
 
 /// `identifierToURL`.
-fn identifier_url(variable: &str, text: &str) -> String {
+pub(crate) fn identifier_url(variable: &str, text: &str) -> String {
     let prefix = match variable {
         "doi" => "https://doi.org/",
         "pmcid" => "https://www.ncbi.nlm.nih.gov/pmc/articles/",

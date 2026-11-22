@@ -169,13 +169,14 @@ pub enum Match {
 }
 
 /// `CitationItemType`: the form of one cited item.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ItemType {
     /// Only the author (`AuthorOnly`), for example the name of an in-text citation.
     AuthorOnly,
     /// The citation without the author (`SuppressAuthor`).
     SuppressAuthor,
     /// The full citation (`NormalCite`).
+    #[default]
     NormalCite,
 }
 

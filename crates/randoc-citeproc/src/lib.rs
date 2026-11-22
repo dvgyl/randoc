@@ -17,16 +17,25 @@
 //! - [`markup`]: the markup inside CSL JSON strings.
 //! - [`csljson`]: the reader and the writer of the format `csljson`.
 //! - [`case_transform`]: the text cases of CSL output (unit 3).
-//! - [`eval`]: the evaluation of one citation (unit 3, part).
+//! - [`eval`]: the evaluation of the elements of a style for one item.
+//! - [`citeproc`](mod@citeproc): the evaluation of a whole document: sorting,
+//!   cite positions, disambiguation, collapse and the bibliography.
+//! - [`collate`] and [`sort`]: the Unicode collation and the sort keys.
+//! - [`abbreviations`]: the abbreviations of short forms.
 //! - [`output`]: the output tree of evaluation and its rendering as inlines (unit 3).
 //!
 //! Errors have the texts of the oracle. A broken style gives
 //! `randoc_core::Error::App` (exit code 4), as in Pandoc.
 
+pub mod abbreviations;
 mod case_fold;
 pub mod case_transform;
+pub mod citeproc;
+mod collapse;
+pub mod collate;
 pub mod csljson;
 mod deep;
+mod disambiguate;
 mod element;
 mod error;
 pub mod eval;
@@ -38,6 +47,7 @@ pub mod locale;
 pub mod markup;
 pub mod output;
 pub mod reference;
+pub mod sort;
 mod style;
 pub mod types;
 mod unicode_class;

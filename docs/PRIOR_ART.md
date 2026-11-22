@@ -127,7 +127,7 @@ snapshot `lts-24.51`, inside the bounds of `pandoc.cabal`:
 
 | Need | Candidate and checked release | Licence (licence file) | Compatible | Note |
 | --- | --- | --- | --- | --- |
-| Sort order for citations | `unicode-collation` 0.1.3.7 | Code BSD-2-Clause; data files under other terms (https://hackage.haskell.org/package/unicode-collation-0.1.3.7/src/LICENSE) | Code yes; part of the data no | `data/tailorings/*.txt` and `data/cjk/*.txt` come from the Perl module `Unicode::Collate` "under the same terms as Perl" (Artistic-1.0-Perl OR GPL-1.0-or-later). Do not copy them. `data/allkeys.txt` (UCA 13.0.0) and `UnicodeData.txt` (13.0.0) are Unicode data: take them from unicode.org. |
+| Sort order for citations | `unicode-collation` 0.1.3.7 | Code BSD-2-Clause; data files under other terms (https://hackage.haskell.org/package/unicode-collation-0.1.3.7/src/LICENSE) | Code yes; part of the data no | `data/tailorings/*.txt` and `data/cjk/*.txt` come from the Perl module `Unicode::Collate` "under the same terms as Perl" (Artistic-1.0-Perl OR GPL-1.0-or-later). Do not copy them. `data/allkeys.txt` (UCA 13.0.0) and `UnicodeData.txt` (13.0.0) are Unicode data: take them from unicode.org. Status (2026-11-22): the code is ported in `crates/randoc-citeproc/src/collate/` (ADR 21); `ducet.bin` comes from the unicode.org files (same SHA-256 as the archive copies); no tailoring. |
 | Djot reader and writer | `djot` 0.1.4.3 (`djoths`) | MIT (https://hackage.haskell.org/package/djot-0.1.4.3/src/LICENSE) | Yes | |
 | Typst reader | `typst` 0.12 (`typst-hs`) | BSD-3-Clause (https://hackage.haskell.org/package/typst-0.12/src/LICENSE) | Yes | |
 | Grid tables | `gridtables` 0.1.1.1 | MIT (https://hackage.haskell.org/package/gridtables-0.1.1.1/src/LICENSE) | Yes | |
