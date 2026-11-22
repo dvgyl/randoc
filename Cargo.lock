@@ -281,6 +281,7 @@ dependencies = [
  "randoc-citeproc",
  "randoc-commonmark",
  "randoc-core",
+ "randoc-docx",
  "randoc-html",
  "randoc-html-reader",
  "randoc-latex",
@@ -288,6 +289,16 @@ dependencies = [
  "randoc-markdown",
  "randoc-markdown-writer",
  "randoc-native",
+]
+
+[[package]]
+name = "randoc-archive"
+version = "0.1.0"
+dependencies = [
+ "quick-xml",
+ "randoc-ast",
+ "randoc-core",
+ "zip",
 ]
 
 [[package]]
@@ -309,6 +320,7 @@ name = "randoc-cli"
 version = "0.1.0"
 dependencies = [
  "randoc",
+ "randoc-archive",
  "randoc-data",
  "randoc-harness",
  "randoc-highlight",
@@ -344,6 +356,17 @@ dependencies = [
 [[package]]
 name = "randoc-data"
 version = "0.1.0"
+
+[[package]]
+name = "randoc-docx"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-citeproc",
+ "randoc-core",
+ "serde_json",
+]
 
 [[package]]
 name = "randoc-harness"

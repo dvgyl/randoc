@@ -133,7 +133,7 @@ fn nocite_all() -> MetaValue {
 }
 
 /// The metadata map of a reference, as the oracle gives it.
-fn reference_to_meta(reference: &Reference<Vec<Markup>>) -> MetaValue {
+pub fn reference_to_meta(reference: &Reference<Vec<Markup>>) -> MetaValue {
     let mut map = BTreeMap::new();
     map.insert("id".into(), MetaValue::MetaString(reference.id.clone()));
     map.insert("type".into(), MetaValue::MetaString(reference.kind.clone()));

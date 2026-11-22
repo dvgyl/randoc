@@ -518,6 +518,64 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
     });
 }
 
+/// Extracts all entries in `context.media` into `dir` and rewrites matching
+/// `Image` URLs in `doc` to match Pandoc 3.13's `--extract-media` output.
+fn extract_media(dir: &str, doc: &mut Pandoc, context: &mut Context) -> Result<()> {
+    let entries: Vec<(String, Vec<u8>)> = context
+        .media
+        .iter()
+        .map(|(k, v)| (k.clone(), v.contents.clone()))
+        .collect();
+    let clean_dir = dir.trim_end_matches('/');
+    let mut rewrites: BTreeMap<String, String> = BTreeMap::new();
+
+    for (key, bytes) in entries {
+        let safe_key = randoc_archive::media::sanitize_media_path(&key, &bytes);
+        let ast_target = if clean_dir.is_empty() {
+            format!("/{safe_key}")
+        } else {
+            format!("{clean_dir}/{safe_key}")
+        };
+        let log_target = ast_target
+            .strip_prefix("./")
+            .unwrap_or(ast_target.as_str())
+            .to_owned();
+        context.report(LogMessage::Extracting(log_target));
+        if let Some((parent, _)) = ast_target.rsplit_once('/')
+            && !parent.is_empty()
+            && let Err(err) = context.host().create_directory(parent, true)
+            && err.kind() != std::io::ErrorKind::Unsupported
+        {
+            return Err(io_error(parent, "createDirectory", &err));
+        }
+        context
+            .host()
+            .write_file(&ast_target, &bytes)
+            .map_err(|err| write_error(&ast_target, "withBinaryFile", &err))?;
+        rewrites.insert(key, ast_target.clone());
+        rewrites.insert(safe_key, ast_target);
+    }
+
+    if !rewrites.is_empty() {
+        struct MediaRewriter<'a>(&'a BTreeMap<String, String>);
+        impl randoc::ast::walk::VisitorMut for MediaRewriter<'_> {
+            fn inline(&mut self, inline: &mut Inline) {
+                if let Inline::Image(_, _, target) = inline
+                    && let Some(new_url) = self
+                        .0
+                        .get(target.url.as_str())
+                        .or_else(|| target.url.strip_prefix("./").and_then(|s| self.0.get(s)))
+                {
+                    target.url = new_url.clone();
+                }
+            }
+        }
+        let mut rewriter = MediaRewriter(&rewrites);
+        randoc::ast::walk::walk_mut(doc, &mut rewriter);
+    }
+    Ok(())
+}
+
 /// Builds the reader options from the settings.
 fn reader_options(settings: &Settings, extensions: randoc::Extensions) -> ReaderOptions {
     let mut options = ReaderOptions::default();
@@ -1787,8 +1845,10 @@ fn convert(
     }
     // Pandoc shifts the headings after the filters.
     shift_headings(&mut doc, settings.shift_heading_level_by);
-    if settings.extract_media.is_some() && !context.media.is_empty() {
-        return Err(subsystem::missing(Subsystem::ExtractMedia));
+    if let Some(dir) = &settings.extract_media
+        && !context.media.is_empty()
+    {
+        extract_media(dir, &mut doc, context)?;
     }
     if settings.embed_resources && is_html_format(&to_spec.name) {
         return Err(subsystem::missing(Subsystem::EmbedResources));
@@ -2800,5 +2860,74 @@ mod tests {
         assert!(is_html_format("html5") && !is_html_format("json"));
         assert!(is_binary_format("docx") && !is_binary_format("json"));
         assert!(bibliography_format_known("a.BIB") && !bibliography_format_known("a.txt"));
+    }
+
+    #[test]
+    fn extract_media_writes_files_rewrites_urls_and_sanitizes_traversal() {
+        use randoc::ast::{Attr, Target};
+        let png = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde";
+        let make_doc = |urls: &[&str]| Pandoc {
+            meta: Meta::default(),
+            blocks: vec![Block::Para(
+                urls.iter()
+                    .map(|u| Inline::Image(Attr::default(), vec![], Target::new(*u, "")))
+                    .collect(),
+            )],
+        };
+
+        // 1. Standard dir, `./dir`, trailing slash, and `.` match Pandoc 3.13 AST & log rules.
+        for (dir, expected_ast, expected_log) in [
+            ("out", "out/media/image1.png", "out/media/image1.png"),
+            ("./out2", "./out2/media/image1.png", "out2/media/image1.png"),
+            ("out3/", "out3/media/image1.png", "out3/media/image1.png"),
+            (".", "./media/image1.png", "media/image1.png"),
+        ] {
+            let mut ctx = Context::new(Box::new(PureHost::default()));
+            ctx.media.insert(
+                "media/image1.png".to_owned(),
+                randoc::MediaItem {
+                    mime_type: "image/png".to_owned(),
+                    contents: png.to_vec(),
+                },
+            );
+            let mut doc = make_doc(&["media/image1.png"]);
+            extract_media(dir, &mut doc, &mut ctx).unwrap();
+
+            let Block::Para(inlines) = &doc.blocks[0] else {
+                panic!("expected Para");
+            };
+            let Inline::Image(_, _, target) = &inlines[0] else {
+                panic!("expected Image");
+            };
+            assert_eq!(target.url, expected_ast, "dir={dir}");
+            assert_eq!(
+                ctx.log(),
+                &[LogMessage::Extracting(expected_log.to_owned())],
+                "dir={dir}"
+            );
+            assert_eq!(ctx.host().read_file(expected_ast).unwrap(), png);
+        }
+
+        // 2. Zip-slip media keys are sanitized to hashed safe paths inside `dir`.
+        let mut ctx = Context::new(Box::new(PureHost::default()));
+        ctx.media.insert(
+            "../evil/../../secret.png".to_owned(),
+            randoc::MediaItem {
+                mime_type: "image/png".to_owned(),
+                contents: png.to_vec(),
+            },
+        );
+        let mut doc = make_doc(&["../evil/../../secret.png"]);
+        extract_media("safe_dir", &mut doc, &mut ctx).unwrap();
+        let Block::Para(inlines) = &doc.blocks[0] else {
+            panic!("expected Para");
+        };
+        let Inline::Image(_, _, target) = &inlines[0] else {
+            panic!("expected Image");
+        };
+        assert!(target.url.starts_with("safe_dir/"));
+        assert!(!target.url.contains(".."));
+        assert!(target.url.ends_with(".png"));
+        assert_eq!(ctx.host().read_file(&target.url).unwrap(), png);
     }
 }
